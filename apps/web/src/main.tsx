@@ -14,7 +14,6 @@ if (racine === null) {
   throw new Error('Élément #racine introuvable dans index.html')
 }
 
-const routeur = creerRouteur(creerHistorique(modeHistorique(import.meta.env.VITE_HISTORIQUE)))
 const client = creerClientRequetes({
   surNonAuthentifie: () => {
     allerALaConnexion(routeur)
@@ -24,6 +23,10 @@ const transport = creerTransport(import.meta.env, {
   apresChangementDemo: () => {
     void client.invalidateQueries()
   },
+})
+const routeur = creerRouteur(creerHistorique(modeHistorique(import.meta.env.VITE_HISTORIQUE)), {
+  client,
+  transport,
 })
 
 createRoot(racine).render(

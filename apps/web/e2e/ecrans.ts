@@ -4,13 +4,23 @@ export interface Ecran {
   readonly chemin: string
   /** Titre (`h1`) à attendre à l'écran avant de prendre la capture. */
   readonly etat: string
+  /** Titre du document (`<title>`) quand il n'est pas celui du `h1`. */
+  readonly titre?: string
+  /** Faux pour un écran qu'on ouvre sans session. */
+  readonly session?: boolean
 }
 
 /** Écrans photographiés à chaque PR, en 4 captures chacun. */
 export const ecrans: readonly Ecran[] = [
   { nom: 'vitrine', chemin: './vitrine.html', etat: 'Vitrine' },
   { nom: 'accueil', chemin: './#/', etat: 'Aujourd’hui' },
-  { nom: 'connexion', chemin: './#/connexion', etat: 'Connexion' },
+  {
+    nom: 'connexion',
+    chemin: './#/connexion',
+    etat: 'Atelier',
+    titre: 'Connexion',
+    session: false,
+  },
   { nom: 'questions', chemin: './#/questions', etat: 'Questions de début de séance' },
   { nom: 'formations', chemin: './#/formations', etat: 'Formations' },
   { nom: 'modules', chemin: './#/formations/dwwm', etat: 'Modules' },

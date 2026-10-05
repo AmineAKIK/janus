@@ -5,7 +5,7 @@ import type {
   SortieRoute,
   Transport,
 } from '@janus/contrats'
-import { ErreurApi, ErreurDonnees, nomRoute } from '@janus/contrats'
+import { ErreurApi, ErreurDonnees, nomRoute, ROUTES } from '@janus/contrats'
 import {
   MutationCache,
   QueryCache,
@@ -56,7 +56,13 @@ export function creerClientRequetes({ surNonAuthentifie }: ReactionsErreurs): Qu
   }
   const client: QueryClient = new QueryClient({
     queryCache: new QueryCache({ onError: traiter, onSuccess: reprise }),
-    mutationCache: new MutationCache({ onError: traiter, onSuccess: reprise }),
+    mutationCache: new MutationCache({
+      // Un mauvais mot de passe répond 401 sans que la session soit perdue : l'écran de connexion s'en occupe.
+      onError: (erreur, _variables, _contexte, mutation) => {
+        if (mutation.options.mutationKey?.[0] !== nomRoute(ROUTES['POST /session'])) traiter(erreur)
+      },
+      onSuccess: reprise,
+    }),
     defaultOptions: {
       queries: {
         staleTime: FRAICHEUR_MS,
