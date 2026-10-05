@@ -1,0 +1,58 @@
+.interrupteur {
+  position: relative;
+  flex: none;
+  box-sizing: border-box;
+  width: var(--largeur-interrupteur);
+  height: var(--hauteur-interrupteur);
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--hauteur-interrupteur) / 2);
+  background: var(--couleur-texte-secondaire);
+  cursor: pointer;
+}
+
+/* La zone tactile dépasse le dessin pour atteindre 44 px de haut. */
+.interrupteur::before {
+  content: '';
+  position: absolute;
+  inset: calc((var(--hauteur-interrupteur) - var(--cible-tactile-min)) / 2) 0;
+}
+
+.coche {
+  background: var(--couleur-accent);
+}
+
+.pouce {
+  position: absolute;
+  top: var(--decalage-pouce);
+  left: var(--decalage-pouce);
+  width: var(--taille-pouce);
+  height: var(--taille-pouce);
+  border-radius: 50%;
+  background: var(--couleur-surface);
+  transition: transform 0.12s ease;
+}
+
+.coche .pouce {
+  background: var(--couleur-accent-sur-fond);
+  transform: translateX(
+    calc(var(--largeur-interrupteur) - var(--taille-pouce) - 2 * var(--decalage-pouce))
+  );
+}
+
+.interrupteur:focus-visible,
+.interrupteur:global(.etat-demo-focus) {
+  outline: none;
+  box-shadow: var(--focus-anneau);
+}
+
+.interrupteur:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pouce {
+    transition: none;
+  }
+}

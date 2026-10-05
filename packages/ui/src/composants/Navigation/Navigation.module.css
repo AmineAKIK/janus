@@ -1,0 +1,111 @@
+/* Mobile par défaut : barre basse. Dès 1024 px : barre latérale. */
+.navigation {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: var(--hauteur-barre-navigation);
+  padding: 0 var(--espacement-4);
+  border: 1px solid var(--couleur-ligne);
+  background: var(--couleur-surface);
+}
+
+.nomAppli {
+  display: none;
+  margin: 0;
+  color: var(--couleur-encre);
+}
+
+.liste {
+  display: flex;
+  flex: 1;
+  gap: var(--espacement-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.element {
+  flex: 1;
+  min-width: 0;
+}
+
+.lien {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacement-2);
+  width: 100%;
+  height: var(--hauteur-entree-navigation);
+  border-radius: var(--rayon-champ);
+  color: var(--couleur-texte-secondaire);
+  font-size: 0.625rem;
+  font-weight: 400;
+  line-height: 0.875rem;
+  text-decoration: none;
+}
+
+.lien:hover {
+  background: color-mix(in srgb, var(--couleur-surface-douce) 60%, transparent);
+}
+
+.lien:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-anneau);
+}
+
+.actif,
+.actif:hover {
+  background: var(--couleur-surface-douce);
+  color: var(--couleur-accent);
+  font-weight: 600;
+}
+
+.icone {
+  flex: none;
+  width: var(--taille-icone-navigation);
+  height: var(--taille-icone-navigation);
+}
+
+.libelle {
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+  .navigation {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--espacement-8);
+    width: var(--largeur-navigation);
+    height: auto;
+    min-height: 100%;
+    padding: var(--espacement-8) var(--espacement-24);
+    border: 0;
+    background: transparent;
+  }
+
+  .nomAppli {
+    display: block;
+    padding: var(--espacement-8) var(--espacement-12);
+  }
+
+  .liste {
+    flex: none;
+    flex-direction: column;
+    gap: var(--espacement-8);
+  }
+
+  .lien {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: var(--espacement-12);
+    padding: 0 var(--espacement-12);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+}
