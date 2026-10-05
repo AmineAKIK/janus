@@ -1,0 +1,83 @@
+/*
+ * Tokens Janus. Chaque variable Figma `groupe/nom` devient `--groupe-nom`.
+ * Valeurs relevées dans Figma (pages 00 Fondations, cadres 3:46 et 5:2841).
+ * Les couleurs sont écrites `light-dark(clair, sombre)` : `color-scheme` choisit la branche.
+ */
+
+:root {
+  /* Thème Système (par défaut, ou `data-theme="systeme"`) : suit le réglage du téléphone. */
+  color-scheme: light dark;
+}
+
+:root[data-theme='clair'] {
+  color-scheme: light;
+}
+
+:root[data-theme='sombre'] {
+  color-scheme: dark;
+}
+
+:root {
+  /* Couleurs */
+  --couleur-fond: light-dark(#f7f4ee, #171512);
+  --couleur-surface: light-dark(#fffdf9, #211e1a);
+  --couleur-surface-douce: light-dark(#efe9df, #2c2822);
+  --couleur-ligne: light-dark(#d6cec2, #4a433a);
+  --couleur-encre: light-dark(#201d19, #f6f1e9);
+  --couleur-texte-secondaire: light-dark(#655f57, #c9c0b5);
+  --couleur-accent: light-dark(#164a8a, #78a9ef);
+  --couleur-accent-sur-fond: light-dark(#ffffff, #101c2c);
+  --couleur-succes: light-dark(#176b45, #58c690);
+  --couleur-alerte: light-dark(#8a5a00, #f2bc52);
+  --couleur-erreur: light-dark(#a62434, #ff8795);
+  --couleur-focus: light-dark(#2b6cb0, #8bb9f5);
+  --effet-ombre-carte: light-dark(#201d19, #000000);
+
+  /* Statuts */
+  --statut-non-commence: light-dark(#8e887f, #a9a198);
+  --statut-en-cours: light-dark(#6f7f91, #91a7bf);
+  --statut-vu: light-dark(#4d8ed8, #73adec);
+  --statut-acquis-provisoirement: light-dark(#b87808, #e0a943);
+  --statut-acquis: light-dark(#27885b, #58b985);
+  --statut-maitrise: light-dark(#15613e, #3e9b6b);
+  --statut-a-reprendre: light-dark(#b12a3c, #f07886);
+
+  /* Espacements (1 rem = 16 px, ils suivent la taille du texte choisie) */
+  --espacement-4: 0.25rem;
+  --espacement-8: 0.5rem;
+  --espacement-12: 0.75rem;
+  --espacement-16: 1rem;
+  --espacement-24: 1.5rem;
+  --espacement-32: 2rem;
+  --espacement-48: 3rem;
+
+  /* Rayons */
+  --rayon-champ: 0.5rem;
+  --rayon-carte: 0.75rem;
+
+  /* Ombre de carte : décalage vertical 6 px, flou 20 px, 8 % d'opacité */
+  --ombre-carte: 0 6px 20px color-mix(in srgb, var(--effet-ombre-carte) 8%, transparent);
+
+  /* Focus : épaisseur 2 px, décalage 2 px */
+  --focus-anneau: 0 0 0 2px var(--couleur-fond), 0 0 0 4px var(--couleur-focus);
+
+  /* Zone tactile minimale : 44 px quelle que soit la taille du texte */
+  --cible-tactile-min: 44px;
+
+  /* Polices */
+  --police-texte: 'Inter', system-ui, sans-serif;
+  --police-code: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* Taille du texte : pourcentage de la taille de police racine, tout est en rem. */
+:root[data-taille='petit'] {
+  font-size: 87.5%;
+}
+
+:root[data-taille='standard'] {
+  font-size: 100%;
+}
+
+:root[data-taille='grand'] {
+  font-size: 112.5%;
+}

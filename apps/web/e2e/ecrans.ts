@@ -7,4 +7,7 @@ export interface Ecran {
 }
 
 /** Écrans photographiés à chaque PR, en 4 captures chacun. */
-export const ecrans: readonly Ecran[] = [{ nom: 'accueil', chemin: './', etat: 'Janus' }]
+export const ecrans: readonly Ecran[] = [
+  { nom: 'accueil', chemin: './', etat: 'Janus' },
+  { nom: 'vitrine', chemin: './vitrine.html', etat: 'Vitrine' },
+]

@@ -5,4 +5,9 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   base: process.env['VITE_BASE'] ?? '/janus/',
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      input: { index: 'index.html', vitrine: 'vitrine.html' },
+    },
+  },
 })
