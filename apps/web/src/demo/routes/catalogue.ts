@@ -1,5 +1,10 @@
 import { ErreurApi, ROUTES } from '@janus/contrats'
-import { catalogueGraine, MANIFESTES_GRAINE, PLAN } from '../graine.ts'
+import {
+  catalogueGraine,
+  formationsSupplementairesGraine,
+  MANIFESTES_GRAINE,
+  PLAN,
+} from '../graine.ts'
 import { accesDuBloc, resultatDuBloc, statutBloc } from './calculs.ts'
 import { definir } from './definir.ts'
 
@@ -22,23 +27,29 @@ const FICHE_DEMO = 'demo/fiche-demo.html'
 
 export function routesCatalogueDemo({ racineFiches }: OptionsCatalogue) {
   const catalogue = catalogueGraine()
-  const idFormation = catalogue.formation.code
+  const formationsVisibles = (supplementaires: boolean) => [
+    catalogue,
+    ...(supplementaires ? formationsSupplementairesGraine() : []),
+  ]
 
   return [
-    definir(ROUTES['GET /formations'], () => ({
-      formations: [
-        {
-          id: idFormation,
-          titre: catalogue.formation.titre,
-          description: catalogue.formation.description,
-        },
-      ],
+    definir(ROUTES['GET /formations'], ({ magasin }) => ({
+      formations: formationsVisibles(magasin.lire().interrupteurs.deuxFormations).map(
+        ({ formation }) => ({
+          id: formation.code,
+          titre: formation.titre,
+          description: formation.description,
+        }),
+      ),
     })),
 
-    definir(ROUTES['GET /formations/:id/modules'], ({ params }) => {
-      if (params.id !== idFormation) throw introuvable('La formation', params.id)
+    definir(ROUTES['GET /formations/:id/modules'], ({ magasin, params }) => {
+      const trouvee = formationsVisibles(magasin.lire().interrupteurs.deuxFormations).find(
+        ({ formation }) => formation.code === params.id,
+      )
+      if (trouvee === undefined) throw introuvable('La formation', params.id)
       return {
-        modules: catalogue.modules.map(({ code, titre, description, ordre, importe }) => ({
+        modules: trouvee.modules.map(({ code, titre, description, ordre, importe }) => ({
           id: code,
           code,
           titre,

@@ -32,6 +32,7 @@ export function etatVide(maintenant: string): EtatDemo {
       correctionNonVerifiee: false,
       plafondAtteint: false,
       horsConnexion: false,
+      deuxFormations: false,
     },
   }
 }

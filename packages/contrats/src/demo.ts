@@ -11,6 +11,8 @@ export const InterrupteursDemo = z.strictObject({
   correctionNonVerifiee: z.boolean(),
   plafondAtteint: z.boolean(),
   horsConnexion: z.boolean(),
+  /** Ajoute une seconde formation, dont aucun module n'est importé. */
+  deuxFormations: z.boolean().default(false),
 })
 export type InterrupteursDemo = z.infer<typeof InterrupteursDemo>
 

@@ -8,6 +8,8 @@ export interface Ecran {
   readonly titre?: string
   /** Faux pour un écran qu'on ouvre sans session. */
   readonly session?: boolean
+  /** Interrupteurs de démo à activer avant d'ouvrir l'écran (voir `session.ts`). */
+  readonly interrupteurs?: readonly string[]
 }
 
 /** Écrans photographiés à chaque PR, en 4 captures chacun. */
@@ -23,8 +25,19 @@ export const ecrans: readonly Ecran[] = [
   },
   { nom: 'questions', chemin: './#/questions', etat: 'Questions de début de séance' },
   { nom: 'formations', chemin: './#/formations', etat: 'Formations' },
-  { nom: 'modules', chemin: './#/formations/dwwm', etat: 'Modules' },
-  { nom: 'blocs', chemin: './#/modules/m1', etat: 'Blocs' },
+  {
+    nom: 'formations-deux',
+    chemin: './#/formations',
+    etat: 'Formations',
+    interrupteurs: ['deuxFormations'],
+  },
+  {
+    nom: 'modules',
+    chemin: './#/formations/DWWM',
+    etat: 'DWWM · Développeur web et web mobile',
+    titre: 'Modules',
+  },
+  { nom: 'blocs', chemin: './#/modules/M1', etat: 'Blocs' },
   { nom: 'bloc', chemin: './#/blocs/b05', etat: 'Page de bloc' },
   { nom: 'revision', chemin: './#/revision', etat: 'Révision' },
   { nom: 'verification', chemin: './#/verifications/v1', etat: 'Vérification' },

@@ -127,6 +127,39 @@ export function catalogueGraine(): Catalogue {
   })
 }
 
+/** Les formations que l'interrupteur « deuxFormations » ajoute : aucun de leurs modules n'est importé. */
+export function formationsSupplementairesGraine(): readonly Pick<
+  Catalogue,
+  'formation' | 'modules'
+>[] {
+  const titres = [
+    'Analyser les besoins',
+    'Concevoir l’architecture',
+    'Développer une application',
+    'Tester et déployer',
+    'Sécuriser les accès',
+    'Gérer les données',
+    'Collaborer en équipe',
+    'Maintenir en production',
+  ]
+  return [
+    {
+      formation: {
+        code: 'CDA',
+        titre: 'Concepteur développeur d’applications',
+        description: 'Une seconde formation d’exemple, pas encore importée.',
+      },
+      modules: titres.map((titre, i) => ({
+        code: `CDA-M${String(i + 1)}`,
+        titre,
+        description: '',
+        ordre: i + 1,
+        importe: false as const,
+      })),
+    },
+  ]
+}
+
 // ---- Les faits, datés par rapport au premier lancement ----
 
 const REGLAGES = Reglages.parse({})
