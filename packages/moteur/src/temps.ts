@@ -23,7 +23,7 @@ function lireJour(jour: Jour): Date {
 }
 
 /** Lit un instant ISO 8601 en UTC (`AAAA-MM-JJThh:mm:ss[.sss]Z`) ; refuse tout le reste, jour impossible ou offset absent compris. */
-function lireInstant(instantIso: string): number {
+export function instantEnMs(instantIso: string): number {
   const jour = FORMAT_INSTANT.exec(instantIso)?.[1]
   if (jour === undefined || !jourExiste(jour)) throw new Error(`Instant illisible : ${instantIso}`)
   return Date.parse(instantIso)
@@ -38,12 +38,17 @@ function jourExiste(jour: Jour): boolean {
   }
 }
 
+/** L'instant ISO 8601 UTC d'un nombre de millisecondes depuis 1970. */
+export function instantEnIso(ms: number): string {
+  return new Date(ms).toISOString()
+}
+
 /**
  * Le jour auquel compte un instant : la date locale du fuseau, moins un jour
  * tant qu'il est avant `heureBascule` (une séance à 1 h 30 compte pour la veille).
  */
 export function jourDe(instantIso: string, fuseau: string, heureBascule: number): Jour {
-  const instant = lireInstant(instantIso)
+  const instant = instantEnMs(instantIso)
   const parties = new Intl.DateTimeFormat('en-CA', {
     timeZone: fuseau,
     year: 'numeric',
