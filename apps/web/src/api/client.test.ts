@@ -51,6 +51,18 @@ describe('creerTransport', () => {
     expect(Object.keys(lireOutilsDemo() ?? {}).sort()).toEqual(['avancer', 'reinitialiser'])
   })
 
+  it('au premier lancement, la démo part de la graine, puis la retrouve au rechargement', () => {
+    localStorage.clear()
+
+    creerTransport({})
+    const lire = (): unknown => JSON.parse(localStorage.getItem('janus.demo.v1') ?? 'null')
+    const premier = lire()
+    creerTransport({})
+
+    expect(JSON.stringify(premier)).toContain('"graine-B01-01"')
+    expect(lire()).toEqual(premier)
+  })
+
   it('en http, window.__janusDemo n’existe pas', () => {
     delete window.__janusDemo
     vi.stubGlobal('fetch', vi.fn())
