@@ -9,6 +9,7 @@ export const IdUuidV7 = z
 export type IdUuidV7 = z.infer<typeof IdUuidV7>
 
 const COMPTEUR_MAX = 0xfff
+const TEMPS_MAX = 2 ** 48 - 1
 
 let dernierTemps = -1
 let compteur = 0
@@ -23,20 +24,24 @@ function enHexadecimal(octets: Uint8Array): string {
  *
  * Ce paquet n'a pas accès à l'horloge : l'instant (en millisecondes depuis 1970) vient de l'appelant.
  * Si l'horloge recule, l'identifiant reprend le dernier instant connu pour ne jamais décroître.
+ * Un instant invalide (NaN, infini, négatif, au-delà de 48 bits) lève une erreur sans toucher à l'état.
  */
 export function nouvelId(maintenantMs: number): IdUuidV7 {
+  if (!Number.isFinite(maintenantMs) || maintenantMs < 0 || maintenantMs > TEMPS_MAX) {
+    throw new RangeError('L’instant doit être un nombre de millisecondes entre 0 et 2^48 - 1.')
+  }
   let temps = Math.max(Math.floor(maintenantMs), dernierTemps)
-  if (temps === dernierTemps) {
-    compteur += 1
-    if (compteur > COMPTEUR_MAX) {
-      // Plus de 4 096 identifiants dans la même milliseconde : on avance d'une milliseconde.
-      temps += 1
-      compteur = 0
-    }
-  } else {
-    compteur = 0
+  let suite = temps === dernierTemps ? compteur + 1 : 0
+  if (suite > COMPTEUR_MAX) {
+    // Plus de 4 096 identifiants dans la même milliseconde : on avance d'une milliseconde.
+    temps += 1
+    suite = 0
+  }
+  if (temps > TEMPS_MAX) {
+    throw new RangeError('Plus aucun identifiant ne peut être généré après l’instant maximal.')
   }
   dernierTemps = temps
+  compteur = suite
 
   const aleatoire = crypto.getRandomValues(new Uint8Array(8))
   const octets = new Uint8Array(16)

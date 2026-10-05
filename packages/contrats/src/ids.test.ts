@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { IdUuidV7, nouvelId } from './ids.ts'
 
 const T0 = 1_700_000_000_000
@@ -62,6 +62,26 @@ describe('nouvelId', () => {
     const ids = Array.from({ length: 5000 }, () => nouvelId(base))
     expect(new Set(ids).size).toBe(5000)
     expect([...ids].sort()).toEqual(ids)
+  })
+
+  it.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, -1, 2 ** 48])(
+    'refuse l’instant %s sans fausser les identifiants suivants',
+    (instant) => {
+      const avant = nouvelId(T0 + 600_000)
+      expect(() => nouvelId(instant)).toThrow(RangeError)
+      const apres = nouvelId(T0 + 600_000)
+      expect(apres > avant).toBe(true)
+      expect(parseInt(apres.slice(0, 8) + apres.slice(9, 13), 16)).toBe(T0 + 600_000)
+    },
+  )
+
+  it('accepte l’instant maximal de 48 bits, puis refuse de dépasser', async () => {
+    // Module neuf : cet instant ne doit pas rester dans l'état partagé des autres tests.
+    vi.resetModules()
+    const { nouvelId: neuf } = await import('./ids.ts')
+    const maximum = 2 ** 48 - 1
+    expect(neuf(maximum).slice(0, 13)).toBe('ffffffff-ffff')
+    expect(() => Array.from({ length: 5000 }, () => neuf(maximum))).toThrow(RangeError)
   })
 
   it('ne répète pas la partie aléatoire d’un appel à l’autre', () => {
