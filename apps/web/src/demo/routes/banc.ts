@@ -9,7 +9,7 @@ export const PREMIER_LANCEMENT = '2026-10-05T10:00:00.000Z'
 export const RACINE_FICHES = 'https://exemple.test/janus/fiches/'
 
 /** Une démo complète dans les tests : la graine, un transport, et l'horloge qu'on peut avancer. */
-export function monterDemo(options: { connecte?: boolean } = {}) {
+export function monterDemo(options: { connecte?: boolean; delaiCorrectionMs?: number } = {}) {
   const magasin = creerMagasin({
     stockage: null,
     creerEtat: () => ({
@@ -29,7 +29,10 @@ export function monterDemo(options: { connecte?: boolean } = {}) {
   const transport: Transport = creerTransportDemo({
     magasin,
     horloge,
-    routes: creerRoutesDemo({ racineFiches: RACINE_FICHES }),
+    routes: creerRoutesDemo({
+      racineFiches: RACINE_FICHES,
+      delaiCorrectionMs: options.delaiCorrectionMs ?? 0,
+    }),
   })
   return { magasin, horloge, transport }
 }

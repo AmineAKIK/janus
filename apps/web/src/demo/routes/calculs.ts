@@ -1,7 +1,8 @@
-import type { EtatDemo, Manque as ManqueContrat, StatutBloc, Statut } from '@janus/contrats'
+import type { EtatDemo, Fait, Manque as ManqueContrat, Statut, StatutBloc } from '@janus/contrats'
 import { accesBloc, calculerBloc } from '@janus/moteur'
 import type { ResultatBloc } from '@janus/moteur'
 import { MANIFESTES_GRAINE } from '../graine.ts'
+import type { Magasin } from '../store.ts'
 
 /** Les faits d'un bloc, tels que le store les a gardés. */
 export const faitsDuBloc = (etat: EtatDemo, bloc: string) =>
@@ -36,4 +37,16 @@ export function accesDuBloc(etat: EtatDemo, bloc: string, maintenant: string) {
   const prerequis = MANIFESTES_GRAINE[bloc]?.prerequis ?? []
   const statuts: Statut[] = prerequis.map((code) => resultatDuBloc(etat, code, maintenant).statut)
   return accesBloc(statuts)
+}
+
+/** Vrai si le serveur a déjà reçu cet identifiant : rien n'est alors enregistré deux fois. */
+export const dejaRecu = (etat: EtatDemo, id: string): boolean => etat.idsRecus.includes(id)
+
+/** Enregistre des faits et retient l'identifiant du message qui les a produits. */
+export function enregistrer(magasin: Magasin, id: string, faits: readonly Fait[]): void {
+  magasin.ecrire((etat) => ({
+    ...etat,
+    idsRecus: [...etat.idsRecus, id],
+    faits: [...etat.faits, ...faits],
+  }))
 }

@@ -1,0 +1,106 @@
+import { ErreurApi, ROUTES } from '@janus/contrats'
+import type { Fait, MessagePage } from '@janus/contrats'
+import { MANIFESTES_GRAINE } from '../graine.ts'
+import { accesDuBloc, dejaRecu, enregistrer, resultatDuBloc, statutBloc } from './calculs.ts'
+import { definir } from './definir.ts'
+
+function blocInconnu(bloc: string): ErreurApi {
+  return new ErreurApi({
+    status: 404,
+    code: 'introuvable',
+    titre: 'Introuvable',
+    detail: `Le bloc « ${bloc} » n’existe pas.`,
+  })
+}
+
+function verifierBloc(bloc: string): void {
+  if (!(bloc in MANIFESTES_GRAINE)) throw blocInconnu(bloc)
+}
+
+/** Le fait qu'un message de la page fait naître, ou `null` s'il ne change aucun statut. */
+function faitDuMessage(message: MessagePage, date: string): Fait | null {
+  const commun = { id: message.id, bloc: message.bloc, date }
+  switch (message.type) {
+    case 'etape.vue':
+      return { ...commun, type: 'etape_vue', etape: message.etape }
+    case 'pratique.resultat':
+      return {
+        ...commun,
+        type: 'pratique_resultat',
+        exercice: message.exercice,
+        item: message.item,
+        reussi: message.reussi,
+        aide: message.aide,
+      }
+    case 'atelier.resultat':
+      return { ...commun, type: 'atelier_resultat', reussi: message.reussi, aide: message.aide }
+    case 'aisance.resultat':
+      return {
+        ...commun,
+        type: 'aisance_resultat',
+        reussi: message.reussi,
+        dureeS: message.duree_s,
+      }
+    default:
+      // Les corrections, les erreurs, l'état de la page... passent par leurs propres routes.
+      return null
+  }
+}
+
+export const ROUTES_BLOCS_DEMO = [
+  definir(ROUTES['POST /blocs/:id/ouvrir'], ({ magasin, horloge, params, corps }) => {
+    verifierBloc(params.id)
+    const maintenant = horloge.maintenant()
+    const avant = magasin.lire()
+    if (!dejaRecu(avant, corps.id)) {
+      const acces = accesDuBloc(avant, params.id, maintenant)
+      if (acces === 'raison_requise' && !(corps.hors_prerequis && corps.raison !== undefined)) {
+        throw new ErreurApi({
+          status: 400,
+          code: 'donnees_invalides',
+          titre: 'Raison exigée',
+          detail: 'Ce bloc a des prérequis pas encore acquis : donne la raison de ton choix.',
+        })
+      }
+      enregistrer(magasin, corps.id, [
+        {
+          id: corps.id,
+          bloc: params.id,
+          date: maintenant,
+          type: 'bloc_ouvert',
+          horsPrerequis: corps.hors_prerequis,
+          ...(corps.raison === undefined ? {} : { raison: corps.raison }),
+        },
+      ])
+    }
+    const etat = magasin.lire()
+    return {
+      acces: accesDuBloc(etat, params.id, maintenant),
+      ...statutBloc(resultatDuBloc(etat, params.id, maintenant)),
+    }
+  }),
+
+  definir(ROUTES['POST /evenements'], ({ magasin, horloge, corps }) => {
+    const maintenant = horloge.maintenant()
+    if (corps.type === 'temps.actif') {
+      verifierBloc(corps.bloc)
+      const doublon = dejaRecu(magasin.lire(), corps.id)
+      if (!doublon) enregistrer(magasin, corps.id, [])
+      return { doublon, statut: null }
+    }
+    verifierBloc(corps.bloc)
+    if (dejaRecu(magasin.lire(), corps.id)) {
+      return {
+        doublon: true,
+        statut: statutBloc(resultatDuBloc(magasin.lire(), corps.bloc, maintenant)),
+      }
+    }
+    const fait = faitDuMessage(corps, maintenant)
+    enregistrer(magasin, corps.id, fait === null ? [] : [fait])
+    return {
+      doublon: false,
+      statut:
+        fait === null ? null : statutBloc(resultatDuBloc(magasin.lire(), corps.bloc, maintenant)),
+    }
+  }),
+]
