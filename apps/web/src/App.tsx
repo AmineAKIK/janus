@@ -1,11 +1,11 @@
 import styles from './App.module.css'
 
-interface Props {
+interface ProprietesApp {
   /** Identifiant court du commit, absent en développement local. */
   readonly commit: string | undefined
 }
 
-export function App({ commit }: Props) {
+export function App({ commit }: ProprietesApp) {
   return (
     <main className={styles.page}>
       <h1 className={styles.titre}>Janus</h1>

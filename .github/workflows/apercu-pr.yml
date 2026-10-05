@@ -72,7 +72,11 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @janus/web build
+      - name: Construire l'appli
+        run: |
+          VITE_COMMIT="$(git rev-parse --short=7 HEAD)"
+          export VITE_COMMIT
+          pnpm --filter @janus/web build
         env:
           VITE_BASE: /janus/
       - run: pnpm --filter @janus/web exec playwright install --with-deps chromium
