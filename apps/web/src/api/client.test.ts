@@ -6,6 +6,10 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
+function lireOutilsDemo(): Window['__janusDemo'] {
+  return window.__janusDemo
+}
+
 describe('modeTransport', () => {
   it('prend la démo par défaut et http sur demande', () => {
     expect(modeTransport(undefined)).toBe('demo')
@@ -33,11 +37,26 @@ describe('creerTransport', () => {
     ])
   })
 
-  it('en démo, n’appelle jamais le réseau', async () => {
+  it('en démo, n’appelle jamais le réseau et expose window.__janusDemo', async () => {
     const fetchMock = vi.fn()
     vi.stubGlobal('fetch', fetchMock)
+    delete window.__janusDemo
 
-    await expect(creerTransport({}).appeler(ROUTES['GET /moi'], {})).rejects.toThrow('PR-032')
+    const erreur: unknown = await creerTransport({})
+      .appeler(ROUTES['GET /moi'], {})
+      .catch((e: unknown) => e)
+
+    expect(erreur).toMatchObject({ status: 501 })
     expect(fetchMock).not.toHaveBeenCalled()
+    expect(Object.keys(lireOutilsDemo() ?? {}).sort()).toEqual(['avancer', 'reinitialiser'])
+  })
+
+  it('en http, window.__janusDemo n’existe pas', () => {
+    delete window.__janusDemo
+    vi.stubGlobal('fetch', vi.fn())
+
+    creerTransport({ VITE_TRANSPORT: 'http' })
+
+    expect(window.__janusDemo).toBeUndefined()
   })
 })

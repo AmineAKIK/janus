@@ -20,7 +20,11 @@ const client = creerClientRequetes({
     allerALaConnexion(routeur)
   },
 })
-const transport = creerTransport(import.meta.env)
+const transport = creerTransport(import.meta.env, {
+  apresChangementDemo: () => {
+    void client.invalidateQueries()
+  },
+})
 
 createRoot(racine).render(
   <StrictMode>

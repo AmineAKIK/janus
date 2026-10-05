@@ -1,0 +1,41 @@
+import { z } from 'zod'
+import { Fait, InstantUtc } from './faits.ts'
+import { CodeBloc, EtatPage, IdUuid } from './pont.ts'
+import { Reglages } from './reglages.ts'
+
+// Ce que le backend de démo (dans le navigateur) garde entre deux rechargements de la page.
+
+/** Les interrupteurs de démo, pour afficher les états Figma qui dépendent du serveur. */
+export const InterrupteursDemo = z.strictObject({
+  correctionIndisponible: z.boolean(),
+  correctionNonVerifiee: z.boolean(),
+  plafondAtteint: z.boolean(),
+  horsConnexion: z.boolean(),
+})
+export type InterrupteursDemo = z.infer<typeof InterrupteursDemo>
+
+export const EtatDemo = z.strictObject({
+  version: z.literal(1),
+  /** Les faits de la graine sont datés par rapport à cet instant. */
+  premierLancement: InstantUtc,
+  /** Décalage de l'horloge de démo, en millisecondes (positif : on avance dans le temps). */
+  decalageMs: z.number().int(),
+  utilisateur: z.strictObject({
+    id: IdUuid,
+    nom_utilisateur: z.string().min(1),
+    fuseau: z.string().min(1),
+  }),
+  /** Vrai tant que la session simulée (le cookie) est ouverte. */
+  sessionOuverte: z.boolean(),
+  /** Les échecs de connexion de la dernière minute. */
+  echecsConnexion: z.array(InstantUtc),
+  /** La connexion est bloquée jusqu'à cet instant (« Trop d'essais »). */
+  connexionBloqueeJusqua: InstantUtc.nullable(),
+  reglages: Reglages,
+  faits: z.array(Fait),
+  etatsPage: z.record(CodeBloc, EtatPage),
+  /** Les identifiants de messages déjà reçus : un doublon est ignoré. */
+  idsRecus: z.array(z.string()),
+  interrupteurs: InterrupteursDemo,
+})
+export type EtatDemo = z.infer<typeof EtatDemo>
