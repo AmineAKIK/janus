@@ -26,7 +26,7 @@ describe('Catalogue', () => {
 
   it('refuse un module importé sans parties', () => {
     const copie = structuredClone(demo)
-    delete (copie.modules[0] as { parties?: unknown }).parties
+    Reflect.deleteProperty(copie.modules[0] ?? {}, 'parties')
     expect(Catalogue.safeParse(copie).success).toBe(false)
   })
 

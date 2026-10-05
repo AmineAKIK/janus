@@ -194,6 +194,9 @@ function verifierDifferees(manifeste: Manifeste, problemes: Probleme[]): void {
     if (differee.type !== 'transfert' && differee.forme !== undefined) {
       ajouter(problemes, `${chemin}.forme`, 'Seul un transfert a une forme.')
     }
+    if (differee.type !== 'tache' && differee.verification !== undefined) {
+      ajouter(problemes, `${chemin}.verification`, 'Seule une tâche a une vérification.')
+    }
   })
 }
 
@@ -219,6 +222,19 @@ function verifierErreursCitees(manifeste: Manifeste, problemes: Probleme[]): voi
   ]
   for (const [liste, nom] of questions) verifier(liste, nom)
   verifier(manifeste.differees, 'differees')
+}
+
+function verifierEtapesCitees(manifeste: Manifeste, problemes: Probleme[]): void {
+  const connues = new Set(manifeste.etapes.map((etape) => etape.id))
+  manifeste.erreurs_critiques.forEach((erreur, i) => {
+    if (erreur.etape !== undefined && !connues.has(erreur.etape)) {
+      ajouter(
+        problemes,
+        `erreurs_critiques[${String(i)}].etape`,
+        `L’étape « ${erreur.etape} » n’existe pas dans etapes.`,
+      )
+    }
+  })
 }
 
 function verifierPratique(manifeste: Manifeste, problemes: Probleme[]): void {
@@ -268,6 +284,7 @@ export function validerManifeste(donnees: unknown): ResultatManifeste {
   verifierConsolidationDistincte(manifeste, problemes)
   verifierDifferees(manifeste, problemes)
   verifierErreursCitees(manifeste, problemes)
+  verifierEtapesCitees(manifeste, problemes)
   verifierPratique(manifeste, problemes)
   verifierPrerequis(manifeste, problemes)
   return problemes.length === 0 ? { ok: true, manifeste } : { ok: false, problemes }
