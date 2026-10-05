@@ -60,6 +60,16 @@ describe('tokens.css', () => {
     expect(css).toContain('--taille-icone: 20px;')
   })
 
+  it('définit les dimensions de la navigation, des sélecteurs et des lignes de réglage', () => {
+    expect(css).toContain('--largeur-navigation: 240px;')
+    expect(css).toContain('--hauteur-barre-navigation: 72px;')
+    expect(css).toContain('--hauteur-entree-navigation: 60px;')
+    expect(css).toContain('--hauteur-entree-navigation: 48px;')
+    expect(css).toContain('--hauteur-selecteur: 48px;')
+    expect(css).toContain('--hauteur-ligne-reglage: 72px;')
+    expect(css).toContain('--largeur-interrupteur: 44px;')
+  })
+
   it('définit la zone tactile minimale à 44 px, indépendante de la taille du texte', () => {
     expect(css).toContain('--cible-tactile-min: 44px;')
   })

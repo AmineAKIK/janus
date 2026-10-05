@@ -1,6 +1,7 @@
 import {
-  TAILLES,
-  THEMES,
+  EnTeteSection,
+  SelecteurTaille,
+  SelecteurTheme,
   appliquerTaille,
   appliquerTheme,
   lireTaille,
@@ -12,19 +13,9 @@ import { useEffect, useState } from 'react'
 import { COULEURS, ESPACEMENTS, RAYONS, STATUTS, STYLES_TEXTE } from './tokens.ts'
 import { SectionBoutons } from './sections/SectionBoutons.tsx'
 import { SectionChamps } from './sections/SectionChamps.tsx'
+import { SectionNavigation } from './sections/SectionNavigation.tsx'
 import { SectionSelections } from './sections/SectionSelections.tsx'
 import styles from './Vitrine.module.css'
-
-const LIBELLES_THEME: Record<Theme, string> = {
-  clair: 'Clair',
-  sombre: 'Sombre',
-  systeme: 'Système',
-}
-const LIBELLES_TAILLE: Record<Taille, string> = {
-  petit: 'Petit',
-  standard: 'Standard',
-  grand: 'Grand',
-}
 
 function enHexadecimal(couleur: string): string {
   const composantes = /\d+(\.\d+)?/g
@@ -74,45 +65,26 @@ export function Vitrine() {
     <main className={styles.page}>
       <h1 className="texte-titre-28">Vitrine</h1>
 
-      <section className={styles.section} aria-labelledby="titre-reglages">
-        <h2 id="titre-reglages" className="texte-titre-22">
-          Réglages temporaires
-        </h2>
-        <fieldset className={styles.reglage}>
-          <legend className="texte-sous-titre-18">Thème</legend>
-          {THEMES.map((valeur) => (
-            <label key={valeur} className={styles.choix}>
-              <input
-                type="radio"
-                name="theme"
-                checked={theme === valeur}
-                onChange={() => {
-                  appliquerTheme(valeur)
-                  setTheme(valeur)
-                  setVersion((v) => v + 1)
-                }}
-              />
-              {LIBELLES_THEME[valeur]}
-            </label>
-          ))}
-        </fieldset>
-        <fieldset className={styles.reglage}>
-          <legend className="texte-sous-titre-18">Taille du texte</legend>
-          {TAILLES.map((valeur) => (
-            <label key={valeur} className={styles.choix}>
-              <input
-                type="radio"
-                name="taille"
-                checked={taille === valeur}
-                onChange={() => {
-                  appliquerTaille(valeur)
-                  setTaille(valeur)
-                }}
-              />
-              {LIBELLES_TAILLE[valeur]}
-            </label>
-          ))}
-        </fieldset>
+      <section className={styles.section} aria-label="Réglages d’affichage">
+        <EnTeteSection
+          titre="Réglages d’affichage"
+          description="Thème et taille du texte, gardés d’une visite à l’autre."
+        />
+        <SelecteurTheme
+          valeur={theme}
+          onChange={(valeur) => {
+            appliquerTheme(valeur)
+            setTheme(valeur)
+            setVersion((v) => v + 1)
+          }}
+        />
+        <SelecteurTaille
+          valeur={taille}
+          onChange={(valeur) => {
+            appliquerTaille(valeur)
+            setTaille(valeur)
+          }}
+        />
       </section>
 
       <section className={styles.section} aria-labelledby="titre-couleurs">
@@ -192,6 +164,7 @@ export function Vitrine() {
       <SectionBoutons />
       <SectionChamps />
       <SectionSelections />
+      <SectionNavigation />
     </main>
   )
 }

@@ -1,0 +1,54 @@
+.groupe {
+  box-sizing: border-box;
+  display: flex;
+  gap: var(--espacement-4);
+  width: 100%;
+  min-height: var(--hauteur-selecteur);
+  padding: var(--espacement-4);
+  border: 1px solid var(--couleur-ligne);
+  border-radius: var(--rayon-champ);
+  background: var(--couleur-surface-douce);
+}
+
+.option {
+  position: relative;
+  display: flex;
+  flex: 1 0 0;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: var(--hauteur-option-selecteur);
+  border-radius: var(--rayon-option);
+  color: var(--couleur-texte-secondaire);
+  cursor: pointer;
+}
+
+/* La vraie radio couvre l'option et déborde du cadre : la zone tactile fait au moins 44 px. */
+.entree {
+  position: absolute;
+  inset: calc(-1 * var(--espacement-4)) 0;
+  width: 100%;
+  height: calc(100% + 2 * var(--espacement-4));
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.texte {
+  white-space: nowrap;
+}
+
+.option:has(.entree:checked) {
+  background: var(--couleur-surface);
+  box-shadow: var(--ombre-option);
+  color: var(--couleur-encre);
+  font-weight: 500;
+}
+
+.option:has(.entree:focus-visible) {
+  box-shadow: var(--focus-anneau);
+}
+
+.option:has(.entree:checked:focus-visible) {
+  box-shadow: var(--ombre-option), var(--focus-anneau);
+}
