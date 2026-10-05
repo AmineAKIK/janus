@@ -117,7 +117,7 @@ export function SectionBlocs() {
         </div>
       </SectionVitrine>
 
-      <SectionVitrine identifiant="titre-lignes-a-faire" titre="Lignes À faire">
+      <SectionVitrine identifiant="titre-lignes-a-faire" titre="Lignes à faire">
         <div className={styles['colonne']}>
           <Etat nom="normale">
             <LigneAFaire type="Vérification" bloc="B03 Variables" echeance="8 oct." lien={lien} />

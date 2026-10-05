@@ -21,6 +21,14 @@ test.describe('blocs et séance', () => {
     }
   })
 
+  test('un nœud de bloc fait 48 × 44 px', async ({ page }) => {
+    await page.goto(VITRINE)
+    const noeud = page.getByRole('region', { name: 'Nœuds de bloc' }).getByRole('link').first()
+    const boite = await noeud.boundingBox()
+    expect(boite?.width).toBe(48)
+    expect(boite?.height).toBe(44)
+  })
+
   for (const largeur of [390, 1440]) {
     test(`un titre de 80 caractères ne casse pas la carte à ${String(largeur)} px`, async ({
       page,
