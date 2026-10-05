@@ -1,0 +1,103 @@
+name: Aperçu de PR
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+
+permissions:
+  contents: read
+
+env:
+  NUMERO: ${{ github.event.pull_request.number }}
+
+jobs:
+  apercu:
+    # Les PR venant d'un fork et celles de Dependabot n'ont pas de jeton en écriture.
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository
+      && github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    # Même file que pages.yml : un seul push à la fois sur gh-pages.
+    concurrency:
+      group: gh-pages
+      cancel-in-progress: false
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        if: github.event.action != 'closed'
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        if: github.event.action != 'closed'
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+        if: github.event.action != 'closed'
+      - name: Construire l'appli
+        if: github.event.action != 'closed'
+        run: |
+          VITE_COMMIT="$(git rev-parse --short=7 HEAD)"
+          export VITE_COMMIT
+          VITE_BASE="/janus/pr-preview/pr-${NUMERO}/"
+          export VITE_BASE
+          pnpm --filter @janus/web build
+      # Publie dans gh-pages/pr-preview/pr-<numéro>/, commente la PR, et supprime le dossier à la fermeture.
+      - uses: rossjrw/pr-preview-action@ffa7509e91a3ec8dfc2e5536c4d5c1acdf7a6de9 # v1.8.1
+        with:
+          source-dir: apps/web/dist
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: auto
+
+  captures:
+    if: >-
+      github.event.action != 'closed'
+      && github.event.pull_request.head.repo.full_name == github.repository
+      && github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @janus/web build
+        env:
+          VITE_BASE: /janus/
+      - run: pnpm --filter @janus/web exec playwright install --with-deps chromium
+      # `playwright test` lance `vite preview` tout seul (webServer de la config).
+      - run: pnpm --filter @janus/web e2e
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        id: artefact
+        if: always()
+        with:
+          name: captures-pr-${{ github.event.pull_request.number }}
+          path: apps/web/captures/*.png
+          if-no-files-found: error
+      - name: Commenter la PR
+        if: always() && steps.artefact.outputs.artifact-url != ''
+        run: |
+          corps="<!-- captures-janus -->
+          Captures d'écran (390 et 1440 px, clair et sombre) : ${ARTEFACT}"
+          id="$(gh api "repos/${DEPOT}/issues/${NUMERO}/comments" --paginate \
+            --jq '.[] | select(.body | contains("<!-- captures-janus -->")) | .id' | head -n 1)"
+          if [ -n "$id" ]; then
+            gh api --method PATCH "repos/${DEPOT}/issues/comments/${id}" -f body="$corps"
+          else
+            gh api --method POST "repos/${DEPOT}/issues/${NUMERO}/comments" -f body="$corps"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPOT: ${{ github.repository }}
+          ARTEFACT: ${{ steps.artefact.outputs.artifact-url }}
