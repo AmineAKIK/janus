@@ -30,3 +30,13 @@ export function validerRechercheJournal(brut: Record<string, unknown>): Recherch
     ...(type === undefined ? {} : { type }),
   }
 }
+
+export interface RechercheConnexion {
+  readonly retour?: string
+}
+
+/** L'adresse à retrouver après la connexion : un chemin de l'appli, jamais un autre site. */
+export function validerRechercheConnexion(brut: Record<string, unknown>): RechercheConnexion {
+  const retour = texte(brut['retour'])
+  return retour?.startsWith('/') === true && !retour.startsWith('//') ? { retour } : {}
+}

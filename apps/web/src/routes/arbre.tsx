@@ -4,7 +4,11 @@ import { Gabarit } from '../gabarit/Gabarit.tsx'
 import { PageErreur } from './PageErreur.tsx'
 import { PageIntrouvable } from './PageIntrouvable.tsx'
 import { PageProvisoire } from './PageProvisoire.tsx'
-import { validerRechercheJournal, validerRechercheModule } from './recherche.ts'
+import {
+  validerRechercheConnexion,
+  validerRechercheJournal,
+  validerRechercheModule,
+} from './recherche.ts'
 
 const racine = createRootRoute({
   staticData: { titre: '', navigation: null },
@@ -14,6 +18,7 @@ const racine = createRootRoute({
 const connexion = createRoute({
   getParentRoute: () => racine,
   path: '/connexion',
+  validateSearch: validerRechercheConnexion,
   staticData: { titre: 'Connexion', navigation: null },
   component: () => <PageProvisoire titre="Connexion" />,
 })

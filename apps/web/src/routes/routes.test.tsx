@@ -4,7 +4,12 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { creerRouteur } from './arbre.tsx'
 import { PageErreur } from './PageErreur.tsx'
-import { validerRechercheJournal, validerRechercheModule } from './recherche.ts'
+import { allerALaConnexion } from './connexion.ts'
+import {
+  validerRechercheConnexion,
+  validerRechercheJournal,
+  validerRechercheModule,
+} from './recherche.ts'
 import { creerHistorique, modeHistorique } from './historique.ts'
 
 async function afficher(chemin: string) {
@@ -70,6 +75,35 @@ describe('paramètres de recherche', () => {
       detail: 'B05',
     })
     expect(validerRechercheModule({})).toEqual({})
+  })
+})
+
+describe('retour après la connexion', () => {
+  it('mène à la connexion en gardant la page demandée', async () => {
+    const routeur = await afficher('/journal?bloc=B04')
+
+    await act(async () => {
+      allerALaConnexion(routeur)
+      await routeur.load()
+    })
+
+    expect(routeur.state.location.pathname).toBe('/connexion')
+    expect(routeur.state.location.search).toEqual({ retour: '/journal?bloc=B04' })
+  })
+
+  it('ne boucle pas quand on est déjà sur la connexion', async () => {
+    const routeur = await afficher('/connexion')
+
+    allerALaConnexion(routeur)
+
+    expect(routeur.state.location.search).toEqual({})
+  })
+
+  it('ne retient qu’un chemin de l’appli, jamais un autre site', () => {
+    expect(validerRechercheConnexion({ retour: '/formations' })).toEqual({ retour: '/formations' })
+    expect(validerRechercheConnexion({ retour: 'https://autre.example' })).toEqual({})
+    expect(validerRechercheConnexion({ retour: '//autre.example' })).toEqual({})
+    expect(validerRechercheConnexion({})).toEqual({})
   })
 })
 
