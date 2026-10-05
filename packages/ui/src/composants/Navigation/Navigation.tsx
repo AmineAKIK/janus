@@ -46,7 +46,11 @@ export function Navigation({ actif, lien, className }: ProprietesNavigation) {
           <li key={cle} className={styles['element']}>
             {lien({
               cle,
-              className: classes(styles['lien'], cle === actif && styles['actif']),
+              className: classes(
+                styles['lien'],
+                'texte-navigation',
+                cle === actif && styles['actif'],
+              ),
               'aria-current': cle === actif ? 'page' : undefined,
               children: (
                 <>

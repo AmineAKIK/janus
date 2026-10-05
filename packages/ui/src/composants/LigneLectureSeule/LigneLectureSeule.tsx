@@ -10,12 +10,12 @@ export interface ProprietesLigneLectureSeule {
 
 export function LigneLectureSeule({ libelle, valeur, className }: ProprietesLigneLectureSeule) {
   return (
-    <dl className={classes(styles['ligne'], className)}>
+    <div className={classes(styles['ligne'], className)}>
       <Lock className={styles['cadenas']} aria-hidden={true} />
-      <div className={styles['textes']}>
+      <dl className={styles['textes']}>
         <dt className={classes(styles['libelle'], 'texte-petit-14')}>{libelle}</dt>
         <dd className={classes(styles['valeur'], 'texte-legende-12')}>{valeur}</dd>
-      </div>
-    </dl>
+      </dl>
+    </div>
   )
 }
