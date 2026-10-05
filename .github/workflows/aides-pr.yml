@@ -16,7 +16,6 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  GH_TOKEN: ${{ github.token }}
   DEPOT: ${{ github.repository }}
   BRANCHE: ${{ github.event.pull_request.head.ref }}
   NUMERO: ${{ github.event.pull_request.number }}
@@ -38,9 +37,11 @@ jobs:
       # Aucun paquet installé, aucun script lancé : seul le lockfile est recalculé.
       - run: pnpm install --lockfile-only --ignore-scripts
       - name: Pousser le lockfile s'il a changé
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           if [ -z "$(git status --porcelain pnpm-lock.yaml)" ]; then
-            gh pr comment "$NUMERO" --repo "$DEPOT" --body "Aides PR : `pnpm-lock.yaml` est déjà à jour, rien n'a été poussé."
+            gh pr comment "$NUMERO" --repo "$DEPOT" --body 'Aides PR : `pnpm-lock.yaml` est déjà à jour, rien n’a été poussé.'
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -48,10 +49,12 @@ jobs:
             git commit -m "chore: mise à jour du lockfile"
             git push "https://x-access-token:${GH_TOKEN}@github.com/${DEPOT}.git" "HEAD:${BRANCHE}"
             gh workflow run ci.yml --repo "$DEPOT" --ref "$BRANCHE"
-            gh pr comment "$NUMERO" --repo "$DEPOT" --body "Aides PR : `pnpm-lock.yaml` mis à jour et poussé (`chore: mise à jour du lockfile`). La CI est relancée."
+            gh pr comment "$NUMERO" --repo "$DEPOT" --body 'Aides PR : `pnpm-lock.yaml` mis à jour et poussé (`chore: mise à jour du lockfile`). La CI est relancée.'
           fi
       - name: Retirer l'étiquette
         if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: gh pr edit "$NUMERO" --remove-label maj-lockfile --repo "$DEPOT"
 
   corriger-format:
@@ -73,9 +76,11 @@ jobs:
       - run: pnpm lint --fix
         continue-on-error: true
       - name: Pousser le formatage s'il a changé
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           if [ -z "$(git status --porcelain)" ]; then
-            gh pr comment "$NUMERO" --repo "$DEPOT" --body "Aides PR : rien à reformater, rien n'a été poussé."
+            gh pr comment "$NUMERO" --repo "$DEPOT" --body 'Aides PR : rien à reformater, rien n’a été poussé.'
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -83,8 +88,10 @@ jobs:
             git commit -m "chore: formatage automatique"
             git push "https://x-access-token:${GH_TOKEN}@github.com/${DEPOT}.git" "HEAD:${BRANCHE}"
             gh workflow run ci.yml --repo "$DEPOT" --ref "$BRANCHE"
-            gh pr comment "$NUMERO" --repo "$DEPOT" --body "Aides PR : formatage poussé (`chore: formatage automatique`). La CI est relancée."
+            gh pr comment "$NUMERO" --repo "$DEPOT" --body 'Aides PR : formatage poussé (`chore: formatage automatique`). La CI est relancée.'
           fi
       - name: Retirer l'étiquette
         if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: gh pr edit "$NUMERO" --remove-label corriger-format --repo "$DEPOT"
