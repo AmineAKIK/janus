@@ -1,0 +1,95 @@
+.badge {
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacement-8);
+  min-width: var(--cible-tactile-min);
+  min-height: var(--cible-tactile-min);
+  border-radius: var(--rayon-champ);
+  color: var(--couleur-encre);
+}
+
+.compacte {
+  justify-content: center;
+}
+
+.normale {
+  padding: 0 var(--espacement-12);
+  border: 1px solid var(--couleur-ligne);
+  background: var(--couleur-surface);
+}
+
+.badge:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-anneau);
+}
+
+.indicateur {
+  flex: none;
+  width: var(--taille-indicateur-statut);
+  height: var(--taille-indicateur-statut);
+}
+
+.libelle {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Lu par les lecteurs d'écran, jamais vu : la couleur ne porte pas seule l'information. */
+.libelleCache {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.nonCommence .indicateur {
+  color: var(--statut-non-commence);
+}
+
+.enCours .indicateur {
+  color: var(--statut-en-cours);
+}
+
+.vu .indicateur {
+  color: var(--statut-vu);
+}
+
+.acquisProvisoirement .indicateur {
+  color: var(--statut-acquis-provisoirement);
+}
+
+.acquis .indicateur {
+  color: var(--statut-acquis);
+}
+
+.maitrise .indicateur {
+  color: var(--statut-maitrise);
+}
+
+.aReprendre .indicateur {
+  color: var(--statut-a-reprendre);
+}
+
+.infobulle {
+  position: absolute;
+  z-index: 1;
+  top: calc(100% + var(--espacement-4));
+  left: 0;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: var(--largeur-infobulle);
+  padding: var(--espacement-8) var(--espacement-12);
+  border-radius: var(--rayon-option);
+  background: var(--couleur-encre);
+  color: var(--couleur-surface);
+  visibility: hidden;
+}
+
+.ouverte,
+.badge:global(.etat-demo-infobulle) .infobulle {
+  visibility: visible;
+}

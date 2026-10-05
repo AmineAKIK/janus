@@ -11,8 +11,11 @@ export interface ProprietesGroupeSegmente<V extends string> {
   /** Nom accessible du groupe. */
   readonly libelle: string
   readonly options: readonly OptionSegmentee<V>[]
-  readonly valeur: V
+  /** `null` : aucun choix fait. */
+  readonly valeur: V | null
   readonly onChange: (valeur: V) => void
+  /** Le parent empêche l'envoi tant que `valeur` vaut `null`. */
+  readonly obligatoire?: boolean
   readonly className?: string
 }
 
@@ -22,11 +25,17 @@ export function GroupeSegmente<V extends string>({
   options,
   valeur,
   onChange,
+  obligatoire = false,
   className,
 }: ProprietesGroupeSegmente<V>) {
   const nom = useId()
   return (
-    <div role="radiogroup" aria-label={libelle} className={classes(styles['groupe'], className)}>
+    <div
+      role="radiogroup"
+      aria-label={libelle}
+      aria-required={obligatoire ? true : undefined}
+      className={classes(styles['groupe'], className)}
+    >
       {options.map((option) => (
         <label key={option.valeur} className={classes(styles['option'], 'texte-petit-14')}>
           <input
@@ -34,6 +43,7 @@ export function GroupeSegmente<V extends string>({
             name={nom}
             value={option.valeur}
             checked={option.valeur === valeur}
+            required={obligatoire}
             onChange={() => {
               onChange(option.valeur)
             }}
