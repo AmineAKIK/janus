@@ -3,7 +3,7 @@ const FORMAT_INSTANT = /^(\d{4}-\d{2}-\d{2})T([01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\
 const MS_PAR_JOUR = 86_400_000
 
 /** Un jour au format `AAAA-MM-JJ`. */
-type Jour = string
+export type Jour = string
 
 function deuxChiffres(n: number): string {
   return String(n).padStart(2, '0')

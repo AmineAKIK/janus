@@ -1,5 +1,6 @@
 import type { Manifeste, Reglages, Statut, TypeEtape } from '@janus/contrats'
 import type { Fait, ReponseVerification } from './faits.ts'
+import { comparer } from './ordre.ts'
 import { points } from './points.ts'
 import { ajouterJours, instantEnIso, instantEnMs, jourDe } from './temps.ts'
 
@@ -47,6 +48,24 @@ export interface ResultatBloc {
   /** Identifiants des erreurs critiques ouvertes, dans l'ordre où elles ont été ouvertes. */
   readonly erreursOuvertes: readonly string[]
   readonly echecsConsecutifs: number
+  /** Les dates qui alimentent le panneau « Cinq preuves » ; la file du jour s'en sert aussi pour les échéances. */
+  readonly preuves: {
+    /** Fin de la série de consolidation réussie. */
+    readonly consolidation: string | null
+    /** Fin du dernier exercice de pratique atteint à l'aide 0 ; `null` s'il n'y a pas d'exercice ou s'il en reste un. */
+    readonly pratique: string | null
+    /** Premier transfert solide, au premier tour et qui compte, d'une vérification valable. */
+    readonly transfert: string | null
+    /** Atteinte de la cible d'aisance. */
+    readonly aisance: string | null
+    readonly aisanceRequise: boolean
+    /** Dernière vérification, dernier retest ou dernier entretien réussi parmi ceux que les règles retiennent. */
+    readonly derniereReussite: string | null
+    /** Retests et entretiens réussis depuis « acquis », dans l'ordre ; vide après une descente. */
+    readonly reussitesDeRetest: readonly string[]
+    /** Date du dernier échec retenu, tant qu'aucune réussite ne l'a suivi. */
+    readonly dernierEchec: string | null
+  }
 }
 
 type FaitDe<T extends Fait['type']> = Extract<Fait, { type: T }>
@@ -72,11 +91,6 @@ export function accesBloc(statutsPrerequis: readonly Statut[]): 'libre' | 'raiso
   return statutsPrerequis.every((statut) => STATUTS_SUFFISANTS.has(statut))
     ? 'libre'
     : 'raison_requise'
-}
-
-function comparer(a: string, b: string): number {
-  if (a < b) return -1
-  return a > b ? 1 : 0
 }
 
 /** Les faits du bloc, triés par date puis identifiant, sans doublon d'identifiant. */
@@ -339,6 +353,9 @@ function evaluerVerifications(ordonnes: readonly Fait[], provisoire: string, reg
   let dateAcquis = provisoire
   let retest: string | null = null
   let echecs = 0
+  let derniereReussite: string | null = null
+  let dernierEchec: string | null = null
+  let reussitesDeRetest: string[] = []
   const retenues = new Set<string>()
   for (const fait of ordonnes) {
     if (fait.type !== 'verification_terminee' || !fait.valable) continue
@@ -350,16 +367,21 @@ function evaluerVerifications(ordonnes: readonly Fait[], provisoire: string, reg
     retenues.add(fait.id)
     if (compositionReussie(fait.reponses)) {
       echecs = 0
+      derniereReussite = fait.date
+      dernierEchec = null
       if (verification) {
         palier = 'acquis'
         dateAcquis = fait.date
       } else {
         retest ??= fait.date
+        reussitesDeRetest.push(fait.date)
       }
     } else {
       echecs += 1
+      dernierEchec = fait.date
       if (echecs >= reglages.echecsAvantDescente && !verification) {
         echecs = 0
+        reussitesDeRetest = []
         if (retest === null) {
           palier = 'provisoire'
         } else {
@@ -368,7 +390,27 @@ function evaluerVerifications(ordonnes: readonly Fait[], provisoire: string, reg
       }
     }
   }
-  return { palier, dateAcquis, retest, echecs, retenues }
+  return {
+    palier,
+    dateAcquis,
+    retest,
+    echecs,
+    retenues,
+    derniereReussite,
+    dernierEchec,
+    reussitesDeRetest,
+  }
+}
+
+/** Le premier transfert solide, au premier tour et qui compte, d'une vérification valable. */
+function premierTransfert(ordonnes: readonly Fait[]): string | null {
+  const fait = ordonnes.find(
+    (candidat) =>
+      candidat.type === 'verification_terminee' &&
+      candidat.valable &&
+      candidat.reponses.some((reponse) => reponse.type === 'transfert' && reponseReussie(reponse)),
+  )
+  return fait?.date ?? null
 }
 
 // --- Calcul du bloc --------------------------------------------------------
@@ -470,5 +512,16 @@ export function calculerBloc(
     manque,
     erreursOuvertes,
     echecsConsecutifs: verifications?.echecs ?? 0,
+    preuves: {
+      consolidation: consolidation.ok ? consolidation.date : null,
+      pratique:
+        manifeste.pratique.length > 0 && pratique.incompletes.length === 0 ? pratique.date : null,
+      transfert: premierTransfert(ordonnes),
+      aisance: aisance.date,
+      aisanceRequise: manifeste.aisance !== undefined,
+      derniereReussite: verifications?.derniereReussite ?? null,
+      reussitesDeRetest: verifications?.reussitesDeRetest ?? [],
+      dernierEchec: verifications?.dernierEchec ?? null,
+    },
   }
 }
