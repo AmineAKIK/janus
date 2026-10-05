@@ -1,7 +1,8 @@
 import type { Transport } from '@janus/contrats'
 import { creerHorlogeDemo, instantReel } from '../demo/horlogeDemo.ts'
 import { creerOutilsDemo } from '../demo/outils.ts'
-import { creerMagasin, etatVide } from '../demo/store.ts'
+import { etatGraine } from '../demo/graine.ts'
+import { creerMagasin } from '../demo/store.ts'
 import { creerTransportDemo } from '../demo/transportDemo.ts'
 import { ROUTES_DEMO } from '../demo/routes/index.ts'
 import { creerTransportHttp } from './transportHttp.ts'
@@ -39,7 +40,7 @@ export function creerTransport(env: EnvironnementApi, options: OptionsTransport 
   }
   const magasin = creerMagasin({
     stockage: stockageDisponible(),
-    creerEtat: () => etatVide(instantReel()),
+    creerEtat: () => etatGraine(instantReel()),
   })
   const horloge = creerHorlogeDemo({
     decalage: {
@@ -49,6 +50,11 @@ export function creerTransport(env: EnvironnementApi, options: OptionsTransport 
       },
     },
   })
-  window.__janusDemo = creerOutilsDemo({ magasin, horloge, apres: options.apresChangementDemo })
+  window.__janusDemo = creerOutilsDemo({
+    magasin,
+    horloge,
+    graine: etatGraine,
+    apres: options.apresChangementDemo,
+  })
   return creerTransportDemo({ magasin, horloge, routes: ROUTES_DEMO })
 }
