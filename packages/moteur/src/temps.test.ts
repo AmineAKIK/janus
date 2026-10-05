@@ -53,8 +53,20 @@ describe('jourDe', () => {
     expect(jourDe('2026-07-15T02:01:00Z', 'America/New_York', 4)).toBe('2026-07-14')
   })
 
-  it('refuse un instant illisible', () => {
-    expect(() => jourDe('pas une date', PARIS, 4)).toThrow('Instant illisible : pas une date')
+  it.each([
+    ['pas une date'],
+    ['2026-02-30T12:00:00Z'],
+    ['2026-07-14T12:00:00'],
+    ['2026-07-14T12:00:00+02:00'],
+    ['2026-07-14T24:00:00Z'],
+    ['2026-07-14'],
+    ['July 14, 2026 12:00:00 UTC'],
+  ])('refuse l’instant %s', (instant) => {
+    expect(() => jourDe(instant, PARIS, 4)).toThrow(`Instant illisible : ${instant}`)
+  })
+
+  it('accepte les millisecondes', () => {
+    expect(jourDe('2026-07-15T02:01:00.123Z', PARIS, 4)).toBe('2026-07-15')
   })
 })
 

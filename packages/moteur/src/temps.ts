@@ -1,4 +1,5 @@
 const FORMAT_JOUR = /^(\d{4})-(\d{2})-(\d{2})$/
+const FORMAT_INSTANT = /^(\d{4}-\d{2}-\d{2})T([01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?Z$/
 const MS_PAR_JOUR = 86_400_000
 
 /** Un jour au format `AAAA-MM-JJ`. */
@@ -21,13 +22,28 @@ function lireJour(jour: Jour): Date {
   return date
 }
 
+/** Lit un instant ISO 8601 en UTC (`AAAA-MM-JJThh:mm:ss[.sss]Z`) ; refuse tout le reste, jour impossible ou offset absent compris. */
+function lireInstant(instantIso: string): number {
+  const jour = FORMAT_INSTANT.exec(instantIso)?.[1]
+  if (jour === undefined || !jourExiste(jour)) throw new Error(`Instant illisible : ${instantIso}`)
+  return Date.parse(instantIso)
+}
+
+function jourExiste(jour: Jour): boolean {
+  try {
+    lireJour(jour)
+    return true
+  } catch {
+    return false
+  }
+}
+
 /**
  * Le jour auquel compte un instant : la date locale du fuseau, moins un jour
  * tant qu'il est avant `heureBascule` (une séance à 1 h 30 compte pour la veille).
  */
 export function jourDe(instantIso: string, fuseau: string, heureBascule: number): Jour {
-  const instant = Date.parse(instantIso)
-  if (Number.isNaN(instant)) throw new Error(`Instant illisible : ${instantIso}`)
+  const instant = lireInstant(instantIso)
   const parties = new Intl.DateTimeFormat('en-CA', {
     timeZone: fuseau,
     year: 'numeric',
