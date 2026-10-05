@@ -22,5 +22,6 @@ export const ecrans: readonly Ecran[] = [
   { nom: 'journal', chemin: './#/journal', etat: 'Journal' },
   { nom: 'parametres', chemin: './#/parametres', etat: 'Paramètres' },
   { nom: 'parametres-section', chemin: './#/parametres/revision', etat: 'Paramètres' },
+  { nom: 'fiche-demo', chemin: './fiches/demo/fiche-demo.html', etat: 'Bloc de démonstration' },
   { nom: 'introuvable', chemin: './#/n-existe-pas', etat: 'Cette page n’existe pas' },
 ]
