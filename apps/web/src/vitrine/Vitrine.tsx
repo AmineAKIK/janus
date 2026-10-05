@@ -12,6 +12,7 @@ import {
 import { useEffect, useState } from 'react'
 import { COULEURS, ESPACEMENTS, RAYONS, STATUTS, STYLES_TEXTE } from './tokens.ts'
 import { SectionBoutons } from './sections/SectionBoutons.tsx'
+import { SectionBlocs } from './sections/SectionBlocs.tsx'
 import { SectionChamps } from './sections/SectionChamps.tsx'
 import { SectionNavigation } from './sections/SectionNavigation.tsx'
 import { SectionStatuts } from './sections/SectionStatuts.tsx'
@@ -167,6 +168,7 @@ export function Vitrine() {
       <SectionSelections />
       <SectionNavigation />
       <SectionStatuts />
+      <SectionBlocs />
     </main>
   )
 }
