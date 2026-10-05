@@ -24,9 +24,7 @@ for (const ecran of ecrans) {
         await page.setViewportSize({ width: taille.width, height: taille.height })
         await page.emulateMedia({ colorScheme: theme.colorScheme })
         await page.goto(ecran.chemin)
-        if (ecran.etat !== undefined) {
-          await expect(page.getByText(ecran.etat, { exact: true })).toBeVisible()
-        }
+        await expect(page.getByRole('heading', { level: 1, name: ecran.etat })).toBeVisible()
         await page.screenshot({
           path: `captures/${ecran.nom}-${String(taille.width)}-${theme.nom}.png`,
           fullPage: true,
