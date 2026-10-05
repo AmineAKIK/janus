@@ -14,7 +14,7 @@ const Identifiant = z.string().trim().min(1)
 const Tour = z.number().int().min(1)
 
 /** Un instant ISO 8601 en UTC, par exemple `2026-06-01T10:00:00Z` (les millisecondes sont permises). */
-const InstantUtc = z.iso.datetime({
+export const InstantUtc = z.iso.datetime({
   error: 'La date doit être un instant ISO 8601 en UTC, par exemple 2026-06-01T10:00:00Z.',
 })
 

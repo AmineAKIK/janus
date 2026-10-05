@@ -1,4 +1,4 @@
-import type { Manifeste, Reglages } from '@janus/contrats'
+import type { Manifeste, Reglages, Tache } from '@janus/contrats'
 import { blocEnCours } from './definitions.ts'
 import { echeances, estDue } from './echeances.ts'
 import type { ResultatBloc } from './statut.ts'
@@ -27,25 +27,7 @@ export interface EntreeFile {
   readonly reglages: Reglages
 }
 
-export type Tache =
-  | {
-      readonly type: 'reprendre_erreur'
-      readonly bloc: string
-      readonly erreur: string
-      readonly libelle: string
-      /** `/blocs/<id>`, suivi de `?etape=<etape>` quand le manifeste donne l'étape de l'erreur. */
-      readonly lien: string
-    }
-  | { readonly type: 'questions_debut'; readonly nombre: number }
-  | { readonly type: 'reprise'; readonly blocs: readonly string[] }
-  | {
-      readonly type: 'verification' | 'retest' | 'entretien'
-      readonly bloc: string
-      readonly apres: string
-    }
-  | { readonly type: 'consolidation'; readonly bloc: string; readonly apres: string }
-  | { readonly type: 'cartes'; readonly dues: number; readonly nouvelles: number }
-  | { readonly type: 'bloc'; readonly bloc: string }
+export type { Tache }
 
 /** Vrai si la dernière activité date de 7 jours ou plus (en jours de `jourDe`), ou si plus de 50 cartes sont dues. */
 export function enRetard(
