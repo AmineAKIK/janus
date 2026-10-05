@@ -9,10 +9,11 @@ export const TAILLE_MAX_REPONSE = 2000
 /** Taille maximale de l'état d'une page une fois écrit en JSON (200 ko), en octets. */
 export const TAILLE_MAX_ETAT_OCTETS = 200_000
 
-const Identifiant = z.string().trim().min(1)
-const CodeBloc = z.string().regex(/^[A-Z]{1,3}\d{2,3}$/)
-const Reponse = z.string().max(TAILLE_MAX_REPONSE)
-const IdUuid = z.uuid({ version: 'v7' })
+export const Identifiant = z.string().trim().min(1)
+export const CodeBloc = z.string().regex(/^[A-Z]{1,3}\d{2,3}$/)
+export const Reponse = z.string().max(TAILLE_MAX_REPONSE)
+/** Un identifiant tiré par le client, UUID v7. */
+export const IdUuid = z.uuid({ version: 'v7' })
 
 /** Les codes de ce qui manque pour le statut suivant, rendus par le moteur ; l'interface les traduit en phrases. */
 export const CodeManque = z.enum([
@@ -45,7 +46,7 @@ export const Manque = z.strictObject({
 export type Manque = z.infer<typeof Manque>
 
 /** L'état d'une page : un objet JSON de 200 ko au plus. */
-const EtatPage = z
+export const EtatPage = z
   .record(z.string(), z.json())
   .refine(
     (etat) => new TextEncoder().encode(JSON.stringify(etat)).length <= TAILLE_MAX_ETAT_OCTETS,
@@ -119,6 +120,26 @@ export const MessagePage = z.discriminatedUnion('type', [
 ])
 export type MessagePage = z.infer<typeof MessagePage>
 
+/** Une correction rendue par le serveur : ce que la page affiche, et que l'API de corrections renvoie. */
+const champsCorrection = {
+  /** L'identifiant de la correction, que la page renvoie dans `correction.accord`. */
+  id: IdUuid,
+  /** Vrai pour une correction de premier tour sur dix : la page demande alors l'avis d'Amine. */
+  echantillon: z.boolean(),
+  question: Identifiant,
+  tour: z.number().int().min(1),
+  message: z.string(),
+  niveau: Niveau,
+  erreurs_critiques: z.array(Identifiant),
+  source: Source,
+  ref: z.string(),
+  certitude: Certitude,
+  compte: z.boolean(),
+  raison_non_compte: RaisonNonCompte.optional(),
+}
+export const CorrectionRecue = z.strictObject(champsCorrection)
+export type CorrectionRecue = z.infer<typeof CorrectionRecue>
+
 /** Un message de l'appli vers la page. */
 export const MessageAppli = z.discriminatedUnion('type', [
   z.strictObject({
@@ -131,23 +152,7 @@ export const MessageAppli = z.discriminatedUnion('type', [
     statut: Statut,
     serie_ouverte: z.strictObject({ restitution: z.boolean(), consolidation: z.boolean() }),
   }),
-  z.strictObject({
-    type: z.literal('restitution.correction'),
-    /** L'identifiant de la correction, que la page renvoie dans `correction.accord`. */
-    id: IdUuid,
-    /** Vrai pour une correction de premier tour sur dix : la page demande alors l'avis d'Amine. */
-    echantillon: z.boolean(),
-    question: Identifiant,
-    tour: z.number().int().min(1),
-    message: z.string(),
-    niveau: Niveau,
-    erreurs_critiques: z.array(Identifiant),
-    source: Source,
-    ref: z.string(),
-    certitude: Certitude,
-    compte: z.boolean(),
-    raison_non_compte: RaisonNonCompte.optional(),
-  }),
+  z.strictObject({ type: z.literal('restitution.correction'), ...champsCorrection }),
   z.strictObject({
     type: z.literal('statut.maj'),
     statut: Statut,
