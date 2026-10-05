@@ -10,6 +10,9 @@ import {
 } from '@janus/ui'
 import { useEffect, useState } from 'react'
 import { COULEURS, ESPACEMENTS, RAYONS, STATUTS, STYLES_TEXTE } from './tokens.ts'
+import { SectionBoutons } from './sections/SectionBoutons.tsx'
+import { SectionChamps } from './sections/SectionChamps.tsx'
+import { SectionSelections } from './sections/SectionSelections.tsx'
 import styles from './Vitrine.module.css'
 
 const LIBELLES_THEME: Record<Theme, string> = {
@@ -186,6 +189,9 @@ export function Vitrine() {
           ))}
         </ul>
       </section>
+      <SectionBoutons />
+      <SectionChamps />
+      <SectionSelections />
     </main>
   )
 }

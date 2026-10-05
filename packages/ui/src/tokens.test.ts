@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
@@ -47,6 +48,15 @@ describe('tokens.css', () => {
     expect(css).toContain(
       '--focus-anneau: 0 0 0 2px var(--couleur-fond), 0 0 0 4px var(--couleur-focus);',
     )
+  })
+
+  it('définit les hauteurs et la taille des icônes, avec la bascule desktop à 1024 px', () => {
+    expect(css).toContain('--hauteur-champ: 3rem;')
+    expect(css).toContain('--hauteur-bouton: 3rem;')
+    expect(css).toContain('--taille-icone: 1.5rem;')
+    expect(css).toContain('@media (min-width: 1024px)')
+    expect(css).toContain('--hauteur-bouton: 2.5rem;')
+    expect(css).toContain('--taille-icone: 1.25rem;')
   })
 
   it('définit la zone tactile minimale à 44 px, indépendante de la taille du texte', () => {

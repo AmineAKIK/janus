@@ -1,0 +1,61 @@
+.case {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-height: var(--cible-tactile-min);
+  color: var(--couleur-encre);
+  cursor: pointer;
+}
+
+/* La vraie case reste dans l'arbre d'accessibilité et au clavier, seule la boîte dessinée se voit. */
+.entree {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+}
+
+.boite {
+  box-sizing: border-box;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  border: 2px solid var(--couleur-texte-secondaire);
+  border-radius: 0.25rem;
+  background: var(--couleur-surface);
+  color: var(--couleur-accent-sur-fond);
+}
+
+.coche {
+  display: none;
+  width: 0.875rem;
+  height: 0.875rem;
+  stroke-width: 3;
+}
+
+.entree:checked + .boite {
+  border-color: var(--couleur-accent);
+  background: var(--couleur-accent);
+}
+
+.entree:checked + .boite .coche {
+  display: block;
+}
+
+.entree:focus-visible + .boite,
+.case:global(.etat-demo-focus) .boite {
+  box-shadow: var(--focus-anneau);
+}
+
+.entree:disabled ~ * {
+  opacity: 0.55;
+}
+
+.case:has(.entree:disabled) {
+  cursor: not-allowed;
+}

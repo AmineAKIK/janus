@@ -1,0 +1,116 @@
+.bouton {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacement-8);
+  min-height: var(--hauteur-bouton);
+  min-width: var(--cible-tactile-min);
+  padding: 0 var(--espacement-16);
+  border: 1px solid transparent;
+  border-radius: var(--rayon-champ);
+  cursor: pointer;
+}
+
+.bouton .libelle {
+  font-weight: 600;
+}
+
+.pleineLargeur {
+  display: flex;
+  width: 100%;
+}
+
+.icone,
+.indicateur {
+  flex: none;
+  display: inline-flex;
+  width: var(--taille-icone);
+  height: var(--taille-icone);
+}
+
+.indicateur {
+  animation: tourner 0.9s linear infinite;
+}
+
+@keyframes tourner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indicateur {
+    animation: none;
+  }
+}
+
+/* Principal */
+.principal {
+  background: var(--couleur-accent);
+  color: var(--couleur-accent-sur-fond);
+}
+
+.principal:hover:not(:disabled),
+.principal:global(.etat-demo-survol) {
+  background: color-mix(in srgb, var(--couleur-accent) 88%, var(--couleur-encre));
+}
+
+.principal:active:not(:disabled),
+.principal:global(.etat-demo-appui) {
+  background: color-mix(in srgb, var(--couleur-accent) 75%, var(--couleur-encre));
+}
+
+/* Secondaire */
+.secondaire {
+  background: var(--couleur-surface);
+  border-color: var(--couleur-ligne);
+  color: var(--couleur-accent);
+}
+
+.secondaire:hover:not(:disabled),
+.secondaire:global(.etat-demo-survol) {
+  background: var(--couleur-surface-douce);
+}
+
+.secondaire:active:not(:disabled),
+.secondaire:global(.etat-demo-appui) {
+  background: var(--couleur-surface-douce);
+  border-color: var(--couleur-accent);
+}
+
+/* Texte */
+.texte {
+  background: transparent;
+  color: var(--couleur-accent);
+}
+
+.texte:hover:not(:disabled),
+.texte:global(.etat-demo-survol) {
+  background: var(--couleur-surface-douce);
+}
+
+.texte:active:not(:disabled),
+.texte:global(.etat-demo-appui) {
+  background: var(--couleur-ligne);
+}
+
+/* Focus clavier */
+.bouton:focus-visible,
+.bouton:global(.etat-demo-focus) {
+  outline: none;
+  box-shadow: var(--focus-anneau);
+}
+
+/* Désactivé */
+.bouton:disabled:not([aria-busy='true']) {
+  background: var(--couleur-surface-douce);
+  border-color: transparent;
+  color: var(--couleur-texte-secondaire);
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.bouton[aria-busy='true'] {
+  cursor: progress;
+}

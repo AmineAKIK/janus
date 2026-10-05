@@ -1,0 +1,74 @@
+.champ {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  width: 100%;
+}
+
+.champ .libelle {
+  font-weight: 500;
+  color: var(--couleur-encre);
+}
+
+.cadre {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--espacement-8);
+  min-height: var(--hauteur-champ);
+  padding: 0 var(--espacement-12);
+  border: 1px solid var(--couleur-ligne);
+  border-radius: var(--rayon-champ);
+  background: var(--couleur-surface);
+}
+
+.cadre.erreur {
+  border-color: var(--couleur-erreur);
+}
+
+.cadre:focus-within,
+:global(.etat-demo-focus) .cadre {
+  border-color: var(--couleur-focus);
+  box-shadow: var(--focus-anneau);
+}
+
+.saisie {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--couleur-encre);
+}
+
+.saisie::placeholder {
+  color: var(--couleur-texte-secondaire);
+  opacity: 1;
+}
+
+.message {
+  display: flex;
+  align-items: center;
+  gap: var(--espacement-4);
+  margin: 0;
+  color: var(--couleur-texte-secondaire);
+}
+
+.messageErreur {
+  color: var(--couleur-erreur);
+}
+
+.iconeMessage {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+}
+
+.desactive {
+  opacity: 0.65;
+}
+
+.desactive .cadre {
+  background: var(--couleur-surface-douce);
+}
