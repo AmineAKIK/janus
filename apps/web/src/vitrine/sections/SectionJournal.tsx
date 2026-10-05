@@ -74,6 +74,14 @@ export function SectionJournal() {
               bloc="B04 Boucles"
               avant="acquis_provisoirement"
               apres="acquis"
+            />
+          </Etat>
+          <Etat nom="changement de statut, avec raison">
+            <ChangementStatut
+              heure="10:12"
+              bloc="B04 Boucles"
+              avant="acquis_provisoirement"
+              apres="acquis"
               raison="Consolidation 5 sur 6, aucune erreur critique."
             />
           </Etat>

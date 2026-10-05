@@ -13,7 +13,7 @@ describe('NoteSeance', () => {
       'aria-expanded',
       'false',
     )
-    expect(screen.getByText('Ce que j’ai compris')).not.toBeVisible()
+    expect(screen.queryByText('Ce que j’ai compris')).not.toBeInTheDocument()
   })
 
   it('se déplie et se replie au clavier', async () => {

@@ -51,20 +51,25 @@ export function NoteSeance({
         )}
       </div>
       <div id={idContenu} className={styles['contenu']} hidden={!deplie}>
-        <ZoneDeTexte
-          libelle="Ce que j’ai compris"
-          value={compris}
-          onChange={(evenement) => {
-            onChangeCompris(evenement.currentTarget.value)
-          }}
-        />
-        <ZoneDeTexte
-          libelle="Ce qui bloque encore"
-          value={bloque}
-          onChange={(evenement) => {
-            onChangeBloque(evenement.currentTarget.value)
-          }}
-        />
+        {/* Les zones ne sont montées qu'une fois visibles : leur hauteur se mesure à l'ouverture. */}
+        {deplie && (
+          <>
+            <ZoneDeTexte
+              libelle="Ce que j’ai compris"
+              value={compris}
+              onChange={(evenement) => {
+                onChangeCompris(evenement.currentTarget.value)
+              }}
+            />
+            <ZoneDeTexte
+              libelle="Ce qui bloque encore"
+              value={bloque}
+              onChange={(evenement) => {
+                onChangeBloque(evenement.currentTarget.value)
+              }}
+            />
+          </>
+        )}
       </div>
     </section>
   )
