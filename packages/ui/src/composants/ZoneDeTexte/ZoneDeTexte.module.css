@@ -1,0 +1,68 @@
+.champ {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-libelle);
+  width: 100%;
+}
+
+.champ .libelle {
+  font-weight: 500;
+  color: var(--couleur-encre);
+}
+
+.saisie {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  padding: var(--espacement-12);
+  border: 1px solid var(--couleur-ligne);
+  border-radius: var(--rayon-champ);
+  outline: none;
+  resize: none;
+  overflow-y: auto;
+  background: var(--couleur-surface);
+  color: var(--couleur-encre);
+}
+
+.saisie::placeholder {
+  color: var(--couleur-texte-secondaire);
+  opacity: 1;
+}
+
+.saisie.erreur {
+  border-color: var(--couleur-erreur);
+}
+
+.saisie:focus,
+.champ:global(.etat-demo-focus) .saisie {
+  border-color: var(--couleur-focus);
+  box-shadow: var(--focus-anneau);
+}
+
+.pied {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacement-8);
+}
+
+.message,
+.compteur {
+  margin: 0;
+  color: var(--couleur-texte-secondaire);
+}
+
+.compteur {
+  margin-left: auto;
+}
+
+.messageErreur {
+  color: var(--couleur-erreur);
+}
+
+.desactive {
+  opacity: 0.55;
+}
+
+.desactive .saisie {
+  background: var(--couleur-surface-douce);
+}

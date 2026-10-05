@@ -1,1 +1,7 @@
 export * from './theme.ts'
+export * from './composants/Bouton/Bouton.tsx'
+export * from './composants/ChampTexte/ChampTexte.tsx'
+export * from './composants/ChampMotDePasse/ChampMotDePasse.tsx'
+export * from './composants/ZoneDeTexte/ZoneDeTexte.tsx'
+export * from './composants/CaseACocher/CaseACocher.tsx'
+export * from './composants/BandeauAlerte/BandeauAlerte.tsx'
