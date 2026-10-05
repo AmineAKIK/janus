@@ -9,6 +9,8 @@ export interface ContexteRoute {
   readonly horloge: HorlogeDemo
   readonly entree: EntreeValidee
   readonly route: DefinitionRoute
+  /** Attend `ms` millisecondes (abandonné avec la requête) : pour simuler un serveur lent. */
+  readonly attendre: (ms: number) => Promise<void>
 }
 
 /** Une route de démo : une fonction par route, comme dans l'API réelle. Sa réponse est validée ensuite. */
@@ -74,7 +76,14 @@ export function creerTransportDemo(options: OptionsTransportDemo): Transport {
         })
       }
       if (delaiMs > 0) await attendre(delaiMs, appel?.signal)
-      return validerSortie(route, reponse({ magasin, horloge, entree: validee, route }))
+      const brute = await reponse({
+        magasin,
+        horloge,
+        entree: validee,
+        route,
+        attendre: (ms) => attendre(ms, appel?.signal),
+      })
+      return validerSortie(route, brute)
     },
   }
 }

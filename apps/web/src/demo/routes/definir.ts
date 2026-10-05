@@ -8,6 +8,7 @@ import type { ContexteRoute, RouteDemo } from '../transportDemo.ts'
 export interface Appel<D extends DefinitionRoute> extends EntreeLue<D> {
   readonly magasin: Magasin
   readonly horloge: HorlogeDemo
+  readonly attendre: (ms: number) => Promise<void>
 }
 
 /**
@@ -16,10 +17,10 @@ export interface Appel<D extends DefinitionRoute> extends EntreeLue<D> {
  */
 export function definir<D extends DefinitionRoute>(
   definition: D,
-  repondre: (appel: Appel<D>) => SortieRoute<D>,
+  repondre: (appel: Appel<D>) => SortieRoute<D> | Promise<SortieRoute<D>>,
 ): readonly [string, RouteDemo] {
   const cle = `${definition.methode} ${definition.chemin}`
-  const route = ({ magasin, horloge, entree }: ContexteRoute): unknown =>
-    repondre({ magasin, horloge, ...lireEntree(definition, entree) })
+  const route = ({ magasin, horloge, entree, attendre }: ContexteRoute): unknown =>
+    repondre({ magasin, horloge, attendre, ...lireEntree(definition, entree) })
   return [cle, route]
 }
