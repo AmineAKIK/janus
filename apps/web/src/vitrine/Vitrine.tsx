@@ -14,6 +14,7 @@ import { COULEURS, ESPACEMENTS, RAYONS, STATUTS, STYLES_TEXTE } from './tokens.t
 import { SectionBoutons } from './sections/SectionBoutons.tsx'
 import { SectionChamps } from './sections/SectionChamps.tsx'
 import { SectionNavigation } from './sections/SectionNavigation.tsx'
+import { SectionStatuts } from './sections/SectionStatuts.tsx'
 import { SectionSelections } from './sections/SectionSelections.tsx'
 import styles from './Vitrine.module.css'
 
@@ -165,6 +166,7 @@ export function Vitrine() {
       <SectionChamps />
       <SectionSelections />
       <SectionNavigation />
+      <SectionStatuts />
     </main>
   )
 }
