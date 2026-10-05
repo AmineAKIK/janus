@@ -3,8 +3,11 @@ import '@janus/ui/typographie.css'
 import { RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { creerHistorique, modeHistorique } from './routes/historique.ts'
+import { creerTransport } from './api/client.ts'
+import { creerClientRequetes, FournisseurApi } from './api/requetes.tsx'
 import { creerRouteur } from './routes/arbre.tsx'
+import { allerALaConnexion } from './routes/connexion.ts'
+import { creerHistorique, modeHistorique } from './routes/historique.ts'
 
 const racine = document.getElementById('racine')
 if (racine === null) {
@@ -12,9 +15,17 @@ if (racine === null) {
 }
 
 const routeur = creerRouteur(creerHistorique(modeHistorique(import.meta.env.VITE_HISTORIQUE)))
+const client = creerClientRequetes({
+  surNonAuthentifie: () => {
+    allerALaConnexion(routeur)
+  },
+})
+const transport = creerTransport(import.meta.env)
 
 createRoot(racine).render(
   <StrictMode>
-    <RouterProvider router={routeur} />
+    <FournisseurApi transport={transport} client={client}>
+      <RouterProvider router={routeur} />
+    </FournisseurApi>
   </StrictMode>,
 )

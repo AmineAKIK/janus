@@ -5,6 +5,10 @@ interface ImportMetaEnv {
   readonly VITE_COMMIT?: string
   /** `ancre` (GitHub Pages, par défaut) ou `chemins` (VPS). */
   readonly VITE_HISTORIQUE?: string
+  /** `demo` (GitHub Pages, par défaut) ou `http`. */
+  readonly VITE_TRANSPORT?: string
+  /** Adresse de l'API en mode `http` (par défaut `/api`). */
+  readonly VITE_API?: string
 }
 
 interface ImportMeta {

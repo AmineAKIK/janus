@@ -52,5 +52,28 @@ export default defineConfig(
         },
       ],
     },
+  }, // Aucun composant n'appelle `fetch` : tout passe par le `Transport`, dont `transportHttp.ts` est le seul HTTP.
+  {
+    files: ['**/*.{js,ts,tsx}'],
+    ignores: ['apps/web/src/api/transportHttp.ts'],
+    rules: {
+      'no-restricted-globals': [
+        'error',
+        { name: 'fetch', message: 'Passe par le Transport (apps/web/src/api), jamais par fetch.' },
+      ],
+      'no-restricted-properties': [
+        'error',
+        {
+          object: 'window',
+          property: 'fetch',
+          message: 'Passe par le Transport (apps/web/src/api), jamais par fetch.',
+        },
+        {
+          object: 'globalThis',
+          property: 'fetch',
+          message: 'Passe par le Transport (apps/web/src/api), jamais par fetch.',
+        },
+      ],
+    },
   },
 )
