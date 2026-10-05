@@ -49,6 +49,10 @@ describe('tokens.css', () => {
     )
   })
 
+  it('définit la zone tactile minimale à 44 px, indépendante de la taille du texte', () => {
+    expect(css).toContain('--cible-tactile-min: 44px;')
+  })
+
   it('définit les trois tailles de texte', () => {
     expect(css).toContain("[data-taille='petit']")
     expect(css).toContain('font-size: 87.5%;')
