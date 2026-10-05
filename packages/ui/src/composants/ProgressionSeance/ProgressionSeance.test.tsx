@@ -41,6 +41,18 @@ describe('ProgressionSeance', () => {
     expect(screen.getByText('1 sur 3')).toBeInTheDocument()
   })
 
+  it("préfère l'étape en cours à une étape à commencer placée avant", () => {
+    render(
+      <ProgressionSeance
+        etapes={[
+          { libelle: 'A', etat: 'a_commencer' },
+          { libelle: 'B', etat: 'en_cours' },
+        ]}
+      />,
+    )
+    expect(screen.getByText('2 sur 2')).toBeInTheDocument()
+  })
+
   it("n'a aucune violation d'accessibilité", async () => {
     const { container } = render(<ProgressionSeance etapes={ETAPES} />)
     expect(await axe(container)).toHaveNoViolations()

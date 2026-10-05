@@ -62,6 +62,15 @@ describe('BadgeStatut', () => {
     expect(screen.getByRole('tooltip').className).not.toMatch(/ouverte/)
   })
 
+  it('reste ouverte au focus quand le pointeur sort', async () => {
+    const utilisateur = userEvent.setup()
+    render(<BadgeStatut statut="vu" infobulle />)
+    await utilisateur.hover(screen.getByText('Vu'))
+    await utilisateur.tab()
+    await utilisateur.unhover(screen.getByText('Vu'))
+    expect(screen.getByRole('tooltip').className).toMatch(/ouverte/)
+  })
+
   it.each(SchemaStatut.options)("n'a aucune violation d'accessibilité en %s", async (statut) => {
     const { container } = render(<BadgeStatut statut={statut} infobulle />)
     expect(await axe(container)).toHaveNoViolations()

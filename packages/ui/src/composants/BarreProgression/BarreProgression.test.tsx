@@ -29,6 +29,13 @@ describe('BarreProgression', () => {
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', attendu)
   })
 
+  it('normalise un maximum invalide partout', () => {
+    render(<BarreProgression libelle="P" valeur={2} max={Number.NaN} />)
+    const barre = screen.getByRole('progressbar')
+    expect(barre).toHaveAttribute('aria-valuemax', '0')
+    expect(barre).toHaveAttribute('aria-valuetext', '0 sur 0')
+  })
+
   it("n'a aucune violation d'accessibilité", async () => {
     const { container } = render(<BarreProgression libelle="Progression" valeur={5} max={7} />)
     expect(await axe(container)).toHaveNoViolations()

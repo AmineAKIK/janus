@@ -53,7 +53,10 @@ export function BadgeStatut({
   className,
 }: ProprietesBadgeStatut) {
   const idInfobulle = useId()
-  const [ouverte, setOuverte] = useState(false)
+  const [survol, setSurvol] = useState(false)
+  const [focus, setFocus] = useState(false)
+  const [echappee, setEchappee] = useState(false)
+  const ouverte = (survol || focus) && !echappee
   const compacte = taille === 'compacte'
 
   return (
@@ -69,19 +72,21 @@ export function BadgeStatut({
             tabIndex: 0,
             'aria-describedby': idInfobulle,
             onPointerEnter: () => {
-              setOuverte(true)
+              setSurvol(true)
+              setEchappee(false)
             },
             onPointerLeave: () => {
-              setOuverte(false)
+              setSurvol(false)
             },
             onFocus: () => {
-              setOuverte(true)
+              setFocus(true)
+              setEchappee(false)
             },
             onBlur: () => {
-              setOuverte(false)
+              setFocus(false)
             },
             onKeyDown: (evenement: { readonly key: string }) => {
-              if (evenement.key === 'Escape') setOuverte(false)
+              if (evenement.key === 'Escape') setEchappee(true)
             },
           }
         : {})}

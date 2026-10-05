@@ -22,8 +22,10 @@ const LIBELLES_ETAT: Record<EtatEtape, string> = {
 
 /** Rang de l'étape à afficher : celle en cours, sinon la première à commencer, sinon la dernière. */
 function rangAffiche(etapes: readonly EtapeSeance[]): number {
-  const index = etapes.findIndex((etape) => etape.etat !== 'termine')
-  return index === -1 ? etapes.length : index + 1
+  const index = etapes.findIndex((etape) => etape.etat === 'en_cours')
+  const aCommencer = etapes.findIndex((etape) => etape.etat === 'a_commencer')
+  const rang = index === -1 ? aCommencer : index
+  return rang === -1 ? etapes.length : rang + 1
 }
 
 export function ProgressionSeance({ etapes, className }: ProprietesProgressionSeance) {

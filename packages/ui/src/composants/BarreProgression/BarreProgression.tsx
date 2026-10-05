@@ -11,19 +11,23 @@ export interface ProprietesBarreProgression {
   readonly className?: string
 }
 
-function borner(valeur: number, max: number): number {
-  if (!Number.isFinite(valeur) || max <= 0) return 0
-  return Math.min(Math.max(valeur, 0), max)
+function normaliser(
+  valeur: number,
+  max: number,
+): { readonly valeur: number; readonly max: number } {
+  const maxValide = Number.isFinite(max) && max > 0 ? max : 0
+  const valeurValide = Number.isFinite(valeur) ? valeur : 0
+  return { valeur: Math.min(Math.max(valeurValide, 0), maxValide), max: maxValide }
 }
 
 export function BarreProgression({
   valeur,
-  max,
+  max: maxBrut,
   libelle,
   texteValeur,
   className,
 }: ProprietesBarreProgression) {
-  const courante = borner(valeur, max)
+  const { valeur: courante, max } = normaliser(valeur, maxBrut)
   const texte = texteValeur ?? `${String(courante)} sur ${String(max)}`
   const part = max > 0 ? (courante / max) * 100 : 0
   return (
