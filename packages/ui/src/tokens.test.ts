@@ -51,12 +51,13 @@ describe('tokens.css', () => {
   })
 
   it('définit les hauteurs et la taille des icônes, avec la bascule desktop à 1024 px', () => {
-    expect(css).toContain('--hauteur-champ: 3rem;')
-    expect(css).toContain('--hauteur-bouton: 3rem;')
-    expect(css).toContain('--taille-icone: 1.5rem;')
+    expect(css).toContain('--hauteur-champ: 48px;')
+    expect(css).toContain('--hauteur-bouton: 48px;')
+    expect(css).toContain('--taille-icone: 24px;')
     expect(css).toContain('@media (min-width: 1024px)')
-    expect(css).toContain('--hauteur-bouton: 2.5rem;')
-    expect(css).toContain('--taille-icone: 1.25rem;')
+    expect(css).toContain('--hauteur-champ: 40px;')
+    expect(css).toContain('--hauteur-bouton: 40px;')
+    expect(css).toContain('--taille-icone: 20px;')
   })
 
   it('définit la zone tactile minimale à 44 px, indépendante de la taille du texte', () => {

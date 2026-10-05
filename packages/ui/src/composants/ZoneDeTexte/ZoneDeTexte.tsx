@@ -17,6 +17,12 @@ function longueurInitiale(valeur: unknown): number {
   return typeof valeur === 'string' ? valeur.length : 0
 }
 
+/** Ajuste la hauteur au contenu réel ; la hauteur maximale est posée par le CSS. */
+function ajusterHauteur(element: HTMLTextAreaElement) {
+  element.style.height = 'auto'
+  element.style.height = `${String(element.scrollHeight + element.offsetHeight - element.clientHeight)}px`
+}
+
 export function ZoneDeTexte({
   libelle,
   message,
@@ -40,13 +46,10 @@ export function ZoneDeTexte({
   const [longueur, setLongueur] = useState(longueurInitiale(value ?? defaultValue))
   const longueurAffichee = value === undefined ? longueur : longueurInitiale(value)
 
-  // La zone grandit avec son contenu ; la hauteur maximale est posée par le CSS.
+  // Recalcul à chaque changement de valeur contrôlée, de lignesMax et au premier rendu.
   useLayoutEffect(() => {
-    const element = zone.current
-    if (element === null) return
-    element.style.height = 'auto'
-    element.style.height = `${String(element.scrollHeight + element.offsetHeight - element.clientHeight)}px`
-  }, [longueurAffichee, lignesMax])
+    if (zone.current !== null) ajusterHauteur(zone.current)
+  }, [value, lignesMax])
 
   const aDecrire = [aMessage ? idMessage : null, maxCaracteres !== undefined ? idCompteur : null]
     .filter((identifiant) => identifiant !== null)
@@ -54,6 +57,7 @@ export function ZoneDeTexte({
 
   const auChangement = (evenement: ChangeEvent<HTMLTextAreaElement>) => {
     setLongueur(evenement.currentTarget.value.length)
+    ajusterHauteur(evenement.currentTarget)
     onChange?.(evenement)
   }
 
