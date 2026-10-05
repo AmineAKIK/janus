@@ -2,7 +2,8 @@ import type { Manifeste, Reglages, Statut, TypeEtape } from '@janus/contrats'
 import type { Fait, ReponseVerification } from './faits.ts'
 import { comparer } from './ordre.ts'
 import { points } from './points.ts'
-import { ajouterJours, instantEnIso, instantEnMs, jourDe } from './temps.ts'
+import { ajouterJours, ajouterMois, instantEnIso, instantEnMs, jourDe } from './temps.ts'
+import type { Jour } from './temps.ts'
 
 /** Codes stables de ce qui manque pour le statut suivant : l'interface les traduit en phrases. */
 export type CodeManque =
@@ -342,6 +343,29 @@ function compositionReussie(reponses: readonly ReponseVerification[]): boolean {
 }
 
 /**
+ * Le premier jour où la vérification, le retest ou l'entretien attendu peut être fait ; `null` s'il
+ * n'y a pas d'échéance d'entretien dans les réglages. Le premier retest vient `delaiRetestJours`
+ * jours après « acquis », puis chaque entretien `entretienMois` mois (le dernier mois se répète)
+ * après la dernière réussite.
+ */
+function echeanceAttendue(
+  attendu: 'verification' | 'retest' | 'entretien',
+  dates: { provisoire: string; dateAcquis: string; derniere: string },
+  reglages: Reglages,
+  reussites: number,
+): Jour | null {
+  const jour = (instant: string) => jourDe(instant, reglages.fuseau, reglages.heureBascule)
+  if (attendu === 'verification') {
+    return ajouterJours(jour(dates.provisoire), reglages.delaiVerificationJours)
+  }
+  if (attendu === 'retest') {
+    return ajouterJours(jour(dates.dateAcquis), reglages.delaiRetestJours)
+  }
+  const mois = reglages.entretienMois[Math.min(reussites, reglages.entretienMois.length) - 1]
+  return mois === undefined ? null : ajouterMois(jour(dates.derniere), mois)
+}
+
+/**
  * Parcourt les vérifications valables, dans l'ordre. Une vérification faite avant son délai est
  * ignorée. Un échec compte ; `echecsAvantDescente` échecs de suite font descendre d'un cran
  * (maîtrisé vers acquis, acquis vers acquis provisoirement) et remettent le compteur à zéro ;
@@ -356,18 +380,27 @@ function evaluerVerifications(ordonnes: readonly Fait[], provisoire: string, reg
   let derniereReussite: string | null = null
   let dernierEchec: string | null = null
   let reussitesDeRetest: string[] = []
+  // La dernière réussite retenue : le point de départ de l'entretien suivant.
+  let derniere = provisoire
   const retenues = new Set<string>()
   for (const fait of ordonnes) {
     if (fait.type !== 'verification_terminee' || !fait.valable) continue
-    const verification = fait.verification === 'verification'
-    if (verification !== (palier === 'provisoire')) continue
-    const delai = verification ? reglages.delaiVerificationJours : reglages.delaiRetestJours
-    const depart = verification ? provisoire : dateAcquis
-    if (jour(fait.date) < ajouterJours(jour(depart), delai)) continue
+    const attendu =
+      palier === 'provisoire' ? 'verification' : retest === null ? 'retest' : 'entretien'
+    if (fait.verification !== attendu) continue
+    const verification = attendu === 'verification'
+    const echeance = echeanceAttendue(
+      attendu,
+      { provisoire, dateAcquis, derniere },
+      reglages,
+      reussitesDeRetest.length,
+    )
+    if (echeance === null || jour(fait.date) < echeance) continue
     retenues.add(fait.id)
     if (compositionReussie(fait.reponses)) {
       echecs = 0
       derniereReussite = fait.date
+      derniere = fait.date
       dernierEchec = null
       if (verification) {
         palier = 'acquis'

@@ -10,15 +10,20 @@ const ms = (iso: string) => instantEnMs(iso)
 /** Une carte déjà en révision : plusieurs « bien » au moment où elle est due. */
 function carteEnRevision(reglages = REGLAGES): EtatCarte {
   let etat = carteNeuve(DEBUT)
-  for (let i = 0; i < 4; i += 1) etat = noterCarte(etat, 'bien', etat.due, reglages)
+  for (let i = 0; i < 4; i += 1) etat = noterCarte(etat, 'bien', etat.echeance, reglages)
   return etat
 }
 
 describe('carteNeuve', () => {
   it('est due tout de suite, jamais révisée', () => {
     const etat = carteNeuve(DEBUT)
-    expect(etat).toMatchObject({ state: 0, reps: 0, lapses: 0, lastReview: null })
-    expect(ms(etat.due)).toBe(ms(DEBUT))
+    expect(etat).toMatchObject({
+      phase: 'nouvelle',
+      repetitions: 0,
+      oublis: 0,
+      derniereRevision: null,
+    })
+    expect(ms(etat.echeance)).toBe(ms(DEBUT))
   })
 })
 
@@ -26,24 +31,24 @@ describe('noterCarte', () => {
   it('programme la révision suivante après la date de la note, et la garde en mémoire', () => {
     const neuve = carteNeuve(DEBUT)
     const notee = noterCarte(neuve, 'bien', DEBUT, REGLAGES)
-    expect(notee.reps).toBe(1)
-    expect(ms(notee.due)).toBeGreaterThan(ms(DEBUT))
-    expect(notee.lastReview).toBe(instantEnIso(ms(DEBUT)))
-    expect(neuve.reps).toBe(0)
+    expect(notee.repetitions).toBe(1)
+    expect(ms(notee.echeance)).toBeGreaterThan(ms(DEBUT))
+    expect(notee.derniereRevision).toBe(instantEnIso(ms(DEBUT)))
+    expect(neuve.repetitions).toBe(0)
   })
 
   it('espace plus les révisions quand la note est meilleure', () => {
     const etat = carteEnRevision()
-    const quand = etat.due
+    const quand = etat.echeance
     const notes: NoteCarte[] = ['a_revoir', 'difficile', 'bien', 'facile']
-    const echeances = notes.map((note) => ms(noterCarte(etat, note, quand, REGLAGES).due))
+    const echeances = notes.map((note) => ms(noterCarte(etat, note, quand, REGLAGES).echeance))
     expect(echeances).toEqual([...echeances].sort((a, b) => a - b))
     expect(new Set(echeances).size).toBe(4)
   })
 
   it('compte un oubli sur une carte en révision', () => {
     const etat = carteEnRevision()
-    expect(noterCarte(etat, 'a_revoir', etat.due, REGLAGES).lapses).toBe(etat.lapses + 1)
+    expect(noterCarte(etat, 'a_revoir', etat.echeance, REGLAGES).oublis).toBe(etat.oublis + 1)
   })
 
   it('espace plus quand la rétention visée est plus basse', () => {
@@ -52,14 +57,14 @@ describe('noterCarte', () => {
     const etatBasse = carteEnRevision(basse)
     const etatHaute = carteEnRevision(haute)
     const intervalle = (etat: EtatCarte, reglages: typeof REGLAGES) =>
-      ms(noterCarte(etat, 'bien', etat.due, reglages).due) - ms(etat.due)
+      ms(noterCarte(etat, 'bien', etat.echeance, reglages).echeance) - ms(etat.echeance)
     expect(intervalle(etatBasse, basse)).toBeGreaterThan(intervalle(etatHaute, haute))
   })
 
   it('donne le même résultat pour les mêmes entrées', () => {
     const etat = carteEnRevision()
-    expect(noterCarte(etat, 'difficile', etat.due, REGLAGES)).toEqual(
-      noterCarte(etat, 'difficile', etat.due, REGLAGES),
+    expect(noterCarte(etat, 'difficile', etat.echeance, REGLAGES)).toEqual(
+      noterCarte(etat, 'difficile', etat.echeance, REGLAGES),
     )
   })
 })
@@ -67,9 +72,9 @@ describe('noterCarte', () => {
 describe('carteDue', () => {
   it('est due à partir de sa date', () => {
     const etat = carteEnRevision()
-    expect(carteDue(etat, apres(etat.due, 0, -1))).toBe(false)
-    expect(carteDue(etat, etat.due)).toBe(true)
-    expect(carteDue(etat, apres(etat.due, 3))).toBe(true)
+    expect(carteDue(etat, apres(etat.echeance, 0, -1))).toBe(false)
+    expect(carteDue(etat, etat.echeance)).toBe(true)
+    expect(carteDue(etat, apres(etat.echeance, 3))).toBe(true)
   })
 })
 
@@ -81,7 +86,7 @@ describe('cartesDuJour', () => {
   })
   const due = (jours: number) => {
     const etat = carteEnRevision()
-    return { ...etat, due: apres(DEBUT, 100 + jours) }
+    return { ...etat, echeance: apres(DEBUT, 100 + jours) }
   }
   const maintenant = apres(DEBUT, 110)
 

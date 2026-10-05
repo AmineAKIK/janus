@@ -1,26 +1,39 @@
 import type { NoteCarte, Reglages } from '@janus/contrats'
-import { createEmptyCard, fsrs, generatorParameters, Rating } from 'ts-fsrs'
-import type { Card, CardInput, State } from 'ts-fsrs'
+import { createEmptyCard, fsrs, generatorParameters, Rating, State } from 'ts-fsrs'
+import type { Card, CardInput } from 'ts-fsrs'
 import { echeances } from './echeances.ts'
 import type { Echeance } from './echeances.ts'
 import type { ResultatBloc } from './statut.ts'
 import { comparer } from './ordre.ts'
 import { instantEnMs } from './temps.ts'
 
-/**
- * L'état d'une carte pour FSRS, tel qu'on le range : les dates sont des instants ISO.
- * `state` : 0 nouvelle, 1 apprentissage, 2 révision, 3 réapprentissage.
- */
+/** Où en est la carte dans l'apprentissage. */
+export type PhaseCarte = 'nouvelle' | 'apprentissage' | 'revision' | 'reapprentissage'
+
+/** L'état d'une carte pour FSRS, tel qu'on le range : les dates sont des instants ISO. */
 export interface EtatCarte {
-  readonly due: string
-  readonly stability: number
-  readonly difficulty: number
-  readonly scheduledDays: number
-  readonly learningSteps: number
-  readonly reps: number
-  readonly lapses: number
-  readonly state: State
-  readonly lastReview: string | null
+  readonly echeance: string
+  readonly stabilite: number
+  readonly difficulte: number
+  readonly joursProgrammes: number
+  readonly etapeApprentissage: number
+  readonly repetitions: number
+  readonly oublis: number
+  readonly phase: PhaseCarte
+  readonly derniereRevision: string | null
+}
+
+const PHASES: Record<State, PhaseCarte> = {
+  [State.New]: 'nouvelle',
+  [State.Learning]: 'apprentissage',
+  [State.Review]: 'revision',
+  [State.Relearning]: 'reapprentissage',
+}
+const ETATS: Record<PhaseCarte, State> = {
+  nouvelle: State.New,
+  apprentissage: State.Learning,
+  revision: State.Review,
+  reapprentissage: State.Relearning,
 }
 
 const NOTES: Record<NoteCarte, Rating.Again | Rating.Hard | Rating.Good | Rating.Easy> = {
@@ -39,15 +52,15 @@ function planificateur(reglages: Reglages) {
 
 function depuis(carte: Card): EtatCarte {
   return {
-    due: carte.due.toISOString(),
-    stability: carte.stability,
-    difficulty: carte.difficulty,
-    scheduledDays: carte.scheduled_days,
-    learningSteps: carte.learning_steps,
-    reps: carte.reps,
-    lapses: carte.lapses,
-    state: carte.state,
-    lastReview: carte.last_review === undefined ? null : carte.last_review.toISOString(),
+    echeance: carte.due.toISOString(),
+    stabilite: carte.stability,
+    difficulte: carte.difficulty,
+    joursProgrammes: carte.scheduled_days,
+    etapeApprentissage: carte.learning_steps,
+    repetitions: carte.reps,
+    oublis: carte.lapses,
+    phase: PHASES[carte.state],
+    derniereRevision: carte.last_review === undefined ? null : carte.last_review.toISOString(),
   }
 }
 
@@ -64,23 +77,23 @@ export function noterCarte(
   reglages: Reglages,
 ): EtatCarte {
   const carte: CardInput = {
-    due: etat.due,
-    stability: etat.stability,
-    difficulty: etat.difficulty,
+    due: etat.echeance,
+    stability: etat.stabilite,
+    difficulty: etat.difficulte,
     elapsed_days: 0,
-    scheduled_days: etat.scheduledDays,
-    learning_steps: etat.learningSteps,
-    reps: etat.reps,
-    lapses: etat.lapses,
-    state: etat.state,
-    last_review: etat.lastReview,
+    scheduled_days: etat.joursProgrammes,
+    learning_steps: etat.etapeApprentissage,
+    reps: etat.repetitions,
+    lapses: etat.oublis,
+    state: ETATS[etat.phase],
+    last_review: etat.derniereRevision,
   }
   return depuis(planificateur(reglages).next(carte, maintenant, NOTES[note]).card)
 }
 
 /** Vrai quand la carte est due à `maintenant`. */
 export function carteDue(etat: EtatCarte, maintenant: string): boolean {
-  return instantEnMs(etat.due) <= instantEnMs(maintenant)
+  return instantEnMs(etat.echeance) <= instantEnMs(maintenant)
 }
 
 export interface CarteDuBloc {
@@ -109,7 +122,9 @@ export function cartesDuJour(entree: EntreeCartesDuJour): { dues: string[]; nouv
   const visibles = cartes.filter(({ bloc }) => blocsVus.includes(bloc))
   const dues = visibles
     .flatMap(({ id, etat }) => (etat !== null && carteDue(etat, maintenant) ? [{ id, etat }] : []))
-    .sort((a, b) => instantEnMs(a.etat.due) - instantEnMs(b.etat.due) || comparer(a.id, b.id))
+    .sort(
+      (a, b) => instantEnMs(a.etat.echeance) - instantEnMs(b.etat.echeance) || comparer(a.id, b.id),
+    )
     .map(({ id }) => id)
   const places = Math.max(0, reglages.nouvellesCartesParJour - nouvellesDejaIntroduites)
   const nouvelles = visibles

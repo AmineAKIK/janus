@@ -118,12 +118,12 @@ describe('echeances', () => {
       ]
     }
 
-    it('programme le premier entretien trois mois après la maîtrise', () => {
+    it('programme le premier entretien trois mois après le retest réussi', () => {
       const f = fabrique()
       expect(echeances(etat(maitrise(f)), REGLAGES)).toEqual({
         type: 'entretien',
         genre: 'jour',
-        apres: '2026-10-12',
+        apres: '2026-10-11',
       })
     })
 
@@ -143,14 +143,14 @@ describe('echeances', () => {
       const f = fabrique()
       const faits = [
         ...maitrise(f),
-        f.verification(apres(DEBUT, 100), { verification: 'entretien', tache: false }),
+        f.verification(apres(DEBUT, 135), { verification: 'entretien', tache: false }),
       ]
       const resultat = etat(faits)
       expect(resultat.statut).toBe('maitrise')
       expect(echeances(resultat, REGLAGES)).toEqual({
         type: 'entretien',
         genre: 'jour',
-        apres: '2026-09-11',
+        apres: '2026-10-16',
       })
     })
 

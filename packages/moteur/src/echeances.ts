@@ -62,8 +62,7 @@ export function echeances(etat: ResultatBloc, reglages: Reglages): Echeance | nu
         Math.min(etat.preuves.reussitesDeRetest.length, reglages.entretienMois.length) - 1
       ]
     if (mois === undefined) return null
-    const depart = instantEnMs(dernier) > instantEnMs(maitrise) ? dernier : maitrise
-    return enJour('entretien', ajouterMois(jour(depart), mois))
+    return enJour('entretien', ajouterMois(jour(dernier), mois))
   }
   return null
 }

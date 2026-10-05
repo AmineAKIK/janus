@@ -233,9 +233,9 @@ function construireCas(): CasAcceptation[] {
       [
         ...jusquaAcquisAvecAisance(f),
         f.verification(apres(DEBUT, 34), { verification: 'retest' }),
-        f.verification(apres(DEBUT, 40), { verification: 'retest', transfert: 'fragile' }),
+        f.verification(apres(DEBUT, 130), { verification: 'entretien', transfert: 'fragile' }),
       ],
-      apres(DEBUT, 40, 60),
+      apres(DEBUT, 130, 60),
       { statut: 'maitrise', echecsConsecutifs: 1 },
     )
   })()
@@ -247,10 +247,10 @@ function construireCas(): CasAcceptation[] {
       [
         ...jusquaAcquisAvecAisance(f),
         f.verification(apres(DEBUT, 34), { verification: 'retest' }),
-        f.verification(apres(DEBUT, 40), { verification: 'retest', transfert: 'fragile' }),
-        f.verification(apres(DEBUT, 42), { verification: 'retest', tache: false }),
+        f.verification(apres(DEBUT, 130), { verification: 'entretien', transfert: 'fragile' }),
+        f.verification(apres(DEBUT, 132), { verification: 'entretien', tache: false }),
       ],
-      apres(DEBUT, 42, 60),
+      apres(DEBUT, 132, 60),
       { statut: 'acquis' },
     )
   })()

@@ -112,7 +112,7 @@ describe('fileDuJour', () => {
       f.aisance(apres(DEBUT, 42), 30),
     ])
     expect(fileDuJour(entree([entretien], { maintenant: apres(DEBUT, 200) })).taches).toEqual([
-      { type: 'entretien', bloc: 'B01', apres: '2026-10-13' },
+      { type: 'entretien', bloc: 'B01', apres: '2026-10-11' },
     ])
   })
 

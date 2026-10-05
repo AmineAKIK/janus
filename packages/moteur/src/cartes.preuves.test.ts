@@ -59,7 +59,7 @@ describe('preuvesDuBloc', () => {
     const resultat = preuves(faits)
     expect(resultat.retenir).toEqual({
       date: retest,
-      prochaine: { type: 'entretien', genre: 'jour', apres: '2026-10-12' },
+      prochaine: { type: 'entretien', genre: 'jour', apres: '2026-10-11' },
     })
     expect(resultat.aisance).toEqual({ date: apres(retest, 1) })
   })
