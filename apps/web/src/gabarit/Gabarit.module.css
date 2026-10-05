@@ -1,0 +1,69 @@
+/* Mobile : marges de 16 px, 24 px du haut, 72 px réservés en bas pour la barre de navigation. */
+.gabarit {
+  min-height: 100dvh;
+}
+
+.contenu {
+  box-sizing: border-box;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--espacement-24) var(--espacement-16);
+}
+
+.contenu:focus {
+  outline: none;
+}
+
+.avecNavigation .contenu {
+  padding-bottom: calc(var(--hauteur-barre-navigation) + var(--espacement-24));
+}
+
+.navigation {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+}
+
+.evitement {
+  position: absolute;
+  top: var(--espacement-8);
+  left: var(--espacement-8);
+  z-index: 20;
+  padding: var(--espacement-8) var(--espacement-16);
+  border-radius: var(--rayon-champ);
+  background: var(--couleur-surface);
+  color: var(--couleur-accent);
+  transform: translateY(-200%);
+}
+
+.evitement:focus-visible {
+  transform: none;
+  outline: none;
+  box-shadow: var(--focus-anneau);
+}
+
+/* Dès 1024 px : barre latérale de 240 px, colonne de 720 px à 48 px de la barre et du haut. */
+@media (min-width: 1024px) {
+  .contenu {
+    margin: 0;
+    padding: var(--espacement-48) var(--espacement-48);
+  }
+
+  .avecNavigation .contenu {
+    margin-left: var(--largeur-navigation);
+    padding-bottom: var(--espacement-48);
+  }
+
+  .navigation {
+    top: 0;
+    right: auto;
+    width: var(--largeur-navigation);
+  }
+}
+
+.commit {
+  margin: var(--espacement-24) 0 0;
+  color: var(--couleur-texte-secondaire);
+}
