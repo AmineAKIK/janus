@@ -1,25 +1,11 @@
-import type { Manifeste, Reglages, Statut, TypeEtape } from '@janus/contrats'
+import type { CodeManque, Manifeste, Reglages, Statut, TypeEtape } from '@janus/contrats'
 import type { Fait, ReponseVerification } from './faits.ts'
 import { comparer } from './ordre.ts'
 import { points } from './points.ts'
 import { ajouterJours, ajouterMois, instantEnIso, instantEnMs, jourDe } from './temps.ts'
 import type { Jour } from './temps.ts'
 
-/** Codes stables de ce qui manque pour le statut suivant : l'interface les traduit en phrases. */
-export type CodeManque =
-  | 'restitution_incomplete'
-  | 'consolidation_trop_tot'
-  | 'consolidation_a_faire'
-  | 'consolidation_cours_rouvert'
-  | 'consolidation_insuffisante'
-  | 'pratique_aide'
-  | 'atelier_manquant'
-  | 'erreur_ouverte'
-  | 'verification_a_venir'
-  | 'verification_a_faire'
-  | 'retest_a_venir'
-  | 'retest_a_faire'
-  | 'aisance_non_atteinte'
+export type { CodeManque }
 
 /** Un manque et ses paramètres : questions ou exercices concernés, date possible, points obtenus et requis. */
 export interface Manque {
