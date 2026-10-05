@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { ecrans } from './ecrans.ts'
-import { ouvrirSession } from './session.ts'
+import { activerInterrupteurs, ouvrirSession } from './session.ts'
 
 const ecransDeLAppli = ecrans.filter(({ chemin }) => chemin.startsWith('./#/'))
 
@@ -13,6 +13,7 @@ test.describe('routes', () => {
 
       if (ecran.session !== false) await ouvrirSession(page)
       await page.goto(ecran.chemin)
+      if (ecran.interrupteurs !== undefined) await activerInterrupteurs(page, ecran.interrupteurs)
       await expect(titre).toBeVisible()
       await expect(page).toHaveTitle(`${ecran.titre ?? ecran.etat} · Atelier`)
 
@@ -43,6 +44,8 @@ test.describe('routes', () => {
   }) => {
     await ouvrirSession(page)
     await page.goto('./#/formations')
+    // Un rechargement : le focus part du début de la page, comme à l'ouverture de l'appli.
+    await page.reload()
     await expect(page.getByRole('heading', { level: 1, name: 'Formations' })).toBeVisible()
     await page.keyboard.press('Tab')
     const lien = page.getByRole('link', { name: 'Aller au contenu' })

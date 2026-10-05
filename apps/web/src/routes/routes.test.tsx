@@ -31,7 +31,12 @@ const ECRANS = [
   { chemin: '/', titre: 'Aujourd’hui', navigation: true },
   { chemin: '/questions', titre: 'Questions de début de séance', navigation: false },
   { chemin: '/formations', titre: 'Formations', navigation: true },
-  { chemin: '/formations/f1', titre: 'Modules', navigation: true },
+  {
+    chemin: '/formations/DWWM',
+    titre: 'Modules',
+    h1: 'DWWM · Développeur web et web mobile',
+    navigation: true,
+  },
   { chemin: '/modules/m1', titre: 'Blocs', navigation: true },
   { chemin: '/modules/m1?statut=a_reprendre&detail=B05', titre: 'Blocs', navigation: true },
   { chemin: '/blocs/b05', titre: 'Page de bloc', navigation: false },
@@ -50,7 +55,7 @@ describe('routes', () => {
     await afficher(chemin)
 
     expect(
-      screen.getByRole('heading', { level: 1, name: 'h1' in ecran ? ecran.h1 : titre }),
+      await screen.findByRole('heading', { level: 1, name: 'h1' in ecran ? ecran.h1 : titre }),
     ).toBeInTheDocument()
     expect(document.title).toBe(`${titre} · Atelier`)
     expect(screen.queryByRole('navigation', NAVIGATION) !== null).toBe(navigation)

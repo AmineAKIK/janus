@@ -12,6 +12,7 @@ import {
   QueryClient,
   QueryClientProvider,
   useMutation,
+  useQueries,
   useQuery,
 } from '@tanstack/react-query'
 import { createContext, use } from 'react'
@@ -108,6 +109,18 @@ export function useLecture<D extends RouteLecture>(route: D, entree: EntreeRoute
   return useQuery({
     queryKey: [nomRoute(route), entree],
     queryFn: ({ signal }) => transport.appeler(route, entree, { signal } satisfies OptionsAppel),
+  })
+}
+
+/** Lit la même route `GET` pour plusieurs entrées à la fois (une requête par entrée, en parallèle). */
+export function useLectures<D extends RouteLecture>(route: D, entrees: readonly EntreeRoute<D>[]) {
+  const transport = useTransport()
+  return useQueries({
+    queries: entrees.map((entree) => ({
+      queryKey: [nomRoute(route), entree],
+      queryFn: ({ signal }: { readonly signal: AbortSignal }) =>
+        transport.appeler(route, entree, { signal } satisfies OptionsAppel),
+    })),
   })
 }
 

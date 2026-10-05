@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { ecrans } from './ecrans.ts'
-import { ouvrirSession } from './session.ts'
+import { activerInterrupteurs, ouvrirSession } from './session.ts'
 
 const tailles = [
   { nom: 'mobile', width: 390, height: 844 },
@@ -26,6 +26,7 @@ for (const ecran of ecrans) {
         await page.emulateMedia({ colorScheme: theme.colorScheme })
         if (ecran.session !== false && ecran.chemin.startsWith('./#/')) await ouvrirSession(page)
         await page.goto(ecran.chemin)
+        if (ecran.interrupteurs !== undefined) await activerInterrupteurs(page, ecran.interrupteurs)
         await expect(page.getByRole('heading', { level: 1, name: ecran.etat })).toBeVisible()
         await page.screenshot({
           path: `captures/${ecran.nom}-${String(taille.width)}-${theme.nom}.png`,

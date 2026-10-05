@@ -46,18 +46,21 @@ export function Gabarit() {
     },
   })
   const contenu = useRef<HTMLElement>(null)
-  const premiereFois = useRef(true)
+  const precedent = useRef<string | undefined>(undefined)
 
   useEffect(() => {
     document.title = titreDocument(titre)
   }, [titre])
 
   useEffect(() => {
-    // Au premier affichage le focus reste au début de la page, pour que le lien d'évitement soit le premier arrêt.
-    if (premiereFois.current) {
-      premiereFois.current = false
+    // Tant que la première page n'est pas prête (la session se vérifie), puis à son affichage, le focus reste
+    // au début de la page, pour que le lien d'évitement soit le premier arrêt.
+    if (chemin === undefined) return
+    if (precedent.current === undefined) {
+      precedent.current = chemin
       return
     }
+    precedent.current = chemin
     window.scrollTo(0, 0)
     contenu.current?.querySelector('h1')?.focus()
   }, [chemin])

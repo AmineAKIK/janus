@@ -1,5 +1,7 @@
 import { createRootRouteWithContext, createRoute, createRouter } from '@tanstack/react-router'
 import type { RouterHistory } from '@tanstack/react-router'
+import { PageFormations } from '../catalogue/PageFormations.tsx'
+import { PageModules } from '../catalogue/PageModules.tsx'
 import { PageConnexion } from '../connexion/PageConnexion.tsx'
 import { Gabarit } from '../gabarit/Gabarit.tsx'
 import { exigerSession } from './garde.ts'
@@ -47,14 +49,17 @@ const formations = createRoute({
   getParentRoute: () => racine,
   path: '/formations',
   staticData: { titre: 'Formations', navigation: 'formations' },
-  component: () => <PageProvisoire titre="Formations" />,
+  component: PageFormations,
 })
 
 const formation = createRoute({
   getParentRoute: () => racine,
   path: '/formations/$formationId',
   staticData: { titre: 'Modules', navigation: 'formations' },
-  component: () => <PageProvisoire titre="Modules" />,
+  component: function RoutePageModules() {
+    const { formationId } = formation.useParams()
+    return <PageModules formationId={formationId} />
+  },
 })
 
 const module = createRoute({
