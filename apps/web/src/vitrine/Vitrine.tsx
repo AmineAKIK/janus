@@ -14,6 +14,7 @@ import { COULEURS, ESPACEMENTS, RAYONS, STATUTS, STYLES_TEXTE } from './tokens.t
 import { SectionBoutons } from './sections/SectionBoutons.tsx'
 import { SectionBlocs } from './sections/SectionBlocs.tsx'
 import { SectionChamps } from './sections/SectionChamps.tsx'
+import { SectionJournal } from './sections/SectionJournal.tsx'
 import { SectionNavigation } from './sections/SectionNavigation.tsx'
 import { SectionStatuts } from './sections/SectionStatuts.tsx'
 import { SectionSelections } from './sections/SectionSelections.tsx'
@@ -169,6 +170,7 @@ export function Vitrine() {
       <SectionNavigation />
       <SectionStatuts />
       <SectionBlocs />
+      <SectionJournal />
     </main>
   )
 }
