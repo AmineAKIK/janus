@@ -1,7 +1,9 @@
 import type { Manifeste, Reglages, Statut, TypeEtape } from '@janus/contrats'
 import type { Fait, ReponseVerification } from './faits.ts'
+import { comparer } from './ordre.ts'
 import { points } from './points.ts'
-import { ajouterJours, instantEnIso, instantEnMs, jourDe } from './temps.ts'
+import { ajouterJours, ajouterMois, instantEnIso, instantEnMs, jourDe } from './temps.ts'
+import type { Jour } from './temps.ts'
 
 /** Codes stables de ce qui manque pour le statut suivant : l'interface les traduit en phrases. */
 export type CodeManque =
@@ -47,6 +49,24 @@ export interface ResultatBloc {
   /** Identifiants des erreurs critiques ouvertes, dans l'ordre où elles ont été ouvertes. */
   readonly erreursOuvertes: readonly string[]
   readonly echecsConsecutifs: number
+  /** Les dates qui alimentent le panneau « Cinq preuves » ; la file du jour s'en sert aussi pour les échéances. */
+  readonly preuves: {
+    /** Fin de la série de consolidation réussie. */
+    readonly consolidation: string | null
+    /** Fin du dernier exercice de pratique atteint à l'aide 0 ; `null` s'il n'y a pas d'exercice ou s'il en reste un. */
+    readonly pratique: string | null
+    /** Premier transfert solide, au premier tour et qui compte, d'une vérification valable. */
+    readonly transfert: string | null
+    /** Atteinte de la cible d'aisance. */
+    readonly aisance: string | null
+    readonly aisanceRequise: boolean
+    /** Dernière vérification, dernier retest ou dernier entretien réussi parmi ceux que les règles retiennent. */
+    readonly derniereReussite: string | null
+    /** Retests et entretiens réussis depuis « acquis », dans l'ordre ; vide après une descente. */
+    readonly reussitesDeRetest: readonly string[]
+    /** Date du dernier échec retenu, tant qu'aucune réussite ne l'a suivi. */
+    readonly dernierEchec: string | null
+  }
 }
 
 type FaitDe<T extends Fait['type']> = Extract<Fait, { type: T }>
@@ -72,11 +92,6 @@ export function accesBloc(statutsPrerequis: readonly Statut[]): 'libre' | 'raiso
   return statutsPrerequis.every((statut) => STATUTS_SUFFISANTS.has(statut))
     ? 'libre'
     : 'raison_requise'
-}
-
-function comparer(a: string, b: string): number {
-  if (a < b) return -1
-  return a > b ? 1 : 0
 }
 
 /** Les faits du bloc, triés par date puis identifiant, sans doublon d'identifiant. */
@@ -328,6 +343,29 @@ function compositionReussie(reponses: readonly ReponseVerification[]): boolean {
 }
 
 /**
+ * Le premier jour où la vérification, le retest ou l'entretien attendu peut être fait ; `null` s'il
+ * n'y a pas d'échéance d'entretien dans les réglages. Le premier retest vient `delaiRetestJours`
+ * jours après « acquis », puis chaque entretien `entretienMois` mois (le dernier mois se répète)
+ * après la dernière réussite.
+ */
+function echeanceAttendue(
+  attendu: 'verification' | 'retest' | 'entretien',
+  dates: { provisoire: string; dateAcquis: string; derniere: string },
+  reglages: Reglages,
+  reussites: number,
+): Jour | null {
+  const jour = (instant: string) => jourDe(instant, reglages.fuseau, reglages.heureBascule)
+  if (attendu === 'verification') {
+    return ajouterJours(jour(dates.provisoire), reglages.delaiVerificationJours)
+  }
+  if (attendu === 'retest') {
+    return ajouterJours(jour(dates.dateAcquis), reglages.delaiRetestJours)
+  }
+  const mois = reglages.entretienMois[Math.min(reussites, reglages.entretienMois.length) - 1]
+  return mois === undefined ? null : ajouterMois(jour(dates.derniere), mois)
+}
+
+/**
  * Parcourt les vérifications valables, dans l'ordre. Une vérification faite avant son délai est
  * ignorée. Un échec compte ; `echecsAvantDescente` échecs de suite font descendre d'un cran
  * (maîtrisé vers acquis, acquis vers acquis provisoirement) et remettent le compteur à zéro ;
@@ -339,27 +377,44 @@ function evaluerVerifications(ordonnes: readonly Fait[], provisoire: string, reg
   let dateAcquis = provisoire
   let retest: string | null = null
   let echecs = 0
+  let derniereReussite: string | null = null
+  let dernierEchec: string | null = null
+  let reussitesDeRetest: string[] = []
+  // La dernière réussite retenue : le point de départ de l'entretien suivant.
+  let derniere = provisoire
   const retenues = new Set<string>()
   for (const fait of ordonnes) {
     if (fait.type !== 'verification_terminee' || !fait.valable) continue
-    const verification = fait.verification === 'verification'
-    if (verification !== (palier === 'provisoire')) continue
-    const delai = verification ? reglages.delaiVerificationJours : reglages.delaiRetestJours
-    const depart = verification ? provisoire : dateAcquis
-    if (jour(fait.date) < ajouterJours(jour(depart), delai)) continue
+    const attendu =
+      palier === 'provisoire' ? 'verification' : retest === null ? 'retest' : 'entretien'
+    if (fait.verification !== attendu) continue
+    const verification = attendu === 'verification'
+    const echeance = echeanceAttendue(
+      attendu,
+      { provisoire, dateAcquis, derniere },
+      reglages,
+      reussitesDeRetest.length,
+    )
+    if (echeance === null || jour(fait.date) < echeance) continue
     retenues.add(fait.id)
     if (compositionReussie(fait.reponses)) {
       echecs = 0
+      derniereReussite = fait.date
+      derniere = fait.date
+      dernierEchec = null
       if (verification) {
         palier = 'acquis'
         dateAcquis = fait.date
       } else {
         retest ??= fait.date
+        reussitesDeRetest.push(fait.date)
       }
     } else {
       echecs += 1
+      dernierEchec = fait.date
       if (echecs >= reglages.echecsAvantDescente && !verification) {
         echecs = 0
+        reussitesDeRetest = []
         if (retest === null) {
           palier = 'provisoire'
         } else {
@@ -368,7 +423,27 @@ function evaluerVerifications(ordonnes: readonly Fait[], provisoire: string, reg
       }
     }
   }
-  return { palier, dateAcquis, retest, echecs, retenues }
+  return {
+    palier,
+    dateAcquis,
+    retest,
+    echecs,
+    retenues,
+    derniereReussite,
+    dernierEchec,
+    reussitesDeRetest,
+  }
+}
+
+/** Le premier transfert solide, au premier tour et qui compte, d'une vérification valable. */
+function premierTransfert(ordonnes: readonly Fait[]): string | null {
+  const fait = ordonnes.find(
+    (candidat) =>
+      candidat.type === 'verification_terminee' &&
+      candidat.valable &&
+      candidat.reponses.some((reponse) => reponse.type === 'transfert' && reponseReussie(reponse)),
+  )
+  return fait?.date ?? null
 }
 
 // --- Calcul du bloc --------------------------------------------------------
@@ -470,5 +545,16 @@ export function calculerBloc(
     manque,
     erreursOuvertes,
     echecsConsecutifs: verifications?.echecs ?? 0,
+    preuves: {
+      consolidation: consolidation.ok ? consolidation.date : null,
+      pratique:
+        manifeste.pratique.length > 0 && pratique.incompletes.length === 0 ? pratique.date : null,
+      transfert: premierTransfert(ordonnes),
+      aisance: aisance.date,
+      aisanceRequise: manifeste.aisance !== undefined,
+      derniereReussite: verifications?.derniereReussite ?? null,
+      reussitesDeRetest: verifications?.reussitesDeRetest ?? [],
+      dernierEchec: verifications?.dernierEchec ?? null,
+    },
   }
 }
