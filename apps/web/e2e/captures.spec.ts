@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { ecrans } from './ecrans.ts'
+import { ouvrirSession } from './session.ts'
 
 const tailles = [
   { nom: 'mobile', width: 390, height: 844 },
@@ -23,6 +24,7 @@ for (const ecran of ecrans) {
 
         await page.setViewportSize({ width: taille.width, height: taille.height })
         await page.emulateMedia({ colorScheme: theme.colorScheme })
+        if (ecran.session !== false && ecran.chemin.startsWith('./#/')) await ouvrirSession(page)
         await page.goto(ecran.chemin)
         await expect(page.getByRole('heading', { level: 1, name: ecran.etat })).toBeVisible()
         await page.screenshot({

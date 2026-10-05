@@ -8,3 +8,6 @@ afterEach(() => {
 
 // jsdom ne sait pas défiler.
 window.scrollTo = () => undefined
+
+// jsdom ne sait pas ramener un élément dans la vue.
+Element.prototype.scrollIntoView = () => undefined

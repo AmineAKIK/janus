@@ -1,6 +1,9 @@
-import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router'
+import { createRootRouteWithContext, createRoute, createRouter } from '@tanstack/react-router'
 import type { RouterHistory } from '@tanstack/react-router'
+import { PageConnexion } from '../connexion/PageConnexion.tsx'
 import { Gabarit } from '../gabarit/Gabarit.tsx'
+import { exigerSession } from './garde.ts'
+import type { ContexteRouteur } from './garde.ts'
 import { PageErreur } from './PageErreur.tsx'
 import { PageIntrouvable } from './PageIntrouvable.tsx'
 import { PageProvisoire } from './PageProvisoire.tsx'
@@ -10,8 +13,11 @@ import {
   validerRechercheModule,
 } from './recherche.ts'
 
-const racine = createRootRoute({
+const racine = createRootRouteWithContext<ContexteRouteur>()({
   staticData: { titre: '', navigation: null },
+  beforeLoad: async ({ context, location }) => {
+    if (location.pathname !== '/connexion') await exigerSession(context, location.href)
+  },
   component: Gabarit,
 })
 
@@ -20,7 +26,7 @@ const connexion = createRoute({
   path: '/connexion',
   validateSearch: validerRechercheConnexion,
   staticData: { titre: 'Connexion', navigation: null },
-  component: () => <PageProvisoire titre="Connexion" />,
+  component: PageConnexion,
 })
 
 const aujourdhui = createRoute({
@@ -125,10 +131,11 @@ const arbre = racine.addChildren([
   sectionParametres,
 ])
 
-export function creerRouteur(historique: RouterHistory) {
+export function creerRouteur(historique: RouterHistory, contexte: ContexteRouteur) {
   return createRouter({
     routeTree: arbre,
     history: historique,
+    context: contexte,
     defaultNotFoundComponent: PageIntrouvable,
     defaultErrorComponent: PageErreur,
   })

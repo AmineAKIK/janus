@@ -1,0 +1,71 @@
+/* Mobile : le contenu est posé sur le fond, sans carte. Dès 1024 px : une carte de 400 px centrée. */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-16);
+  padding-top: var(--espacement-48);
+}
+
+.carte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-16);
+}
+
+.identite {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-4);
+}
+
+.titre {
+  margin: 0;
+}
+
+.titre:focus {
+  outline: none;
+}
+
+.sousTitre {
+  margin: 0;
+  color: var(--couleur-texte-secondaire);
+}
+
+.formulaire {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-16);
+}
+
+.champs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-24);
+}
+
+.demo {
+  height: auto;
+}
+
+@media (min-width: 1024px) {
+  .page {
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100dvh - 2 * var(--espacement-24));
+    padding-top: 0;
+  }
+
+  .carte {
+    box-sizing: border-box;
+    width: 400px;
+    padding: var(--espacement-24) var(--espacement-20);
+    border-radius: var(--rayon-carte);
+    background: var(--couleur-surface);
+    box-shadow: var(--ombre-carte);
+  }
+
+  .demo {
+    width: 400px;
+    box-sizing: border-box;
+  }
+}

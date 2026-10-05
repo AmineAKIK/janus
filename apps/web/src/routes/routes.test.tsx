@@ -1,8 +1,9 @@
-import { createMemoryHistory, RouterProvider } from '@tanstack/react-router'
+import { createMemoryHistory } from '@tanstack/react-router'
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { creerRouteur } from './arbre.tsx'
+import { creerContexteTest } from './contexteTest.tsx'
 import { PageErreur } from './PageErreur.tsx'
 import { allerALaConnexion } from './connexion.ts'
 import {
@@ -12,10 +13,11 @@ import {
 } from './recherche.ts'
 import { creerHistorique, modeHistorique } from './historique.ts'
 
-async function afficher(chemin: string) {
-  const routeur = creerRouteur(createMemoryHistory({ initialEntries: [chemin] }))
+async function afficher(chemin: string, options: { connecte?: boolean } = {}) {
+  const { contexte, application } = creerContexteTest(options)
+  const routeur = creerRouteur(createMemoryHistory({ initialEntries: [chemin] }), contexte)
   await act(async () => {
-    render(<RouterProvider router={routeur} />)
+    render(application(routeur))
     await routeur.load()
   })
   return routeur
@@ -25,7 +27,7 @@ const NAVIGATION = { name: 'Navigation principale' }
 
 // Titre de l'écran et présence de la navigation d'après les cadres Figma.
 const ECRANS = [
-  { chemin: '/connexion', titre: 'Connexion', navigation: false },
+  { chemin: '/connexion', titre: 'Connexion', h1: 'Atelier', navigation: false },
   { chemin: '/', titre: 'Aujourd’hui', navigation: true },
   { chemin: '/questions', titre: 'Questions de début de séance', navigation: false },
   { chemin: '/formations', titre: 'Formations', navigation: true },
@@ -43,10 +45,13 @@ const ECRANS = [
 ]
 
 describe('routes', () => {
-  it.each(ECRANS)('$chemin affiche « $titre »', async ({ chemin, titre, navigation }) => {
+  it.each(ECRANS)('$chemin affiche « $titre »', async (ecran) => {
+    const { chemin, titre, navigation } = ecran
     await afficher(chemin)
 
-    expect(screen.getByRole('heading', { level: 1, name: titre })).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'h1' in ecran ? ecran.h1 : titre }),
+    ).toBeInTheDocument()
     expect(document.title).toBe(`${titre} · Atelier`)
     expect(screen.queryByRole('navigation', NAVIGATION) !== null).toBe(navigation)
   })
@@ -61,6 +66,28 @@ describe('routes', () => {
     const routeur = await afficher('/journal?bloc=B04&type=correction')
 
     expect(routeur.state.matches.at(-1)?.search).toEqual({ bloc: 'B04', type: 'correction' })
+  })
+})
+
+describe('garde des routes', () => {
+  it('sans session, mène à la connexion en gardant la page demandée', async () => {
+    const routeur = await afficher('/journal?bloc=B04', { connecte: false })
+
+    expect(routeur.state.location.pathname).toBe('/connexion')
+    expect(routeur.state.location.search).toEqual({ retour: '/journal?bloc=B04' })
+    expect(screen.getByRole('heading', { level: 1, name: 'Atelier' })).toBeInTheDocument()
+  })
+
+  it('la connexion elle-même reste accessible sans session', async () => {
+    const routeur = await afficher('/connexion', { connecte: false })
+
+    expect(routeur.state.location.pathname).toBe('/connexion')
+  })
+
+  it('avec une session, ouvre la page demandée et garde le compte en cache', async () => {
+    const routeur = await afficher('/journal')
+
+    expect(routeur.state.location.pathname).toBe('/journal')
   })
 })
 
@@ -197,7 +224,8 @@ describe('frontière d’erreur', () => {
   })
 
   it('est la frontière par défaut de toutes les routes', () => {
-    const routeur = creerRouteur(createMemoryHistory({ initialEntries: ['/'] }))
+    const { contexte } = creerContexteTest()
+    const routeur = creerRouteur(createMemoryHistory({ initialEntries: ['/'] }), contexte)
 
     expect(routeur.options.defaultErrorComponent).toBe(PageErreur)
   })
