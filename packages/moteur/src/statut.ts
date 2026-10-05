@@ -196,7 +196,10 @@ function evaluerConsolidation(
   restitutionFinie: string,
   maintenant: string,
 ): Verdict {
-  const comptees = ordonnes.filter(estCorrectionDe('consolidation')).filter((c) => c.compte)
+  const reserve = new Set(manifeste.consolidation.map((question) => question.id))
+  const comptees = ordonnes
+    .filter(estCorrectionDe('consolidation'))
+    .filter((correction) => correction.compte && reserve.has(correction.question))
   const verdicts = Array.from({ length: Math.floor(comptees.length / 3) }, (_, rang) =>
     verdictSerie(ordonnes, comptees.slice(3 * rang, 3 * rang + 3), manifeste, reglages),
   )
@@ -219,6 +222,7 @@ function evaluerPratique(ordonnes: readonly Fait[], manifeste: Manifeste) {
     const atteint = ordonnes.find((fait) => {
       if (fait.type !== 'pratique_resultat') return false
       if (fait.exercice !== exercice.id || !fait.reussi || fait.aide !== 0) return false
+      if (!exercice.items.some((item) => item.id === fait.item)) return false
       items.add(fait.item)
       return items.size >= exercice.reussite
     })
@@ -266,18 +270,26 @@ function erreursDeLaQuestion(manifeste: Manifeste, question: string): readonly s
   return toutes.find((candidate) => candidate.id === question)?.erreurs ?? []
 }
 
-function reponseSolide(reponse: ReponseVerification): boolean {
+/** Une réponse réussie compte au premier tour : tâche réussie, ou explication et transfert au niveau solide. */
+function reponseReussie(reponse: ReponseVerification): boolean {
   return (
-    reponse.tour === 1 && reponse.compte && (reponse.niveau === 'solide' || reponse.reussi === true)
+    reponse.tour === 1 &&
+    reponse.compte &&
+    (reponse.type === 'tache' ? reponse.reussi === true : reponse.niveau === 'solide')
   )
 }
 
 /**
  * Une erreur s'ouvre quand Amine la coche (l'IA seule n'ouvre rien) et se ferme quand il la décoche
- * ou qu'une réponse solide, au premier tour et qui compte, touche la même erreur dans une série
- * de restitution ou de consolidation, ou dans une vérification valable.
+ * ou qu'une réponse réussie, au premier tour et qui compte, touche la même erreur dans une série
+ * de restitution ou de consolidation, ou dans une vérification retenue par `evaluerVerifications`
+ * (valable, du bon genre et à l'heure : les autres sont ignorées).
  */
-function evaluerErreurs(ordonnes: readonly Fait[], manifeste: Manifeste): string[] {
+function evaluerErreurs(
+  ordonnes: readonly Fait[],
+  manifeste: Manifeste,
+  verificationsRetenues: ReadonlySet<string>,
+): string[] {
   const ouvertes: string[] = []
   const fermer = (erreurs: readonly string[]) => {
     for (const erreur of erreurs) {
@@ -297,8 +309,8 @@ function evaluerErreurs(ordonnes: readonly Fait[], manifeste: Manifeste): string
     ) {
       fermer(erreursDeLaQuestion(manifeste, fait.question))
     }
-    if (fait.type === 'verification_terminee' && fait.valable) {
-      for (const reponse of fait.reponses.filter(reponseSolide)) {
+    if (fait.type === 'verification_terminee' && verificationsRetenues.has(fait.id)) {
+      for (const reponse of fait.reponses.filter(reponseReussie)) {
         fermer(erreursDeLaQuestion(manifeste, reponse.question))
       }
     }
@@ -311,13 +323,7 @@ function evaluerErreurs(ordonnes: readonly Fait[], manifeste: Manifeste): string
 /** Une explication solide, une tâche réussie et un transfert solide, au premier tour et qui comptent. */
 function compositionReussie(reponses: readonly ReponseVerification[]): boolean {
   const reussit = (type: ReponseVerification['type']) =>
-    reponses.some(
-      (reponse) =>
-        reponse.type === type &&
-        reponse.tour === 1 &&
-        reponse.compte &&
-        (type === 'tache' ? reponse.reussi === true : reponse.niveau === 'solide'),
-    )
+    reponses.some((reponse) => reponse.type === type && reponseReussie(reponse))
   return reussit('explication') && reussit('tache') && reussit('transfert')
 }
 
@@ -333,6 +339,7 @@ function evaluerVerifications(ordonnes: readonly Fait[], provisoire: string, reg
   let dateAcquis = provisoire
   let retest: string | null = null
   let echecs = 0
+  const retenues = new Set<string>()
   for (const fait of ordonnes) {
     if (fait.type !== 'verification_terminee' || !fait.valable) continue
     const verification = fait.verification === 'verification'
@@ -340,6 +347,7 @@ function evaluerVerifications(ordonnes: readonly Fait[], provisoire: string, reg
     const delai = verification ? reglages.delaiVerificationJours : reglages.delaiRetestJours
     const depart = verification ? provisoire : dateAcquis
     if (jour(fait.date) < ajouterJours(jour(depart), delai)) continue
+    retenues.add(fait.id)
     if (compositionReussie(fait.reponses)) {
       echecs = 0
       if (verification) {
@@ -360,7 +368,7 @@ function evaluerVerifications(ordonnes: readonly Fait[], provisoire: string, reg
       }
     }
   }
-  return { palier, dateAcquis, retest, echecs }
+  return { palier, dateAcquis, retest, echecs, retenues }
 }
 
 // --- Calcul du bloc --------------------------------------------------------
@@ -388,7 +396,6 @@ export function calculerBloc(
   const ordonnes = ordonner(faits, manifeste.bloc)
   const jour = (instant: string) => jourDe(instant, reglages.fuseau, reglages.heureBascule)
   const restitution = evaluerRestitution(ordonnes, manifeste)
-  const erreursOuvertes = evaluerErreurs(ordonnes, manifeste)
   const manque: Manque[] = []
 
   const consolidation: Verdict = restitution.vu
@@ -410,6 +417,11 @@ export function calculerBloc(
       : null
   const verifications =
     provisoire === null ? null : evaluerVerifications(ordonnes, provisoire, reglages)
+  const erreursOuvertes = evaluerErreurs(
+    ordonnes,
+    manifeste,
+    verifications?.retenues ?? new Set<string>(),
+  )
 
   if (provisoire !== null && verifications !== null) {
     const echeance = ajouterJours(

@@ -2,7 +2,7 @@ import fc from 'fast-check'
 import { describe, expect, it } from 'vitest'
 import type { Niveau, Statut } from '@janus/contrats'
 import { apres, DEBUT, fabrique, MANIFESTE, REGLAGES } from './fabrique.ts'
-import type { Fait } from './faits.ts'
+import type { Fait, ReponseVerification } from './faits.ts'
 import { calculerBloc } from './statut.ts'
 
 const NIVEAUX: readonly Niveau[] = ['solide', 'partiel', 'fragile', 'pas_encore']
@@ -10,11 +10,11 @@ const SERIES = ['restitution', 'consolidation', 'rappel'] as const
 const QUESTIONS = [...MANIFESTE.restitution, ...MANIFESTE.consolidation, ...MANIFESTE.rappel].map(
   (q) => q.id,
 )
-const REPONSES_DE_VERIFICATION = [
+const REPONSES_DE_VERIFICATION: ReponseVerification[] = [
   { type: 'explication', question: 'DE1', tour: 1, niveau: 'solide', compte: true },
   { type: 'tache', question: 'DT1', tour: 1, reussi: true, compte: true },
   { type: 'transfert', question: 'DR1', tour: 1, niveau: 'solide', compte: true },
-] as const
+]
 
 /** Un fait au hasard parmi tous les types, avec des dates sur 60 jours à partir de DEBUT. */
 const faitAleatoire: fc.Arbitrary<Fait> = fc

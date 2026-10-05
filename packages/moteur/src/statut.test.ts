@@ -12,7 +12,9 @@ import {
 import type { Fabrique } from './fabrique.ts'
 import { accesBloc, calculerBloc } from './statut.ts'
 import { jourDe } from './temps.ts'
-import type { Fait } from './faits.ts'
+import { Fait as SchemaFait } from '@janus/contrats'
+import type { Niveau } from '@janus/contrats'
+import type { Fait, ReponseVerification } from './faits.ts'
 
 function calcul(faits: readonly Fait[], maintenant: string = apres(DEBUT, 60)) {
   return calculerBloc(faits, MANIFESTE, REGLAGES, maintenant)
@@ -336,6 +338,59 @@ describe('la consolidation', () => {
   })
 })
 
+describe('les faits sur des éléments qui ne sont pas dans le manifeste', () => {
+  it('une consolidation sur des questions inconnues ne compte pas', () => {
+    const f = fabrique()
+    const inconnues = ['X1', 'X2', 'X3'].map((question, i) =>
+      f.correction(apres(DEBUT, 0, 120 + i), 'consolidation', question, {}),
+    )
+    const faits = [
+      ...f.pratique(DEBUT),
+      f.atelier(DEBUT),
+      ...f.restitution(apres(DEBUT, 0, 30)),
+      ...inconnues,
+    ]
+    expect(codes(faits, apres(DEBUT, 0, 200))).toEqual(['consolidation_a_faire'])
+  })
+
+  it('une question de restitution ou de rappel ne remplace pas une question de consolidation', () => {
+    const f = fabrique()
+    const autres = ['R1', 'R2', 'RA1'].map((question, i) =>
+      f.correction(apres(DEBUT, 0, 120 + i), 'consolidation', question, {}),
+    )
+    const faits = [
+      ...f.pratique(DEBUT),
+      f.atelier(DEBUT),
+      ...f.restitution(apres(DEBUT, 0, 30)),
+      ...autres,
+    ]
+    expect(calcul(faits, apres(DEBUT, 0, 200)).statut).toBe('vu')
+  })
+
+  it('des résultats de pratique sur des items inconnus ne comptent pas', () => {
+    const f = fabrique()
+    const inconnus = ['X1', 'X2'].map((item, i) =>
+      f.fait(apres(DEBUT, 0, i), {
+        type: 'pratique_resultat',
+        exercice: 'PR1',
+        item,
+        reussi: true,
+        aide: 0,
+      }),
+    )
+    const faits = [...inconnus, f.atelier(DEBUT), ...f.restitution(apres(DEBUT, 0, 30))]
+    expect(codes(faits)).toContain('pratique_aide')
+  })
+
+  it('tous les faits des cas d’acceptation passent le schéma de contrats', () => {
+    for (const cas of CAS_ACCEPTATION) {
+      if (cas.genre === 'statut') {
+        for (const fait of cas.faits) expect(SchemaFait.safeParse(fait).success).toBe(true)
+      }
+    }
+  })
+})
+
 describe('la pratique et l’atelier', () => {
   it('chaque exercice doit atteindre sa règle à l’aide 0, sur des items différents', () => {
     const f = fabrique()
@@ -477,36 +532,57 @@ describe('les erreurs critiques', () => {
     expect(calcul(faits).erreursOuvertes).toEqual(['E1'])
   })
 
-  it('une vérification valable ferme l’erreur par une explication solide ou une tâche réussie', () => {
+  it('une vérification retenue ferme l’erreur par une réponse réussie du premier tour', () => {
     const f = fabrique()
-    // La vérification type contient DE1 (E1), DT1 (aucune), DR1 (aucune) : on cible E1 avec une réponse sur mesure.
-    const sur = (
-      question: string,
-      reponse: { niveau?: 'solide'; reussi?: boolean; tour?: number; compte?: boolean },
+    const base = jusquaProvisoire(f)
+    const verification = (
+      reponse: ReponseVerification,
+      options: { jours?: number; verification?: 'verification' | 'retest'; valable?: boolean } = {},
     ) =>
-      f.fait(apres(DEBUT, 1), {
+      f.fait(apres(DEBUT, options.jours ?? 3), {
         type: 'verification_terminee',
-        verification: 'verification',
-        valable: true,
-        reponses: [{ type: 'explication', question, tour: 1, compte: true, ...reponse }],
+        verification: options.verification ?? 'verification',
+        valable: options.valable ?? true,
+        reponses: [reponse],
       })
-    const ouverte = f.cochee(DEBUT, 'E1')
-    expect(calcul([ouverte, sur('DE1', { niveau: 'solide' })]).erreursOuvertes).toEqual([])
-    expect(calcul([ouverte, sur('DE1', { reussi: true })]).erreursOuvertes).toEqual([])
-    expect(calcul([ouverte, sur('DE1', { reussi: false })]).erreursOuvertes).toEqual(['E1'])
-    expect(calcul([ouverte, sur('DE1', { niveau: 'solide', tour: 2 })]).erreursOuvertes).toEqual([
-      'E1',
-    ])
-    expect(
-      calcul([ouverte, sur('DE1', { niveau: 'solide', compte: false })]).erreursOuvertes,
-    ).toEqual(['E1'])
-    const invalide = f.fait(apres(DEBUT, 1), {
-      type: 'verification_terminee',
-      verification: 'verification',
-      valable: false,
-      reponses: [{ type: 'explication', question: 'DE1', tour: 1, compte: true, niveau: 'solide' }],
+    const ouvertes = (erreur: string, fait: Fait) =>
+      calcul([...base, f.cochee(apres(DEBUT, 1), erreur), fait], apres(DEBUT, 40)).erreursOuvertes
+    const explication = (niveau: Niveau | null = 'solide'): ReponseVerification => ({
+      type: 'explication',
+      question: 'DE1',
+      tour: 1,
+      compte: true,
+      ...(niveau === null ? {} : { niveau }),
     })
-    expect(calcul([ouverte, invalide]).erreursOuvertes).toEqual(['E1'])
+    const tache = (
+      reussi: boolean,
+      extra: { tour?: number; compte?: boolean } = {},
+    ): ReponseVerification => ({
+      type: 'tache',
+      question: 'DT2',
+      tour: extra.tour ?? 1,
+      compte: extra.compte ?? true,
+      reussi,
+    })
+
+    expect(ouvertes('E1', verification(explication()))).toEqual([])
+    expect(ouvertes('E2', verification(tache(true)))).toEqual([])
+    // Réponse pas assez bonne, ou qui ne compte pas.
+    expect(ouvertes('E2', verification(tache(false)))).toEqual(['E2'])
+    expect(ouvertes('E2', verification(tache(true, { tour: 2 })))).toEqual(['E2'])
+    expect(ouvertes('E2', verification(tache(true, { compte: false })))).toEqual(['E2'])
+    expect(ouvertes('E1', verification(explication('partiel')))).toEqual(['E1'])
+    expect(ouvertes('E1', verification(explication(null)))).toEqual(['E1'])
+    // Vérification que le calcul ignore : invalide, trop tôt, ou retest alors que le bloc n’est pas encore acquis.
+    expect(ouvertes('E1', verification(explication(), { valable: false }))).toEqual(['E1'])
+    expect(ouvertes('E1', verification(explication(), { jours: 2 }))).toEqual(['E1'])
+    expect(ouvertes('E1', verification(explication(), { verification: 'retest' }))).toEqual(['E1'])
+  })
+
+  it('une vérification avant que le bloc soit acquis provisoirement ne ferme rien', () => {
+    const f = fabrique()
+    const faits = [f.cochee(DEBUT, 'E1'), f.verification(apres(DEBUT, 5))]
+    expect(calcul(faits, apres(DEBUT, 6)).erreursOuvertes).toEqual(['E1'])
   })
 
   it('un bloc revient au statut que ses preuves justifient une fois l’erreur fermée', () => {

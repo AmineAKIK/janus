@@ -1,7 +1,8 @@
 import { Manifeste, Reglages } from '@janus/contrats'
 import type { Aide, Niveau, Serie, Statut, TypeVerification } from '@janus/contrats'
 import demo from '@janus/contrats/fixtures/manifeste-demo.json'
-import type { Fait } from './faits.ts'
+import type { Fait, ReponseVerification } from './faits.ts'
+import { instantEnIso, instantEnMs } from './temps.ts'
 
 // Aides à l'écriture des tests et des cas d'acceptation : ce fichier n'est pas du code du moteur.
 
@@ -14,7 +15,7 @@ export const DEBUT = '2026-06-01T10:00:00Z'
 
 /** `iso` décalé de `jours` jours et `minutes` minutes. */
 export function apres(iso: string, jours: number, minutes = 0): string {
-  return new Date(Date.parse(iso) + (jours * 1440 + minutes) * 60_000).toISOString()
+  return instantEnIso(instantEnMs(iso) + (jours * 1440 + minutes) * 60_000)
 }
 
 type Sans<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never
@@ -54,12 +55,11 @@ export function fabrique(bloc: string = MANIFESTE.bloc) {
       erreursIa: options.erreursIa ?? [],
     })
 
-  const reponses = (transfert: Niveau, tache: boolean) =>
-    [
-      { type: 'explication', question: 'DE1', tour: 1, niveau: 'solide', compte: true },
-      { type: 'tache', question: 'DT1', tour: 1, reussi: tache, compte: true },
-      { type: 'transfert', question: 'DR1', tour: 1, niveau: transfert, compte: true },
-    ] as const
+  const reponses = (transfert: Niveau, tache: boolean): ReponseVerification[] => [
+    { type: 'explication', question: 'DE1', tour: 1, niveau: 'solide', compte: true },
+    { type: 'tache', question: 'DT1', tour: 1, reussi: tache, compte: true },
+    { type: 'transfert', question: 'DR1', tour: 1, niveau: transfert, compte: true },
+  ]
 
   return {
     fait,
