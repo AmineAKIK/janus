@@ -8,8 +8,8 @@ interface ProprietesApp {
 export function App({ commit }: ProprietesApp) {
   return (
     <main className={styles.page}>
-      <h1 className={styles.titre}>Janus</h1>
-      <p className={styles.commit}>{commit ?? 'local'}</p>
+      <h1 className={[styles.titre, 'texte-titre-28'].join(' ')}>Janus</h1>
+      <p className={[styles.commit, 'texte-legende-12'].join(' ')}>{commit ?? 'local'}</p>
     </main>
   )
 }

@@ -2,15 +2,15 @@ import '@janus/ui/tokens.css'
 import '@janus/ui/typographie.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { App } from './App.tsx'
+import { Vitrine } from './Vitrine.tsx'
 
 const racine = document.getElementById('racine')
 if (racine === null) {
-  throw new Error('Élément #racine introuvable dans index.html')
+  throw new Error('Élément #racine introuvable dans vitrine.html')
 }
 
 createRoot(racine).render(
   <StrictMode>
-    <App commit={import.meta.env.VITE_COMMIT} />
+    <Vitrine />
   </StrictMode>,
 )
