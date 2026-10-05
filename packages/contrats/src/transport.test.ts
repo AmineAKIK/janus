@@ -5,6 +5,7 @@ import {
   ErreurDonnees,
   nomRoute,
   remplirChemin,
+  lireEntree,
   validerEntree,
   validerSortie,
 } from './transport.ts'
@@ -121,5 +122,18 @@ describe('ErreurApi', () => {
     expect(erreur).toBeInstanceOf(Error)
     expect(erreur).toMatchObject({ status: 429, code: 'trop_de_requetes', retryAfter: 60 })
     expect(erreur.message).toContain('Trop de requêtes (429)')
+  })
+})
+
+describe('lireEntree', () => {
+  it('rend les parties validées, avec leur type', () => {
+    const entree = lireEntree(
+      CONNEXION,
+      validerEntree(CONNEXION, { corps: { nom_utilisateur: 'amine', mot_de_passe: 'x' } }),
+    )
+
+    expectTypeOf(entree.corps.nom_utilisateur).toBeString()
+    expect(entree.corps).toEqual({ nom_utilisateur: 'amine', mot_de_passe: 'x' })
+    expect(entree.params).toBeUndefined()
   })
 })

@@ -4,7 +4,7 @@ import { creerOutilsDemo } from '../demo/outils.ts'
 import { etatGraine } from '../demo/graine.ts'
 import { creerMagasin } from '../demo/store.ts'
 import { creerTransportDemo } from '../demo/transportDemo.ts'
-import { ROUTES_DEMO } from '../demo/routes/index.ts'
+import { creerRoutesDemo } from '../demo/routes/index.ts'
 import { creerTransportHttp } from './transportHttp.ts'
 
 export type ModeTransport = 'demo' | 'http'
@@ -33,6 +33,11 @@ function stockageDisponible(): Storage | null {
   }
 }
 
+/** L'adresse absolue du dossier des fiches, qui suit `base` de Vite (GitHub Pages sert sous /janus/). */
+function racineFiches(): string {
+  return new URL(`${import.meta.env.BASE_URL}fiches/`, window.location.href).href
+}
+
 /** Le transport choisi par `VITE_TRANSPORT` : tout le reste de l'appli ne connaît que `Transport`. */
 export function creerTransport(env: EnvironnementApi, options: OptionsTransport = {}): Transport {
   if (modeTransport(env.VITE_TRANSPORT) === 'http') {
@@ -56,5 +61,9 @@ export function creerTransport(env: EnvironnementApi, options: OptionsTransport 
     graine: etatGraine,
     apres: options.apresChangementDemo,
   })
-  return creerTransportDemo({ magasin, horloge, routes: ROUTES_DEMO })
+  return creerTransportDemo({
+    magasin,
+    horloge,
+    routes: creerRoutesDemo({ racineFiches: racineFiches() }),
+  })
 }

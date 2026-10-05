@@ -15,6 +15,16 @@ export type EntreeRoute<D extends DefinitionRoute> = Partie<D, 'params'> &
   Partie<D, 'requete'> &
   Partie<D, 'corps'>
 
+type PartieLue<D extends DefinitionRoute, K extends PartieDEntree> =
+  D extends Record<K, infer S extends z.ZodType> ? z.output<S> : undefined
+
+/** L'entrée telle qu'une route la lit, une fois validée : ses valeurs ont le type des schémas de la route. */
+export interface EntreeLue<D extends DefinitionRoute> {
+  readonly params: PartieLue<D, 'params'>
+  readonly requete: PartieLue<D, 'requete'>
+  readonly corps: PartieLue<D, 'corps'>
+}
+
 /** Ce que l'appelant reçoit : la réponse validée, ou `null` pour une réponse sans corps. */
 export type SortieRoute<D extends DefinitionRoute> = D['reponse'] extends z.ZodType
   ? z.output<D['reponse']>
@@ -137,4 +147,18 @@ export function remplirChemin(chemin: string, params: Record<string, unknown> | 
     if (typeof valeur !== 'string') throw new Error(`Paramètre « ${nom} » manquant pour ${chemin}`)
     return encodeURIComponent(valeur)
   })
+}
+
+/** Redonne leur type aux parties d'une entrée déjà validée par `validerEntree` (même schéma, même résultat). */
+export function lireEntree<D extends DefinitionRoute>(
+  route: D,
+  entree: EntreeValidee,
+): EntreeLue<D> {
+  const lire = (schema: z.ZodType | undefined, valeur: unknown): unknown =>
+    schema === undefined ? undefined : schema.parse(valeur)
+  return {
+    params: lire(route.params, entree.params),
+    requete: lire(route.requete, entree.requete),
+    corps: lire(route.corps, entree.corps),
+  } as EntreeLue<D>
 }

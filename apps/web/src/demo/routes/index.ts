@@ -1,4 +1,11 @@
 import type { RoutesDemo } from '../transportDemo.ts'
+import { routesCatalogueDemo } from './catalogue.ts'
+import type { OptionsCatalogue } from './catalogue.ts'
+import { ROUTES_COMPTE_DEMO } from './compte.ts'
 
-/** Les routes de démo ; chaque PR de routes en ajoute (authentification, catalogue, événements...). */
-export const ROUTES_DEMO: RoutesDemo = {}
+export type OptionsRoutesDemo = OptionsCatalogue
+
+/** Les routes de démo ; chaque PR de routes en ajoute (événements, corrections, apprentissage...). */
+export function creerRoutesDemo(options: OptionsRoutesDemo): RoutesDemo {
+  return Object.fromEntries([...ROUTES_COMPTE_DEMO, ...routesCatalogueDemo(options)])
+}
