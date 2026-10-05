@@ -97,6 +97,8 @@ export function creerPont(options: OptionsPont = {}): Pont {
   const fenetre = options.fenetre ?? window
   const parent = options.parent ?? fenetre.parent
   const maintenant = options.maintenant ?? maintenantMs
+  // Une fiche ouverte seule dans un navigateur est sa propre fenêtre parente : personne à qui parler.
+  const seule = parent === fenetre
 
   let contexte: { bloc: string; version: number } | null = null
   let autonome: Autonome | undefined
@@ -124,14 +126,14 @@ export function creerPont(options: OptionsPont = {}): Pont {
     const resultat = MessagePage.safeParse(construire(type, donnees))
     if (!resultat.success) return refuser(`« ${type} » est mal formé.`, resultat.error.issues)
     envoyes.set(resultat.data.id, resultat.data)
-    parent.postMessage(resultat.data, '*')
+    if (!seule) parent.postMessage(resultat.data, '*')
     return resultat.data.id
   }
 
   function renvoyer(id: string) {
     const message = envoyes.get(id)
     if (message === undefined) return false
-    parent.postMessage(message, '*')
+    if (!seule) parent.postMessage(message, '*')
     return true
   }
 

@@ -140,6 +140,22 @@ describe('poignée de main', () => {
   })
 })
 
+describe('fiche ouverte seule', () => {
+  it('ne s’envoie rien à elle-même et passe en mode autonome', async () => {
+    const erreur = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    const envoye = vi.spyOn(window, 'postMessage')
+    const pont = creerPont({ fenetre: window, parent: window })
+    const demarrage = pont.demarrer({ manifeste: MANIFESTE })
+
+    expect(pont.envoyer('etape.vue', { etape: 'ET1' })).not.toBeNull()
+    await vi.advanceTimersByTimeAsync(2000)
+
+    await expect(demarrage).resolves.toMatchObject({ mode: 'autonome' })
+    expect(envoye).not.toHaveBeenCalled()
+    expect(erreur).not.toHaveBeenCalled()
+  })
+})
+
 describe('messages reçus', () => {
   it('ne lit que les messages venant de la fenêtre parente', () => {
     const { pont, depuisParent } = monter()

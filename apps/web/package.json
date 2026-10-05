@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "pnpm --filter @janus/pont build && tsc && vite build && node ../../packages/pont/scripts/injecter.ts dist/fiches/demo/fiche-demo.html ../../packages/pont/dist/pont.js",
     "preview": "vite preview --port 4173 --strictPort",
     "typecheck": "tsc",
     "e2e": "playwright test",
@@ -19,6 +19,7 @@
     "react-dom": "^19.3.0"
   },
   "devDependencies": {
+    "@janus/pont": "workspace:*",
     "@playwright/test": "^1.63.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
