@@ -56,3 +56,22 @@ export const TEXTES_DETAIL = {
   ouvrir: 'Ouvrir le bloc',
   reprendre: 'Reprendre',
 } as const
+
+export const TEXTES_PREREQUIS = {
+  titre: 'Prérequis manquant',
+  fermer: 'Fermer',
+  champ: 'Pourquoi l’ouvrir quand même ?',
+  exemple: 'Ex. : je veux seulement survoler le sujet',
+  ouvrirQuandMeme: 'Ouvrir quand même',
+  raisonTropCourte: 'Écris au moins 3 caractères.',
+  erreurServeur: 'Impossible d’ouvrir le bloc. Réessaie.',
+} as const
+
+export const RAISON_MIN = 3
+
+export const texteConseil = (manquants: readonly string[]) =>
+  manquants.length === 1
+    ? `${manquants[0] ?? ''} n’est pas encore acquis provisoirement. La méthode conseille de le consolider d’abord.`
+    : `${manquants.join(', ')} ne sont pas encore acquis provisoirement. La méthode conseille de les consolider d’abord.`
+
+export const texteAllerA = (code: string) => `Aller à ${code}`

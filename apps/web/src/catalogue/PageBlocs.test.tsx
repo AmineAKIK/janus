@@ -1,3 +1,4 @@
+import { ROUTES } from '@janus/contrats'
 import { createMemoryHistory } from '@tanstack/react-router'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -163,6 +164,100 @@ describe('Blocs d’un module', () => {
       expect(
         screen.queryByRole('complementary', { name: 'Détail du bloc' }),
       ).not.toBeInTheDocument()
+    })
+
+    it('ouvre sans dialogue un bloc dont les prérequis sont acquis', async () => {
+      const utilisateur = userEvent.setup()
+      const { routeur } = await afficher('/modules/M1?detail=B05')
+      await screen.findByRole('complementary', { name: 'Détail du bloc' })
+
+      await utilisateur.click(screen.getByRole('button', { name: 'Ouvrir le bloc' }))
+
+      await waitFor(() => {
+        expect(routeur.state.location.pathname).toBe('/blocs/B05')
+      })
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('prérequis manquants', () => {
+    async function ouvrirLeDialogue() {
+      const utilisateur = userEvent.setup()
+      const banc = await afficher('/modules/M1?detail=B08')
+      await screen.findByRole('complementary', { name: 'Détail du bloc' })
+      await utilisateur.click(screen.getByRole('button', { name: 'Ouvrir le bloc' }))
+      return { ...banc, utilisateur, dialogue: await screen.findByRole('dialog') }
+    }
+
+    it('demande une raison : conseil, champ obligatoire, « Ouvrir quand même » inactif', async () => {
+      const { dialogue } = await ouvrirLeDialogue()
+
+      expect(within(dialogue).getByRole('heading', { name: 'Prérequis manquant' })).toBeVisible()
+      expect(
+        within(dialogue).getByText(
+          'B03, B04 ne sont pas encore acquis provisoirement. La méthode conseille de les consolider d’abord.',
+        ),
+      ).toBeVisible()
+      expect(within(dialogue).getByLabelText('Pourquoi l’ouvrir quand même ?')).toHaveFocus()
+      expect(within(dialogue).getByRole('button', { name: 'Ouvrir quand même' })).toBeDisabled()
+    })
+
+    it('refuse une raison de moins de 3 caractères', async () => {
+      const { dialogue, utilisateur } = await ouvrirLeDialogue()
+
+      await utilisateur.type(
+        within(dialogue).getByLabelText('Pourquoi l’ouvrir quand même ?'),
+        'ok',
+      )
+      expect(within(dialogue).getByRole('button', { name: 'Ouvrir quand même' })).toBeDisabled()
+
+      await utilisateur.type(within(dialogue).getByLabelText('Pourquoi l’ouvrir quand même ?'), '!')
+      expect(within(dialogue).getByRole('button', { name: 'Ouvrir quand même' })).toBeEnabled()
+    })
+
+    it('avec une raison, ouvre le bloc et enregistre la raison', async () => {
+      const { dialogue, utilisateur, routeur, transport, magasin } = await ouvrirLeDialogue()
+
+      await utilisateur.type(
+        within(dialogue).getByLabelText('Pourquoi l’ouvrir quand même ?'),
+        'Je connais déjà le sujet',
+      )
+      await utilisateur.click(within(dialogue).getByRole('button', { name: 'Ouvrir quand même' }))
+
+      await waitFor(() => {
+        expect(routeur.state.location.pathname).toBe('/blocs/B08')
+      })
+      const bloc = await transport.appeler(ROUTES['GET /blocs/:id'], { params: { id: 'B08' } })
+      expect(bloc.statut).toBe('en_cours')
+      const ouverture = magasin
+        .lire()
+        .faits.find((fait) => fait.bloc === 'B08' && fait.type === 'bloc_ouvert')
+      expect(ouverture).toMatchObject({
+        horsPrerequis: true,
+        raison: 'Je connais déjà le sujet',
+      })
+    })
+
+    it('Échap ferme sans ouvrir le bloc et rend le focus au bouton', async () => {
+      const { utilisateur, transport } = await ouvrirLeDialogue()
+
+      await utilisateur.keyboard('{Escape}')
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Ouvrir le bloc' })).toHaveFocus()
+      const bloc = await transport.appeler(ROUTES['GET /blocs/:id'], { params: { id: 'B08' } })
+      expect(bloc.statut).toBe('non_commence')
+    })
+
+    it('« Aller à B03 » ferme le dialogue et affiche B03', async () => {
+      const { dialogue, utilisateur, routeur } = await ouvrirLeDialogue()
+
+      await utilisateur.click(within(dialogue).getByRole('button', { name: 'Aller à B03' }))
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      await waitFor(() => {
+        expect(routeur.state.location.search).toEqual({ detail: 'B03' })
+      })
     })
   })
 })

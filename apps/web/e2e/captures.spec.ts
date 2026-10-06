@@ -28,6 +28,10 @@ for (const ecran of ecrans) {
         await page.goto(ecran.chemin)
         if (ecran.interrupteurs !== undefined) await activerInterrupteurs(page, ecran.interrupteurs)
         await expect(page.getByRole('heading', { level: 1, name: ecran.etat })).toBeVisible()
+        for (const nom of ecran.clics ?? []) {
+          await page.getByRole('button', { name: nom, exact: true }).click()
+        }
+        if (ecran.clics !== undefined) await expect(page.getByRole('dialog')).toBeVisible()
         await page.screenshot({
           path: `captures/${ecran.nom}-${String(taille.width)}-${theme.nom}.png`,
           fullPage: true,
