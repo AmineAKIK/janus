@@ -1,7 +1,8 @@
 import { createMemoryHistory } from '@tanstack/react-router'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { PREMIER_LANCEMENT } from '../demo/routes/banc.ts'
 import { creerRouteur } from '../routes/arbre.tsx'
 import { creerContexteTest } from '../routes/contexteTest.tsx'
 
@@ -25,6 +26,10 @@ async function ouvrirDialogue(utilisateur: ReturnType<typeof userEvent.setup>) {
 }
 
 describe('Compte', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('montre le nom d’utilisateur en lecture seule et l’heure de bascule par défaut', async () => {
     await afficher()
 
@@ -129,6 +134,8 @@ describe('Compte', () => {
   })
 
   it('liste les sessions et déconnecte une autre session, jamais la courante', async () => {
+    // Les sessions de la démo sont datées depuis le premier lancement : le temps réel est figé juste après.
+    vi.useFakeTimers({ toFake: ['Date'], now: Date.parse(PREMIER_LANCEMENT) + 60_000 })
     const utilisateur = userEvent.setup()
     const banc = await afficher()
     const liste = await screen.findByRole('region', { name: 'Sessions ouvertes' })
