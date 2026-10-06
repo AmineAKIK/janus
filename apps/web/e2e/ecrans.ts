@@ -120,7 +120,7 @@ export const ecrans: readonly Ecran[] = [
   {
     nom: 'revision-recto',
     chemin: './#/revision',
-    etat: 'Révision, recto',
+    etat: 'Révision',
     scenario: async (page) => {
       await expect(page.getByRole('button', { name: 'Voir la réponse' })).toBeVisible()
     },
@@ -128,7 +128,7 @@ export const ecrans: readonly Ecran[] = [
   {
     nom: 'revision-verso',
     chemin: './#/revision',
-    etat: 'Révision, verso',
+    etat: 'Révision',
     scenario: async (page) => {
       await page.getByRole('button', { name: 'Voir la réponse' }).click()
       await expect(page.getByRole('button', { name: /^Bien/ })).toBeVisible()
