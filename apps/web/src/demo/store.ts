@@ -33,6 +33,8 @@ export function etatVide(maintenant: string): EtatDemo {
       plafondAtteint: false,
       horsConnexion: false,
       deuxFormations: false,
+      ficheRefusee: false,
+      reseauLent: false,
     },
   }
 }

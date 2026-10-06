@@ -18,6 +18,7 @@ describe('filtrerMessage', () => {
     expect(filtrerMessage({ source: {}, data: message }, CONTEXTE)).toEqual({
       accepte: false,
       refus: 'source_inconnue',
+      pagePrete: false,
     })
   })
 
@@ -42,13 +43,14 @@ describe('filtrerMessage', () => {
     expect(filtrerMessage({ source: FENETRE, data }, CONTEXTE)).toEqual({
       accepte: false,
       refus: 'schema',
+      pagePrete: false,
     })
   })
 
   it('refuse un autre bloc', () => {
     expect(
       filtrerMessage({ source: FENETRE, data: { ...message, bloc: 'D02' } }, CONTEXTE),
-    ).toEqual({ accepte: false, refus: 'bloc' })
+    ).toEqual({ accepte: false, refus: 'bloc', pagePrete: false })
   })
 
   it('accepte page.prete d’une fiche qui ne connaît pas encore son bloc', () => {
@@ -59,9 +61,24 @@ describe('filtrerMessage', () => {
     })
   })
 
+  it('signale un page.prete refusé pour son schéma ou sa version', () => {
+    expect(
+      filtrerMessage(
+        { source: FENETRE, data: { ...EXEMPLES_PAGE['page.prete'], schema: 3 } },
+        CONTEXTE,
+      ),
+    ).toEqual({ accepte: false, refus: 'schema', pagePrete: true })
+    expect(
+      filtrerMessage(
+        { source: FENETRE, data: { ...EXEMPLES_PAGE['page.prete'], version: 9 } },
+        CONTEXTE,
+      ),
+    ).toEqual({ accepte: false, refus: 'version', pagePrete: true })
+  })
+
   it('refuse une autre version du manifeste', () => {
     expect(filtrerMessage({ source: FENETRE, data: { ...message, version: 2 } }, CONTEXTE)).toEqual(
-      { accepte: false, refus: 'version' },
+      { accepte: false, refus: 'version', pagePrete: false },
     )
   })
 })

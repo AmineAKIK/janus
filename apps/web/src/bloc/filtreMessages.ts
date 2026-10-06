@@ -12,7 +12,7 @@ export type RefusMessage = 'source_inconnue' | 'schema' | 'bloc' | 'version'
 
 export type ResultatFiltre =
   | { readonly accepte: true; readonly message: MessagePage }
-  | { readonly accepte: false; readonly refus: RefusMessage }
+  | { readonly accepte: false; readonly refus: RefusMessage; readonly pagePrete: boolean }
 
 /**
  * Décide si un message reçu par l'appli vient bien de la fiche affichée : la source est la fenêtre
@@ -24,15 +24,19 @@ export function filtrerMessage(
   evenement: { readonly source: unknown; readonly data: unknown },
   contexte: ContexteFiltre,
 ): ResultatFiltre {
+  const { data } = evenement
+  const pagePrete =
+    typeof data === 'object' && data !== null && 'type' in data && data.type === 'page.prete'
+  const refuse = (refus: RefusMessage): ResultatFiltre => ({ accepte: false, refus, pagePrete })
   if (evenement.source === null || evenement.source !== contexte.fenetreFiche) {
-    return { accepte: false, refus: 'source_inconnue' }
+    return refuse('source_inconnue')
   }
-  const lecture = MessagePage.safeParse(evenement.data)
-  if (!lecture.success) return { accepte: false, refus: 'schema' }
+  const lecture = MessagePage.safeParse(data)
+  if (!lecture.success) return refuse('schema')
   // Avant `etat.init`, la fiche ne connaît que son manifeste embarqué : son `page.prete` porte donc
   // le bloc de ce manifeste (la fiche de démonstration sert tous les blocs).
   if (lecture.data.type !== 'page.prete' && lecture.data.bloc !== contexte.bloc)
-    return { accepte: false, refus: 'bloc' }
-  if (lecture.data.version !== contexte.version) return { accepte: false, refus: 'version' }
+    return refuse('bloc')
+  if (lecture.data.version !== contexte.version) return refuse('version')
   return { accepte: true, message: lecture.data }
 }

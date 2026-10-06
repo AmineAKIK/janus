@@ -26,6 +26,13 @@ export interface OptionsCatalogue {
 /** La fiche de démonstration sert tous les blocs : elle prend le bloc et la version dans `etat.init`. */
 const FICHE_DEMO = 'demo/fiche-demo.html'
 
+/** Ce que rend l'interrupteur « Fiche refusée ». */
+const PROBLEMES_DEMO = [
+  'Il manque la question de rappel R2.',
+  'L’étape ET4 n’a pas de titre.',
+  'Deux erreurs critiques portent le même identifiant.',
+]
+
 /** Seul le module 1 est importé dans la démo. */
 const MODULE_DEMO = 'M1'
 
@@ -116,7 +123,7 @@ export function routesCatalogueDemo({ racineFiches }: OptionsCatalogue) {
         module: MODULE_DEMO,
         version: manifeste.version,
         manifeste,
-        problemes: [],
+        problemes: etat.interrupteurs.ficheRefusee ? PROBLEMES_DEMO : [],
         serie_ouverte: serieOuverte(resultat.statut),
         force: resultat.force,
         acces: accesDuBloc(etat, params.id, maintenant),

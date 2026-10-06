@@ -44,6 +44,9 @@ function attendre(ms: number, signal: AbortSignal | undefined): Promise<void> {
   })
 }
 
+/** Le délai de l'interrupteur « Réseau lent ». */
+export const DELAI_RESEAU_LENT_MS = 2000
+
 /**
  * Le faux serveur : le même `Transport` que le HTTP, mais les réponses viennent de fonctions qui
  * lisent et écrivent le store. L'entrée et la sortie sont validées comme avec le vrai serveur.
@@ -75,7 +78,8 @@ export function creerTransportDemo(options: OptionsTransportDemo): Transport {
           detail: 'Connecte-toi pour continuer.',
         })
       }
-      if (delaiMs > 0) await attendre(delaiMs, appel?.signal)
+      const delai = magasin.lire().interrupteurs.reseauLent ? DELAI_RESEAU_LENT_MS : delaiMs
+      if (delai > 0) await attendre(delai, appel?.signal)
       const brute = await reponse({
         magasin,
         horloge,

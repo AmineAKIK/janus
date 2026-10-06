@@ -169,3 +169,68 @@ describe('page d’un bloc', () => {
     expect(screen.queryByText('Chargement de la fiche…')).not.toBeInTheDocument()
   })
 })
+
+describe('fil d’étapes', () => {
+  it('suit etape.vue et cliquer un onglet envoie etape.aller à la page', async () => {
+    const utilisateur = userEvent.setup()
+    const { envoyer, recu } = await afficher()
+    const premier = MANIFESTES_GRAINE['B03']?.etapes[0]?.titre ?? ''
+    expect(screen.getByRole('button', { name: premier })).toHaveAttribute('aria-current', 'step')
+
+    await envoyer(message('etape.vue', { etape: MANIFESTES_GRAINE['B03']?.etapes[2]?.id }))
+    const troisieme = MANIFESTES_GRAINE['B03']?.etapes[2]?.titre ?? ''
+    expect(screen.getByRole('button', { name: troisieme })).toHaveAttribute('aria-current', 'step')
+    expect(screen.getByRole('button', { name: premier }).textContent).toBe(`✓ ${premier}`)
+
+    await utilisateur.click(screen.getByRole('button', { name: premier }))
+    expect(recu).toHaveBeenCalledWith(
+      { type: 'etape.aller', etape: MANIFESTES_GRAINE['B03']?.etapes[0]?.id },
+      '*',
+    )
+  })
+})
+
+describe('fiche refusée', () => {
+  const alerte = () => screen.getByRole('alert')
+
+  it('manifeste avec des problèmes : pas d’iframe, les problèmes sont listés', async () => {
+    const banc = creerContexteTest()
+    banc.magasin.ecrire((etat) => ({
+      ...etat,
+      interrupteurs: { ...etat.interrupteurs, ficheRefusee: true },
+    }))
+    const routeur = creerRouteur(
+      createMemoryHistory({ initialEntries: ['/blocs/B03'] }),
+      banc.contexte,
+    )
+    await act(async () => {
+      render(banc.application(routeur))
+      await routeur.load()
+    })
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Cette fiche ne peut pas s’ouvrir : son manifeste est incomplet (3 problèmes).',
+    )
+    expect(screen.getAllByRole('listitem').length).toBeGreaterThanOrEqual(3)
+    expect(screen.queryByTitle(/^Fiche du bloc/)).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Retour aux blocs' })).toBeVisible()
+  })
+
+  it('page.prete avec un autre schéma : la fiche est retirée', async () => {
+    const { envoyer } = await afficher()
+
+    await envoyer({ ...prete, schema: 3 })
+
+    expect(alerte()).toHaveTextContent('(1 problème)')
+    expect(screen.queryByTitle(/^Fiche du bloc/)).not.toBeInTheDocument()
+  })
+
+  it('page.prete avec une autre version : la fiche est retirée', async () => {
+    const { envoyer } = await afficher()
+
+    await envoyer({ ...prete, version: 7 })
+
+    expect(alerte()).toHaveTextContent('(1 problème)')
+    expect(screen.queryByTitle(/^Fiche du bloc/)).not.toBeInTheDocument()
+  })
+})
