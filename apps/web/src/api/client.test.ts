@@ -51,6 +51,7 @@ describe('creerTransport', () => {
     expect(Object.keys(lireOutilsDemo() ?? {}).sort()).toEqual([
       'avancer',
       'interrupteur',
+      'lire',
       'reinitialiser',
     ])
   })

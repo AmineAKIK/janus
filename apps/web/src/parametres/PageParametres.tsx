@@ -6,6 +6,9 @@ import styles from './Parametres.module.css'
 import { estSection, SECTIONS } from './sections.ts'
 import type { CleSection } from './sections.ts'
 import { SectionCompte } from './sections/Compte.tsx'
+import { SectionDemo } from './sections/Demo.tsx'
+import { SectionDonnees } from './sections/Donnees.tsx'
+import { SectionZone } from './sections/Zone.tsx'
 import { SectionAffichage } from './sections/Affichage.tsx'
 import { SectionRegles } from './sections/Regles.tsx'
 import { SectionRevision } from './sections/Revision.tsx'
@@ -38,6 +41,12 @@ export function PageParametres({ section }: { readonly section?: string }) {
         return <SectionRegles reglages={reglages} />
       case 'affichage':
         return <SectionAffichage />
+      case 'donnees':
+        return <SectionDonnees />
+      case 'zone':
+        return <SectionZone />
+      case 'demo':
+        return <SectionDemo />
     }
   }
 

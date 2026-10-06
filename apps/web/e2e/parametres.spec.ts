@@ -31,4 +31,31 @@ test.describe('paramètres', () => {
     await page.getByRole('link', { name: '← Paramètres' }).click()
     await expect(page.getByRole('navigation', { name: 'Choisis une section' })).toBeVisible()
   })
+
+  test('le panneau de démo avance l’heure de 3 jours', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await ouvrirSession(page)
+    await page.goto('./#/parametres/demo')
+    const heure = page.getByText(/^Heure de démo/)
+    const avant = await heure.textContent()
+
+    await page.getByRole('button', { name: 'Avancer de 3 jours' }).click()
+
+    await expect(heure).not.toHaveText(avant ?? '')
+  })
+
+  test('supprimer le compte demande le mot de passe puis ramène à la connexion', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await ouvrirSession(page)
+    await page.goto('./#/parametres/zone')
+
+    await page.getByRole('button', { name: 'Supprimer mon compte' }).click()
+    const dialogue = page.getByRole('dialog', { name: 'Supprimer mon compte ?' })
+    await dialogue.getByLabel('Mot de passe', { exact: true }).fill('demo-janus')
+    await dialogue.getByRole('button', { name: 'Supprimer définitivement' }).click()
+
+    await expect(page).toHaveURL(/#\/connexion$/)
+  })
 })

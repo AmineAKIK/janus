@@ -4,7 +4,7 @@ import { axe } from '../../tests/axe.ts'
 import { describe, expect, it, vi } from 'vitest'
 import { Bouton, type VarianteBouton } from './Bouton.tsx'
 
-const VARIANTES: readonly VarianteBouton[] = ['principal', 'secondaire', 'texte']
+const VARIANTES: readonly VarianteBouton[] = ['principal', 'secondaire', 'texte', 'danger']
 
 describe('Bouton', () => {
   it.each(VARIANTES)('affiche la variante %s avec son libellé', (variante) => {
