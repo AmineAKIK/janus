@@ -566,6 +566,7 @@
         'carte',
         'explication',
         'pratique',
+        'atelier',
         'restitution',
         'consolidation',
         'bilan',
@@ -664,9 +665,12 @@
       const questions = (serie) =>
         serie === 'restitution' ? manifeste.restitution : manifeste.consolidation
       const restitutionTerminee = () => manifeste.restitution.every((q) => etat.envoyees[q.id])
-      /** Restitution sans support : le cours est masqué jusqu'à la dernière réponse, sauf retour au cours. */
+      /** Restitution sans support : dès la première réponse, le cours est masqué jusqu'à la dernière, sauf retour au cours. */
       const coursMasque = () =>
-        serieOuverte.restitution && !restitutionTerminee() && !etat.retourCours
+        serieOuverte.restitution &&
+        Object.keys(etat.envoyees).length > 0 &&
+        !restitutionTerminee() &&
+        !etat.retourCours
 
       function creer(balise, { dataset = {}, ...proprietes } = {}, ...enfants) {
         const element = Object.assign(document.createElement(balise), proprietes)
@@ -792,6 +796,53 @@
         return section
       }
 
+      function afficherAtelier() {
+        const section = creer(
+          'section',
+          {},
+          creer('h2', { textContent: 'Atelier' }),
+          creer('p', {
+            className: 'discret',
+            textContent: 'Dis si tu as réussi l’atelier, sans aide ou avec le cran d’aide utilisé.',
+          }),
+        )
+        const resultat = creer('p', {
+          className: 'discret',
+          textContent: etat.atelier
+            ? 'Envoyé : ' +
+              (etat.atelier.reussi ? 'réussi' : 'non réussi') +
+              ', aide ' +
+              etat.atelier.aide
+            : '',
+        })
+        const envoyer = (reussi, aide) => {
+          pont.envoyer('atelier.resultat', { reussi, predictions_justes: reussi ? 3 : 0, aide })
+          etat.atelier = { reussi, aide }
+          enregistrer()
+          resultat.textContent = 'Envoyé : ' + (reussi ? 'réussi' : 'non réussi') + ', aide ' + aide
+        }
+        section.append(
+          creer(
+            'div',
+            { className: 'actions' },
+            creer('button', {
+              type: 'button',
+              className: 'bouton',
+              textContent: 'Atelier réussi sans aide',
+              onclick: () => envoyer(true, 0),
+            }),
+            creer('button', {
+              type: 'button',
+              className: 'bouton secondaire',
+              textContent: 'Atelier pas réussi',
+              onclick: () => envoyer(false, 0),
+            }),
+          ),
+          resultat,
+        )
+        return section
+      }
+
       function afficherSerie(serie, titre) {
         if (!serieOuverte[serie])
           return creer(
@@ -903,7 +954,11 @@
             if (correction.niveau === 'solide' || correction.tour >= 2) {
               etat.envoyees[question.id] = { reponse: zone.value, confiance: choisie.value }
               enregistrer()
-              if (serie === 'restitution' && restitutionTerminee()) setTimeout(afficher, 1200)
+              if (serie === 'restitution' && restitutionTerminee())
+                setTimeout(() => {
+                  // Redessiner rouvre le cours : seulement si on est encore à la restitution.
+                  if (etapes.find((e) => e.id === etat.etape)?.type === 'restitution') afficher()
+                }, 1200)
             } else {
               bouton.disabled = false
               bouton.textContent = 'Répondre à la relance'
@@ -988,14 +1043,17 @@
             }),
           )
         } else
-          vue = {
-            carte: afficherCarte,
-            explication: afficherExplication,
-            pratique: afficherPratique,
-            restitution: () => afficherSerie('restitution', 'Restitution'),
-            consolidation: () => afficherSerie('consolidation', 'Consolidation'),
-            bilan: afficherBilan,
-          }[etape.type]()
+          vue =
+            {
+              carte: afficherCarte,
+              explication: afficherExplication,
+              pratique: afficherPratique,
+              atelier: afficherAtelier,
+              restitution: () => afficherSerie('restitution', 'Restitution'),
+              consolidation: () => afficherSerie('consolidation', 'Consolidation'),
+              bilan: afficherBilan,
+            }[etape.type]?.() ??
+            creer('p', { className: 'discret', textContent: 'Cette étape n’est pas dans la démo.' })
         $('contenu').replaceChildren(vue)
       }
 
@@ -1026,6 +1084,13 @@
           serieOuverte = depart.init.serie_ouverte
           $('statut').textContent = 'Statut : ' + depart.init.statut
         }
+        pont.surInit((init) => {
+          const consolidationChangee =
+            serieOuverte.consolidation !== init.serie_ouverte.consolidation
+          serieOuverte = init.serie_ouverte
+          // Redessiner efface les corrections affichées : seulement quand la consolidation s'ouvre.
+          if (consolidationChangee) afficher()
+        })
         if (depart.etat && typeof depart.etat === 'object') etat = { ...etat, ...depart.etat }
         afficher()
       }

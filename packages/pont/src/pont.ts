@@ -82,6 +82,8 @@ export interface Pont {
   surStatut: (rappel: (statut: Statut) => void) => () => void
   surErreur: (rappel: (erreur: ErreurAppli) => void) => () => void
   surEtape: (rappel: (etape: string) => void) => () => void
+  /** Un `etat.init` reçu après le démarrage : les séries ouvertes ont changé (la consolidation s'ouvre). */
+  surInit: (rappel: (init: Init) => void) => () => void
 }
 
 function abonnement<T>(rappels: Set<(valeur: T) => void>) {
@@ -109,6 +111,7 @@ export function creerPont(options: OptionsPont = {}): Pont {
   const rappelsStatut = new Set<(statut: Statut) => void>()
   const rappelsErreur = new Set<(erreur: ErreurAppli) => void>()
   const rappelsEtape = new Set<(etape: string) => void>()
+  const rappelsInit = new Set<(init: Init) => void>()
 
   // --- Envoi -------------------------------------------------------------------------------------
 
@@ -147,7 +150,11 @@ export function creerPont(options: OptionsPont = {}): Pont {
   function recevoir(message: MessageAppli) {
     switch (message.type) {
       case 'etat.init':
-        attenteInit?.(message)
+        if (attenteInit === null) {
+          rappelsInit.forEach((rappel) => {
+            rappel(message)
+          })
+        } else attenteInit(message)
         break
       case 'restitution.correction': {
         const correction = CorrectionRecue.parse(
@@ -291,5 +298,6 @@ export function creerPont(options: OptionsPont = {}): Pont {
     surStatut: abonnement(rappelsStatut),
     surErreur: abonnement(rappelsErreur),
     surEtape: abonnement(rappelsEtape),
+    surInit: abonnement(rappelsInit),
   }
 }

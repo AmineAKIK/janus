@@ -1,8 +1,12 @@
 import { ROUTES } from '@janus/contrats'
 import { BandeauAlerte, Bouton } from '@janus/ui'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLecture } from '../api/requetes.tsx'
 import { BarreBloc } from './BarreBloc.tsx'
+import { EncartBilan } from './EncartBilan.tsx'
+import { EncartConsolidation } from './EncartConsolidation.tsx'
+import { formaterDelai, formaterInstant } from './instant.ts'
+import { instantReel } from '../demo/horlogeDemo.ts'
 import { DialogueRevoirCours } from './DialogueRevoirCours.tsx'
 import { EncartHorsConnexion } from './EncartHorsConnexion.tsx'
 import { useEtatEnvoi } from './useEtatEnvoi.ts'
@@ -26,8 +30,13 @@ function FicheOuverte({
   problemes,
   questions,
   relire,
+  relireBloc,
+  delaiConsolidationMinutes,
 }: {
   readonly relire: () => void
+  /** Relit le bloc sans repartir de zéro : statut, ce qui manque, séries ouvertes. */
+  readonly relireBloc: () => void
+  readonly delaiConsolidationMinutes: number
   readonly etapes: readonly EtapeAffichee[]
   readonly problemes: readonly string[]
   readonly questions: Readonly<Record<SerieVerrou, readonly string[]>>
@@ -38,7 +47,7 @@ function FicheOuverte({
 }) {
   const iframe = useRef<HTMLIFrameElement>(null)
   const { signalerActivite } = useTempsActif(donnees.bloc)
-  const hote = useHoteFiche(donnees, iframe, signalerActivite)
+  const hote = useHoteFiche(donnees, iframe, signalerActivite, relireBloc)
   const envoi = useEtatEnvoi(donnees.bloc)
   const sauvee = donnees.etatPage?.etat['etape']
   const courante =
@@ -60,6 +69,24 @@ function FicheOuverte({
     ).length,
   }
   const verrouillees = etapesVerrouillees(etapes, courante, restantes)
+  const typeCourant = etapes.find(({ id }) => id === courante)?.type
+  const consolidationAttendue =
+    hote.statut.manque.find(({ code }) => code === 'consolidation_trop_tot')?.apres ?? null
+  const montrerConsolidation =
+    typeCourant === 'consolidation' &&
+    !donnees.serieOuverte.consolidation &&
+    consolidationAttendue !== null
+
+  // À l'heure dite, l'appli relit le bloc : la série s'ouvre sans recharger la page.
+  useEffect(() => {
+    if (consolidationAttendue === null) return
+    const attente = Date.parse(consolidationAttendue) - Date.parse(instantReel())
+    const minuteur = setTimeout(relireBloc, Math.min(Math.max(attente, 0) + 1000, 2_147_000_000))
+    return () => {
+      clearTimeout(minuteur)
+    }
+  }, [consolidationAttendue, relireBloc])
+
   const refusee = [
     ...problemes,
     ...(hote.refus === null ? [] : [PROBLEMES_POIGNEE_DE_MAIN[hote.refus]]),
@@ -109,6 +136,19 @@ function FicheOuverte({
             )}
           </div>
         )}
+        {montrerConsolidation && (
+          <EncartConsolidation
+            heure={formaterInstant(consolidationAttendue, instantReel())}
+            delai={formaterDelai(delaiConsolidationMinutes)}
+          />
+        )}
+        {typeCourant === 'bilan' && (
+          <EncartBilan
+            statut={hote.statut.statut}
+            manque={hote.statut.manque}
+            maintenant={instantReel()}
+          />
+        )}
         {envoi.etat === 'attente' && (
           <EncartHorsConnexion derniereReponse={envoi.derniereReponse} />
         )}
@@ -154,6 +194,7 @@ function FicheOuverte({
 /** La page d'un bloc : barre du haut et fiche dans son iframe. */
 export function PageBloc({ blocId }: { readonly blocId: string }) {
   const lecture = useLecture(ROUTES['GET /blocs/:id'], { params: { id: blocId } })
+  const reglages = useLecture(ROUTES['GET /reglages'], {})
   const [relecture, setRelecture] = useState(0)
 
   // Une relecture qui échoue (réseau coupé) ne retire pas la fiche déjà affichée.
@@ -190,6 +231,10 @@ export function PageBloc({ blocId }: { readonly blocId: string }) {
           setRelecture((valeur) => valeur + 1)
         })
       }}
+      relireBloc={() => {
+        void lecture.refetch()
+      }}
+      delaiConsolidationMinutes={reglages.data?.delaiConsolidationMinutes ?? 60}
       donnees={{
         bloc: detail.bloc,
         version: detail.version,

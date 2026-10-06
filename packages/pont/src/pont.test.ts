@@ -201,6 +201,31 @@ describe('messages reçus', () => {
   })
 })
 
+describe('etat.init après le démarrage', () => {
+  it('prévient la page que les séries ouvertes ont changé', async () => {
+    const { pont, depuisParent } = monter()
+    const surInit = vi.fn()
+    pont.surInit(surInit)
+    const demarrage = pont.demarrer({ manifeste: MANIFESTE })
+    const init = {
+      type: 'etat.init',
+      bloc: MANIFESTE.bloc,
+      version: MANIFESTE.version,
+      etat: null,
+      statut: 'vu',
+      serie_ouverte: { restitution: false, consolidation: false },
+    }
+    depuisParent(init)
+    await demarrage
+    expect(surInit).not.toHaveBeenCalled()
+
+    const ouverte = { ...init, serie_ouverte: { restitution: false, consolidation: true } }
+    depuisParent(ouverte)
+
+    expect(surInit).toHaveBeenCalledWith(ouverte)
+  })
+})
+
 describe('validation avant envoi', () => {
   it('n’envoie jamais un message mal formé et le dit en console', () => {
     const { pont, recus } = monter()

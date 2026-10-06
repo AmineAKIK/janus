@@ -19,6 +19,34 @@ export interface Ecran {
   readonly clics?: readonly string[]
 }
 
+/** Répond à toutes les questions de la série affichée par la fiche, avec des mots à soi. */
+async function repondreALaSerie(page: Page) {
+  const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
+  const items = fiche.locator('.item')
+  const nombre = await items.count()
+  for (let rang = 0; rang < nombre; rang++) {
+    const item = items.nth(rang)
+    const libelle = await item.locator('strong').first().innerText()
+    await item
+      .locator('textarea')
+      .fill(
+        `Réponse attendue : ${libelle} . Je l’explique avec mes propres mots, en détail, comme à un camarade.`,
+      )
+    await item.getByLabel('Sûr').check()
+    await item.getByRole('button', { name: 'Envoyer' }).click()
+    await expect(item.locator('.correction')).toBeVisible()
+  }
+}
+
+/** Ouvre le bloc B03 et envoie toute la restitution. */
+async function apresRestitution(page: Page) {
+  const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
+  await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
+  await fiche.getByRole('button', { name: 'Restitution' }).click()
+  await repondreALaSerie(page)
+  await fiche.getByRole('button', { name: 'Consolidation' }).click()
+}
+
 /** Écrans photographiés à chaque PR, en 4 captures chacun. */
 export const ecrans: readonly Ecran[] = [
   { nom: 'vitrine', chemin: './vitrine.html', etat: 'Vitrine' },
@@ -113,6 +141,30 @@ export const ecrans: readonly Ecran[] = [
         .getByRole('button', { name: 'Explication' })
         .click()
       await expect(page.getByRole('dialog', { name: 'Revoir le cours maintenant ?' })).toBeVisible()
+    },
+  },
+  {
+    nom: 'bloc-consolidation',
+    chemin: './#/blocs/B03',
+    etat: 'Ordinateur et composants',
+    titre: 'Page de bloc',
+    scenario: async (page) => {
+      await apresRestitution(page)
+      await expect(page.getByText(/Consolidation disponible à/)).toBeVisible()
+    },
+  },
+  {
+    nom: 'bloc-bilan',
+    chemin: './#/blocs/B03',
+    etat: 'Ordinateur et composants',
+    titre: 'Page de bloc',
+    scenario: async (page) => {
+      await apresRestitution(page)
+      await page
+        .getByRole('navigation', { name: 'Étapes de la fiche' })
+        .getByRole('button', { name: 'Bilan' })
+        .click()
+      await expect(page.getByText(/Statut calculé/)).toBeVisible()
     },
   },
   { nom: 'revision', chemin: './#/revision', etat: 'Révision' },

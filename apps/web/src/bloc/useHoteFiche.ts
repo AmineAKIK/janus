@@ -55,6 +55,8 @@ export function useHoteFiche(
   donnees: DonneesFiche,
   iframe: RefObject<HTMLIFrameElement | null>,
   surActivite?: () => void,
+  /** Appelé quand une correction est rendue : le statut et les séries ouvertes ont pu changer. */
+  surCorrection?: () => void,
 ) {
   const boite = useBoiteEnvoi()
 
@@ -67,6 +69,8 @@ export function useHoteFiche(
   const [conflit, setConflit] = useState(false)
   const rappelActivite = useRef(surActivite)
   rappelActivite.current = surActivite
+  const rappelCorrection = useRef(surCorrection)
+  rappelCorrection.current = surCorrection
   const [refus, setRefus] = useState<CauseRefus | null>(null)
   const [etapeVue, setEtapeVue] = useState<string | null>(null)
   const [etapesVues, setEtapesVues] = useState<readonly string[]>([])
@@ -96,6 +100,41 @@ export function useHoteFiche(
     [vers],
   )
 
+  const envoyerInit = useCallback(() => {
+    const { donnees: courantes, etat, statut: courant } = dernieres.current
+    vers({
+      type: 'etat.init',
+      bloc: courantes.bloc,
+      version: courantes.version,
+      etat,
+      statut: courant.statut,
+      serie_ouverte: courantes.serieOuverte,
+    })
+  }, [vers])
+
+  // Une série qui s'ouvre (ou se ferme) pendant que la page est ouverte : la page le sait aussitôt.
+  const { restitution: restitutionOuverte, consolidation: consolidationOuverte } =
+    donnees.serieOuverte
+  const seriesAvant = useRef(`${String(restitutionOuverte)}:${String(consolidationOuverte)}`)
+  useEffect(() => {
+    const cle = `${String(restitutionOuverte)}:${String(consolidationOuverte)}`
+    if (seriesAvant.current === cle) return
+    seriesAvant.current = cle
+    if (phase === 'prete') envoyerInit()
+  }, [restitutionOuverte, consolidationOuverte, phase, envoyerInit])
+
+  // Le serveur a recalculé le statut (après une correction, ou en relisant le bloc).
+  const cleStatut = `${donnees.statut}:${JSON.stringify(donnees.manque)}`
+  const statutAvant = useRef(cleStatut)
+  useEffect(() => {
+    if (statutAvant.current === cleStatut) return
+    statutAvant.current = cleStatut
+    appliquerStatut({
+      statut: dernieres.current.donnees.statut,
+      manque: dernieres.current.donnees.manque,
+    })
+  }, [cleStatut, appliquerStatut])
+
   useEffect(() => {
     const traiter = (message: MessagePage) => {
       const { donnees: courantes } = dernieres.current
@@ -104,14 +143,7 @@ export function useHoteFiche(
           setPhase('prete')
           if (courantes.etatPage !== null)
             boite.fixerVersion(courantes.bloc, courantes.etatPage.version)
-          vers({
-            type: 'etat.init',
-            bloc: courantes.bloc,
-            version: courantes.version,
-            etat: dernieres.current.etat,
-            statut: dernieres.current.statut.statut,
-            serie_ouverte: courantes.serieOuverte,
-          })
+          envoyerInit()
           return
         default: {
           if (message.type === 'etat.sauver') dernieres.current.etat = message.etat
@@ -135,6 +167,7 @@ export function useHoteFiche(
               surReponse: (reponse) => {
                 if (envoi.route === 'POST /corrections') {
                   vers({ type: 'restitution.correction', ...CorrectionRecue.parse(reponse) })
+                  rappelCorrection.current?.()
                   return
                 }
                 const recalcule = statutDeReponse(envoi.route, reponse)
@@ -187,7 +220,7 @@ export function useHoteFiche(
     return () => {
       window.removeEventListener('message', surMessage)
     }
-  }, [appliquerStatut, boite, iframe, vers])
+  }, [appliquerStatut, boite, envoyerInit, iframe, vers])
 
   // Une fiche qui ne répond pas dans le délai est signalée ; un rechargement repart de zéro.
   useEffect(() => {
