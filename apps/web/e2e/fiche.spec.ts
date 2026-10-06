@@ -46,6 +46,17 @@ test.describe('fiche de démonstration', () => {
     await page.goto(FICHE)
     await expect(page.getByRole('status').first()).toHaveText('Mode autonome', { timeout: 5000 })
 
+    await page.getByRole('button', { name: 'Restitution' }).click()
+    const question = page.locator('.item').first()
+    await question
+      .getByRole('textbox')
+      .fill(
+        'Réponse attendue : Que contient une fiche . Je le dis avec mes propres mots, en détail.',
+      )
+    await question.getByLabel('Sûr').check()
+    await question.getByRole('button', { name: 'Envoyer' }).click()
+    await expect(question.getByText('Niveau : solide')).toBeVisible()
+
     await page.getByRole('button', { name: 'Explication' }).click()
     await expect(page.getByText(/Masqué : la restitution se fait sans le cours/)).toBeVisible()
     await page.getByRole('button', { name: 'Revenir au cours' }).click()

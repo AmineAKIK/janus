@@ -10,7 +10,11 @@ import type { ContexteRouteur } from './garde.ts'
 
 /** Le contexte des routes dans les tests : un faux serveur de démo, connecté ou non. */
 export function creerContexteTest(
-  options: { connecte?: boolean; stockageIndisponible?: boolean } = {},
+  options: {
+    connecte?: boolean
+    stockageIndisponible?: boolean
+    delaiCorrectionMs?: number
+  } = {},
 ) {
   const demo = monterDemo(options)
   const client = creerClientRequetes({ surNonAuthentifie: () => undefined })

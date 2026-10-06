@@ -3,6 +3,7 @@ import { ROUTES_BLOCS_DEMO } from './blocs.ts'
 import { routesCatalogueDemo } from './catalogue.ts'
 import type { OptionsCatalogue } from './catalogue.ts'
 import { ROUTES_COMPTE_DEMO } from './compte.ts'
+import { ROUTES_REGLAGES_DEMO } from './reglages.ts'
 import { routesCorrectionsDemo } from './corrections.ts'
 import type { OptionsCorrections } from './corrections.ts'
 
@@ -15,5 +16,6 @@ export function creerRoutesDemo(options: OptionsRoutesDemo): RoutesDemo {
     ...routesCatalogueDemo(options),
     ...ROUTES_BLOCS_DEMO,
     ...routesCorrectionsDemo(options),
+    ...ROUTES_REGLAGES_DEMO,
   ])
 }

@@ -42,6 +42,7 @@ describe('pont.js', () => {
       'sauver',
       'surErreur',
       'surEtape',
+      'surInit',
       'surStatut',
     ])
   }, 30_000)
