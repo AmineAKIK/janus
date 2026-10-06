@@ -171,10 +171,10 @@ describe('Questions de début de séance', () => {
     const banc = await afficher()
     const corps: unknown[] = []
     const appeler = banc.transport.appeler.bind(banc.transport)
-    banc.transport.appeler = ((route: never, entree: never, options: never) => {
+    banc.transport.appeler = (route: never, entree: never, options: never) => {
       corps.push(entree)
       return appeler(route, entree, options)
-    })
+    }
     await utilisateur.click(screen.getByRole('button', { name: 'Je ne sais pas' }))
     await screen.findByText('Tu as choisi « Je ne sais pas ».')
 
