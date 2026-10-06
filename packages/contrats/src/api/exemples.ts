@@ -145,8 +145,11 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
     reponse: {
       ...statutBloc,
       bloc: 'D01',
+      module: 'M1',
       version: 3,
       manifeste: demo,
+      problemes: [],
+      serie_ouverte: { restitution: true, consolidation: false },
       force: null,
       acces: 'libre',
       preuves: {

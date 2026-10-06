@@ -76,4 +76,17 @@ export default defineConfig(
       ],
     },
   },
+  // Les fiches s'ouvrent dans un bac à sable qui ne laisse que les scripts (jamais `allow-same-origin`).
+  {
+    files: ['apps/web/src/**/*.tsx'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "JSXAttribute[name.name='sandbox'][value.value!='allow-scripts']",
+          message: 'Le sandbox d’une iframe vaut exactement « allow-scripts ».',
+        },
+      ],
+    },
+  },
 )

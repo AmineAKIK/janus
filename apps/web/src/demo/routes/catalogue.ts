@@ -1,3 +1,4 @@
+import type { Statut } from '@janus/contrats'
 import { ErreurApi, ROUTES } from '@janus/contrats'
 import {
   catalogueGraine,
@@ -24,6 +25,20 @@ export interface OptionsCatalogue {
 
 /** La fiche de démonstration sert tous les blocs : elle prend le bloc et la version dans `etat.init`. */
 const FICHE_DEMO = 'demo/fiche-demo.html'
+
+/** Seul le module 1 est importé dans la démo. */
+const MODULE_DEMO = 'M1'
+
+/**
+ * Les séries que la page propose. Règle de la démo (à confirmer dans la PR) : la restitution tant
+ * qu'elle n'est pas faite, la consolidation une fois le bloc vu.
+ */
+function serieOuverte(statut: Statut) {
+  return {
+    restitution: statut === 'non_commence' || statut === 'en_cours' || statut === 'a_reprendre',
+    consolidation: statut === 'vu',
+  }
+}
 
 export function routesCatalogueDemo({ racineFiches }: OptionsCatalogue) {
   const catalogue = catalogueGraine()
@@ -98,8 +113,11 @@ export function routesCatalogueDemo({ racineFiches }: OptionsCatalogue) {
       return {
         ...statutBloc(resultat),
         bloc: params.id,
+        module: MODULE_DEMO,
         version: manifeste.version,
         manifeste,
+        problemes: [],
+        serie_ouverte: serieOuverte(resultat.statut),
         force: resultat.force,
         acces: accesDuBloc(etat, params.id, maintenant),
         preuves: preuvesDuBlocApi(resultat, etat.reglages),

@@ -60,8 +60,14 @@ export type CinqPreuves = z.infer<typeof CinqPreuves>
 const BlocDetail = z.strictObject({
   ...StatutBloc.shape,
   bloc: CodeBloc,
+  /** L'identifiant du module du bloc, pour le lien de retour. */
+  module: Identifiant,
   version: z.number().int().min(1),
   manifeste: Manifeste,
+  /** Les problèmes trouvés dans le manifeste importé : vide si la fiche peut s'ouvrir. */
+  problemes: z.array(Texte),
+  /** Les séries de questions que la page peut proposer en ce moment. */
+  serie_ouverte: z.strictObject({ restitution: z.boolean(), consolidation: z.boolean() }),
   /** Le statut forcé par Amine, s'il y en a un. */
   force: z.strictObject({ statut: Statut, raison: Texte }).nullable(),
   acces: AccesBloc,
