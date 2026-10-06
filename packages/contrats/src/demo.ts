@@ -53,6 +53,23 @@ export const EtatDemo = z.strictObject({
     })
     .nullable()
     .default(null),
+  /** L'état FSRS des cartes déjà vues, par identifiant de carte. */
+  cartes: z
+    .record(
+      Identifiant,
+      z.strictObject({
+        echeance: InstantUtc,
+        stabilite: z.number(),
+        difficulte: z.number(),
+        joursProgrammes: z.number(),
+        etapeApprentissage: z.number(),
+        repetitions: z.number(),
+        oublis: z.number(),
+        phase: z.enum(['nouvelle', 'apprentissage', 'revision', 'reapprentissage']),
+        derniereRevision: InstantUtc.nullable(),
+      }),
+    )
+    .default({}),
   /** Les réponses aux questions de début de séance : de quoi reprendre la série après un départ. */
   rappels: z
     .record(

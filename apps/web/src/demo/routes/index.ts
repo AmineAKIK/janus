@@ -1,6 +1,7 @@
 import type { RoutesDemo } from '../transportDemo.ts'
 import { ROUTES_AUJOURDHUI_DEMO } from './aujourdhui.ts'
 import { ROUTES_BLOCS_DEMO } from './blocs.ts'
+import { ROUTES_CARTES_DEMO } from './cartes.ts'
 import { routesCatalogueDemo } from './catalogue.ts'
 import type { OptionsCatalogue } from './catalogue.ts'
 import { ROUTES_COMPTE_DEMO } from './compte.ts'
@@ -19,6 +20,7 @@ export function creerRoutesDemo(options: OptionsRoutesDemo): RoutesDemo {
     ...ROUTES_BLOCS_DEMO,
     ...ROUTES_AUJOURDHUI_DEMO,
     ...ROUTES_QUESTIONS_DEMO,
+    ...ROUTES_CARTES_DEMO,
     ...routesCorrectionsDemo(options),
     ...ROUTES_REGLAGES_DEMO,
   ])

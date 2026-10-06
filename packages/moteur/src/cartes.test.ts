@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { NoteCarte } from '@janus/contrats'
-import { carteDue, carteNeuve, cartesDuJour, noterCarte } from './cartes.ts'
+import { apercuCarte, carteDue, carteNeuve, cartesDuJour, noterCarte } from './cartes.ts'
 import type { CarteDuBloc, EtatCarte } from './cartes.ts'
 import { apres, DEBUT, REGLAGES } from './fabrique.ts'
 import { instantEnIso, instantEnMs } from './temps.ts'
@@ -160,5 +160,32 @@ describe('cartesDuJour', () => {
     expect(
       cartesDuJour({ ...entree, reglages: zero, nouvellesDejaIntroduites: 0 }).nouvelles,
     ).toEqual([])
+  })
+})
+
+describe('apercuCarte', () => {
+  const reglages = REGLAGES
+  const maintenant = DEBUT
+
+  it('donne pour une carte neuve les délais que noterCarte appliquera', () => {
+    const apercu = apercuCarte(null, maintenant, reglages)
+
+    for (const note of ['a_revoir', 'difficile', 'bien', 'facile'] as const) {
+      const apres = noterCarte(carteNeuve(maintenant), note, maintenant, reglages)
+      expect(Date.parse(apres.echeance) - Date.parse(maintenant)).toBe(apercu[note])
+    }
+  })
+
+  it('donne pour une carte déjà révisée les délais que noterCarte appliquera', () => {
+    const revisee = noterCarte(carteNeuve(maintenant), 'facile', maintenant, reglages)
+    const plusTard = instantEnIso(instantEnMs(DEBUT) + 15 * 24 * 3_600_000)
+    const apercu = apercuCarte(revisee, plusTard, reglages)
+
+    for (const note of ['a_revoir', 'difficile', 'bien', 'facile'] as const) {
+      const apres = noterCarte(revisee, note, plusTard, reglages)
+      expect(Date.parse(apres.echeance) - Date.parse(plusTard)).toBe(apercu[note])
+    }
+    expect(apercu.facile).toBeGreaterThan(apercu.bien)
+    expect(apercu.bien).toBeGreaterThan(apercu.difficile)
   })
 })

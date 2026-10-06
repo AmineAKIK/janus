@@ -107,27 +107,40 @@ export function serieDuJour(magasin: Magasin, maintenant: string) {
   return { jour, questions: tirees }
 }
 
+/** Les cartes à réviser aujourd'hui : les dues, puis les nouvelles dans la limite du réglage. */
+export function cartesDuJourDemo(etat: EtatDemo, maintenant: string) {
+  const { vus, reglages, jourDu } = contexteDuJour(etat, maintenant)
+  const jour = jourDu(maintenant)
+  const introduitesAujourdhui = Object.values(etat.cartes).filter(
+    (carte) =>
+      carte.repetitions === 1 &&
+      carte.derniereRevision !== null &&
+      jourDu(carte.derniereRevision) === jour,
+  ).length
+  return cartesDuJour({
+    cartes: vus.flatMap(({ manifeste }) =>
+      manifeste.cartes.map(({ id }) => ({
+        id: `${manifeste.bloc}:${id}`,
+        bloc: manifeste.bloc,
+        etat: etat.cartes[`${manifeste.bloc}:${id}`] ?? null,
+      })),
+    ),
+    blocsVus: vus.map(({ manifeste }) => manifeste.bloc),
+    nouvellesDejaIntroduites: introduitesAujourdhui,
+    maintenant,
+    reglages,
+  })
+}
+
 export const ROUTES_AUJOURDHUI_DEMO = [
   definir(ROUTES['GET /aujourdhui'], ({ magasin, horloge }) => {
     const etat = magasin.lire()
     const maintenant = horloge.maintenant()
-    const { blocs, derniereActivite, vus, questions, jourDu, reglages } = contexteDuJour(
+    const { blocs, derniereActivite, questions, jourDu, reglages } = contexteDuJour(
       etat,
       maintenant,
     )
-    const cartes = cartesDuJour({
-      cartes: vus.flatMap(({ manifeste }) =>
-        manifeste.cartes.map(({ id }) => ({
-          id: `${manifeste.bloc}:${id}`,
-          bloc: manifeste.bloc,
-          etat: null,
-        })),
-      ),
-      blocsVus: vus.map(({ manifeste }) => manifeste.bloc),
-      nouvellesDejaIntroduites: 0,
-      maintenant,
-      reglages,
-    })
+    const cartes = cartesDuJourDemo(etat, maintenant)
 
     const file = fileDuJour({
       blocs,
