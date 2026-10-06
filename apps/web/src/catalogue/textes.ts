@@ -29,3 +29,17 @@ export const texteModule = (ordre: number, titre: string) => `Module ${String(or
 
 export const texteCompteursModule = (total: number, ouverts: number, acquis: number) =>
   `${accorder(total, 'bloc', 'blocs')} · ${accorder(ouverts, 'ouvert', 'ouverts')} · ${accorder(acquis, 'acquis', 'acquis')}`
+
+export const TEXTES_BLOCS = {
+  titreParDefaut: 'Blocs',
+  filtre: 'Filtrer les blocs',
+  tous: 'Tous',
+  aFaire: 'À faire',
+  aReprendre: 'À reprendre',
+  aucunBlocFiltre: 'Aucun bloc ne correspond à ce filtre.',
+  aucunBloc: 'Aucun bloc dans ce module.',
+  filAriane: 'Fil d’Ariane',
+} as const
+
+export const texteBlocs = (nombre: number) => accorder(nombre, 'bloc', 'blocs')
+export const titreModule = (ordre: number) => `Module ${String(ordre)}`

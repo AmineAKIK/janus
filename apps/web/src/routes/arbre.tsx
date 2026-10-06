@@ -1,5 +1,6 @@
 import { createRootRouteWithContext, createRoute, createRouter } from '@tanstack/react-router'
 import type { RouterHistory } from '@tanstack/react-router'
+import { PageBlocs } from '../catalogue/PageBlocs.tsx'
 import { PageFormations } from '../catalogue/PageFormations.tsx'
 import { PageModules } from '../catalogue/PageModules.tsx'
 import { PageConnexion } from '../connexion/PageConnexion.tsx'
@@ -67,7 +68,11 @@ const module = createRoute({
   path: '/modules/$moduleId',
   validateSearch: validerRechercheModule,
   staticData: { titre: 'Blocs', navigation: 'formations' },
-  component: () => <PageProvisoire titre="Blocs" />,
+  component: function RoutePageBlocs() {
+    const { moduleId } = module.useParams()
+    const { statut, detail } = module.useSearch()
+    return <PageBlocs moduleId={moduleId} statut={statut} detail={detail} />
+  },
 })
 
 const bloc = createRoute({

@@ -29,3 +29,35 @@ test.describe('formations et modules', () => {
     ).toBeVisible()
   })
 })
+
+test.describe('blocs d’un module', () => {
+  test.beforeEach(async ({ page }) => {
+    await ouvrirSession(page)
+  })
+
+  test('les blocs sont groupés par partie et chaque carte annonce son échéance', async ({
+    page,
+  }) => {
+    await page.goto('./#/modules/M1')
+
+    await expect(page.getByRole('heading', { level: 2 })).toHaveCount(5)
+    await expect(page.getByRole('link', { name: /B02/ }).first()).toContainText(
+      'vérification aujourd’hui',
+    )
+    await expect(page.getByText('Confond compilateur et interpréteur.')).toBeVisible()
+  })
+
+  test('le filtre et le bloc choisi restent dans l’adresse, aussi après rechargement', async ({
+    page,
+  }) => {
+    await page.goto('./#/modules/M1')
+    await page.getByRole('radio', { name: 'À reprendre' }).check({ force: true })
+    await expect(page.getByRole('status')).toHaveText('1 bloc')
+    await expect(page).toHaveURL(/statut=a_reprendre/)
+
+    await page.reload()
+
+    await expect(page.getByRole('radio', { name: 'À reprendre' })).toBeChecked()
+    await expect(page.getByRole('status')).toHaveText('1 bloc')
+  })
+})
