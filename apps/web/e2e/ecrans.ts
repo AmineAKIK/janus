@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
+import { ouvrirSession } from './session.ts'
 
 export interface Ecran {
   /** Ce qu'il faut faire une fois l'écran affiché pour atteindre l'état à photographier. */
@@ -51,6 +52,35 @@ async function apresRestitution(page: Page) {
 export const ecrans: readonly Ecran[] = [
   { nom: 'vitrine', chemin: './vitrine.html', etat: 'Vitrine' },
   { nom: 'accueil', chemin: './#/', etat: 'Aujourd’hui' },
+  {
+    nom: 'accueil-retour',
+    chemin: './#/',
+    etat: 'Aujourd’hui',
+    scenario: async (page) => {
+      await page.evaluate(() => window.__janusDemo?.avancer(10 * 24 * 3600 * 1000))
+      await page.reload()
+      await expect(page.getByText(/Tu reviens après \d+ jours/)).toBeVisible()
+    },
+  },
+  {
+    nom: 'accueil-tout-fait',
+    chemin: './#/',
+    etat: 'Aujourd’hui',
+    interrupteurs: ['toutFait'],
+    scenario: async (page) => {
+      await expect(page.getByText('Rien d’autre n’est dû aujourd’hui.')).toBeVisible()
+    },
+  },
+  {
+    nom: 'accueil-premiere-connexion',
+    chemin: './#/',
+    etat: 'Aujourd’hui',
+    scenario: async (page) => {
+      await page.evaluate(() => window.__janusDemo?.reinitialiser('vide'))
+      await ouvrirSession(page)
+      await expect(page.getByRole('button', { name: 'Commencer', exact: true })).toBeVisible()
+    },
+  },
   {
     nom: 'connexion',
     chemin: './#/connexion',

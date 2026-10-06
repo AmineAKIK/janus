@@ -10,6 +10,7 @@ import { exigerSession } from './garde.ts'
 import type { ContexteRouteur } from './garde.ts'
 import { PageErreur } from './PageErreur.tsx'
 import { PageIntrouvable } from './PageIntrouvable.tsx'
+import { PageAujourdhui } from '../aujourdhui/PageAujourdhui.tsx'
 import { PageProvisoire } from './PageProvisoire.tsx'
 import {
   validerRechercheConnexion,
@@ -37,7 +38,7 @@ const aujourdhui = createRoute({
   getParentRoute: () => racine,
   path: '/',
   staticData: { titre: 'Aujourd’hui', navigation: 'aujourdhui' },
-  component: () => <PageProvisoire titre="Aujourd’hui" />,
+  component: PageAujourdhui,
 })
 
 const questions = createRoute({
