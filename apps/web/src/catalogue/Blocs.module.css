@@ -114,3 +114,28 @@
   block-size: 18px;
   color: var(--couleur-texte-secondaire);
 }
+
+.colonnes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-24);
+}
+
+@media (min-width: 1024px) {
+  .colonnes {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .colonnes > :first-child {
+    flex: 1 1 0;
+    min-inline-size: 0;
+  }
+
+  .colonnes > :last-child:not(:first-child) {
+    position: sticky;
+    inset-block-start: var(--espacement-24);
+    flex: none;
+    inline-size: 360px;
+  }
+}

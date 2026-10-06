@@ -5,7 +5,7 @@ import {
   MANIFESTES_GRAINE,
   PLAN,
 } from '../graine.ts'
-import { accesDuBloc, resultatDuBloc, statutBloc } from './calculs.ts'
+import { accesDuBloc, preuvesDuBlocApi, resultatDuBloc, statutBloc } from './calculs.ts'
 import { definir } from './definir.ts'
 
 function introuvable(quoi: string, id: string): ErreurApi {
@@ -102,6 +102,7 @@ export function routesCatalogueDemo({ racineFiches }: OptionsCatalogue) {
         manifeste,
         force: resultat.force,
         acces: accesDuBloc(etat, params.id, maintenant),
+        preuves: preuvesDuBlocApi(resultat, etat.reglages),
         fiche_url: `${racineFiches}${FICHE_DEMO}`,
         etat_page: page === undefined ? null : { version: 1, etat: page },
       }

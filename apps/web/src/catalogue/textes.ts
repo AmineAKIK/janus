@@ -43,3 +43,16 @@ export const TEXTES_BLOCS = {
 
 export const texteBlocs = (nombre: number) => accorder(nombre, 'bloc', 'blocs')
 export const titreModule = (ordre: number) => `Module ${String(ordre)}`
+
+export const TEXTES_DETAIL = {
+  panneau: 'Détail du bloc',
+  objectif: 'Objectif',
+  prerequis: 'Prérequis',
+  aucunPrerequis: 'aucun',
+  erreurCritique: 'Erreur critique',
+  cinqPreuves: 'Cinq preuves',
+  explicationPreuves:
+    'Un bloc est acquis quand tu l’expliques, le fais seul, le transfères et le retiens.',
+  ouvrir: 'Ouvrir le bloc',
+  reprendre: 'Reprendre',
+} as const

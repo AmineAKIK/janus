@@ -149,6 +149,13 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
       manifeste: demo,
       force: null,
       acces: 'libre',
+      preuves: {
+        comprendre: { date: INSTANT },
+        faire_seul: null,
+        transferer: null,
+        retenir: { date: INSTANT, prochaine: { type: 'retest', apres: '2026-11-01' } },
+        aisance: 'non_requis',
+      },
       fiche_url: 'https://fiches.example.org/D01/3/index.html',
       etat_page: { version: 2, etat: { etape: 'ET3' } },
     },

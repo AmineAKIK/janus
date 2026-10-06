@@ -109,4 +109,60 @@ describe('Blocs d’un module', () => {
       expect(routeur.state.location.search).toEqual({ detail: 'B05' })
     })
   })
+
+  describe('panneau de détail', () => {
+    it('n’apparaît pas sans bloc choisi', async () => {
+      await afficher('/modules/M1')
+
+      expect(
+        screen.queryByRole('complementary', { name: 'Détail du bloc' }),
+      ).not.toBeInTheDocument()
+    })
+
+    it('un bloc non commencé : objectif, prérequis, cinq fois « Pas encore » et « Ouvrir le bloc »', async () => {
+      await afficher('/modules/M1?detail=B10')
+
+      const panneau = await screen.findByRole('complementary', { name: 'Détail du bloc' })
+      expect(within(panneau).getByText('B10')).toBeVisible()
+      expect(within(panneau).getByText(/Objectif/)).toBeVisible()
+      expect(within(panneau).getByText(/Prérequis/)).toBeVisible()
+      expect(within(panneau).getByRole('heading', { level: 3, name: 'Cinq preuves' })).toBeVisible()
+      expect(within(panneau).getAllByText('Pas encore')).toHaveLength(5)
+      expect(within(panneau).getByRole('button', { name: 'Ouvrir le bloc' })).toBeVisible()
+    })
+
+    it('un bloc à reprendre : erreur critique, preuve datée, bouton « Reprendre »', async () => {
+      await afficher('/modules/M1?detail=B04')
+
+      const panneau = await screen.findByRole('complementary', { name: 'Détail du bloc' })
+      expect(within(panneau).getByText(/Erreur critique/)).toBeVisible()
+      expect(within(panneau).getByRole('button', { name: 'Reprendre' })).toBeVisible()
+    })
+
+    it('un bloc acquis : ses preuves sont datées', async () => {
+      await afficher('/modules/M1?detail=B01')
+
+      const panneau = await screen.findByRole('complementary', { name: 'Détail du bloc' })
+      expect(within(panneau).getAllByText(/^Prouvé/).length).toBeGreaterThanOrEqual(3)
+      expect(within(panneau).getByRole('button', { name: 'Ouvrir le bloc' })).toBeVisible()
+    })
+
+    it('choisir une ligne ouvre son détail', async () => {
+      const utilisateur = userEvent.setup()
+      const { routeur } = await afficher('/modules/M1')
+
+      await utilisateur.click(ligne('B05'))
+
+      expect(routeur.state.location.search).toEqual({ detail: 'B05' })
+      expect(await screen.findByRole('complementary', { name: 'Détail du bloc' })).toBeVisible()
+    })
+
+    it('ignore un bloc qui n’est pas dans ce module', async () => {
+      await afficher('/modules/M1?detail=Z99')
+
+      expect(
+        screen.queryByRole('complementary', { name: 'Détail du bloc' }),
+      ).not.toBeInTheDocument()
+    })
+  })
 })

@@ -5,6 +5,7 @@ import { useLecture, useLectures } from '../api/requetes.tsx'
 import { instantReel } from '../demo/horlogeDemo.ts'
 import { ligneEcheance } from './echeance.ts'
 import type { LigneEcheance } from './echeance.ts'
+import type { ContexteDetail } from './PanneauDetail.tsx'
 
 const BASCULE_PAR_DEFAUT = Reglages.parse({}).heureBascule
 const ACQUIS_AU_MOINS_PROVISOIRE: readonly Statut[] = [
@@ -36,6 +37,7 @@ export type EtatBlocs =
       readonly phase: 'pret'
       readonly module: ModuleAffiche | null
       readonly blocs: readonly BlocDeLaListe[]
+      readonly contexte: ContexteDetail
     }
 
 function enJour(date: string, fuseau: string): string {
@@ -95,6 +97,7 @@ export function useBlocs(moduleId: string): EtatBlocs {
 
   return {
     phase: 'pret',
+    contexte: { fuseau, heureBascule: BASCULE_PAR_DEFAUT, statuts },
     module:
       formation === undefined || module === undefined
         ? null

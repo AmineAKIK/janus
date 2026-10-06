@@ -1,5 +1,13 @@
-import type { EtatDemo, Fait, Manque as ManqueContrat, Statut, StatutBloc } from '@janus/contrats'
-import { accesBloc, calculerBloc } from '@janus/moteur'
+import type {
+  CinqPreuves,
+  EtatDemo,
+  Fait,
+  Manque as ManqueContrat,
+  Reglages,
+  Statut,
+  StatutBloc,
+} from '@janus/contrats'
+import { accesBloc, calculerBloc, preuvesDuBloc } from '@janus/moteur'
 import type { ResultatBloc } from '@janus/moteur'
 import { MANIFESTES_GRAINE } from '../graine.ts'
 import type { Magasin } from '../store.ts'
@@ -49,4 +57,25 @@ export function enregistrer(magasin: Magasin, id: string, faits: readonly Fait[]
     idsRecus: [...etat.idsRecus, id],
     faits: [...etat.faits, ...faits],
   }))
+}
+
+/** Le panneau « Cinq preuves » tel que l'API le rend. */
+export function preuvesDuBlocApi(resultat: ResultatBloc, reglages: Reglages): CinqPreuves {
+  const preuves = preuvesDuBloc(resultat, reglages)
+  return {
+    comprendre: preuves.comprendre,
+    faire_seul: preuves.faireSeul,
+    transferer: preuves.transferer,
+    retenir:
+      preuves.retenir === null
+        ? null
+        : {
+            date: preuves.retenir.date,
+            prochaine:
+              preuves.retenir.prochaine === null
+                ? null
+                : { type: preuves.retenir.prochaine.type, apres: preuves.retenir.prochaine.apres },
+          },
+    aisance: preuves.aisance,
+  }
 }
