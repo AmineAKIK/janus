@@ -11,6 +11,16 @@ export const TEXTES_BLOC = {
   stockageIndisponible: 'Les réponses ne peuvent pas être gardées sur cet appareil.',
   conflit: 'Ce bloc a été modifié sur un autre appareil.',
   faite: '✓',
+  verrou: '🔒',
+  verrouillee: 'Verrouillée tant que la série n’est pas envoyée',
+} as const
+
+export const TEXTES_REVOIR_COURS = {
+  titre: 'Revoir le cours maintenant ?',
+  corps: 'Tes réponses pas encore envoyées ne compteront pas comme preuve.',
+  rester: 'Rester',
+  revoir: 'Revoir le cours',
+  fermer: 'Fermer',
 } as const
 
 export const textesRefus = (nombre: number) =>

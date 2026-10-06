@@ -99,6 +99,22 @@ export const ecrans: readonly Ecran[] = [
       await expect(page.getByText('En attente de réseau · 3 réponses gardées')).toBeVisible()
     },
   },
+  {
+    nom: 'bloc-revoir-cours',
+    chemin: './#/blocs/B03',
+    etat: 'Ordinateur et composants',
+    titre: 'Page de bloc',
+    scenario: async (page) => {
+      const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
+      await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
+      await fiche.getByRole('button', { name: 'Restitution' }).click()
+      await page
+        .getByRole('navigation', { name: 'Étapes de la fiche' })
+        .getByRole('button', { name: 'Explication' })
+        .click()
+      await expect(page.getByRole('dialog', { name: 'Revoir le cours maintenant ?' })).toBeVisible()
+    },
+  },
   { nom: 'revision', chemin: './#/revision', etat: 'Révision' },
   { nom: 'verification', chemin: './#/verifications/v1', etat: 'Vérification' },
   { nom: 'tableau-de-bord', chemin: './#/tableau-de-bord', etat: 'Tableau de bord' },

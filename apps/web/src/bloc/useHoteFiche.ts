@@ -5,6 +5,7 @@ import type { RefObject } from 'react'
 import { useBoiteEnvoi } from '../envoi/FournisseurEnvoi.tsx'
 import { envoiDeMessage, statutDeReponse } from '../envoi/messages.ts'
 import { filtrerMessage } from './filtreMessages.ts'
+import type { SerieVerrou } from './verrou.ts'
 
 /** Au bout de ce délai sans `page.prete`, la fiche est jugée muette. */
 export const DELAI_FICHE_MS = 10_000
@@ -69,6 +70,10 @@ export function useHoteFiche(
   const [refus, setRefus] = useState<CauseRefus | null>(null)
   const [etapeVue, setEtapeVue] = useState<string | null>(null)
   const [etapesVues, setEtapesVues] = useState<readonly string[]>([])
+  const [envoyees, setEnvoyees] = useState<Readonly<Record<SerieVerrou, readonly string[]>>>({
+    restitution: [],
+    consolidation: [],
+  })
 
   // La dernière valeur de chaque donnée, pour que l'écouteur n'ait pas à se réinstaller.
   const dernieres = useRef({ donnees, statut, etat: donnees.etatPage?.etat ?? null })
@@ -114,6 +119,14 @@ export function useHoteFiche(
             const vue = message.etape
             setEtapeVue(vue)
             setEtapesVues((avant) => (avant.includes(vue) ? avant : [...avant, vue]))
+          }
+          if (message.type === 'restitution.demande' && message.relance === '') {
+            const { serie, question } = message
+            setEnvoyees((avant) =>
+              avant[serie].includes(question)
+                ? avant
+                : { ...avant, [serie]: [...avant[serie], question] },
+            )
           }
           const envoi = envoiDeMessage(message, courantes.etatPage?.version ?? 0)
           void boite.ajouter(
@@ -197,6 +210,7 @@ export function useHoteFiche(
     statut,
     etapeVue,
     etapesVues,
+    envoyees,
     chargement,
     recharger: () => {
       setChargement((valeur) => valeur + 1)

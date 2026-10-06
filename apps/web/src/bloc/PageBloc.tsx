@@ -3,6 +3,7 @@ import { BandeauAlerte, Bouton } from '@janus/ui'
 import { useRef, useState } from 'react'
 import { useLecture } from '../api/requetes.tsx'
 import { BarreBloc } from './BarreBloc.tsx'
+import { DialogueRevoirCours } from './DialogueRevoirCours.tsx'
 import { EncartHorsConnexion } from './EncartHorsConnexion.tsx'
 import { useEtatEnvoi } from './useEtatEnvoi.ts'
 import { useTempsActif } from './useTempsActif.ts'
@@ -10,6 +11,8 @@ import styles from './Bloc.module.css'
 import { FilEtapes } from './FilEtapes.tsx'
 import type { EtapeAffichee } from './FilEtapes.tsx'
 import { IframeFiche } from './HoteFiche.tsx'
+import type { SerieVerrou } from './verrou.ts'
+import { etapesVerrouillees, questionsRestantes } from './verrou.ts'
 import { PROBLEMES_POIGNEE_DE_MAIN, TEXTES_BLOC, textesRefus } from './textes.ts'
 import { useHoteFiche } from './useHoteFiche.ts'
 import type { DonneesFiche } from './useHoteFiche.ts'
@@ -21,11 +24,13 @@ function FicheOuverte({
   src,
   etapes,
   problemes,
+  questions,
   relire,
 }: {
   readonly relire: () => void
   readonly etapes: readonly EtapeAffichee[]
   readonly problemes: readonly string[]
+  readonly questions: Readonly<Record<SerieVerrou, readonly string[]>>
   readonly donnees: DonneesFiche
   readonly titre: string
   readonly moduleId: string
@@ -39,6 +44,22 @@ function FicheOuverte({
   const courante =
     hote.etapeVue ??
     (typeof sauvee === 'string' && etapes.some(({ id }) => id === sauvee) ? sauvee : null)
+  const [revoir, setRevoir] = useState<string | null>(null)
+  const restantes = {
+    restitution: questionsRestantes(
+      'restitution',
+      questions.restitution,
+      hote.envoyees.restitution,
+      hote.statut.manque,
+    ).length,
+    consolidation: questionsRestantes(
+      'consolidation',
+      questions.consolidation,
+      hote.envoyees.consolidation,
+      hote.statut.manque,
+    ).length,
+  }
+  const verrouillees = etapesVerrouillees(etapes, courante, restantes)
   const refusee = [
     ...problemes,
     ...(hote.refus === null ? [] : [PROBLEMES_POIGNEE_DE_MAIN[hote.refus]]),
@@ -58,7 +79,20 @@ function FicheOuverte({
         courante={courante}
         vues={hote.etapesVues}
         surChoix={hote.allerEtape}
+        verrouillees={verrouillees}
+        surVerrou={setRevoir}
       />
+      {revoir !== null && (
+        <DialogueRevoirCours
+          surRester={() => {
+            setRevoir(null)
+          }}
+          surRevoir={() => {
+            hote.allerEtape(revoir)
+            setRevoir(null)
+          }}
+        />
+      )}
       <div className={styles['zone']}>
         {(hote.conflit || envoi.stockageIndisponible) && (
           <div className={styles['alertes']}>
@@ -169,6 +203,10 @@ export function PageBloc({ blocId }: { readonly blocId: string }) {
       src={detail.fiche_url}
       etapes={detail.manifeste.etapes}
       problemes={detail.problemes}
+      questions={{
+        restitution: detail.manifeste.restitution.map(({ id }) => id),
+        consolidation: detail.manifeste.consolidation.map(({ id }) => id),
+      }}
     />
   )
 }

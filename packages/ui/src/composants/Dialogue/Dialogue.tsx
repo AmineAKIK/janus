@@ -19,7 +19,7 @@ const FOCALISABLES =
 
 /**
  * Fenêtre modale : le fond est voilé, le focus reste dedans (Tab boucle), Échap la ferme et le focus
- * revient à l'élément qui l'a ouverte. Le premier champ de saisie prend le focus, sinon le premier
+ * revient à l'élément qui l'a ouverte. Le premier élément marqué `data-focus-initial`, sinon le premier champ de saisie, prend le focus, sinon le premier
  * élément focalisable.
  */
 export function Dialogue({
@@ -37,7 +37,9 @@ export function Dialogue({
   useEffect(() => {
     const precedent = document.activeElement
     const boiteActuelle = boite.current
-    const champ = boiteActuelle?.querySelector<HTMLElement>('input, textarea, select')
+    const champ = boiteActuelle?.querySelector<HTMLElement>(
+      '[data-focus-initial], input, textarea, select',
+    )
     const premier = boiteActuelle?.querySelector<HTMLElement>(FOCALISABLES)
     ;(champ ?? premier)?.focus()
     return () => {

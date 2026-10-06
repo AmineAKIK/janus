@@ -230,6 +230,66 @@ describe('fil d’étapes', () => {
   })
 })
 
+describe('restitution verrouillée', () => {
+  const etapes = MANIFESTES_GRAINE['B03']?.etapes ?? []
+  const restitution = etapes.find(({ type }) => type === 'restitution')
+  const cours = etapes.find(({ type }) => type === 'explication')
+  const questions = MANIFESTES_GRAINE['B03']?.restitution.map(({ id }) => id) ?? []
+
+  it('met 🔒 sur les étapes de cours et demande confirmation avant de les rouvrir', async () => {
+    const utilisateur = userEvent.setup()
+    const { envoyer, recu } = await afficher()
+    await envoyer(message('etape.vue', { etape: restitution?.id }))
+
+    const onglet = screen.getByRole('button', { name: cours?.titre ?? '' })
+    expect(onglet.textContent).toBe(`🔒 ${cours?.titre ?? ''}`)
+
+    await utilisateur.click(onglet)
+    const dialogue = screen.getByRole('dialog', { name: 'Revoir le cours maintenant ?' })
+    expect(dialogue).toHaveTextContent(
+      'Tes réponses pas encore envoyées ne compteront pas comme preuve.',
+    )
+    expect(screen.getByRole('button', { name: 'Rester' })).toHaveFocus()
+    expect(recu).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'etape.aller' }), '*')
+
+    await utilisateur.click(screen.getByRole('button', { name: 'Revoir le cours' }))
+    expect(recu).toHaveBeenCalledWith({ type: 'etape.aller', etape: cours?.id }, '*')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('« Rester » ferme le dialogue sans quitter la restitution', async () => {
+    const utilisateur = userEvent.setup()
+    const { envoyer, recu } = await afficher()
+    await envoyer(message('etape.vue', { etape: restitution?.id }))
+
+    await utilisateur.click(screen.getByRole('button', { name: cours?.titre ?? '' }))
+    await utilisateur.click(screen.getByRole('button', { name: 'Rester' }))
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(recu).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'etape.aller' }), '*')
+  })
+
+  it('rend les étapes de cours libres quand toutes les questions sont envoyées', async () => {
+    const utilisateur = userEvent.setup()
+    const { envoyer } = await afficher()
+    await envoyer(message('etape.vue', { etape: restitution?.id }))
+
+    for (const [rang, question] of questions.entries()) {
+      await envoyer(
+        message('restitution.demande', {
+          id: `0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a${String(rang).padStart(2, '0')}`,
+          question,
+        }),
+      )
+    }
+
+    const onglet = screen.getByRole('button', { name: cours?.titre ?? '' })
+    expect(onglet.textContent).toBe(`✓ ${cours?.titre ?? ''}`)
+    await utilisateur.click(onglet)
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+})
+
 describe('fiche refusée', () => {
   const alerte = () => screen.getByRole('alert')
 
