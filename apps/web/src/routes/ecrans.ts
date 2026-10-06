@@ -7,6 +7,8 @@ declare module '@tanstack/react-router' {
     readonly titre: string
     /** Entrée active de la navigation, ou `null` quand le cadre Figma n'en montre pas. */
     readonly navigation: CleNavigation | null
+    /** Vrai pour un écran à deux colonnes (720 px et 320 px) : la colonne du cadre s'élargit. */
+    readonly large?: boolean
   }
 }
 

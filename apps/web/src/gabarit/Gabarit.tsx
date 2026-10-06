@@ -34,7 +34,7 @@ function LienNavigation({
  * sur le `h1` et la page revient en haut.
  */
 export function Gabarit() {
-  const { chemin, titre, navigation } = useRouterState({
+  const { chemin, titre, navigation, large } = useRouterState({
     select: (etat) => {
       const ecran = etat.matches.findLast((route) => route.staticData.titre !== '')
       return {
@@ -42,6 +42,7 @@ export function Gabarit() {
         chemin: etat.resolvedLocation?.pathname,
         titre: ecran?.staticData.titre ?? TITRE_INTROUVABLE,
         navigation: ecran?.staticData.navigation ?? null,
+        large: ecran?.staticData.large ?? false,
       }
     },
   })
@@ -87,7 +88,12 @@ export function Gabarit() {
           className={styles['navigation'] ?? ''}
         />
       )}
-      <main id={ID_CONTENU} ref={contenu} tabIndex={-1} className={styles['contenu']}>
+      <main
+        id={ID_CONTENU}
+        ref={contenu}
+        tabIndex={-1}
+        className={`${styles['contenu'] ?? ''}${large ? ` ${styles['large'] ?? ''}` : ''}`}
+      >
         <Outlet />
         <p className={`${styles['commit'] ?? ''} texte-legende-12`}>
           {import.meta.env.VITE_COMMIT ?? 'local'}
