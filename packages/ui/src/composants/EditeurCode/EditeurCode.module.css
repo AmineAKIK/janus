@@ -1,0 +1,70 @@
+.editeur {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-libelle);
+  width: 100%;
+}
+
+.libelle {
+  font-weight: 500;
+  color: var(--couleur-encre);
+}
+
+.cadre {
+  --ligne: 22px;
+
+  display: grid;
+  grid-template-columns: auto 1fr;
+  max-block-size: calc(var(--ligne) * 18 + var(--espacement-24));
+  overflow: hidden;
+  background: var(--couleur-surface);
+  border: 1px solid var(--couleur-ligne);
+  border-radius: var(--rayon-champ);
+}
+
+.cadre:focus-within {
+  border-color: var(--couleur-focus);
+  box-shadow: var(--focus-anneau);
+}
+
+.numeros {
+  counter-reset: ligne;
+  margin: 0;
+  padding: var(--espacement-12) var(--espacement-8);
+  list-style: none;
+  text-align: end;
+  user-select: none;
+  background: var(--couleur-surface-douce);
+  color: var(--couleur-texte-secondaire);
+  font-family: var(--police-code);
+  font-size: 14px;
+  line-height: var(--ligne);
+}
+
+.numeros li {
+  block-size: var(--ligne);
+  counter-increment: ligne;
+}
+
+.numeros li::before {
+  content: counter(ligne);
+}
+
+.saisie {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-inline-size: 0;
+  margin: 0;
+  padding: var(--espacement-12);
+  border: none;
+  outline: none;
+  resize: none;
+  overflow: auto;
+  background: transparent;
+  color: var(--couleur-encre);
+  font-family: var(--police-code);
+  font-size: 14px;
+  line-height: var(--ligne);
+  tab-size: 2;
+  white-space: pre;
+}
