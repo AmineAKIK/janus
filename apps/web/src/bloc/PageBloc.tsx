@@ -1,8 +1,11 @@
 import { ROUTES } from '@janus/contrats'
 import { BandeauAlerte, Bouton } from '@janus/ui'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useLecture } from '../api/requetes.tsx'
 import { BarreBloc } from './BarreBloc.tsx'
+import { EncartHorsConnexion } from './EncartHorsConnexion.tsx'
+import { useEtatEnvoi } from './useEtatEnvoi.ts'
+import { useTempsActif } from './useTempsActif.ts'
 import styles from './Bloc.module.css'
 import { FilEtapes } from './FilEtapes.tsx'
 import type { EtapeAffichee } from './FilEtapes.tsx'
@@ -18,7 +21,9 @@ function FicheOuverte({
   src,
   etapes,
   problemes,
+  relire,
 }: {
+  readonly relire: () => void
   readonly etapes: readonly EtapeAffichee[]
   readonly problemes: readonly string[]
   readonly donnees: DonneesFiche
@@ -27,7 +32,9 @@ function FicheOuverte({
   readonly src: string
 }) {
   const iframe = useRef<HTMLIFrameElement>(null)
-  const hote = useHoteFiche(donnees, iframe)
+  const { signalerActivite } = useTempsActif(donnees.bloc)
+  const hote = useHoteFiche(donnees, iframe, signalerActivite)
+  const envoi = useEtatEnvoi(donnees.bloc)
   const sauvee = donnees.etatPage?.etat['etape']
   const courante =
     hote.etapeVue ??
@@ -43,6 +50,8 @@ function FicheOuverte({
         titre={titre}
         moduleId={moduleId}
         statut={hote.statut.statut}
+        etatEnvoi={envoi.etat}
+        gardees={envoi.gardees}
       />
       <FilEtapes
         etapes={etapes}
@@ -51,6 +60,24 @@ function FicheOuverte({
         surChoix={hote.allerEtape}
       />
       <div className={styles['zone']}>
+        {(hote.conflit || envoi.stockageIndisponible) && (
+          <div className={styles['alertes']}>
+            {envoi.stockageIndisponible && (
+              <BandeauAlerte type="erreur">{TEXTES_BLOC.stockageIndisponible}</BandeauAlerte>
+            )}
+            {hote.conflit && (
+              <>
+                <BandeauAlerte type="erreur">{TEXTES_BLOC.conflit}</BandeauAlerte>
+                <Bouton variante="secondaire" onClick={relire}>
+                  {TEXTES_BLOC.recharger}
+                </Bouton>
+              </>
+            )}
+          </div>
+        )}
+        {envoi.etat === 'attente' && (
+          <EncartHorsConnexion derniereReponse={envoi.derniereReponse} />
+        )}
         {refusee.length > 0 && (
           <div className={styles['refusee']}>
             <p className={`${styles['refus'] ?? ''} texte-petit-14`} role="alert">
@@ -93,6 +120,7 @@ function FicheOuverte({
 /** La page d'un bloc : barre du haut et fiche dans son iframe. */
 export function PageBloc({ blocId }: { readonly blocId: string }) {
   const lecture = useLecture(ROUTES['GET /blocs/:id'], { params: { id: blocId } })
+  const [relecture, setRelecture] = useState(0)
 
   // Une relecture qui échoue (réseau coupé) ne retire pas la fiche déjà affichée.
   if (lecture.isError && lecture.data === undefined) {
@@ -121,8 +149,13 @@ export function PageBloc({ blocId }: { readonly blocId: string }) {
   const detail = lecture.data
   return (
     <FicheOuverte
-      // Un autre bloc repart d'une poignée de main neuve.
-      key={detail.bloc}
+      // Un autre bloc, ou une relecture après un conflit, repart d'une poignée de main neuve.
+      key={`${detail.bloc}:${String(relecture)}`}
+      relire={() => {
+        void lecture.refetch().then(() => {
+          setRelecture((valeur) => valeur + 1)
+        })
+      }}
       donnees={{
         bloc: detail.bloc,
         version: detail.version,

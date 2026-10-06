@@ -35,7 +35,11 @@ export interface ReponseStatut {
  * L'hôte d'une fiche : écoute la fenêtre, filtre ce qui arrive, fait la poignée de main, relaie les
  * messages au serveur et renvoie le statut recalculé à la page. L'appli ne lit jamais l'iframe.
  */
-export function useHoteFiche(donnees: DonneesFiche, iframe: RefObject<HTMLIFrameElement | null>) {
+export function useHoteFiche(
+  donnees: DonneesFiche,
+  iframe: RefObject<HTMLIFrameElement | null>,
+  surActivite?: () => void,
+) {
   const boite = useBoiteEnvoi()
 
   const [phase, setPhase] = useState<PhaseFiche>('attente')
@@ -44,6 +48,9 @@ export function useHoteFiche(donnees: DonneesFiche, iframe: RefObject<HTMLIFrame
     statut: donnees.statut,
     manque: donnees.manque,
   })
+  const [conflit, setConflit] = useState(false)
+  const rappelActivite = useRef(surActivite)
+  rappelActivite.current = surActivite
   const [refus, setRefus] = useState<CauseRefus | null>(null)
   const [etapeVue, setEtapeVue] = useState<string | null>(null)
   const [etapesVues, setEtapesVues] = useState<readonly string[]>([])
@@ -106,6 +113,9 @@ export function useHoteFiche(donnees: DonneesFiche, iframe: RefObject<HTMLIFrame
                 const recalcule = statutDeReponse(envoi.route, reponse)
                 if (recalcule !== null) appliquerStatut(recalcule)
               },
+              surConflit: () => {
+                setConflit(true)
+              },
               surRefus: () => {
                 vers({
                   type: 'erreur',
@@ -128,6 +138,7 @@ export function useHoteFiche(donnees: DonneesFiche, iframe: RefObject<HTMLIFrame
         version,
       })
       if (resultat.accepte) {
+        rappelActivite.current?.()
         traiter(resultat.message)
         return
       }
@@ -165,6 +176,7 @@ export function useHoteFiche(donnees: DonneesFiche, iframe: RefObject<HTMLIFrame
 
   return {
     phase,
+    conflit,
     refus,
     allerEtape: (etape: string) => {
       vers({ type: 'etape.aller', etape })
