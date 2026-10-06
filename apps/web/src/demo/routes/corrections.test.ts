@@ -131,4 +131,42 @@ describe('POST /corrections de la démo', () => {
       }),
     ).rejects.toMatchObject({ status: 501 })
   })
+
+  it('met une correction de premier tour sur dix à l’avis d’Amine : la 1re, la 11e, etc.', async () => {
+    const { transport } = monterDemo({ delaiCorrectionMs: 0 })
+    const echantillons: boolean[] = []
+
+    for (let n = 1; n <= 12; n++) {
+      const correction = await transport.appeler(ROUTES['POST /corrections'], {
+        corps: demande(n, { question: n % 2 === 0 ? 'R1' : 'R2' }),
+      })
+      echantillons.push(correction.echantillon)
+    }
+    const relance = await transport.appeler(ROUTES['POST /corrections'], {
+      corps: demande(13, { relance: 'Je précise.' }),
+    })
+
+    expect(echantillons.map((e, i) => (e ? i + 1 : null)).filter((n) => n !== null)).toEqual([
+      1, 11,
+    ])
+    expect(relance.echantillon).toBe(false)
+  })
+
+  it('accepte l’avis d’Amine sur une correction connue, refuse une inconnue', async () => {
+    const { transport } = monterDemo({ delaiCorrectionMs: 0 })
+    await transport.appeler(ROUTES['POST /corrections'], { corps: demande(1) })
+
+    await expect(
+      transport.appeler(ROUTES['POST /corrections/:id/accord'], {
+        params: { id: ID(1) },
+        corps: { accord: false },
+      }),
+    ).resolves.toBeNull()
+    await expect(
+      transport.appeler(ROUTES['POST /corrections/:id/accord'], {
+        params: { id: ID(99) },
+        corps: { accord: true },
+      }),
+    ).rejects.toMatchObject({ status: 404 })
+  })
 })

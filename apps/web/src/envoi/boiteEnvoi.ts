@@ -44,7 +44,7 @@ export interface OptionsBoiteEnvoi {
 /** Ce que l'appelant veut savoir de l'envoi d'un message, tant que l'onglet reste ouvert. */
 export interface RappelsEnvoi {
   readonly surReponse?: (reponse: unknown) => void
-  readonly surRefus?: () => void
+  readonly surRefus?: (erreur: unknown) => void
   readonly surConflit?: () => void
 }
 
@@ -146,7 +146,13 @@ export function creerBoiteEnvoi(options: OptionsBoiteEnvoi, ecouteurs: Ecouteurs
         rappel?.surConflit?.()
         return 'continuer'
       }
+      // Une correction que l'IA ne peut pas rendre (plafond, panne) est rendue à la page, qui garde sa réponse.
+      const correctionImpossible =
+        entree.route === 'POST /corrections' &&
+        erreur instanceof ErreurApi &&
+        (erreur.status === 429 || erreur.status === 503)
       const refuse =
+        correctionImpossible ||
         erreur instanceof ErreurDonnees ||
         (erreur instanceof ErreurApi &&
           (erreur.status === 400 || erreur.status === 422 || erreur.status === 409))
@@ -156,7 +162,7 @@ export function creerBoiteEnvoi(options: OptionsBoiteEnvoi, ecouteurs: Ecouteurs
         const rappel = rappels.get(entree.id)
         rappels.delete(entree.id)
         ecouteurs.surRefus?.(entree)
-        rappel?.surRefus?.()
+        rappel?.surRefus?.(erreur)
         return 'continuer'
       }
       if (erreur instanceof ErreurReseau) reseauManque = true

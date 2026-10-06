@@ -154,6 +154,38 @@ describe('boîte d’envoi', () => {
     expect(surRefus).toHaveBeenCalledOnce()
   })
 
+  it.each([429, 503])(
+    'une correction que l’IA ne peut pas rendre (%i) est rendue à la page, pas réessayée',
+    async (status) => {
+      const { boite, stockage, appels } = monter([
+        () => {
+          throw erreur(status)
+        },
+      ])
+      vi.spyOn(console, 'error').mockImplementation(() => undefined)
+      const surRefus = vi.fn()
+      const demande = MessagePage.parse({ ...EXEMPLES_PAGE['restitution.demande'], id: ID1 })
+
+      await boite.ajouter({ ...envoiDeMessage(demande, 0), id: ID1 }, { surRefus })
+
+      expect(await stockage.lister()).toHaveLength(0)
+      expect(appels).toHaveLength(1)
+      expect(surRefus).toHaveBeenCalledWith(expect.objectContaining({ status }))
+    },
+  )
+
+  it('un 503 sur un événement est réessayé, il ne vient pas de l’IA', async () => {
+    const { boite, stockage } = monter([
+      () => {
+        throw erreur(503)
+      },
+    ])
+
+    await boite.ajouter(evenement(ID1))
+
+    expect(await stockage.lister()).toHaveLength(1)
+  })
+
   it('un 401 suspend l’envoi sans rien supprimer, jusqu’à la reconnexion', async () => {
     const { boite, stockage, appels } = monter([
       () => {
@@ -258,14 +290,14 @@ describe('verrou local', () => {
 describe('envoiDeMessage', () => {
   it('choisit la route de chaque message', () => {
     const route = (type: keyof typeof EXEMPLES_PAGE) =>
-      envoiDeMessage(MessagePage.parse(EXEMPLES_PAGE[type]), 3)?.route ?? null
+      envoiDeMessage(MessagePage.parse(EXEMPLES_PAGE[type]), 3).route
 
     expect(route('etat.sauver')).toBe('PUT /blocs/:id/etat-page')
     expect(route('bilan.erreurs')).toBe('POST /blocs/:id/erreurs')
     expect(route('correction.accord')).toBe('POST /corrections/:id/accord')
     expect(route('etape.vue')).toBe('POST /evenements')
     expect(route('pratique.resultat')).toBe('POST /evenements')
-    expect(route('restitution.demande')).toBeNull()
+    expect(route('restitution.demande')).toBe('POST /corrections')
   })
 
   it('l’état d’une page porte la version et une clé par bloc', () => {

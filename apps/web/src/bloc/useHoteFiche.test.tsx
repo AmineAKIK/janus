@@ -129,6 +129,46 @@ describe('page d’un bloc', () => {
     })
   })
 
+  it('corrige une restitution et rend la correction à la page', async () => {
+    const { envoyer, recu } = await afficher()
+    const question = MANIFESTES_GRAINE['B03']?.restitution[0]?.id ?? ''
+
+    await envoyer(message('restitution.demande', { question, reponse: 'Mes propres mots.' }))
+
+    await waitFor(() => {
+      expect(recu).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'restitution.correction', question, echantillon: true }),
+        '*',
+      )
+    })
+  })
+
+  it.each([
+    ['plafondAtteint', 'plafond_atteint'],
+    ['correctionIndisponible', 'correction_indisponible'],
+  ])('dit à la page que la correction est impossible (%s)', async (interrupteur, code) => {
+    const { envoyer, recu, magasin } = await afficher()
+    vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    magasin.ecrire((etat) => ({
+      ...etat,
+      interrupteurs: { ...etat.interrupteurs, [interrupteur]: true },
+    }))
+    const question = MANIFESTES_GRAINE['B03']?.restitution[0]?.id ?? ''
+
+    await envoyer(message('restitution.demande', { question }))
+
+    await waitFor(() => {
+      expect(recu).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'erreur',
+          code,
+          message_id: EXEMPLES_PAGE['restitution.demande'].id,
+        }),
+        '*',
+      )
+    })
+  })
+
   it('sauvegarde l’état de la page sur le serveur', async () => {
     const { envoyer, transport } = await afficher()
 

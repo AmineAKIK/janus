@@ -1,3 +1,4 @@
+import { CorrectionRecue, ErreurApi } from '@janus/contrats'
 import type { Manque, MessageAppli, MessagePage, Statut } from '@janus/contrats'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
@@ -29,6 +30,20 @@ export type CauseRefus = 'schema' | 'version'
 export interface ReponseStatut {
   readonly statut: Statut
   readonly manque: readonly Manque[]
+}
+
+/** Ce que la page apprend d'un message refusé : le plafond, la panne de l'IA, ou un simple refus. */
+function causeDeRefus(erreur: unknown): {
+  code: 'correction_indisponible' | 'plafond_atteint' | 'message_refuse'
+  detail: string
+} {
+  if (erreur instanceof ErreurApi && erreur.status === 429) {
+    return { code: 'plafond_atteint', detail: 'plafond atteint' }
+  }
+  if (erreur instanceof ErreurApi && erreur.status === 503) {
+    return { code: 'correction_indisponible', detail: 'correction indisponible' }
+  }
+  return { code: 'message_refuse', detail: 'message refusé' }
 }
 
 /**
@@ -101,26 +116,24 @@ export function useHoteFiche(
             setEtapesVues((avant) => (avant.includes(vue) ? avant : [...avant, vue]))
           }
           const envoi = envoiDeMessage(message, courantes.etatPage?.version ?? 0)
-          if (envoi === null) {
-            // Les demandes de correction viennent avec la PR-052.
-            console.info(`[janus] ${message.type} pas encore pris en charge`)
-            return
-          }
           void boite.ajouter(
             { ...envoi, id: message.id },
             {
               surReponse: (reponse) => {
+                if (envoi.route === 'POST /corrections') {
+                  vers({ type: 'restitution.correction', ...CorrectionRecue.parse(reponse) })
+                  return
+                }
                 const recalcule = statutDeReponse(envoi.route, reponse)
                 if (recalcule !== null) appliquerStatut(recalcule)
               },
               surConflit: () => {
                 setConflit(true)
               },
-              surRefus: () => {
+              surRefus: (erreur) => {
                 vers({
                   type: 'erreur',
-                  code: 'message_refuse',
-                  detail: 'message refusé',
+                  ...causeDeRefus(erreur),
                   message_id: message.id,
                 })
               },

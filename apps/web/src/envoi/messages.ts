@@ -11,9 +11,10 @@ export interface EnvoiDeMessage {
 
 /**
  * La route de chaque message de la page. L'état d'une page garde une seule entrée par bloc ;
- * `restitution.demande` attend la PR-052 (il lui faut le numéro de tentative), il rend `null`.
+ * une demande de restitution devient une demande de correction, de tentative 1 (le cadrage ne
+ * dit pas encore comment compter les tentatives d'une série).
  */
-export function envoiDeMessage(message: MessagePage, versionEtat: number): EnvoiDeMessage | null {
+export function envoiDeMessage(message: MessagePage, versionEtat: number): EnvoiDeMessage {
   switch (message.type) {
     case 'etat.sauver':
       return {
@@ -35,7 +36,21 @@ export function envoiDeMessage(message: MessagePage, versionEtat: number): Envoi
         corps: { accord: message.accord },
       }
     case 'restitution.demande':
-      return null
+      return {
+        route: 'POST /corrections',
+        corps: {
+          id: message.id,
+          serie: message.serie,
+          tentative: 1,
+          question: message.question,
+          reponse: message.reponse,
+          confiance: message.confiance,
+          relance: message.relance,
+          support: message.support,
+          bloc: message.bloc,
+          version: message.version,
+        },
+      }
     default:
       return { route: 'POST /evenements', corps: message }
   }

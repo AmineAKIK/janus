@@ -23,6 +23,13 @@ export function routesCorrectionsDemo({
   delaiCorrectionMs = DELAI_CORRECTION_SIMULEE_MS,
 }: OptionsCorrections = {}) {
   return [
+    definir(ROUTES['POST /corrections/:id/accord'], ({ magasin, params }) => {
+      // Les avis d'Amine ne changent aucun statut : la démo les accepte sans les garder.
+      if (!magasin.lire().faits.some((fait) => fait.id === params.id)) {
+        throw probleme(404, 'introuvable', 'Introuvable', 'Cette correction n’existe pas.')
+      }
+      return null
+    }),
     definir(ROUTES['POST /corrections'], async ({ magasin, horloge, attendre, corps }) => {
       const { interrupteurs, reglages } = magasin.lire()
       if (interrupteurs.correctionIndisponible) {
@@ -88,6 +95,16 @@ export function routesCorrectionsDemo({
       })
       const erreurs = correction.niveau === 'solide' ? [] : question.erreurs
 
+      // Une correction de premier tour sur dix est mise à l'avis d'Amine : la 1re, la 11e, etc.
+      // Seules comptent les corrections rendues par cette démo, pas celles de la graine.
+      const { faits, idsRecus } = magasin.lire()
+      const premiersTours = faits.filter(
+        (fait) => fait.type === 'correction' && fait.tour === 1 && idsRecus.includes(fait.id),
+      )
+      const rang = premiersTours.findIndex((fait) => fait.id === corps.id)
+      const echantillon =
+        tour === 1 &&
+        (rang === -1 ? premiersTours.length : rang) % reglages.echantillonControle === 0
       if (!dejaRecu(magasin.lire(), corps.id)) {
         enregistrer(magasin, corps.id, [
           {
@@ -108,7 +125,7 @@ export function routesCorrectionsDemo({
       }
       const recue: CorrectionRecue = {
         id: corps.id,
-        echantillon: false,
+        echantillon,
         question: question.id,
         tour,
         message: [correction.message, correction.indice].filter((t) => t !== undefined).join(' '),
