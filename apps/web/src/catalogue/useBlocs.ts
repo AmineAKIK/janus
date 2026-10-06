@@ -44,7 +44,7 @@ function enJour(date: string, fuseau: string): string {
   return date.length === 10 ? date : jourDe(date, fuseau, BASCULE_PAR_DEFAUT)
 }
 
-function rangEtape(
+export function rangEtape(
   etatPage: Readonly<Record<string, unknown>> | undefined,
   etapes: readonly { readonly id: string }[],
 ) {

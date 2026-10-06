@@ -1,7 +1,3 @@
-import type { Tache } from '@janus/contrats'
-import { accorder } from '../catalogue/calculs.ts'
-import { formaterDate } from '../format.ts'
-
 const JOURS = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'] as const
 const MOIS = [
   'janvier',
@@ -36,9 +32,6 @@ export function dateLongue(jour: string): string {
 
 export const TEXTES_AUJOURDHUI = {
   titreEcran: 'Aujourd’hui',
-  chargement: 'Chargement…',
-  erreur: 'Impossible de charger cet écran.',
-  reessayer: 'Réessayer',
   prochaineEtape: 'Prochaine étape',
   progression: 'Progression',
   commencer: 'Commencer la séance',
@@ -54,68 +47,23 @@ export const TEXTES_AUJOURDHUI = {
   legende: 'Légende des statuts',
   voirTableau: 'Voir le tableau de bord',
   grille: 'Blocs du module',
-  aucunModule: 'Aucun module n’est encore importé.',
 } as const
 
 export const texteRetour = (jours: number) =>
   `Tu reviens après ${String(jours)} jours. On commence par ce qui est en retard, puis le bloc en cours.`
 
-export const texteNombreTaches = (faites: number, total: number) =>
-  faites === 0
-    ? accorder(total, 'tâche', 'tâches')
-    : `${String(faites)} sur ${String(total)} faites`
+/** « 1 tâche », « 9 tâches », ou « 9 sur 9 faites » quand tout est fait. */
+export function texteNombreTaches(faites: number, total: number): string {
+  if (total > 0 && faites === total) return `${String(total)} sur ${String(total)} faites`
+  return `${String(total)} ${total < 2 ? 'tâche' : 'tâches'}`
+}
 
 export const texteEtape = (rang: number, total: number) =>
   `${TEXTES_AUJOURDHUI.prochaineEtape} · ${String(rang)} sur ${String(total)}`
 
-export interface TexteTache {
-  readonly type: string
-  readonly titre: string
-  readonly complement: string
-}
+/** « 0 faite sur 9 », « 2 faites sur 9 ». */
+export const texteProgression = (faites: number, total: number) =>
+  `${String(faites)} ${faites < 2 ? 'faite' : 'faites'} sur ${String(total)}`
 
-/** Ce que la ligne de la tâche annonce ; `titreBloc` donne le titre court d'un code de bloc. */
-export function texteTache(
-  tache: Tache,
-  titreBloc: (bloc: string) => string,
-  aujourdhui: string,
-): TexteTache {
-  const du = (jour: string) => `Dû ${formaterDate(jour, aujourdhui)}`
-  const bloc = (code: string) => `${code} ${titreBloc(code)}`
-  switch (tache.type) {
-    case 'reprendre_erreur':
-      return { type: 'Erreur à reprendre', titre: tache.libelle, complement: bloc(tache.bloc) }
-    case 'questions_debut':
-      return {
-        type: 'Questions de début de séance',
-        titre: accorder(tache.nombre, 'question', 'questions'),
-        complement: 'Mélangées entre les blocs vus',
-      }
-    case 'reprise':
-      return {
-        type: 'Reprise',
-        titre: tache.blocs.map((code) => bloc(code)).join(', '),
-        complement: 'À reprendre',
-      }
-    case 'verification':
-      return { type: 'Vérification', titre: bloc(tache.bloc), complement: du(tache.apres) }
-    case 'retest':
-      return {
-        type: 'Vérifications et retests',
-        titre: bloc(tache.bloc),
-        complement: du(tache.apres),
-      }
-    case 'entretien':
-      return { type: 'Entretien', titre: bloc(tache.bloc), complement: du(tache.apres) }
-    case 'consolidation':
-      return { type: 'Consolidation', titre: bloc(tache.bloc), complement: 'Après la restitution' }
-    case 'cartes':
-      return {
-        type: 'Cartes',
-        titre: accorder(tache.dues + tache.nouvelles, 'carte', 'cartes'),
-        complement: `${accorder(tache.dues, 'due', 'dues')} · ${accorder(tache.nouvelles, 'nouvelle', 'nouvelles')}`,
-      }
-    case 'bloc':
-      return { type: 'Bloc en cours', titre: bloc(tache.bloc), complement: 'Continuer le bloc' }
-  }
-}
+export const texteBlocsAcquis = (acquis: number, total: number) =>
+  `${String(acquis)} ${acquis < 2 ? 'bloc acquis' : 'blocs acquis'} sur ${String(total)}`

@@ -37,7 +37,7 @@ const connexion = createRoute({
 const aujourdhui = createRoute({
   getParentRoute: () => racine,
   path: '/',
-  staticData: { titre: 'Aujourd’hui', navigation: 'aujourdhui' },
+  staticData: { titre: 'Aujourd’hui', navigation: 'aujourdhui', large: true },
   component: PageAujourdhui,
 })
 
