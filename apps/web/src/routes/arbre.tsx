@@ -1,5 +1,6 @@
 import { createRootRouteWithContext, createRoute, createRouter } from '@tanstack/react-router'
 import type { RouterHistory } from '@tanstack/react-router'
+import { PageBloc } from '../bloc/PageBloc.tsx'
 import { PageBlocs } from '../catalogue/PageBlocs.tsx'
 import { PageFormations } from '../catalogue/PageFormations.tsx'
 import { PageModules } from '../catalogue/PageModules.tsx'
@@ -79,7 +80,10 @@ const bloc = createRoute({
   getParentRoute: () => racine,
   path: '/blocs/$blocId',
   staticData: { titre: 'Page de bloc', navigation: null },
-  component: () => <PageProvisoire titre="Page de bloc" />,
+  component: function RoutePageBloc() {
+    const { blocId } = bloc.useParams()
+    return <PageBloc blocId={blocId} />
+  },
 })
 
 const revision = createRoute({

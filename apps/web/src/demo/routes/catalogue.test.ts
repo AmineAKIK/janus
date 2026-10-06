@@ -63,6 +63,9 @@ describe('routes de catalogue de la démo', () => {
       acces: 'raison_requise',
       force: null,
       etat_page: null,
+      module: 'M1',
+      problemes: [],
+      serie_ouverte: { restitution: true, consolidation: false },
       fiche_url: `${RACINE_FICHES}demo/fiche-demo.html`,
     })
     expect(b04.manifeste.bloc).toBe('B04')
