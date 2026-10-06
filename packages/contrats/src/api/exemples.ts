@@ -360,10 +360,28 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
   },
   'GET /cartes/dues': {
     reponse: {
-      dues: [{ id: 'C1', bloc: 'D01', recto: 'Recto', verso: 'Verso' }],
+      dues: [
+        {
+          id: 'C1',
+          bloc: 'D01',
+          recto: 'Recto',
+          verso: 'Verso',
+          nouvelle: false,
+          apercu: {
+            a_revoir: 600_000,
+            difficile: 172_800_000,
+            bien: 432_000_000,
+            facile: 1_036_800_000,
+          },
+        },
+      ],
       nouvelles: [],
+      prochaine: null,
     },
-    invalides: [{ partie: 'reponse', valeur: { dues: [{ id: 'C1' }], nouvelles: [] } }],
+    invalides: [
+      { partie: 'reponse', valeur: { dues: [{ id: 'C1' }], nouvelles: [], prochaine: null } },
+      { partie: 'reponse', valeur: { dues: [], nouvelles: [] } },
+    ],
   },
   'POST /cartes/:id/note': {
     params: { id: 'C1' },

@@ -64,6 +64,46 @@ function depuis(carte: Card): EtatCarte {
   }
 }
 
+/** Les cinq champs de `ts-fsrs` d'une carte rangée, pour lui demander ses prochaines dates. */
+function entreeFsrs(etat: EtatCarte): CardInput {
+  return {
+    due: etat.echeance,
+    stability: etat.stabilite,
+    difficulty: etat.difficulte,
+    elapsed_days: 0,
+    scheduled_days: etat.joursProgrammes,
+    learning_steps: etat.etapeApprentissage,
+    reps: etat.repetitions,
+    lapses: etat.oublis,
+    state: ETATS[etat.phase],
+    last_review: etat.derniereRevision,
+  }
+}
+
+/** Dans combien de millisecondes la carte revient, pour chacune des quatre notes. */
+export type ApercuCarte = Readonly<Record<NoteCarte, number>>
+
+/**
+ * Ce que chaque note ferait de la carte : le délai avant son retour, tel que `ts-fsrs` le calculera
+ * quand la note sera donnée. Une carte jamais vue (`null`) est traitée comme une carte neuve.
+ */
+export function apercuCarte(
+  etat: EtatCarte | null,
+  maintenant: string,
+  reglages: Reglages,
+): ApercuCarte {
+  const carte = etat === null ? createEmptyCard(maintenant) : entreeFsrs(etat)
+  const suites = planificateur(reglages).repeat(carte, maintenant)
+  const delai = (note: Rating.Again | Rating.Hard | Rating.Good | Rating.Easy) =>
+    Math.max(0, suites[note].card.due.getTime() - instantEnMs(maintenant))
+  return {
+    a_revoir: delai(Rating.Again),
+    difficile: delai(Rating.Hard),
+    bien: delai(Rating.Good),
+    facile: delai(Rating.Easy),
+  }
+}
+
 /** Une carte jamais révisée, due à `maintenant`. */
 export function carteNeuve(maintenant: string): EtatCarte {
   return depuis(createEmptyCard(maintenant))

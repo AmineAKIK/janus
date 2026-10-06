@@ -66,7 +66,23 @@ const QuestionDebut = z.strictObject({
     .nullable(),
 })
 
-const Carte = z.strictObject({ id: Identifiant, bloc: CodeBloc, recto: Texte, verso: Texte })
+/** Dans combien de millisecondes la carte revient pour chaque note : ce que `ts-fsrs` appliquera. */
+const ApercuCarte = z.strictObject({
+  a_revoir: z.number().int().min(0),
+  difficile: z.number().int().min(0),
+  bien: z.number().int().min(0),
+  facile: z.number().int().min(0),
+})
+
+const Carte = z.strictObject({
+  id: Identifiant,
+  bloc: CodeBloc,
+  recto: Texte,
+  verso: Texte,
+  /** Vrai pour une carte jamais vue. */
+  nouvelle: z.boolean(),
+  apercu: ApercuCarte,
+})
 
 export const ROUTES_APPRENTISSAGE = {
   'GET /aujourdhui': {
@@ -97,7 +113,12 @@ export const ROUTES_APPRENTISSAGE = {
   'GET /cartes/dues': {
     methode: 'GET',
     chemin: '/cartes/dues',
-    reponse: z.strictObject({ dues: z.array(Carte), nouvelles: z.array(Carte) }),
+    reponse: z.strictObject({
+      dues: z.array(Carte),
+      nouvelles: z.array(Carte),
+      /** Quand la prochaine carte revient, `null` s'il n'y en a aucune à venir. */
+      prochaine: InstantUtc.nullable(),
+    }),
     succes: 200,
   },
   'POST /cartes/:id/note': {
