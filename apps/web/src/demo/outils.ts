@@ -1,4 +1,4 @@
-import type { EtatDemo } from '@janus/contrats'
+import type { EtatDemo, InterrupteursDemo } from '@janus/contrats'
 import type { HorlogeDemo } from './horlogeDemo.ts'
 import { etatVide } from './store.ts'
 import type { Magasin } from './store.ts'
@@ -11,6 +11,8 @@ export interface OutilsDemo {
   readonly avancer: (ms: number) => void
   /** Repart de la graine (les statuts du jeu d'exemple) ou d'un état vide. */
   readonly reinitialiser: (mode: ModeReinitialisation) => void
+  /** Allume ou éteint un interrupteur de démo, sans recharger la page. */
+  readonly interrupteur: (nom: keyof InterrupteursDemo, actif: boolean) => void
 }
 
 declare global {
@@ -33,6 +35,13 @@ export function creerOutilsDemo(options: OptionsOutilsDemo): OutilsDemo {
   return {
     avancer: (ms) => {
       horloge.avancer(ms)
+      apres?.()
+    },
+    interrupteur: (nom, actif) => {
+      magasin.ecrire((etat) => ({
+        ...etat,
+        interrupteurs: { ...etat.interrupteurs, [nom]: actif },
+      }))
       apres?.()
     },
     reinitialiser: (mode) => {

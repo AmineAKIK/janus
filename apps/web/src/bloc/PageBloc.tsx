@@ -94,7 +94,8 @@ function FicheOuverte({
 export function PageBloc({ blocId }: { readonly blocId: string }) {
   const lecture = useLecture(ROUTES['GET /blocs/:id'], { params: { id: blocId } })
 
-  if (lecture.isError) {
+  // Une relecture qui échoue (réseau coupé) ne retire pas la fiche déjà affichée.
+  if (lecture.isError && lecture.data === undefined) {
     return (
       <div className={styles['erreur']}>
         <BandeauAlerte type="erreur">{TEXTES_BLOC.erreur}</BandeauAlerte>
