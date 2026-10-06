@@ -17,6 +17,8 @@ export const InterrupteursDemo = z.strictObject({
   ficheRefusee: z.boolean().default(false),
   /** Toutes les routes de démo mettent 2 secondes à répondre. */
   reseauLent: z.boolean().default(false),
+  /** La prochaine correction propose la première erreur critique du manifeste du bloc. */
+  erreurIa: z.boolean().default(false),
 })
 export type InterrupteursDemo = z.infer<typeof InterrupteursDemo>
 

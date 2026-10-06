@@ -63,5 +63,6 @@ export const TEXTES_ENCARTS = {
   bilanStatut: 'Statut calculé',
   bilanPour: (statut: string) => `Pour passer à ${statut}`,
   bilanRien: 'Rien ne manque pour le moment.',
+  trancherD: 'Tranche d’abord l’erreur repérée ci-dessous.',
   jour: formaterJour,
 } as const

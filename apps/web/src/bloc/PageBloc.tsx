@@ -8,6 +8,7 @@ import { EncartConsolidation } from './EncartConsolidation.tsx'
 import { formaterDelai, formaterInstant } from './instant.ts'
 import { instantReel } from '../demo/horlogeDemo.ts'
 import { DialogueRevoirCours } from './DialogueRevoirCours.tsx'
+import { EncartErreurIa } from './EncartErreurIa.tsx'
 import { EncartHorsConnexion } from './EncartHorsConnexion.tsx'
 import { useEtatEnvoi } from './useEtatEnvoi.ts'
 import { useTempsActif } from './useTempsActif.ts'
@@ -87,6 +88,9 @@ function FicheOuverte({
     }
   }, [consolidationAttendue, relireBloc])
 
+  // Une erreur déjà ouverte n'a plus besoin d'être tranchée.
+  const ouvertes = hote.statut.manque.find(({ code }) => code === 'erreur_ouverte')?.erreurs ?? []
+  const enAttente = hote.propositions.filter(({ erreur }) => !ouvertes.includes(erreur))
   const refusee = [
     ...problemes,
     ...(hote.refus === null ? [] : [PROBLEMES_POIGNEE_DE_MAIN[hote.refus]]),
@@ -142,8 +146,22 @@ function FicheOuverte({
             delai={formaterDelai(delaiConsolidationMinutes)}
           />
         )}
+        {enAttente.map((proposition) => (
+          <EncartErreurIa
+            key={`${proposition.correction}:${proposition.erreur}`}
+            code={donnees.bloc}
+            reponse={proposition.reponse}
+            surConfirmer={() => {
+              hote.trancherErreur(proposition, 'confirmee')
+            }}
+            surRejeter={() => {
+              hote.trancherErreur(proposition, 'rejetee')
+            }}
+          />
+        ))}
         {typeCourant === 'bilan' && (
           <EncartBilan
+            erreurEnAttente={enAttente.length > 0}
             statut={hote.statut.statut}
             manque={hote.statut.manque}
             maintenant={instantReel()}

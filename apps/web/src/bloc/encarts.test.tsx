@@ -1,6 +1,7 @@
 import { EXEMPLES_PAGE } from '@janus/contrats'
 import { createMemoryHistory } from '@tanstack/react-router'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { MANIFESTES_GRAINE } from '../demo/graine.ts'
 import { creerRouteur } from '../routes/arbre.tsx'
@@ -141,5 +142,74 @@ describe('encart du bilan', () => {
     await envoyer(message('etape.vue', { etape: etape('restitution') }))
 
     expect(screen.queryByText(/Statut calculé/)).not.toBeInTheDocument()
+  })
+})
+
+describe('erreur critique repérée par l’IA', () => {
+  const REPONSE = 'Une fiche, c’est un cours en entier.'
+
+  async function avecErreurIa() {
+    const banc = await afficher()
+    banc.magasin.ecrire((etat) => ({
+      ...etat,
+      interrupteurs: { ...etat.interrupteurs, erreurIa: true },
+    }))
+    await banc.envoyer(
+      banc.message('restitution.demande', { question: QUESTIONS[0], reponse: REPONSE }),
+    )
+    const encart = await screen.findByRole('region', {
+      name: 'Erreur critique repérée par l’IA · À confirmer',
+    })
+    return { ...banc, encart }
+  }
+
+  it('cite la réponse et dit ce que la confirmation change', async () => {
+    const { encart } = await avecErreurIa()
+
+    expect(encart).toHaveTextContent(`« ${REPONSE} »`)
+    expect(encart).toHaveTextContent(
+      'Si tu confirmes, B03 passe à À reprendre jusqu’à ce que tu réussisses une question sur ce point.',
+    )
+    expect(within(encart).getByRole('button', { name: 'C’est bien une erreur' })).toBeVisible()
+    expect(within(encart).getByRole('button', { name: 'Ce n’en est pas une' })).toBeVisible()
+  })
+
+  it('confirmer passe le bloc à « À reprendre »', async () => {
+    const utilisateur = userEvent.setup()
+    const { encart, magasin } = await avecErreurIa()
+
+    await utilisateur.click(within(encart).getByRole('button', { name: 'C’est bien une erreur' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('À reprendre')).toBeVisible()
+    })
+    expect(screen.queryByRole('region', { name: /Erreur critique/ })).not.toBeInTheDocument()
+    expect(
+      magasin
+        .lire()
+        .faits.some((fait) => fait.type === 'erreur_cochee' && fait.source === 'ia_confirmee'),
+    ).toBe(true)
+  })
+
+  it('rejeter laisse le statut calculé et ne coche rien', async () => {
+    const utilisateur = userEvent.setup()
+    const { encart, magasin } = await avecErreurIa()
+    const cochees = () =>
+      magasin.lire().faits.filter((fait) => fait.type === 'erreur_cochee').length
+    const avant = cochees()
+
+    await utilisateur.click(within(encart).getByRole('button', { name: 'Ce n’en est pas une' }))
+
+    expect(screen.queryByRole('region', { name: /Erreur critique/ })).not.toBeInTheDocument()
+    expect(screen.queryByText('À reprendre')).not.toBeInTheDocument()
+    expect(cochees()).toBe(avant)
+  })
+
+  it('au bilan, la phrase de ce qui manque commence par « Tranche d’abord »', async () => {
+    const { envoyer, message } = await avecErreurIa()
+
+    await envoyer(message('etape.vue', { etape: etape('bilan') }))
+
+    expect(await screen.findByText('Tranche d’abord l’erreur repérée ci-dessous.')).toBeVisible()
   })
 })

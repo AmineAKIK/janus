@@ -93,7 +93,13 @@ export function routesCorrectionsDemo({
         recopiee: estRecopiee(corps.reponse, [question.attendu], reglages.seuilRecopie),
         certitude,
       })
-      const erreurs = correction.niveau === 'solide' ? [] : question.erreurs
+      const proposee = manifeste.erreurs_critiques[0]?.id
+      const erreurs =
+        interrupteurs.erreurIa && proposee !== undefined
+          ? [proposee]
+          : correction.niveau === 'solide'
+            ? []
+            : question.erreurs
 
       // Une correction de premier tour sur dix est mise à l'avis d'Amine : la 1re, la 11e, etc.
       // Seules comptent les corrections rendues par cette démo, pas celles de la graine.
