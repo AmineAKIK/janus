@@ -65,6 +65,19 @@ export const EtatDemo = z.strictObject({
     nom_utilisateur: z.string().min(1),
     fuseau: z.string().min(1),
   }),
+  /** Le mot de passe du compte de démo, que « Changer le mot de passe » modifie. */
+  motDePasse: z.string().min(1).default('demo-janus'),
+  /** Les autres appareils connectés (la session courante est implicite). */
+  sessions: z
+    .array(
+      z.strictObject({
+        id: IdUuid,
+        appareil: z.string().min(1),
+        creee_le: InstantUtc,
+        derniere_activite: InstantUtc,
+      }),
+    )
+    .default([]),
   /** Vrai tant que la session simulée (le cookie) est ouverte. */
   sessionOuverte: z.boolean(),
   /** Les échecs de connexion de la dernière minute. */

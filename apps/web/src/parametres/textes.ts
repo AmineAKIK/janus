@@ -26,6 +26,29 @@ export const TEXTES_REVISION = {
   questionsDebutAide: 'Entre 5 et 10 questions.',
 } as const
 
+export const TEXTES_COMPTE = {
+  nomUtilisateur: 'Nom d’utilisateur',
+  fuseau: 'Fuseau horaire',
+  heureBascule: 'Heure de bascule du jour',
+  motDePasse: 'Mot de passe',
+  changer: 'Changer le mot de passe',
+  actuel: 'Mot de passe actuel',
+  nouveau: 'Nouveau mot de passe',
+  nouveauAide: '12 caractères au moins, 72 octets au plus.',
+  confirmation: 'Confirmation du nouveau mot de passe',
+  differents: 'Les deux mots de passe ne sont pas identiques.',
+  obligatoire: 'Ce champ est obligatoire.',
+  enregistrer: 'Enregistrer',
+  annuler: 'Annuler',
+  motDePasseChange: 'Mot de passe changé.',
+  sessions: 'Sessions ouvertes',
+  cetteSession: 'Cette session',
+  deconnecter: 'Déconnecter',
+  seDeconnecter: 'Se déconnecter',
+} as const
+
+export const texteActivite = (intervalle: string) => `Dernière activité : il y a ${intervalle}`
+
 export const TEXTES_REGLES = {
   badge: 'Règle protégée',
   explication: 'Les délais méthodologiques restent en lecture seule pour préserver la preuve.',

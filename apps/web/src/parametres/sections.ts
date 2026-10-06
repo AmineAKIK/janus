@@ -1,4 +1,5 @@
 export const SECTIONS = [
+  { cle: 'compte', titre: 'Compte' },
   { cle: 'revision', titre: 'Révision' },
   { cle: 'regles', titre: 'Règles de la méthode' },
   { cle: 'affichage', titre: 'Affichage' },

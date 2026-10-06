@@ -1,4 +1,5 @@
 import { EtatDemo, Reglages } from '@janus/contrats'
+import { instantEnIso } from '@janus/moteur'
 
 /** La clé de `localStorage` : la version est dans le nom, un changement de format repart de zéro. */
 export const CLE_STOCKAGE = 'janus.demo.v1'
@@ -10,6 +11,33 @@ const UTILISATEUR_DEMO = {
   fuseau: 'Europe/Paris',
 } as const
 
+const MOT_DE_PASSE_INITIAL = 'demo-janus'
+
+/** La session de l'appareil qui fait la requête : les autres sont dans l'état. */
+export const SESSION_COURANTE = '0190a000-0000-7000-8000-00000000d3b0'
+
+const HEURE_MS = 3_600_000
+
+/** Deux autres appareils, pour montrer « Déconnecter » ; leurs dates suivent le premier lancement. */
+function autresSessions(maintenant: string): EtatDemo['sessions'] {
+  const ms = Date.parse(maintenant)
+  const instant = (decalage: number) => instantEnIso(ms - decalage)
+  return [
+    {
+      id: '0190a000-0000-7000-8000-00000000d3b1',
+      appareil: 'Pixel 8 · Chrome',
+      creee_le: instant(72 * HEURE_MS),
+      derniere_activite: instant(2 * HEURE_MS),
+    },
+    {
+      id: '0190a000-0000-7000-8000-00000000d3b2',
+      appareil: 'Portable · Firefox',
+      creee_le: instant(240 * HEURE_MS),
+      derniere_activite: instant(30 * HEURE_MS),
+    },
+  ]
+}
+
 /** Le morceau de `localStorage` dont le store a besoin ; `null` quand le navigateur n'en donne pas. */
 export type Stockage = Pick<Storage, 'getItem' | 'setItem'>
 
@@ -20,6 +48,8 @@ export function etatVide(maintenant: string): EtatDemo {
     premierLancement: maintenant,
     decalageMs: 0,
     utilisateur: { ...UTILISATEUR_DEMO },
+    motDePasse: MOT_DE_PASSE_INITIAL,
+    sessions: autresSessions(maintenant),
     sessionOuverte: false,
     echecsConnexion: [],
     connexionBloqueeJusqua: null,
