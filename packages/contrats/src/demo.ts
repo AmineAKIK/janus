@@ -1,6 +1,7 @@
 import { z } from 'zod'
+import { Confiance } from './enums.ts'
 import { Fait, InstantUtc } from './faits.ts'
-import { CodeBloc, EtatPage, IdUuid } from './pont.ts'
+import { CodeBloc, CorrectionRecue, EtatPage, IdUuid, Identifiant } from './pont.ts'
 import { Reglages } from './reglages.ts'
 
 // Ce que le backend de démo (dans le navigateur) garde entre deux rechargements de la page.
@@ -42,6 +43,19 @@ export const EtatDemo = z.strictObject({
   reglages: Reglages,
   faits: z.array(Fait),
   etatsPage: z.record(CodeBloc, EtatPage),
+  /** Les réponses aux questions de début de séance : de quoi reprendre la série après un départ. */
+  rappels: z
+    .record(
+      Identifiant,
+      z.strictObject({
+        jour: z.string(),
+        bloc: CodeBloc,
+        confiance: Confiance,
+        reponse: z.string(),
+        correction: CorrectionRecue,
+      }),
+    )
+    .default({}),
   /** Les identifiants de messages déjà reçus : un doublon est ignoré. */
   idsRecus: z.array(z.string()),
   interrupteurs: InterrupteursDemo,

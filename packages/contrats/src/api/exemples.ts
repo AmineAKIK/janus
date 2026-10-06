@@ -323,9 +323,39 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
     ],
   },
   'GET /questions-debut': {
-    reponse: { questions: [{ id: 'RA1', question: 'Qu’est-ce qu’une fiche ?' }] },
+    reponse: {
+      questions: [
+        { id: 'RA1', question: 'Qu’est-ce qu’une fiche ?', deja: null },
+        {
+          id: 'RA2',
+          question: 'À quoi sert un manifeste ?',
+          deja: {
+            bloc: 'D01',
+            confiance: 'sur',
+            reponse: 'À décrire la fiche.',
+            correction: {
+              id: ID,
+              echantillon: false,
+              question: 'RA2',
+              tour: 1,
+              message: 'Bien.',
+              niveau: 'solide',
+              erreurs_critiques: [],
+              source: 'support',
+              ref: 'RA2',
+              certitude: 'sur',
+              compte: true,
+            },
+          },
+        },
+      ],
+    },
     invalides: [
-      { partie: 'reponse', valeur: { questions: [{ id: 'RA1', question: 'Q', bloc: 'D01' }] } },
+      {
+        partie: 'reponse',
+        valeur: { questions: [{ id: 'RA1', question: 'Q', deja: null, bloc: 'D01' }] },
+      },
+      { partie: 'reponse', valeur: { questions: [{ id: 'RA1', question: 'Q' }] } },
     ],
   },
   'GET /cartes/dues': {

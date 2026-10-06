@@ -3,6 +3,7 @@ import type { CorrectionRecue } from '@janus/contrats'
 import { compte, estRecopiee } from '@janus/moteur'
 import { MANIFESTES_GRAINE } from '../graine.ts'
 import { dejaRecu, enregistrer, faitsDuBloc } from './calculs.ts'
+import { contexteDuJour } from './aujourdhui.ts'
 import { definir } from './definir.ts'
 
 export interface OptionsCorrections {
@@ -49,7 +50,7 @@ export function routesCorrectionsDemo({
         )
       }
       const { serie } = corps
-      if (serie !== 'restitution' && serie !== 'consolidation') {
+      if (serie === 'verification') {
         throw probleme(
           501,
           'erreur_interne',
@@ -57,7 +58,14 @@ export function routesCorrectionsDemo({
           `La démo ne corrige pas encore la série « ${serie} ».`,
         )
       }
-      const manifeste = corps.bloc === undefined ? undefined : MANIFESTES_GRAINE[corps.bloc]
+      // Une question de début de séance ne donne pas son bloc : la démo le retrouve par la question.
+      const codeBloc =
+        serie === 'rappel'
+          ? contexteDuJour(magasin.lire(), horloge.maintenant()).questions.find(
+              ({ question: id }) => id === corps.question,
+            )?.bloc
+          : corps.bloc
+      const manifeste = codeBloc === undefined ? undefined : MANIFESTES_GRAINE[codeBloc]
       const question = manifeste?.[serie].find(({ id }) => id === corps.question)
       if (manifeste === undefined || question === undefined) {
         throw probleme(
@@ -136,6 +144,25 @@ export function routesCorrectionsDemo({
         certitude,
         compte: resultat.compte,
         ...(resultat.compte ? {} : { raison_non_compte: resultat.raison }),
+      }
+      if (serie === 'rappel') {
+        const { jourDu } = contexteDuJour(magasin.lire(), horloge.maintenant())
+        magasin.ecrire((etat) => {
+          const avant = etat.rappels[question.id]
+          return {
+            ...etat,
+            rappels: {
+              ...etat.rappels,
+              [question.id]: {
+                jour: jourDu(horloge.maintenant()),
+                bloc: manifeste.bloc,
+                confiance: avant?.confiance ?? corps.confiance,
+                reponse: avant?.reponse ?? corps.reponse,
+                correction: recue,
+              },
+            },
+          }
+        })
       }
       return recue
     }),
