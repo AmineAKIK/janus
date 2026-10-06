@@ -4,7 +4,7 @@ import { useState } from 'react'
 import styles from './Parametres.module.css'
 import { nombreFrancais, TEXTES_PARAMETRES as T } from './textes.ts'
 
-type CleNombre = 'nouvellesCartesParJour' | 'retentionVisee' | 'questionsDebut'
+type CleNombre = 'nouvellesCartesParJour' | 'retentionVisee' | 'questionsDebut' | 'heureBascule'
 
 interface Proprietes {
   readonly cle: CleNombre

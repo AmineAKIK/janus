@@ -80,6 +80,7 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
     corps: { ancien: 'ancien-secret', nouveau: 'nouveau-secret' },
     invalides: [
       { partie: 'corps', valeur: { ancien: 'ancien-secret', nouveau: 'court' } },
+      { partie: 'corps', valeur: { ancien: 'ancien-secret', nouveau: 'a'.repeat(73) } },
       { partie: 'corps', valeur: { nouveau: 'nouveau-secret' } },
     ],
   },

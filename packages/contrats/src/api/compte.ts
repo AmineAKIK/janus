@@ -20,7 +20,13 @@ const SessionAppareil = z.strictObject({
   courante: z.boolean(),
 })
 
-const MotDePasse = z.string().min(8, { error: 'Le mot de passe doit faire au moins 8 caractères.' })
+/** Au moins 12 caractères ; 72 octets au plus, la limite de bcrypt. */
+const MotDePasse = z
+  .string()
+  .min(12, { error: 'Le mot de passe doit faire au moins 12 caractères.' })
+  .refine((valeur) => new TextEncoder().encode(valeur).length <= 72, {
+    error: 'Le mot de passe doit faire 72 octets au plus.',
+  })
 
 export const ROUTES_COMPTE = {
   'POST /session': {

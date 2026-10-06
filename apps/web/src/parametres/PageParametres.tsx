@@ -5,6 +5,7 @@ import { Chargement, Erreur } from '../catalogue/EtatEcran.tsx'
 import styles from './Parametres.module.css'
 import { estSection, SECTIONS } from './sections.ts'
 import type { CleSection } from './sections.ts'
+import { SectionCompte } from './sections/Compte.tsx'
 import { SectionAffichage } from './sections/Affichage.tsx'
 import { SectionRegles } from './sections/Regles.tsx'
 import { SectionRevision } from './sections/Revision.tsx'
@@ -29,6 +30,8 @@ export function PageParametres({ section }: { readonly section?: string }) {
   const corps = (cle: CleSection): ReactNode => {
     if (reglages === undefined) return null
     switch (cle) {
+      case 'compte':
+        return <SectionCompte reglages={reglages} enregistrer={enregistrer} />
       case 'revision':
         return <SectionRevision reglages={reglages} enregistrer={enregistrer} />
       case 'regles':

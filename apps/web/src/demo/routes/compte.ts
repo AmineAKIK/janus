@@ -1,5 +1,6 @@
 import { ErreurApi, ROUTES } from '@janus/contrats'
 import { instantEnIso, instantEnMs } from '@janus/moteur'
+import { SESSION_COURANTE } from '../store.ts'
 import { definir } from './definir.ts'
 
 /** L'identifiant et le mot de passe de la démo, affichés dans le bandeau « Démo » de la connexion. */
@@ -30,7 +31,10 @@ export const ROUTES_COMPTE_DEMO = [
       throw tropDEssais(Math.ceil((instantEnMs(bloquee) - ms) / 1000))
     }
 
-    if (corps.nom_utilisateur === IDENTIFIANT_DEMO && corps.mot_de_passe === MOT_DE_PASSE_DEMO) {
+    if (
+      corps.nom_utilisateur === IDENTIFIANT_DEMO &&
+      corps.mot_de_passe === magasin.lire().motDePasse
+    ) {
       magasin.ecrire((etat) => ({
         ...etat,
         sessionOuverte: true,
@@ -68,5 +72,50 @@ export const ROUTES_COMPTE_DEMO = [
   definir(ROUTES['GET /moi'], ({ magasin }) => {
     const { id, nom_utilisateur, fuseau } = magasin.lire().utilisateur
     return { id, nom_utilisateur, fuseau }
+  }),
+
+  definir(ROUTES['PATCH /moi/mot-de-passe'], ({ magasin, corps }) => {
+    if (corps.ancien !== magasin.lire().motDePasse) {
+      throw new ErreurApi({
+        status: 403,
+        code: 'refus',
+        titre: 'Mot de passe incorrect',
+        detail: 'Le mot de passe actuel est incorrect.',
+      })
+    }
+    magasin.ecrire((etat) => ({ ...etat, motDePasse: corps.nouveau }))
+    return null
+  }),
+
+  definir(ROUTES['GET /sessions'], ({ magasin, horloge }) => {
+    const maintenant = horloge.maintenant()
+    return {
+      sessions: [
+        {
+          id: SESSION_COURANTE,
+          appareil: 'Cet appareil',
+          creee_le: magasin.lire().premierLancement,
+          derniere_activite: maintenant,
+          courante: true,
+        },
+        ...magasin.lire().sessions.map((session) => ({ ...session, courante: false })),
+      ],
+    }
+  }),
+
+  definir(ROUTES['DELETE /sessions/:id'], ({ magasin, params }) => {
+    if (!magasin.lire().sessions.some(({ id }) => id === params.id)) {
+      throw new ErreurApi({
+        status: 404,
+        code: 'introuvable',
+        titre: 'Session introuvable',
+        detail: 'Cette session n’existe plus.',
+      })
+    }
+    magasin.ecrire((etat) => ({
+      ...etat,
+      sessions: etat.sessions.filter(({ id }) => id !== params.id),
+    }))
+    return null
   }),
 ]
