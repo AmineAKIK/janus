@@ -322,7 +322,7 @@ function evaluerErreurs(
 // --- Vérifications, retests ------------------------------------------------
 
 /** Une explication solide, une tâche réussie et un transfert solide, au premier tour et qui comptent. */
-function compositionReussie(reponses: readonly ReponseVerification[]): boolean {
+export function compositionReussie(reponses: readonly ReponseVerification[]): boolean {
   const reussit = (type: ReponseVerification['type']) =>
     reponses.some((reponse) => reponse.type === type && reponseReussie(reponse))
   return reussit('explication') && reussit('tache') && reussit('transfert')

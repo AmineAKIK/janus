@@ -9,6 +9,7 @@ import { ROUTES_QUESTIONS_DEMO } from './questions.ts'
 import { ROUTES_REGLAGES_DEMO } from './reglages.ts'
 import { routesCorrectionsDemo } from './corrections.ts'
 import type { OptionsCorrections } from './corrections.ts'
+import { routesVerificationsDemo } from './verifications.ts'
 
 export type OptionsRoutesDemo = OptionsCatalogue & OptionsCorrections
 
@@ -22,6 +23,7 @@ export function creerRoutesDemo(options: OptionsRoutesDemo): RoutesDemo {
     ...ROUTES_QUESTIONS_DEMO,
     ...ROUTES_CARTES_DEMO,
     ...routesCorrectionsDemo(options),
+    ...routesVerificationsDemo(options),
     ...ROUTES_REGLAGES_DEMO,
   ])
 }

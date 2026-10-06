@@ -1,5 +1,6 @@
 import { z } from 'zod'
-import { Confiance } from './enums.ts'
+import { ResultatVerification } from './api/apprentissage.ts'
+import { Confiance, Niveau, TypeDifferee, TypeVerification } from './enums.ts'
 import { Fait, InstantUtc } from './faits.ts'
 import { CodeBloc, CorrectionRecue, EtatPage, IdUuid, Identifiant } from './pont.ts'
 import { Reglages } from './reglages.ts'
@@ -24,6 +25,34 @@ export const InterrupteursDemo = z.strictObject({
   erreurIa: z.boolean().default(false),
 })
 export type InterrupteursDemo = z.infer<typeof InterrupteursDemo>
+
+/** Une vérification de la démo : ses trois parties tirées, les réponses reçues et, à la fin, son résultat. */
+export const VerificationDemo = z.strictObject({
+  bloc: CodeBloc,
+  type: TypeVerification,
+  parties: z.array(z.strictObject({ id: Identifiant, type: TypeDifferee })),
+  /** Un instant : le début, c'est la première réponse reçue. */
+  debut: InstantUtc.nullable(),
+  reponses: z.record(
+    Identifiant,
+    z.strictObject({
+      date: InstantUtc,
+      compte: z.boolean(),
+      niveau: Niveau.optional(),
+      reussi: z.boolean().optional(),
+      cas: z
+        .strictObject({ reussis: z.number().int().min(0), total: z.number().int().min(1) })
+        .optional(),
+      correction: z.string(),
+      indice: z.string().optional(),
+      reponse: z.string(),
+    }),
+  ),
+  /** Le jour `AAAA-MM-JJ` jusqu'auquel Amine a reporté la vérification. */
+  reporteeJusqua: z.string().nullable(),
+  resultat: ResultatVerification.nullable(),
+})
+export type VerificationDemo = z.infer<typeof VerificationDemo>
 
 export const EtatDemo = z.strictObject({
   version: z.literal(1),
@@ -83,6 +112,7 @@ export const EtatDemo = z.strictObject({
       }),
     )
     .default({}),
+  verifications: z.record(IdUuid, VerificationDemo).default({}),
   /** Les identifiants de messages déjà reçus : un doublon est ignoré. */
   idsRecus: z.array(z.string()),
   interrupteurs: InterrupteursDemo,

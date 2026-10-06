@@ -271,7 +271,7 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
         { tache: { type: 'reprise', blocs: ['D01'] }, lien: '/blocs/D01', faite: false },
         {
           tache: { type: 'verification', bloc: 'D01', apres: '2026-06-04' },
-          lien: '/verifications/D01',
+          lien: `/verifications/${ID}`,
           faite: false,
         },
         {
@@ -400,24 +400,63 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
       type: 'verification',
       due_le: '2026-06-04',
       terminee: false,
-      questions: [{ id: 'DE1', type: 'explication', consigne: 'Explique ce qu’est une fiche.' }],
+      revu_recemment: null,
+      parties: [
+        {
+          id: 'DE1',
+          type: 'explication',
+          consigne: 'Explique ce qu’est une fiche.',
+          envoyee: false,
+        },
+        {
+          id: 'DT1',
+          type: 'tache',
+          consigne: 'Écris une fonction double(n).',
+          tache: { mode: 'code', langage: 'js', cas: [{ entree: [2], sortie: 4 }] },
+          envoyee: false,
+        },
+      ],
+      resultat: null,
     },
     invalides: [
       { partie: 'params', valeur: { id: 'abc' } },
       {
         partie: 'reponse',
-        valeur: { id: ID, type: 'examen', due_le: 'x', terminee: false, questions: [] },
+        valeur: {
+          id: ID,
+          type: 'examen',
+          due_le: 'x',
+          terminee: false,
+          revu_recemment: null,
+          parties: [],
+          resultat: null,
+        },
       },
     ],
   },
   'POST /verifications/:id/reponses': {
     params: { id: ID },
-    corps: { id: AUTRE_ID, question: 'DE1', reponse: 'Une fiche résume un seul bloc.' },
-    reponse: { question: 'DE1', tour: 1, compte: true, niveau: 'solide', terminee: false },
+    corps: {
+      id: AUTRE_ID,
+      partie: 'DE1',
+      reponse: 'Une fiche résume un seul bloc.',
+      confiance: 'sur',
+      support: { colle: false, retour_cours: false },
+    },
+    reponse: { partie: 'DE1', terminee: false },
     invalides: [
-      { partie: 'corps', valeur: { id: AUTRE_ID, question: 'DE1', reponse: '' } },
-      { partie: 'corps', valeur: { question: 'DE1', reponse: 'x' } },
-      { partie: 'reponse', valeur: { question: 'DE1', tour: 0, compte: true, terminee: false } },
+      {
+        partie: 'corps',
+        valeur: {
+          id: AUTRE_ID,
+          partie: 'DE1',
+          reponse: '',
+          confiance: 'sur',
+          support: { colle: false, retour_cours: false },
+        },
+      },
+      { partie: 'corps', valeur: { partie: 'DE1', reponse: 'x' } },
+      { partie: 'reponse', valeur: { partie: 'DE1' } },
     ],
   },
   'POST /verifications/:id/reporter': {

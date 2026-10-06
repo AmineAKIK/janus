@@ -37,7 +37,7 @@ describe('GET /aujourdhui de la démo', () => {
     expect(taches.map(({ lien }) => lien)).toEqual([
       expect.stringMatching(/^\/blocs\/B04/),
       '/questions',
-      '/verifications/B02',
+      expect.stringMatching(/^\/verifications\/[0-9a-f-]{36}$/),
       expect.stringMatching(/^\/blocs\/B04\?etape=/),
       expect.stringMatching(/^\/blocs\/B05\?etape=/),
       '/revision',
