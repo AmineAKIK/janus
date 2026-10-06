@@ -35,6 +35,8 @@ export interface ResultatBloc {
   /** Identifiants des erreurs critiques ouvertes, dans l'ordre où elles ont été ouvertes. */
   readonly erreursOuvertes: readonly string[]
   readonly echecsConsecutifs: number
+  /** Vrai quand le bloc est redescendu d'un cran après des échecs de vérification et n'a pas réussi depuis. */
+  readonly descendu: boolean
   /** Les dates qui alimentent le panneau « Cinq preuves » ; la file du jour s'en sert aussi pour les échéances. */
   readonly preuves: {
     /** Fin de la série de consolidation réussie. */
@@ -365,6 +367,7 @@ function evaluerVerifications(ordonnes: readonly Fait[], provisoire: string, reg
   let echecs = 0
   let derniereReussite: string | null = null
   let dernierEchec: string | null = null
+  let descendu = false
   let reussitesDeRetest: string[] = []
   // La dernière réussite retenue : le point de départ de l'entretien suivant.
   let derniere = provisoire
@@ -385,6 +388,7 @@ function evaluerVerifications(ordonnes: readonly Fait[], provisoire: string, reg
     retenues.add(fait.id)
     if (compositionReussie(fait.reponses)) {
       echecs = 0
+      descendu = false
       derniereReussite = fait.date
       derniere = fait.date
       dernierEchec = null
@@ -400,6 +404,7 @@ function evaluerVerifications(ordonnes: readonly Fait[], provisoire: string, reg
       dernierEchec = fait.date
       if (echecs >= reglages.echecsAvantDescente && !verification) {
         echecs = 0
+        descendu = true
         reussitesDeRetest = []
         if (retest === null) {
           palier = 'provisoire'
@@ -414,6 +419,7 @@ function evaluerVerifications(ordonnes: readonly Fait[], provisoire: string, reg
     dateAcquis,
     retest,
     echecs,
+    descendu,
     retenues,
     derniereReussite,
     dernierEchec,
@@ -531,6 +537,7 @@ export function calculerBloc(
     manque,
     erreursOuvertes,
     echecsConsecutifs: verifications?.echecs ?? 0,
+    descendu: verifications?.descendu ?? false,
     preuves: {
       consolidation: consolidation.ok ? consolidation.date : null,
       pratique:

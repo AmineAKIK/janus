@@ -6,6 +6,7 @@ import { routesCatalogueDemo } from './catalogue.ts'
 import type { OptionsCatalogue } from './catalogue.ts'
 import { ROUTES_COMPTE_DEMO } from './compte.ts'
 import { ROUTES_DONNEES_DEMO } from './donnees.ts'
+import { ROUTES_TABLEAU_DE_BORD_DEMO } from './tableauDeBord.ts'
 import { ROUTES_QUESTIONS_DEMO } from './questions.ts'
 import { ROUTES_REGLAGES_DEMO } from './reglages.ts'
 import { routesCorrectionsDemo } from './corrections.ts'
@@ -27,5 +28,6 @@ export function creerRoutesDemo(options: OptionsRoutesDemo): RoutesDemo {
     ...routesVerificationsDemo(options),
     ...ROUTES_REGLAGES_DEMO,
     ...ROUTES_DONNEES_DEMO,
+    ...ROUTES_TABLEAU_DE_BORD_DEMO,
   ])
 }

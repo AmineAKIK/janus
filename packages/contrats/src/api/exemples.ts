@@ -470,12 +470,47 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
     ],
   },
   'GET /tableau-de-bord': {
+    requete: { module: 'M1', periode: '7j' },
     reponse: {
-      blocs: [{ bloc: 'D01', titre_court: 'Démo', statut: 'acquis', prerequis: [] }],
-      a_faire: [{ type: 'bloc', bloc: 'D02' }],
-      erreurs_ouvertes: [{ bloc: 'D01', erreur: 'E1', libelle: 'Confondre fiche et cours.' }],
+      modules: [{ id: 'M1', titre: 'Module 1' }],
+      module: { id: 'M1', titre: 'Module 1' },
+      periode: '7j',
+      blocs: [
+        {
+          bloc: 'D01',
+          titre_court: 'Démo',
+          partie: 'P1',
+          statut: 'acquis',
+          prerequis: [],
+          force: false,
+          redescendu: false,
+          prerequis_non_valides: false,
+        },
+      ],
+      a_faire: {
+        aujourdhui: 1,
+        a_venir: 0,
+        taches: [{ tache: { type: 'bloc', bloc: 'D02' }, lien: '/blocs/D02', faite: false }],
+      },
+      erreurs: [
+        {
+          erreur: 'E1',
+          libelle: 'Confondre fiche et cours.',
+          nombre: 2,
+          blocs: ['D01'],
+          ouverte: true,
+        },
+      ],
+      decisions: {
+        forces: [{ date: INSTANT, bloc: 'D01', statut: 'vu', raison: 'Je l’ai vu en cours.' }],
+        sans_prerequis: [{ date: INSTANT, bloc: 'D02', raison: null }],
+      },
+      cout_ia: { depense_millioniemes: 1_500_000, plafond_millioniemes: 10_000_000 },
     },
-    invalides: [{ partie: 'reponse', valeur: { blocs: [], a_faire: [] } }],
+    invalides: [
+      { partie: 'requete', valeur: { periode: '1an' } },
+      { partie: 'reponse', valeur: { blocs: [], a_faire: [] } },
+    ],
   },
   'GET /journal': {
     requete: { avant: INSTANT, limite: '50' },

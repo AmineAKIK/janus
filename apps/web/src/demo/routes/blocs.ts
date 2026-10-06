@@ -87,6 +87,25 @@ export const ROUTES_BLOCS_DEMO = [
     }
   }),
 
+  definir(ROUTES['POST /blocs/:id/forcer'], ({ magasin, horloge, params, corps }) => {
+    verifierBloc(params.id)
+    const maintenant = horloge.maintenant()
+    if (!dejaRecu(magasin.lire(), corps.id)) {
+      const commun = { id: corps.id, bloc: params.id, date: maintenant }
+      enregistrer(magasin, corps.id, [
+        corps.action === 'forcer'
+          ? { ...commun, type: 'statut_force', statut: corps.statut, raison: corps.raison }
+          : { ...commun, type: 'force_levee' },
+      ])
+    }
+    const resultat = resultatDuBloc(magasin.lire(), params.id, maintenant)
+    return {
+      ...statutBloc(resultat),
+      force: resultat.force,
+      statut_calcule: resultat.statutCalcule,
+    }
+  }),
+
   definir(ROUTES['PUT /blocs/:id/etat-page'], ({ magasin, params, corps }) => {
     verifierBloc(params.id)
     // La démo n'a qu'un onglet : l'état n'a qu'une version, 0 tant qu'il n'existe pas, 1 ensuite.
