@@ -29,12 +29,21 @@ const correction = {
   compte: true,
 }
 
-const entreeJournal = {
+const noteJournal = {
   id: ID,
+  entree: 'f0001',
   date: INSTANT,
-  type: 'note',
-  bloc: 'D01',
   texte: 'Je confonds encore fiche et cours.',
+}
+
+const ligneJournal = {
+  id: 'f0001',
+  date: INSTANT,
+  bloc: 'D01',
+  type: 'restitution',
+  resume: '4 sur 5 comptées · 1 ne compte pas (collé) · statut inchangé',
+  detail: ['R1 · solide'],
+  note: noteJournal,
 }
 
 const demandeCorrection = {
@@ -513,12 +522,18 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
     ],
   },
   'GET /journal': {
-    requete: { avant: INSTANT, limite: '50' },
-    reponse: { entrees: [entreeJournal] },
+    requete: { module: 'M1', bloc: 'D01', type: 'restitution', avant: INSTANT },
+    reponse: {
+      modules: [{ id: 'M1', titre: 'Environnement numérique' }],
+      entrees: [ligneJournal],
+      suivant: null,
+      blocs: [{ bloc: 'D01', titre_court: 'Fiche et cours', statut: 'vu' }],
+      idees: [{ id: ID, date: INSTANT, texte: 'Ajouter un mode révision rapide.' }],
+    },
     invalides: [
-      { partie: 'requete', valeur: { limite: '0' } },
+      { partie: 'requete', valeur: { type: 'secret' } },
       { partie: 'requete', valeur: { avant: 'hier' } },
-      { partie: 'reponse', valeur: { entrees: [{ ...entreeJournal, type: 'secret' }] } },
+      { partie: 'reponse', valeur: { entrees: [{ ...ligneJournal, type: 'secret' }] } },
     ],
   },
   'GET /journal/export.txt': {
@@ -530,17 +545,17 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
     invalides: [{ partie: 'reponse', valeur: { version: 2, genere_le: INSTANT, donnees: {} } }],
   },
   'POST /journal/notes': {
-    corps: { id: ID, texte: 'Je confonds encore fiche et cours.', bloc: 'D01' },
-    reponse: entreeJournal,
+    corps: { id: ID, entree: 'f0001', texte: 'Je confonds encore fiche et cours.' },
+    reponse: noteJournal,
     invalides: [
-      { partie: 'corps', valeur: { id: ID, texte: '   ' } },
-      { partie: 'corps', valeur: { id: ID, texte: 'a'.repeat(10_001) } },
+      { partie: 'corps', valeur: { id: ID, entree: 'f0001', texte: '   ' } },
+      { partie: 'corps', valeur: { id: ID, entree: 'f0001', texte: 'a'.repeat(1001) } },
     ],
   },
   'PATCH /journal/notes/:id': {
     params: { id: ID },
     corps: { texte: 'Note corrigée.' },
-    reponse: entreeJournal,
+    reponse: noteJournal,
     invalides: [
       { partie: 'corps', valeur: { texte: '' } },
       { partie: 'params', valeur: { id: '1' } },
@@ -548,7 +563,7 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
   },
   'POST /journal/idees': {
     corps: { id: ID, texte: 'Ajouter un mode révision rapide.' },
-    reponse: { ...entreeJournal, type: 'idee', bloc: null },
+    reponse: { id: ID, date: INSTANT, texte: 'Ajouter un mode révision rapide.' },
     invalides: [{ partie: 'corps', valeur: { texte: 'sans identifiant' } }],
   },
   'POST /revues-methode': {

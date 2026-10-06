@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { ResultatVerification } from './api/apprentissage.ts'
+import { IdeeJournal, NoteJournal } from './api/suivi.ts'
 import { Confiance, Niveau, TypeDifferee, TypeVerification } from './enums.ts'
 import { Fait, InstantUtc } from './faits.ts'
 import { CodeBloc, CorrectionRecue, EtatPage, IdUuid, Identifiant } from './pont.ts'
@@ -126,6 +127,10 @@ export const EtatDemo = z.strictObject({
     )
     .default({}),
   verifications: z.record(IdUuid, VerificationDemo).default({}),
+  /** Les notes d'Amine sur les lignes du journal, par identifiant de note. */
+  notesJournal: z.record(IdUuid, NoteJournal).default({}),
+  /** « À explorer plus tard » : les idées, dans l'ordre où elles sont arrivées. */
+  idees: z.array(IdeeJournal).default([]),
   /** Les identifiants de messages déjà reçus : un doublon est ignoré. */
   idsRecus: z.array(z.string()),
   interrupteurs: InterrupteursDemo,

@@ -45,13 +45,15 @@ describe('requête', () => {
   })
 
   it('remplit les paramètres d’URL et ajoute la requête', async () => {
-    const { fetchImpl, transport } = transportAvec(reponseJson({ entrees: [] }))
+    const { fetchImpl, transport } = transportAvec(
+      reponseJson({ modules: [], entrees: [], suivant: null, blocs: [], idees: [] }),
+    )
 
     await transport.appeler(ROUTES['GET /journal'], {
-      requete: { limite: '50' },
+      requete: { bloc: 'B04' },
     })
 
-    expect(fetchImpl.mock.calls[0]?.[0]).toBe('/api/journal?limite=50')
+    expect(fetchImpl.mock.calls[0]?.[0]).toBe('/api/journal?bloc=B04')
     expect(fetchImpl.mock.calls[0]?.[1]).not.toHaveProperty('body')
   })
 
