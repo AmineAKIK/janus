@@ -80,6 +80,25 @@ export const ROUTES_BLOCS_DEMO = [
     }
   }),
 
+  definir(ROUTES['PUT /blocs/:id/etat-page'], ({ magasin, params, corps }) => {
+    verifierBloc(params.id)
+    // La démo n'a qu'un onglet : l'état n'a qu'une version, 0 tant qu'il n'existe pas, 1 ensuite.
+    const actuelle = params.id in magasin.lire().etatsPage ? 1 : 0
+    if (corps.version !== actuelle) {
+      throw new ErreurApi({
+        status: 409,
+        code: 'conflit',
+        titre: 'Conflit',
+        detail: 'L’état de la page a changé depuis ta dernière lecture.',
+      })
+    }
+    magasin.ecrire((etat) => ({
+      ...etat,
+      etatsPage: { ...etat.etatsPage, [params.id]: corps.etat },
+    }))
+    return { version: 1 }
+  }),
+
   definir(ROUTES['POST /evenements'], ({ magasin, horloge, corps }) => {
     const maintenant = horloge.maintenant()
     if (corps.type === 'temps.actif') {

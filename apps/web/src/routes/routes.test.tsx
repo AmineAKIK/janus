@@ -2,6 +2,7 @@ import { createMemoryHistory } from '@tanstack/react-router'
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
+import { MANIFESTES_GRAINE } from '../demo/graine.ts'
 import { creerRouteur } from './arbre.tsx'
 import { creerContexteTest } from './contexteTest.tsx'
 import { PageErreur } from './PageErreur.tsx'
@@ -44,7 +45,12 @@ const ECRANS = [
     h1: 'Module 1',
     navigation: true,
   },
-  { chemin: '/blocs/b05', titre: 'Page de bloc', navigation: false },
+  {
+    chemin: '/blocs/B03',
+    titre: 'Page de bloc',
+    h1: MANIFESTES_GRAINE['B03']?.titre ?? '',
+    navigation: false,
+  },
   { chemin: '/revision', titre: 'Révision', navigation: false },
   { chemin: '/verifications/v1', titre: 'Vérification', navigation: false },
   { chemin: '/tableau-de-bord', titre: 'Tableau de bord', navigation: true },

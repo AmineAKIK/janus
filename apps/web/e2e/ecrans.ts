@@ -59,7 +59,12 @@ export const ecrans: readonly Ecran[] = [
     titre: 'Blocs',
     clics: ['Ouvrir le bloc'],
   },
-  { nom: 'bloc', chemin: './#/blocs/b05', etat: 'Page de bloc' },
+  {
+    nom: 'bloc',
+    chemin: './#/blocs/B03',
+    etat: 'Ordinateur et composants',
+    titre: 'Page de bloc',
+  },
   { nom: 'revision', chemin: './#/revision', etat: 'Révision' },
   { nom: 'verification', chemin: './#/verifications/v1', etat: 'Vérification' },
   { nom: 'tableau-de-bord', chemin: './#/tableau-de-bord', etat: 'Tableau de bord' },

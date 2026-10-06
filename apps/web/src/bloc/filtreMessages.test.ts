@@ -51,6 +51,14 @@ describe('filtrerMessage', () => {
     ).toEqual({ accepte: false, refus: 'bloc' })
   })
 
+  it('accepte page.prete d’une fiche qui ne connaît pas encore son bloc', () => {
+    const prete = { ...EXEMPLES_PAGE['page.prete'], bloc: 'D09' }
+
+    expect(filtrerMessage({ source: FENETRE, data: prete }, CONTEXTE)).toMatchObject({
+      accepte: true,
+    })
+  })
+
   it('refuse une autre version du manifeste', () => {
     expect(filtrerMessage({ source: FENETRE, data: { ...message, version: 2 } }, CONTEXTE)).toEqual(
       { accepte: false, refus: 'version' },
