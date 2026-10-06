@@ -16,6 +16,8 @@ export interface Revue {
 /** Pendant ce délai, la note reste annulable : elle n'est envoyée qu'après. */
 export const DELAI_ANNULATION_MS = 5000
 
+const SEUIL_BIENTOT_MS = 20 * 60_000
+
 const ROUTE_DUES = ROUTES['GET /cartes/dues']
 
 interface EnAttente {
@@ -33,7 +35,6 @@ export function useRevision() {
   const [verso, setVerso] = useState(false)
   const [revues, setRevues] = useState<readonly Revue[]>([])
   const [annulable, setAnnulable] = useState<Revue | null>(null)
-  const [plusTard, setPlusTard] = useState(false)
   const enAttente = useRef<EnAttente | null>(null)
 
   // La file est figée à la première lecture : les cartes revues ne changent pas sous les yeux.
@@ -94,7 +95,6 @@ export function useRevision() {
     setRevues((avant) => [...avant, revue])
     setPosition((avant) => avant + 1)
     setVerso(false)
-    setPlusTard(false)
   }
 
   function annuler() {
@@ -106,16 +106,17 @@ export function useRevision() {
     setRevues((avant) => avant.slice(0, -1))
     setPosition((avant) => avant - 1)
     setVerso(false)
-    setPlusTard(false)
   }
 
   /** La dernière note de chaque carte : c'est elle qui compte pour la suite de la séance. */
   const dernieres = new Map(revues.map((revue) => [revue.carte.id, revue]))
   const aRevoir = [...dernieres.values()].filter(({ note }) => note === 'a_revoir')
+  /** Celles qui reviennent avant la fin de la séance : dues dans moins de 20 minutes. */
+  const bientot = aRevoir.filter(({ carte: revue }) => revue.apercu.a_revoir < SEUIL_BIENTOT_MS)
 
   function revoirMaintenant() {
     vider()
-    setFile([...cartes, ...aRevoir.map(({ carte: revue }) => revue)])
+    setFile([...cartes, ...bientot.map(({ carte: revue }) => revue)])
   }
 
   return {
@@ -138,10 +139,7 @@ export function useRevision() {
     prochaine: lecture.data?.prochaine ?? null,
     revues: [...dernieres.values()],
     aRevoir,
-    plusTard,
-    reporter: () => {
-      setPlusTard(true)
-    },
+    bientot,
     annulable,
     noter,
     annuler,

@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { creerRouteur } from '../routes/arbre.tsx'
 import { creerContexteTest } from '../routes/contexteTest.tsx'
-import { texteIntervalle, texteProchaine } from './textes.ts'
+import { texteIntervalle, texteProchaine, texteRepartition } from './textes.ts'
 
 async function afficher() {
   const banc = creerContexteTest({ delaiCorrectionMs: 0 })
@@ -28,6 +28,22 @@ describe('texteIntervalle', () => {
     expect(texteIntervalle(4 * 86_400_000)).toBe('4 j')
     expect(texteIntervalle(30 * 86_400_000)).toBe('30 j')
     expect(texteIntervalle(95 * 86_400_000)).toBe('3 mois')
+  })
+})
+
+describe('texteRepartition', () => {
+  it('compte la dernière note de chaque carte, avec les accords', () => {
+    expect(
+      texteRepartition([
+        { note: 'a_revoir' },
+        { note: 'bien' },
+        { note: 'bien' },
+        { note: 'facile' },
+      ]),
+    ).toBe('1 à revoir, 0 difficile, 2 bien, 1 facile')
+    expect(texteRepartition([{ note: 'difficile' }, { note: 'difficile' }])).toBe(
+      '0 à revoir, 2 difficiles, 0 bien, 0 facile',
+    )
   })
 })
 
@@ -111,6 +127,9 @@ describe('Révision', () => {
     }
 
     await screen.findByRole('heading', { name: new RegExp(`^${String(total)} cartes? revues?$`) })
+    expect(
+      screen.getByText(`0 à revoir, 0 difficile, ${String(total)} bien, 0 facile`),
+    ).toBeVisible()
     expect(screen.getByRole('button', { name: /^Étape suivante/ })).toBeVisible()
   })
 })

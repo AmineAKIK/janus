@@ -87,3 +87,14 @@ export function texteProchaine(jourDeLaCarte: string, ecart: number): string {
   const [, mois = 1, numero = 1] = jourDeLaCarte.split('-').map(Number)
   return `La prochaine arrive le ${String(numero)} ${MOIS_COURTS[mois - 1] ?? ''}`
 }
+
+/** « 1 à revoir, 2 difficiles, 3 bien, 4 faciles » : la dernière note de chaque carte. */
+export function texteRepartition(revues: readonly { readonly note: NoteCarte }[]): string {
+  const nombre = (note: NoteCarte) => revues.filter((revue) => revue.note === note).length
+  return [
+    `${String(nombre('a_revoir'))} à revoir`,
+    accorder(nombre('difficile'), 'difficile', 'difficiles'),
+    `${String(nombre('bien'))} bien`,
+    accorder(nombre('facile'), 'facile', 'faciles'),
+  ].join(', ')
+}
