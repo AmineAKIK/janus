@@ -11,6 +11,7 @@ import type { ContexteRouteur } from './garde.ts'
 import { PageErreur } from './PageErreur.tsx'
 import { PageIntrouvable } from './PageIntrouvable.tsx'
 import { PageAujourdhui } from '../aujourdhui/PageAujourdhui.tsx'
+import { PageParametres } from '../parametres/PageParametres.tsx'
 import { PageQuestions } from '../questions/PageQuestions.tsx'
 import { PageRevision } from '../revision/PageRevision.tsx'
 import { PageVerification } from '../verification/PageVerification.tsx'
@@ -126,14 +127,17 @@ const parametres = createRoute({
   getParentRoute: () => racine,
   path: '/parametres',
   staticData: { titre: 'Paramètres', navigation: 'parametres' },
-  component: () => <PageProvisoire titre="Paramètres" />,
+  component: () => <PageParametres />,
 })
 
 const sectionParametres = createRoute({
   getParentRoute: () => racine,
   path: '/parametres/$section',
   staticData: { titre: 'Paramètres', navigation: 'parametres' },
-  component: () => <PageProvisoire titre="Paramètres" />,
+  component: function SectionParametres() {
+    const { section } = sectionParametres.useParams()
+    return <PageParametres section={section} />
+  },
 })
 
 const arbre = racine.addChildren([
