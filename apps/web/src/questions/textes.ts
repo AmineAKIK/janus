@@ -29,6 +29,15 @@ export const TEXTES_QUESTIONS = {
   dialogueTitre: 'Quitter la séance ?',
   reprendrePlusTard: 'Reprendre plus tard',
   continuer: 'Continuer',
+  accordQuestion: 'D’accord avec ce niveau ?',
+  oui: 'Oui',
+  non: 'Non',
+  repondreAuTuteur: 'Répondre au tuteur',
+  reponseAuTuteur: 'Ta réponse au tuteur',
+  noteRelance: 'Les échanges avec le tuteur servent à apprendre et ne comptent pas comme preuve.',
+  envoyerAuTuteur: 'Envoyer au tuteur',
+  pasDAccord: 'Je ne suis pas d’accord',
+  pourAllerPlusLoin: 'Pour aller plus loin, parles-en dans le projet Claude.',
 } as const
 
 export const LIBELLES_CONFIANCE: Record<Confiance, string> = {

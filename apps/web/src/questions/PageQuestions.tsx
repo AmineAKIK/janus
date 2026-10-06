@@ -110,6 +110,15 @@ export function PageQuestions() {
             }
             dernier={serie.index === total - 1}
             surSuivante={serie.suivante}
+            echange={{
+              enAttente: serie.enRelance.has(question.id),
+              relancer: (texte, conteste) => {
+                serie.relancer(question, etat, texte, conteste)
+              },
+              donnerAccord: (accord) => {
+                serie.donnerAccord(etat.correction.id, accord)
+              },
+            }}
           />
         ) : (
           <>

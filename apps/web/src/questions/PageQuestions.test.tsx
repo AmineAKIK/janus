@@ -140,6 +140,69 @@ describe('Questions de début de séance', () => {
     ).toBeVisible()
   })
 
+  it('relance le tuteur jusqu’à quatre fois, puis renvoie vers le projet Claude', async () => {
+    const utilisateur = userEvent.setup()
+    await afficher()
+    await utilisateur.click(screen.getByRole('button', { name: 'Je ne sais pas' }))
+    await screen.findByText('Tu as choisi « Je ne sais pas ».')
+
+    for (let relance = 1; relance <= 4; relance += 1) {
+      await utilisateur.click(screen.getByRole('button', { name: /Répondre au tuteur/ }))
+      expect(screen.getByText(/ne comptent pas comme preuve/)).toBeVisible()
+      await utilisateur.type(
+        screen.getByRole('textbox', { name: 'Ta réponse au tuteur' }),
+        'Pourquoi ?',
+      )
+      await utilisateur.click(screen.getByRole('button', { name: 'Envoyer au tuteur' }))
+      await waitFor(() => {
+        expect(screen.queryByRole('textbox', { name: 'Ta réponse au tuteur' })).toBeNull()
+      })
+      await waitFor(() => {
+        expect(screen.getByText(/tu étais au hasard/)).toBeVisible()
+      })
+    }
+
+    await screen.findByText('Pour aller plus loin, parles-en dans le projet Claude.')
+    expect(screen.queryByRole('button', { name: /Répondre au tuteur/ })).toBeNull()
+  })
+
+  it('« Je ne suis pas d’accord » préremplit la relance et l’envoie comme contestation', async () => {
+    const utilisateur = userEvent.setup()
+    const banc = await afficher()
+    const corps: unknown[] = []
+    const appeler = banc.transport.appeler.bind(banc.transport)
+    banc.transport.appeler = ((route: never, entree: never, options: never) => {
+      corps.push(entree)
+      return appeler(route, entree, options)
+    })
+    await utilisateur.click(screen.getByRole('button', { name: 'Je ne sais pas' }))
+    await screen.findByText('Tu as choisi « Je ne sais pas ».')
+
+    await utilisateur.click(screen.getByRole('button', { name: 'Je ne suis pas d’accord' }))
+    expect(screen.getByRole('textbox', { name: 'Ta réponse au tuteur' })).toHaveValue(
+      'Je conteste ta correction : ',
+    )
+    await utilisateur.type(screen.getByRole('textbox', { name: 'Ta réponse au tuteur' }), 'faux')
+    await utilisateur.click(screen.getByRole('button', { name: 'Envoyer au tuteur' }))
+
+    await waitFor(() => {
+      expect(JSON.stringify(corps)).toContain('"conteste":true')
+    })
+  })
+
+  it('une correction de l’échantillon demande « D’accord avec ce niveau ? »', async () => {
+    const utilisateur = userEvent.setup()
+    await afficher()
+    await utilisateur.click(screen.getByRole('button', { name: 'Je ne sais pas' }))
+
+    expect(await screen.findByText('D’accord avec ce niveau ?')).toBeVisible()
+    await utilisateur.click(screen.getByRole('button', { name: 'Oui' }))
+
+    await waitFor(() => {
+      expect(screen.queryByText('D’accord avec ce niveau ?')).toBeNull()
+    })
+  })
+
   it('tronque l’énoncé à 48 caractères avec « … »', () => {
     expect(tronquer('a'.repeat(48))).toBe('a'.repeat(48))
     expect(tronquer('a'.repeat(49))).toBe(`${'a'.repeat(48)}…`)

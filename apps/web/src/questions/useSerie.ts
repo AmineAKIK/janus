@@ -36,6 +36,7 @@ export function useSerie() {
   const lecture = useLecture(ROUTE_QUESTIONS, {})
   const [locales, setLocales] = useState<Readonly<Record<string, Locale>>>({})
   const [choisi, setChoisi] = useState<number | null>(null)
+  const [enRelance, setEnRelance] = useState<ReadonlySet<string>>(new Set())
 
   const questions: readonly Question[] = lecture.data?.questions ?? []
 
@@ -102,7 +103,65 @@ export function useSerie() {
     )
   }
 
+  /** Une relance (ou une contestation) : le tuteur répond à la réponse de départ, avec le texte en plus. */
+  function relancer(
+    question: Question,
+    etat: Extract<EtatQuestion, { phase: 'corrigee' }>,
+    texte: string,
+    conteste: boolean,
+  ) {
+    const id = nouvelId(Date.parse(instantReel()))
+    const fin = () => {
+      setEnRelance((avant) => new Set([...avant].filter((autre) => autre !== question.id)))
+    }
+    setEnRelance((avant) => new Set([...avant, question.id]))
+    void boite.ajouter(
+      {
+        id,
+        route: 'POST /corrections',
+        corps: {
+          id,
+          serie: 'rappel',
+          tentative: 1,
+          question: question.id,
+          reponse: etat.reponse,
+          confiance: etat.confiance,
+          relance: texte,
+          support: { colle: false, retour_cours: false },
+          ...(conteste ? { conteste: true } : {}),
+        },
+      },
+      {
+        surReponse: (reponse) => {
+          poser(question.id, {
+            phase: 'corrigee',
+            confiance: etat.confiance,
+            reponse: etat.reponse,
+            correction: CorrectionRecue.parse(reponse),
+            bloc: etat.bloc,
+          })
+          fin()
+        },
+        surRefus: fin,
+      },
+    )
+  }
+
+  /** L'avis d'Amine sur le niveau d'une correction de l'échantillon. */
+  function donnerAccord(correction: string, accord: boolean) {
+    const id = nouvelId(Date.parse(instantReel()))
+    void boite.ajouter({
+      id,
+      route: 'POST /corrections/:id/accord',
+      params: { id: correction },
+      corps: { accord },
+    })
+  }
+
   return {
+    relancer,
+    donnerAccord,
+    enRelance,
     phase: lecture.isError
       ? ('erreur' as const)
       : lecture.isPending
