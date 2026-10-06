@@ -40,3 +40,17 @@ export function validerRechercheConnexion(brut: Record<string, unknown>): Recher
   const retour = texte(brut['retour'])
   return retour?.startsWith('/') === true && !retour.startsWith('//') ? { retour } : {}
 }
+
+export interface RechercheSuivi {
+  readonly module?: string
+  readonly periode?: string
+}
+
+export function validerRechercheSuivi(brut: Record<string, unknown>): RechercheSuivi {
+  const module = texte(brut['module'])
+  const periode = texte(brut['periode'])
+  return {
+    ...(module === undefined ? {} : { module }),
+    ...(periode === undefined ? {} : { periode }),
+  }
+}

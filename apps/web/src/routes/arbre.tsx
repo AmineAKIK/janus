@@ -16,10 +16,12 @@ import { PageQuestions } from '../questions/PageQuestions.tsx'
 import { PageRevision } from '../revision/PageRevision.tsx'
 import { PageVerification } from '../verification/PageVerification.tsx'
 import { PageProvisoire } from './PageProvisoire.tsx'
+import { PageSuivi } from '../suivi/PageSuivi.tsx'
 import {
   validerRechercheConnexion,
   validerRechercheJournal,
   validerRechercheModule,
+  validerRechercheSuivi,
 } from './recherche.ts'
 
 const racine = createRootRouteWithContext<ContexteRouteur>()({
@@ -111,8 +113,12 @@ const verification = createRoute({
 const tableauDeBord = createRoute({
   getParentRoute: () => racine,
   path: '/tableau-de-bord',
-  staticData: { titre: 'Tableau de bord', navigation: 'tableau' },
-  component: () => <PageProvisoire titre="Tableau de bord" />,
+  validateSearch: validerRechercheSuivi,
+  staticData: { titre: 'Suivi', navigation: 'tableau', large: true },
+  component: function RoutePageSuivi() {
+    const { module, periode } = tableauDeBord.useSearch()
+    return <PageSuivi module={module} periode={periode} />
+  },
 })
 
 const journal = createRoute({

@@ -262,7 +262,7 @@ export const ecrans: readonly Ecran[] = [
       await expect(page.getByRole('textbox', { name: 'Réponse libre' })).toBeVisible()
     },
   },
-  { nom: 'tableau-de-bord', chemin: './#/tableau-de-bord', etat: 'Tableau de bord' },
+  { nom: 'tableau-de-bord', chemin: './#/tableau-de-bord', etat: 'Suivi' },
   { nom: 'journal', chemin: './#/journal', etat: 'Journal' },
   { nom: 'parametres', chemin: './#/parametres', etat: 'Paramètres' },
   { nom: 'parametres-section', chemin: './#/parametres/revision', etat: 'Paramètres' },
