@@ -19,6 +19,8 @@ export const InterrupteursDemo = z.strictObject({
   reseauLent: z.boolean().default(false),
   /** Toutes les tâches de la journée sont faites : Aujourd'hui montre « Rien d'autre n'est dû ». */
   toutFait: z.boolean().default(false),
+  /** La prochaine correction propose la première erreur critique du manifeste du bloc. */
+  erreurIa: z.boolean().default(false),
 })
 export type InterrupteursDemo = z.infer<typeof InterrupteursDemo>
 

@@ -1,7 +1,14 @@
 import { ErreurApi, ROUTES } from '@janus/contrats'
 import type { Fait, MessagePage } from '@janus/contrats'
 import { MANIFESTES_GRAINE } from '../graine.ts'
-import { accesDuBloc, dejaRecu, enregistrer, resultatDuBloc, statutBloc } from './calculs.ts'
+import {
+  accesDuBloc,
+  dejaRecu,
+  enregistrer,
+  faitsDuBloc,
+  resultatDuBloc,
+  statutBloc,
+} from './calculs.ts'
 import { definir } from './definir.ts'
 
 function blocInconnu(bloc: string): ErreurApi {
@@ -104,7 +111,11 @@ export const ROUTES_BLOCS_DEMO = [
     const maintenant = horloge.maintenant()
     if (!dejaRecu(magasin.lire(), corps.id)) {
       const ouvertes = resultatDuBloc(magasin.lire(), params.id, maintenant).erreursOuvertes
-      const commun = { bloc: params.id, date: maintenant, source: 'amine' as const }
+      // Une erreur que l'IA avait proposée et qu'Amine confirme vient de l'IA ; les autres, de lui.
+      const proposees = faitsDuBloc(magasin.lire(), params.id).flatMap((fait) =>
+        fait.type === 'correction' ? fait.erreursIa : [],
+      )
+      const commun = { bloc: params.id, date: maintenant }
       const cochees: Fait[] = corps.ids
         .filter((erreur) => !ouvertes.includes(erreur))
         .map((erreur) => ({
@@ -112,6 +123,7 @@ export const ROUTES_BLOCS_DEMO = [
           id: `${corps.id}:${erreur}`,
           type: 'erreur_cochee',
           erreur,
+          source: proposees.includes(erreur) ? 'ia_confirmee' : 'amine',
         }))
       const decochees: Fait[] = ouvertes
         .filter((erreur) => !corps.ids.includes(erreur))
@@ -120,6 +132,7 @@ export const ROUTES_BLOCS_DEMO = [
           id: `${corps.id}:${erreur}`,
           type: 'erreur_decochee',
           erreur,
+          source: 'amine',
         }))
       enregistrer(magasin, corps.id, [...cochees, ...decochees])
     }

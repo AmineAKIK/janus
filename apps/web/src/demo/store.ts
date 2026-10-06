@@ -36,6 +36,7 @@ export function etatVide(maintenant: string): EtatDemo {
       ficheRefusee: false,
       reseauLent: false,
       toutFait: false,
+      erreurIa: false,
     },
   }
 }

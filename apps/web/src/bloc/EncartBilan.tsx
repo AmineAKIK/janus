@@ -8,10 +8,13 @@ export function EncartBilan({
   statut,
   manque,
   maintenant,
+  erreurEnAttente = false,
 }: {
   readonly statut: Statut
   readonly manque: readonly Manque[]
   readonly maintenant: string
+  /** Une erreur repérée par l'IA attend la décision d'Amine. */
+  readonly erreurEnAttente?: boolean
 }) {
   const suivant = STATUT_SUIVANT[statut]
   return (
@@ -24,12 +27,13 @@ export function EncartBilan({
           <p className={`${styles['encartTexte'] ?? ''} texte-petit-14`}>
             {TEXTES_ENCARTS.bilanPour(LIBELLES_STATUT[suivant])}
           </p>
-          {manque.length === 0 ? (
+          {manque.length === 0 && !erreurEnAttente ? (
             <p className={`${styles['encartTexte'] ?? ''} texte-petit-14`}>
               {TEXTES_ENCARTS.bilanRien}
             </p>
           ) : (
             <ul className={`${styles['encartListe'] ?? ''} texte-petit-14`}>
+              {erreurEnAttente && <li>{TEXTES_ENCARTS.trancherD}</li>}
               {manque.map((element) => (
                 <li
                   key={`${element.code}:${(element.questions ?? element.exercices ?? element.erreurs ?? []).join()}`}
