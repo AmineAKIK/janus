@@ -5,6 +5,7 @@ import catalogue from './Catalogue.module.css'
 import { Chargement, Erreur } from './EtatEcran.tsx'
 import { correspond, grouper, lireFiltre } from './filtre.ts'
 import type { FiltreBlocs } from './filtre.ts'
+import { PanneauDetail } from './PanneauDetail.tsx'
 import { RepartitionStatuts } from './RepartitionStatuts.tsx'
 import { TEXTES_BLOCS, texteBlocs, titreModule } from './textes.ts'
 import { useBlocs } from './useBlocs.ts'
@@ -110,25 +111,30 @@ export function PageBlocs({
       contenu = <EtatVideZone message={TEXTES_BLOCS.aucunBlocFiltre} />
     } else {
       contenu = (
-        <div className={styles['parties']}>
-          {groupes.map(({ partie, plage, blocs: dansLaPartie }) => (
-            <section key={partie} className={styles['partie']}>
-              <h2 className={`${styles['intertitre'] ?? ''} texte-legende-12`}>
-                {partie} ({plage})
-              </h2>
-              <ul className={styles['liste']}>
-                {dansLaPartie.map((bloc) => (
-                  <LigneBloc
-                    key={bloc.bloc}
-                    bloc={bloc}
-                    moduleId={moduleId}
-                    selectionne={bloc.bloc === detail}
-                    statutFiltre={filtre}
-                  />
-                ))}
-              </ul>
-            </section>
-          ))}
+        <div className={styles['colonnes']}>
+          <div className={styles['parties']}>
+            {groupes.map(({ partie, plage, blocs: dansLaPartie }) => (
+              <section key={partie} className={styles['partie']}>
+                <h2 className={`${styles['intertitre'] ?? ''} texte-legende-12`}>
+                  {partie} ({plage})
+                </h2>
+                <ul className={styles['liste']}>
+                  {dansLaPartie.map((bloc) => (
+                    <LigneBloc
+                      key={bloc.bloc}
+                      bloc={bloc}
+                      moduleId={moduleId}
+                      selectionne={bloc.bloc === detail}
+                      statutFiltre={filtre}
+                    />
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
+          {detail !== undefined && blocs.some(({ bloc }) => bloc === detail) && (
+            <PanneauDetail bloc={detail} contexte={etat.contexte} />
+          )}
         </div>
       )
     }

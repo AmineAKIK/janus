@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { Statut } from '../enums.ts'
 import { Manifeste } from '../manifeste.ts'
 import { EtatPage } from '../pont.ts'
-import { CodeBloc, Identifiant, ParamId, StatutBloc } from './commun.ts'
+import { CodeBloc, Identifiant, InstantUtc, ParamId, StatutBloc } from './commun.ts'
 import type { DefinitionRoute } from './routes.ts'
 
 const Texte = z.string().trim().min(1)
@@ -33,6 +33,30 @@ const BlocListe = z.strictObject({
 export const AccesBloc = z.enum(['libre', 'raison_requise'])
 export type AccesBloc = z.infer<typeof AccesBloc>
 
+const PreuveDatee = z.strictObject({ date: InstantUtc }).nullable()
+
+/** Le panneau « Cinq preuves » d'un bloc : la date de chaque preuve, `null` tant qu'elle n'est pas faite. */
+export const CinqPreuves = z.strictObject({
+  comprendre: PreuveDatee,
+  faire_seul: PreuveDatee,
+  transferer: PreuveDatee,
+  /** La dernière vérification ou le dernier retest réussi, et la prochaine échéance. */
+  retenir: z
+    .strictObject({
+      date: InstantUtc,
+      prochaine: z
+        .strictObject({
+          type: z.enum(['consolidation', 'verification', 'retest', 'entretien']),
+          /** Un jour « AAAA-MM-JJ », ou un instant pour la consolidation. */
+          apres: z.string(),
+        })
+        .nullable(),
+    })
+    .nullable(),
+  aisance: z.union([PreuveDatee, z.literal('non_requis')]),
+})
+export type CinqPreuves = z.infer<typeof CinqPreuves>
+
 const BlocDetail = z.strictObject({
   ...StatutBloc.shape,
   bloc: CodeBloc,
@@ -41,6 +65,7 @@ const BlocDetail = z.strictObject({
   /** Le statut forcé par Amine, s'il y en a un. */
   force: z.strictObject({ statut: Statut, raison: Texte }).nullable(),
   acces: AccesBloc,
+  preuves: CinqPreuves,
   /** L'adresse de la fiche, servie par le sous-domaine des fiches. */
   fiche_url: z.url(),
   etat_page: z.strictObject({ version: z.number().int().min(0), etat: EtatPage }).nullable(),
