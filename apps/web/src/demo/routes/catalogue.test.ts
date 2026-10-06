@@ -39,7 +39,7 @@ describe('routes de catalogue de la démo', () => {
       'B07 acquis_provisoirement',
       'B08 non_commence',
     ])
-    expect(blocs[3]).toMatchObject({ partie: 'Machine et logique', prerequis: ['B01', 'B03'] })
+    expect(blocs[3]).toMatchObject({ partie: 'P1 Machine et logique', prerequis: ['B01', 'B03'] })
   })
 
   it('rend une liste vide pour un module pas encore importé', async () => {

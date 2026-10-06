@@ -76,7 +76,7 @@ export function routesCatalogueDemo({ racineFiches }: OptionsCatalogue) {
                 bloc: code,
                 titre: manifeste.titre,
                 titre_court: manifeste.titre_court,
-                partie: partie.titre,
+                partie: `${partie.code} ${partie.titre}`,
                 prerequis: manifeste.prerequis,
                 statut: resultatDuBloc(etat, code, maintenant).statut,
               },

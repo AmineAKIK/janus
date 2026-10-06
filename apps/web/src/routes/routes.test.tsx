@@ -37,8 +37,13 @@ const ECRANS = [
     h1: 'DWWM · Développeur web et web mobile',
     navigation: true,
   },
-  { chemin: '/modules/m1', titre: 'Blocs', navigation: true },
-  { chemin: '/modules/m1?statut=a_reprendre&detail=B05', titre: 'Blocs', navigation: true },
+  { chemin: '/modules/M1', titre: 'Blocs', h1: 'Module 1', navigation: true },
+  {
+    chemin: '/modules/M1?statut=a_reprendre&detail=B05',
+    titre: 'Blocs',
+    h1: 'Module 1',
+    navigation: true,
+  },
   { chemin: '/blocs/b05', titre: 'Page de bloc', navigation: false },
   { chemin: '/revision', titre: 'Révision', navigation: false },
   { chemin: '/verifications/v1', titre: 'Vérification', navigation: false },
@@ -62,7 +67,7 @@ describe('routes', () => {
   })
 
   it('met en avant l’entrée de navigation de l’écran', async () => {
-    await afficher('/modules/m1')
+    await afficher('/modules/M1')
 
     expect(screen.getByRole('link', { name: 'Formations' })).toHaveAttribute('aria-current', 'page')
   })
