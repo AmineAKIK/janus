@@ -28,6 +28,7 @@ export function etatVide(maintenant: string): EtatDemo {
     etatsPage: {},
     rappels: {},
     serieDuJour: null,
+    verifications: {},
     cartes: {},
     idsRecus: [],
     interrupteurs: {

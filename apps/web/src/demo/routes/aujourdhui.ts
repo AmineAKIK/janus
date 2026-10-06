@@ -1,5 +1,12 @@
 import { ROUTES } from '@janus/contrats'
-import type { EtatDemo, Manifeste, Statut, Tache, TacheDuJour } from '@janus/contrats'
+import type {
+  EtatDemo,
+  Manifeste,
+  Statut,
+  Tache,
+  TacheDuJour,
+  TypeVerification,
+} from '@janus/contrats'
 import {
   blocEnCours,
   cartesDuJour,
@@ -13,6 +20,7 @@ import { catalogueGraine, MANIFESTES_GRAINE, PLAN } from '../graine.ts'
 import { faitsDuBloc, resultatDuBloc } from './calculs.ts'
 import type { Magasin } from '../store.ts'
 import { definir } from './definir.ts'
+import { blocsReportes, verificationPour } from './verifications.ts'
 
 /** Les statuts à partir desquels un bloc compte comme « vu » pour les questions et les cartes. */
 const AU_MOINS_VU: ReadonlySet<Statut> = new Set([
@@ -23,7 +31,10 @@ const AU_MOINS_VU: ReadonlySet<Statut> = new Set([
 ])
 
 /** Où mène une tâche : les écrans de séance des PR suivantes, ou le bloc. */
-function lienDeLaTache(tache: Tache): string {
+function lienDeLaTache(
+  tache: Tache,
+  verification: (bloc: string, type: TypeVerification) => string,
+): string {
   switch (tache.type) {
     case 'reprendre_erreur':
       return tache.lien
@@ -34,7 +45,7 @@ function lienDeLaTache(tache: Tache): string {
     case 'verification':
     case 'retest':
     case 'entretien':
-      return `/verifications/${tache.bloc}`
+      return `/verifications/${verification(tache.bloc, tache.type)}`
     case 'consolidation': {
       const etape = MANIFESTES_GRAINE[tache.bloc]?.etapes.find(
         ({ type }) => type === 'consolidation',
@@ -154,6 +165,7 @@ export const ROUTES_AUJOURDHUI_DEMO = [
     const joursDePause =
       derniereActivite === null ? 0 : ecartEnJours(jourDu(derniereActivite), jour)
     const toutFait = etat.interrupteurs.toutFait
+    const reportes = blocsReportes(etat, jour)
     const module = catalogueGraine().modules.find(({ code }) => code === 'M1')
 
     return {
@@ -161,11 +173,24 @@ export const ROUTES_AUJOURDHUI_DEMO = [
       en_retard: file.enRetard,
       ...(joursDePause >= JOURS_AVANT_RETARD ? { retour: { jours: joursDePause } } : {}),
       premiere_connexion: etat.faits.length === 0,
-      taches: file.taches.map((tache): TacheDuJour => ({
-        tache,
-        lien: lienDeLaTache(tache),
-        faite: toutFait,
-      })),
+      taches: file.taches
+        .filter(
+          (tache) =>
+            !(
+              (tache.type === 'verification' ||
+                tache.type === 'retest' ||
+                tache.type === 'entretien') &&
+              reportes.has(tache.bloc)
+            ),
+        )
+        .map((tache): TacheDuJour => ({
+          tache,
+          lien: lienDeLaTache(
+            tache,
+            (bloc, type) => verificationPour(magasin, bloc, type, maintenant) ?? bloc,
+          ),
+          faite: toutFait,
+        })),
       module:
         module === undefined
           ? null

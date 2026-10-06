@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { Confiance, NoteCarte, Statut, TypeDifferee, TypeVerification } from '../enums.ts'
+import { Confiance, Niveau, NoteCarte, Statut, TypeDifferee, TypeVerification } from '../enums.ts'
 import { InstantUtc } from '../faits.ts'
 import { CodeBloc, CorrectionRecue, IdUuid, Identifiant, Reponse } from './commun.ts'
 import type { DefinitionRoute } from './routes.ts'
@@ -84,6 +84,68 @@ const Carte = z.strictObject({
   apercu: ApercuCarte,
 })
 
+/** Une partie d'une vérification. Une tâche `exacte` ne dit pas la réponse attendue ; une tâche `code` donne ses cas. */
+export const PartieVerification = z.strictObject({
+  id: Identifiant,
+  type: TypeDifferee,
+  consigne: Texte,
+  /** Un extrait de code à lire (transfert) : le manifeste ne le porte pas encore, la démo n'en donne pas. */
+  extrait: Texte.optional(),
+  tache: z
+    .discriminatedUnion('mode', [
+      z.strictObject({ mode: z.literal('exacte') }),
+      z.strictObject({
+        mode: z.literal('code'),
+        langage: z.literal('js'),
+        cas: z.array(z.strictObject({ entree: z.array(z.unknown()), sortie: z.unknown() })).min(1),
+      }),
+    ])
+    .optional(),
+  /** Vrai quand la réponse à cette partie est déjà envoyée : on reprend à la suivante. */
+  envoyee: z.boolean(),
+})
+
+/** Ce que l'écran de résultat montre pour une partie, correction comprise. */
+export const PartieCorrigee = z.strictObject({
+  id: Identifiant,
+  type: TypeDifferee,
+  consigne: Texte,
+  niveau: Niveau.optional(),
+  reussi: z.boolean().optional(),
+  /** Une tâche de code : cas réussis sur cas testés. */
+  cas: z
+    .strictObject({ reussis: z.number().int().min(0), total: z.number().int().min(1) })
+    .optional(),
+  compte: z.boolean(),
+  correction: Texte,
+  indice: Texte.optional(),
+})
+
+export const ResultatVerification = z.strictObject({
+  bloc: z.strictObject({ code: CodeBloc, titre: Texte }),
+  /** `a_examiner` : le tuteur propose une erreur critique qu'Amine doit confirmer ou contester. */
+  issue: z.enum(['reussie', 'ratee', 'a_examiner']),
+  valable: z.boolean(),
+  raison_invalide: z.enum(['revu_avant', 'avec_support']).optional(),
+  statut_avant: Statut,
+  statut: Statut,
+  /** Vrai après deux échecs de suite : le bloc descend d'un cran. */
+  descend: z.boolean(),
+  /** La prochaine échéance (retest, entretien ou nouvelle vérification), au jour `AAAA-MM-JJ`. */
+  prochaine: z.strictObject({ type: TypeVerification, apres: Texte }).nullable(),
+  parties: z.array(PartieCorrigee),
+  erreur_a_confirmer: z
+    .strictObject({
+      /** La correction qui l'a proposée : « Demander une revue » la conteste. */
+      correction: IdUuid,
+      erreur: Identifiant,
+      libelle: Texte,
+      explication: Texte,
+      extrait: Texte,
+    })
+    .nullable(),
+})
+
 export const ROUTES_APPRENTISSAGE = {
   'GET /aujourdhui': {
     methode: 'GET',
@@ -139,8 +201,12 @@ export const ROUTES_APPRENTISSAGE = {
       /** Le jour `AAAA-MM-JJ` à partir duquel elle est due. */
       due_le: Texte,
       terminee: z.boolean(),
-      /** Les questions tirées : sans le nom du bloc, qui n'apparaît qu'avec la correction. */
-      questions: z.array(z.strictObject({ id: Identifiant, type: TypeDifferee, consigne: Texte })),
+      /** Présent quand la page du bloc a été ouverte dans les 24 h : la vérification ne compterait pas. */
+      revu_recemment: z.enum(['hier', 'aujourdhui']).nullable(),
+      /** Les trois parties, dans l'ordre : sans le code ni le titre du bloc, qui n'apparaissent qu'au résultat. */
+      parties: z.array(PartieVerification),
+      /** Le résultat, une fois toutes les parties envoyées. */
+      resultat: ResultatVerification.nullable(),
     }),
     succes: 200,
   },
@@ -148,16 +214,24 @@ export const ROUTES_APPRENTISSAGE = {
     methode: 'POST',
     chemin: '/verifications/:id/reponses',
     params: z.strictObject({ id: IdUuid }),
-    corps: z.strictObject({ id: IdUuid, question: Identifiant, reponse: Reponse.min(1) }),
+    corps: z.strictObject({
+      id: IdUuid,
+      /** L'identifiant de la partie, tel que `GET /verifications/:id` le donne. */
+      partie: Identifiant,
+      reponse: Reponse.min(1),
+      confiance: Confiance,
+      support: z.strictObject({ colle: z.boolean(), retour_cours: z.boolean() }),
+      /** Une tâche de code : le code a été essayé dans le navigateur, le serveur garde ce résultat. */
+      code: z
+        .strictObject({ reussis: z.number().int().min(0), total: z.number().int().min(1) })
+        .optional(),
+    }),
     reponse: z.strictObject({
-      question: Identifiant,
-      tour: z.number().int().min(1),
-      compte: z.boolean(),
-      /** La tâche vérifiée automatiquement rend `reussi` ; une explication ou un transfert, le `niveau`. */
-      reussi: z.boolean().optional(),
-      niveau: z.enum(['solide', 'partiel', 'fragile', 'pas_encore']).optional(),
-      /** Vrai quand toutes les questions ont une réponse : la vérification est terminée. */
+      partie: Identifiant,
+      /** Vrai quand toutes les parties ont une réponse : la vérification est terminée. */
       terminee: z.boolean(),
+      /** Rendu avec la réponse à la dernière partie : aucune correction n'est donnée avant. */
+      resultat: ResultatVerification.optional(),
     }),
     succes: 200,
   },
