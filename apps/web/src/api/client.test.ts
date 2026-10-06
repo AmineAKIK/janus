@@ -1,4 +1,4 @@
-import { ROUTES } from '@janus/contrats'
+import { nouvelId, ROUTES } from '@janus/contrats'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { creerTransport, modeTransport } from './client.ts'
 
@@ -43,7 +43,7 @@ describe('creerTransport', () => {
     delete window.__janusDemo
 
     const erreur: unknown = await creerTransport({})
-      .appeler(ROUTES['GET /journal'], { requete: {} })
+      .appeler(ROUTES['POST /revues-methode'], { corps: { id: nouvelId(1), texte: 'Bien.' } })
       .catch((e: unknown) => e)
 
     expect(erreur).toMatchObject({ status: 501 })

@@ -59,6 +59,8 @@ export function etatVide(maintenant: string): EtatDemo {
     rappels: {},
     serieDuJour: null,
     verifications: {},
+    notesJournal: {},
+    idees: [],
     cartes: {},
     idsRecus: [],
     interrupteurs: {

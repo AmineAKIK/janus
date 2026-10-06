@@ -10,14 +10,47 @@ const Texte = z.string().trim().min(1)
 export const Periode = z.enum(['7j', '30j', 'tout'])
 export type Periode = z.infer<typeof Periode>
 
-const EntreeJournal = z.strictObject({
+/** Les types de ligne du journal, dans l'ordre des filtres de Figma. */
+export const TypeJournal = z.enum([
+  'seance',
+  'restitution',
+  'consolidation',
+  'verification',
+  'carte',
+  'changement_statut',
+  'erreur_critique',
+  'contestation',
+  'statut_force',
+])
+export type TypeJournal = z.infer<typeof TypeJournal>
+
+/** Une note d'Amine sur une ligne du journal : 1000 caractères au plus. */
+const TexteNote = z.string().trim().min(1).max(1000)
+
+export const NoteJournal = z.strictObject({
   id: IdUuid,
+  /** L'identifiant de la ligne annotée. */
+  entree: Identifiant,
   date: InstantUtc,
-  type: z.enum(['fait', 'note', 'idee']),
-  bloc: CodeBloc.nullable(),
-  texte: z.string(),
+  texte: TexteNote,
 })
-export type EntreeJournal = z.infer<typeof EntreeJournal>
+export type NoteJournal = z.infer<typeof NoteJournal>
+
+export const IdeeJournal = z.strictObject({ id: IdUuid, date: InstantUtc, texte: TexteLibre })
+export type IdeeJournal = z.infer<typeof IdeeJournal>
+
+export const LigneJournal = z.strictObject({
+  id: Identifiant,
+  date: InstantUtc,
+  bloc: CodeBloc,
+  type: TypeJournal,
+  /** La phrase affichée sous « <heure> · <code> · <type> ». */
+  resume: Texte,
+  /** Ce que la ligne déplie. */
+  detail: z.array(Texte),
+  note: NoteJournal.nullable(),
+})
+export type LigneJournal = z.infer<typeof LigneJournal>
 
 export const ROUTES_SUIVI = {
   'GET /tableau-de-bord': {
@@ -88,10 +121,25 @@ export const ROUTES_SUIVI = {
     methode: 'GET',
     chemin: '/journal',
     requete: z.strictObject({
+      /** Le module affiché ; tous les blocs du journal par défaut. */
+      module: Identifiant.optional(),
+      bloc: CodeBloc.optional(),
+      type: TypeJournal.optional(),
+      /** Seules les lignes strictement avant cet instant : la page suivante. */
       avant: InstantUtc.optional(),
-      limite: z.coerce.number().int().min(1).max(200).optional(),
     }),
-    reponse: z.strictObject({ entrees: z.array(EntreeJournal) }),
+    reponse: z.strictObject({
+      /** Les modules importés, pour le sélecteur. */
+      modules: z.array(z.strictObject({ id: Identifiant, titre: Texte })),
+      /** Les lignes, les plus récentes d'abord, 50 par page. */
+      entrees: z.array(LigneJournal),
+      /** L'instant à passer en `avant` pour la page suivante, `null` à la dernière page. */
+      suivant: InstantUtc.nullable(),
+      /** L'état de chaque bloc du module : le panneau « État des blocs » et le filtre « Bloc ». */
+      blocs: z.array(z.strictObject({ bloc: CodeBloc, titre_court: Texte, statut: Statut })),
+      /** « À explorer plus tard » : les idées, les plus récentes d'abord. */
+      idees: z.array(IdeeJournal),
+    }),
     succes: 200,
   },
   'GET /journal/export.txt': {
@@ -114,23 +162,23 @@ export const ROUTES_SUIVI = {
   'POST /journal/notes': {
     methode: 'POST',
     chemin: '/journal/notes',
-    corps: z.strictObject({ id: IdUuid, texte: TexteLibre, bloc: CodeBloc.optional() }),
-    reponse: EntreeJournal,
+    corps: z.strictObject({ id: IdUuid, entree: Identifiant, texte: TexteNote }),
+    reponse: NoteJournal,
     succes: 201,
   },
   'PATCH /journal/notes/:id': {
     methode: 'PATCH',
     chemin: '/journal/notes/:id',
     params: z.strictObject({ id: IdUuid }),
-    corps: z.strictObject({ texte: TexteLibre }),
-    reponse: EntreeJournal,
+    corps: z.strictObject({ texte: TexteNote }),
+    reponse: NoteJournal,
     succes: 200,
   },
   'POST /journal/idees': {
     methode: 'POST',
     chemin: '/journal/idees',
     corps: z.strictObject({ id: IdUuid, texte: TexteLibre }),
-    reponse: EntreeJournal,
+    reponse: IdeeJournal,
     succes: 201,
   },
   'POST /revues-methode': {
