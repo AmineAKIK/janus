@@ -13,6 +13,7 @@ import { PageIntrouvable } from './PageIntrouvable.tsx'
 import { PageAujourdhui } from '../aujourdhui/PageAujourdhui.tsx'
 import { PageQuestions } from '../questions/PageQuestions.tsx'
 import { PageRevision } from '../revision/PageRevision.tsx'
+import { PageVerification } from '../verification/PageVerification.tsx'
 import { PageProvisoire } from './PageProvisoire.tsx'
 import {
   validerRechercheConnexion,
@@ -100,7 +101,10 @@ const verification = createRoute({
   getParentRoute: () => racine,
   path: '/verifications/$verificationId',
   staticData: { titre: 'Vérification', navigation: null },
-  component: () => <PageProvisoire titre="Vérification" />,
+  component: function RouteVerification() {
+    const { verificationId } = verification.useParams()
+    return <PageVerification id={verificationId} />
+  },
 })
 
 const tableauDeBord = createRoute({

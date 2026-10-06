@@ -148,7 +148,8 @@ export function creerBoiteEnvoi(options: OptionsBoiteEnvoi, ecouteurs: Ecouteurs
       }
       // Une correction que l'IA ne peut pas rendre (plafond, panne) est rendue à la page, qui garde sa réponse.
       const correctionImpossible =
-        entree.route === 'POST /corrections' &&
+        (entree.route === 'POST /corrections' ||
+          entree.route === 'POST /verifications/:id/reponses') &&
         erreur instanceof ErreurApi &&
         (erreur.status === 429 || erreur.status === 503)
       const refuse =

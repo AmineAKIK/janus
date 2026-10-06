@@ -8,6 +8,8 @@ export interface ProprietesChoixConfiance {
   /** Le parent empêche l'envoi tant que `valeur` vaut `null`. */
   readonly obligatoire?: boolean
   readonly className?: string
+  /** Le titre du groupe ; « Ta confiance dans cette réponse » par défaut. */
+  readonly libelle?: string
 }
 
 const OPTIONS: readonly OptionSegmentee<Confiance>[] = [
@@ -21,10 +23,11 @@ export function ChoixConfiance({
   onChange,
   obligatoire = false,
   className,
+  libelle = 'Ta confiance dans cette réponse',
 }: ProprietesChoixConfiance) {
   return (
     <GroupeSegmente
-      libelle="Ta confiance dans cette réponse"
+      libelle={libelle}
       options={OPTIONS}
       valeur={valeur}
       onChange={onChange}

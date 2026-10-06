@@ -52,7 +52,11 @@ const ECRANS = [
     navigation: false,
   },
   { chemin: '/revision', titre: 'Révision', navigation: false },
-  { chemin: '/verifications/v1', titre: 'Vérification', navigation: false },
+  {
+    chemin: '/verifications/0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2b',
+    titre: 'Vérification',
+    navigation: false,
+  },
   { chemin: '/tableau-de-bord', titre: 'Tableau de bord', navigation: true },
   { chemin: '/journal', titre: 'Journal', navigation: true },
   { chemin: '/journal?bloc=B04&type=correction', titre: 'Journal', navigation: true },

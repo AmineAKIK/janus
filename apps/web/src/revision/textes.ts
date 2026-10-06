@@ -80,12 +80,17 @@ const MOIS_COURTS = [
   'déc.',
 ] as const
 
+/** « 8 oct. » depuis un jour `AAAA-MM-JJ`. */
+export function texteJourCourt(jour: string): string {
+  const [, mois = 1, numero = 1] = jour.split('-').map(Number)
+  return `${String(numero)} ${MOIS_COURTS[mois - 1] ?? ''}`
+}
+
 /** « La prochaine arrive demain » ou « La prochaine arrive le 8 oct. » depuis des jours `AAAA-MM-JJ`. */
 export function texteProchaine(jourDeLaCarte: string, ecart: number): string {
   if (ecart <= 0) return 'La prochaine arrive aujourd’hui'
   if (ecart === 1) return 'La prochaine arrive demain'
-  const [, mois = 1, numero = 1] = jourDeLaCarte.split('-').map(Number)
-  return `La prochaine arrive le ${String(numero)} ${MOIS_COURTS[mois - 1] ?? ''}`
+  return `La prochaine arrive le ${texteJourCourt(jourDeLaCarte)}`
 }
 
 /** « 1 à revoir, 2 difficiles, 3 bien, 4 faciles » : la dernière note de chaque carte. */
