@@ -15,6 +15,7 @@ import {
   texteIntervalle,
   texteProchaine,
   texteProgression,
+  texteRepartition,
   texteReviennentDans,
 } from './textes.ts'
 import { useRevision } from './useRevision.ts'
@@ -65,15 +66,12 @@ export function PageRevision() {
   )
   const titreBloc = (code: string) =>
     aujourdhui.data?.module?.blocs.find(({ bloc }) => bloc === code)?.titre_court ?? ''
+  const allerALEtapeSuivante = () => {
+    revision.vider()
+    window.location.hash = suivante?.lien ?? '/'
+  }
   const etapeSuivante = (
-    <Bouton
-      type="button"
-      variante="principal"
-      onClick={() => {
-        revision.vider()
-        window.location.hash = suivante?.lien ?? '/'
-      }}
-    >
+    <Bouton type="button" variante="principal" onClick={allerALEtapeSuivante}>
       {suivante === undefined
         ? T.etapeSuivante
         : texteEtapeSuivante(texteTache(suivante.tache, { titreBloc, etape: () => null }).titre)}
@@ -102,14 +100,14 @@ export function PageRevision() {
       </section>
     )
   } else if (carte === undefined) {
-    const { aRevoir, revues } = revision
-    if (aRevoir.length > 0 && !revision.plusTard) {
-      const delai = Math.min(...aRevoir.map(({ carte: revue }) => revue.apercu.a_revoir))
+    const { aRevoir, bientot, revues } = revision
+    if (bientot.length > 0) {
+      const delai = Math.min(...bientot.map(({ carte: revue }) => revue.apercu.a_revoir))
       contenu = (
         <section className={styles['fin']}>
           <h2 className="texte-sous-titre-18">{T.cartesARevoir}</h2>
           <p className="texte-corps-16">
-            {texteReviennentDans(aRevoir.length, texteIntervalle(delai))}
+            {texteReviennentDans(bientot.length, texteIntervalle(delai))}
           </p>
           <p className="texte-corps-16">{T.reviennentAvant}</p>
           <p className="texte-corps-16">{T.revoirOuPlusTard}</p>
@@ -117,7 +115,7 @@ export function PageRevision() {
             <Bouton type="button" variante="principal" onClick={revision.revoirMaintenant}>
               {T.revoirMaintenant}
             </Bouton>
-            <Bouton type="button" variante="secondaire" onClick={revision.reporter}>
+            <Bouton type="button" variante="secondaire" onClick={allerALEtapeSuivante}>
               {T.plusTard}
             </Bouton>
           </div>
@@ -127,13 +125,7 @@ export function PageRevision() {
       contenu = (
         <section className={styles['fin']}>
           <h2 className="texte-sous-titre-18">{texteCartesRevues(revues.length)}</h2>
-          <ul className={styles['repartition']}>
-            {NOTES.map(({ note, libelle }) => (
-              <li key={note} className="texte-corps-16">
-                {libelle} : {String(revues.filter((revue) => revue.note === note).length)}
-              </li>
-            ))}
-          </ul>
+          <p className="texte-corps-16">{texteRepartition(revues)}</p>
           {aRevoir.length > 0 && <p className="texte-corps-16">{T.reviennentBientot}</p>}
           {etapeSuivante}
         </section>
