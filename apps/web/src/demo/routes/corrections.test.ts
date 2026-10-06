@@ -127,7 +127,7 @@ describe('POST /corrections de la démo', () => {
     ).rejects.toMatchObject({ status: 404 })
     await expect(
       transport.appeler(ROUTES['POST /corrections'], {
-        corps: demande(2, { serie: 'rappel', bloc: undefined, version: undefined }),
+        corps: demande(2, { serie: 'verification', bloc: undefined, version: undefined }),
       }),
     ).rejects.toMatchObject({ status: 501 })
   })

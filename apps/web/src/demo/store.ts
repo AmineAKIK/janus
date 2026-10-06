@@ -26,6 +26,7 @@ export function etatVide(maintenant: string): EtatDemo {
     reglages: Reglages.parse({}),
     faits: [],
     etatsPage: {},
+    rappels: {},
     idsRecus: [],
     interrupteurs: {
       correctionIndisponible: false,

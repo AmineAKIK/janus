@@ -1,5 +1,5 @@
 import { ROUTES } from '@janus/contrats'
-import type { Manifeste, Statut, Tache, TacheDuJour } from '@janus/contrats'
+import type { EtatDemo, Manifeste, Statut, Tache, TacheDuJour } from '@janus/contrats'
 import {
   blocEnCours,
   cartesDuJour,
@@ -47,52 +47,61 @@ function lienDeLaTache(tache: Tache): string {
   }
 }
 
+/** Ce que les routes du jour partagent : les blocs, ceux qui sont vus, et les questions de la journée. */
+export function contexteDuJour(etat: EtatDemo, maintenant: string) {
+  const { reglages } = etat
+  const jourDu = (instant: string) => jourDe(instant, reglages.fuseau, reglages.heureBascule)
+
+  const blocs = PLAN.flatMap(({ code }) => {
+    const manifeste = MANIFESTES_GRAINE[code]
+    if (manifeste === undefined) return []
+    const faits = faitsDuBloc(etat, code)
+    return [
+      {
+        manifeste,
+        etat: resultatDuBloc(etat, code, maintenant),
+        dernierFait: faits.reduce<string | null>(
+          (dernier, fait) => (dernier === null || fait.date > dernier ? fait.date : dernier),
+          null,
+        ),
+      },
+    ]
+  })
+  const derniereActivite = blocs.reduce<string | null>(
+    (dernier, { dernierFait }) =>
+      dernierFait !== null && (dernier === null || dernierFait > dernier) ? dernierFait : dernier,
+    null,
+  )
+
+  const enCours = blocEnCours(
+    blocs.map(({ manifeste, etat: resultat, dernierFait }) => ({
+      bloc: manifeste.bloc,
+      statut: resultat.statut,
+      dernierFait,
+    })),
+  )
+  const vus = blocs.filter(({ etat: resultat }) => AU_MOINS_VU.has(resultat.statut))
+  const questions = choisirQuestionsDebut(
+    vus.map(({ manifeste }) => ({
+      manifeste,
+      prerequisDuBlocEnCours: (
+        blocs.find(({ manifeste: autre }) => autre.bloc === enCours)?.manifeste.prerequis ?? []
+      ).includes(manifeste.bloc),
+    })),
+    etat.faits,
+    reglages,
+    Date.parse(jourDu(maintenant)),
+  )
+  return { blocs, derniereActivite, enCours, vus, questions, jourDu, reglages }
+}
+
 export const ROUTES_AUJOURDHUI_DEMO = [
   definir(ROUTES['GET /aujourdhui'], ({ magasin, horloge }) => {
     const etat = magasin.lire()
     const maintenant = horloge.maintenant()
-    const { reglages } = etat
-    const jourDu = (instant: string) => jourDe(instant, reglages.fuseau, reglages.heureBascule)
-
-    const blocs = PLAN.flatMap(({ code }) => {
-      const manifeste = MANIFESTES_GRAINE[code]
-      if (manifeste === undefined) return []
-      const faits = faitsDuBloc(etat, code)
-      return [
-        {
-          manifeste,
-          etat: resultatDuBloc(etat, code, maintenant),
-          dernierFait: faits.reduce<string | null>(
-            (dernier, fait) => (dernier === null || fait.date > dernier ? fait.date : dernier),
-            null,
-          ),
-        },
-      ]
-    })
-    const derniereActivite = blocs.reduce<string | null>(
-      (dernier, { dernierFait }) =>
-        dernierFait !== null && (dernier === null || dernierFait > dernier) ? dernierFait : dernier,
-      null,
-    )
-
-    const enCours = blocEnCours(
-      blocs.map(({ manifeste, etat: resultat, dernierFait }) => ({
-        bloc: manifeste.bloc,
-        statut: resultat.statut,
-        dernierFait,
-      })),
-    )
-    const vus = blocs.filter(({ etat: resultat }) => AU_MOINS_VU.has(resultat.statut))
-    const questions = choisirQuestionsDebut(
-      vus.map(({ manifeste }) => ({
-        manifeste,
-        prerequisDuBlocEnCours: (
-          blocs.find(({ manifeste: autre }) => autre.bloc === enCours)?.manifeste.prerequis ?? []
-        ).includes(manifeste.bloc),
-      })),
-      etat.faits,
-      reglages,
-      Date.parse(jourDu(maintenant)),
+    const { blocs, derniereActivite, vus, questions, jourDu, reglages } = contexteDuJour(
+      etat,
+      maintenant,
     )
     const cartes = cartesDuJour({
       cartes: vus.flatMap(({ manifeste }) =>

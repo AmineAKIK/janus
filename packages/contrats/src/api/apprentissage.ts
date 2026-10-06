@@ -1,7 +1,7 @@
 import { z } from 'zod'
-import { NoteCarte, Statut, TypeDifferee, TypeVerification } from '../enums.ts'
+import { Confiance, NoteCarte, Statut, TypeDifferee, TypeVerification } from '../enums.ts'
 import { InstantUtc } from '../faits.ts'
-import { CodeBloc, IdUuid, Identifiant, Reponse } from './commun.ts'
+import { CodeBloc, CorrectionRecue, IdUuid, Identifiant, Reponse } from './commun.ts'
 import type { DefinitionRoute } from './routes.ts'
 
 const Texte = z.string().trim().min(1)
@@ -52,7 +52,19 @@ const BlocDuModule = z.strictObject({
 })
 
 /** Une question de début de séance : sans le nom du bloc, pour que les blocs restent mélangés. */
-const QuestionDebut = z.strictObject({ id: Identifiant, question: Texte })
+const QuestionDebut = z.strictObject({
+  id: Identifiant,
+  question: Texte,
+  /** Présent une fois la question corrigée : c'est seulement alors que le bloc est donné. */
+  deja: z
+    .strictObject({
+      bloc: CodeBloc,
+      confiance: Confiance,
+      reponse: Reponse,
+      correction: CorrectionRecue,
+    })
+    .nullable(),
+})
 
 const Carte = z.strictObject({ id: Identifiant, bloc: CodeBloc, recto: Texte, verso: Texte })
 
