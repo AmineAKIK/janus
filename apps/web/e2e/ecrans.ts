@@ -10,6 +10,8 @@ export interface Ecran {
   readonly session?: boolean
   /** Interrupteurs de démo à activer avant d'ouvrir l'écran (voir `session.ts`). */
   readonly interrupteurs?: readonly string[]
+  /** Boutons à cliquer, dans l'ordre, une fois l'écran affiché (par exemple pour ouvrir un dialogue). */
+  readonly clics?: readonly string[]
 }
 
 /** Écrans photographiés à chaque PR, en 4 captures chacun. */
@@ -49,6 +51,13 @@ export const ecrans: readonly Ecran[] = [
     chemin: './#/modules/M1?detail=B04',
     etat: 'Module 1',
     titre: 'Blocs',
+  },
+  {
+    nom: 'blocs-prerequis',
+    chemin: './#/modules/M1?detail=B08',
+    etat: 'Module 1',
+    titre: 'Blocs',
+    clics: ['Ouvrir le bloc'],
   },
   { nom: 'bloc', chemin: './#/blocs/b05', etat: 'Page de bloc' },
   { nom: 'revision', chemin: './#/revision', etat: 'Révision' },

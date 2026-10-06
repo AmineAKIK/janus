@@ -8,7 +8,7 @@ import type { LigneEcheance } from './echeance.ts'
 import type { ContexteDetail } from './PanneauDetail.tsx'
 
 const BASCULE_PAR_DEFAUT = Reglages.parse({}).heureBascule
-const ACQUIS_AU_MOINS_PROVISOIRE: readonly Statut[] = [
+export const ACQUIS_AU_MOINS_PROVISOIRE: readonly Statut[] = [
   'acquis_provisoirement',
   'acquis',
   'maitrise',

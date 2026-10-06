@@ -1,12 +1,17 @@
 import type { Statut } from '@janus/contrats'
-import { ROUTES } from '@janus/contrats'
+import { nouvelId, ROUTES } from '@janus/contrats'
 import { jourDe } from '@janus/moteur'
 import { BadgeStatut, Bouton, LIBELLES_STATUT } from '@janus/ui'
-import { useLecture } from '../api/requetes.tsx'
+import { useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
+import { useEcriture, useLecture } from '../api/requetes.tsx'
 import { instantReel } from '../demo/horlogeDemo.ts'
+import { DialoguePrerequis } from './DialoguePrerequis.tsx'
 import styles from './Detail.module.css'
 import { Chargement, Erreur } from './EtatEcran.tsx'
 import { lignesPreuves } from './preuves.ts'
+import { ACQUIS_AU_MOINS_PROVISOIRE } from './useBlocs.ts'
 import { TEXTES_DETAIL } from './textes.ts'
 
 export interface ContexteDetail {
@@ -25,6 +30,10 @@ export function PanneauDetail({
   readonly contexte: ContexteDetail
 }) {
   const lecture = useLecture(ROUTES['GET /blocs/:id'], { params: { id: bloc } })
+  const ecriture = useEcriture(ROUTES['POST /blocs/:id/ouvrir'])
+  const client = useQueryClient()
+  const navigate = useNavigate()
+  const [dialogue, setDialogue] = useState(false)
   if (lecture.isError) {
     return (
       <aside className={styles['panneau']} aria-label={TEXTES_DETAIL.panneau}>
@@ -52,6 +61,29 @@ export function PanneauDetail({
     detail.manifeste.erreurs_critiques.map(({ id, libelle }) => [id, libelle]),
   )
   const reprise = detail.statut === 'a_reprendre'
+  const manquants = detail.manifeste.prerequis.filter(
+    (code) => !ACQUIS_AU_MOINS_PROVISOIRE.includes(statuts.get(code) ?? 'non_commence'),
+  )
+
+  const ouvrir = (raison: string | null) => {
+    ecriture.mutate(
+      {
+        params: { id: detail.bloc },
+        corps: {
+          id: nouvelId(Date.parse(instantReel())),
+          hors_prerequis: raison !== null,
+          ...(raison === null ? {} : { raison }),
+        },
+      },
+      {
+        onSuccess: () => {
+          setDialogue(false)
+          void client.invalidateQueries()
+          void navigate({ to: '/blocs/$blocId', params: { blocId: detail.bloc } })
+        },
+      },
+    )
+  }
 
   return (
     <aside className={styles['panneau']} aria-label={TEXTES_DETAIL.panneau}>
@@ -103,7 +135,33 @@ export function PanneauDetail({
           ))}
         </ul>
       </section>
-      <Bouton pleineLargeur>{reprise ? TEXTES_DETAIL.reprendre : TEXTES_DETAIL.ouvrir}</Bouton>
+      <Bouton
+        pleineLargeur
+        chargement={ecriture.isPending && !dialogue}
+        onClick={() => {
+          if (detail.acces === 'raison_requise') {
+            ecriture.reset()
+            setDialogue(true)
+          } else ouvrir(null)
+        }}
+      >
+        {reprise ? TEXTES_DETAIL.reprendre : TEXTES_DETAIL.ouvrir}
+      </Bouton>
+      {dialogue && (
+        <DialoguePrerequis
+          manquants={manquants}
+          enCours={ecriture.isPending}
+          echec={ecriture.isError}
+          surOuvrir={ouvrir}
+          surAller={(code) => {
+            setDialogue(false)
+            void navigate({ to: '.', search: (precedent) => ({ ...precedent, detail: code }) })
+          }}
+          surFermeture={() => {
+            setDialogue(false)
+          }}
+        />
+      )}
     </aside>
   )
 }
