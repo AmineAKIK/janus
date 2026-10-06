@@ -114,6 +114,18 @@ describe('erreursRecurrentes', () => {
     ])
   })
 
+  it('départage à égalité par identifiant et garde l’identifiant sans libellé', () => {
+    const faits = [cochee('B01', 'E9', 1), cochee('B01', 'E1', 2), cochee('B01', 'E5', 3)]
+
+    const erreurs = erreursRecurrentes(faits, libelles, new Set(), 'tout', MAINTENANT, REGLAGES)
+
+    expect(erreurs.map((e) => [e.erreur, e.libelle])).toEqual([
+      ['E1', 'Confond A et B.'],
+      ['E5', 'E5'],
+      ['E9', 'E9'],
+    ])
+  })
+
   it('rend une liste vide sans erreur', () => {
     expect(erreursRecurrentes([], libelles, new Set(), 'tout', MAINTENANT, REGLAGES)).toEqual([])
   })
