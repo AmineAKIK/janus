@@ -59,12 +59,12 @@ export function PanneauDetail({
         <span className={`${styles['reference'] ?? ''} texte-code-14`}>{detail.bloc}</span>
         <BadgeStatut statut={detail.statut} />
       </header>
-      <h2 className={`${styles['titre'] ?? ''} texte-titre-20`}>{detail.manifeste.titre}</h2>
+      <h2 className={`${styles['titre'] ?? ''} texte-titre-22`}>{detail.manifeste.titre}</h2>
       <p className={`${styles['ligne'] ?? ''} texte-petit-14`}>
-        <strong>{TEXTES_DETAIL.objectif}</strong> · {detail.manifeste.objectif}
+        {TEXTES_DETAIL.objectif} · {detail.manifeste.objectif}
       </p>
-      <p className={`${styles['ligne'] ?? ''} texte-petit-14`}>
-        <strong>{TEXTES_DETAIL.prerequis}</strong> ·{' '}
+      <p className={`${styles['prerequis'] ?? ''} texte-legende-12`}>
+        {TEXTES_DETAIL.prerequis} ·{' '}
         {detail.manifeste.prerequis.length === 0
           ? TEXTES_DETAIL.aucunPrerequis
           : detail.manifeste.prerequis
@@ -80,7 +80,7 @@ export function PanneauDetail({
         <div className={styles['erreurs']}>
           {detail.erreurs_ouvertes.map((id) => (
             <p key={id} className={`${styles['erreur'] ?? ''} texte-petit-14`}>
-              <strong>{TEXTES_DETAIL.erreurCritique}</strong> · {libelles.get(id) ?? id}
+              {TEXTES_DETAIL.erreurCritique} · {libelles.get(id) ?? id}
             </p>
           ))}
         </div>

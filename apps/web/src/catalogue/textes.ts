@@ -52,7 +52,7 @@ export const TEXTES_DETAIL = {
   erreurCritique: 'Erreur critique',
   cinqPreuves: 'Cinq preuves',
   explicationPreuves:
-    'Un bloc est acquis quand tu prouves que tu comprends, que tu fais seul, que tu transfères et que tu retiens.',
+    'Un bloc est acquis quand tu l’expliques, le fais seul, le transfères et le retiens.',
   ouvrir: 'Ouvrir le bloc',
   reprendre: 'Reprendre',
 } as const
