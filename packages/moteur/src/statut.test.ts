@@ -780,10 +780,12 @@ describe('la vérification, le retest et les échecs', () => {
     const resultat = calcul(faits, apres(DEBUT, 37))
     expect(resultat.statut).toBe('acquis_provisoirement')
     expect(resultat.dates.acquis).toBeNull()
+    expect(resultat.descendu).toBe(true)
     // Une nouvelle vérification réussie le remonte à acquis.
     const remonte = calcul([...faits, f.verification(apres(DEBUT, 40))], apres(DEBUT, 41))
     expect(remonte.statut).toBe('acquis')
     expect(remonte.dates.acquis).toBe(apres(DEBUT, 40))
+    expect(remonte.descendu).toBe(false)
   })
 
   it('le nombre d’échecs avant descente est un réglage', () => {

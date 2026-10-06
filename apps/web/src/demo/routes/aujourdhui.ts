@@ -19,6 +19,7 @@ import {
 import { catalogueGraine, MANIFESTES_GRAINE, PLAN } from '../graine.ts'
 import { faitsDuBloc, resultatDuBloc } from './calculs.ts'
 import type { Magasin } from '../store.ts'
+import type { HorlogeDemo } from '../horlogeDemo.ts'
 import { definir } from './definir.ts'
 import { blocsReportes, verificationPour } from './verifications.ts'
 
@@ -143,74 +144,73 @@ export function cartesDuJourDemo(etat: EtatDemo, maintenant: string) {
   })
 }
 
-export const ROUTES_AUJOURDHUI_DEMO = [
-  definir(ROUTES['GET /aujourdhui'], ({ magasin, horloge }) => {
-    const etat = magasin.lire()
-    const maintenant = horloge.maintenant()
-    const { blocs, derniereActivite, questions, jourDu, reglages } = contexteDuJour(
-      etat,
-      maintenant,
-    )
-    const cartes = cartesDuJourDemo(etat, maintenant)
+/** La réponse de `GET /aujourdhui` : la file du jour, assez pour que le tableau de bord la reprenne telle quelle. */
+export function aujourdhuiDemo(magasin: Magasin, horloge: HorlogeDemo) {
+  const etat = magasin.lire()
+  const maintenant = horloge.maintenant()
+  const { blocs, derniereActivite, questions, jourDu, reglages } = contexteDuJour(etat, maintenant)
+  const cartes = cartesDuJourDemo(etat, maintenant)
 
-    const file = fileDuJour({
-      blocs,
-      questionsDebut: questions.length,
-      cartes,
-      derniereActivite,
-      maintenant,
-      reglages,
-    })
-    const jour = jourDu(maintenant)
-    const joursDePause =
-      derniereActivite === null ? 0 : ecartEnJours(jourDu(derniereActivite), jour)
-    const toutFait = etat.interrupteurs.toutFait
-    const reportes = blocsReportes(etat, jour)
-    const module = catalogueGraine().modules.find(({ code }) => code === 'M1')
+  const file = fileDuJour({
+    blocs,
+    questionsDebut: questions.length,
+    cartes,
+    derniereActivite,
+    maintenant,
+    reglages,
+  })
+  const jour = jourDu(maintenant)
+  const joursDePause = derniereActivite === null ? 0 : ecartEnJours(jourDu(derniereActivite), jour)
+  const toutFait = etat.interrupteurs.toutFait
+  const reportes = blocsReportes(etat, jour)
+  const module = catalogueGraine().modules.find(({ code }) => code === 'M1')
 
-    return {
-      jour,
-      en_retard: file.enRetard,
-      ...(joursDePause >= JOURS_AVANT_RETARD ? { retour: { jours: joursDePause } } : {}),
-      premiere_connexion: etat.faits.length === 0,
-      taches: file.taches
-        .filter(
-          (tache) =>
-            !(
-              (tache.type === 'verification' ||
-                tache.type === 'retest' ||
-                tache.type === 'entretien') &&
-              reportes.has(tache.bloc)
-            ),
-        )
-        .map((tache): TacheDuJour => ({
-          tache,
-          lien: lienDeLaTache(
-            tache,
-            (bloc, type) => verificationPour(magasin, bloc, type, maintenant) ?? bloc,
+  return {
+    jour,
+    en_retard: file.enRetard,
+    ...(joursDePause >= JOURS_AVANT_RETARD ? { retour: { jours: joursDePause } } : {}),
+    premiere_connexion: etat.faits.length === 0,
+    taches: file.taches
+      .filter(
+        (tache) =>
+          !(
+            (tache.type === 'verification' ||
+              tache.type === 'retest' ||
+              tache.type === 'entretien') &&
+            reportes.has(tache.bloc)
           ),
-          faite: toutFait,
-        })),
-      module:
-        module === undefined
-          ? null
-          : {
-              id: module.code,
-              titre: module.titre,
-              blocs: blocs.map(
-                ({
-                  manifeste,
-                  etat: resultat,
-                }: {
-                  manifeste: Manifeste
-                  etat: { statut: Statut }
-                }) => ({
-                  bloc: manifeste.bloc,
-                  titre_court: manifeste.titre_court,
-                  statut: resultat.statut,
-                }),
-              ),
-            },
-    }
-  }),
+      )
+      .map((tache): TacheDuJour => ({
+        tache,
+        lien: lienDeLaTache(
+          tache,
+          (bloc, type) => verificationPour(magasin, bloc, type, maintenant) ?? bloc,
+        ),
+        faite: toutFait,
+      })),
+    module:
+      module === undefined
+        ? null
+        : {
+            id: module.code,
+            titre: module.titre,
+            blocs: blocs.map(
+              ({
+                manifeste,
+                etat: resultat,
+              }: {
+                manifeste: Manifeste
+                etat: { statut: Statut }
+              }) => ({
+                bloc: manifeste.bloc,
+                titre_court: manifeste.titre_court,
+                statut: resultat.statut,
+              }),
+            ),
+          },
+  }
+}
+
+export const ROUTES_AUJOURDHUI_DEMO = [
+  definir(ROUTES['GET /aujourdhui'], ({ magasin, horloge }) => aujourdhuiDemo(magasin, horloge)),
 ]

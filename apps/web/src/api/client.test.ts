@@ -43,7 +43,7 @@ describe('creerTransport', () => {
     delete window.__janusDemo
 
     const erreur: unknown = await creerTransport({})
-      .appeler(ROUTES['GET /tableau-de-bord'], {})
+      .appeler(ROUTES['GET /journal'], { requete: {} })
       .catch((e: unknown) => e)
 
     expect(erreur).toMatchObject({ status: 501 })
