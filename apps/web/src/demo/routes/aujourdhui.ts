@@ -11,6 +11,7 @@ import {
 } from '@janus/moteur'
 import { catalogueGraine, MANIFESTES_GRAINE, PLAN } from '../graine.ts'
 import { faitsDuBloc, resultatDuBloc } from './calculs.ts'
+import type { Magasin } from '../store.ts'
 import { definir } from './definir.ts'
 
 /** Les statuts à partir desquels un bloc compte comme « vu » pour les questions et les cartes. */
@@ -93,6 +94,17 @@ export function contexteDuJour(etat: EtatDemo, maintenant: string) {
     Date.parse(jourDu(maintenant)),
   )
   return { blocs, derniereActivite, enCours, vus, questions, jourDu, reglages }
+}
+
+/** La série du jour : tirée à la première lecture puis gardée, pour qu'elle ne bouge pas après une réponse. */
+export function serieDuJour(magasin: Magasin, maintenant: string) {
+  const etat = magasin.lire()
+  const { questions, jourDu } = contexteDuJour(etat, maintenant)
+  const jour = jourDu(maintenant)
+  if (etat.serieDuJour?.jour === jour) return { jour, questions: etat.serieDuJour.questions }
+  const tirees = questions.map(({ bloc, question }) => ({ bloc, question }))
+  magasin.ecrire((avant) => ({ ...avant, serieDuJour: { jour, questions: tirees } }))
+  return { jour, questions: tirees }
 }
 
 export const ROUTES_AUJOURDHUI_DEMO = [

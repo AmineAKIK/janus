@@ -89,6 +89,34 @@ export const ecrans: readonly Ecran[] = [
     session: false,
   },
   { nom: 'questions', chemin: './#/questions', etat: 'Questions de début de séance' },
+  {
+    nom: 'questions-correction',
+    chemin: './#/questions',
+    etat: 'Questions de début de séance',
+    scenario: async (page) => {
+      await page.getByRole('button', { name: 'Je ne sais pas' }).click()
+      await expect(page.getByText('Tu as choisi « Je ne sais pas ».')).toBeVisible()
+    },
+  },
+  {
+    nom: 'questions-indisponible',
+    chemin: './#/questions',
+    etat: 'Questions de début de séance',
+    interrupteurs: ['correctionIndisponible'],
+    scenario: async (page) => {
+      await page.getByRole('button', { name: 'Je ne sais pas' }).click()
+      await expect(page.getByText(/Correction indisponible pour l’instant/)).toBeVisible()
+    },
+  },
+  {
+    nom: 'questions-quitter',
+    chemin: './#/questions',
+    etat: 'Questions de début de séance',
+    scenario: async (page) => {
+      await page.getByRole('button', { name: /Quitter/ }).click()
+      await expect(page.getByRole('dialog', { name: 'Quitter la séance ?' })).toBeVisible()
+    },
+  },
   { nom: 'formations', chemin: './#/formations', etat: 'Formations' },
   {
     nom: 'formations-deux',

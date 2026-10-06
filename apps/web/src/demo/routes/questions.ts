@@ -1,14 +1,13 @@
 import { ROUTES } from '@janus/contrats'
 import { MANIFESTES_GRAINE } from '../graine.ts'
-import { contexteDuJour } from './aujourdhui.ts'
+import { serieDuJour } from './aujourdhui.ts'
 import { definir } from './definir.ts'
 
 export const ROUTES_QUESTIONS_DEMO = [
   definir(ROUTES['GET /questions-debut'], ({ magasin, horloge }) => {
     const etat = magasin.lire()
     const maintenant = horloge.maintenant()
-    const { questions, jourDu } = contexteDuJour(etat, maintenant)
-    const jour = jourDu(maintenant)
+    const { questions, jour } = serieDuJour(magasin, maintenant)
     return {
       questions: questions.flatMap(({ bloc, question: id }) => {
         const texte = MANIFESTES_GRAINE[bloc]?.rappel.find((question) => question.id === id)

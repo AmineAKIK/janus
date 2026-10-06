@@ -45,6 +45,14 @@ export const EtatDemo = z.strictObject({
   reglages: Reglages,
   faits: z.array(Fait),
   etatsPage: z.record(CodeBloc, EtatPage),
+  /** La série de questions de début de séance du jour : tirée une fois, elle ne change plus avant demain. */
+  serieDuJour: z
+    .strictObject({
+      jour: z.string(),
+      questions: z.array(z.strictObject({ bloc: CodeBloc, question: Identifiant })),
+    })
+    .nullable()
+    .default(null),
   /** Les réponses aux questions de début de séance : de quoi reprendre la série après un départ. */
   rappels: z
     .record(
