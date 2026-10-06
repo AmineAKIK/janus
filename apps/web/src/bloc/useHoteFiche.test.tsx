@@ -129,6 +129,46 @@ describe('page d’un bloc', () => {
     })
   })
 
+  it('corrige une restitution et rend la correction à la page', async () => {
+    const { envoyer, recu } = await afficher()
+    const question = MANIFESTES_GRAINE['B03']?.restitution[0]?.id ?? ''
+
+    await envoyer(message('restitution.demande', { question, reponse: 'Mes propres mots.' }))
+
+    await waitFor(() => {
+      expect(recu).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'restitution.correction', question, echantillon: true }),
+        '*',
+      )
+    })
+  })
+
+  it.each([
+    ['plafondAtteint', 'plafond_atteint'],
+    ['correctionIndisponible', 'correction_indisponible'],
+  ])('dit à la page que la correction est impossible (%s)', async (interrupteur, code) => {
+    const { envoyer, recu, magasin } = await afficher()
+    vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    magasin.ecrire((etat) => ({
+      ...etat,
+      interrupteurs: { ...etat.interrupteurs, [interrupteur]: true },
+    }))
+    const question = MANIFESTES_GRAINE['B03']?.restitution[0]?.id ?? ''
+
+    await envoyer(message('restitution.demande', { question }))
+
+    await waitFor(() => {
+      expect(recu).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'erreur',
+          code,
+          message_id: EXEMPLES_PAGE['restitution.demande'].id,
+        }),
+        '*',
+      )
+    })
+  })
+
   it('sauvegarde l’état de la page sur le serveur', async () => {
     const { envoyer, transport } = await afficher()
 
@@ -187,6 +227,66 @@ describe('fil d’étapes', () => {
       { type: 'etape.aller', etape: MANIFESTES_GRAINE['B03']?.etapes[0]?.id },
       '*',
     )
+  })
+})
+
+describe('restitution verrouillée', () => {
+  const etapes = MANIFESTES_GRAINE['B03']?.etapes ?? []
+  const restitution = etapes.find(({ type }) => type === 'restitution')
+  const cours = etapes.find(({ type }) => type === 'explication')
+  const questions = MANIFESTES_GRAINE['B03']?.restitution.map(({ id }) => id) ?? []
+
+  it('met 🔒 sur les étapes de cours et demande confirmation avant de les rouvrir', async () => {
+    const utilisateur = userEvent.setup()
+    const { envoyer, recu } = await afficher()
+    await envoyer(message('etape.vue', { etape: restitution?.id }))
+
+    const onglet = screen.getByRole('button', { name: cours?.titre ?? '' })
+    expect(onglet.textContent).toBe(`🔒 ${cours?.titre ?? ''}`)
+
+    await utilisateur.click(onglet)
+    const dialogue = screen.getByRole('dialog', { name: 'Revoir le cours maintenant ?' })
+    expect(dialogue).toHaveTextContent(
+      'Tes réponses pas encore envoyées ne compteront pas comme preuve.',
+    )
+    expect(screen.getByRole('button', { name: 'Rester' })).toHaveFocus()
+    expect(recu).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'etape.aller' }), '*')
+
+    await utilisateur.click(screen.getByRole('button', { name: 'Revoir le cours' }))
+    expect(recu).toHaveBeenCalledWith({ type: 'etape.aller', etape: cours?.id }, '*')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('« Rester » ferme le dialogue sans quitter la restitution', async () => {
+    const utilisateur = userEvent.setup()
+    const { envoyer, recu } = await afficher()
+    await envoyer(message('etape.vue', { etape: restitution?.id }))
+
+    await utilisateur.click(screen.getByRole('button', { name: cours?.titre ?? '' }))
+    await utilisateur.click(screen.getByRole('button', { name: 'Rester' }))
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(recu).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'etape.aller' }), '*')
+  })
+
+  it('rend les étapes de cours libres quand toutes les questions sont envoyées', async () => {
+    const utilisateur = userEvent.setup()
+    const { envoyer } = await afficher()
+    await envoyer(message('etape.vue', { etape: restitution?.id }))
+
+    for (const [rang, question] of questions.entries()) {
+      await envoyer(
+        message('restitution.demande', {
+          id: `0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a${String(rang).padStart(2, '0')}`,
+          question,
+        }),
+      )
+    }
+
+    const onglet = screen.getByRole('button', { name: cours?.titre ?? '' })
+    expect(onglet.textContent).toBe(`✓ ${cours?.titre ?? ''}`)
+    await utilisateur.click(onglet)
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 })
 

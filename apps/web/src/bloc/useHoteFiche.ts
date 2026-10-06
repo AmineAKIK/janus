@@ -1,9 +1,11 @@
+import { CorrectionRecue, ErreurApi } from '@janus/contrats'
 import type { Manque, MessageAppli, MessagePage, Statut } from '@janus/contrats'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
 import { useBoiteEnvoi } from '../envoi/FournisseurEnvoi.tsx'
 import { envoiDeMessage, statutDeReponse } from '../envoi/messages.ts'
 import { filtrerMessage } from './filtreMessages.ts'
+import type { SerieVerrou } from './verrou.ts'
 
 /** Au bout de ce délai sans `page.prete`, la fiche est jugée muette. */
 export const DELAI_FICHE_MS = 10_000
@@ -31,6 +33,20 @@ export interface ReponseStatut {
   readonly manque: readonly Manque[]
 }
 
+/** Ce que la page apprend d'un message refusé : le plafond, la panne de l'IA, ou un simple refus. */
+function causeDeRefus(erreur: unknown): {
+  code: 'correction_indisponible' | 'plafond_atteint' | 'message_refuse'
+  detail: string
+} {
+  if (erreur instanceof ErreurApi && erreur.status === 429) {
+    return { code: 'plafond_atteint', detail: 'plafond atteint' }
+  }
+  if (erreur instanceof ErreurApi && erreur.status === 503) {
+    return { code: 'correction_indisponible', detail: 'correction indisponible' }
+  }
+  return { code: 'message_refuse', detail: 'message refusé' }
+}
+
 /**
  * L'hôte d'une fiche : écoute la fenêtre, filtre ce qui arrive, fait la poignée de main, relaie les
  * messages au serveur et renvoie le statut recalculé à la page. L'appli ne lit jamais l'iframe.
@@ -54,6 +70,10 @@ export function useHoteFiche(
   const [refus, setRefus] = useState<CauseRefus | null>(null)
   const [etapeVue, setEtapeVue] = useState<string | null>(null)
   const [etapesVues, setEtapesVues] = useState<readonly string[]>([])
+  const [envoyees, setEnvoyees] = useState<Readonly<Record<SerieVerrou, readonly string[]>>>({
+    restitution: [],
+    consolidation: [],
+  })
 
   // La dernière valeur de chaque donnée, pour que l'écouteur n'ait pas à se réinstaller.
   const dernieres = useRef({ donnees, statut, etat: donnees.etatPage?.etat ?? null })
@@ -100,27 +120,33 @@ export function useHoteFiche(
             setEtapeVue(vue)
             setEtapesVues((avant) => (avant.includes(vue) ? avant : [...avant, vue]))
           }
-          const envoi = envoiDeMessage(message, courantes.etatPage?.version ?? 0)
-          if (envoi === null) {
-            // Les demandes de correction viennent avec la PR-052.
-            console.info(`[janus] ${message.type} pas encore pris en charge`)
-            return
+          if (message.type === 'restitution.demande' && message.relance === '') {
+            const { serie, question } = message
+            setEnvoyees((avant) =>
+              avant[serie].includes(question)
+                ? avant
+                : { ...avant, [serie]: [...avant[serie], question] },
+            )
           }
+          const envoi = envoiDeMessage(message, courantes.etatPage?.version ?? 0)
           void boite.ajouter(
             { ...envoi, id: message.id },
             {
               surReponse: (reponse) => {
+                if (envoi.route === 'POST /corrections') {
+                  vers({ type: 'restitution.correction', ...CorrectionRecue.parse(reponse) })
+                  return
+                }
                 const recalcule = statutDeReponse(envoi.route, reponse)
                 if (recalcule !== null) appliquerStatut(recalcule)
               },
               surConflit: () => {
                 setConflit(true)
               },
-              surRefus: () => {
+              surRefus: (erreur) => {
                 vers({
                   type: 'erreur',
-                  code: 'message_refuse',
-                  detail: 'message refusé',
+                  ...causeDeRefus(erreur),
                   message_id: message.id,
                 })
               },
@@ -184,6 +210,7 @@ export function useHoteFiche(
     statut,
     etapeVue,
     etapesVues,
+    envoyees,
     chargement,
     recharger: () => {
       setChargement((valeur) => valeur + 1)

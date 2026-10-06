@@ -4,10 +4,10 @@ import { describe, expect, it, vi } from 'vitest'
 import { etapesFaites, FilEtapes } from './FilEtapes.tsx'
 
 const ETAPES = [
-  { id: 'ET1', titre: 'Carte' },
-  { id: 'ET2', titre: 'Pré-test' },
-  { id: 'ET3', titre: 'Explication' },
-  { id: 'ET4', titre: 'Pratique' },
+  { id: 'ET1', titre: 'Carte', type: 'carte' as const },
+  { id: 'ET2', titre: 'Pré-test', type: 'pretest' as const },
+  { id: 'ET3', titre: 'Explication', type: 'explication' as const },
+  { id: 'ET4', titre: 'Pratique', type: 'pratique' as const },
 ]
 
 describe('etapesFaites', () => {

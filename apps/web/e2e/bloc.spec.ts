@@ -80,4 +80,26 @@ test.describe('page d’un bloc', () => {
         .getByRole('button', { name: 'Pratique guidée' }),
     ).toHaveAttribute('aria-current', 'step')
   })
+
+  test('pendant la restitution, revoir le cours demande confirmation', async ({ page }) => {
+    await page.goto('./#/blocs/B03')
+    const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
+    await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
+    const fil = page.getByRole('navigation', { name: 'Étapes de la fiche' })
+
+    await fiche.getByRole('button', { name: 'Restitution' }).click()
+    await fil.getByRole('button', { name: 'Explication' }).click()
+
+    const dialogue = page.getByRole('dialog', { name: 'Revoir le cours maintenant ?' })
+    await expect(dialogue.getByRole('button', { name: 'Rester' })).toBeFocused()
+    await dialogue.getByRole('button', { name: 'Rester' }).click()
+    await expect(dialogue).toHaveCount(0)
+
+    await fil.getByRole('button', { name: 'Explication' }).click()
+    await page.getByRole('button', { name: 'Revoir le cours' }).click()
+    await expect(fiche.getByRole('button', { name: 'Explication' })).toHaveAttribute(
+      'aria-current',
+      'step',
+    )
+  })
 })

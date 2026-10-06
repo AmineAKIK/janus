@@ -99,6 +99,33 @@ export const ROUTES_BLOCS_DEMO = [
     return { version: 1 }
   }),
 
+  definir(ROUTES['POST /blocs/:id/erreurs'], ({ magasin, horloge, params, corps }) => {
+    verifierBloc(params.id)
+    const maintenant = horloge.maintenant()
+    if (!dejaRecu(magasin.lire(), corps.id)) {
+      const ouvertes = resultatDuBloc(magasin.lire(), params.id, maintenant).erreursOuvertes
+      const commun = { bloc: params.id, date: maintenant, source: 'amine' as const }
+      const cochees: Fait[] = corps.ids
+        .filter((erreur) => !ouvertes.includes(erreur))
+        .map((erreur) => ({
+          ...commun,
+          id: `${corps.id}:${erreur}`,
+          type: 'erreur_cochee',
+          erreur,
+        }))
+      const decochees: Fait[] = ouvertes
+        .filter((erreur) => !corps.ids.includes(erreur))
+        .map((erreur) => ({
+          ...commun,
+          id: `${corps.id}:${erreur}`,
+          type: 'erreur_decochee',
+          erreur,
+        }))
+      enregistrer(magasin, corps.id, [...cochees, ...decochees])
+    }
+    return statutBloc(resultatDuBloc(magasin.lire(), params.id, maintenant))
+  }),
+
   definir(ROUTES['POST /evenements'], ({ magasin, horloge, corps }) => {
     const maintenant = horloge.maintenant()
     if (corps.type === 'temps.actif') {
