@@ -17,6 +17,8 @@ export const InterrupteursDemo = z.strictObject({
   ficheRefusee: z.boolean().default(false),
   /** Toutes les routes de démo mettent 2 secondes à répondre. */
   reseauLent: z.boolean().default(false),
+  /** Toutes les tâches de la journée sont faites : Aujourd'hui montre « Rien d'autre n'est dû ». */
+  toutFait: z.boolean().default(false),
 })
 export type InterrupteursDemo = z.infer<typeof InterrupteursDemo>
 
