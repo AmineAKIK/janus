@@ -5,6 +5,10 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { creerTransport } from './api/client.ts'
 import { creerClientRequetes, FournisseurApi } from './api/requetes.tsx'
+import { creerBoiteEnvoi, creerVerrouNavigateur } from './envoi/boiteEnvoi.ts'
+import { FournisseurEnvoi } from './envoi/FournisseurEnvoi.tsx'
+import { ouvrirStockageIndexedDB, creerStockageParesseux } from './envoi/stockageEnvoi.ts'
+import { instantReel } from './demo/horlogeDemo.ts'
 import { creerRouteur } from './routes/arbre.tsx'
 import { allerALaConnexion } from './routes/connexion.ts'
 import { creerHistorique, modeHistorique } from './routes/historique.ts'
@@ -24,6 +28,13 @@ const transport = creerTransport(import.meta.env, {
     void client.invalidateQueries()
   },
 })
+const { stockage } = creerStockageParesseux(ouvrirStockageIndexedDB())
+const boite = creerBoiteEnvoi({
+  stockage,
+  transport,
+  verrou: creerVerrouNavigateur(),
+  maintenant: instantReel,
+})
 const routeur = creerRouteur(creerHistorique(modeHistorique(import.meta.env.VITE_HISTORIQUE)), {
   client,
   transport,
@@ -32,7 +43,9 @@ const routeur = creerRouteur(creerHistorique(modeHistorique(import.meta.env.VITE
 createRoot(racine).render(
   <StrictMode>
     <FournisseurApi transport={transport} client={client}>
-      <RouterProvider router={routeur} />
+      <FournisseurEnvoi boite={boite}>
+        <RouterProvider router={routeur} />
+      </FournisseurEnvoi>
     </FournisseurApi>
   </StrictMode>,
 )

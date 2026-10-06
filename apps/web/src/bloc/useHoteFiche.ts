@@ -1,8 +1,8 @@
 import type { Manque, MessageAppli, MessagePage, Statut } from '@janus/contrats'
-import { ErreurApi, ROUTES } from '@janus/contrats'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
-import { useEcriture } from '../api/requetes.tsx'
+import { useBoiteEnvoi } from '../envoi/FournisseurEnvoi.tsx'
+import { envoiDeMessage, statutDeReponse } from '../envoi/messages.ts'
 import { filtrerMessage } from './filtreMessages.ts'
 
 /** Au bout de ce délai sans `page.prete`, la fiche est jugée muette. */
@@ -36,9 +36,7 @@ export interface ReponseStatut {
  * messages au serveur et renvoie le statut recalculé à la page. L'appli ne lit jamais l'iframe.
  */
 export function useHoteFiche(donnees: DonneesFiche, iframe: RefObject<HTMLIFrameElement | null>) {
-  const evenement = useEcriture(ROUTES['POST /evenements'])
-  const etatPage = useEcriture(ROUTES['PUT /blocs/:id/etat-page'])
-  const erreurs = useEcriture(ROUTES['POST /blocs/:id/erreurs'])
+  const boite = useBoiteEnvoi()
 
   const [phase, setPhase] = useState<PhaseFiche>('attente')
   const [chargement, setChargement] = useState(0)
@@ -54,9 +52,6 @@ export function useHoteFiche(donnees: DonneesFiche, iframe: RefObject<HTMLIFrame
   const dernieres = useRef({ donnees, statut, etat: donnees.etatPage?.etat ?? null })
   dernieres.current.donnees = donnees
   dernieres.current.statut = statut
-  const versionEtat = useRef(donnees.etatPage?.version ?? 0)
-  const mutations = useRef({ evenement, etatPage, erreurs })
-  mutations.current = { evenement, etatPage, erreurs }
 
   const vers = useCallback(
     (message: MessageAppli) => {
@@ -76,11 +71,12 @@ export function useHoteFiche(donnees: DonneesFiche, iframe: RefObject<HTMLIFrame
 
   useEffect(() => {
     const traiter = (message: MessagePage) => {
-      const { evenement, etatPage, erreurs } = mutations.current
       const { donnees: courantes } = dernieres.current
       switch (message.type) {
         case 'page.prete':
           setPhase('prete')
+          if (courantes.etatPage !== null)
+            boite.fixerVersion(courantes.bloc, courantes.etatPage.version)
           vers({
             type: 'etat.init',
             bloc: courantes.bloc,
@@ -90,53 +86,37 @@ export function useHoteFiche(donnees: DonneesFiche, iframe: RefObject<HTMLIFrame
             serie_ouverte: courantes.serieOuverte,
           })
           return
-        case 'etat.sauver':
-          dernieres.current.etat = message.etat
-          etatPage.mutate(
-            {
-              params: { id: courantes.bloc },
-              corps: { version: versionEtat.current, etat: message.etat },
-            },
-            {
-              onSuccess: ({ version }) => {
-                versionEtat.current = version
-              },
-            },
-          )
-          return
-        case 'bilan.erreurs':
-          erreurs.mutate(
-            { params: { id: courantes.bloc }, corps: { id: message.id, ids: message.ids } },
-            {
-              onSuccess: ({ statut, manque }) => {
-                appliquerStatut({ statut, manque })
-              },
-            },
-          )
-          return
-        case 'restitution.demande':
-        case 'correction.accord':
-          // Les corrections viennent avec la PR-052.
-          console.info(`[janus] ${message.type} pas encore pris en charge`)
-          return
-        default:
+        default: {
+          if (message.type === 'etat.sauver') dernieres.current.etat = message.etat
           if (message.type === 'etape.vue') {
             const vue = message.etape
             setEtapeVue(vue)
             setEtapesVues((avant) => (avant.includes(vue) ? avant : [...avant, vue]))
           }
-          evenement.mutate(
-            { corps: message },
+          const envoi = envoiDeMessage(message, courantes.etatPage?.version ?? 0)
+          if (envoi === null) {
+            // Les demandes de correction viennent avec la PR-052.
+            console.info(`[janus] ${message.type} pas encore pris en charge`)
+            return
+          }
+          void boite.ajouter(
+            { ...envoi, id: message.id },
             {
-              onSuccess: ({ statut }) => {
-                if (statut !== null)
-                  appliquerStatut({ statut: statut.statut, manque: statut.manque })
+              surReponse: (reponse) => {
+                const recalcule = statutDeReponse(envoi.route, reponse)
+                if (recalcule !== null) appliquerStatut(recalcule)
               },
-              onError: (erreur) => {
-                if (!(erreur instanceof ErreurApi)) throw erreur
+              surRefus: () => {
+                vers({
+                  type: 'erreur',
+                  code: 'message_refuse',
+                  detail: 'message refusé',
+                  message_id: message.id,
+                })
               },
             },
           )
+        }
       }
     }
 
@@ -170,7 +150,7 @@ export function useHoteFiche(donnees: DonneesFiche, iframe: RefObject<HTMLIFrame
     return () => {
       window.removeEventListener('message', surMessage)
     }
-  }, [appliquerStatut, iframe, vers])
+  }, [appliquerStatut, boite, iframe, vers])
 
   // Une fiche qui ne répond pas dans le délai est signalée ; un rechargement repart de zéro.
   useEffect(() => {
