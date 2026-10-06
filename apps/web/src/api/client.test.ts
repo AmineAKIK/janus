@@ -48,7 +48,11 @@ describe('creerTransport', () => {
 
     expect(erreur).toMatchObject({ status: 501 })
     expect(fetchMock).not.toHaveBeenCalled()
-    expect(Object.keys(lireOutilsDemo() ?? {}).sort()).toEqual(['avancer', 'interrupteur', 'reinitialiser'])
+    expect(Object.keys(lireOutilsDemo() ?? {}).sort()).toEqual([
+      'avancer',
+      'interrupteur',
+      'reinitialiser',
+    ])
   })
 
   it('au premier lancement, la démo part de la graine, puis la retrouve au rechargement', () => {
