@@ -12,6 +12,7 @@ import { PageErreur } from './PageErreur.tsx'
 import { PageIntrouvable } from './PageIntrouvable.tsx'
 import { PageAujourdhui } from '../aujourdhui/PageAujourdhui.tsx'
 import { PageQuestions } from '../questions/PageQuestions.tsx'
+import { PageRevision } from '../revision/PageRevision.tsx'
 import { PageProvisoire } from './PageProvisoire.tsx'
 import {
   validerRechercheConnexion,
@@ -92,7 +93,7 @@ const revision = createRoute({
   getParentRoute: () => racine,
   path: '/revision',
   staticData: { titre: 'Révision', navigation: null },
-  component: () => <PageProvisoire titre="Révision" />,
+  component: PageRevision,
 })
 
 const verification = createRoute({
