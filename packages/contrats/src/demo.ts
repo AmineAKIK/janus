@@ -13,6 +13,10 @@ export const InterrupteursDemo = z.strictObject({
   horsConnexion: z.boolean(),
   /** Ajoute une seconde formation, dont aucun module n'est importé. */
   deuxFormations: z.boolean().default(false),
+  /** Le manifeste de chaque bloc rend 3 problèmes : la fiche ne s'ouvre pas. */
+  ficheRefusee: z.boolean().default(false),
+  /** Toutes les routes de démo mettent 2 secondes à répondre. */
+  reseauLent: z.boolean().default(false),
 })
 export type InterrupteursDemo = z.infer<typeof InterrupteursDemo>
 

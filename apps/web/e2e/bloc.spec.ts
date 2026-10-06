@@ -59,4 +59,25 @@ test.describe('page d’un bloc', () => {
 
     await expect(page).toHaveURL(/#\/modules\/M1\?detail=B03$/)
   })
+
+  test('cliquer un onglet du fil affiche l’étape dans la fiche', async ({ page }) => {
+    await page.goto('./#/blocs/B03')
+    const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
+    await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
+
+    await page
+      .getByRole('navigation', { name: 'Étapes de la fiche' })
+      .getByRole('button', { name: 'Pratique guidée' })
+      .click()
+
+    await expect(fiche.getByRole('button', { name: 'Pratique guidée' })).toHaveAttribute(
+      'aria-current',
+      'step',
+    )
+    await expect(
+      page
+        .getByRole('navigation', { name: 'Étapes de la fiche' })
+        .getByRole('button', { name: 'Pratique guidée' }),
+    ).toHaveAttribute('aria-current', 'step')
+  })
 })

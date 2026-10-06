@@ -107,6 +107,26 @@ describe('transport de démo', () => {
   })
 
   describe('délai simulé', () => {
+    it('l’interrupteur « Réseau lent » ajoute 2 secondes à toutes les routes', async () => {
+      vi.useFakeTimers()
+      const { transport, magasin } = monter({ 'GET /moi': () => MOI })
+      magasin.ecrire((etat) => ({
+        ...etat,
+        interrupteurs: { ...etat.interrupteurs, reseauLent: true },
+      }))
+      let reponse: unknown = null
+      void transport.appeler(ROUTES['GET /moi'], {}).then((valeur) => {
+        reponse = valeur
+      })
+
+      await vi.advanceTimersByTimeAsync(1999)
+      expect(reponse).toBeNull()
+      await vi.advanceTimersByTimeAsync(1)
+
+      expect(reponse).toEqual(MOI)
+      vi.useRealTimers()
+    })
+
     it('attend avant de répondre', async () => {
       vi.useFakeTimers()
       const { transport } = monter({ 'GET /moi': () => MOI }, { delaiMs: 800 })

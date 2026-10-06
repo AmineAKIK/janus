@@ -22,6 +22,9 @@ type EtatDePage = Extract<MessagePage, { type: 'etat.sauver' }>['etat']
 
 export type PhaseFiche = 'attente' | 'prete' | 'muette'
 
+/** Pourquoi la fiche a été refusée à la poignée de main. */
+export type CauseRefus = 'schema' | 'version'
+
 /** Ce que l'appli sait d'une réponse du serveur à un message de la page. */
 export interface ReponseStatut {
   readonly statut: Statut
@@ -43,6 +46,7 @@ export function useHoteFiche(donnees: DonneesFiche, iframe: RefObject<HTMLIFrame
     statut: donnees.statut,
     manque: donnees.manque,
   })
+  const [refus, setRefus] = useState<CauseRefus | null>(null)
   const [etapeVue, setEtapeVue] = useState<string | null>(null)
   const [etapesVues, setEtapesVues] = useState<readonly string[]>([])
 
@@ -148,6 +152,15 @@ export function useHoteFiche(donnees: DonneesFiche, iframe: RefObject<HTMLIFrame
         return
       }
       console.warn(`[janus] message refusé (${resultat.refus})`)
+      // Une fiche qui se présente avec un autre schéma ou une autre version n'est pas ouverte.
+      if (
+        resultat.pagePrete &&
+        (resultat.refus === 'schema' || resultat.refus === 'version') &&
+        evenement.source === iframe.current?.contentWindow
+      ) {
+        setRefus(resultat.refus)
+        return
+      }
       if (resultat.refus !== 'source_inconnue') {
         vers({ type: 'erreur', code: 'message_refuse', detail: 'message refusé' })
       }
@@ -172,6 +185,10 @@ export function useHoteFiche(donnees: DonneesFiche, iframe: RefObject<HTMLIFrame
 
   return {
     phase,
+    refus,
+    allerEtape: (etape: string) => {
+      vers({ type: 'etape.aller', etape })
+    },
     statut,
     etapeVue,
     etapesVues,
