@@ -75,6 +75,25 @@ function terminee(transaction: IDBTransaction): Promise<void> {
   })
 }
 
+/** Supprime la base de la boîte d'envoi. Une connexion encore ouverte retarde la suppression, sans la bloquer. */
+export function supprimerStockageIndexedDB(
+  fabrique: IDBFactory | undefined = globalThis.indexedDB,
+): Promise<void> {
+  if (typeof fabrique === 'undefined') return Promise.resolve()
+  return new Promise((resolve) => {
+    const demande = fabrique.deleteDatabase(BASE)
+    demande.onsuccess = () => {
+      resolve()
+    }
+    demande.onerror = () => {
+      resolve()
+    }
+    demande.onblocked = () => {
+      resolve()
+    }
+  })
+}
+
 /**
  * La boîte d'envoi dans IndexedDB : base `janus`, magasin `boite_envoi`, clé = `id`. Rend `null`
  * si IndexedDB n'est pas disponible (navigation privée de certains navigateurs, par exemple).

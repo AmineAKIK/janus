@@ -1,5 +1,4 @@
-import { ROUTES } from '@janus/contrats'
-import type { ErreurApi } from '@janus/contrats'
+import { ErreurApi, ROUTES } from '@janus/contrats'
 import { Bouton, ChampMotDePasse, Dialogue } from '@janus/ui'
 import { useState } from 'react'
 import { useEcriture } from '../../api/requetes.tsx'
@@ -35,10 +34,7 @@ export function ChangerMotDePasse({
   const [confirmation, setConfirmation] = useState('')
   const [tente, setTente] = useState(false)
   const erreurs = verifier(ancien, nouveau, confirmation)
-  const refus: ErreurApi | undefined =
-    ecriture.error !== null && 'detail' in ecriture.error
-      ? (ecriture.error as ErreurApi)
-      : undefined
+  const refus = ecriture.error instanceof ErreurApi ? ecriture.error : undefined
 
   function envoyer() {
     setTente(true)

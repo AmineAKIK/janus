@@ -49,6 +49,51 @@ export const TEXTES_COMPTE = {
 
 export const texteActivite = (intervalle: string) => `Dernière activité : il y a ${intervalle}`
 
+export const TEXTES_DONNEES = {
+  toutes: 'Toutes mes données',
+  toutesAide: 'Fiches, réponses, réglages et historique · JSON',
+  exporter: 'Exporter',
+  nomFichier: 'janus-donnees.json',
+  echec: 'L’export n’a pas pu être préparé. Réessaie.',
+} as const
+
+export const TEXTES_ZONE = {
+  supprimer: 'Supprimer mon compte',
+  aide: 'Efface définitivement les fiches, réponses et journaux.',
+  titreDialogue: 'Supprimer mon compte ?',
+  liste: ['Tes fiches', 'Tes réponses', 'Ton journal', 'Tes réglages'],
+  avant: 'Avant de continuer',
+  exporte: 'Exporte tes données si tu souhaites en garder une copie.',
+  motDePasse: 'Mot de passe',
+  definitivement: 'Supprimer définitivement',
+  annuler: 'Annuler',
+} as const
+
+export const TEXTES_DEMO = {
+  avancer: [
+    { libelle: 'Avancer d’une heure', ms: 3_600_000 },
+    { libelle: 'Avancer d’un jour', ms: 86_400_000 },
+    { libelle: 'Avancer de 3 jours', ms: 3 * 86_400_000 },
+    { libelle: 'Avancer de 30 jours', ms: 30 * 86_400_000 },
+  ],
+  heure: 'Heure de démo',
+  zero: 'Remettre la démo à zéro',
+  vide: 'Compte vide',
+  interrupteurs: 'Interrupteurs de démo',
+} as const
+
+export const LIBELLES_INTERRUPTEURS = {
+  correctionIndisponible: 'Correction indisponible',
+  correctionNonVerifiee: 'Correction non vérifiée',
+  plafondAtteint: 'Plafond de dépense atteint',
+  horsConnexion: 'Hors connexion',
+  deuxFormations: 'Deux formations',
+  ficheRefusee: 'Fiche refusée',
+  reseauLent: 'Réseau lent',
+  toutFait: 'Tout est fait aujourd’hui',
+  erreurIa: 'Le tuteur propose une erreur critique',
+} as const
+
 export const TEXTES_REGLES = {
   badge: 'Règle protégée',
   explication: 'Les délais méthodologiques restent en lecture seule pour préserver la preuve.',

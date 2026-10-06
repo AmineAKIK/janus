@@ -5,6 +5,7 @@ import { ROUTES_CARTES_DEMO } from './cartes.ts'
 import { routesCatalogueDemo } from './catalogue.ts'
 import type { OptionsCatalogue } from './catalogue.ts'
 import { ROUTES_COMPTE_DEMO } from './compte.ts'
+import { ROUTES_DONNEES_DEMO } from './donnees.ts'
 import { ROUTES_QUESTIONS_DEMO } from './questions.ts'
 import { ROUTES_REGLAGES_DEMO } from './reglages.ts'
 import { routesCorrectionsDemo } from './corrections.ts'
@@ -25,5 +26,6 @@ export function creerRoutesDemo(options: OptionsRoutesDemo): RoutesDemo {
     ...routesCorrectionsDemo(options),
     ...routesVerificationsDemo(options),
     ...ROUTES_REGLAGES_DEMO,
+    ...ROUTES_DONNEES_DEMO,
   ])
 }

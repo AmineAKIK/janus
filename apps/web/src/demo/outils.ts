@@ -13,6 +13,8 @@ export interface OutilsDemo {
   readonly reinitialiser: (mode: ModeReinitialisation) => void
   /** Allume ou éteint un interrupteur de démo, sans recharger la page. */
   readonly interrupteur: (nom: keyof InterrupteursDemo, actif: boolean) => void
+  /** L'heure de démo et les interrupteurs allumés, pour que le panneau de démo les affiche. */
+  readonly lire: () => { readonly maintenant: string; readonly interrupteurs: InterrupteursDemo }
 }
 
 declare global {
@@ -44,6 +46,7 @@ export function creerOutilsDemo(options: OptionsOutilsDemo): OutilsDemo {
       }))
       apres?.()
     },
+    lire: () => ({ maintenant: horloge.maintenant(), interrupteurs: magasin.lire().interrupteurs }),
     reinitialiser: (mode) => {
       // La graine est datée par rapport à l'heure réelle : le décalage repart de zéro.
       const maintenant = horloge.reel()

@@ -114,3 +114,20 @@
 .bouton[aria-busy='true'] {
   cursor: progress;
 }
+
+/* Danger : une action qu'on ne peut pas annuler */
+.danger {
+  background: var(--couleur-surface);
+  border-color: var(--couleur-erreur);
+  color: var(--couleur-erreur);
+}
+
+.danger:hover:not(:disabled),
+.danger:global(.etat-demo-survol) {
+  background: color-mix(in srgb, var(--couleur-erreur) 10%, var(--couleur-surface));
+}
+
+.danger:active:not(:disabled),
+.danger:global(.etat-demo-appui) {
+  background: color-mix(in srgb, var(--couleur-erreur) 18%, var(--couleur-surface));
+}

@@ -3,7 +3,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { classes } from '../../utilitaires/classes.ts'
 import styles from './Bouton.module.css'
 
-export type VarianteBouton = 'principal' | 'secondaire' | 'texte'
+export type VarianteBouton = 'principal' | 'secondaire' | 'texte' | 'danger'
 
 export interface ProprietesBouton extends ComponentProps<'button'> {
   readonly variante?: VarianteBouton
