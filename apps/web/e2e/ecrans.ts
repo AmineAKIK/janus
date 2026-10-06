@@ -2,6 +2,9 @@ import { expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
 import { ouvrirSession } from './session.ts'
 
+/** La vérification de B02 de la démo : son identifiant se lit à l'envers (bloc, type, numéro). */
+const VERIFICATION_B02 = '0190a000-0000-7000-8000-000423032000'
+
 export interface Ecran {
   /** Ce qu'il faut faire une fois l'écran affiché pour atteindre l'état à photographier. */
   readonly scenario?: (page: Page) => Promise<void>
@@ -243,7 +246,22 @@ export const ecrans: readonly Ecran[] = [
     },
   },
   { nom: 'revision', chemin: './#/revision', etat: 'Révision' },
-  { nom: 'verification', chemin: './#/verifications/v1', etat: 'Vérification' },
+  {
+    nom: 'verification',
+    chemin: `./#/verifications/${VERIFICATION_B02}`,
+    etat: 'Vérification · bloc masqué',
+    titre: 'Vérification',
+  },
+  {
+    nom: 'verification-partie-1',
+    chemin: `./#/verifications/${VERIFICATION_B02}`,
+    etat: 'Vérification · bloc masqué',
+    titre: 'Vérification',
+    scenario: async (page) => {
+      await page.getByRole('button', { name: 'Commencer' }).click()
+      await expect(page.getByRole('textbox', { name: 'Réponse libre' })).toBeVisible()
+    },
+  },
   { nom: 'tableau-de-bord', chemin: './#/tableau-de-bord', etat: 'Tableau de bord' },
   { nom: 'journal', chemin: './#/journal', etat: 'Journal' },
   { nom: 'parametres', chemin: './#/parametres', etat: 'Paramètres' },

@@ -73,25 +73,48 @@ function tirerParties(etat: EtatDemo, manifeste: Manifeste, maintenant: string) 
   })
 }
 
+const TYPES_ENCODES: readonly TypeVerification[] = ['verification', 'retest', 'entretien']
+const PREFIXE_IDENTIFIANT = '0190a000-0000-7000-8000-'
+
 /**
- * L'identifiant de la vérification en cours d'un bloc, créée à la première demande : l'écran
- * Aujourd'hui en a besoin pour son lien. Une vérification terminée n'est jamais rouverte.
+ * L'identifiant d'une vérification de la démo : il se lit à l'envers (bloc, type, numéro), ce qui
+ * permet d'ouvrir une adresse `/verifications/<identifiant>` sans passer par Aujourd'hui.
  */
-export function verificationPour(
+export function identifiantVerification(
+  bloc: string,
+  type: TypeVerification,
+  numero: number,
+): string {
+  const hex = (valeur: number, largeur: number) => valeur.toString(16).padStart(largeur, '0')
+  const codes = Array.from(bloc, (lettre) => hex(lettre.charCodeAt(0), 2)).join('')
+  return `${PREFIXE_IDENTIFIANT}${hex(TYPES_ENCODES.indexOf(type), 1)}${hex(numero, 2)}${codes}`.padEnd(
+    PREFIXE_IDENTIFIANT.length + 12,
+    '0',
+  )
+}
+
+function decoder(id: string): { bloc: string; type: TypeVerification } | null {
+  if (!id.startsWith(PREFIXE_IDENTIFIANT)) return null
+  const fin = id.slice(PREFIXE_IDENTIFIANT.length)
+  const type = TYPES_ENCODES[Number.parseInt(fin.slice(0, 1), 16)]
+  const lettres = fin.slice(3).match(/../gu) ?? []
+  const bloc = lettres
+    .map((hex) => String.fromCharCode(Number.parseInt(hex, 16)))
+    .join('')
+    .replace(/\0+$/u, '')
+  return type === undefined || MANIFESTES_GRAINE[bloc] === undefined ? null : { bloc, type }
+}
+
+function creer(
   magasin: Magasin,
+  id: string,
   bloc: string,
   type: TypeVerification,
   maintenant: string,
-): string | null {
-  const etat = magasin.lire()
-  const existante = Object.entries(etat.verifications).find(
-    ([, v]) => v.bloc === bloc && v.type === type && v.resultat === null,
-  )
-  if (existante !== undefined) return existante[0]
+) {
   const manifeste = MANIFESTES_GRAINE[bloc]
-  if (manifeste === undefined) return null
-  const parties = tirerParties(etat, manifeste, maintenant)
-  const id = nouvelId(Date.parse(maintenant))
+  if (manifeste === undefined) return
+  const parties = tirerParties(magasin.lire(), manifeste, maintenant)
   magasin.ecrire((avant) => ({
     ...avant,
     verifications: {
@@ -107,6 +130,26 @@ export function verificationPour(
       },
     },
   }))
+}
+
+/**
+ * L'identifiant de la vérification en cours d'un bloc, créée à la première demande : l'écran
+ * Aujourd'hui en a besoin pour son lien. Une vérification terminée n'est jamais rouverte.
+ */
+export function verificationPour(
+  magasin: Magasin,
+  bloc: string,
+  type: TypeVerification,
+  maintenant: string,
+): string | null {
+  if (MANIFESTES_GRAINE[bloc] === undefined) return null
+  const memes = Object.entries(magasin.lire().verifications).filter(
+    ([, v]) => v.bloc === bloc && v.type === type,
+  )
+  const enCours = memes.find(([, v]) => v.resultat === null)
+  if (enCours !== undefined) return enCours[0]
+  const id = identifiantVerification(bloc, type, memes.length)
+  creer(magasin, id, bloc, type, maintenant)
   return id
 }
 
@@ -119,7 +162,11 @@ export function blocsReportes(etat: EtatDemo, jour: string): ReadonlySet<string>
   )
 }
 
-function lire(magasin: Magasin, id: string) {
+function lire(magasin: Magasin, id: string, maintenant: string) {
+  const decode = decoder(id)
+  if (magasin.lire().verifications[id] === undefined && decode !== null) {
+    creer(magasin, id, decode.bloc, decode.type, maintenant)
+  }
   const verification = magasin.lire().verifications[id]
   if (verification === undefined) {
     throw probleme(404, 'introuvable', 'Introuvable', 'Cette vérification n’existe pas.')
@@ -270,7 +317,7 @@ export function routesVerificationsDemo({
 }: OptionsVerifications = {}) {
   return [
     definir(ROUTES['GET /verifications/:id'], ({ magasin, horloge, params }) => {
-      const { verification, manifeste } = lire(magasin, params.id)
+      const { verification, manifeste } = lire(magasin, params.id, horloge.maintenant())
       const etat = magasin.lire()
       const maintenant = horloge.maintenant()
       const terminee = verification.resultat !== null
@@ -303,7 +350,7 @@ export function routesVerificationsDemo({
     }),
 
     definir(ROUTES['POST /verifications/:id/reporter'], ({ magasin, horloge, params, corps }) => {
-      const { verification } = lire(magasin, params.id)
+      const { verification } = lire(magasin, params.id, horloge.maintenant())
       const etat = magasin.lire()
       const maintenant = horloge.maintenant()
       const demain = ajouterJours(jourDuReglage(etat, maintenant), 1)
@@ -326,7 +373,7 @@ export function routesVerificationsDemo({
     definir(
       ROUTES['POST /verifications/:id/reponses'],
       async ({ magasin, horloge, attendre, params, corps }) => {
-        const { verification, manifeste } = lire(magasin, params.id)
+        const { verification, manifeste } = lire(magasin, params.id, horloge.maintenant())
         const etat = magasin.lire()
         const maintenant = horloge.maintenant()
         if (etat.interrupteurs.correctionIndisponible) {

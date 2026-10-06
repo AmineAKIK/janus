@@ -62,6 +62,32 @@ export function appelerEntree(transport: Transport, entree: EntreeEnvoi): Promis
         params: lire(ROUTES['POST /cartes/:id/note'].params, params, 'POST /cartes/:id/note'),
         corps: lire(ROUTES['POST /cartes/:id/note'].corps, corps, 'POST /cartes/:id/note'),
       })
+    case 'POST /verifications/:id/reponses':
+      return transport.appeler(ROUTES['POST /verifications/:id/reponses'], {
+        params: lire(
+          ROUTES['POST /verifications/:id/reponses'].params,
+          params,
+          'POST /verifications/:id/reponses',
+        ),
+        corps: lire(
+          ROUTES['POST /verifications/:id/reponses'].corps,
+          corps,
+          'POST /verifications/:id/reponses',
+        ),
+      })
+    case 'POST /verifications/:id/reporter':
+      return transport.appeler(ROUTES['POST /verifications/:id/reporter'], {
+        params: lire(
+          ROUTES['POST /verifications/:id/reporter'].params,
+          params,
+          'POST /verifications/:id/reporter',
+        ),
+        corps: lire(
+          ROUTES['POST /verifications/:id/reporter'].corps,
+          corps,
+          'POST /verifications/:id/reporter',
+        ),
+      })
     default:
       return Promise.reject(new Error(`La boîte d'envoi ne sait pas envoyer ${entree.route}.`))
   }
