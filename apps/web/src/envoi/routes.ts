@@ -57,6 +57,11 @@ export function appelerEntree(transport: Transport, entree: EntreeEnvoi): Promis
           'POST /corrections/:id/accord',
         ),
       })
+    case 'POST /cartes/:id/note':
+      return transport.appeler(ROUTES['POST /cartes/:id/note'], {
+        params: lire(ROUTES['POST /cartes/:id/note'].params, params, 'POST /cartes/:id/note'),
+        corps: lire(ROUTES['POST /cartes/:id/note'].corps, corps, 'POST /cartes/:id/note'),
+      })
     default:
       return Promise.reject(new Error(`La boîte d'envoi ne sait pas envoyer ${entree.route}.`))
   }
