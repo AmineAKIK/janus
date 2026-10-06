@@ -157,7 +157,10 @@ export function creerBoiteEnvoi(options: OptionsBoiteEnvoi, ecouteurs: Ecouteurs
         (erreur instanceof ErreurApi &&
           (erreur.status === 400 || erreur.status === 422 || erreur.status === 409))
       if (refuse) {
-        console.error(`[janus] message refusé par le serveur (${entree.route})`, erreur)
+        // Une correction impossible est un état attendu (plafond, panne), pas une anomalie à journaliser.
+        if (!correctionImpossible) {
+          console.error(`[janus] message refusé par le serveur (${entree.route})`, erreur)
+        }
         await stockage.supprimer(entree.id)
         const rappel = rappels.get(entree.id)
         rappels.delete(entree.id)

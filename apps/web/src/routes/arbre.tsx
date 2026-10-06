@@ -11,6 +11,7 @@ import type { ContexteRouteur } from './garde.ts'
 import { PageErreur } from './PageErreur.tsx'
 import { PageIntrouvable } from './PageIntrouvable.tsx'
 import { PageAujourdhui } from '../aujourdhui/PageAujourdhui.tsx'
+import { PageQuestions } from '../questions/PageQuestions.tsx'
 import { PageProvisoire } from './PageProvisoire.tsx'
 import {
   validerRechercheConnexion,
@@ -45,7 +46,7 @@ const questions = createRoute({
   getParentRoute: () => racine,
   path: '/questions',
   staticData: { titre: 'Questions de début de séance', navigation: null },
-  component: () => <PageProvisoire titre="Questions de début de séance" />,
+  component: PageQuestions,
 })
 
 const formations = createRoute({

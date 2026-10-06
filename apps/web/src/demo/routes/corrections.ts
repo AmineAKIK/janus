@@ -3,7 +3,7 @@ import type { CorrectionRecue } from '@janus/contrats'
 import { compte, estRecopiee } from '@janus/moteur'
 import { MANIFESTES_GRAINE } from '../graine.ts'
 import { dejaRecu, enregistrer, faitsDuBloc } from './calculs.ts'
-import { contexteDuJour } from './aujourdhui.ts'
+import { serieDuJour } from './aujourdhui.ts'
 import { definir } from './definir.ts'
 
 export interface OptionsCorrections {
@@ -61,7 +61,7 @@ export function routesCorrectionsDemo({
       // Une question de début de séance ne donne pas son bloc : la démo le retrouve par la question.
       const codeBloc =
         serie === 'rappel'
-          ? contexteDuJour(magasin.lire(), horloge.maintenant()).questions.find(
+          ? serieDuJour(magasin, horloge.maintenant()).questions.find(
               ({ question: id }) => id === corps.question,
             )?.bloc
           : corps.bloc
@@ -152,7 +152,7 @@ export function routesCorrectionsDemo({
         ...(resultat.compte ? {} : { raison_non_compte: resultat.raison }),
       }
       if (serie === 'rappel') {
-        const { jourDu } = contexteDuJour(magasin.lire(), horloge.maintenant())
+        const { jour } = serieDuJour(magasin, horloge.maintenant())
         magasin.ecrire((etat) => {
           const avant = etat.rappels[question.id]
           return {
@@ -160,7 +160,7 @@ export function routesCorrectionsDemo({
             rappels: {
               ...etat.rappels,
               [question.id]: {
-                jour: jourDu(horloge.maintenant()),
+                jour,
                 bloc: manifeste.bloc,
                 confiance: avant?.confiance ?? corps.confiance,
                 reponse: avant?.reponse ?? corps.reponse,
