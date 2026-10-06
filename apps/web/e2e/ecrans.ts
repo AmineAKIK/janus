@@ -1,4 +1,9 @@
+import { expect } from '@playwright/test'
+import type { Page } from '@playwright/test'
+
 export interface Ecran {
+  /** Ce qu'il faut faire une fois l'écran affiché pour atteindre l'état à photographier. */
+  readonly scenario?: (page: Page) => Promise<void>
   readonly nom: string
   /** Chemin relatif à la base de l'appli (`./` pour l'accueil, `./#/…` pour les écrans de l'appli). */
   readonly chemin: string
@@ -78,6 +83,21 @@ export const ecrans: readonly Ecran[] = [
     etat: 'Ordinateur et composants',
     titre: 'Page de bloc',
     interrupteurs: ['ficheRefusee'],
+  },
+  {
+    nom: 'bloc-hors-connexion',
+    chemin: './#/blocs/B03',
+    etat: 'Ordinateur et composants',
+    titre: 'Page de bloc',
+    scenario: async (page) => {
+      const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
+      await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
+      await page.evaluate(() => window.__janusDemo?.interrupteur('horsConnexion', true))
+      for (const titre of ['Explication', 'Pratique guidée', 'Restitution']) {
+        await fiche.getByRole('button', { name: titre }).click()
+      }
+      await expect(page.getByText('En attente de réseau · 3 réponses gardées')).toBeVisible()
+    },
   },
   { nom: 'revision', chemin: './#/revision', etat: 'Révision' },
   { nom: 'verification', chemin: './#/verifications/v1', etat: 'Vérification' },

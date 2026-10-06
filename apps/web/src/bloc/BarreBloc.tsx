@@ -2,6 +2,8 @@ import type { Statut } from '@janus/contrats'
 import { ArrowLeft, BadgeStatut } from '@janus/ui'
 import { Link } from '@tanstack/react-router'
 import styles from './Bloc.module.css'
+import { IndicateurEnregistrement } from './IndicateurEnregistrement.tsx'
+import type { EtatIndicateur } from '../envoi/indicateur.ts'
 import { TEXTES_BLOC } from './textes.ts'
 
 /** La barre du haut : retour aux blocs, code, titre, statut calculé et état d'enregistrement. */
@@ -10,11 +12,15 @@ export function BarreBloc({
   titre,
   moduleId,
   statut,
+  etatEnvoi,
+  gardees,
 }: {
   readonly code: string
   readonly titre: string
   readonly moduleId: string
   readonly statut: Statut
+  readonly etatEnvoi: EtatIndicateur
+  readonly gardees: number
 }) {
   return (
     <div className={styles['barre']}>
@@ -32,9 +38,7 @@ export function BarreBloc({
         {titre}
       </h1>
       <BadgeStatut statut={statut} className={styles['statut'] ?? ''} />
-      <span className={`${styles['enregistre'] ?? ''} texte-legende-12`}>
-        {TEXTES_BLOC.enregistre}
-      </span>
+      <IndicateurEnregistrement etat={etatEnvoi} gardees={gardees} />
     </div>
   )
 }

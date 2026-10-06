@@ -28,6 +28,7 @@ for (const ecran of ecrans) {
         await page.goto(ecran.chemin)
         if (ecran.interrupteurs !== undefined) await activerInterrupteurs(page, ecran.interrupteurs)
         await expect(page.getByRole('heading', { level: 1, name: ecran.etat })).toBeVisible()
+        await ecran.scenario?.(page)
         for (const nom of ecran.clics ?? []) {
           await page.getByRole('button', { name: nom, exact: true }).click()
         }

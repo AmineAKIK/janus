@@ -1,4 +1,4 @@
-import { ErreurApi, ErreurDonnees } from '@janus/contrats'
+import { ErreurApi, ErreurDonnees, ErreurReseau } from '@janus/contrats'
 import type { Transport } from '@janus/contrats'
 import type { EnvoiDeMessage } from './messages.ts'
 import { appelerEntree } from './routes.ts'
@@ -35,6 +35,8 @@ export interface OptionsBoiteEnvoi {
   readonly verrou: Verrou
   /** L'instant présent, en ISO (la seule source de temps de l'appli est l'horloge). */
   readonly maintenant: () => string
+  /** Vrai quand IndexedDB manque : les messages partent alors sans être gardés. */
+  readonly indisponible?: () => boolean
   /** Pour les tests : remplace `setTimeout`. */
   readonly planifier?: (action: () => void, delaiMs: number) => () => void
 }
@@ -76,6 +78,14 @@ export function creerBoiteEnvoi(options: OptionsBoiteEnvoi, ecouteurs: Ecouteurs
   let prochainOrdre: number | null = null
   let suspendue = false
   let annulerReessai: (() => void) | null = null
+  let reseauManque = false
+  const abonnes = new Set<() => void>()
+  const signaler = () => {
+    ecouteurs.surChangement?.()
+    abonnes.forEach((abonne) => {
+      abonne()
+    })
+  }
 
   async function ordreSuivant(): Promise<number> {
     if (prochainOrdre === null) {
@@ -107,6 +117,7 @@ export function creerBoiteEnvoi(options: OptionsBoiteEnvoi, ecouteurs: Ecouteurs
     try {
       const reponse = await appelerEntree(transport, avecVersion(entree))
       await stockage.supprimer(entree.id)
+      reseauManque = false
       if (
         entree.route === 'PUT /blocs/:id/etat-page' &&
         typeof reponse === 'object' &&
@@ -148,6 +159,7 @@ export function creerBoiteEnvoi(options: OptionsBoiteEnvoi, ecouteurs: Ecouteurs
         rappel?.surRefus?.()
         return 'continuer'
       }
+      if (erreur instanceof ErreurReseau) reseauManque = true
       await stockage.compterEssai(entree.id)
       prevoirReessai(entree.essais + 1)
       return 'arreter'
@@ -161,7 +173,7 @@ export function creerBoiteEnvoi(options: OptionsBoiteEnvoi, ecouteurs: Ecouteurs
       for (const entree of await stockage.lister()) {
         if (suspendue) break
         const suite = await traiter(entree)
-        ecouteurs.surChangement?.()
+        signaler()
         if (suite === 'arreter') break
       }
     })
@@ -185,7 +197,7 @@ export function creerBoiteEnvoi(options: OptionsBoiteEnvoi, ecouteurs: Ecouteurs
       }
       await stockage.ajouter(entree)
       if (rappelsDuMessage !== undefined) rappels.set(entree.id, rappelsDuMessage)
-      ecouteurs.surChangement?.()
+      signaler()
       await vider()
     },
     vider,
@@ -195,6 +207,21 @@ export function creerBoiteEnvoi(options: OptionsBoiteEnvoi, ecouteurs: Ecouteurs
       return vider()
     },
     entrees: () => stockage.lister(),
+    /** Vrai tant que le dernier envoi a échoué faute de réseau. */
+    reseauManque: () => reseauManque,
+    stockageIndisponible: () => options.indisponible?.() ?? false,
+    /** Appelé à chaque changement de la boîte ; rend la fonction qui arrête d'écouter. */
+    abonner(abonne: () => void): () => void {
+      abonnes.add(abonne)
+      return () => {
+        abonnes.delete(abonne)
+      }
+    },
+    /** Le réseau est revenu ou parti d'après le navigateur : l'indicateur suit. */
+    signalerReseau(manque: boolean): void {
+      reseauManque = manque
+      signaler()
+    },
     /** La version de l'état d'une page que ce navigateur a lue : la suivante part avec elle. */
     fixerVersion(bloc: string, version: number): void {
       versions.set(bloc, version)
@@ -207,7 +234,17 @@ export function creerBoiteEnvoi(options: OptionsBoiteEnvoi, ecouteurs: Ecouteurs
       const auPremierPlan = () => {
         if (document.visibilityState === 'visible') declencher()
       }
-      window.addEventListener('online', declencher)
+      const enLigne = () => {
+        reseauManque = false
+        signaler()
+        declencher()
+      }
+      const horsLigne = () => {
+        reseauManque = true
+        signaler()
+      }
+      window.addEventListener('online', enLigne)
+      window.addEventListener('offline', horsLigne)
       document.addEventListener('visibilitychange', auPremierPlan)
       const periodique = setInterval(() => {
         void stockage.lister().then((restantes) => {
@@ -216,7 +253,8 @@ export function creerBoiteEnvoi(options: OptionsBoiteEnvoi, ecouteurs: Ecouteurs
       }, PERIODE_ENVOI_MS)
       declencher()
       return () => {
-        window.removeEventListener('online', declencher)
+        window.removeEventListener('online', enLigne)
+        window.removeEventListener('offline', horsLigne)
         document.removeEventListener('visibilitychange', auPremierPlan)
         clearInterval(periodique)
         annulerReessai?.()

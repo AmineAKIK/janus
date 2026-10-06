@@ -9,7 +9,9 @@ import type { Routeur } from './arbre.tsx'
 import type { ContexteRouteur } from './garde.ts'
 
 /** Le contexte des routes dans les tests : un faux serveur de démo, connecté ou non. */
-export function creerContexteTest(options: { connecte?: boolean } = {}) {
+export function creerContexteTest(
+  options: { connecte?: boolean; stockageIndisponible?: boolean } = {},
+) {
   const demo = monterDemo(options)
   const client = creerClientRequetes({ surNonAuthentifie: () => undefined })
   const boite = creerBoiteEnvoi({
@@ -17,6 +19,7 @@ export function creerContexteTest(options: { connecte?: boolean } = {}) {
     transport: demo.transport,
     verrou: creerVerrouLocal(),
     maintenant: instantReel,
+    indisponible: () => options.stockageIndisponible ?? false,
   })
   const contexte: ContexteRouteur = { client, transport: demo.transport }
   const application = (routeur: Routeur) => (
