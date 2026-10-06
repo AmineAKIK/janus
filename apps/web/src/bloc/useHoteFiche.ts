@@ -1,7 +1,8 @@
-import { CorrectionRecue, ErreurApi } from '@janus/contrats'
+import { CorrectionRecue, ErreurApi, nouvelId } from '@janus/contrats'
 import type { Manque, MessageAppli, MessagePage, Statut } from '@janus/contrats'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
+import { instantReel } from '../demo/horlogeDemo.ts'
 import { useBoiteEnvoi } from '../envoi/FournisseurEnvoi.tsx'
 import { envoiDeMessage, statutDeReponse } from '../envoi/messages.ts'
 import { filtrerMessage } from './filtreMessages.ts'
@@ -26,6 +27,13 @@ export type PhaseFiche = 'attente' | 'prete' | 'muette'
 
 /** Pourquoi la fiche a été refusée à la poignée de main. */
 export type CauseRefus = 'schema' | 'version'
+
+/** Une erreur critique que l'IA a repérée dans une réponse, en attente de la décision d'Amine. */
+export interface PropositionErreur {
+  readonly erreur: string
+  readonly correction: string
+  readonly reponse: string
+}
 
 /** Ce que l'appli sait d'une réponse du serveur à un message de la page. */
 export interface ReponseStatut {
@@ -74,6 +82,7 @@ export function useHoteFiche(
   const [refus, setRefus] = useState<CauseRefus | null>(null)
   const [etapeVue, setEtapeVue] = useState<string | null>(null)
   const [etapesVues, setEtapesVues] = useState<readonly string[]>([])
+  const [propositions, setPropositions] = useState<readonly PropositionErreur[]>([])
   const [envoyees, setEnvoyees] = useState<Readonly<Record<SerieVerrou, readonly string[]>>>({
     restitution: [],
     consolidation: [],
@@ -160,13 +169,23 @@ export function useHoteFiche(
                 : { ...avant, [serie]: [...avant[serie], question] },
             )
           }
+          const reponseDonnee = message.type === 'restitution.demande' ? message.reponse : ''
           const envoi = envoiDeMessage(message, courantes.etatPage?.version ?? 0)
           void boite.ajouter(
             { ...envoi, id: message.id },
             {
               surReponse: (reponse) => {
                 if (envoi.route === 'POST /corrections') {
-                  vers({ type: 'restitution.correction', ...CorrectionRecue.parse(reponse) })
+                  const recue = CorrectionRecue.parse(reponse)
+                  vers({ type: 'restitution.correction', ...recue })
+                  setPropositions((avant) => [
+                    ...avant,
+                    ...recue.erreurs_critiques
+                      .filter(
+                        (erreur) => !avant.some((proposition) => proposition.erreur === erreur),
+                      )
+                      .map((erreur) => ({ erreur, correction: recue.id, reponse: reponseDonnee })),
+                  ])
                   rappelCorrection.current?.()
                   return
                 }
@@ -233,8 +252,34 @@ export function useHoteFiche(
     }
   }, [chargement])
 
+  /** Confirmer une erreur de l'IA l'ouvre ; la rejeter laisse le statut calculé. */
+  const trancherErreur = (proposition: PropositionErreur, decision: 'confirmee' | 'rejetee') => {
+    setPropositions((avant) => avant.filter((autre) => autre !== proposition))
+    if (decision === 'rejetee') return
+    const { donnees: courantes, statut: courant } = dernieres.current
+    const ouvertes = courant.manque.find(({ code }) => code === 'erreur_ouverte')?.erreurs ?? []
+    const id = nouvelId(Date.parse(instantReel()))
+    const route = 'POST /blocs/:id/erreurs'
+    void boite.ajouter(
+      {
+        id,
+        route,
+        params: { id: courantes.bloc },
+        corps: { id, ids: [...new Set([...ouvertes, proposition.erreur])] },
+      },
+      {
+        surReponse: (reponse) => {
+          const recalcule = statutDeReponse(route, reponse)
+          if (recalcule !== null) appliquerStatut(recalcule)
+        },
+      },
+    )
+  }
+
   return {
     phase,
+    propositions,
+    trancherErreur,
     conflit,
     refus,
     allerEtape: (etape: string) => {

@@ -30,3 +30,11 @@ export const PROBLEMES_POIGNEE_DE_MAIN = {
   schema: 'La fiche ne parle pas la bonne version du pont (schéma 2 attendu).',
   version: 'La version de la fiche n’est pas celle du manifeste importé.',
 } as const
+
+export const TEXTES_ERREUR_IA = {
+  titre: 'Erreur critique repérée par l’IA · À confirmer',
+  consequence: (code: string) =>
+    `Si tu confirmes, ${code} passe à À reprendre jusqu’à ce que tu réussisses une question sur ce point.`,
+  confirmer: 'C’est bien une erreur',
+  rejeter: 'Ce n’en est pas une',
+} as const

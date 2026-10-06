@@ -169,4 +169,18 @@ describe('POST /corrections de la démo', () => {
       }),
     ).rejects.toMatchObject({ status: 404 })
   })
+
+  it('revenir au cours pendant la restitution : la réponse ne compte pas', async () => {
+    const { transport } = monterDemo({ delaiCorrectionMs: 0 })
+
+    const retour = await transport.appeler(ROUTES['POST /corrections'], {
+      corps: demande(1, {
+        bloc: 'B03',
+        question: 'R2',
+        support: { colle: false, retour_cours: true },
+      }),
+    })
+
+    expect(retour).toMatchObject({ compte: false, raison_non_compte: 'avec_support' })
+  })
 })
