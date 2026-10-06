@@ -117,6 +117,23 @@ export const ecrans: readonly Ecran[] = [
       await expect(page.getByRole('dialog', { name: 'Quitter la séance ?' })).toBeVisible()
     },
   },
+  {
+    nom: 'revision-recto',
+    chemin: './#/revision',
+    etat: 'Révision, recto',
+    scenario: async (page) => {
+      await expect(page.getByRole('button', { name: 'Voir la réponse' })).toBeVisible()
+    },
+  },
+  {
+    nom: 'revision-verso',
+    chemin: './#/revision',
+    etat: 'Révision, verso',
+    scenario: async (page) => {
+      await page.getByRole('button', { name: 'Voir la réponse' }).click()
+      await expect(page.getByRole('button', { name: /^Bien/ })).toBeVisible()
+    },
+  },
   { nom: 'formations', chemin: './#/formations', etat: 'Formations' },
   {
     nom: 'formations-deux',
