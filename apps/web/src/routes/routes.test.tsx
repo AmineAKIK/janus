@@ -57,7 +57,7 @@ const ECRANS = [
     titre: 'Vérification',
     navigation: false,
   },
-  { chemin: '/tableau-de-bord', titre: 'Tableau de bord', navigation: true },
+  { chemin: '/tableau-de-bord', titre: 'Suivi', navigation: true },
   { chemin: '/journal', titre: 'Journal', navigation: true },
   { chemin: '/journal?bloc=B04&type=correction', titre: 'Journal', navigation: true },
   { chemin: '/parametres', titre: 'Paramètres', navigation: true },
