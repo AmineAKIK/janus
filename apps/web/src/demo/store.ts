@@ -35,6 +35,7 @@ export function etatVide(maintenant: string): EtatDemo {
       deuxFormations: false,
       ficheRefusee: false,
       reseauLent: false,
+      toutFait: false,
     },
   }
 }

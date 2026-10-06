@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { NoteCarte, TypeDifferee, TypeVerification } from '../enums.ts'
+import { NoteCarte, Statut, TypeDifferee, TypeVerification } from '../enums.ts'
 import { InstantUtc } from '../faits.ts'
 import { CodeBloc, IdUuid, Identifiant, Reponse } from './commun.ts'
 import type { DefinitionRoute } from './routes.ts'
@@ -34,6 +34,23 @@ export const Tache = z.discriminatedUnion('type', [
 ])
 export type Tache = z.infer<typeof Tache>
 
+/** Une tâche de la journée : la tâche du moteur, où elle mène et si elle est faite aujourd'hui. */
+export const TacheDuJour = z.strictObject({
+  tache: Tache,
+  /** Le chemin de l'appli vers la tâche, par exemple `/blocs/B03`. */
+  lien: Texte,
+  /** Vrai quand la tâche a été faite dans la journée : elle reste alors dans la liste. */
+  faite: z.boolean(),
+})
+export type TacheDuJour = z.infer<typeof TacheDuJour>
+
+/** Un bloc du module en cours, avec son statut calculé. */
+const BlocDuModule = z.strictObject({
+  bloc: CodeBloc,
+  titre_court: Texte,
+  statut: Statut,
+})
+
 /** Une question de début de séance : sans le nom du bloc, pour que les blocs restent mélangés. */
 const QuestionDebut = z.strictObject({ id: Identifiant, question: Texte })
 
@@ -44,8 +61,18 @@ export const ROUTES_APPRENTISSAGE = {
     methode: 'GET',
     chemin: '/aujourdhui',
     reponse: z.strictObject({
+      /** Le jour `AAAA-MM-JJ`, avec la bascule à l'heure réglée. */
+      jour: Texte,
       en_retard: z.boolean(),
-      taches: z.array(Tache),
+      /** Présent quand la dernière séance date d'au moins 7 jours. */
+      retour: z.strictObject({ jours: z.number().int().min(7) }).optional(),
+      /** Vrai tant qu'aucun fait n'est enregistré : la file n'a qu'une tâche, commencer le premier bloc. */
+      premiere_connexion: z.boolean(),
+      taches: z.array(TacheDuJour),
+      /** Le module en cours, `null` si aucun n'est importé. */
+      module: z
+        .strictObject({ id: Identifiant, titre: Texte, blocs: z.array(BlocDuModule) })
+        .nullable(),
     }),
     succes: 200,
   },
