@@ -9,6 +9,9 @@ import { SectionCompte } from './sections/Compte.tsx'
 import { SectionDemo } from './sections/Demo.tsx'
 import { SectionDonnees } from './sections/Donnees.tsx'
 import { SectionZone } from './sections/Zone.tsx'
+import { SectionHorsLigne } from './sections/HorsLigne.tsx'
+import { SectionIa } from './sections/Ia.tsx'
+import { SectionRappels } from './sections/Rappels.tsx'
 import { SectionAffichage } from './sections/Affichage.tsx'
 import { SectionRegles } from './sections/Regles.tsx'
 import { SectionRevision } from './sections/Revision.tsx'
@@ -35,6 +38,12 @@ export function PageParametres({ section }: { readonly section?: string }) {
     switch (cle) {
       case 'compte':
         return <SectionCompte reglages={reglages} enregistrer={enregistrer} />
+      case 'rappels':
+        return <SectionRappels reglages={reglages} enregistrer={enregistrer} />
+      case 'ia':
+        return <SectionIa reglages={reglages} enregistrer={enregistrer} />
+      case 'hors-ligne':
+        return <SectionHorsLigne />
       case 'revision':
         return <SectionRevision reglages={reglages} enregistrer={enregistrer} />
       case 'regles':

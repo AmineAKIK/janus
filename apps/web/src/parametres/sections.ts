@@ -2,9 +2,12 @@ import { modeTransport } from '../api/client.ts'
 
 const SECTIONS_BASE = [
   { cle: 'compte', titre: 'Compte' },
+  { cle: 'rappels', titre: 'Rappels' },
   { cle: 'revision', titre: 'Révision' },
   { cle: 'regles', titre: 'Règles de la méthode' },
+  { cle: 'ia', titre: 'Correction IA' },
   { cle: 'affichage', titre: 'Affichage' },
+  { cle: 'hors-ligne', titre: 'Hors ligne' },
   { cle: 'donnees', titre: 'Données' },
   { cle: 'zone', titre: 'Zone sensible' },
 ] as const
