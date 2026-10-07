@@ -2,9 +2,6 @@ import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
 import { ouvrirSession } from './session.ts'
 
-// Les autres spécifications bloquent le service worker : celle-ci l'utilise.
-test.use({ serviceWorkers: 'allow' })
-
 const FICHE = './fiches/demo/fiche-demo.html'
 
 async function attendreLeControle(page: Page) {

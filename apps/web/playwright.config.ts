@@ -7,8 +7,7 @@ export default defineConfig({
   outputDir: './captures/traces',
   forbidOnly: process.env['CI'] !== undefined,
   reporter: process.env['CI'] === undefined ? 'list' : 'github',
-  // Le service worker est bloqué par défaut : seule `horsLigne.spec.ts` le laisse agir.
-  use: { baseURL: `http://localhost:4173${base}`, serviceWorkers: 'block' },
+  use: { baseURL: `http://localhost:4173${base}` },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
     command: 'pnpm preview',
