@@ -9,6 +9,7 @@ export interface RechercheModule {
 }
 
 export interface RechercheJournal {
+  readonly module?: string
   readonly bloc?: string
   readonly type?: string
 }
@@ -23,9 +24,11 @@ export function validerRechercheModule(brut: Record<string, unknown>): Recherche
 }
 
 export function validerRechercheJournal(brut: Record<string, unknown>): RechercheJournal {
+  const module = texte(brut['module'])
   const bloc = texte(brut['bloc'])
   const type = texte(brut['type'])
   return {
+    ...(module === undefined ? {} : { module }),
     ...(bloc === undefined ? {} : { bloc }),
     ...(type === undefined ? {} : { type }),
   }
