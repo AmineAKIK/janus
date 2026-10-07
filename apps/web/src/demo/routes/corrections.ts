@@ -2,7 +2,7 @@ import { corrigerSimule, DELAI_CORRECTION_SIMULEE_MS, ErreurApi, ROUTES } from '
 import type { CorrectionRecue } from '@janus/contrats'
 import { compte, estRecopiee } from '@janus/moteur'
 import { MANIFESTES_GRAINE } from '../graine.ts'
-import { dejaRecu, enregistrer, faitsDuBloc } from './calculs.ts'
+import { dejaRecu, enregistrer, faitsDuBloc, resultatDuBloc, statutBloc } from './calculs.ts'
 import { serieDuJour } from './aujourdhui.ts'
 import { definir } from './definir.ts'
 
@@ -30,6 +30,29 @@ export function routesCorrectionsDemo({
         throw probleme(404, 'introuvable', 'Introuvable', 'Cette correction n’existe pas.')
       }
       return null
+    }),
+    definir(ROUTES['POST /corrections/:id/trancher'], ({ magasin, horloge, params, corps }) => {
+      const correction = magasin
+        .lire()
+        .faits.find((fait) => fait.type === 'correction' && fait.id === params.id)
+      if (correction === undefined) {
+        throw probleme(404, 'introuvable', 'Introuvable', 'Cette correction n’existe pas.')
+      }
+      if (!dejaRecu(magasin.lire(), corps.id)) {
+        enregistrer(magasin, corps.id, [
+          {
+            id: corps.id,
+            bloc: correction.bloc,
+            date: horloge.maintenant(),
+            type: 'correction_tranchee',
+            correction: correction.id,
+            compte: corps.compte,
+            ...(corps.niveau === undefined ? {} : { niveau: corps.niveau }),
+            ...(corps.raison === undefined ? {} : { raison: corps.raison }),
+          },
+        ])
+      }
+      return statutBloc(resultatDuBloc(magasin.lire(), correction.bloc, horloge.maintenant()))
     }),
     definir(ROUTES['POST /corrections'], async ({ magasin, horloge, attendre, corps }) => {
       const { interrupteurs, reglages } = magasin.lire()

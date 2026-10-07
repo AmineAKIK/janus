@@ -157,6 +157,39 @@ describe('les corrections', () => {
   })
 })
 
+describe('le tranchage des corrections', () => {
+  const corps = ROUTES['POST /corrections/:id/trancher'].corps
+  const id = '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2b'
+
+  it('accepte compter, ne pas compter et changer le niveau avec une raison longue', () => {
+    expect(corps.safeParse({ id, compte: true }).success).toBe(true)
+    expect(corps.safeParse({ id, compte: false }).success).toBe(true)
+    expect(
+      corps.safeParse({
+        id,
+        compte: true,
+        niveau: 'partiel',
+        raison: 'Je retiens ce niveau.',
+      }).success,
+    ).toBe(true)
+  })
+
+  it('exige la raison avec un niveau changé, et refuse le niveau si la correction ne compte pas', () => {
+    expect(corps.safeParse({ id, compte: true, niveau: 'partiel' }).success).toBe(false)
+    expect(corps.safeParse({ id, compte: true, niveau: 'partiel', raison: 'court' }).success).toBe(
+      false,
+    )
+    expect(
+      corps.safeParse({
+        id,
+        compte: false,
+        niveau: 'partiel',
+        raison: 'Je retiens ce niveau.',
+      }).success,
+    ).toBe(false)
+  })
+})
+
 describe('les erreurs', () => {
   const probleme = {
     type: 'https://janus.example.org/problemes/introuvable',

@@ -59,6 +59,7 @@ export interface ResultatBloc {
 
 type FaitDe<T extends Fait['type']> = Extract<Fait, { type: T }>
 type Correction = FaitDe<'correction'>
+type TranchageCorrection = FaitDe<'correction_tranchee'>
 
 const ETAPES_DE_COURS: ReadonlySet<TypeEtape> = new Set([
   'carte',
@@ -109,6 +110,24 @@ function plusTard(dates: readonly string[]): string | null {
 function estCorrectionDe(serie: Correction['serie']): (fait: Fait) => fait is Correction {
   return (fait): fait is Correction =>
     fait.type === 'correction' && fait.serie === serie && fait.tour === 1
+}
+
+function dernierTranchage(
+  ordonnes: readonly Fait[],
+  correction: Correction,
+): TranchageCorrection | undefined {
+  return ordonnes.findLast(
+    (fait): fait is TranchageCorrection =>
+      fait.type === 'correction_tranchee' && fait.correction === correction.id,
+  )
+}
+
+function compteEffectif(ordonnes: readonly Fait[], correction: Correction): boolean {
+  return dernierTranchage(ordonnes, correction)?.compte ?? correction.compte
+}
+
+function niveauEffectif(ordonnes: readonly Fait[], correction: Correction): Correction['niveau'] {
+  return dernierTranchage(ordonnes, correction)?.niveau ?? correction.niveau
 }
 
 // --- Restitution -----------------------------------------------------------
@@ -174,7 +193,8 @@ function verdictSerie(
     return { ok: false, manque: { code: 'consolidation_cours_rouvert' } }
   }
   const obtenus =
-    trio.reduce((total, correction) => total + points(correction.niveau), 0) / trio.length
+    trio.reduce((total, correction) => total + points(niveauEffectif(ordonnes, correction)), 0) /
+    trio.length
   if (obtenus < reglages.seuilConsolidation) {
     return {
       ok: false,
@@ -202,7 +222,9 @@ function evaluerConsolidation(
   const reserve = new Set(manifeste.consolidation.map((question) => question.id))
   const comptees = ordonnes
     .filter(estCorrectionDe('consolidation'))
-    .filter((correction) => correction.compte && reserve.has(correction.question))
+    .filter(
+      (correction) => compteEffectif(ordonnes, correction) && reserve.has(correction.question),
+    )
   const verdicts = Array.from({ length: Math.floor(comptees.length / 3) }, (_, rang) =>
     verdictSerie(ordonnes, comptees.slice(3 * rang, 3 * rang + 3), manifeste, reglages),
   )
@@ -304,11 +326,18 @@ function evaluerErreurs(
     if (fait.type === 'erreur_cochee' && !ouvertes.includes(fait.erreur)) ouvertes.push(fait.erreur)
     if (fait.type === 'erreur_decochee') fermer([fait.erreur])
     if (
+      fait.type === 'erreur_ia_tranchee' &&
+      fait.decision === 'confirmee' &&
+      !ouvertes.includes(fait.erreur)
+    ) {
+      ouvertes.push(fait.erreur)
+    }
+    if (
       fait.type === 'correction' &&
       (fait.serie === 'restitution' || fait.serie === 'consolidation') &&
       fait.tour === 1 &&
-      fait.compte &&
-      fait.niveau === 'solide'
+      compteEffectif(ordonnes, fait) &&
+      niveauEffectif(ordonnes, fait) === 'solide'
     ) {
       fermer(erreursDeLaQuestion(manifeste, fait.question))
     }

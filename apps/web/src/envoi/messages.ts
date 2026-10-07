@@ -24,11 +24,7 @@ export function envoiDeMessage(message: MessagePage, versionEtat: number): Envoi
         cle: `etat:${message.bloc}`,
       }
     case 'bilan.erreurs':
-      return {
-        route: 'POST /blocs/:id/erreurs',
-        params: { id: message.bloc },
-        corps: { id: message.id, ids: message.ids },
-      }
+      return { route: 'POST /evenements', corps: message }
     case 'correction.accord':
       return {
         route: 'POST /corrections/:id/accord',

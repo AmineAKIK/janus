@@ -61,9 +61,12 @@ export const ROUTES_BLOCS = {
     chemin: '/blocs/:id/erreurs',
     params: ParamBloc,
     corps: z.strictObject({
+      /** Identifiant de la décision, tiré une fois par le client. */
       id: IdUuid,
-      /** Les erreurs cochées : l'état complet, le dernier fait foi. */
-      ids: z.array(Identifiant),
+      erreur: Identifiant,
+      /** Correction qui a proposé l'erreur. */
+      correction: IdUuid,
+      decision: z.enum(['confirmee', 'rejetee']),
     }),
     reponse: StatutBloc,
     succes: 200,

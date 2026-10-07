@@ -170,6 +170,108 @@ describe('POST /corrections de la démo', () => {
     ).rejects.toMatchObject({ status: 404 })
   })
 
+  it('tranche une correction non vérifiée sans modifier la correction d’origine', async () => {
+    const { transport, magasin } = monterDemo({ delaiCorrectionMs: 0 })
+    magasin.ecrire((etat) => ({
+      ...etat,
+      interrupteurs: { ...etat.interrupteurs, correctionNonVerifiee: true },
+    }))
+    const correction = await transport.appeler(ROUTES['POST /corrections'], { corps: demande(1) })
+
+    const statut = await transport.appeler(ROUTES['POST /corrections/:id/trancher'], {
+      params: { id: correction.id },
+      corps: {
+        id: ID(90),
+        compte: true,
+        niveau: 'solide',
+        raison: 'Le mécanisme est correctement expliqué.',
+      },
+    })
+
+    expect(statut.statut).toBe('en_cours')
+    const faits = magasin.lire().faits.filter(({ bloc }) => bloc === 'B08')
+    expect(
+      faits.find((fait) => fait.type === 'correction' && fait.id === correction.id),
+    ).toMatchObject({
+      compte: false,
+      raisonNonCompte: 'non_verifiee',
+    })
+    expect(faits.find((fait) => fait.type === 'correction_tranchee')).toMatchObject({
+      correction: correction.id,
+      compte: true,
+      niveau: 'solide',
+      raison: 'Le mécanisme est correctement expliqué.',
+    })
+  })
+
+  it('enregistre le rejet d’une erreur IA sans ouvrir l’erreur', async () => {
+    const { transport, magasin } = monterDemo({ delaiCorrectionMs: 0 })
+    magasin.ecrire((etat) => ({
+      ...etat,
+      interrupteurs: { ...etat.interrupteurs, erreurIa: true },
+    }))
+    const correction = await transport.appeler(ROUTES['POST /corrections'], { corps: demande(1) })
+
+    const statut = await transport.appeler(ROUTES['POST /blocs/:id/erreurs'], {
+      params: { id: 'B08' },
+      corps: {
+        id: ID(91),
+        erreur: 'E1',
+        correction: correction.id,
+        decision: 'rejetee',
+      },
+    })
+
+    expect(statut.statut).not.toBe('a_reprendre')
+    expect(
+      magasin.lire().faits.find((fait) => fait.type === 'erreur_ia_tranchee' && fait.id === ID(91)),
+    ).toMatchObject({ erreur: 'E1', correction: correction.id, decision: 'rejetee' })
+  })
+
+  it('ouvre une erreur IA seulement après confirmation', async () => {
+    const { transport, magasin } = monterDemo({ delaiCorrectionMs: 0 })
+    magasin.ecrire((etat) => ({
+      ...etat,
+      interrupteurs: { ...etat.interrupteurs, erreurIa: true },
+    }))
+    const correction = await transport.appeler(ROUTES['POST /corrections'], { corps: demande(1) })
+
+    const statut = await transport.appeler(ROUTES['POST /blocs/:id/erreurs'], {
+      params: { id: 'B08' },
+      corps: {
+        id: ID(92),
+        erreur: 'E1',
+        correction: correction.id,
+        decision: 'confirmee',
+      },
+    })
+
+    expect(statut.statut).toBe('a_reprendre')
+    expect(statut.erreurs_ouvertes).toEqual(['E1'])
+  })
+
+  it('fait passer bilan.erreurs par les événements, avec le dernier état qui fait foi', async () => {
+    const { transport } = monterDemo({ delaiCorrectionMs: 0 })
+    const commun = {
+      bloc: 'B08',
+      version: 1,
+      t: '2026-06-01T12:00:00+02:00',
+      type: 'bilan.erreurs' as const,
+    }
+
+    const cochee = await transport.appeler(ROUTES['POST /evenements'], {
+      corps: { ...commun, id: ID(93), ids: ['E1'] },
+    })
+    expect(cochee.statut?.statut).toBe('a_reprendre')
+    expect(cochee.statut?.erreurs_ouvertes).toEqual(['E1'])
+
+    const decochee = await transport.appeler(ROUTES['POST /evenements'], {
+      corps: { ...commun, id: ID(94), ids: [] },
+    })
+    expect(decochee.statut?.statut).not.toBe('a_reprendre')
+    expect(decochee.statut?.erreurs_ouvertes).toEqual([])
+  })
+
   it('revenir au cours pendant la restitution : la réponse ne compte pas', async () => {
     const { transport } = monterDemo({ delaiCorrectionMs: 0 })
 

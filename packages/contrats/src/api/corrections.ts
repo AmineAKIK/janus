@@ -3,6 +3,44 @@ import { Confiance, Niveau, Serie } from '../enums.ts'
 import { CodeBloc, CorrectionRecue, IdUuid, Identifiant, Reponse, StatutBloc } from './commun.ts'
 import type { DefinitionRoute } from './routes.ts'
 
+const RaisonTranchage = z.string().trim().min(10)
+
+const TranchageCorrection = z
+  .strictObject({
+    /** Identifiant de la décision, tiré une fois par le client. */
+    id: IdUuid,
+    /** La correction compte après la décision d'Amine. */
+    compte: z.boolean(),
+    /** Présent seulement quand Amine remplace le niveau proposé. */
+    niveau: Niveau.optional(),
+    /** Obligatoire avec un niveau changé, au moins 10 caractères. */
+    raison: RaisonTranchage.optional(),
+  })
+  .superRefine((tranchage, contexte) => {
+    const changeNiveau = tranchage.niveau !== undefined || tranchage.raison !== undefined
+    if (changeNiveau && !tranchage.compte) {
+      contexte.addIssue({
+        code: 'custom',
+        path: ['compte'],
+        message: 'Un niveau changé doit compter.',
+      })
+    }
+    if (tranchage.niveau === undefined && tranchage.raison !== undefined) {
+      contexte.addIssue({
+        code: 'custom',
+        path: ['niveau'],
+        message: 'Le niveau est obligatoire avec une raison.',
+      })
+    }
+    if (tranchage.niveau !== undefined && tranchage.raison === undefined) {
+      contexte.addIssue({
+        code: 'custom',
+        path: ['raison'],
+        message: 'La raison est obligatoire quand le niveau change.',
+      })
+    }
+  })
+
 const DemandeCorrection = z
   .strictObject({
     /** Identifiant de la demande, tiré une fois par le client : un doublon est ignoré. */
@@ -61,14 +99,8 @@ export const ROUTES_CORRECTIONS = {
     methode: 'POST',
     chemin: '/corrections/:id/trancher',
     params: z.strictObject({ id: IdUuid }),
-    corps: z.strictObject({
-      id: IdUuid,
-      /** Qui a raison quand Amine conteste le niveau donné par l'IA. */
-      decision: z.enum(['ia', 'amine']),
-      /** Le niveau retenu quand la décision est celle d'Amine. */
-      niveau: Niveau.optional(),
-    }),
-    reponse: z.strictObject({ correction: CorrectionRecue, statut: StatutBloc.nullable() }),
+    corps: TranchageCorrection,
+    reponse: StatutBloc,
     succes: 200,
   },
 } satisfies Record<string, DefinitionRoute>

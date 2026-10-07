@@ -208,11 +208,22 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
   },
   'POST /blocs/:id/erreurs': {
     params: { id: 'D01' },
-    corps: { id: ID, ids: ['E1', 'E3'] },
+    corps: { id: ID, erreur: 'E1', correction: AUTRE_ID, decision: 'confirmee' },
     reponse: statutBloc,
     invalides: [
-      { partie: 'corps', valeur: { id: ID, ids: [''] } },
-      { partie: 'corps', valeur: { ids: [] } },
+      {
+        partie: 'corps',
+        valeur: { id: ID, erreur: '', correction: AUTRE_ID, decision: 'confirmee' },
+      },
+      {
+        partie: 'corps',
+        valeur: { id: ID, erreur: 'E1', correction: 'x', decision: 'confirmee' },
+      },
+      {
+        partie: 'corps',
+        valeur: { id: ID, erreur: 'E1', correction: AUTRE_ID, decision: 'peut_etre' },
+      },
+      { partie: 'corps', valeur: { erreur: 'E1', correction: AUTRE_ID, decision: 'confirmee' } },
     ],
   },
   'POST /blocs/:id/forcer': {
@@ -252,11 +263,25 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
   },
   'POST /corrections/:id/trancher': {
     params: { id: ID },
-    corps: { id: AUTRE_ID, decision: 'amine', niveau: 'solide' },
-    reponse: { correction, statut: statutBloc },
+    corps: {
+      id: AUTRE_ID,
+      compte: true,
+      niveau: 'solide',
+      raison: 'Je retiens ce niveau.',
+    },
+    reponse: statutBloc,
     invalides: [
-      { partie: 'corps', valeur: { id: AUTRE_ID, decision: 'personne' } },
-      { partie: 'corps', valeur: { decision: 'ia' } },
+      { partie: 'corps', valeur: { compte: true } },
+      {
+        partie: 'corps',
+        valeur: { id: AUTRE_ID, compte: false, niveau: 'solide', raison: 'Assez longue.' },
+      },
+      { partie: 'corps', valeur: { id: AUTRE_ID, compte: true, niveau: 'solide' } },
+      {
+        partie: 'corps',
+        valeur: { id: AUTRE_ID, compte: true, niveau: 'solide', raison: 'court' },
+      },
+      { partie: 'corps', valeur: { id: AUTRE_ID, compte: true, raison: 'Assez longue.' } },
       { partie: 'reponse', valeur: { correction } },
     ],
   },

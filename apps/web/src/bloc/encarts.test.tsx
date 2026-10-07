@@ -187,22 +187,23 @@ describe('erreur critique repérée par l’IA', () => {
     expect(
       magasin
         .lire()
-        .faits.some((fait) => fait.type === 'erreur_cochee' && fait.source === 'ia_confirmee'),
+        .faits.some((fait) => fait.type === 'erreur_ia_tranchee' && fait.decision === 'confirmee'),
     ).toBe(true)
   })
 
-  it('rejeter laisse le statut calculé et ne coche rien', async () => {
+  it('rejeter laisse le statut calculé et garde la décision', async () => {
     const utilisateur = userEvent.setup()
     const { encart, magasin } = await avecErreurIa()
-    const cochees = () =>
-      magasin.lire().faits.filter((fait) => fait.type === 'erreur_cochee').length
-    const avant = cochees()
 
     await utilisateur.click(within(encart).getByRole('button', { name: 'Ce n’en est pas une' }))
 
     expect(screen.queryByRole('region', { name: /Erreur critique/ })).not.toBeInTheDocument()
     expect(screen.queryByText('À reprendre')).not.toBeInTheDocument()
-    expect(cochees()).toBe(avant)
+    expect(
+      magasin
+        .lire()
+        .faits.some((fait) => fait.type === 'erreur_ia_tranchee' && fait.decision === 'rejetee'),
+    ).toBe(true)
   })
 
   it('au bilan, la phrase de ce qui manque commence par « Tranche d’abord »', async () => {

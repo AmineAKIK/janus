@@ -293,7 +293,7 @@ describe('envoiDeMessage', () => {
       envoiDeMessage(MessagePage.parse(EXEMPLES_PAGE[type]), 3).route
 
     expect(route('etat.sauver')).toBe('PUT /blocs/:id/etat-page')
-    expect(route('bilan.erreurs')).toBe('POST /blocs/:id/erreurs')
+    expect(route('bilan.erreurs')).toBe('POST /evenements')
     expect(route('correction.accord')).toBe('POST /corrections/:id/accord')
     expect(route('etape.vue')).toBe('POST /evenements')
     expect(route('pratique.resultat')).toBe('POST /evenements')
