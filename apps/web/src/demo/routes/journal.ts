@@ -1,6 +1,6 @@
 import { ErreurApi, ROUTES } from '@janus/contrats'
 import type { EtatDemo, LigneJournal } from '@janus/contrats'
-import { lignesDuJournal, pageDuJournal } from '@janus/moteur'
+import { exportTexte, lignesDuJournal, pageDuJournal } from '@janus/moteur'
 import { catalogueGraine, MANIFESTES_GRAINE } from '../graine.ts'
 import { resultatDuBloc } from './calculs.ts'
 import { definir } from './definir.ts'
@@ -11,6 +11,28 @@ const introuvable = (detail: string) =>
 /** Toutes les lignes du journal, depuis les faits gardés. */
 const lignesDeLEtat = (etat: EtatDemo) =>
   lignesDuJournal(etat.faits, { manifestes: MANIFESTES_GRAINE, reglages: etat.reglages })
+
+/** Le journal au format de la méthode. Les tâches inédites réservées et la dernière revue n'ont pas encore de données en démo. */
+export function exportDuJournal(etat: EtatDemo): string {
+  const manifestes = catalogueGraine().modules.flatMap((module) =>
+    module.importe
+      ? module.parties.flatMap(({ blocs }) =>
+          blocs.flatMap((code) => {
+            const manifeste = MANIFESTES_GRAINE[code]
+            return manifeste === undefined ? [] : [manifeste]
+          }),
+        )
+      : [],
+  )
+  return exportTexte({
+    manifestes,
+    faits: etat.faits,
+    reglages: etat.reglages,
+    tachesReservees: [],
+    idees: etat.idees.map(({ texte }) => texte),
+    derniereRevue: null,
+  })
+}
 
 export const ROUTES_JOURNAL_DEMO = [
   definir(ROUTES['GET /journal'], ({ magasin, horloge, requete }) => {
@@ -54,6 +76,8 @@ export const ROUTES_JOURNAL_DEMO = [
       idees: [...etat.idees].reverse(),
     }
   }),
+
+  definir(ROUTES['GET /journal/export.txt'], ({ magasin }) => exportDuJournal(magasin.lire())),
 
   definir(ROUTES['POST /journal/notes'], ({ magasin, horloge, corps }) => {
     const etat = magasin.lire()
