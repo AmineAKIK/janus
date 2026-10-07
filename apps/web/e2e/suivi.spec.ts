@@ -14,6 +14,20 @@ test.describe('Suivi', () => {
     await expect(page).toHaveURL(/#\/blocs\/B03/)
   })
 
+  test('les mesures sont là, et la période change la calibration', async ({ page }) => {
+    await ouvrirSession(page)
+    await page.goto('./#/tableau-de-bord?periode=tout')
+    for (const titre of ['Autonomie', 'Calibration', 'Aisance']) {
+      await expect(page.getByRole('heading', { level: 2, name: titre })).toBeVisible()
+    }
+    const lignesSure = page.getByRole('row', { name: /^Sûr/ })
+    const avant = await lignesSure.textContent()
+    await page.goto('./#/tableau-de-bord?periode=7j')
+    await expect(page.getByRole('radio', { name: '7 jours' })).toBeChecked()
+    await expect(lignesSure).not.toHaveText(avant ?? '')
+    await expect(page.getByText('Une erreur en étant sûr vaut une révision.')).toBeVisible()
+  })
+
   test('force un statut puis revient au statut calculé', async ({ page }) => {
     await ouvrirSession(page)
     await page.goto('./#/tableau-de-bord')

@@ -539,6 +539,41 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
         forces: [{ date: INSTANT, bloc: 'D01', statut: 'vu', raison: 'Je l’ai vu en cours.' }],
         sans_prerequis: [{ date: INSTANT, bloc: 'D02', raison: null }],
       },
+      mesures: {
+        autonomie: {
+          semaines: [
+            { debut: '2026-09-21', sans_aide: 1, total: 2, part: 0.5 },
+            { debut: '2026-09-28', sans_aide: 0, total: 0, part: null },
+            { debut: '2026-10-05', sans_aide: 2, total: 4, part: 0.5 },
+            { debut: '2026-10-12', sans_aide: 3, total: 4, part: 0.75 },
+          ],
+          aide_moyenne: 0.5,
+        },
+        calibration: {
+          lignes: [
+            { confiance: 'sur', justes: 6, faux: 1 },
+            { confiance: 'hesitant', justes: 2, faux: 2 },
+            { confiance: 'hasard', justes: 0, faux: 1 },
+          ],
+          erreurs_sures: [{ bloc: 'D01', question: 'R1', date: INSTANT }],
+        },
+        aisance: [
+          {
+            bloc: 'D01',
+            titre_court: 'Variables',
+            cible: {
+              libelle: 'Écrire une boucle',
+              objectif_s: 60,
+              meilleur_s: 45,
+              reussites: 2,
+              reussites_requises: 3,
+              jours: 1,
+              jours_requis: 2,
+            },
+          },
+          { bloc: 'D02', titre_court: 'Conditions', cible: null },
+        ],
+      },
       cout_ia: { depense_millioniemes: 1_500_000, plafond_millioniemes: 10_000_000 },
     },
     invalides: [
