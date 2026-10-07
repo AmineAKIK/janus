@@ -11,11 +11,11 @@ import type { ContexteRouteur } from './garde.ts'
 import { PageErreur } from './PageErreur.tsx'
 import { PageIntrouvable } from './PageIntrouvable.tsx'
 import { PageAujourdhui } from '../aujourdhui/PageAujourdhui.tsx'
+import { PageJournal } from '../journal/PageJournal.tsx'
 import { PageParametres } from '../parametres/PageParametres.tsx'
 import { PageQuestions } from '../questions/PageQuestions.tsx'
 import { PageRevision } from '../revision/PageRevision.tsx'
 import { PageVerification } from '../verification/PageVerification.tsx'
-import { PageProvisoire } from './PageProvisoire.tsx'
 import { PageSuivi } from '../suivi/PageSuivi.tsx'
 import {
   validerRechercheConnexion,
@@ -125,8 +125,19 @@ const journal = createRoute({
   getParentRoute: () => racine,
   path: '/journal',
   validateSearch: validerRechercheJournal,
-  staticData: { titre: 'Journal', navigation: 'journal' },
-  component: () => <PageProvisoire titre="Journal" />,
+  staticData: { titre: 'Journal', navigation: 'journal', large: true },
+  component: function RoutePageJournal() {
+    const recherche = journal.useSearch()
+    const naviguer = journal.useNavigate()
+    return (
+      <PageJournal
+        recherche={recherche}
+        surFiltres={(filtres) => {
+          void naviguer({ search: filtres })
+        }}
+      />
+    )
+  },
 })
 
 const parametres = createRoute({
