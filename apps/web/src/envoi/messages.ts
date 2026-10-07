@@ -65,5 +65,9 @@ export function statutDeReponse(
     const { statut, manque } = ROUTES['POST /blocs/:id/erreurs'].reponse.parse(reponse)
     return { statut, manque }
   }
+  if (route === 'POST /corrections/:id/trancher') {
+    const { statut, manque } = ROUTES['POST /corrections/:id/trancher'].reponse.parse(reponse)
+    return { statut, manque }
+  }
   return null
 }

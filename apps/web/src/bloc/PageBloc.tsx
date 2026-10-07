@@ -8,6 +8,8 @@ import { EncartConsolidation } from './EncartConsolidation.tsx'
 import { formaterDelai, formaterInstant } from './instant.ts'
 import { instantReel } from '../demo/horlogeDemo.ts'
 import { DialogueRevoirCours } from './DialogueRevoirCours.tsx'
+import { DialogueChangerNiveau } from './DialogueChangerNiveau.tsx'
+import { EncartDecisionsIa } from './EncartDecisionsIa.tsx'
 import { EncartErreurIa } from './EncartErreurIa.tsx'
 import { EncartHorsConnexion } from './EncartHorsConnexion.tsx'
 import { useEtatEnvoi } from './useEtatEnvoi.ts'
@@ -20,7 +22,7 @@ import type { SerieVerrou } from './verrou.ts'
 import { etapesVerrouillees, questionsRestantes } from './verrou.ts'
 import { PROBLEMES_POIGNEE_DE_MAIN, TEXTES_BLOC, textesRefus } from './textes.ts'
 import { useHoteFiche } from './useHoteFiche.ts'
-import type { DonneesFiche } from './useHoteFiche.ts'
+import type { CorrectionSuivie, DonneesFiche } from './useHoteFiche.ts'
 
 function FicheOuverte({
   donnees,
@@ -40,7 +42,9 @@ function FicheOuverte({
   readonly delaiConsolidationMinutes: number
   readonly etapes: readonly EtapeAffichee[]
   readonly problemes: readonly string[]
-  readonly questions: Readonly<Record<SerieVerrou, readonly string[]>>
+  readonly questions: Readonly<
+    Record<SerieVerrou, readonly { readonly id: string; readonly question: string }[]>
+  >
   readonly donnees: DonneesFiche
   readonly titre: string
   readonly moduleId: string
@@ -55,16 +59,20 @@ function FicheOuverte({
     hote.etapeVue ??
     (typeof sauvee === 'string' && etapes.some(({ id }) => id === sauvee) ? sauvee : null)
   const [revoir, setRevoir] = useState<string | null>(null)
+  const [changerNiveau, setChangerNiveau] = useState<CorrectionSuivie | null>(null)
+  const toutesQuestions = [...questions.restitution, ...questions.consolidation]
+  const texteQuestion = (id: string) =>
+    toutesQuestions.find((question) => question.id === id)?.question ?? id
   const restantes = {
     restitution: questionsRestantes(
       'restitution',
-      questions.restitution,
+      questions.restitution.map(({ id }) => id),
       hote.envoyees.restitution,
       hote.statut.manque,
     ).length,
     consolidation: questionsRestantes(
       'consolidation',
-      questions.consolidation,
+      questions.consolidation.map(({ id }) => id),
       hote.envoyees.consolidation,
       hote.statut.manque,
     ).length,
@@ -124,6 +132,17 @@ function FicheOuverte({
           }}
         />
       )}
+      {changerNiveau !== null && (
+        <DialogueChangerNiveau
+          surFermeture={() => {
+            setChangerNiveau(null)
+          }}
+          surValider={(niveau, raison) => {
+            hote.trancherCorrection(changerNiveau, true, niveau, raison)
+            setChangerNiveau(null)
+          }}
+        />
+      )}
       <div className={styles['zone']}>
         {(hote.conflit || envoi.stockageIndisponible) && (
           <div className={styles['alertes']}>
@@ -146,25 +165,55 @@ function FicheOuverte({
             delai={formaterDelai(delaiConsolidationMinutes)}
           />
         )}
-        {enAttente.map((proposition) => (
-          <EncartErreurIa
-            key={`${proposition.correction}:${proposition.erreur}`}
-            code={donnees.bloc}
-            reponse={proposition.reponse}
-            surConfirmer={() => {
-              hote.trancherErreur(proposition, 'confirmee')
-            }}
-            surRejeter={() => {
-              hote.trancherErreur(proposition, 'rejetee')
-            }}
-          />
-        ))}
+        {typeCourant !== 'bilan' &&
+          enAttente.map((proposition) => (
+            <EncartErreurIa
+              key={`${proposition.correction}:${proposition.erreur}`}
+              code={donnees.bloc}
+              reponse={proposition.reponse}
+              surConfirmer={() => {
+                hote.trancherErreur(proposition, 'confirmee')
+              }}
+              surRejeter={() => {
+                hote.trancherErreur(proposition, 'rejetee')
+              }}
+            />
+          ))}
+        {typeCourant === 'bilan' &&
+          (enAttente.length > 0 || hote.correctionsAVerifier.length > 0) && (
+            <EncartDecisionsIa
+              code={donnees.bloc}
+              erreurs={enAttente}
+              corrections={hote.correctionsAVerifier}
+              question={texteQuestion}
+              surConfirmer={(proposition) => {
+                hote.trancherErreur(proposition, 'confirmee')
+              }}
+              surRejeter={(proposition) => {
+                hote.trancherErreur(proposition, 'rejetee')
+              }}
+              surCompter={(correction) => {
+                hote.trancherCorrection(correction, true)
+              }}
+              surNePasCompter={(correction) => {
+                hote.trancherCorrection(correction, false)
+              }}
+              surChanger={setChangerNiveau}
+            />
+          )}
         {typeCourant === 'bilan' && (
           <EncartBilan
             erreurEnAttente={enAttente.length > 0}
             statut={hote.statut.statut}
             manque={hote.statut.manque}
             maintenant={instantReel()}
+            reponsesApresRetourCours={hote.reponsesApresRetourCours.map(
+              ({ correction, reponse }) => ({
+                id: correction.id,
+                question: texteQuestion(correction.question),
+                reponse,
+              }),
+            )}
           />
         )}
         {envoi.etat === 'attente' && (
@@ -267,8 +316,8 @@ export function PageBloc({ blocId }: { readonly blocId: string }) {
       etapes={detail.manifeste.etapes}
       problemes={detail.problemes}
       questions={{
-        restitution: detail.manifeste.restitution.map(({ id }) => id),
-        consolidation: detail.manifeste.consolidation.map(({ id }) => id),
+        restitution: detail.manifeste.restitution,
+        consolidation: detail.manifeste.consolidation,
       }}
     />
   )

@@ -1,5 +1,5 @@
 import type { Manque, Statut } from '@janus/contrats'
-import { BadgeStatut, LIBELLES_STATUT } from '@janus/ui'
+import { BadgeNeComptePas, BadgeStatut, LIBELLES_STATUT } from '@janus/ui'
 import styles from './Bloc.module.css'
 import { STATUT_SUIVANT, TEXTES_ENCARTS, texteManque } from './textesManquants.ts'
 
@@ -9,12 +9,19 @@ export function EncartBilan({
   manque,
   maintenant,
   erreurEnAttente = false,
+  reponsesApresRetourCours = [],
 }: {
   readonly statut: Statut
   readonly manque: readonly Manque[]
   readonly maintenant: string
   /** Une erreur repérée par l'IA attend la décision d'Amine. */
   readonly erreurEnAttente?: boolean
+  /** Réponses faites après « Revoir le cours », visibles comme preuves non comptées. */
+  readonly reponsesApresRetourCours?: readonly {
+    readonly id: string
+    readonly question: string
+    readonly reponse: string
+  }[]
 }) {
   const suivant = STATUT_SUIVANT[statut]
   return (
@@ -45,6 +52,13 @@ export function EncartBilan({
           )}
         </>
       )}
+      {reponsesApresRetourCours.map((element) => (
+        <div key={element.id} className={styles['reponseBilan']}>
+          <p className="texte-petit-14">{element.question}</p>
+          <p className={`${styles['encartTexte'] ?? ''} texte-petit-14`}>« {element.reponse} »</p>
+          <BadgeNeComptePas raison="avec_support" />
+        </div>
+      ))}
     </div>
   )
 }

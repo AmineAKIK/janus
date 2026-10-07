@@ -1,5 +1,5 @@
 import { CorrectionRecue, ErreurApi, nouvelId } from '@janus/contrats'
-import type { Manque, MessageAppli, MessagePage, Statut } from '@janus/contrats'
+import type { Manque, MessageAppli, MessagePage, Niveau, Statut } from '@janus/contrats'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
 import { instantReel } from '../demo/horlogeDemo.ts'
@@ -33,6 +33,14 @@ export interface PropositionErreur {
   readonly erreur: string
   readonly correction: string
   readonly reponse: string
+}
+
+/** Une correction reçue de la fiche, avec la réponse qui l'a déclenchée. */
+export interface CorrectionSuivie {
+  readonly correction: CorrectionRecue
+  readonly reponse: string
+  /** Vrai uniquement si cette réponse a été donnée après « Revoir le cours ». */
+  readonly retourCours: boolean
 }
 
 /** Ce que l'appli sait d'une réponse du serveur à un message de la page. */
@@ -83,6 +91,8 @@ export function useHoteFiche(
   const [etapeVue, setEtapeVue] = useState<string | null>(null)
   const [etapesVues, setEtapesVues] = useState<readonly string[]>([])
   const [propositions, setPropositions] = useState<readonly PropositionErreur[]>([])
+  const [corrections, setCorrections] = useState<readonly CorrectionSuivie[]>([])
+  const [correctionsTranchees, setCorrectionsTranchees] = useState<readonly string[]>([])
   const [envoyees, setEnvoyees] = useState<Readonly<Record<SerieVerrou, readonly string[]>>>({
     restitution: [],
     consolidation: [],
@@ -169,7 +179,8 @@ export function useHoteFiche(
                 : { ...avant, [serie]: [...avant[serie], question] },
             )
           }
-          const reponseDonnee = message.type === 'restitution.demande' ? message.reponse : ''
+          const demande = message.type === 'restitution.demande' ? message : null
+          const reponseDonnee = demande?.reponse ?? ''
           const envoi = envoiDeMessage(message, courantes.etatPage?.version ?? 0)
           void boite.ajouter(
             { ...envoi, id: message.id },
@@ -178,6 +189,20 @@ export function useHoteFiche(
                 if (envoi.route === 'POST /corrections') {
                   const recue = CorrectionRecue.parse(reponse)
                   vers({ type: 'restitution.correction', ...recue })
+                  if (demande !== null) {
+                    setCorrections((avant) =>
+                      avant.some(({ correction }) => correction.id === recue.id)
+                        ? avant
+                        : [
+                            ...avant,
+                            {
+                              correction: recue,
+                              reponse: demande.reponse,
+                              retourCours: demande.support.retour_cours,
+                            },
+                          ],
+                    )
+                  }
                   setPropositions((avant) => [
                     ...avant,
                     ...recue.erreurs_critiques
@@ -252,6 +277,37 @@ export function useHoteFiche(
     }
   }, [chargement])
 
+  /** Enregistre la décision d'Amine sur une correction non vérifiée. */
+  const trancherCorrection = (
+    suivie: CorrectionSuivie,
+    compte: boolean,
+    niveau?: Niveau,
+    raison?: string,
+  ) => {
+    const correction = suivie.correction.id
+    setCorrectionsTranchees((avant) =>
+      avant.includes(correction) ? avant : [...avant, correction],
+    )
+    const id = nouvelId(Date.parse(instantReel()))
+    const route = 'POST /corrections/:id/trancher'
+    const corps =
+      niveau === undefined ? { id, compte } : { id, compte, niveau, raison: raison?.trim() ?? '' }
+    void boite.ajouter(
+      { id, route, params: { id: correction }, corps },
+      {
+        surReponse: (reponse) => {
+          const recalcule = statutDeReponse(route, reponse)
+          if (recalcule !== null) appliquerStatut(recalcule)
+        },
+        surRefus: () => {
+          setCorrectionsTranchees((avant) =>
+            avant.filter((identifiant) => identifiant !== correction),
+          )
+        },
+      },
+    )
+  }
+
   /** Confirmer une erreur de l'IA l'ouvre ; la rejeter garde la décision dans l'historique. */
   const trancherErreur = (proposition: PropositionErreur, decision: 'confirmee' | 'rejetee') => {
     setPropositions((avant) => avant.filter((autre) => autre !== proposition))
@@ -282,6 +338,12 @@ export function useHoteFiche(
   return {
     phase,
     propositions,
+    correctionsAVerifier: corrections.filter(
+      ({ correction }) =>
+        correction.certitude === 'non_verifie' && !correctionsTranchees.includes(correction.id),
+    ),
+    reponsesApresRetourCours: corrections.filter(({ retourCours }) => retourCours),
+    trancherCorrection,
     trancherErreur,
     conflit,
     refus,

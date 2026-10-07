@@ -237,6 +237,19 @@ describe('boîte d’envoi', () => {
     expect(entrees[0]?.id).toBe(ID2)
   })
 
+  it('rejoue une décision de correction gardée dans la boîte', async () => {
+    const { boite, appels } = monter()
+
+    await boite.ajouter({
+      id: ID1,
+      route: 'POST /corrections/:id/trancher',
+      params: { id: ID2 },
+      corps: { id: ID1, compte: true },
+    })
+
+    expect(appels).toContain(`POST /corrections/:id/trancher ${ID1}`)
+  })
+
   it('une entrée abîmée est supprimée, pas envoyée', async () => {
     const { boite, stockage, appels } = monter()
     vi.spyOn(console, 'error').mockImplementation(() => undefined)
