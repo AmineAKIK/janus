@@ -44,6 +44,19 @@ export function appelerEntree(transport: Transport, entree: EntreeEnvoi): Promis
         params: lire(ROUTES['POST /blocs/:id/erreurs'].params, params, 'POST /blocs/:id/erreurs'),
         corps: lire(ROUTES['POST /blocs/:id/erreurs'].corps, corps, 'POST /blocs/:id/erreurs'),
       })
+    case 'POST /corrections/:id/trancher':
+      return transport.appeler(ROUTES['POST /corrections/:id/trancher'], {
+        params: lire(
+          ROUTES['POST /corrections/:id/trancher'].params,
+          params,
+          'POST /corrections/:id/trancher',
+        ),
+        corps: lire(
+          ROUTES['POST /corrections/:id/trancher'].corps,
+          corps,
+          'POST /corrections/:id/trancher',
+        ),
+      })
     case 'POST /corrections/:id/accord':
       return transport.appeler(ROUTES['POST /corrections/:id/accord'], {
         params: lire(
