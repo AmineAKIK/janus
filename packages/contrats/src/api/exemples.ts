@@ -549,6 +549,20 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
           ],
           aide_moyenne: 0.5,
         },
+        retention: [
+          {
+            debut: '2026-09-21',
+            cartes: { reussis: 8, total: 10 },
+            questions: { reussis: 4, total: 6 },
+            verifications: { reussis: 1, total: 1 },
+          },
+          {
+            debut: '2026-09-28',
+            cartes: { reussis: 0, total: 0 },
+            questions: { reussis: 0, total: 0 },
+            verifications: { reussis: 0, total: 0 },
+          },
+        ],
         calibration: {
           lignes: [
             { confiance: 'sur', justes: 6, faux: 1 },

@@ -9,6 +9,7 @@ import {
   ecartEnJours,
   echeances,
   erreursRecurrentes,
+  retention,
   ouverturesSansPrerequis,
   statutsForces,
 } from '@janus/moteur'
@@ -91,6 +92,7 @@ export const ROUTES_TABLEAU_DE_BORD_DEMO = [
       : Math.min(plafond, depenseDuMois(couts, maintenant, reglages))
 
     const mesureAutonomie = autonomie(faits, maintenant, reglages)
+    const semainesRetention = retention(faits, etat.revuesCartes, maintenant, reglages)
     const calibre = calibration(faits, periode, maintenant, reglages)
     const aisance = aisanceDesBlocs(
       blocs.map(({ manifeste }) => manifeste),
@@ -136,6 +138,12 @@ export const ROUTES_TABLEAU_DE_BORD_DEMO = [
           })),
           aide_moyenne: mesureAutonomie.aideMoyenne,
         },
+        retention: semainesRetention.map((semaine) => ({
+          debut: semaine.debut,
+          cartes: { ...semaine.cartes },
+          questions: { ...semaine.questions },
+          verifications: { ...semaine.verifications },
+        })),
         calibration: {
           lignes: calibre.lignes.map((ligne) => ({ ...ligne })),
           erreurs_sures: calibre.erreursSuresCetteSemaine.map((erreur) => ({ ...erreur })),
