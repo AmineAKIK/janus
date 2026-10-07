@@ -1,3 +1,5 @@
+import { readFileSync, writeFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { ErreurApi, nouvelId, ROUTES, TypeJournal } from '@janus/contrats'
 import { TYPES_JOURNAL } from '@janus/moteur'
 import { describe, expect, it } from 'vitest'
@@ -133,5 +135,29 @@ describe('notes et idées du journal de la démo', () => {
     await envoyer(une, 'Une.')
 
     expect((await lire(banc)).idees.map(({ texte }) => texte)).toEqual(['Deux.', 'Une.'])
+  })
+})
+
+describe('export texte du journal de la démo', () => {
+  it('est identique octet pour octet à la fixture de la graine', async () => {
+    const texte = await monterDemo().transport.appeler(ROUTES['GET /journal/export.txt'], {})
+    const fixture = resolve(
+      process.cwd(),
+      '../../packages/moteur/src/journal/__fixtures__/export-graine.txt',
+    )
+
+    if (process.env['ECRIRE_FIXTURE'] === '1') writeFileSync(fixture, texte)
+    expect(texte).toBe(readFileSync(fixture, 'utf8'))
+  })
+
+  it('ajoute les idées dans « À explorer plus tard »', async () => {
+    const banc = monterDemo()
+    await banc.transport.appeler(ROUTES['POST /journal/idees'], {
+      corps: { id: nouvelId(20), texte: 'Un mode révision rapide.' },
+    })
+
+    const texte = await banc.transport.appeler(ROUTES['GET /journal/export.txt'], {})
+
+    expect(texte).toContain('### À explorer plus tard\n\n- Un mode révision rapide.\n')
   })
 })
