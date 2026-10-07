@@ -185,6 +185,64 @@ describe('lignesDuJournal', () => {
     ])
   })
 
+  it('contestation : une nouvelle correction et un forçage ne la ferment pas', () => {
+    const f = fabrique()
+    const correction = f.correction(DEBUT, 'restitution', 'R1')
+    const contestation = f.fait(apres(DEBUT, 0, 1), {
+      type: 'correction_contestee',
+      correction: correction.id,
+    })
+    const suivante = f.correction(apres(DEBUT, 0, 2), 'restitution', 'R1', { compte: false })
+    const force = f.force(apres(DEBUT, 0, 3), 'vu', 'Décision indépendante.')
+
+    const lignes = lignesDuJournal([correction, contestation, suivante, force], CONTEXTE)
+    const [ligne] = du('contestation', lignes)
+
+    expect(ligne).toMatchObject({
+      type: 'contestation',
+      resume: 'R1 · correction contestée',
+      contestationEnAttente: true,
+    })
+    expect(pageDuJournal(lignes, { type: 'contestation' }).lignes).toEqual([ligne])
+  })
+
+  it('contestation : reste lisible si la correction référencée manque', () => {
+    const f = fabrique()
+    const contestation = f.fait(DEBUT, {
+      type: 'correction_contestee',
+      correction: 'correction-inconnue',
+    })
+
+    const [ligne] = du('contestation', lignesDuJournal([contestation], CONTEXTE))
+
+    expect(ligne).toMatchObject({
+      resume: 'Correction contestée',
+      detail: [],
+      contestationEnAttente: true,
+    })
+  })
+
+  it('contestation : un tranchage humain postérieur la résout', () => {
+    const f = fabrique()
+    const correction = f.correction(DEBUT, 'restitution', 'R1')
+    const contestation = f.fait(apres(DEBUT, 0, 1), {
+      type: 'correction_contestee',
+      correction: correction.id,
+    })
+    const tranchage = f.fait(apres(DEBUT, 0, 2), {
+      type: 'correction_tranchee',
+      correction: correction.id,
+      compte: true,
+    })
+
+    const [ligne] = du(
+      'contestation',
+      lignesDuJournal([correction, contestation, tranchage], CONTEXTE),
+    )
+
+    expect(ligne?.contestationEnAttente).toBe(false)
+  })
+
   it('statut forcé : le forçage et son retour au calculé', () => {
     const f = fabrique()
     const lignes = lignesDuJournal(

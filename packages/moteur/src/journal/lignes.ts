@@ -74,6 +74,8 @@ export interface LigneJournal {
   readonly resume: string
   /** Ce que la ligne déplie : une phrase par fait. */
   readonly detail: readonly string[]
+  /** Uniquement pour une ligne de contestation encore sans tranchage humain postérieur. */
+  readonly contestationEnAttente?: boolean
 }
 
 export interface ContexteJournal {
@@ -219,8 +221,8 @@ function typeDeGroupe(fait: Fait): Groupe['type'] | null {
 }
 
 /**
- * Toutes les lignes du journal depuis les faits, les plus récentes d'abord. Les types « Cartes » et
- * « Contestations » n'ont pas encore de fait qui les porte : ils existent comme filtres, sans ligne.
+ * Toutes les lignes du journal depuis les faits, les plus récentes d'abord. Le type « Cartes »
+ * n'a pas encore de fait qui le porte : il existe comme filtre, sans ligne.
  */
 export function lignesDuJournal(faits: readonly Fait[], contexte: ContexteJournal): LigneJournal[] {
   const lignes: LigneJournal[] = []
@@ -298,6 +300,36 @@ export function lignesDuJournal(faits: readonly Fait[], contexte: ContexteJourna
             type: 'erreur_critique',
             resume: `${libelleErreur(fait.erreur)} · ${fait.type === 'erreur_cochee' ? 'cochée' : 'décochée'} ${source}`,
             detail: [],
+          })
+          break
+        }
+        case 'correction_contestee': {
+          const correction = faitsDuBloc.find(
+            (candidat): candidat is FaitDe<'correction'> =>
+              candidat.type === 'correction' && candidat.id === fait.correction,
+          )
+          const position = faitsDuBloc.indexOf(fait)
+          const trancheeApres = faitsDuBloc
+            .slice(position + 1)
+            .some(
+              (candidat) =>
+                candidat.type === 'correction_tranchee' && candidat.correction === fait.correction,
+            )
+          lignes.push({
+            ...commun,
+            type: 'contestation',
+            resume:
+              correction === undefined
+                ? 'Correction contestée'
+                : `${correction.question} · correction contestée`,
+            detail:
+              correction === undefined
+                ? []
+                : [
+                    `${correction.question} · ${correction.niveau}`,
+                    'Une contestation ne change jamais le niveau, elle part en revue humaine.',
+                  ],
+            contestationEnAttente: !trancheeApres,
           })
           break
         }

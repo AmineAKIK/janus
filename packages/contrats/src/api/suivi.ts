@@ -48,6 +48,8 @@ export const LigneJournal = z.strictObject({
   resume: Texte,
   /** Ce que la ligne déplie. */
   detail: z.array(Texte),
+  /** Présent pour une contestation : vrai tant qu'Amine ne l'a pas tranchée. */
+  contestation_en_attente: z.boolean().optional(),
   note: NoteJournal.nullable(),
 })
 export type LigneJournal = z.infer<typeof LigneJournal>
