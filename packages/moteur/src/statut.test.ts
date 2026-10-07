@@ -391,6 +391,95 @@ describe('les faits sur des éléments qui ne sont pas dans le manifeste', () =>
   })
 })
 
+describe('le tranchage humain des corrections', () => {
+  it('une correction non vérifiée ne compte qu’après « Compter ce niveau »', () => {
+    const f = fabrique()
+    const [c1, c2, c3] = f.consolidation(apres(DEBUT, 0, 120))
+    if (c1?.type !== 'correction' || c2?.type !== 'correction' || c3?.type !== 'correction') {
+      throw new Error('Série incomplète')
+    }
+    const nonVerifiee: Fait = {
+      ...c1,
+      compte: false,
+      raisonNonCompte: 'non_verifiee',
+    }
+    const base = [
+      ...f.pratique(DEBUT),
+      f.atelier(DEBUT),
+      ...f.restitution(apres(DEBUT, 0, 30)),
+      nonVerifiee,
+      c2,
+      c3,
+    ]
+    expect(calcul(base, apres(DEBUT, 1)).statut).toBe('vu')
+
+    const tranchee = f.fait(apres(DEBUT, 1, 1), {
+      type: 'correction_tranchee',
+      correction: nonVerifiee.id,
+      compte: true,
+    })
+    expect(calcul([...base, tranchee], apres(DEBUT, 2)).statut).toBe('acquis_provisoirement')
+  })
+
+  it('« Ne pas compter » garde la correction hors des preuves', () => {
+    const f = fabrique()
+    const [c1, c2, c3] = f.consolidation(apres(DEBUT, 0, 120))
+    if (c1?.type !== 'correction' || c2?.type !== 'correction' || c3?.type !== 'correction') {
+      throw new Error('Série incomplète')
+    }
+    const base = [
+      ...f.pratique(DEBUT),
+      f.atelier(DEBUT),
+      ...f.restitution(apres(DEBUT, 0, 30)),
+      { ...c1, compte: false, raisonNonCompte: 'non_verifiee' } satisfies Fait,
+      c2,
+      c3,
+    ]
+    const decision = f.fait(apres(DEBUT, 1, 1), {
+      type: 'correction_tranchee',
+      correction: c1.id,
+      compte: false,
+    })
+    expect(calcul([...base, decision], apres(DEBUT, 2)).statut).toBe('vu')
+  })
+
+  it('« Changer le niveau » utilise le niveau choisi et la dernière décision gagne', () => {
+    const f = fabrique()
+    const [c1, c2, c3] = f.consolidation(apres(DEBUT, 0, 120), ['pas_encore', 'solide', 'solide'])
+    if (c1?.type !== 'correction' || c2?.type !== 'correction' || c3?.type !== 'correction') {
+      throw new Error('Série incomplète')
+    }
+    const nonVerifiee: Fait = {
+      ...c1,
+      compte: false,
+      raisonNonCompte: 'non_verifiee',
+    }
+    const base = [
+      ...f.pratique(DEBUT),
+      f.atelier(DEBUT),
+      ...f.restitution(apres(DEBUT, 0, 30)),
+      nonVerifiee,
+      c2,
+      c3,
+    ]
+    const changer = f.fait(apres(DEBUT, 1, 1), {
+      type: 'correction_tranchee',
+      correction: c1.id,
+      compte: true,
+      niveau: 'solide',
+      raison: 'Le mécanisme est bien expliqué.',
+    })
+    expect(calcul([...base, changer], apres(DEBUT, 2)).statut).toBe('acquis_provisoirement')
+
+    const retirer = f.fait(apres(DEBUT, 1, 2), {
+      type: 'correction_tranchee',
+      correction: c1.id,
+      compte: false,
+    })
+    expect(calcul([...base, changer, retirer], apres(DEBUT, 2)).statut).toBe('vu')
+  })
+})
+
 describe('la pratique et l’atelier', () => {
   it('chaque exercice doit atteindre sa règle à l’aide 0, sur des items différents', () => {
     const f = fabrique()
@@ -456,6 +545,27 @@ describe('la pratique et l’atelier', () => {
 })
 
 describe('les erreurs critiques', () => {
+  it('une erreur proposée par l’IA ne s’ouvre qu’après confirmation, pas après rejet', () => {
+    const f = fabrique()
+    const correction = f.correction(DEBUT, 'restitution', 'R1', { erreursIa: ['E1'] })
+    const rejet = f.fait(apres(DEBUT, 0, 1), {
+      type: 'erreur_ia_tranchee',
+      correction: correction.id,
+      erreur: 'E1',
+      decision: 'rejetee',
+    })
+    expect(calcul([correction, rejet], apres(DEBUT, 0, 2)).erreursOuvertes).toEqual([])
+
+    const confirmation = f.fait(apres(DEBUT, 0, 2), {
+      type: 'erreur_ia_tranchee',
+      correction: correction.id,
+      erreur: 'E1',
+      decision: 'confirmee',
+    })
+    expect(calcul([correction, confirmation], apres(DEBUT, 0, 3)).erreursOuvertes).toEqual(['E1'])
+    expect(calcul([correction, confirmation], apres(DEBUT, 0, 3)).statut).toBe('a_reprendre')
+  })
+
   it('une erreur cochée prime sur tout, une seule fois même cochée deux fois', () => {
     const f = fabrique()
     const faits = [

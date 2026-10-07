@@ -252,12 +252,10 @@ export function useHoteFiche(
     }
   }, [chargement])
 
-  /** Confirmer une erreur de l'IA l'ouvre ; la rejeter laisse le statut calculé. */
+  /** Confirmer une erreur de l'IA l'ouvre ; la rejeter garde la décision dans l'historique. */
   const trancherErreur = (proposition: PropositionErreur, decision: 'confirmee' | 'rejetee') => {
     setPropositions((avant) => avant.filter((autre) => autre !== proposition))
-    if (decision === 'rejetee') return
-    const { donnees: courantes, statut: courant } = dernieres.current
-    const ouvertes = courant.manque.find(({ code }) => code === 'erreur_ouverte')?.erreurs ?? []
+    const { donnees: courantes } = dernieres.current
     const id = nouvelId(Date.parse(instantReel()))
     const route = 'POST /blocs/:id/erreurs'
     void boite.ajouter(
@@ -265,7 +263,12 @@ export function useHoteFiche(
         id,
         route,
         params: { id: courantes.bloc },
-        corps: { id, ids: [...new Set([...ouvertes, proposition.erreur])] },
+        corps: {
+          id,
+          erreur: proposition.erreur,
+          correction: proposition.correction,
+          decision,
+        },
       },
       {
         surReponse: (reponse) => {

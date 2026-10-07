@@ -85,6 +85,21 @@ export const Fait = z.discriminatedUnion('type', [
   }),
   z.strictObject({
     ...commun,
+    type: z.literal('correction_tranchee'),
+    correction: Identifiant,
+    compte: z.boolean(),
+    niveau: Niveau.optional(),
+    raison: z.string().trim().min(10).optional(),
+  }),
+  z.strictObject({
+    ...commun,
+    type: z.literal('erreur_ia_tranchee'),
+    correction: Identifiant,
+    erreur: Identifiant,
+    decision: z.enum(['confirmee', 'rejetee']),
+  }),
+  z.strictObject({
+    ...commun,
     type: z.literal('verification_terminee'),
     verification: TypeVerification,
     valable: z.boolean(),

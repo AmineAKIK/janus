@@ -128,32 +128,32 @@ export const ROUTES_BLOCS_DEMO = [
   definir(ROUTES['POST /blocs/:id/erreurs'], ({ magasin, horloge, params, corps }) => {
     verifierBloc(params.id)
     const maintenant = horloge.maintenant()
+    const proposition = faitsDuBloc(magasin.lire(), params.id).find(
+      (fait) =>
+        fait.type === 'correction' &&
+        fait.id === corps.correction &&
+        fait.erreursIa.includes(corps.erreur),
+    )
+    if (proposition === undefined) {
+      throw new ErreurApi({
+        status: 404,
+        code: 'introuvable',
+        titre: 'Introuvable',
+        detail: 'Cette erreur proposée par l’IA n’existe pas.',
+      })
+    }
     if (!dejaRecu(magasin.lire(), corps.id)) {
-      const ouvertes = resultatDuBloc(magasin.lire(), params.id, maintenant).erreursOuvertes
-      // Une erreur que l'IA avait proposée et qu'Amine confirme vient de l'IA ; les autres, de lui.
-      const proposees = faitsDuBloc(magasin.lire(), params.id).flatMap((fait) =>
-        fait.type === 'correction' ? fait.erreursIa : [],
-      )
-      const commun = { bloc: params.id, date: maintenant }
-      const cochees: Fait[] = corps.ids
-        .filter((erreur) => !ouvertes.includes(erreur))
-        .map((erreur) => ({
-          ...commun,
-          id: `${corps.id}:${erreur}`,
-          type: 'erreur_cochee',
-          erreur,
-          source: proposees.includes(erreur) ? 'ia_confirmee' : 'amine',
-        }))
-      const decochees: Fait[] = ouvertes
-        .filter((erreur) => !corps.ids.includes(erreur))
-        .map((erreur) => ({
-          ...commun,
-          id: `${corps.id}:${erreur}`,
-          type: 'erreur_decochee',
-          erreur,
-          source: 'amine',
-        }))
-      enregistrer(magasin, corps.id, [...cochees, ...decochees])
+      enregistrer(magasin, corps.id, [
+        {
+          id: corps.id,
+          bloc: params.id,
+          date: maintenant,
+          type: 'erreur_ia_tranchee',
+          correction: corps.correction,
+          erreur: corps.erreur,
+          decision: corps.decision,
+        },
+      ])
     }
     return statutBloc(resultatDuBloc(magasin.lire(), params.id, maintenant))
   }),
@@ -173,12 +173,38 @@ export const ROUTES_BLOCS_DEMO = [
         statut: statutBloc(resultatDuBloc(magasin.lire(), corps.bloc, maintenant)),
       }
     }
-    const fait = faitDuMessage(corps, maintenant)
-    enregistrer(magasin, corps.id, fait === null ? [] : [fait])
+    let recalcule = false
+    if (corps.type === 'bilan.erreurs') {
+      const ouvertes = resultatDuBloc(magasin.lire(), corps.bloc, maintenant).erreursOuvertes
+      const commun = { bloc: corps.bloc, date: maintenant }
+      const cochees: Fait[] = corps.ids
+        .filter((erreur) => !ouvertes.includes(erreur))
+        .map((erreur) => ({
+          ...commun,
+          id: `${corps.id}:${erreur}:on`,
+          type: 'erreur_cochee',
+          erreur,
+          source: 'amine',
+        }))
+      const decochees: Fait[] = ouvertes
+        .filter((erreur) => !corps.ids.includes(erreur))
+        .map((erreur) => ({
+          ...commun,
+          id: `${corps.id}:${erreur}:off`,
+          type: 'erreur_decochee',
+          erreur,
+          source: 'amine',
+        }))
+      enregistrer(magasin, corps.id, [...cochees, ...decochees])
+      recalcule = true
+    } else {
+      const fait = faitDuMessage(corps, maintenant)
+      enregistrer(magasin, corps.id, fait === null ? [] : [fait])
+      recalcule = fait !== null
+    }
     return {
       doublon: false,
-      statut:
-        fait === null ? null : statutBloc(resultatDuBloc(magasin.lire(), corps.bloc, maintenant)),
+      statut: recalcule ? statutBloc(resultatDuBloc(magasin.lire(), corps.bloc, maintenant)) : null,
     }
   }),
 ]
