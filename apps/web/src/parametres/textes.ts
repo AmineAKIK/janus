@@ -94,6 +94,39 @@ export const LIBELLES_INTERRUPTEURS = {
   erreurIa: 'Le tuteur propose une erreur critique',
 } as const
 
+export const TEXTES_RAPPELS = {
+  introduction: 'C’est toi qui décides quand tu travailles. Le rappel dit seulement ce qui est dû.',
+  notifications: 'Notifications sur cet appareil',
+  activer: 'Activer',
+  indisponible: 'Disponible quand l’appli tourne sur le serveur.',
+  autorisees: 'Autorisées sur cet appareil.',
+  refusees: 'Refusées par ce navigateur.',
+  heure: 'Heure du rappel',
+  pause: 'Pause jusqu’au',
+  aucunePause: 'Aucune',
+  reprendre: 'Reprendre les rappels',
+} as const
+
+export const TEXTES_IA = {
+  depense: 'Dépense ce mois-ci',
+  plafond: 'Plafond mensuel (en euros)',
+  plafondErreur: 'Le plafond doit être un nombre entre 0 et 100 €.',
+  limite: 'Limite d’appels',
+  limiteValeur: (appels: number) => `${String(appels)} appels par heure`,
+  confidentialite:
+    'Tes réponses et l’extrait de fiche concerné sont envoyés au service de correction, sans ton nom d’utilisateur.',
+  plafondAtteint:
+    'Plafond atteint : les corrections reprendront le 1er du mois prochain, ou relève le plafond.',
+} as const
+
+export const TEXTES_HORS_LIGNE = {
+  synchronisation: 'Synchronisation',
+  synchronise: 'Tout est synchronisé',
+  espace: 'Espace fiches',
+  espaceValeur: (megaoctets: string) => `${megaoctets} Mo sur cet appareil`,
+  espaceInconnu: 'Non mesurable sur ce navigateur.',
+} as const
+
 export const TEXTES_REGLES = {
   badge: 'Règle protégée',
   explication: 'Les délais méthodologiques restent en lecture seule pour préserver la preuve.',

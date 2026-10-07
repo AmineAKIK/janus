@@ -70,9 +70,12 @@ describe('Paramètres sur mobile', () => {
         .map((lien) => lien.textContent),
     ).toEqual([
       'Compte',
+      'Rappels',
       'Révision',
       'Règles de la méthode',
+      'Correction IA',
       'Affichage',
+      'Hors ligne',
       'Données',
       'Zone sensible',
       'Démo',
@@ -97,7 +100,7 @@ describe('Paramètres sur bureau', () => {
 
     expect(await screen.findByText(/jamais les règles de preuve/)).toBeVisible()
     const sommaire = screen.getByRole('navigation', { name: 'Sur cette page' })
-    expect(within(sommaire).getAllByRole('link')).toHaveLength(7)
+    expect(within(sommaire).getAllByRole('link')).toHaveLength(10)
     expect(screen.getByRole('region', { name: 'Révision' })).toBeVisible()
     expect(screen.getByRole('region', { name: 'Règles de la méthode' })).toBeVisible()
     expect(screen.getByText('Règle protégée')).toBeVisible()
