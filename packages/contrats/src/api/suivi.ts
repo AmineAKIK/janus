@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { Statut } from '../enums.ts'
+import { Confiance, Statut } from '../enums.ts'
 import { InstantUtc } from '../faits.ts'
 import { TacheDuJour } from './apprentissage.ts'
 import { CodeBloc, IdUuid, Identifiant, TexteLibre } from './commun.ts'
@@ -109,6 +109,55 @@ export const ROUTES_SUIVI = {
         ),
         sans_prerequis: z.array(
           z.strictObject({ date: InstantUtc, bloc: CodeBloc, raison: Texte.nullable() }),
+        ),
+      }),
+      /** Les mesures de l'apprentissage ; Autonomie et Aisance ne suivent pas la période. */
+      mesures: z.strictObject({
+        /** Les 4 dernières semaines, la plus ancienne d'abord. */
+        autonomie: z.strictObject({
+          semaines: z.array(
+            z.strictObject({
+              /** Le lundi, `AAAA-MM-JJ`. */
+              debut: z.string(),
+              sans_aide: z.number().int().min(0),
+              total: z.number().int().min(0),
+              /** Entre 0 et 1 ; `null` sans item cette semaine-là. */
+              part: z.number().min(0).max(1).nullable(),
+            }),
+          ),
+          /** Le niveau d'aide moyen de la semaine courante (0 à 4). */
+          aide_moyenne: z.number().min(0).max(4).nullable(),
+        }),
+        calibration: z.strictObject({
+          lignes: z.array(
+            z.strictObject({
+              confiance: Confiance,
+              justes: z.number().int().min(0),
+              faux: z.number().int().min(0),
+            }),
+          ),
+          /** Les erreurs commises en étant sûr pendant la semaine courante. */
+          erreurs_sures: z.array(
+            z.strictObject({ bloc: CodeBloc, question: Identifiant, date: InstantUtc }),
+          ),
+        }),
+        /** Un bloc par ligne, dans l'ordre du plan ; `cible` est `null` quand le bloc n'en a pas. */
+        aisance: z.array(
+          z.strictObject({
+            bloc: CodeBloc,
+            titre_court: Texte,
+            cible: z
+              .strictObject({
+                libelle: Texte,
+                objectif_s: z.number().int().min(1),
+                meilleur_s: z.number().min(0).nullable(),
+                reussites: z.number().int().min(0),
+                reussites_requises: z.number().int().min(1),
+                jours: z.number().int().min(0),
+                jours_requis: z.number().int().min(1),
+              })
+              .nullable(),
+          }),
         ),
       }),
       cout_ia: z.strictObject({

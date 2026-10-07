@@ -100,4 +100,27 @@ describe('tableau de bord de la démo, avec la graine', () => {
     }))
     expect((await lire(banc)).cout_ia.depense_millioniemes).toBe(10_000_000)
   })
+
+  it('rend les mesures de la graine ; la période change la calibration, pas la carte ni les semaines', async () => {
+    const banc = monterDemo()
+    const long = await lire(banc, { periode: 'tout' })
+    const court = await lire(banc, { periode: '7j' })
+
+    expect(long.mesures.autonomie.semaines.map(({ debut }) => debut)).toEqual([
+      '2026-09-14',
+      '2026-09-21',
+      '2026-09-28',
+      '2026-10-05',
+    ])
+    expect(long.mesures.autonomie.aide_moyenne).toBe(0)
+    expect(long.mesures.calibration.lignes[0]).toEqual({ confiance: 'sur', justes: 39, faux: 3 })
+    expect(long.mesures.aisance).toHaveLength(20)
+    expect(long.mesures.aisance[0]?.cible).toMatchObject({ objectif_s: 30, reussites: 0 })
+
+    const lignesCourtes = court.mesures.calibration.lignes
+    expect(lignesCourtes[0]?.justes).toBeLessThan(39)
+    expect(court.blocs).toEqual(long.blocs)
+    expect(court.mesures.autonomie).toEqual(long.mesures.autonomie)
+    expect(court.mesures.aisance).toEqual(long.mesures.aisance)
+  })
 })

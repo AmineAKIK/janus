@@ -1,6 +1,9 @@
 import { ROUTES } from '@janus/contrats'
 import {
+  aisanceDesBlocs,
+  autonomie,
   blocsOuvertsSansPrerequis,
+  calibration,
   carteDuModule,
   depenseDuMois,
   ecartEnJours,
@@ -87,6 +90,14 @@ export const ROUTES_TABLEAU_DE_BORD_DEMO = [
       ? plafond
       : Math.min(plafond, depenseDuMois(couts, maintenant, reglages))
 
+    const mesureAutonomie = autonomie(faits, maintenant, reglages)
+    const calibre = calibration(faits, periode, maintenant, reglages)
+    const aisance = aisanceDesBlocs(
+      blocs.map(({ manifeste }) => manifeste),
+      faits,
+      reglages,
+    )
+
     return {
       modules: importes.map(({ code, titre }) => ({ id: code, titre })),
       module: module === undefined ? null : { id: module.code, titre: module.titre },
@@ -114,6 +125,37 @@ export const ROUTES_TABLEAU_DE_BORD_DEMO = [
       decisions: {
         forces: statutsForces(faits, periode, maintenant, reglages),
         sans_prerequis: ouverturesSansPrerequis(faits, periode, maintenant, reglages),
+      },
+      mesures: {
+        autonomie: {
+          semaines: mesureAutonomie.semaines.map(({ debut, sansAide, total, part }) => ({
+            debut,
+            sans_aide: sansAide,
+            total,
+            part,
+          })),
+          aide_moyenne: mesureAutonomie.aideMoyenne,
+        },
+        calibration: {
+          lignes: calibre.lignes.map((ligne) => ({ ...ligne })),
+          erreurs_sures: calibre.erreursSuresCetteSemaine.map((erreur) => ({ ...erreur })),
+        },
+        aisance: aisance.map(({ bloc, titre, cible }) => ({
+          bloc,
+          titre_court: titre,
+          cible:
+            cible === null
+              ? null
+              : {
+                  libelle: cible.libelle,
+                  objectif_s: cible.objectifS,
+                  meilleur_s: cible.meilleurS,
+                  reussites: cible.reussites,
+                  reussites_requises: cible.reussitesRequises,
+                  jours: cible.jours,
+                  jours_requis: cible.joursRequis,
+                },
+        })),
       },
       cout_ia: { depense_millioniemes: depense, plafond_millioniemes: plafond },
     }
