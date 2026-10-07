@@ -128,6 +128,28 @@ export const ROUTES_SUIVI = {
           /** Le niveau d'aide moyen de la semaine courante (0 à 4). */
           aide_moyenne: z.number().min(0).max(4).nullable(),
         }),
+        /** Les 4 dernières semaines, la plus ancienne d'abord : jamais de total global. */
+        retention: z.array(
+          z.strictObject({
+            /** Le lundi, `AAAA-MM-JJ`. */
+            debut: z.string(),
+            /** Cartes revues, dont `reussis` notées autrement que « À revoir ». */
+            cartes: z.strictObject({
+              reussis: z.number().int().min(0),
+              total: z.number().int().min(0),
+            }),
+            /** Questions de début de séance, dont `reussis` au niveau solide. */
+            questions: z.strictObject({
+              reussis: z.number().int().min(0),
+              total: z.number().int().min(0),
+            }),
+            /** Vérifications valables, dont `reussis` sans erreur au premier tour. */
+            verifications: z.strictObject({
+              reussis: z.number().int().min(0),
+              total: z.number().int().min(0),
+            }),
+          }),
+        ),
         calibration: z.strictObject({
           lignes: z.array(
             z.strictObject({

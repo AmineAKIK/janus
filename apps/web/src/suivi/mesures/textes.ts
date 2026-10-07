@@ -1,4 +1,5 @@
 import type { Confiance } from '@janus/contrats'
+import { texteJourCourt } from '../../revision/textes.ts'
 import { nombreFrancais } from '../../parametres/textes.ts'
 
 const nombre = (n: number, singulier: string, pluriel: string) =>
@@ -8,6 +9,13 @@ export const TEXTES_MESURES = {
   autonomie: 'Autonomie',
   autonomieSousTitre: 'Réponses correctes sans aide',
   autonomieVide: 'Pas encore d’exercice de pratique.',
+  retention: 'Rétention',
+  retentionSousTitre: 'Mesures par semaine, sans agrégat global',
+  semaine: 'Semaine du',
+  cartes: 'Cartes',
+  questions: 'Questions de début',
+  verifications: 'Vérifications',
+  aucune: '–',
   calibration: 'Calibration',
   calibrationSousTitre: 'Confiance déclarée avant correction',
   confiance: 'Confiance',
@@ -33,6 +41,17 @@ export function libelleSemaine(rang: number, total: number): string {
   if (ecart === 1) return 'Semaine dernière'
   return `Il y a ${String(ecart)} semaines`
 }
+
+/** « 16 sept. » : le lundi d'une semaine, `AAAA-MM-JJ`. */
+export const texteLundi = (debut: string) => texteJourCourt(debut)
+
+/** « 8 · 80 % » : le total, puis la part réussie ; « – » sans rien. */
+export const texteCartes = (reussis: number, total: number) =>
+  total === 0 ? TEXTES_MESURES.aucune : `${String(total)} · ${pourcent(reussis / total)}`
+
+/** « 4 sur 6 » : les réussis sur le total ; « – » sans rien. */
+export const texteSur = (reussis: number, total: number) =>
+  total === 0 ? TEXTES_MESURES.aucune : `${String(reussis)} sur ${String(total)}`
 
 export const pourcent = (part: number) => `${String(Math.round(part * 100))} %`
 

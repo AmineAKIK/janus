@@ -8,7 +8,7 @@ import styles from './Suivi.module.css'
 import { OPTIONS_PERIODE, TEXTES_SUIVI as T } from './textes.ts'
 import { useSuivi } from './useSuivi.ts'
 import type { DonneesSuivi } from './useSuivi.ts'
-import { ZoneAisance, ZoneAutonomie, ZoneCalibration } from './mesures/Zones.tsx'
+import { ZoneAisance, ZoneAutonomie, ZoneCalibration, ZoneRetention } from './mesures/Zones.tsx'
 import { ZoneAFaire, ZoneCout, ZoneDecisions, ZoneErreurs } from './Zones.tsx'
 import { CarteZone } from '@janus/ui'
 
@@ -47,6 +47,7 @@ function Corps({
           }}
           surLever={suivi.lever}
         />
+        <ZoneRetention donnees={donnees.mesures.retention} />
         <ZoneCalibration donnees={donnees.mesures.calibration} />
         <ZoneCout cout={donnees.cout_ia} />
       </div>

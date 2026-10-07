@@ -123,4 +123,31 @@ describe('tableau de bord de la démo, avec la graine', () => {
     expect(court.mesures.autonomie).toEqual(long.mesures.autonomie)
     expect(court.mesures.aisance).toEqual(long.mesures.aisance)
   })
+
+  it('mesure la rétention : questions et vérifications de la graine, puis une carte notée', async () => {
+    const banc = monterDemo()
+    const avant = await lire(banc)
+    expect(avant.mesures.retention.map(({ debut }) => debut)).toEqual([
+      '2026-09-14',
+      '2026-09-21',
+      '2026-09-28',
+      '2026-10-05',
+    ])
+    expect(avant.mesures.retention.every(({ cartes }) => cartes.total === 0)).toBe(true)
+
+    const { nouvelles } = await banc.transport.appeler(ROUTES['GET /cartes/dues'], {})
+    const carte = nouvelles[0]
+    if (carte === undefined) throw new Error('Aucune carte')
+    await banc.transport.appeler(ROUTES['POST /cartes/:id/note'], {
+      params: { id: carte.id },
+      corps: { id: nouvelId(7), note: 'a_revoir' },
+    })
+    await banc.transport.appeler(ROUTES['POST /cartes/:id/note'], {
+      params: { id: carte.id },
+      corps: { id: nouvelId(8), note: 'bien' },
+    })
+
+    const apres = await lire(banc)
+    expect(apres.mesures.retention.at(-1)?.cartes).toEqual({ reussis: 1, total: 2 })
+  })
 })

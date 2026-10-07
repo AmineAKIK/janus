@@ -2,7 +2,7 @@ import { render, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import type { DonneesSuivi } from '../useSuivi.ts'
 import { libelleSemaine, texteAideMoyenne, texteMeilleur, texteReussites } from './textes.ts'
-import { ZoneAisance, ZoneAutonomie, ZoneCalibration } from './Zones.tsx'
+import { ZoneAisance, ZoneAutonomie, ZoneCalibration, ZoneRetention } from './Zones.tsx'
 
 type Autonomie = DonneesSuivi['mesures']['autonomie']
 
@@ -64,6 +64,37 @@ describe('Autonomie', () => {
     )
     expect(screen.getByText('Pas encore d’exercice de pratique.')).toBeVisible()
     expect(screen.queryByRole('progressbar')).toBeNull()
+  })
+})
+
+describe('Rétention', () => {
+  it('montre un tableau par semaine, sans total global', () => {
+    render(
+      <ZoneRetention
+        donnees={[
+          {
+            debut: '2026-09-16',
+            cartes: { reussis: 8, total: 10 },
+            questions: { reussis: 4, total: 6 },
+            verifications: { reussis: 1, total: 1 },
+          },
+          {
+            debut: '2026-09-23',
+            cartes: { reussis: 0, total: 0 },
+            questions: { reussis: 0, total: 0 },
+            verifications: { reussis: 0, total: 0 },
+          },
+        ]}
+      />,
+    )
+
+    expect(screen.getByText('Mesures par semaine, sans agrégat global')).toBeVisible()
+    const lignes = screen.getAllByRole('row').map((ligne) => ligne.textContent)
+    expect(lignes).toEqual([
+      'Semaine duCartesQuestions de débutVérifications',
+      '16 sept.10 · 80 %4 sur 61 sur 1',
+      '23 sept.–––',
+    ])
   })
 })
 

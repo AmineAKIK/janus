@@ -58,6 +58,7 @@ export const ROUTES_CARTES_DEMO = [
       enregistrer(magasin, corps.id, [])
       magasin.ecrire((etat) => ({
         ...etat,
+        revuesCartes: [...etat.revuesCartes, { date: maintenant, note: corps.note }],
         cartes: {
           ...etat.cartes,
           [params.id]: noterCarte(

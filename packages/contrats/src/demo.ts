@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { ResultatVerification } from './api/apprentissage.ts'
 import { IdeeJournal, NoteJournal } from './api/suivi.ts'
-import { Confiance, Niveau, TypeDifferee, TypeVerification } from './enums.ts'
+import { Confiance, Niveau, NoteCarte, TypeDifferee, TypeVerification } from './enums.ts'
 import { Fait, InstantUtc } from './faits.ts'
 import { CodeBloc, CorrectionRecue, EtatPage, IdUuid, Identifiant } from './pont.ts'
 import { Reglages } from './reglages.ts'
@@ -126,6 +126,8 @@ export const EtatDemo = z.strictObject({
       }),
     )
     .default({}),
+  /** Chaque carte notée, dans l'ordre : de quoi mesurer la rétention par semaine. */
+  revuesCartes: z.array(z.strictObject({ date: InstantUtc, note: NoteCarte })).default([]),
   verifications: z.record(IdUuid, VerificationDemo).default({}),
   /** Les notes d'Amine sur les lignes du journal, par identifiant de note. */
   notesJournal: z.record(IdUuid, NoteJournal).default({}),

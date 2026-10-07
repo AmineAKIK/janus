@@ -7,6 +7,9 @@ import {
   pourcent,
   TEXTES_MESURES as T,
   texteAideMoyenne,
+  texteCartes,
+  texteLundi,
+  texteSur,
   texteErreursSures,
   texteMeilleur,
   textePhraseAutonomie,
@@ -43,6 +46,34 @@ export function ZoneAutonomie({ donnees }: { readonly donnees: Mesures['autonomi
           {aide !== null && <p>{texteAideMoyenne(aide)}</p>}
         </>
       )}
+    </CarteZone>
+  )
+}
+
+export function ZoneRetention({ donnees }: { readonly donnees: Mesures['retention'] }) {
+  return (
+    <CarteZone titre={T.retention}>
+      <p className={`${styles['complement'] ?? ''} texte-petit-14`}>{T.retentionSousTitre}</p>
+      <table className={styles['tableau']}>
+        <thead>
+          <tr>
+            <th scope="col">{T.semaine}</th>
+            <th scope="col">{T.cartes}</th>
+            <th scope="col">{T.questions}</th>
+            <th scope="col">{T.verifications}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {donnees.map(({ debut, cartes, questions, verifications }) => (
+            <tr key={debut}>
+              <th scope="row">{texteLundi(debut)}</th>
+              <td>{texteCartes(cartes.reussis, cartes.total)}</td>
+              <td>{texteSur(questions.reussis, questions.total)}</td>
+              <td>{texteSur(verifications.reussis, verifications.total)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </CarteZone>
   )
 }
