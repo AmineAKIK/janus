@@ -85,6 +85,11 @@ export const Fait = z.discriminatedUnion('type', [
   }),
   z.strictObject({
     ...commun,
+    type: z.literal('correction_contestee'),
+    correction: Identifiant,
+  }),
+  z.strictObject({
+    ...commun,
     type: z.literal('correction_tranchee'),
     correction: Identifiant,
     compte: z.boolean(),

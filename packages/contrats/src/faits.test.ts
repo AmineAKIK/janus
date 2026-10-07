@@ -28,6 +28,20 @@ const VALIDES: Record<string, unknown> = {
     confiance: 'sur',
     erreursIa: ['E1'],
   },
+  correction_contestee: { ...commun, type: 'correction_contestee', correction: 'c1' },
+  correction_tranchee: {
+    ...commun,
+    type: 'correction_tranchee',
+    correction: 'c1',
+    compte: true,
+  },
+  erreur_ia_tranchee: {
+    ...commun,
+    type: 'erreur_ia_tranchee',
+    correction: 'c1',
+    erreur: 'E1',
+    decision: 'rejetee',
+  },
   verification_terminee: {
     ...commun,
     type: 'verification_terminee',
@@ -51,8 +65,8 @@ describe('Fait', () => {
     expect(Fait.safeParse(fait).success).toBe(true)
   })
 
-  it('couvre les onze types de fait', () => {
-    expect(Object.keys(VALIDES)).toHaveLength(11)
+  it('couvre les quatorze types de fait', () => {
+    expect(Object.keys(VALIDES)).toHaveLength(14)
   })
 
   it.each([

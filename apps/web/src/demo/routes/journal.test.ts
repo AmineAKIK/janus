@@ -67,6 +67,57 @@ describe('journal de la démo, avec la graine', () => {
   })
 })
 
+describe('contestations dans le journal de la démo', () => {
+  const demanderCorrection = (
+    banc: ReturnType<typeof monterDemo>,
+    id: string,
+    relance = '',
+    conteste = false,
+  ) =>
+    banc.transport.appeler(ROUTES['POST /corrections'], {
+      corps: {
+        id,
+        serie: 'restitution',
+        tentative: 1,
+        question: 'R1',
+        reponse: 'Réponse attendue : Que contient une fiche . Et voilà mes propres mots.',
+        confiance: 'sur',
+        relance,
+        support: { colle: false, retour_cours: false },
+        bloc: 'B08',
+        version: 1,
+        ...(conteste ? { conteste: true } : {}),
+      },
+    })
+
+  it('filtre une contestation et la marque en attente jusqu’au tranchage', async () => {
+    const banc = monterDemo({ delaiCorrectionMs: 0 })
+    const correction = await demanderCorrection(banc, nouvelId(30))
+    await demanderCorrection(
+      banc,
+      nouvelId(31),
+      'Je conteste ta correction : mon raisonnement suit bien le cours.',
+      true,
+    )
+
+    const avant = await lire(banc, { type: 'contestation' })
+    expect(avant.entrees).toHaveLength(1)
+    expect(avant.entrees[0]).toMatchObject({
+      bloc: 'B08',
+      type: 'contestation',
+      contestation_en_attente: true,
+    })
+
+    await banc.transport.appeler(ROUTES['POST /corrections/:id/trancher'], {
+      params: { id: correction.id },
+      corps: { id: nouvelId(32), compte: true },
+    })
+
+    const apres = await lire(banc, { type: 'contestation' })
+    expect(apres.entrees[0]?.contestation_en_attente).toBe(false)
+  })
+})
+
 describe('notes et idées du journal de la démo', () => {
   const ecrire = async (banc: ReturnType<typeof monterDemo>, entree: string, texte: string) => {
     const id = nouvelId(1)

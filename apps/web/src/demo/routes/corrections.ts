@@ -99,16 +99,26 @@ export function routesCorrectionsDemo({
         )
       }
 
+      const precedentes = faitsDuBloc(magasin.lire(), manifeste.bloc).filter(
+        (fait) =>
+          fait.type === 'correction' && fait.serie === serie && fait.question === question.id,
+      )
+      const contestee = corps.conteste === true ? precedentes.at(-1) : undefined
+      if (corps.conteste === true && contestee === undefined) {
+        throw probleme(
+          400,
+          'donnees_invalides',
+          'Contestation invalide',
+          'Aucune correction précédente à contester.',
+        )
+      }
+
       await attendre(delaiCorrectionMs)
       const correction = corrigerSimule(corps.reponse, question.attendu)
       if (correction.refusee) {
         throw probleme(400, 'donnees_invalides', 'Réponse refusée', correction.message)
       }
 
-      const precedentes = faitsDuBloc(magasin.lire(), manifeste.bloc).filter(
-        (fait) =>
-          fait.type === 'correction' && fait.serie === serie && fait.question === question.id,
-      )
       const dernierPremierTour = precedentes.findLastIndex(
         (fait) => fait.type === 'correction' && fait.tour === 1,
       )
@@ -143,11 +153,23 @@ export function routesCorrectionsDemo({
         tour === 1 &&
         (rang === -1 ? premiersTours.length : rang) % reglages.echantillonControle === 0
       if (!dejaRecu(magasin.lire(), corps.id)) {
+        const date = horloge.maintenant()
         enregistrer(magasin, corps.id, [
+          ...(contestee === undefined
+            ? []
+            : [
+                {
+                  id: `${corps.id}:contestation`,
+                  bloc: manifeste.bloc,
+                  date,
+                  type: 'correction_contestee' as const,
+                  correction: contestee.id,
+                },
+              ]),
           {
             id: corps.id,
             bloc: manifeste.bloc,
-            date: horloge.maintenant(),
+            date,
             type: 'correction',
             serie,
             question: question.id,

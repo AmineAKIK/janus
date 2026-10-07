@@ -54,6 +54,44 @@ describe('POST /corrections de la démo', () => {
     expect(support).toMatchObject({ compte: false, raison_non_compte: 'avec_support' })
   })
 
+  it('persiste une contestation sur la correction immédiatement précédente', async () => {
+    const { transport, magasin } = monterDemo({ delaiCorrectionMs: 0 })
+    const premiere = await transport.appeler(ROUTES['POST /corrections'], { corps: demande(1) })
+
+    const relance = await transport.appeler(ROUTES['POST /corrections'], {
+      corps: demande(2, {
+        relance: 'Je conteste ta correction : le mécanisme est correct.',
+        conteste: true,
+      }),
+    })
+
+    expect(relance.tour).toBe(2)
+    expect(
+      magasin
+        .lire()
+        .faits.find(
+          (fait) => fait.type === 'correction_contestee' && fait.correction === premiere.id,
+        ),
+    ).toMatchObject({
+      id: `${ID(2)}:contestation`,
+      bloc: 'B08',
+      correction: premiere.id,
+    })
+  })
+
+  it('refuse une contestation sans correction précédente', async () => {
+    const { transport } = monterDemo({ delaiCorrectionMs: 0 })
+
+    await expect(
+      transport.appeler(ROUTES['POST /corrections'], {
+        corps: demande(1, {
+          relance: 'Je conteste ta correction : elle ne correspond pas au cours.',
+          conteste: true,
+        }),
+      }),
+    ).rejects.toMatchObject({ status: 400, code: 'donnees_invalides' })
+  })
+
   it('rend les erreurs critiques de la question quand la réponse n’est pas solide', async () => {
     const { transport } = monterDemo()
 

@@ -56,8 +56,15 @@ export const ROUTES_JOURNAL_DEMO = [
     return {
       modules: importes.map(({ code, titre }) => ({ id: code, titre })),
       entrees: page.lignes.map((ligne): LigneJournal => ({
-        ...ligne,
+        id: ligne.id,
+        date: ligne.date,
+        bloc: ligne.bloc,
+        type: ligne.type,
+        resume: ligne.resume,
         detail: [...ligne.detail],
+        ...(ligne.contestationEnAttente === undefined
+          ? {}
+          : { contestation_en_attente: ligne.contestationEnAttente }),
         note: Object.values(etat.notesJournal).find(({ entree }) => entree === ligne.id) ?? null,
       })),
       suivant: page.suivant,
