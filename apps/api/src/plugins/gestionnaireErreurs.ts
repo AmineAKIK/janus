@@ -1,6 +1,6 @@
 import type { FastifyError, FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { hasZodFastifySchemaValidationErrors } from 'fastify-type-provider-zod'
-import { ErreurMetier, Introuvable, versProbleme } from '../erreurs.ts'
+import { ErreurMetier, Introuvable, TropDeTentatives, versProbleme } from '../erreurs.ts'
 import type { Dependances } from '../types.ts'
 
 const TYPE_PROBLEME = 'application/problem+json'
@@ -36,6 +36,9 @@ export function gestionnaireErreurs(app: FastifyInstance, { observer }: Dependan
   app.setErrorHandler((erreur: FastifyError | Error, requete: FastifyRequest, reponse) => {
     observer?.('gestionnaire_erreurs')
     if (erreur instanceof ErreurMetier) {
+      if (erreur instanceof TropDeTentatives) {
+        void reponse.header('retry-after', String(erreur.reessayerDansS))
+      }
       return envoyer(reponse, [erreur.status, erreur.code, erreur.titre, erreur.message])
     }
     if (hasZodFastifySchemaValidationErrors(erreur)) {

@@ -4,7 +4,7 @@ import etag from '@fastify/etag'
 import helmet from '@fastify/helmet'
 import rateLimit from '@fastify/rate-limit'
 import type { FastifyInstance } from 'fastify'
-import type { Dependances, NomMiddleware } from '../types.ts'
+import type { Dependances, NomMiddleware, ResoudreSession } from '../types.ts'
 import { authentification } from './authentification.ts'
 import { gestionnaireErreurs } from './gestionnaireErreurs.ts'
 import { identifiantRequete } from './identifiantRequete.ts'
@@ -31,7 +31,11 @@ function passage(app: FastifyInstance, nom: NomMiddleware, { observer }: Dependa
  * des passages (les crochets de même étape de cycle de vie Fastify s'exécutent dans l'ordre où ils
  * sont ajoutés, `await register` charge chaque plugin avant la ligne suivante).
  */
-export async function declarerMiddlewares(app: FastifyInstance, dependances: Dependances) {
+export async function declarerMiddlewares(
+  app: FastifyInstance,
+  dependances: Dependances,
+  resoudreSession: ResoudreSession,
+) {
   // 1. Identifiant de requête et journal pino.
   identifiantRequete(app, dependances)
   // 2. Limite de corps et délai.
@@ -51,9 +55,9 @@ export async function declarerMiddlewares(app: FastifyInstance, dependances: Dep
     keyGenerator: (requete) => requete.ip,
   })
   passage(app, 'limite_debit', dependances)
-  // 6. Cookie et session (vide jusqu'à PR-082).
+  // 6. Cookie et session.
   await app.register(cookie)
-  session(app, dependances)
+  session(app, dependances, resoudreSession)
   // 7. Origine des écritures.
   origine(app, dependances)
   // 8. Authentification.

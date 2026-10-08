@@ -247,7 +247,7 @@ describe('6. cookie et session', () => {
       headers: { cookie: 'janus=faux' },
     })
 
-    expect(reponse.json()).toEqual({ utilisateur: null })
+    expect(reponse.json()).toEqual({ utilisateur: null, sessionId: null })
   })
 })
 

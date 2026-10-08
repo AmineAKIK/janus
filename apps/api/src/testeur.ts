@@ -1,6 +1,8 @@
 import type { FastifyInstance } from 'fastify'
+import { creerBase } from './base/base.ts'
 import type { Base } from './base/base.ts'
 import { lireConfig } from './config.ts'
+import type { Hacheur } from './domaines/auth/composition.ts'
 import type { Config } from './config.ts'
 import type { Horloge } from './horloge.ts'
 import { creerServeur } from './serveur.ts'
@@ -12,6 +14,7 @@ export const ORIGINE_TEST = 'https://appli.test'
 
 export const ENVIRONNEMENT_TEST = {
   DATABASE_URL: 'postgres://janus@localhost/janus_test',
+  DATABASE_URL_PROPRIETAIRE: 'postgres://janus@localhost/janus_test',
   ORIGINE_APPLI: ORIGINE_TEST,
   COOKIE_SECURE: 'true',
   VAPID_PUBLIC_KEY: 'publique',
@@ -27,7 +30,9 @@ export function configDeTest(surcharge: Readonly<Record<string, string>> = {}): 
 /** Une base qui répond (ou non) au `SELECT 1`. */
 export function baseFactice(repond = true): Base & { readonly requetes: string[] } {
   const requetes: string[] = []
+  // Une vraie connexion paresseuse qui ne s'ouvre jamais : seules les requêtes factices répondent.
   return {
+    ...creerBase('postgres://janus@localhost/janus_factice'),
     requetes,
     requete: (texte) => {
       requetes.push(texte)
@@ -63,20 +68,29 @@ export interface ServeurDeTest {
 
 /** Un serveur complet, prêt pour `app.inject`, qui note les passages des middlewares et le journal. */
 export async function serveurDeTest(
-  options: { readonly baseRepond?: boolean; readonly config?: Config } = {},
+  options: {
+    readonly baseRepond?: boolean
+    readonly config?: Config
+    readonly base?: Base
+    readonly proprietaire?: Base
+    readonly hacheur?: Hacheur
+  } = {},
 ): Promise<ServeurDeTest> {
   const passages: NomMiddleware[] = []
   const journal: Record<string, unknown>[] = []
-  const base = baseFactice(options.baseRepond ?? true)
+  const factice = baseFactice(options.baseRepond ?? true)
+  const base = options.base ?? factice
   const horloge = horlogeFausse()
   const app = await creerServeur(
     {
       config: options.config ?? configDeTest(),
       horloge,
       base,
+      proprietaire: options.proprietaire ?? base,
       observer: (nom) => passages.push(nom),
     },
     {
+      ...(options.hacheur === undefined ? {} : { hacheur: options.hacheur }),
       fluxJournal: {
         write: (ligne) => {
           const lue: unknown = JSON.parse(ligne)
@@ -85,5 +99,5 @@ export async function serveurDeTest(
       },
     },
   )
-  return { app, passages, journal, base, horloge }
+  return { app, passages, journal, base: factice, horloge }
 }

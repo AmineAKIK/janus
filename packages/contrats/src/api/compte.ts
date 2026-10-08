@@ -32,7 +32,12 @@ export const ROUTES_COMPTE = {
   'POST /session': {
     methode: 'POST',
     chemin: '/session',
-    corps: z.strictObject({ nom_utilisateur: Texte, mot_de_passe: z.string().min(1) }),
+    corps: z.strictObject({
+      nom_utilisateur: Texte,
+      mot_de_passe: z.string().min(1),
+      /** « Rester connecté » : cookie de 30 jours au lieu d'un cookie de session. Faux si absent. */
+      rester_connecte: z.boolean().optional(),
+    }),
     reponse: Moi,
     succes: 200,
   },

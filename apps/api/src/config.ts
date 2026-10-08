@@ -4,7 +4,10 @@ const Booleen = z.enum(['true', 'false']).transform((valeur) => valeur === 'true
 
 /** Les variables d'environnement de l'API, lues et validées une seule fois au démarrage. */
 export const SchemaConfig = z.object({
+  /** La connexion de l'API : le rôle `janus_app`, sans UPDATE ni DELETE sur les faits. */
   DATABASE_URL: z.string().min(1),
+  /** Le rôle propriétaire : seule la suppression d'un compte l'utilise. */
+  DATABASE_URL_PROPRIETAIRE: z.string().min(1),
   /** L'origine exacte de l'appli (`https://exemple.fr`), la seule autorisée à écrire. */
   ORIGINE_APPLI: z.url(),
   COOKIE_SECURE: Booleen,
@@ -20,9 +23,11 @@ export const SchemaConfig = z.object({
 export type Config = z.infer<typeof SchemaConfig>
 
 export class ErreurConfig extends Error {
-  constructor(readonly problemes: readonly string[]) {
+  readonly problemes: readonly string[]
+  constructor(problemes: readonly string[]) {
     super(`Configuration invalide :\n${problemes.map((probleme) => `- ${probleme}`).join('\n')}`)
     this.name = 'ErreurConfig'
+    this.problemes = problemes
   }
 }
 
