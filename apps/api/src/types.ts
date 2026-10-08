@@ -23,6 +23,15 @@ export const NOMS_MIDDLEWARES = [
 ] as const
 export type NomMiddleware = (typeof NOMS_MIDDLEWARES)[number]
 
+/** Signale une erreur inattendue au suivi d'erreurs ; absent, rien n'est envoyé. */
+export type SignalerErreur = (
+  erreur: Error,
+  requete: {
+    readonly method: string
+    readonly routeOptions: { readonly url?: string | undefined }
+  },
+) => void
+
 /** Ce que l'API reçoit de l'extérieur : jamais lu dans un global, toujours injecté. */
 export interface Dependances {
   readonly config: Config
@@ -36,6 +45,8 @@ export interface Dependances {
   readonly envoyeur?: Envoyeur
   /** Un nombre dans [0, 1[ : le tirage de l'échantillon de contrôle (`Math.random` en production). */
   readonly hasard?: () => number
+  /** Le suivi d'erreurs facultatif (`SENTRY_DSN`). */
+  readonly signalerErreur?: SignalerErreur
   /** Appelé par chaque middleware quand il passe sur une requête : sert aux tests d'ordre. */
   readonly observer?: (nom: NomMiddleware) => void
 }

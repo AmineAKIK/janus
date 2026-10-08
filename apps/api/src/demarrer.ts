@@ -1,8 +1,11 @@
+import { randomUUID } from 'node:crypto'
+import { envoyerEnveloppe } from './adaptateurs/suiviErreurs/envoyeurHttp.ts'
 import { creerBase } from './base/base.ts'
 import { migrer } from './base/migrer.ts'
 import { poserMotDePasseApplication } from './base/roleApplication.ts'
 import { ErreurConfig, lireConfig } from './config.ts'
 import { horlogeSysteme } from './horloge.ts'
+import { creerSuiviErreurs } from './plugins/suiviErreurs.ts'
 import { creerServeur } from './serveur.ts'
 import { demarrerLesTaches } from './taches/rappels.ts'
 
@@ -15,7 +18,22 @@ try {
   await poserMotDePasseApplication(config.DATABASE_URL_PROPRIETAIRE, config.DATABASE_URL)
   const base = creerBase(config.DATABASE_URL)
   const proprietaire = creerBase(config.DATABASE_URL_PROPRIETAIRE)
-  const app = await creerServeur({ config, horloge: horlogeSysteme, base, proprietaire })
+  const signalerErreur = creerSuiviErreurs({
+    dsn: config.SENTRY_DSN,
+    horloge: horlogeSysteme,
+    envoyer: envoyerEnveloppe,
+    identifiant: () => randomUUID().replaceAll('-', ''),
+    echec: (cause) => {
+      process.stderr.write(`Suivi d'erreurs indisponible : ${String(cause)}\n`)
+    },
+  })
+  const app = await creerServeur({
+    config,
+    horloge: horlogeSysteme,
+    base,
+    proprietaire,
+    ...(signalerErreur === undefined ? {} : { signalerErreur }),
+  })
   await app.listen({ host: '0.0.0.0', port: Number(process.env['PORT'] ?? PORT_PAR_DEFAUT) })
   const taches = await demarrerLesTaches({
     proprietaire,

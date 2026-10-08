@@ -10,11 +10,20 @@ import { creerBoiteEnvoi, creerVerrouNavigateur } from './envoi/boiteEnvoi.ts'
 import { FournisseurEnvoi } from './envoi/FournisseurEnvoi.tsx'
 import { ouvrirStockageIndexedDB, creerStockageParesseux } from './envoi/stockageEnvoi.ts'
 import { instantReel } from './demo/horlogeDemo.ts'
+import { cibleFenetre, suivreLesErreurs } from './erreurs.ts'
 import { creerMiseAJour } from './pwa/miseAJour.ts'
 import { MiseAJour } from './pwa/MiseAJour.tsx'
 import { creerRouteur } from './routes/arbre.tsx'
 import { allerALaConnexion } from './routes/connexion.ts'
 import { creerHistorique, modeHistorique } from './routes/historique.ts'
+
+suivreLesErreurs({
+  dsn: import.meta.env.VITE_SENTRY_DSN,
+  cible: cibleFenetre(window),
+  maintenant: instantReel,
+  envoyer: (url, corps) => navigator.sendBeacon(url, corps),
+  identifiant: () => crypto.randomUUID().replaceAll('-', ''),
+})
 
 const racine = document.getElementById('racine')
 if (racine === null) {

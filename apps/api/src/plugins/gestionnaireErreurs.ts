@@ -29,7 +29,10 @@ function aUnStatut(
 }
 
 /** Le seul endroit qui traduit une erreur en réponse : `application/problem+json`, sans détail interne en 500. */
-export function gestionnaireErreurs(app: FastifyInstance, { observer }: Dependances): void {
+export function gestionnaireErreurs(
+  app: FastifyInstance,
+  { observer, signalerErreur }: Dependances,
+): void {
   app.setNotFoundHandler(() => {
     throw new Introuvable('Cette adresse n’existe pas.')
   })
@@ -92,6 +95,7 @@ export function gestionnaireErreurs(app: FastifyInstance, { observer }: Dependan
     }
     // Inattendue : aucun détail dans la réponse, la pile dans le journal.
     requete.log.error({ err: erreur }, 'erreur inattendue')
+    signalerErreur?.(erreur, requete)
     return envoyer(reponse, [500, 'erreur_interne', 'Erreur interne', 'Une erreur est survenue.'])
   })
 }

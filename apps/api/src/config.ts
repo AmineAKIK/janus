@@ -30,6 +30,8 @@ export const SchemaConfig = z.object({
   VAPID_PUBLIC_KEY: z.string().min(1),
   VAPID_PRIVATE_KEY: z.string().min(1),
   VAPID_SUJET: z.string().min(1),
+  /** Facultative : l'adresse (DSN) d'un Sentry ou d'un GlitchTip. Sans elle, aucune erreur n'est envoyée. */
+  SENTRY_DSN: z.preprocess((valeur) => (valeur === '' ? undefined : valeur), z.url().optional()),
   NIVEAU_JOURNAL: z
     .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
     .default('info'),

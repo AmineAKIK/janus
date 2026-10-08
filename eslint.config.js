@@ -142,12 +142,13 @@ export default defineConfig(
   }, // Aucun composant n'appelle `fetch` : tout passe par le `Transport`, dont `transportHttp.ts` est le seul HTTP.
   {
     files: ['**/*.{js,ts,tsx}'],
-    // Côté API, seul le client DeepSeek sort sur le réseau.
+    // Côté API, seuls le client DeepSeek et l'envoi du suivi d'erreurs sortent sur le réseau.
     ignores: [
       'apps/web/src/api/transportHttp.ts',
       // Le banc de la CI parle à l'API réelle avec un cookie de session, hors navigateur.
       'apps/web/src/api/contratHttp.test.ts',
       'apps/api/src/adaptateurs/correcteur/deepseek.ts',
+      'apps/api/src/adaptateurs/suiviErreurs/envoyeurHttp.ts',
     ],
     rules: {
       'no-restricted-globals': [
