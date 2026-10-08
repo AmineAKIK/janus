@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import { creerBase } from './base/base.ts'
 import type { Base } from './base/base.ts'
 import { lireConfig } from './config.ts'
+import type { Envoyeur } from './adaptateurs/push/envoyeur.ts'
 import type { Correcteur } from './adaptateurs/correcteur/correcteur.ts'
 import type { Hacheur } from './domaines/auth/composition.ts'
 import type { Config } from './config.ts'
@@ -81,6 +82,7 @@ export async function serveurDeTest(
     readonly proprietaire?: Base
     readonly hacheur?: Hacheur
     readonly correcteur?: Correcteur
+    readonly envoyeur?: Envoyeur
     readonly hasard?: () => number
   } = {},
 ): Promise<ServeurDeTest> {
@@ -96,6 +98,7 @@ export async function serveurDeTest(
       base,
       proprietaire: options.proprietaire ?? base,
       ...(options.correcteur === undefined ? {} : { correcteur: options.correcteur }),
+      ...(options.envoyeur === undefined ? {} : { envoyeur: options.envoyeur }),
       ...(options.hasard === undefined ? {} : { hasard: options.hasard }),
       observer: (nom) => passages.push(nom),
     },

@@ -99,6 +99,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('authentification contre Postgre
         id: amineId,
         nom_utilisateur: 'amine',
         fuseau: 'Europe/Paris',
+        cle_vapid: 'publique',
       })
       const cookie = reponse.cookies.find(({ name }) => name === 'janus_session')
       expect(cookie).toMatchObject({ httpOnly: true, secure: true, sameSite: 'Lax', path: '/' })
