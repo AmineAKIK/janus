@@ -119,13 +119,16 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
 
       it('ignore un doublon : même identifiant, même contenu', async () => {
         const message = { ...commun(), type: 'etape.vue', etape: 'ET2' }
-        await envoyer(message)
+        const premiere = await envoyer(message)
         const avant = await compter('etape_vue')
 
         const reponse = await envoyer(message)
 
         expect(reponse.statusCode).toBe(200)
-        expect(reponse.json()).toEqual({ doublon: true, statut: null })
+        expect(reponse.json()).toEqual({
+          doublon: true,
+          statut: premiere.json<{ statut: unknown }>().statut,
+        })
         expect(await compter('etape_vue')).toBe(avant)
       })
 

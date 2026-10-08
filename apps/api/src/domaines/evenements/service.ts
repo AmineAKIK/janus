@@ -81,7 +81,10 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
           if (existant.userId !== userId || existant.empreinte !== empreinte) {
             throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
           }
-          return { doublon: true, statut: null }
+          // Le doublon rend le statut que la première réception a rendu (il se recalcule à l'identique).
+          if (!enregistrement.changeLeStatut) return { doublon: true, statut: null }
+          const actuel = await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant })
+          return { doublon: true, statut: versStatutBloc(actuel) }
         }
         await depot.ajouterEvenement(tx, {
           id: message.id,
