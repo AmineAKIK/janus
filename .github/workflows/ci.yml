@@ -70,3 +70,11 @@ jobs:
           pnpm --filter @janus/web exec playwright install --with-deps chromium
           pnpm --filter @janus/web e2e:api
       - run: pnpm build
+      # GitHub Pages reste en démo (build ci-dessus). Le VPS est en http, avec des chemins propres.
+      - name: Build du VPS (http, historique par chemins)
+        run: pnpm --filter @janus/web exec vite build --outDir dist-vps
+        env:
+          VITE_BASE: /
+          VITE_TRANSPORT: http
+          VITE_HISTORIQUE: chemins
+          VITE_API: /api

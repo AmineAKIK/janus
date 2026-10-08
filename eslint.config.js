@@ -44,6 +44,7 @@ export default defineConfig(
     ignores: [
       '**/dist/**',
       '**/dist-api/**',
+      '**/dist-vps/**',
       '**/coverage/**',
       '**/captures/**',
       '**/node_modules/**',
