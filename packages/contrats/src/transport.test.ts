@@ -41,6 +41,7 @@ describe('types des routes', () => {
       id: string
       nom_utilisateur: string
       fuseau: string
+      cle_vapid?: string | undefined
     }>()
     expectTypeOf<SortieRoute<typeof SUPPRIMER>>().toEqualTypeOf<null>()
   })
