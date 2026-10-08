@@ -35,6 +35,19 @@ export function routesRevisions(controleur: ControleurRevisions): FastifyPluginA
       },
       controleur.noterCarte,
     )
+    app.get(
+      ROUTES['GET /verifications/:id'].chemin,
+      { schema: schemaDe(ROUTES['GET /verifications/:id']) },
+      controleur.verification,
+    )
+    app.post(
+      ROUTES['POST /verifications/:id/reporter'].chemin,
+      {
+        schema: schemaDe(ROUTES['POST /verifications/:id/reporter']),
+        config: { identifiant: true },
+      },
+      controleur.reporterVerification,
+    )
     return Promise.resolve()
   }
 }
