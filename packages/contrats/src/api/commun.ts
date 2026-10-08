@@ -17,6 +17,8 @@ export const CodeProbleme = z.enum([
   'contenu_different',
   'trop_de_requetes',
   'budget_atteint',
+  'precondition_echouee',
+  'delai_depasse',
   'erreur_interne',
 ])
 export type CodeProbleme = z.infer<typeof CodeProbleme>
