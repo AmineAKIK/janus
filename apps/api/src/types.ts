@@ -1,5 +1,6 @@
 import type { Config } from './config.ts'
 import type { Base } from './base/base.ts'
+import type { Correcteur } from './adaptateurs/correcteur/correcteur.ts'
 import type { Horloge } from './horloge.ts'
 
 /** Les noms des middlewares, dans l'ordre exact de la chaîne (`plugins/ordre.ts`). */
@@ -27,6 +28,10 @@ export interface Dependances {
   readonly base: Base
   /** La connexion du rôle propriétaire : seule la suppression d'un compte s'en sert. */
   readonly proprietaire: Base
+  /** Le correcteur : absent, la clé DeepSeek de la configuration en crée un, sans elle la correction est indisponible. */
+  readonly correcteur?: Correcteur
+  /** Un nombre dans [0, 1[ : le tirage de l'échantillon de contrôle (`Math.random` en production). */
+  readonly hasard?: () => number
   /** Appelé par chaque middleware quand il passe sur une requête : sert aux tests d'ordre. */
   readonly observer?: (nom: NomMiddleware) => void
 }

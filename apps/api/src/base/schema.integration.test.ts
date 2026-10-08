@@ -58,7 +58,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
       const { rows } = await base.pool.query<{ n: string }>(
         'SELECT count(*) AS n FROM drizzle.__drizzle_migrations',
       )
-      expect(Number(rows[0]?.n)).toBe(10)
+      expect(Number(rows[0]?.n)).toBe(11)
     })
 
     it('crée les tables du catalogue, des utilisateurs et des faits', async () => {
@@ -71,6 +71,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
         'budget_ia',
         'cartes',
         'corrections',
+        'corrections_echecs',
         'decisions_erreurs',
         'echeances',
         'etats_page',

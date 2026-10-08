@@ -177,6 +177,7 @@ async function effacerLesDonnees(tx: Tx, userId: string): Promise<void> {
   // Ce qui référence un autre fait d'abord : les décisions pointent des corrections.
   await tx.delete(t.decisionsErreurs).where(eq(t.decisionsErreurs.userId, userId))
   const parUtilisateur = [
+    t.correctionsEchecs,
     t.corrections,
     t.evenements,
     t.statutsForces,
