@@ -15,6 +15,12 @@ export function creerControleurRevisions(service: ServiceRevisions) {
     cartesDues: (requete: FastifyRequest) => service.cartesDues(utilisateurDe(requete)),
     verification: (requete: FastifyRequest<{ Params: { id: string } }>) =>
       service.verification(utilisateurDe(requete), requete.params.id),
+    repondre: (
+      requete: FastifyRequest<{
+        Params: { id: string }
+        Body: Parameters<ServiceRevisions['repondre']>[2]
+      }>,
+    ) => service.repondre(utilisateurDe(requete), requete.params.id, requete.body),
     reporterVerification: (
       requete: FastifyRequest<{ Params: { id: string }; Body: { id: string } }>,
     ) => service.reporterVerification(utilisateurDe(requete), requete.params.id, requete.body.id),

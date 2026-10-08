@@ -2,6 +2,7 @@ import type { Config } from './config.ts'
 import type { Base } from './base/base.ts'
 import type { Correcteur } from './adaptateurs/correcteur/correcteur.ts'
 import type { Horloge } from './horloge.ts'
+import type { CorrectionRecue } from '@janus/contrats'
 
 /** Les noms des middlewares, dans l'ordre exact de la chaîne (`plugins/ordre.ts`). */
 export const NOMS_MIDDLEWARES = [
@@ -61,3 +62,16 @@ declare module 'fastify' {
     identifiant?: boolean
   }
 }
+
+/** La correction d'une partie de vérification (explication, transfert), fournie par le domaine de correction. */
+export type CorrigerPartie = (
+  userId: string,
+  demande: {
+    readonly id: string
+    readonly verification: string
+    readonly question: string
+    readonly reponse: string
+    readonly confiance: 'sur' | 'hesitant' | 'hasard'
+    readonly support: { readonly colle: boolean; readonly retour_cours: boolean }
+  },
+) => Promise<CorrectionRecue>

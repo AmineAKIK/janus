@@ -36,7 +36,8 @@ export async function creerServeur(
   await app.register(auth.routes, { prefix: '/api' })
   await app.register(monterCatalogue(dependances), { prefix: '/api' })
   await app.register(monterEvenements(dependances), { prefix: '/api' })
-  await app.register(monterCorrection(dependances), { prefix: '/api' })
-  await app.register(monterRevisions(dependances), { prefix: '/api' })
+  const correction = monterCorrection(dependances)
+  await app.register(correction.routes, { prefix: '/api' })
+  await app.register(monterRevisions(dependances, correction.corrigerPartie), { prefix: '/api' })
   return app
 }

@@ -53,6 +53,8 @@ export interface DemandeCorrection {
   relance: string
   support: { colle: boolean; retour_cours: boolean }
   conteste?: boolean | undefined
+  /** Pour la série `verification` : la vérification tirée, qui donne le bloc (jamais envoyée par la page). */
+  verification?: string | undefined
   bloc?: string | undefined
   version?: number | undefined
 }
@@ -174,7 +176,7 @@ export function creerServiceCorrection({
      * validation, enregistrement, recalcul du bloc.
      */
     async corriger(userId: string, demande: DemandeCorrection): Promise<CorrectionRecueApi> {
-      if (demande.serie === 'verification') {
+      if (demande.serie === 'verification' && demande.verification === undefined) {
         throw new ErreurProtocole(
           400,
           'donnees_invalides',
@@ -183,7 +185,11 @@ export function creerServiceCorrection({
         )
       }
       const { serie } = demande
-      if (serie !== 'rappel' && (demande.bloc === undefined || demande.version === undefined)) {
+      if (
+        serie !== 'rappel' &&
+        serie !== 'verification' &&
+        (demande.bloc === undefined || demande.version === undefined)
+      ) {
         throw new ErreurProtocole(
           400,
           'donnees_invalides',
@@ -202,7 +208,11 @@ export function creerServiceCorrection({
 
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
       let trouve
-      if (serie === 'rappel') {
+      if (serie === 'verification') {
+        // Une partie d'une vérification : le bloc est celui de la vérification tirée.
+        trouve = await depot.blocDeLaVerification(base.db, userId, demande.verification ?? '')
+        if (trouve === undefined) throw introuvable('La vérification')
+      } else if (serie === 'rappel') {
         // Le rappel ne dit pas son bloc : le serveur le retrouve dans la série gardée pour aujourd'hui.
         const jour = jourDe(horloge.maintenant(), reglages.fuseau, reglages.heureBascule)
         const gardee = SerieGardee.safeParse(await depot.serieDuJour(base.db, userId, jour))
@@ -220,7 +230,12 @@ export function creerServiceCorrection({
         }
       }
       const manifeste = Manifeste.parse(trouve.manifeste)
-      const question = manifeste[serie].find(({ id }) => id === demande.question)
+      const question =
+        serie === 'verification'
+          ? manifeste.differees
+              .filter(({ id }) => id === demande.question)
+              .map(({ id, consigne, attendu }) => ({ id, question: consigne, attendu }))[0]
+          : manifeste[serie].find(({ id }) => id === demande.question)
       if (question === undefined) throw introuvable(`La question « ${demande.question} »`)
       const bloc = { id: trouve.blocId, code: trouve.code }
 
@@ -231,8 +246,10 @@ export function creerServiceCorrection({
         question: question.id,
         serie,
       })
-      const deLaTentative = deLaQuestion.filter(({ tentative }) => tentative === demande.tentative)
-      const sansRelance = demande.relance.trim() === ''
+      // Une question de vérification peut revenir : chaque passage est une tentative neuve, sans relance.
+      const tentative = serie === 'verification' ? deLaQuestion.length + 1 : demande.tentative
+      const deLaTentative = deLaQuestion.filter((autre) => autre.tentative === tentative)
+      const sansRelance = serie === 'verification' || demande.relance.trim() === ''
       if (sansRelance && deLaTentative.length > 0) {
         throw new ErreurProtocole(
           409,
@@ -344,7 +361,7 @@ export function creerServiceCorrection({
             blocId: bloc.id,
             questionId: question.id,
             serie,
-            tentative: demande.tentative,
+            tentative,
             tour,
             motif: essais.motif,
             bruts: essais.bruts,
@@ -368,7 +385,7 @@ export function creerServiceCorrection({
           blocId: bloc.id,
           questionId: question.id,
           serie,
-          tentative: demande.tentative,
+          tentative,
           tour,
           confiance: demande.confiance,
           reponse: demande.reponse,
