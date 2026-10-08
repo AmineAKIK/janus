@@ -221,6 +221,22 @@ export function creerDepotRevisions() {
         })
     },
 
+    /** Une note de carte déjà reçue : sert à rejouer un message sans rien changer. */
+    noteParId: async (lecteur: Db | Tx, userId: string, id: string) => {
+      const [ligne] = await lecteur
+        .select({ id: t.notesCartes.id })
+        .from(t.notesCartes)
+        .where(and(eq(t.notesCartes.id, id), eq(t.notesCartes.userId, userId)))
+      return ligne
+    },
+
+    ajouterNote: async (
+      tx: Tx,
+      o: { id: string; userId: string; carteId: string; note: string; dateServeur: string },
+    ): Promise<void> => {
+      await tx.insert(t.notesCartes).values(o)
+    },
+
     /** La série tirée pour ce jour, si elle l'a déjà été. */
     serieDuJour: async (lecteur: Db | Tx, userId: string, jour: string): Promise<unknown> => {
       const [ligne] = await lecteur

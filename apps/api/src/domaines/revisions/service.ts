@@ -457,7 +457,9 @@ export function creerServiceRevisions({
         const maintenant = horloge.maintenant()
         const brut = await depot.revueDe(tx, userId, trouvee.id)
         const avant = brut === undefined ? null : EtatGarde.parse(brut)
-        if (avant?.noteId === noteId) return { echeance: avant.echeance }
+        if (avant !== null && (await depot.noteParId(tx, userId, noteId)) !== undefined) {
+          return { echeance: avant.echeance }
+        }
         const apres = apresNote(avant, note, noteId, maintenant, reglages)
         await depot.ecrireRevue(tx, {
           id: noteId,
@@ -465,6 +467,13 @@ export function creerServiceRevisions({
           carteId: trouvee.id,
           dueLe: apres.echeance,
           etat: apres,
+        })
+        await depot.ajouterNote(tx, {
+          id: noteId,
+          userId,
+          carteId: trouvee.id,
+          note,
+          dateServeur: maintenant,
         })
         return { echeance: apres.echeance }
       })
