@@ -1,8 +1,14 @@
 import { render, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import type { DonneesSuivi } from '../useSuivi.ts'
-import { libelleSemaine, texteAideMoyenne, texteMeilleur, texteReussites } from './textes.ts'
-import { ZoneAisance, ZoneAutonomie, ZoneCalibration, ZoneRetention } from './Zones.tsx'
+import {
+  libelleSemaine,
+  texteAideMoyenne,
+  texteDuree,
+  texteMeilleur,
+  texteReussites,
+} from './textes.ts'
+import { ZoneAisance, ZoneAutonomie, ZoneCalibration, ZoneRetention, ZoneTemps } from './Zones.tsx'
 
 type Autonomie = DonneesSuivi['mesures']['autonomie']
 
@@ -164,5 +170,46 @@ describe('Aisance', () => {
       premiere?.getByText('25 s · objectif 30 s · 1 réussite sur 2, sur 2 jours différents'),
     ).toBeVisible()
     expect(seconde?.getByText('non requis')).toBeVisible()
+  })
+})
+
+describe('Temps', () => {
+  it('écrit une durée en secondes, minutes ou heures', () => {
+    expect([45, 60, 750, 3900].map(texteDuree)).toEqual(['45 s', '1 min', '13 min', '1 h 05'])
+  })
+
+  it('montre le total, les trois groupes et le temps par bloc, sans objectif', () => {
+    render(
+      <ZoneTemps
+        donnees={{
+          total_s: 3900,
+          lecture_s: 300,
+          pratique_s: 3000,
+          restitution_s: 600,
+          blocs: [{ bloc: 'B02', titre_court: 'Fonctions', secondes: 3900 }],
+        }}
+      />,
+    )
+
+    expect(screen.getByRole('heading', { name: 'Temps actif de la semaine' })).toBeVisible()
+    expect(screen.getByText('Une mesure, jamais un objectif.')).toBeVisible()
+    expect(screen.getByText('1 h 05')).toBeVisible()
+    expect(screen.getByText('Lecture · 5 min')).toBeVisible()
+    expect(screen.getByText('Pratique · 50 min')).toBeVisible()
+    expect(screen.getByText('Restitution · 10 min')).toBeVisible()
+    expect(screen.getByRole('link', { name: 'B02 · Fonctions' })).toHaveAttribute(
+      'href',
+      '#/blocs/B02',
+    )
+  })
+
+  it('dit qu’il n’y a pas encore de temps sans mesure', () => {
+    render(
+      <ZoneTemps
+        donnees={{ total_s: 0, lecture_s: 0, pratique_s: 0, restitution_s: 0, blocs: [] }}
+      />,
+    )
+
+    expect(screen.getByText('Pas encore de temps actif cette semaine.')).toBeVisible()
   })
 })

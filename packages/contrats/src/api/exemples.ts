@@ -587,6 +587,13 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
           },
           { bloc: 'D02', titre_court: 'Conditions', cible: null },
         ],
+        temps: {
+          total_s: 1500,
+          lecture_s: 300,
+          pratique_s: 900,
+          restitution_s: 200,
+          blocs: [{ bloc: 'D01', titre_court: 'Variables', secondes: 1500 }],
+        },
       },
       cout_ia: { depense_millioniemes: 1_500_000, plafond_millioniemes: 10_000_000 },
     },

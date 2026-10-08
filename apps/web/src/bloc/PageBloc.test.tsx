@@ -147,4 +147,18 @@ describe('temps actif', () => {
       expect(magasin.lire().idsRecus.length).toBeGreaterThanOrEqual(2)
     })
   })
+
+  it('garde le type de l’étape affichée avec le temps actif', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    const { envoyer, magasin } = await afficher()
+    await envoyer(etape('ET2'))
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(60_500)
+    })
+
+    await waitFor(() => {
+      expect(magasin.lire().tempsActif.map(({ etape: type }) => type)).toContain('pretest')
+    })
+  })
 })

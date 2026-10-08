@@ -181,6 +181,21 @@ export const ROUTES_SUIVI = {
               .nullable(),
           }),
         ),
+        /** Le temps actif de la semaine courante, en secondes : une mesure, jamais un objectif. */
+        temps: z.strictObject({
+          total_s: z.number().int().min(0),
+          lecture_s: z.number().int().min(0),
+          pratique_s: z.number().int().min(0),
+          restitution_s: z.number().int().min(0),
+          /** Le plus long d'abord. */
+          blocs: z.array(
+            z.strictObject({
+              bloc: CodeBloc,
+              titre_court: Texte,
+              secondes: z.number().int().min(1),
+            }),
+          ),
+        }),
       }),
       cout_ia: z.strictObject({
         /** En millionièmes d'euro, comme `plafondIaMillioniemes`. */

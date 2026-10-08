@@ -4,6 +4,7 @@ import { IdeeJournal, NoteJournal } from './api/suivi.ts'
 import { Confiance, Niveau, NoteCarte, TypeDifferee, TypeVerification } from './enums.ts'
 import { Fait, InstantUtc } from './faits.ts'
 import { CodeBloc, CorrectionRecue, EtatPage, IdUuid, Identifiant } from './pont.ts'
+import { TypeEtape } from './manifeste.ts'
 import { Reglages } from './reglages.ts'
 
 // Ce que le backend de démo (dans le navigateur) garde entre deux rechargements de la page.
@@ -127,6 +128,17 @@ export const EtatDemo = z.strictObject({
     )
     .default({}),
   /** Chaque carte notée, dans l'ordre : de quoi mesurer la rétention par semaine. */
+  /** Le temps actif reçu, minute par minute, avec le type de l'étape quand l'appli le donnait. */
+  tempsActif: z
+    .array(
+      z.strictObject({
+        date: InstantUtc,
+        bloc: CodeBloc,
+        secondes: z.number().int().min(1),
+        etape: TypeEtape.optional(),
+      }),
+    )
+    .default([]),
   revuesCartes: z.array(z.strictObject({ date: InstantUtc, note: NoteCarte })).default([]),
   verifications: z.record(IdUuid, VerificationDemo).default({}),
   /** Les notes d'Amine sur les lignes du journal, par identifiant de note. */

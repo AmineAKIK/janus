@@ -8,6 +8,7 @@ import {
   TEXTES_MESURES as T,
   texteAideMoyenne,
   texteCartes,
+  texteDuree,
   texteLundi,
   texteSur,
   texteErreursSures,
@@ -142,6 +143,44 @@ export function ZoneAisance({ donnees }: { readonly donnees: Mesures['aisance'] 
           </li>
         ))}
       </ul>
+    </CarteZone>
+  )
+}
+
+export function ZoneTemps({ donnees }: { readonly donnees: Mesures['temps'] }) {
+  const groupes = [
+    [T.lecture, donnees.lecture_s],
+    [T.pratique, donnees.pratique_s],
+    [T.restitution, donnees.restitution_s],
+  ] as const
+  return (
+    <CarteZone titre={T.temps}>
+      <p className={`${styles['complement'] ?? ''} texte-petit-14`}>{T.tempsSousTitre}</p>
+      {donnees.total_s === 0 ? (
+        <EtatVideZone message={T.tempsVide} />
+      ) : (
+        <>
+          <p>{texteDuree(donnees.total_s)}</p>
+          <ul className={styles['liste']}>
+            {groupes.map(([libelle, secondes]) => (
+              <li key={libelle}>
+                {libelle} · {texteDuree(secondes)}
+              </li>
+            ))}
+          </ul>
+          <p className={`${styles['complement'] ?? ''} texte-petit-14`}>{T.parBloc}</p>
+          <ul className={styles['liste']}>
+            {donnees.blocs.map(({ bloc, titre_court: titre, secondes }) => (
+              <li key={bloc}>
+                <a href={`#/blocs/${bloc}`}>
+                  {bloc} · {titre}
+                </a>{' '}
+                · {texteDuree(secondes)}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </CarteZone>
   )
 }

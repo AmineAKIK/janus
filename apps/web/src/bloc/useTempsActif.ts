@@ -1,5 +1,6 @@
 import { nouvelId } from '@janus/contrats'
-import { useEffect, useRef } from 'react'
+import type { TypeEtape } from '@janus/contrats'
+import { useCallback, useEffect, useRef } from 'react'
 import { instantReel } from '../demo/horlogeDemo.ts'
 import { useBoiteEnvoi } from '../envoi/FournisseurEnvoi.tsx'
 import { creerCompteurTempsActif } from '../envoi/tempsActif.ts'
@@ -14,6 +15,9 @@ export function useTempsActif(bloc: string) {
     }),
   )
 
+  const etape = useRef<TypeEtape | undefined>(undefined)
+  const envoyerRef = useRef<() => void>(() => undefined)
+
   useEffect(() => {
     const { current } = compteur
     const envoyer = () => {
@@ -23,9 +27,16 @@ export function useTempsActif(bloc: string) {
       void boite.ajouter({
         id,
         route: 'POST /evenements',
-        corps: { id, type: 'temps.actif', bloc, secondes },
+        corps: {
+          id,
+          type: 'temps.actif',
+          bloc,
+          secondes,
+          ...(etape.current === undefined ? {} : { etape: etape.current }),
+        },
       })
     }
+    envoyerRef.current = envoyer
     const battement = setInterval(() => {
       current.battre()
     }, 1000)
@@ -46,7 +57,14 @@ export function useTempsActif(bloc: string) {
     }
   }, [boite, bloc])
 
+  /** À chaque changement d'étape : le temps déjà compté part avec l'étape quittée. */
+  const changerEtape = useCallback((suivante: TypeEtape | undefined) => {
+    envoyerRef.current()
+    etape.current = suivante
+  }, [])
+
   return {
+    changerEtape,
     signalerActivite: () => {
       compteur.current.activite()
     },
