@@ -154,6 +154,22 @@ export default defineConfig(
       ],
     },
   },
+  // Une transaction ne s'ouvre qu'à un endroit : `base/transaction.ts` (rejeu, niveau d'isolation).
+  {
+    files: ['apps/api/src/**/*.ts'],
+    ignores: ['apps/api/src/base/transaction.ts'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            "CallExpression[callee.type='MemberExpression'][callee.property.name='transaction']",
+          message:
+            'Ouvre une transaction avec transaction() de base/transaction.ts, jamais avec db.transaction.',
+        },
+      ],
+    },
+  },
   // Les fiches s'ouvrent dans un bac à sable qui ne laisse que les scripts (jamais `allow-same-origin`).
   {
     files: ['apps/web/src/**/*.tsx'],
