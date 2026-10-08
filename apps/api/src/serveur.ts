@@ -1,11 +1,13 @@
 import Fastify from 'fastify'
 import type { FastifyInstance } from 'fastify'
+import { monterAuth } from './domaines/auth/composition.ts'
+import type { OptionsAuth } from './domaines/auth/composition.ts'
 import { monterSante } from './domaines/sante/composition.ts'
 import { genererIdentifiant } from './plugins/identifiantRequete.ts'
 import { declarerMiddlewares } from './plugins/ordre.ts'
 import type { Dependances } from './types.ts'
 
-export interface OptionsServeur {
+export interface OptionsServeur extends OptionsAuth {
   /** Où va le journal pino ; la sortie standard par défaut. */
   readonly fluxJournal?: { write(ligne: string): void }
 }
@@ -24,7 +26,9 @@ export async function creerServeur(
     // Le proxy de l'hébergeur est le seul devant l'API : son `x-forwarded-for` fait foi.
     trustProxy: true,
   })
-  await declarerMiddlewares(app, dependances)
+  const auth = monterAuth(dependances, options)
+  await declarerMiddlewares(app, dependances, auth.resoudreSession)
   await app.register(monterSante(dependances.base), { prefix: '/api' })
+  await app.register(auth.routes, { prefix: '/api' })
   return app
 }

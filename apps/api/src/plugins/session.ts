@@ -1,13 +1,23 @@
-import type { FastifyInstance } from 'fastify'
-import type { Dependances, Session } from '../types.ts'
+import type { FastifyInstance, FastifyRequest } from 'fastify'
+import type { Dependances, ResoudreSession, Session } from '../types.ts'
 
-const SESSION_VIDE: Session = { utilisateur: null }
+const NOM_COOKIE = 'janus_session'
+const SESSION_VIDE: Session = { utilisateur: null, sessionId: null }
 
-/** La session de la requête. Branchée sur le cookie en PR-082 ; ici elle est toujours vide. */
-export function session(app: FastifyInstance, { observer }: Dependances): void {
-  app.decorateRequest('session', { getter: () => SESSION_VIDE })
-  app.addHook('onRequest', (_requete, _reponse, fini) => {
+/** La session de chaque requête : celle que désigne le cookie `janus_session`, ou une session vide. */
+export function session(
+  app: FastifyInstance,
+  { observer }: Dependances,
+  resoudre: ResoudreSession,
+): void {
+  const sessions = new WeakMap<FastifyRequest, Session>()
+  app.decorateRequest('session', {
+    getter(this: FastifyRequest) {
+      return sessions.get(this) ?? SESSION_VIDE
+    },
+  })
+  app.addHook('onRequest', async (requete) => {
     observer?.('session')
-    fini()
+    sessions.set(requete, await resoudre(requete.cookies[NOM_COOKIE]))
   })
 }

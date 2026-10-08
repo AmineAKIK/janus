@@ -40,13 +40,14 @@ export class PreconditionEchouee extends ErreurMetier {
 
 /** Les erreurs de protocole que les middlewares lèvent eux-mêmes. */
 export class ErreurProtocole extends ErreurMetier {
-  constructor(
-    readonly status: number,
-    readonly code: CodeProbleme,
-    readonly titre: string,
-    detail: string,
-  ) {
+  readonly status: number
+  readonly code: CodeProbleme
+  readonly titre: string
+  constructor(status: number, code: CodeProbleme, titre: string, detail: string) {
     super(detail)
+    this.status = status
+    this.code = code
+    this.titre = titre
   }
 }
 
@@ -58,4 +59,22 @@ export function versProbleme(
   detail: string,
 ): ProblemeApi {
   return { type: `urn:janus:erreur:${code}`, title: titre, status, detail, code }
+}
+
+/** Trop d'essais : la réponse dit dans combien de secondes réessayer (`retry-after`). */
+export class TropDeTentatives extends ErreurMetier {
+  readonly status = 429
+  readonly code = 'trop_de_requetes'
+  readonly titre = 'Trop d’essais'
+  readonly reessayerDansS: number
+  constructor(reessayerDansS: number) {
+    super(`Trop d’essais : réessaie dans ${String(reessayerDansS)} secondes.`)
+    this.reessayerDansS = reessayerDansS
+  }
+}
+
+export class NonAuthentifie extends ErreurMetier {
+  readonly status = 401
+  readonly code = 'non_authentifie'
+  readonly titre = 'Non authentifié'
 }

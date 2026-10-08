@@ -270,6 +270,8 @@ export const sessions = pgTable(
     creeLe: instant('cree_le').notNull(),
     expireLe: instant('expire_le').notNull(),
     appareil: text('appareil'),
+    /** « Rester connecté » : sinon la session expire après 12 h sans activité. */
+    persistante: boolean('persistante').notNull().default(false),
   },
   (table) => [
     index('sessions_user').on(table.userId),
@@ -284,6 +286,14 @@ export const sessionsRevoquees = pgTable('sessions_revoquees', {
     .primaryKey()
     .references(() => sessions.id),
   revoqueeLe: instant('revoquee_le').notNull(),
+})
+
+/** La dernière activité d'une session : la seule chose qui change, donc hors de `sessions` (ajout seul). */
+export const sessionsActivite = pgTable('sessions_activite', {
+  sessionId: uuid('session_id')
+    .primaryKey()
+    .references(() => sessions.id),
+  derniereActivite: instant('derniere_activite').notNull(),
 })
 
 /** Un rappel par jour au plus : la ligne est insérée avant l'envoi. */

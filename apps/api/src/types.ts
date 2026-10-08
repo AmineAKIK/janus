@@ -25,14 +25,20 @@ export interface Dependances {
   readonly config: Config
   readonly horloge: Horloge
   readonly base: Base
+  /** La connexion du rôle propriétaire : seule la suppression d'un compte s'en sert. */
+  readonly proprietaire: Base
   /** Appelé par chaque middleware quand il passe sur une requête : sert aux tests d'ordre. */
   readonly observer?: (nom: NomMiddleware) => void
 }
 
-/** La session : toujours vide jusqu'à la connexion (PR-082). */
+/** La session de la requête : vide tant que le cookie ne désigne pas une session valide. */
 export interface Session {
   readonly utilisateur: string | null
+  readonly sessionId: string | null
 }
+
+/** Lit le jeton du cookie et rend la session qu'il désigne (vide si elle est inconnue, révoquée ou expirée). */
+export type ResoudreSession = (jeton: string | undefined) => Promise<Session>
 
 declare module 'fastify' {
   interface FastifyRequest {

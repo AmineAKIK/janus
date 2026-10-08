@@ -14,6 +14,7 @@ describe.skipIf(url === undefined)('GET /api/sante contre PostgreSQL', () => {
       config: configDeTest({ NIVEAU_JOURNAL: 'silent' }),
       horloge: horlogeSysteme,
       base,
+      proprietaire: base,
     })
 
     const vivante = await app.inject({ method: 'GET', url: '/api/sante' })

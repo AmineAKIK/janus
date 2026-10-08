@@ -8,7 +8,8 @@ const PORT_PAR_DEFAUT = 3000
 try {
   const config = lireConfig(process.env)
   const base = creerBase(config.DATABASE_URL)
-  const app = await creerServeur({ config, horloge: horlogeSysteme, base })
+  const proprietaire = creerBase(config.DATABASE_URL_PROPRIETAIRE)
+  const app = await creerServeur({ config, horloge: horlogeSysteme, base, proprietaire })
   await app.listen({ host: '0.0.0.0', port: Number(process.env['PORT'] ?? PORT_PAR_DEFAUT) })
 } catch (erreur) {
   if (erreur instanceof ErreurConfig) {

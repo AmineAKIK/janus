@@ -43,7 +43,7 @@ export function useConnexion(retour: string | undefined) {
       }
       setEchec(null)
       ecriture.mutate(
-        { corps: { nom_utilisateur: nom.trim(), mot_de_passe: mot } },
+        { corps: { nom_utilisateur: nom.trim(), mot_de_passe: mot, rester_connecte: rester } },
         {
           onSuccess: (moi) => {
             client.setQueryData(CLE_MOI, moi)
@@ -68,7 +68,7 @@ export function useConnexion(retour: string | undefined) {
         },
       )
     },
-    [client, ecriture, retour, routeur],
+    [client, ecriture, rester, retour, routeur],
   )
 
   // Le compte à rebours de « Trop d’essais ».
