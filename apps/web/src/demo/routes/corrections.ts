@@ -24,11 +24,17 @@ export function routesCorrectionsDemo({
   delaiCorrectionMs = DELAI_CORRECTION_SIMULEE_MS,
 }: OptionsCorrections = {}) {
   return [
-    definir(ROUTES['POST /corrections/:id/accord'], ({ magasin, params }) => {
-      // Les avis d'Amine ne changent aucun statut : la démo les accepte sans les garder.
+    definir(ROUTES['POST /corrections/:id/accord'], ({ magasin, params, corps }) => {
+      // Les avis d'Amine ne changent aucun statut : la démo les garde pour la zone Fiabilité.
       if (!magasin.lire().faits.some((fait) => fait.id === params.id)) {
         throw probleme(404, 'introuvable', 'Introuvable', 'Cette correction n’existe pas.')
       }
+      magasin.ecrire((etat) => ({
+        ...etat,
+        controlesCorrections: etat.controlesCorrections.map((controle) =>
+          controle.correction === params.id ? { ...controle, accord: corps.accord } : controle,
+        ),
+      }))
       return null
     }),
     definir(ROUTES['POST /corrections/:id/trancher'], ({ magasin, horloge, params, corps }) => {
@@ -181,6 +187,19 @@ export function routesCorrectionsDemo({
             erreursIa: erreurs,
           },
         ])
+        magasin.ecrire((etat) => ({
+          ...etat,
+          controlesCorrections: [
+            ...etat.controlesCorrections,
+            {
+              correction: corps.id,
+              date,
+              echantillon,
+              nonVerifiee: certitude === 'non_verifie',
+              accord: null,
+            },
+          ],
+        }))
       }
       const recue: CorrectionRecue = {
         id: corps.id,

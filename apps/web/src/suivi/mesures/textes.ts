@@ -33,6 +33,14 @@ export const TEXTES_MESURES = {
   pratique: 'Pratique',
   restitution: 'Restitution',
   parBloc: 'Par bloc',
+  fiabilite: 'Fiabilité de la correction IA',
+  fiabiliteSousTitre: 'Contrôle humain et signalements',
+  copiesRelues: 'Copies relues',
+  desaccords: 'Désaccords',
+  nonVerifiees: 'Réponses non vérifiées',
+  contestations: 'Contestations',
+  fiabiliteRegle: 'Une contestation ne change jamais le niveau.',
+  alerteDesaccords: 'Le tuteur se trompe souvent : revois la consigne ou le modèle.',
 } as const
 
 export const LIBELLE_CONFIANCE: Readonly<Record<Confiance, string>> = {
@@ -83,3 +91,7 @@ export function texteDuree(secondes: number): string {
   if (minutes < 60) return `${String(minutes)} min`
   return `${String(Math.floor(minutes / 60))} h ${String(minutes % 60).padStart(2, '0')}`
 }
+
+/** « 1 sur 4 » : les désaccords sur les copies relues ; « – » sans copie relue. */
+export const texteDesaccords = (desaccords: number, relues: number) =>
+  relues === 0 ? TEXTES_MESURES.aucune : `${String(desaccords)} sur ${String(relues)}`

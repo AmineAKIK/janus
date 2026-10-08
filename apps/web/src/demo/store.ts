@@ -60,6 +60,7 @@ export function etatVide(maintenant: string): EtatDemo {
     serieDuJour: null,
     verifications: {},
     notesJournal: {},
+    controlesCorrections: [],
     tempsActif: [],
     revuesCartes: [],
     idees: [],

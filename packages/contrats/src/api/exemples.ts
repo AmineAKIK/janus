@@ -587,6 +587,13 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
           },
           { bloc: 'D02', titre_court: 'Conditions', cible: null },
         ],
+        fiabilite: {
+          copies_relues: 4,
+          desaccords: 1,
+          non_verifiees: 0,
+          contestations: 1,
+          alerte: true,
+        },
         temps: {
           total_s: 1500,
           lecture_s: 300,

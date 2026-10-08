@@ -181,6 +181,14 @@ export const ROUTES_SUIVI = {
               .nullable(),
           }),
         ),
+        /** Le contrôle humain de la correction IA ; `alerte` porte sur les 30 derniers échantillons relus. */
+        fiabilite: z.strictObject({
+          copies_relues: z.number().int().min(0),
+          desaccords: z.number().int().min(0),
+          non_verifiees: z.number().int().min(0),
+          contestations: z.number().int().min(0),
+          alerte: z.boolean(),
+        }),
         /** Le temps actif de la semaine courante, en secondes : une mesure, jamais un objectif. */
         temps: z.strictObject({
           total_s: z.number().int().min(0),

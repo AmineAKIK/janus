@@ -189,4 +189,49 @@ describe('tableau de bord de la démo, avec la graine', () => {
       { bloc: 'B02', secondes: 15 },
     ])
   })
+
+  it('mesure la fiabilité : échantillons relus, désaccords, non vérifiées et contestations', async () => {
+    const banc = monterDemo()
+    expect((await lire(banc)).mesures.fiabilite).toEqual({
+      copies_relues: 0,
+      desaccords: 0,
+      non_verifiees: 0,
+      contestations: 0,
+      alerte: false,
+    })
+
+    const correction = (id: string, conteste = false) =>
+      banc.transport.appeler(ROUTES['POST /corrections'], {
+        corps: {
+          id,
+          serie: 'restitution',
+          tentative: 1,
+          question: 'R1',
+          reponse:
+            'Réponse attendue : Que contient une fiche . Et voilà mes propres mots pour expliquer.',
+          confiance: 'sur',
+          relance: '',
+          support: { colle: false, retour_cours: false },
+          bloc: 'B08',
+          version: 1,
+          ...(conteste ? { conteste } : {}),
+        },
+      })
+    const premiere = nouvelId(31)
+    const recue = await correction(premiere)
+    expect(recue.echantillon).toBe(true)
+    await correction(nouvelId(32), true)
+    await banc.transport.appeler(ROUTES['POST /corrections/:id/accord'], {
+      params: { id: premiere },
+      corps: { accord: false },
+    })
+
+    expect((await lire(banc)).mesures.fiabilite).toEqual({
+      copies_relues: 1,
+      desaccords: 1,
+      non_verifiees: 0,
+      contestations: 1,
+      alerte: true,
+    })
+  })
 })
