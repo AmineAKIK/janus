@@ -15,6 +15,18 @@ export const SchemaConfig = z.object({
   COOKIE_SECURE: Booleen,
   /** Facultative en test : sans elle, la correction par l'IA est indisponible. */
   DEEPSEEK_API_KEY: z.string().min(1).optional(),
+  /** Le modèle de correction (`deepseek-flash` à la date du cadrage). */
+  DEEPSEEK_MODELE: z.string().min(1).default('deepseek-flash'),
+  DEEPSEEK_URL: z.url().default('https://api.deepseek.com'),
+  /** Entre 0 et 0,3 ; 0,2 en attendant le jeu de test. */
+  DEEPSEEK_TEMPERATURE: z.coerce.number().min(0).max(0.3).default(0.2),
+  /**
+   * Les tarifs par million de jetons, en millionièmes de l'unité du budget. Par défaut : les prix
+   * de pointe de `deepseek-flash` en dollars (0,006 / 0,30 / 1,20), repris tels quels.
+   */
+  DEEPSEEK_PRIX_ENTREE_CACHE: z.coerce.number().int().min(0).default(6_000),
+  DEEPSEEK_PRIX_ENTREE: z.coerce.number().int().min(0).default(300_000),
+  DEEPSEEK_PRIX_SORTIE: z.coerce.number().int().min(0).default(1_200_000),
   VAPID_PUBLIC_KEY: z.string().min(1),
   VAPID_PRIVATE_KEY: z.string().min(1),
   VAPID_SUJET: z.string().min(1),
