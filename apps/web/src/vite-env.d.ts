@@ -10,6 +10,8 @@ interface ImportMetaEnv {
   readonly VITE_TRANSPORT?: string
   /** Adresse de l'API en mode `http` (par défaut `/api`). */
   readonly VITE_API?: string
+  /** L'adresse (DSN) du suivi d'erreurs, facultative : sans elle, rien n'est envoyé. */
+  readonly VITE_SENTRY_DSN?: string
 }
 
 interface ImportMeta {

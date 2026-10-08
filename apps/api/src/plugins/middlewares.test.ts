@@ -420,6 +420,26 @@ describe('11. gestionnaire d’erreurs', () => {
     expect(JSON.stringify(ligne)).toContain('hunter2')
     expect(JSON.stringify(ligne)).toContain('stack')
   })
+
+  it('signale au suivi d’erreurs les seules erreurs inattendues, avec le modèle de la route', async () => {
+    const signalees: { erreur: Error; methode: string; route: string | undefined }[] = []
+    const { app } = await serveurDeTest({
+      signalerErreur: (erreur, requete) =>
+        signalees.push({
+          erreur,
+          methode: requete.method,
+          route: requete.routeOptions.url,
+        }),
+    })
+    await ajouterRoutesDEssai(app)
+
+    await app.inject({ method: 'GET', url: '/essai/erreur/introuvable' })
+    await app.inject({ method: 'GET', url: '/essai/erreur/inattendue' })
+
+    expect(signalees).toHaveLength(1)
+    expect(signalees[0]).toMatchObject({ methode: 'GET', route: '/essai/erreur/:genre' })
+    expect(signalees[0]?.erreur.message).toContain('hunter2')
+  })
 })
 
 describe('12. journal de fin de requête', () => {

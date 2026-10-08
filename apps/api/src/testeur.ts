@@ -8,7 +8,7 @@ import type { Hacheur } from './domaines/auth/composition.ts'
 import type { Config } from './config.ts'
 import type { Horloge } from './horloge.ts'
 import { creerServeur } from './serveur.ts'
-import type { NomMiddleware } from './types.ts'
+import type { NomMiddleware, SignalerErreur } from './types.ts'
 
 // Aides des tests de l'API : un serveur complet, une base factice, une horloge et un journal qu'on lit.
 
@@ -84,6 +84,7 @@ export async function serveurDeTest(
     readonly correcteur?: Correcteur
     readonly envoyeur?: Envoyeur
     readonly hasard?: () => number
+    readonly signalerErreur?: SignalerErreur
   } = {},
 ): Promise<ServeurDeTest> {
   const passages: NomMiddleware[] = []
@@ -100,6 +101,7 @@ export async function serveurDeTest(
       ...(options.correcteur === undefined ? {} : { correcteur: options.correcteur }),
       ...(options.envoyeur === undefined ? {} : { envoyeur: options.envoyeur }),
       ...(options.hasard === undefined ? {} : { hasard: options.hasard }),
+      ...(options.signalerErreur === undefined ? {} : { signalerErreur: options.signalerErreur }),
       observer: (nom) => passages.push(nom),
     },
     {

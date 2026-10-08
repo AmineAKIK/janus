@@ -15,6 +15,14 @@ describe('lireConfig', () => {
     expect(config.DEEPSEEK_API_KEY).toBeUndefined()
   })
 
+  it('lit le DSN du suivi d’erreurs, facultatif', () => {
+    expect(lireConfig(ENVIRONNEMENT_TEST).SENTRY_DSN).toBeUndefined()
+    expect(lireConfig({ ...ENVIRONNEMENT_TEST, SENTRY_DSN: '' }).SENTRY_DSN).toBeUndefined()
+    expect(
+      lireConfig({ ...ENVIRONNEMENT_TEST, SENTRY_DSN: 'https://cle@erreurs.test/1' }).SENTRY_DSN,
+    ).toBe('https://cle@erreurs.test/1')
+  })
+
   it('accepte la clé DeepSeek et COOKIE_SECURE=false', () => {
     const config = lireConfig({
       ...ENVIRONNEMENT_TEST,
