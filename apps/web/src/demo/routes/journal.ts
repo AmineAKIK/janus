@@ -30,7 +30,7 @@ export function exportDuJournal(etat: EtatDemo): string {
     reglages: etat.reglages,
     tachesReservees: [],
     idees: etat.idees.map(({ texte }) => texte),
-    derniereRevue: null,
+    derniereRevue: etat.revuesMethode.findLast(({ texte }) => texte !== undefined)?.texte ?? null,
   })
 }
 
@@ -131,5 +131,15 @@ export const ROUTES_JOURNAL_DEMO = [
     const idee = { id: corps.id, date: horloge.maintenant(), texte: corps.texte }
     magasin.ecrire((courant) => ({ ...courant, idees: [...courant.idees, idee] }))
     return idee
+  }),
+  definir(ROUTES['POST /revues-methode'], ({ magasin, horloge, corps }) => {
+    if (magasin.lire().revuesMethode.some(({ id }) => id === corps.id)) return null
+    const revue = {
+      id: corps.id,
+      date: horloge.maintenant(),
+      ...(corps.texte === undefined ? {} : { texte: corps.texte }),
+    }
+    magasin.ecrire((courant) => ({ ...courant, revuesMethode: [...courant.revuesMethode, revue] }))
+    return null
   }),
 ]

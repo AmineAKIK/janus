@@ -1,4 +1,4 @@
-import { BandeauAlerte, BarreProgression, CarteZone, EtatVideZone } from '@janus/ui'
+import { BandeauAlerte, BarreProgression, Bouton, CarteZone, EtatVideZone } from '@janus/ui'
 import styles from '../Suivi.module.css'
 import type { DonneesSuivi } from '../useSuivi.ts'
 import {
@@ -8,7 +8,12 @@ import {
   TEXTES_MESURES as T,
   texteAideMoyenne,
   texteCartes,
+  texteBlocsVus,
   texteDesaccords,
+  texteEtapeSautee,
+  texteNotion,
+  texteProchaineRevue,
+  texteTempsDeRevue,
   texteDuree,
   texteLundi,
   texteSur,
@@ -206,6 +211,55 @@ export function ZoneFiabilite({ donnees }: { readonly donnees: Mesures['fiabilit
         </li>
       </ul>
       <p className={`${styles['complement'] ?? ''} texte-petit-14`}>{T.fiabiliteRegle}</p>
+    </CarteZone>
+  )
+}
+
+export function ZoneRevue({
+  donnees,
+  enCours,
+  surRevue,
+}: {
+  readonly donnees: Mesures['revue']
+  readonly enCours: boolean
+  readonly surRevue: () => void
+}) {
+  return (
+    <CarteZone titre={T.revue}>
+      <p className={`${styles['complement'] ?? ''} texte-petit-14`}>{T.revueSousTitre}</p>
+      {donnees.a_proposer ? (
+        <>
+          <p>{texteBlocsVus(donnees.blocs_depuis)}</p>
+          <p>{texteTempsDeRevue(donnees.temps_s, donnees.pratique_s)}</p>
+          {donnees.a_reprendre.length > 0 && (
+            <>
+              <p className={`${styles['complement'] ?? ''} texte-petit-14`}>{T.revueATitre}</p>
+              <ul className={styles['liste']}>
+                {donnees.a_reprendre.map(({ bloc, question, fois }) => (
+                  <li key={`${bloc}-${question}`}>
+                    <a href={`#/blocs/${bloc}`}>{texteNotion(bloc, question, fois)}</a>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          {donnees.etapes_sautees.length > 0 && (
+            <>
+              <p className={`${styles['complement'] ?? ''} texte-petit-14`}>{T.revueEtapes}</p>
+              <ul className={styles['liste']}>
+                {donnees.etapes_sautees.map(({ etape, blocs }) => (
+                  <li key={etape}>{texteEtapeSautee(etape, blocs)}</li>
+                ))}
+              </ul>
+            </>
+          )}
+          <Bouton type="button" variante="principal" disabled={enCours} onClick={surRevue}>
+            {T.revueFaite}
+          </Bouton>
+        </>
+      ) : (
+        <p>{texteProchaineRevue(donnees.blocs_requis - donnees.blocs_depuis)}</p>
+      )}
     </CarteZone>
   )
 }

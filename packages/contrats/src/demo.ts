@@ -128,6 +128,10 @@ export const EtatDemo = z.strictObject({
     )
     .default({}),
   /** Chaque carte notée, dans l'ordre : de quoi mesurer la rétention par semaine. */
+  /** Les revues de la méthode faites, avec le texte quand il y en a un. */
+  revuesMethode: z
+    .array(z.strictObject({ id: IdUuid, date: InstantUtc, texte: z.string().optional() }))
+    .default([]),
   /** Chaque correction rendue : mise à l'avis d'Amine ou non, vérifiée ou non, et son avis une fois donné. */
   controlesCorrections: z
     .array(

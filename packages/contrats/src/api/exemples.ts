@@ -587,6 +587,15 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
           },
           { bloc: 'D02', titre_court: 'Conditions', cible: null },
         ],
+        revue: {
+          a_proposer: true,
+          blocs_depuis: 3,
+          blocs_requis: 3,
+          temps_s: 5400,
+          pratique_s: 1800,
+          a_reprendre: [{ bloc: 'D01', question: 'R1', fois: 2 }],
+          etapes_sautees: [{ etape: 'pretest', blocs: 2 }],
+        },
         fiabilite: {
           copies_relues: 4,
           desaccords: 1,
@@ -656,7 +665,7 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
   },
   'POST /revues-methode': {
     corps: { id: ID, texte: 'Les consolidations marchent bien, les retests moins.' },
-    invalides: [{ partie: 'corps', valeur: { id: ID } }],
+    invalides: [{ partie: 'corps', valeur: { id: ID, texte: '' } }],
   },
   'GET /reglages': {
     reponse: Reglages.parse({}),
