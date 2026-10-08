@@ -78,3 +78,30 @@ jobs:
           VITE_TRANSPORT: http
           VITE_HISTORIQUE: chemins
           VITE_API: /api
+
+  # Tout l'hébergement démarre sur une machine vide avec un `.env` de test (PR-090).
+  hebergement:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Démarre les services (compose)
+        working-directory: infra
+        run: |
+          {
+            echo DOMAINE=localhost
+            echo POSTGRES_PASSWORD=essai0postgres
+            echo JANUS_APP_MOT_DE_PASSE=essai0application
+            echo DEEPSEEK_API_KEY=essai
+            echo VAPID_PUBLIC_KEY=essai
+            echo VAPID_PRIVATE_KEY=essai
+            echo VAPID_SUJET=mailto:essai@exemple.fr
+          } > .env
+          docker compose up -d --build --wait
+      - name: /api/sante répond 200 par Caddy
+        run: curl -fsk https://app.localhost/api/sante
+      - name: Journaux en cas d'échec
+        if: failure()
+        working-directory: infra
+        run: docker compose logs --no-color
