@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, inArray } from 'drizzle-orm'
+import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm'
 import { instantIso } from '../../base/instant.ts'
 import * as t from '../../base/schema/index.ts'
 import type { Db, Tx } from '../../base/transaction.ts'
@@ -29,6 +29,7 @@ export function creerDepotRevisions() {
           moduleId: t.blocs.moduleId,
           manifeste: t.fichesVersions.manifeste,
           version: t.fichesVersions.version,
+          versionId: t.fichesVersions.id,
         })
         .from(t.blocs)
         .innerJoin(t.modules, eq(t.modules.id, t.blocs.moduleId))
@@ -38,6 +39,108 @@ export function creerDepotRevisions() {
       // Une ligne par version : la plus récente vient en premier pour chaque bloc.
       const vus = new Set<string>()
       return lignes.filter(({ id }) => (vus.has(id) ? false : (vus.add(id), true)))
+    },
+
+    /** Une vérification tirée pour cet utilisateur. */
+    verificationParId: async (lecteur: Db | Tx, userId: string, id: string) => {
+      const [ligne] = await lecteur
+        .select({
+          id: t.verificationsTirees.id,
+          blocId: t.verificationsTirees.blocId,
+          type: t.verificationsTirees.type,
+          tirage: t.verificationsTirees.tirage,
+        })
+        .from(t.verificationsTirees)
+        .where(and(eq(t.verificationsTirees.id, id), eq(t.verificationsTirees.userId, userId)))
+      return ligne
+    },
+
+    /** La vérification de ce bloc et de ce type qui n'a pas encore de résultat, la plus récente. */
+    verificationOuverte: async (lecteur: Db | Tx, userId: string, blocId: string, type: string) => {
+      const [ligne] = await lecteur
+        .select({ id: t.verificationsTirees.id })
+        .from(t.verificationsTirees)
+        .where(
+          and(
+            eq(t.verificationsTirees.userId, userId),
+            eq(t.verificationsTirees.blocId, blocId),
+            eq(t.verificationsTirees.type, type),
+            sql`NOT EXISTS (
+              SELECT 1 FROM ${t.evenements}
+              WHERE ${t.evenements.type} = 'verification_resultat'
+                AND ${t.evenements.donnees}->>'verification' = ${t.verificationsTirees.id}::text
+            )`,
+          ),
+        )
+        .orderBy(desc(t.verificationsTirees.dateServeur))
+        .limit(1)
+      return ligne
+    },
+
+    ajouterTirage: async (
+      tx: Tx,
+      o: {
+        id: string
+        userId: string
+        blocId: string
+        type: string
+        tirage: unknown
+        dateServeur: string
+      },
+    ): Promise<void> => {
+      await tx.insert(t.verificationsTirees).values(o)
+    },
+
+    /** Ce qui s'est passé sur une vérification : parties envoyées, report, résultat, dans l'ordre. */
+    evenementsDeVerification: (lecteur: Db | Tx, userId: string, id: string) =>
+      lecteur
+        .select({
+          type: t.evenements.type,
+          donnees: t.evenements.donnees,
+          date: instantIso(t.evenements.dateServeur),
+        })
+        .from(t.evenements)
+        .where(
+          and(
+            eq(t.evenements.userId, userId),
+            inArray(t.evenements.type, [
+              'verification_partie',
+              'verification_reportee',
+              'verification_resultat',
+            ]),
+            sql`${t.evenements.donnees}->>'verification' = ${id}`,
+          ),
+        )
+        .orderBy(asc(t.evenements.dateServeur), asc(t.evenements.id)),
+
+    /** Ajoute un événement ; `false` si cet identifiant était déjà là. */
+    ajouterEvenement: async (
+      tx: Tx,
+      o: {
+        id: string
+        userId: string
+        blocId: string
+        ficheVersionId: string
+        type: string
+        donnees: unknown
+        empreinte: string
+        dateServeur: string
+      },
+    ): Promise<boolean> => {
+      const ajoutes = await tx
+        .insert(t.evenements)
+        .values({ ...o, aide: null })
+        .onConflictDoNothing()
+        .returning({ id: t.evenements.id })
+      return ajoutes.length > 0
+    },
+
+    evenementParId: async (lecteur: Db | Tx, userId: string, id: string) => {
+      const [ligne] = await lecteur
+        .select({ donnees: t.evenements.donnees })
+        .from(t.evenements)
+        .where(and(eq(t.evenements.id, id), eq(t.evenements.userId, userId)))
+      return ligne
     },
 
     /** Les cartes actives des modules importés, dans l'ordre du plan. */

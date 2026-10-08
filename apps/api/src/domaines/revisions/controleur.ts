@@ -13,6 +13,11 @@ export function creerControleurRevisions(service: ServiceRevisions) {
   return {
     questionsDebut: (requete: FastifyRequest) => service.questionsDebut(utilisateurDe(requete)),
     cartesDues: (requete: FastifyRequest) => service.cartesDues(utilisateurDe(requete)),
+    verification: (requete: FastifyRequest<{ Params: { id: string } }>) =>
+      service.verification(utilisateurDe(requete), requete.params.id),
+    reporterVerification: (
+      requete: FastifyRequest<{ Params: { id: string }; Body: { id: string } }>,
+    ) => service.reporterVerification(utilisateurDe(requete), requete.params.id, requete.body.id),
     noterCarte: (
       requete: FastifyRequest<{
         Params: { id: string }
