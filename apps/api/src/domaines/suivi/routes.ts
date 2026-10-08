@@ -30,6 +30,11 @@ export function routesSuivi(controleur: ControleurSuivi): FastifyPluginAsync {
     )
     // La réponse est du texte brut : le schéma de sortie est celui du contrat, mais il ne sérialise pas.
     app.get(ROUTES['GET /journal/export.txt'].chemin, controleur.exportTexte)
+    app.get(
+      ROUTES['GET /export.json'].chemin,
+      { schema: schemaDe(ROUTES['GET /export.json']) },
+      controleur.exportJson,
+    )
     app.post(
       ROUTES['POST /journal/notes'].chemin,
       { schema: schemaDe(ROUTES['POST /journal/notes']), config: { identifiant: true } },

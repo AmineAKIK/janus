@@ -14,6 +14,83 @@ export function creerDepotSuivi() {
       return ligne?.reglages
     },
 
+    /**
+     * Tout ce qui appartient à l'utilisateur, table par table. Ni le hash du mot de passe, ni les
+     * sessions, ni les abonnements push (des secrets) n'en font partie.
+     */
+    donneesDe: async (lecteur: Db | Tx, userId: string): Promise<Record<string, unknown[]>> => {
+      const [compte] = await lecteur
+        .select({
+          id: t.users.id,
+          nom_utilisateur: t.users.nomUtilisateur,
+          reglages: t.users.reglages,
+          reglages_version: t.users.reglagesVersion,
+          cree_le: t.users.creeLe,
+        })
+        .from(t.users)
+        .where(eq(t.users.id, userId))
+      return {
+        users: compte === undefined ? [] : [compte],
+        evenements: await lecteur
+          .select()
+          .from(t.evenements)
+          .where(eq(t.evenements.userId, userId)),
+        corrections: await lecteur
+          .select()
+          .from(t.corrections)
+          .where(eq(t.corrections.userId, userId)),
+        corrections_echecs: await lecteur
+          .select()
+          .from(t.correctionsEchecs)
+          .where(eq(t.correctionsEchecs.userId, userId)),
+        statuts_forces: await lecteur
+          .select()
+          .from(t.statutsForces)
+          .where(eq(t.statutsForces.userId, userId)),
+        decisions_erreurs: await lecteur
+          .select()
+          .from(t.decisionsErreurs)
+          .where(eq(t.decisionsErreurs.userId, userId)),
+        notes_journal: await lecteur
+          .select()
+          .from(t.notesJournal)
+          .where(eq(t.notesJournal.userId, userId)),
+        idees: await lecteur.select().from(t.idees).where(eq(t.idees.userId, userId)),
+        revues_methode: await lecteur
+          .select()
+          .from(t.revuesMethode)
+          .where(eq(t.revuesMethode.userId, userId)),
+        notes_cartes: await lecteur
+          .select()
+          .from(t.notesCartes)
+          .where(eq(t.notesCartes.userId, userId)),
+        verifications_tirees: await lecteur
+          .select()
+          .from(t.verificationsTirees)
+          .where(eq(t.verificationsTirees.userId, userId)),
+        series_questions_debut: await lecteur
+          .select()
+          .from(t.seriesQuestionsDebut)
+          .where(eq(t.seriesQuestionsDebut.userId, userId)),
+        rappels_envoyes: await lecteur
+          .select()
+          .from(t.rappelsEnvoyes)
+          .where(eq(t.rappelsEnvoyes.userId, userId)),
+        statuts_courants: await lecteur
+          .select()
+          .from(t.statutsCourants)
+          .where(eq(t.statutsCourants.userId, userId)),
+        echeances: await lecteur.select().from(t.echeances).where(eq(t.echeances.userId, userId)),
+        revues_fsrs: await lecteur
+          .select()
+          .from(t.revuesFsrs)
+          .where(eq(t.revuesFsrs.userId, userId)),
+        journal: await lecteur.select().from(t.journal).where(eq(t.journal.userId, userId)),
+        budget_ia: await lecteur.select().from(t.budgetIa).where(eq(t.budgetIa.userId, userId)),
+        etats_page: await lecteur.select().from(t.etatsPage).where(eq(t.etatsPage.userId, userId)),
+      }
+    },
+
     /** Les modules importés, dans l'ordre du plan. */
     modulesImportes: (lecteur: Db | Tx) =>
       lecteur

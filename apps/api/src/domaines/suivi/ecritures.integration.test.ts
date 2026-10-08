@@ -192,4 +192,30 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('écritures du journal contre Po
     )
     expect(Number(rows[0]?.n)).toBe(2)
   })
+
+  it('exporte toutes les données, sans secret, et refuse sans session', async () => {
+    const sans = await s.app.inject({ method: 'GET', url: '/api/export.json' })
+    const reponse = await s.app.inject({
+      method: 'GET',
+      url: '/api/export.json',
+      headers: { cookie },
+    })
+
+    expect(sans.statusCode).toBe(401)
+    expect(reponse.statusCode).toBe(200)
+    const { version, genere_le, donnees } = reponse.json<{
+      version: number
+      genere_le: string
+      donnees: Record<string, unknown[]>
+    }>()
+    expect(version).toBe(1)
+    expect(genere_le).toBe(s.horloge.maintenant())
+    expect(donnees['users']).toMatchObject([{ nom_utilisateur: 'amine' }])
+    expect(donnees['idees']).toHaveLength(1)
+    expect(donnees['revues_methode']).toHaveLength(2)
+    expect(donnees['notes_journal']).toHaveLength(2)
+    expect(donnees['evenements']?.length).toBeGreaterThan(0)
+    expect(reponse.body).not.toContain('mot_de_passe')
+    expect(Object.keys(donnees)).not.toContain('sessions')
+  })
 })

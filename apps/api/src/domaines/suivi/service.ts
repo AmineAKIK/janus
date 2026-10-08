@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import { NoteCarte, Reglages } from '@janus/contrats'
 import type { TypeJournal } from '@janus/contrats'
 import type { Periode } from '@janus/moteur'
@@ -194,6 +195,12 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
         idees: await depot.idees(base.db, userId),
         derniereRevue: await depot.dernierTexteDeRevue(base.db, userId),
       })
+    },
+
+    /** Toutes les données de l'utilisateur, au format versionné de l'export. */
+    async exportJson(userId: string) {
+      const donnees = z.record(z.string(), z.json()).parse(await depot.donneesDe(base.db, userId))
+      return { version: 1 as const, genere_le: horloge.maintenant(), donnees }
     },
 
     /** Le tableau de bord, calculé à la lecture : rien n'est gardé. */
