@@ -6,6 +6,8 @@ import { creerDepotCorrection } from './depot.ts'
 import { routesCorrection } from './routes.ts'
 import { creerServiceCorrection } from './service.ts'
 
+export { validerSortie } from './policy.ts'
+
 /** Assez pour un message de 1500 caractères et le JSON autour. */
 const JETONS_SORTIE_MAX = 1000
 const DELAI_CORRECTEUR_MS = 30_000

@@ -22,6 +22,22 @@ export function routesCorrection(controleur: ControleurCorrection): FastifyPlugi
       { config: { identifiant: true }, schema: schemaDe(ROUTES['POST /corrections']) },
       controleur.corriger,
     )
+    app.post(
+      ROUTES['POST /corrections/:id/accord'].chemin,
+      {
+        config: { identifiant: false },
+        schema: schemaDe(ROUTES['POST /corrections/:id/accord']),
+      },
+      controleur.accord,
+    )
+    app.post(
+      ROUTES['POST /corrections/:id/trancher'].chemin,
+      {
+        config: { identifiant: true },
+        schema: schemaDe(ROUTES['POST /corrections/:id/trancher']),
+      },
+      controleur.trancher,
+    )
     return Promise.resolve()
   }
 }
