@@ -5,6 +5,7 @@ import type { OptionsAuth } from './domaines/auth/composition.ts'
 import { monterCatalogue } from './domaines/catalogue/composition.ts'
 import { monterCorrection } from './domaines/correction/composition.ts'
 import { monterEvenements } from './domaines/evenements/composition.ts'
+import { monterRappels } from './domaines/rappels/composition.ts'
 import { monterReglages } from './domaines/reglages/composition.ts'
 import { monterSuivi } from './domaines/suivi/composition.ts'
 import { monterRevisions } from './domaines/revisions/composition.ts'
@@ -44,5 +45,8 @@ export async function creerServeur(
   const revisions = monterRevisions(dependances, correction.corrigerPartie)
   await app.register(revisions.routes, { prefix: '/api' })
   await app.register(monterSuivi(dependances, revisions.aujourdhui), { prefix: '/api' })
+  const rappels = monterRappels(dependances, revisions.aujourdhui)
+  await app.register(rappels.routes, { prefix: '/api' })
+  app.decorate('envoyerLesRappels', rappels.envoyerLesRappels)
   return app
 }

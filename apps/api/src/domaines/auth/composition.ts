@@ -20,7 +20,12 @@ export function monterAuth(
   { base, proprietaire, horloge, config }: Dependances,
   { hacheur = creerHacheur() }: OptionsAuth = {},
 ): { readonly routes: FastifyPluginAsync; readonly resoudreSession: ResoudreSession } {
-  const service = creerServiceAuth({ depot: creerDepotAuth(base, proprietaire), hacheur, horloge })
+  const service = creerServiceAuth({
+    depot: creerDepotAuth(base, proprietaire),
+    hacheur,
+    horloge,
+    cleVapid: config.VAPID_PUBLIC_KEY,
+  })
   return {
     routes: routesAuth(creerControleurAuth(service, config)),
     resoudreSession: service.resoudre,

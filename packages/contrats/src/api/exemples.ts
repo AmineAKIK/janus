@@ -59,7 +59,7 @@ const demandeCorrection = {
   version: 3,
 }
 
-const moi = { id: ID, nom_utilisateur: 'amine', fuseau: 'Europe/Paris' }
+const moi = { id: ID, nom_utilisateur: 'amine', fuseau: 'Europe/Paris', cle_vapid: 'cle-publique' }
 
 export interface ExempleRoute {
   readonly params?: unknown

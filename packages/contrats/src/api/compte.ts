@@ -8,6 +8,8 @@ export const Moi = z.strictObject({
   id: IdUuid,
   nom_utilisateur: Texte,
   fuseau: Texte,
+  /** La clé publique VAPID du serveur, pour s'abonner aux rappels ; absente en démo, où rien n'est envoyé. */
+  cle_vapid: Texte.optional(),
 })
 export type Moi = z.infer<typeof Moi>
 

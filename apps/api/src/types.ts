@@ -1,5 +1,6 @@
 import type { Config } from './config.ts'
 import type { Base } from './base/base.ts'
+import type { Envoyeur } from './adaptateurs/push/envoyeur.ts'
 import type { Correcteur } from './adaptateurs/correcteur/correcteur.ts'
 import type { Horloge } from './horloge.ts'
 import type { CorrectionRecue, ROUTES, SortieRoute } from '@janus/contrats'
@@ -31,6 +32,8 @@ export interface Dependances {
   readonly proprietaire: Base
   /** Le correcteur : absent, la clé DeepSeek de la configuration en crée un, sans elle la correction est indisponible. */
   readonly correcteur?: Correcteur
+  /** L'envoi des notifications Web Push ; absent, aucun rappel ne peut partir. */
+  readonly envoyeur?: Envoyeur
   /** Un nombre dans [0, 1[ : le tirage de l'échantillon de contrôle (`Math.random` en production). */
   readonly hasard?: () => number
   /** Appelé par chaque middleware quand il passe sur une requête : sert aux tests d'ordre. */
@@ -47,6 +50,10 @@ export interface Session {
 export type ResoudreSession = (jeton: string | undefined) => Promise<Session>
 
 declare module 'fastify' {
+  interface FastifyInstance {
+    /** Envoie les rappels dus maintenant : la tâche planifiée l'appelle toutes les 5 minutes. */
+    envoyerLesRappels: () => Promise<BilanDesRappels>
+  }
   interface FastifyRequest {
     session: Session
     /** Le chrono au début de la requête, pour la durée du journal de fin. */
@@ -80,3 +87,13 @@ export type CorrigerPartie = (
 export type LireAujourdhui = (
   userId: string,
 ) => Promise<SortieRoute<(typeof ROUTES)['GET /aujourdhui']>>
+
+/** Ce qu'un passage de la tâche des rappels a fait. */
+export interface BilanDesRappels {
+  /** Les utilisateurs à qui un rappel a été envoyé. */
+  readonly rappels: number
+  /** Les abonnements supprimés parce que le service de push ne les connaît plus. */
+  readonly abonnementsSupprimes: number
+  /** Les envois qui ont échoué pour une autre raison (réseau, service de push). */
+  readonly echecs: number
+}

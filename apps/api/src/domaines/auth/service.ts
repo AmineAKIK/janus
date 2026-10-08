@@ -47,17 +47,21 @@ export interface DependancesService {
   readonly depot: DepotAuth
   readonly hacheur: Hacheur
   readonly horloge: Horloge
+  /** La clé publique VAPID, donnée à l'appli pour qu'elle s'abonne aux rappels. */
+  readonly cleVapid: string
 }
 
-function moiDe(utilisateur: Utilisateur): Moi {
-  return {
+function moiDeLaCle(cleVapid: string) {
+  return (utilisateur: Utilisateur): Moi => ({
     id: utilisateur.id,
     nom_utilisateur: utilisateur.nomUtilisateur,
     fuseau: Reglages.parse(utilisateur.reglages).fuseau,
-  }
+    cle_vapid: cleVapid,
+  })
 }
 
-export function creerServiceAuth({ depot, hacheur, horloge }: DependancesService) {
+export function creerServiceAuth({ depot, hacheur, horloge, cleVapid }: DependancesService) {
+  const moiDe = moiDeLaCle(cleVapid)
   const limiteur = creerLimiteur()
 
   /** Vrai si le mot de passe correspond ; un mot de passe trop long ne correspond jamais (bcrypt le tronquerait). */
