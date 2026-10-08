@@ -22,7 +22,8 @@ export async function creerBaseDeTest(urlServeur: string) {
   await admin.query(`CREATE DATABASE "${nom}"`)
   const url = urlDeLaBase(urlServeur, nom)
   await migrer(url)
-  const acces = creerAcces(url)
+  // La base est supprimée de force à la fin : une connexion qui se ferme à ce moment n'est pas une erreur.
+  const acces = creerAcces(url, () => undefined)
   return {
     url,
     ...acces,

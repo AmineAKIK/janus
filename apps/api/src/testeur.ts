@@ -16,6 +16,7 @@ export const ENVIRONNEMENT_TEST = {
   DATABASE_URL: 'postgres://janus@localhost/janus_test',
   DATABASE_URL_PROPRIETAIRE: 'postgres://janus@localhost/janus_test',
   ORIGINE_APPLI: ORIGINE_TEST,
+  FICHES_URL: 'https://fiches.test',
   COOKIE_SECURE: 'true',
   VAPID_PUBLIC_KEY: 'publique',
   VAPID_PRIVATE_KEY: 'privee',
