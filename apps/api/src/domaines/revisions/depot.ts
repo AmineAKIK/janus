@@ -27,6 +27,8 @@ export function creerDepotRevisions() {
           id: t.blocs.id,
           code: t.blocs.code,
           moduleId: t.blocs.moduleId,
+          moduleCode: t.modules.code,
+          moduleTitre: t.modules.titre,
           manifeste: t.fichesVersions.manifeste,
           version: t.fichesVersions.version,
           versionId: t.fichesVersions.id,
@@ -40,6 +42,26 @@ export function creerDepotRevisions() {
       const vus = new Set<string>()
       return lignes.filter(({ id }) => (vus.has(id) ? false : (vus.add(id), true)))
     },
+
+    /** Les reports en vigueur : ceux des vérifications qui n'ont pas encore de résultat. */
+    reportsOuverts: (lecteur: Db | Tx, userId: string) =>
+      lecteur
+        .select({
+          blocId: t.evenements.blocId,
+          jusqua: sql<string>`${t.evenements.donnees}->>'jusqua'`,
+        })
+        .from(t.evenements)
+        .where(
+          and(
+            eq(t.evenements.userId, userId),
+            eq(t.evenements.type, 'verification_reportee'),
+            sql`NOT EXISTS (
+              SELECT 1 FROM ${t.evenements} AS fin
+              WHERE fin.type = 'verification_resultat'
+                AND fin.donnees->>'verification' = ${t.evenements.donnees}->>'verification'
+            )`,
+          ),
+        ),
 
     /** Une vérification tirée pour cet utilisateur. */
     verificationParId: async (lecteur: Db | Tx, userId: string, id: string) => {
