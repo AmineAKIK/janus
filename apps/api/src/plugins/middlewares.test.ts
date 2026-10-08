@@ -65,11 +65,6 @@ async function ajouterRoutesDEssai(app: FastifyInstance): Promise<RouteOptions[]
         await new Promise((resolu) => setTimeout(resolu, 400))
         return { tard: true }
       })
-      interne.put(
-        '/api/blocs/:id/etat-page',
-        { config: { publique: true, identifiant: false } },
-        () => ({ fait: true }),
-      )
       interne.post('/api/corrections', { config: { publique: true, identifiant: true } }, () => ({
         fait: true,
       }))
@@ -114,7 +109,7 @@ describe('1. identifiant de requête et journal', () => {
 })
 
 describe('2. limite de corps et délai', () => {
-  it('refuse en 413 un corps de plus de 64 ko, mais laisse 256 ko à PUT /blocs/:id/etat-page', async () => {
+  it('refuse en 413 un corps de plus de 64 ko', async () => {
     const { app } = await serveurDeTest()
     await ajouterRoutesDEssai(app)
     const gros = JSON.stringify({ texte: 'x'.repeat(100 * KO) })
@@ -125,23 +120,9 @@ describe('2. limite de corps et délai', () => {
       headers: ECRITURE,
       payload: gros,
     })
-    const permis = await app.inject({
-      method: 'PUT',
-      url: '/api/blocs/B01/etat-page',
-      headers: ECRITURE,
-      payload: gros,
-    })
-    const trop = await app.inject({
-      method: 'PUT',
-      url: '/api/blocs/B01/etat-page',
-      headers: ECRITURE,
-      payload: JSON.stringify({ texte: 'x'.repeat(300 * KO) }),
-    })
 
     expect(refuse.statusCode).toBe(413)
     expect(refuse.json()).toMatchObject({ code: 'donnees_invalides', status: 413 })
-    expect(permis.statusCode).toBe(200)
-    expect(trop.statusCode).toBe(413)
   })
 
   it('donne 15 s à chaque route, 75 s à POST /api/corrections, et 64 ko de corps par défaut', async () => {
@@ -155,8 +136,6 @@ describe('2. limite de corps et délai', () => {
     expect(de('POST', '/api/corrections')?.handlerTimeout).toBe(75_000)
     expect(de('POST', '/essai/gros')?.handlerTimeout).toBe(15_000)
     expect(de('POST', '/essai/gros')?.bodyLimit).toBe(64 * KO)
-    expect(de('PUT', '/api/blocs/:id/etat-page')?.bodyLimit).toBe(256 * KO)
-    expect(de('PUT', '/api/blocs/:id/etat-page')?.handlerTimeout).toBe(15_000)
   })
 
   it('rend 503 delai_depasse quand le délai de la route est dépassé', async () => {

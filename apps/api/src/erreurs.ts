@@ -5,6 +5,8 @@ export abstract class ErreurMetier extends Error {
   abstract readonly status: number
   abstract readonly code: CodeProbleme
   abstract readonly titre: string
+  /** Des champs en plus dans le corps de la réponse (l'état actuel d'un conflit de version, par exemple). */
+  readonly extras: Readonly<Record<string, unknown>> = {}
 }
 
 export class Refus extends ErreurMetier {
@@ -57,8 +59,9 @@ export function versProbleme(
   code: CodeProbleme,
   titre: string,
   detail: string,
+  extras: Readonly<Record<string, unknown>> = {},
 ): ProblemeApi {
-  return { type: `urn:janus:erreur:${code}`, title: titre, status, detail, code }
+  return { type: `urn:janus:erreur:${code}`, title: titre, status, detail, code, ...extras }
 }
 
 /** Trop d'essais : la réponse dit dans combien de secondes réessayer (`retry-after`). */
@@ -77,4 +80,16 @@ export class NonAuthentifie extends ErreurMetier {
   readonly status = 401
   readonly code = 'non_authentifie'
   readonly titre = 'Non authentifié'
+}
+
+/** L'état de page a changé depuis la lecture de l'onglet : la réponse porte l'état actuel. */
+export class ConflitEtatPage extends ErreurMetier {
+  readonly status = 409
+  readonly code = 'conflit'
+  readonly titre = 'Conflit'
+  override readonly extras: Readonly<Record<string, unknown>>
+  constructor(extras: { version: number; etat: unknown; modifie_le: string }) {
+    super('L’état de la page a changé depuis ta dernière lecture.')
+    this.extras = extras
+  }
 }

@@ -3,6 +3,7 @@ import type { FastifyInstance } from 'fastify'
 import { monterAuth } from './domaines/auth/composition.ts'
 import type { OptionsAuth } from './domaines/auth/composition.ts'
 import { monterCatalogue } from './domaines/catalogue/composition.ts'
+import { monterEvenements } from './domaines/evenements/composition.ts'
 import { monterSante } from './domaines/sante/composition.ts'
 import { genererIdentifiant } from './plugins/identifiantRequete.ts'
 import { declarerMiddlewares } from './plugins/ordre.ts'
@@ -32,5 +33,6 @@ export async function creerServeur(
   await app.register(monterSante(dependances.base), { prefix: '/api' })
   await app.register(auth.routes, { prefix: '/api' })
   await app.register(monterCatalogue(dependances), { prefix: '/api' })
+  await app.register(monterEvenements(dependances), { prefix: '/api' })
   return app
 }
