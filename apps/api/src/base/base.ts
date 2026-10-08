@@ -9,6 +9,8 @@ export interface Base {
   /** Le seul point d'ouverture d'une transaction : `READ COMMITTED`, avec rejeu. */
   readonly enTransaction: ReturnType<typeof creerTransaction>
   readonly requete: (texte: string) => Promise<unknown>
+  /** Une requête SQL paramétrée sur le même pool : la file de tâches (pg-boss) s'en sert. */
+  readonly executer: (texte: string, valeurs?: unknown[]) => Promise<{ rows: unknown[] }>
   readonly fermer: () => Promise<void>
 }
 
@@ -17,6 +19,7 @@ export function baseDepuisPool(db: Db, pool: pg.Pool): Base {
     db,
     enTransaction: creerTransaction({ db }),
     requete: (texte) => pool.query(texte),
+    executer: (texte, valeurs) => pool.query(texte, valeurs),
     fermer: () => pool.end(),
   }
 }
