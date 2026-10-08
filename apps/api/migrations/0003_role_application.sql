@@ -1,18 +1,17 @@
 -- Le rôle de l'API : il se connecte (mot de passe posé hors dépôt) mais ne peut ni modifier ni effacer
 -- un fait. Les migrations tournent avec le rôle propriétaire, l'API avec `janus_app`.
--- Un verrou consultatif évite que deux bases créées en même temps (les tests) se disputent le rôle.
+-- Un verrou consultatif, dans la même instruction que tout ce qui touche le rôle (partagé entre les
+-- bases), évite que deux bases créées en même temps (les tests) se disputent.
 DO $$
 BEGIN
 	PERFORM pg_advisory_xact_lock(hashtext('janus_app'));
 	IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'janus_app') THEN
 		CREATE ROLE janus_app LOGIN;
+		ALTER ROLE janus_app SET lock_timeout = '2s';
+		ALTER ROLE janus_app SET statement_timeout = '10s';
 	END IF;
 END
 $$;
---> statement-breakpoint
-ALTER ROLE janus_app SET lock_timeout = '2s';
---> statement-breakpoint
-ALTER ROLE janus_app SET statement_timeout = '10s';
 --> statement-breakpoint
 GRANT USAGE ON SCHEMA public TO janus_app;
 --> statement-breakpoint
