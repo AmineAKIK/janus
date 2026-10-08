@@ -58,23 +58,35 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
       const { rows } = await base.pool.query<{ n: string }>(
         'SELECT count(*) AS n FROM drizzle.__drizzle_migrations',
       )
-      expect(Number(rows[0]?.n)).toBe(2)
+      expect(Number(rows[0]?.n)).toBe(4)
     })
 
-    it('crée les tables du catalogue, users et etats_page', async () => {
+    it('crée les tables du catalogue, des utilisateurs et des faits', async () => {
       const { rows } = await base.pool.query<{ table_name: string }>(
         `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY 1`,
       )
       expect(rows.map(({ table_name: nom }) => nom)).toEqual([
         'blocs',
         'cartes',
+        'corrections',
+        'decisions_erreurs',
         'etats_page',
+        'evenements',
         'fiches_versions',
         'formations',
+        'idees',
         'modules',
+        'notes_journal',
         'parties',
+        'rappels_envoyes',
+        'revues_methode',
+        'series_questions_debut',
+        'sessions',
+        'sessions_revoquees',
+        'statuts_forces',
         'taches_reservees',
         'users',
+        'verifications_tirees',
       ])
     })
 
