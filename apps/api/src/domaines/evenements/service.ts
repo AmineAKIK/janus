@@ -1,5 +1,5 @@
 import { Manifeste, Reglages, nouvelId } from '@janus/contrats'
-import type { StatutBloc } from '@janus/contrats'
+import type { Statut, StatutBloc } from '@janus/contrats'
 import { calculerBloc, instantEnMs } from '@janus/moteur'
 import type { Base } from '../../base/base.ts'
 import { lireFaits } from '../../base/faits.ts'
@@ -7,11 +7,12 @@ import { verrouBloc } from '../../base/transaction.ts'
 import { ConflitEtatPage, ContenuDifferent, ErreurProtocole, Introuvable } from '../../erreurs.ts'
 import type { Horloge } from '../../horloge.ts'
 import { recalculer, versStatutBloc } from '../../recalcul.ts'
-import type { DepotEvenements } from './depot.ts'
+import type { DepotEvenements, StatutForce } from './depot.ts'
 import {
   MESSAGES_AILLEURS,
   decisionsDuBilan,
   empreinteDuMessage,
+  erreurProposee,
   enregistrementDe,
 } from './policy.ts'
 import type { Message } from './policy.ts'
@@ -20,6 +21,16 @@ export interface DependancesService {
   readonly base: Base
   readonly depot: DepotEvenements
   readonly horloge: Horloge
+}
+
+export type DemandeForce =
+  { id: string; action: 'forcer'; statut: Statut; raison: string } | { id: string; action: 'lever' }
+
+export interface DemandeErreur {
+  id: string
+  erreur: string
+  correction: string
+  decision: 'confirmee' | 'rejetee'
 }
 
 export interface ResultatEvenement {
@@ -99,6 +110,7 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
               erreurId,
               decision,
               source: 'amine' as const,
+              correctionId: null,
               dateServeur: maintenant,
             })),
           )
@@ -106,6 +118,101 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
         if (!enregistrement.changeLeStatut) return { doublon: false, statut: null }
         const resultat = await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant })
         return { doublon: false, statut: versStatutBloc(resultat) }
+      })
+    },
+
+    /**
+     * Force un statut (avec sa raison) ou lève la force. Le fait est ajouté, jamais modifié : le
+     * même identifiant avec le même contenu est un doublon, avec un autre contenu c'est 422.
+     */
+    async forcer(userId: string, code: string, demande: DemandeForce) {
+      const trouve = await depot.blocEtVersions(base.db, code, undefined)
+      if (trouve === undefined) throw introuvable(`Le bloc « ${code} »`)
+      const { bloc } = trouve
+      const manifeste = Manifeste.parse(trouve.manifeste)
+      const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
+      const voulu: Pick<StatutForce, 'action' | 'statut' | 'raison'> =
+        demande.action === 'forcer'
+          ? { action: 'forcer', statut: demande.statut, raison: demande.raison }
+          : { action: 'lever', statut: null, raison: null }
+      return base.enTransaction(async (tx) => {
+        await verrouBloc(tx, userId, bloc.id)
+        const maintenant = horloge.maintenant()
+        const existant = await depot.forceParId(tx, demande.id)
+        if (existant === undefined) {
+          await depot.ajouterForce(tx, {
+            id: demande.id,
+            userId,
+            blocId: bloc.id,
+            ...voulu,
+            dateServeur: maintenant,
+          })
+        } else if (
+          existant.userId !== userId ||
+          existant.blocId !== bloc.id ||
+          existant.action !== voulu.action ||
+          existant.statut !== voulu.statut ||
+          existant.raison !== voulu.raison
+        ) {
+          throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
+        }
+        const resultat = await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant })
+        return {
+          ...versStatutBloc(resultat),
+          force: resultat.force,
+          statut_calcule: resultat.statutCalcule,
+        }
+      })
+    },
+
+    /** Amine tranche une erreur critique que l'IA a repérée : confirmée (elle s'ouvre) ou rejetée. */
+    async trancherErreur(userId: string, code: string, demande: DemandeErreur) {
+      const trouve = await depot.blocEtVersions(base.db, code, undefined)
+      if (trouve === undefined) throw introuvable(`Le bloc « ${code} »`)
+      const { bloc } = trouve
+      const manifeste = Manifeste.parse(trouve.manifeste)
+      const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
+      return base.enTransaction(async (tx) => {
+        await verrouBloc(tx, userId, bloc.id)
+        const maintenant = horloge.maintenant()
+        const existant = await depot.decisionParId(tx, demande.id)
+        if (existant === undefined) {
+          const correction = await depot.correctionParId(tx, userId, demande.correction)
+          if (correction?.blocId !== bloc.id) {
+            throw introuvable(`La correction « ${demande.correction} »`)
+          }
+          if (!erreurProposee(correction.erreursIds, demande.erreur)) {
+            throw new ErreurProtocole(
+              400,
+              'donnees_invalides',
+              'Erreur inconnue',
+              'Cette correction n’a pas repéré cette erreur.',
+            )
+          }
+          await depot.ajouterDecisions(tx, [
+            {
+              id: demande.id,
+              userId,
+              blocId: bloc.id,
+              erreurId: demande.erreur,
+              decision: demande.decision,
+              source: null,
+              correctionId: demande.correction,
+              dateServeur: maintenant,
+            },
+          ])
+        } else if (
+          existant.userId !== userId ||
+          existant.blocId !== bloc.id ||
+          existant.erreurId !== demande.erreur ||
+          existant.decision !== demande.decision ||
+          existant.correctionId !== demande.correction
+        ) {
+          throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
+        }
+        return versStatutBloc(
+          await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant }),
+        )
       })
     },
 

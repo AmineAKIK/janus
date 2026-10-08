@@ -20,8 +20,21 @@ export interface DecisionErreur {
   readonly userId: string
   readonly blocId: string
   readonly erreurId: string
-  readonly decision: 'cochee' | 'decochee'
-  readonly source: 'amine'
+  readonly decision: 'cochee' | 'decochee' | 'confirmee' | 'rejetee'
+  /** Pour cochée et décochée seulement. */
+  readonly source: 'amine' | null
+  /** Pour confirmée et rejetée seulement. */
+  readonly correctionId: string | null
+  readonly dateServeur: string
+}
+
+export interface StatutForce {
+  readonly id: string
+  readonly userId: string
+  readonly blocId: string
+  readonly action: 'forcer' | 'lever'
+  readonly statut: string | null
+  readonly raison: string | null
   readonly dateServeur: string
 }
 
@@ -83,6 +96,47 @@ export function creerDepotEvenements() {
 
     ajouterDecisions: async (tx: Tx, decisions: readonly DecisionErreur[]): Promise<void> => {
       if (decisions.length > 0) await tx.insert(t.decisionsErreurs).values([...decisions])
+    },
+
+    forceParId: async (lecteur: Db | Tx, id: string) => {
+      const [ligne] = await lecteur
+        .select({
+          userId: t.statutsForces.userId,
+          blocId: t.statutsForces.blocId,
+          action: t.statutsForces.action,
+          statut: t.statutsForces.statut,
+          raison: t.statutsForces.raison,
+        })
+        .from(t.statutsForces)
+        .where(eq(t.statutsForces.id, id))
+      return ligne
+    },
+
+    ajouterForce: async (tx: Tx, force: StatutForce): Promise<void> => {
+      await tx.insert(t.statutsForces).values(force)
+    },
+
+    decisionParId: async (lecteur: Db | Tx, id: string) => {
+      const [ligne] = await lecteur
+        .select({
+          userId: t.decisionsErreurs.userId,
+          blocId: t.decisionsErreurs.blocId,
+          erreurId: t.decisionsErreurs.erreurId,
+          decision: t.decisionsErreurs.decision,
+          correctionId: t.decisionsErreurs.correctionId,
+        })
+        .from(t.decisionsErreurs)
+        .where(eq(t.decisionsErreurs.id, id))
+      return ligne
+    },
+
+    /** La correction d'un utilisateur et les erreurs que l'IA y a repérées. */
+    correctionParId: async (lecteur: Db | Tx, userId: string, id: string) => {
+      const [ligne] = await lecteur
+        .select({ blocId: t.corrections.blocId, erreursIds: t.corrections.erreursIds })
+        .from(t.corrections)
+        .where(and(eq(t.corrections.id, id), eq(t.corrections.userId, userId)))
+      return ligne
     },
 
     /**

@@ -52,11 +52,15 @@ export function horlogeFausse(debut = '2026-10-01T10:00:00.000Z') {
   return {
     maintenant: () => new Date(ms).toISOString(),
     chrono: () => chrono,
+    /** Place l'horloge à cet instant (les cas d'acceptation rejouent des dates passées). */
+    placer: (instant: string) => {
+      ms = Date.parse(instant)
+    },
     avancer: (millisecondes: number) => {
       ms += millisecondes
       chrono += millisecondes
     },
-  } satisfies Horloge & { avancer: (ms: number) => void }
+  } satisfies Horloge & { avancer: (ms: number) => void; placer: (instant: string) => void }
 }
 
 export interface ServeurDeTest {

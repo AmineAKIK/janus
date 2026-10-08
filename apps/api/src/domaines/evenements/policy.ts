@@ -106,3 +106,8 @@ export function decisionsDuBilan(ouvertes: readonly string[], cochees: readonly 
     aDecocher: ouvertes.filter((erreur) => !cochees.includes(erreur)),
   }
 }
+
+/** Vrai si l'IA a repéré cette erreur dans la correction (`erreurs_ids` est un tableau JSON). */
+export function erreurProposee(erreursIds: unknown, erreur: string): boolean {
+  return Array.isArray(erreursIds) && erreursIds.includes(erreur)
+}

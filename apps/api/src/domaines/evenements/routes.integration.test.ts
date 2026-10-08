@@ -246,6 +246,149 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
         const gros = { texte: 'x'.repeat(201_000) }
         expect((await sauver('D01', { version: 3, etat: gros })).statusCode).toBe(400)
       })
+
+      describe('POST /blocs/:id/forcer', () => {
+        const forcer = (corps: Record<string, unknown>) =>
+          s.app.inject({
+            method: 'POST',
+            url: '/api/blocs/D01/forcer',
+            headers: { cookie, origin: ORIGINE_TEST },
+            payload: corps,
+          })
+
+        it('force un statut avec sa raison et rend aussi le statut calculé', async () => {
+          const reponse = await forcer({
+            id: identifiant(),
+            action: 'forcer',
+            statut: 'acquis',
+            raison: 'Je le maîtrise déjà',
+          })
+
+          expect(reponse.statusCode).toBe(200)
+          expect(reponse.json()).toMatchObject({
+            statut: 'acquis',
+            force: { statut: 'acquis', raison: 'Je le maîtrise déjà' },
+            statut_calcule: expect.any(String) as unknown,
+          })
+        })
+
+        it('ignore un doublon et refuse le même identifiant pour un autre contenu', async () => {
+          const demande = { id: identifiant(), action: 'forcer', statut: 'vu', raison: 'Un test' }
+          await forcer(demande)
+
+          const doublon = await forcer(demande)
+          const autre = await forcer({ ...demande, statut: 'acquis' })
+
+          expect(doublon.statusCode).toBe(200)
+          expect(autre.statusCode).toBe(422)
+        })
+
+        it('lève le forçage : le statut redevient le statut calculé', async () => {
+          const reponse = await forcer({ id: identifiant(), action: 'lever' })
+
+          const corps = reponse.json<{ statut: string; statut_calcule: string; force: unknown }>()
+          expect(corps.force).toBeNull()
+          expect(corps.statut).toBe(corps.statut_calcule)
+        })
+
+        it('refuse une raison vide (400) et un bloc inconnu (404)', async () => {
+          const vide = await forcer({
+            id: identifiant(),
+            action: 'forcer',
+            statut: 'vu',
+            raison: ' ',
+          })
+          const inconnu = await s.app.inject({
+            method: 'POST',
+            url: '/api/blocs/D99/forcer',
+            headers: { cookie, origin: ORIGINE_TEST },
+            payload: { id: identifiant(), action: 'lever' },
+          })
+
+          expect(vide.statusCode).toBe(400)
+          expect(inconnu.statusCode).toBe(404)
+        })
+      })
+
+      describe('POST /blocs/:id/erreurs', () => {
+        const trancher = (corps: Record<string, unknown>) =>
+          s.app.inject({
+            method: 'POST',
+            url: '/api/blocs/D01/erreurs',
+            headers: { cookie, origin: ORIGINE_TEST },
+            payload: corps,
+          })
+        let correction = ''
+
+        beforeAll(async () => {
+          const [ligne] = await bases.pool
+            .query<{ user_id: string; bloc_id: string }>(
+              "SELECT u.id AS user_id, b.id AS bloc_id FROM users u, blocs b WHERE b.code = 'D01'",
+            )
+            .then(({ rows }) => rows)
+          correction = identifiant()
+          await bases.db.insert(t.corrections).values({
+            id: correction,
+            userId: ligne?.user_id ?? '',
+            blocId: ligne?.bloc_id ?? '',
+            questionId: 'R1',
+            serie: 'restitution',
+            tentative: 1,
+            tour: 1,
+            confiance: 'sur',
+            reponse: 'réponse',
+            supportColle: false,
+            supportRetourCours: false,
+            recopiee: false,
+            message: 'message',
+            niveau: 'partiel',
+            erreursIds: ['E1'],
+            source: 'support',
+            ref: 'ref',
+            certitude: 'sur',
+            compte: true,
+            raisonNonCompte: null,
+            conteste: false,
+            modele: 'modele',
+            parametres: {},
+            jetonsEntree: 0,
+            jetonsSortie: 0,
+            coutMillioniemes: 0,
+            consigneEmpreinte: 'f'.repeat(64),
+            dateServeur: '2026-10-01T10:00:00.000Z',
+          })
+        })
+
+        it('répond 404 pour une correction inconnue et 400 pour une erreur qu’elle n’a pas repérée', async () => {
+          const inconnue = await trancher({
+            id: identifiant(),
+            erreur: 'E1',
+            correction: identifiant(),
+            decision: 'confirmee',
+          })
+          const autre = await trancher({
+            id: identifiant(),
+            erreur: 'E2',
+            correction,
+            decision: 'confirmee',
+          })
+
+          expect(inconnue.statusCode).toBe(404)
+          expect(autre.statusCode).toBe(400)
+        })
+
+        it('confirmer ouvre l’erreur, rejeter n’ouvre rien, un doublon est sans effet', async () => {
+          const demande = { id: identifiant(), erreur: 'E1', correction, decision: 'confirmee' }
+
+          const confirmee = await trancher(demande)
+          const doublon = await trancher(demande)
+          const autre = await trancher({ ...demande, decision: 'rejetee' })
+
+          expect(confirmee.json<{ erreurs_ouvertes: string[] }>().erreurs_ouvertes).toContain('E1')
+          expect(doublon.statusCode).toBe(200)
+          expect(autre.statusCode).toBe(422)
+        })
+      })
     })
   },
 )
