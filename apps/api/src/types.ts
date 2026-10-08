@@ -2,7 +2,7 @@ import type { Config } from './config.ts'
 import type { Base } from './base/base.ts'
 import type { Correcteur } from './adaptateurs/correcteur/correcteur.ts'
 import type { Horloge } from './horloge.ts'
-import type { CorrectionRecue } from '@janus/contrats'
+import type { CorrectionRecue, ROUTES, SortieRoute } from '@janus/contrats'
 
 /** Les noms des middlewares, dans l'ordre exact de la chaîne (`plugins/ordre.ts`). */
 export const NOMS_MIDDLEWARES = [
@@ -75,3 +75,8 @@ export type CorrigerPartie = (
     readonly support: { readonly colle: boolean; readonly retour_cours: boolean }
   },
 ) => Promise<CorrectionRecue>
+
+/** L'écran Aujourd'hui, fourni par le domaine des révisions : le tableau de bord en reprend les tâches. */
+export type LireAujourdhui = (
+  userId: string,
+) => Promise<SortieRoute<(typeof ROUTES)['GET /aujourdhui']>>
