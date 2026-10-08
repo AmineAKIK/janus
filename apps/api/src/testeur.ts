@@ -1,0 +1,89 @@
+import type { FastifyInstance } from 'fastify'
+import type { Base } from './base/base.ts'
+import { lireConfig } from './config.ts'
+import type { Config } from './config.ts'
+import type { Horloge } from './horloge.ts'
+import { creerServeur } from './serveur.ts'
+import type { NomMiddleware } from './types.ts'
+
+// Aides des tests de l'API : un serveur complet, une base factice, une horloge et un journal qu'on lit.
+
+export const ORIGINE_TEST = 'https://appli.test'
+
+export const ENVIRONNEMENT_TEST = {
+  DATABASE_URL: 'postgres://janus@localhost/janus_test',
+  ORIGINE_APPLI: ORIGINE_TEST,
+  COOKIE_SECURE: 'true',
+  VAPID_PUBLIC_KEY: 'publique',
+  VAPID_PRIVATE_KEY: 'privee',
+  VAPID_SUJET: 'mailto:amine@example.test',
+  NIVEAU_JOURNAL: 'info',
+}
+
+export function configDeTest(surcharge: Readonly<Record<string, string>> = {}): Config {
+  return lireConfig({ ...ENVIRONNEMENT_TEST, ...surcharge })
+}
+
+/** Une base qui répond (ou non) au `SELECT 1`. */
+export function baseFactice(repond = true): Base & { readonly requetes: string[] } {
+  const requetes: string[] = []
+  return {
+    requetes,
+    requete: (texte) => {
+      requetes.push(texte)
+      return repond
+        ? Promise.resolve({ rows: [{ '?column?': 1 }] })
+        : Promise.reject(new Error('base coupée'))
+    },
+    fermer: () => Promise.resolve(),
+  }
+}
+
+/** Une horloge qui n'avance que quand on le demande. */
+export function horlogeFausse(debut = '2026-10-01T10:00:00.000Z') {
+  let ms = Date.parse(debut)
+  let chrono = 0
+  return {
+    maintenant: () => new Date(ms).toISOString(),
+    chrono: () => chrono,
+    avancer: (millisecondes: number) => {
+      ms += millisecondes
+      chrono += millisecondes
+    },
+  } satisfies Horloge & { avancer: (ms: number) => void }
+}
+
+export interface ServeurDeTest {
+  readonly app: FastifyInstance
+  readonly passages: NomMiddleware[]
+  readonly journal: Record<string, unknown>[]
+  readonly base: ReturnType<typeof baseFactice>
+  readonly horloge: ReturnType<typeof horlogeFausse>
+}
+
+/** Un serveur complet, prêt pour `app.inject`, qui note les passages des middlewares et le journal. */
+export async function serveurDeTest(
+  options: { readonly baseRepond?: boolean; readonly config?: Config } = {},
+): Promise<ServeurDeTest> {
+  const passages: NomMiddleware[] = []
+  const journal: Record<string, unknown>[] = []
+  const base = baseFactice(options.baseRepond ?? true)
+  const horloge = horlogeFausse()
+  const app = await creerServeur(
+    {
+      config: options.config ?? configDeTest(),
+      horloge,
+      base,
+      observer: (nom) => passages.push(nom),
+    },
+    {
+      fluxJournal: {
+        write: (ligne) => {
+          const lue: unknown = JSON.parse(ligne)
+          if (typeof lue === 'object' && lue !== null) journal.push({ ...lue })
+        },
+      },
+    },
+  )
+  return { app, passages, journal, base, horloge }
+}
