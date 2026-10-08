@@ -3,12 +3,15 @@ import '@janus/ui/typographie.css'
 import { RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { registerSW } from 'virtual:pwa-register'
 import { creerTransport } from './api/client.ts'
 import { creerClientRequetes, FournisseurApi } from './api/requetes.tsx'
 import { creerBoiteEnvoi, creerVerrouNavigateur } from './envoi/boiteEnvoi.ts'
 import { FournisseurEnvoi } from './envoi/FournisseurEnvoi.tsx'
 import { ouvrirStockageIndexedDB, creerStockageParesseux } from './envoi/stockageEnvoi.ts'
 import { instantReel } from './demo/horlogeDemo.ts'
+import { creerMiseAJour } from './pwa/miseAJour.ts'
+import { MiseAJour } from './pwa/MiseAJour.tsx'
 import { creerRouteur } from './routes/arbre.tsx'
 import { allerALaConnexion } from './routes/connexion.ts'
 import { creerHistorique, modeHistorique } from './routes/historique.ts'
@@ -40,11 +43,15 @@ const routeur = creerRouteur(creerHistorique(modeHistorique(import.meta.env.VITE
   transport,
 })
 
+const miseAJour = creerMiseAJour(registerSW, import.meta.env.BASE_URL)
+miseAJour.demarrer()
+
 createRoot(racine).render(
   <StrictMode>
     <FournisseurApi transport={transport} client={client}>
       <FournisseurEnvoi boite={boite}>
         <RouterProvider router={routeur} />
+        <MiseAJour miseAJour={miseAJour} />
       </FournisseurEnvoi>
     </FournisseurApi>
   </StrictMode>,

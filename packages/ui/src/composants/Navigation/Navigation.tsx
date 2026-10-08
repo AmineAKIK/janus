@@ -1,9 +1,10 @@
 import { Book, Calendar, FileText, LayoutDashboard, Settings, type LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { NOM_APPLI } from '../../nomAppli.ts'
 import { classes } from '../../utilitaires/classes.ts'
 import styles from './Navigation.module.css'
 
-export const NOM_APPLI = 'Atelier'
+export { NOM_APPLI }
 
 export type CleNavigation = 'aujourdhui' | 'formations' | 'tableau' | 'journal' | 'parametres'
 
