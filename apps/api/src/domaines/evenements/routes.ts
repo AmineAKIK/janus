@@ -27,6 +27,16 @@ export function routesEvenements(controleur: ControleurEvenements): FastifyPlugi
       { config: { identifiant: false }, schema: schemaDe(ROUTES['PUT /blocs/:id/etat-page']) },
       controleur.etatPage,
     )
+    app.post(
+      ROUTES['POST /blocs/:id/forcer'].chemin,
+      { config: { identifiant: true }, schema: schemaDe(ROUTES['POST /blocs/:id/forcer']) },
+      controleur.forcer,
+    )
+    app.post(
+      ROUTES['POST /blocs/:id/erreurs'].chemin,
+      { config: { identifiant: true }, schema: schemaDe(ROUTES['POST /blocs/:id/erreurs']) },
+      controleur.erreur,
+    )
     return Promise.resolve()
   }
 }
