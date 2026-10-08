@@ -5,6 +5,7 @@ import type { OptionsAuth } from './domaines/auth/composition.ts'
 import { monterCatalogue } from './domaines/catalogue/composition.ts'
 import { monterCorrection } from './domaines/correction/composition.ts'
 import { monterEvenements } from './domaines/evenements/composition.ts'
+import { monterReglages } from './domaines/reglages/composition.ts'
 import { monterRevisions } from './domaines/revisions/composition.ts'
 import { monterSante } from './domaines/sante/composition.ts'
 import { genererIdentifiant } from './plugins/identifiantRequete.ts'
@@ -38,6 +39,7 @@ export async function creerServeur(
   await app.register(monterEvenements(dependances), { prefix: '/api' })
   const correction = monterCorrection(dependances)
   await app.register(correction.routes, { prefix: '/api' })
+  await app.register(monterReglages(dependances), { prefix: '/api' })
   await app.register(monterRevisions(dependances, correction.corrigerPartie), { prefix: '/api' })
   return app
 }
