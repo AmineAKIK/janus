@@ -1,5 +1,4 @@
 import { nouvelId } from '@janus/contrats'
-import type { Fait } from '@janus/contrats'
 import { CAS_ACCEPTATION } from '@janus/moteur/cas-acceptation'
 import type { Attendu, CasStatut } from '@janus/moteur/cas-acceptation'
 import { eq } from 'drizzle-orm'
@@ -7,6 +6,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { baseDepuisPool } from '../../base/base.ts'
 import type { Base } from '../../base/base.ts'
 import * as t from '../../base/schema/index.ts'
+import { ecrireFait } from '../../base/ecrireFait.ts'
 import { creerBaseDeTest, URL_SERVEUR_TEST } from '../../base/testeurBase.ts'
 import { recalculer } from '../../recalcul.ts'
 
@@ -53,88 +53,6 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('cas d’acceptation rejoués su
   afterAll(async () => {
     await bases.supprimer()
   })
-
-  /** Écrit un fait dans la table qui le porte, sous les identifiants de la base. */
-  async function ecrire(userId: string, fait: Fait, ids: Map<string, string>, rang: number) {
-    // Le serveur ignore un message déjà reçu : le doublon n'ajoute rien.
-    if (ids.has(fait.id)) return
-    const id = identifiant()
-    ids.set(fait.id, id)
-    const liens = { id, userId, blocId, dateServeur: fait.date }
-    const donnees = Object.fromEntries(
-      Object.entries(fait).filter(([cle]) => !['id', 'bloc', 'date', 'type'].includes(cle)),
-    )
-    switch (fait.type) {
-      case 'correction':
-        await bases.db.insert(t.corrections).values({
-          ...liens,
-          questionId: fait.question,
-          serie: fait.serie,
-          tentative: rang,
-          tour: fait.tour,
-          confiance: fait.confiance,
-          reponse: 'réponse',
-          supportColle: false,
-          supportRetourCours: false,
-          recopiee: fait.raisonNonCompte === 'recopiee',
-          message: 'message',
-          niveau: fait.niveau,
-          erreursIds: fait.erreursIa,
-          source: 'support',
-          ref: 'ref',
-          certitude: 'sur',
-          compte: fait.compte,
-          raisonNonCompte: fait.raisonNonCompte ?? null,
-          conteste: false,
-          modele: 'modele',
-          parametres: {},
-          jetonsEntree: 0,
-          jetonsSortie: 0,
-          coutMillioniemes: 0,
-          consigneEmpreinte: HASH,
-        })
-        return
-      case 'statut_force':
-        await bases.db
-          .insert(t.statutsForces)
-          .values({ ...liens, action: 'forcer', statut: fait.statut, raison: fait.raison })
-        return
-      case 'force_levee':
-        await bases.db.insert(t.statutsForces).values({ ...liens, action: 'lever' })
-        return
-      case 'erreur_cochee':
-      case 'erreur_decochee':
-        await bases.db.insert(t.decisionsErreurs).values({
-          ...liens,
-          erreurId: fait.erreur,
-          decision: fait.type === 'erreur_cochee' ? 'cochee' : 'decochee',
-          source: fait.source,
-        })
-        return
-      case 'erreur_ia_tranchee':
-        await bases.db.insert(t.decisionsErreurs).values({
-          ...liens,
-          erreurId: fait.erreur,
-          decision: fait.decision,
-          correctionId: ids.get(fait.correction) ?? null,
-        })
-        return
-      default: {
-        const lien =
-          fait.type === 'correction_contestee' || fait.type === 'correction_tranchee'
-            ? { correction: ids.get(fait.correction) }
-            : {}
-        await bases.db.insert(t.evenements).values({
-          ...liens,
-          ficheVersionId,
-          type: fait.type,
-          donnees: { ...donnees, ...lien },
-          empreinte: HASH,
-          aide: 'aide' in fait ? fait.aide : null,
-        })
-      }
-    }
-  }
 
   async function verifier(cas: CasStatut, userId: string, attendu: Attendu) {
     const resultat = await base.enTransaction((tx) =>
@@ -186,7 +104,12 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('cas d’acceptation rejoués su
     for (const { apresFaits, attendu } of etapes) {
       for (const fait of cas.faits.slice(ecrits, apresFaits)) {
         ecrits += 1
-        await ecrire(userId, fait, ids, ecrits)
+        await ecrireFait(
+          { db: bases.db, userId, blocId, ficheVersionId, identifiant },
+          fait,
+          ids,
+          ecrits,
+        )
       }
       await verifier(cas, userId, attendu)
     }

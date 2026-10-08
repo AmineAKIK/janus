@@ -12,6 +12,7 @@ function utilisateurDe(requete: FastifyRequest): string {
 export function creerControleurRevisions(service: ServiceRevisions) {
   return {
     questionsDebut: (requete: FastifyRequest) => service.questionsDebut(utilisateurDe(requete)),
+    aujourdhui: (requete: FastifyRequest) => service.aujourdhui(utilisateurDe(requete)),
     cartesDues: (requete: FastifyRequest) => service.cartesDues(utilisateurDe(requete)),
     verification: (requete: FastifyRequest<{ Params: { id: string } }>) =>
       service.verification(utilisateurDe(requete), requete.params.id),

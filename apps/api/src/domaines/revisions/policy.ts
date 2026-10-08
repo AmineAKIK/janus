@@ -26,6 +26,8 @@ export interface BlocDuPlan {
   readonly id: string
   readonly code: string
   readonly moduleId: string
+  readonly moduleCode: string
+  readonly moduleTitre: string
   readonly manifeste: unknown
 }
 
@@ -206,5 +208,22 @@ export function apresNote(
     ...noterCarte(depart, note, maintenant, reglages),
     introduiteLe: avant?.introduiteLe ?? maintenant,
     noteId,
+  }
+}
+
+/** Le module en cours : celui du bloc en cours, sinon le premier du plan ; `null` si rien n'est importé. */
+export function moduleEnCours(plan: readonly BlocDuPlan[], contexte: ContexteDuJour) {
+  const courant = plan.find(({ code }) => code === contexte.enCours) ?? plan.at(0)
+  if (courant === undefined) return null
+  return {
+    id: courant.moduleCode,
+    titre: courant.moduleTitre,
+    blocs: contexte.blocs
+      .filter(({ moduleId }) => moduleId === courant.moduleId)
+      .map(({ manifeste, etat }) => ({
+        bloc: manifeste.bloc,
+        titre_court: manifeste.titre_court,
+        statut: etat.statut,
+      })),
   }
 }

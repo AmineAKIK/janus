@@ -4,7 +4,10 @@ import type { NoteCarte } from '@janus/contrats'
 import {
   ajouterJours,
   calculerBloc,
+  ecartEnJours,
+  fileDuJour,
   instantEnMs,
+  JOURS_AVANT_RETARD,
   jourDe,
   validiteVerification,
 } from '@janus/moteur'
@@ -16,12 +19,14 @@ import { Conflit, ContenuDifferent, ErreurProtocole, Introuvable } from '../../e
 import { recalculer } from '../../recalcul.ts'
 import type { CorrigerPartie } from '../../types.ts'
 import type { Horloge } from '../../horloge.ts'
+import { blocsReportes, estVerification, lienDeLaTache } from './aujourdhui.ts'
 import type { DepotRevisions } from './depot.ts'
 import {
   apresNote,
   cartesAFaire,
   contexteDuJour,
   EtatGarde,
+  moduleEnCours,
   tirerQuestionsDuJour,
 } from './policy.ts'
 import {
@@ -57,6 +62,8 @@ export function creerServiceRevisions({
   horloge,
   corrigerPartie,
 }: DependancesService) {
+  type Chargement = Awaited<ReturnType<typeof charger>>
+
   /** Les réglages, le plan, les faits et le contexte du jour : le point de départ de chaque route. */
   async function charger(userId: string) {
     const maintenant = horloge.maintenant()
@@ -87,6 +94,20 @@ export function creerServiceRevisions({
     }
     const evenements = await depot.evenementsDeVerification(base.db, userId, id)
     return { ...charge, ligne, bloc, manifeste: Manifeste.parse(bloc.manifeste), evenements }
+  }
+
+  async function cartesDe(userId: string, { maintenant, reglages, contexte }: Chargement) {
+    const catalogue = await depot.cartesActives(base.db)
+    const revues = await depot.revuesDe(base.db, userId)
+    const etats = new Map(
+      revues.flatMap(({ carteId, etat }) => {
+        const carte = catalogue.find(({ id }) => id === carteId)
+        return carte === undefined
+          ? []
+          : [[`${carte.bloc}:${carte.carte}`, EtatGarde.parse(etat)] as const]
+      }),
+    )
+    return cartesAFaire(catalogue, etats, contexte, reglages, maintenant)
   }
 
   return {
@@ -351,18 +372,71 @@ export function creerServiceRevisions({
 
     /** Les cartes dues et les nouvelles des blocs vus. */
     async cartesDues(userId: string) {
-      const { maintenant, reglages, contexte } = await charger(userId)
-      const catalogue = await depot.cartesActives(base.db)
-      const revues = await depot.revuesDe(base.db, userId)
-      const etats = new Map(
-        revues.flatMap(({ carteId, etat }) => {
-          const carte = catalogue.find(({ id }) => id === carteId)
-          return carte === undefined
-            ? []
-            : [[`${carte.bloc}:${carte.carte}`, EtatGarde.parse(etat)] as const]
-        }),
+      return cartesDe(userId, await charger(userId))
+    },
+
+    /**
+     * L'écran Aujourd'hui en une requête : la file du moteur, où mène chaque tâche (les vérifications
+     * sont tirées au passage), le module en cours. Rien n'est trié ailleurs.
+     */
+    async aujourdhui(userId: string) {
+      const charge = await charger(userId)
+      const { maintenant, reglages, plan, faits, contexte } = charge
+      const cartes = await cartesDe(userId, charge)
+      const gardee = SerieGardee.safeParse(await depot.serieDuJour(base.db, userId, contexte.jour))
+      const questions = gardee.success
+        ? gardee.data.length
+        : tirerQuestionsDuJour(contexte, faits, reglages).length
+      const file = fileDuJour({
+        blocs: contexte.blocs,
+        questionsDebut: questions,
+        cartes: {
+          dues: cartes.dues.map(({ id }) => id),
+          nouvelles: cartes.nouvelles.map(({ id }) => id),
+        },
+        derniereActivite: contexte.derniereActivite,
+        maintenant,
+        reglages,
+      })
+      const reports = (await depot.reportsOuverts(base.db, userId)).flatMap(
+        ({ blocId, jusqua }) => {
+          const bloc = plan.find(({ id }) => id === blocId)
+          return bloc === undefined ? [] : [{ bloc: bloc.code, jusqua }]
+        },
       )
-      return cartesAFaire(catalogue, etats, contexte, reglages, maintenant)
+      const reportes = blocsReportes(reports, contexte.jour)
+      const aFaire = file.taches.filter(
+        (tache) => !(estVerification(tache) && reportes.has(tache.bloc)),
+      )
+      const verifications = new Map<string, string>()
+      for (const tache of aFaire) {
+        if (!estVerification(tache)) continue
+        verifications.set(
+          `${tache.bloc}:${tache.type}`,
+          await this.verificationPour(userId, tache.bloc, tache.type),
+        )
+      }
+      const jourDeLaDerniere =
+        contexte.derniereActivite === null
+          ? null
+          : jourDe(contexte.derniereActivite, reglages.fuseau, reglages.heureBascule)
+      const pause = jourDeLaDerniere === null ? 0 : ecartEnJours(jourDeLaDerniere, contexte.jour)
+      return {
+        jour: contexte.jour,
+        en_retard: file.enRetard,
+        ...(pause >= JOURS_AVANT_RETARD ? { retour: { jours: pause } } : {}),
+        premiere_connexion: faits.length === 0,
+        taches: aFaire.map((tache) => ({
+          tache,
+          lien: lienDeLaTache(
+            tache,
+            (bloc) => contexte.blocs.find(({ manifeste }) => manifeste.bloc === bloc)?.manifeste,
+            (bloc, type) => verifications.get(`${bloc}:${type}`) ?? bloc,
+          ),
+          faite: false,
+        })),
+        module: moduleEnCours(plan, contexte),
+      }
     },
 
     /** Note une carte : FSRS calcule la suite, la note déjà reçue (même identifiant) ne change rien. */

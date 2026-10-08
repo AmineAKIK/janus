@@ -18,6 +18,11 @@ function schemaDe(definition: DefinitionRoute) {
 export function routesRevisions(controleur: ControleurRevisions): FastifyPluginAsync {
   return (app) => {
     app.get(
+      ROUTES['GET /aujourdhui'].chemin,
+      { schema: schemaDe(ROUTES['GET /aujourdhui']) },
+      controleur.aujourdhui,
+    )
+    app.get(
       ROUTES['GET /questions-debut'].chemin,
       { schema: schemaDe(ROUTES['GET /questions-debut']) },
       controleur.questionsDebut,
