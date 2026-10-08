@@ -97,10 +97,17 @@ jobs:
             echo VAPID_PUBLIC_KEY=essai
             echo VAPID_PRIVATE_KEY=essai
             echo VAPID_SUJET=mailto:essai@exemple.fr
+            echo RESTIC_REPOSITORY=/depot-essai
+            echo RESTIC_PASSWORD=essai0restic
           } > .env
           docker compose up -d --build --wait
       - name: /api/sante répond 200 par Caddy
         run: curl -fsk https://app.localhost/api/sante
+      - name: Sauvegarde puis restauration dans une base vide
+        working-directory: infra
+        run: |
+          docker compose exec -T sauvegarde sauvegarder.sh
+          docker compose exec -T sauvegarde essai-restauration.sh
       - name: Journaux en cas d'échec
         if: failure()
         working-directory: infra

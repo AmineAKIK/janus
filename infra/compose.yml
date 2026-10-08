@@ -81,6 +81,23 @@ services:
     networks: [interne]
     logging: *journaux
 
+  sauvegarde:
+    build:
+      context: sauvegarde
+    restart: unless-stopped
+    environment:
+      DATABASE_URL_PROPRIETAIRE: postgres://janus:${POSTGRES_PASSWORD}@postgres:5432/janus
+      RESTIC_REPOSITORY: ${RESTIC_REPOSITORY:?RESTIC_REPOSITORY manquant dans .env}
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD:?RESTIC_PASSWORD manquant dans .env}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      HEURE_SAUVEGARDE: ${HEURE_SAUVEGARDE:-03:00}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [interne]
+    logging: *journaux
+
 volumes:
   donnees:
   fiches:
