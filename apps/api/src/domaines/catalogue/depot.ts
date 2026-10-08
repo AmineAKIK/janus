@@ -1,7 +1,7 @@
-import { and, asc, eq, notInArray, sql } from 'drizzle-orm'
+import { and, asc, desc, eq, inArray, notInArray, sql } from 'drizzle-orm'
 import type { Base } from '../../base/base.ts'
 import * as t from '../../base/schema/index.ts'
-import type { Tx } from '../../base/transaction.ts'
+import type { Db, Tx } from '../../base/transaction.ts'
 
 export interface BlocTrouve {
   readonly id: string
@@ -56,6 +56,16 @@ export interface NouvelleVersion {
   }[]
 }
 
+export interface BlocDeLaListe {
+  readonly code: string
+  readonly titre: string
+  readonly titreCourt: string | null
+  readonly partieCode: string | null
+  readonly partieTitre: string | null
+  readonly prerequis: unknown
+  readonly statut: string | null
+}
+
 export interface CompteCartes {
   readonly ajoutees: number
   readonly retirees: number
@@ -65,6 +75,173 @@ export interface CompteCartes {
 /** Les ordres SQL de l'import : le plan de la formation, les versions de fiches, les cartes. */
 export function creerDepotCatalogue(base: Base) {
   return {
+    formations: (lecteur: Db | Tx) =>
+      lecteur
+        .select({
+          id: t.formations.id,
+          titre: t.formations.titre,
+          description: t.formations.description,
+        })
+        .from(t.formations)
+        .orderBy(asc(t.formations.code)),
+
+    formationExiste: async (lecteur: Db | Tx, id: string): Promise<boolean> =>
+      (
+        await lecteur
+          .select({ id: t.formations.id })
+          .from(t.formations)
+          .where(eq(t.formations.id, id))
+      ).length > 0,
+
+    modulesDeLaFormation: (lecteur: Db | Tx, formationId: string) =>
+      lecteur
+        .select({
+          id: t.modules.id,
+          code: t.modules.code,
+          titre: t.modules.titre,
+          description: t.modules.description,
+          ordre: t.modules.ordre,
+          importe: t.modules.importe,
+        })
+        .from(t.modules)
+        .where(eq(t.modules.formationId, formationId))
+        .orderBy(asc(t.modules.ordre)),
+
+    moduleParId: async (lecteur: Db | Tx, id: string) => {
+      const [ligne] = await lecteur
+        .select({ id: t.modules.id, importe: t.modules.importe })
+        .from(t.modules)
+        .where(eq(t.modules.id, id))
+      return ligne
+    },
+
+    /**
+     * Les blocs d'un module avec leur dernière version de fiche et leur statut courant. Les colonnes
+     * du manifeste sont choisies une à une : un manifeste entier ne sort jamais d'une liste.
+     */
+    blocsDuModule: async (
+      lecteur: Db | Tx,
+      moduleId: string,
+      userId: string,
+    ): Promise<BlocDeLaListe[]> => {
+      const derniere = lecteur
+        .select({
+          blocId: t.fichesVersions.blocId,
+          derniereVersion: sql<number>`max(${t.fichesVersions.version})`.as('derniere_version'),
+        })
+        .from(t.fichesVersions)
+        .groupBy(t.fichesVersions.blocId)
+        .as('derniere')
+      return lecteur
+        .select({
+          code: t.blocs.code,
+          titre: t.blocs.titre,
+          titreCourt: sql<string | null>`${t.fichesVersions.manifeste}->>'titre_court'`,
+          partieCode: t.parties.code,
+          partieTitre: t.parties.titre,
+          prerequis: sql<unknown>`${t.fichesVersions.manifeste}->'prerequis'`,
+          statut: sql<string | null>`${t.statutsCourants.detail}->>'statut'`,
+        })
+        .from(t.blocs)
+        .innerJoin(derniere, eq(derniere.blocId, t.blocs.id))
+        .innerJoin(
+          t.fichesVersions,
+          and(
+            eq(t.fichesVersions.blocId, t.blocs.id),
+            eq(t.fichesVersions.version, derniere.derniereVersion),
+          ),
+        )
+        .leftJoin(t.parties, eq(t.parties.id, t.blocs.partieId))
+        .leftJoin(
+          t.statutsCourants,
+          and(eq(t.statutsCourants.blocId, t.blocs.id), eq(t.statutsCourants.userId, userId)),
+        )
+        .where(eq(t.blocs.moduleId, moduleId))
+        .orderBy(asc(t.blocs.ordre))
+    },
+
+    /** Le bloc de ce code, avec sa version en service (la plus récente). */
+    blocEtVersion: async (lecteur: Db | Tx, code: string) => {
+      const blocs = await lecteur
+        .select({
+          id: t.blocs.id,
+          code: t.blocs.code,
+          moduleId: t.blocs.moduleId,
+          titre: t.blocs.titre,
+        })
+        .from(t.blocs)
+        .where(eq(t.blocs.code, code))
+      const [bloc] = blocs
+      if (bloc === undefined || blocs.length > 1) return undefined
+      const [version] = await lecteur
+        .select({
+          id: t.fichesVersions.id,
+          version: t.fichesVersions.version,
+          empreinte: t.fichesVersions.empreinte,
+          chemin: t.fichesVersions.chemin,
+          manifeste: t.fichesVersions.manifeste,
+        })
+        .from(t.fichesVersions)
+        .where(eq(t.fichesVersions.blocId, bloc.id))
+        .orderBy(desc(t.fichesVersions.version))
+        .limit(1)
+      return { bloc, version }
+    },
+
+    etatPage: async (lecteur: Db | Tx, userId: string, blocId: string) => {
+      const [ligne] = await lecteur
+        .select({ version: t.etatsPage.version, etat: t.etatsPage.etat })
+        .from(t.etatsPage)
+        .where(and(eq(t.etatsPage.userId, userId), eq(t.etatsPage.blocId, blocId)))
+      return ligne
+    },
+
+    reglagesDe: async (lecteur: Db | Tx, userId: string): Promise<unknown> => {
+      const [ligne] = await lecteur
+        .select({ reglages: t.users.reglages })
+        .from(t.users)
+        .where(eq(t.users.id, userId))
+      return ligne?.reglages
+    },
+
+    /** Le statut courant (forçage compris) de ces blocs, par code ; `non_commence` quand rien n'est calculé. */
+    statutsCourants: async (
+      lecteur: Db | Tx,
+      userId: string,
+      codes: readonly string[],
+    ): Promise<Map<string, string>> => {
+      if (codes.length === 0) return new Map()
+      const lignes = await lecteur
+        .select({ code: t.blocs.code, statut: sql<string>`${t.statutsCourants.detail}->>'statut'` })
+        .from(t.statutsCourants)
+        .innerJoin(t.blocs, eq(t.blocs.id, t.statutsCourants.blocId))
+        .where(and(eq(t.statutsCourants.userId, userId), inArray(t.blocs.code, [...codes])))
+      return new Map(lignes.map(({ code, statut }) => [code, statut]))
+    },
+
+    evenementParId: async (lecteur: Db | Tx, id: string) => {
+      const [ligne] = await lecteur
+        .select({ userId: t.evenements.userId, empreinte: t.evenements.empreinte })
+        .from(t.evenements)
+        .where(eq(t.evenements.id, id))
+      return ligne
+    },
+
+    ajouterOuverture: async (
+      tx: Tx,
+      ouverture: {
+        readonly id: string
+        readonly userId: string
+        readonly blocId: string
+        readonly ficheVersionId: string
+        readonly donnees: unknown
+        readonly empreinte: string
+        readonly dateServeur: string
+      },
+    ): Promise<void> => {
+      await tx.insert(t.evenements).values({ ...ouverture, type: 'bloc_ouvert', aide: null })
+    },
+
     /** Insère ou met à jour la formation, ses modules, parties et blocs ; compte ce qui a été créé. */
     importerCatalogue: (
       formation: NouvelleFormation,

@@ -10,6 +10,8 @@ export const SchemaConfig = z.object({
   DATABASE_URL_PROPRIETAIRE: z.string().min(1),
   /** L'origine exacte de l'appli (`https://exemple.fr`), la seule autorisée à écrire. */
   ORIGINE_APPLI: z.url(),
+  /** L'adresse (sans barre finale ou avec) d'où les fiches sont servies : `<FICHES_URL>/<code>/<empreinte>.html`. */
+  FICHES_URL: z.url(),
   COOKIE_SECURE: Booleen,
   /** Facultative en test : sans elle, la correction par l'IA est indisponible. */
   DEEPSEEK_API_KEY: z.string().min(1).optional(),

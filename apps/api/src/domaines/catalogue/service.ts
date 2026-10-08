@@ -1,9 +1,28 @@
-import { Catalogue, nouvelId, validerManifeste } from '@janus/contrats'
-import { instantEnMs } from '@janus/moteur'
+import {
+  Catalogue,
+  EtatPage,
+  IdUuid,
+  Manifeste,
+  Reglages,
+  Statut,
+  nouvelId,
+  validerManifeste,
+} from '@janus/contrats'
+import type { CinqPreuves } from '@janus/contrats'
+import { accesBloc, calculerBloc, instantEnMs, preuvesDuBloc } from '@janus/moteur'
+import type { ResultatBloc } from '@janus/moteur'
+import { z } from 'zod'
+import type { Base } from '../../base/base.ts'
+import { lireFaits } from '../../base/faits.ts'
+import { verrouBloc } from '../../base/transaction.ts'
+import type { Db, Tx } from '../../base/transaction.ts'
+import { ContenuDifferent, ErreurProtocole, Introuvable } from '../../erreurs.ts'
 import type { Horloge } from '../../horloge.ts'
+import { recalculer, versStatutBloc } from '../../recalcul.ts'
 import { empreinteDuTexte, extraireManifeste, extraireSons } from './adaptateur.ts'
 import type { Stockage } from './adaptateur.ts'
 import type { CompteCartes, CompteImportCatalogue, DepotCatalogue } from './depot.ts'
+import { peutOuvrir, serieOuverte } from './policy.ts'
 
 /** Un import refusé, avec tous ses problèmes (la ligne de commande les affiche et sort en erreur). */
 export class ErreurImport extends Error {
@@ -150,3 +169,204 @@ export function creerServiceCatalogue({ depot, stockage, horloge }: DependancesS
   }
 }
 export type ServiceCatalogue = ReturnType<typeof creerServiceCatalogue>
+
+const SANS_STATUT: Statut = 'non_commence'
+
+export interface DependancesLecture {
+  readonly base: Base
+  readonly depot: DepotCatalogue
+  readonly horloge: Horloge
+  /** L'adresse d'où les fiches sont servies. */
+  readonly fichesUrl: string
+}
+
+function introuvable(quoi: string): Introuvable {
+  return new Introuvable(`${quoi} n’existe pas.`)
+}
+
+/** Les routes de lecture du catalogue, et l'ouverture d'un bloc. */
+export function creerServiceLecture({ base, depot, horloge, fichesUrl }: DependancesLecture) {
+  // Le validateur rejoue la fiche une fois par version en service : un validateur plus strict peut
+  // refuser une fiche déjà importée.
+  const problemesParVersion = new Map<string, readonly string[]>()
+  const racine = fichesUrl.replace(/\/+$/, '')
+
+  function problemesDe(versionId: string, manifeste: unknown): readonly string[] {
+    const connus = problemesParVersion.get(versionId)
+    if (connus !== undefined) return connus
+    const resultat = validerManifeste(manifeste)
+    const problemes = resultat.ok
+      ? []
+      : resultat.problemes.map(({ chemin, message }) =>
+          chemin === '' ? message : `${chemin} : ${message}`,
+        )
+    problemesParVersion.set(versionId, problemes)
+    return problemes
+  }
+
+  async function statutsDesPrerequis(
+    lecteur: Db | Tx,
+    userId: string,
+    prerequis: readonly string[],
+  ): Promise<Statut[]> {
+    const statuts = await depot.statutsCourants(lecteur, userId, prerequis)
+    return prerequis.map((code) => Statut.parse(statuts.get(code) ?? SANS_STATUT))
+  }
+
+  async function bloc(lecteur: Db | Tx, code: string) {
+    const trouve = await depot.blocEtVersion(lecteur, code)
+    if (trouve?.version === undefined) throw introuvable(`Le bloc « ${code} »`)
+    return {
+      bloc: trouve.bloc,
+      version: trouve.version,
+      manifeste: Manifeste.parse(trouve.version.manifeste),
+    }
+  }
+
+  return {
+    async formations() {
+      return { formations: await depot.formations(base.db) }
+    },
+
+    async modules(formationId: string) {
+      if (
+        !IdUuid.safeParse(formationId).success ||
+        !(await depot.formationExiste(base.db, formationId))
+      ) {
+        throw introuvable(`La formation « ${formationId} »`)
+      }
+      return { modules: await depot.modulesDeLaFormation(base.db, formationId) }
+    },
+
+    async blocsDuModule(userId: string, moduleId: string) {
+      const leModule = IdUuid.safeParse(moduleId).success
+        ? await depot.moduleParId(base.db, moduleId)
+        : undefined
+      if (leModule === undefined) throw introuvable(`Le module « ${moduleId} »`)
+      if (!leModule.importe) return { blocs: [] }
+      const lignes = await depot.blocsDuModule(base.db, moduleId, userId)
+      return {
+        blocs: lignes.map((ligne) => ({
+          bloc: ligne.code,
+          titre: ligne.titre,
+          titre_court: ligne.titreCourt ?? ligne.titre,
+          partie:
+            ligne.partieCode === null
+              ? ''
+              : `${ligne.partieCode} ${ligne.partieTitre ?? ''}`.trim(),
+          prerequis: z.array(z.string()).parse(ligne.prerequis),
+          statut: Statut.parse(ligne.statut ?? SANS_STATUT),
+        })),
+      }
+    },
+
+    async bloc(userId: string, code: string) {
+      const maintenant = horloge.maintenant()
+      const { bloc: leBloc, version, manifeste } = await bloc(base.db, code)
+      const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
+      const faits = await lireFaits(base.db, userId, [leBloc])
+      const resultat = calculerBloc(faits, manifeste, reglages, maintenant)
+      const page = await depot.etatPage(base.db, userId, leBloc.id)
+      return {
+        ...versStatutBloc(resultat),
+        bloc: leBloc.code,
+        module: leBloc.moduleId,
+        version: version.version,
+        manifeste,
+        problemes: [...problemesDe(version.id, version.manifeste)],
+        serie_ouverte: serieOuverte(
+          resultat.statut,
+          resultat.manque.some(({ code: manque }) => manque === 'consolidation_trop_tot'),
+        ),
+        force: resultat.force,
+        acces: accesBloc(await statutsDesPrerequis(base.db, userId, manifeste.prerequis)),
+        preuves: preuvesDeLApi(resultat, reglages),
+        fiche_url: `${racine}/${version.chemin}`,
+        etat_page:
+          page === undefined ? null : { version: page.version, etat: EtatPage.parse(page.etat) },
+      }
+    },
+
+    /**
+     * Ouvre un bloc : le verrou du bloc, la règle d'accès, le fait d'ouverture, le recalcul. Le même
+     * identifiant avec le même contenu rend l'état d'origine ; avec un autre contenu, 422.
+     */
+    async ouvrir(
+      userId: string,
+      code: string,
+      demande: { id: string; hors_prerequis: boolean; raison?: string | undefined },
+    ) {
+      const { bloc: leBloc, version, manifeste } = await bloc(base.db, code)
+      const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
+      const empreinte = empreinteDuTexte(
+        JSON.stringify({
+          bloc: code,
+          hors_prerequis: demande.hors_prerequis,
+          raison: demande.raison ?? null,
+        }),
+      )
+      return base.enTransaction(async (tx) => {
+        await verrouBloc(tx, userId, leBloc.id)
+        const maintenant = horloge.maintenant()
+        const acces = accesBloc(await statutsDesPrerequis(tx, userId, manifeste.prerequis))
+        const existant = await depot.evenementParId(tx, demande.id)
+        if (existant === undefined) {
+          if (
+            !peutOuvrir(acces, { horsPrerequis: demande.hors_prerequis, raison: demande.raison })
+          ) {
+            throw new ErreurProtocole(
+              400,
+              'donnees_invalides',
+              'Raison exigée',
+              'Ce bloc a des prérequis pas encore acquis : donne la raison de ton choix.',
+            )
+          }
+          await depot.ajouterOuverture(tx, {
+            id: demande.id,
+            userId,
+            blocId: leBloc.id,
+            ficheVersionId: version.id,
+            donnees: {
+              horsPrerequis: demande.hors_prerequis,
+              ...(demande.raison === undefined ? {} : { raison: demande.raison }),
+            },
+            empreinte,
+            dateServeur: maintenant,
+          })
+        } else if (existant.userId !== userId || existant.empreinte !== empreinte) {
+          throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
+        }
+        const resultat = await recalculer(tx, {
+          userId,
+          bloc: leBloc,
+          manifeste,
+          reglages,
+          maintenant,
+        })
+        return { acces, ...versStatutBloc(resultat) }
+      })
+    },
+  }
+}
+export type ServiceLecture = ReturnType<typeof creerServiceLecture>
+
+/** Le panneau « Cinq preuves » tel que l'API le rend. */
+function preuvesDeLApi(resultat: ResultatBloc, reglages: Reglages): CinqPreuves {
+  const preuves = preuvesDuBloc(resultat, reglages)
+  return {
+    comprendre: preuves.comprendre,
+    faire_seul: preuves.faireSeul,
+    transferer: preuves.transferer,
+    retenir:
+      preuves.retenir === null
+        ? null
+        : {
+            date: preuves.retenir.date,
+            prochaine:
+              preuves.retenir.prochaine === null
+                ? null
+                : { type: preuves.retenir.prochaine.type, apres: preuves.retenir.prochaine.apres },
+          },
+    aisance: preuves.aisance,
+  }
+}
