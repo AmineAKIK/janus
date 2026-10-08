@@ -19,11 +19,18 @@ export const UTILISATEUR_BANC = 'amine'
 export const MOT_DE_PASSE_BANC = 'demo-janus'
 
 const FICHE_MODELE = new URL('../../../web/public/fiches/demo/fiche-demo.html', import.meta.url)
+/** La bibliothèque de la fiche (`pnpm --filter @janus/pont build`) : le navigateur en a besoin pour parler à l'appli. */
+const PONT = new URL('../../../../packages/pont/dist/pont.js', import.meta.url)
+const BALISE_PONT = '<script id="pont"></script>'
 
 /** La fiche de démonstration, avec le manifeste d'un autre bloc. */
-function ficheDuBloc(modele: string, manifeste: unknown): string {
+function ficheDuBloc(modele: string, manifeste: unknown, pont: string): string {
   const json = JSON.stringify(manifeste).replaceAll('<', '\\u003c')
-  return modele.replace(
+  const avecPont = modele.replace(
+    BALISE_PONT,
+    () => `<script id="pont">${pont.replaceAll('</script', '<\\/script')}</script>`,
+  )
+  return avecPont.replace(
     /(<script\b[^>]*\bid="manifeste"[^>]*>)[\s\S]*?(<\/script>)/,
     (_, ouverture: string, fermeture: string) => `${ouverture}${json}${fermeture}`,
   )
@@ -50,7 +57,8 @@ export async function planterLaGraine(base: Base, horloge: Horloge, dossierFiche
   const importation = monterImportation(base, horloge, dossierFiches)
   await importation.importerCatalogue(catalogueGraine())
   const modele = await readFile(FICHE_MODELE, 'utf8')
+  const pont = await readFile(PONT, 'utf8')
   for (const { code } of PLAN_GRAINE) {
-    await importation.importerFiche(ficheDuBloc(modele, MANIFESTES_GRAINE[code]))
+    await importation.importerFiche(ficheDuBloc(modele, MANIFESTES_GRAINE[code], pont))
   }
 }

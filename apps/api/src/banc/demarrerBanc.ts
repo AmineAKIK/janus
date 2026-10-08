@@ -1,3 +1,5 @@
+import { createServer } from 'node:http'
+import { readFile } from 'node:fs/promises'
 import { mkdtemp } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -17,6 +19,7 @@ import { planterLaGraine } from './graine.ts'
 // (un test le vérifie), donc ces routes n'existent pas en production.
 
 const PORT_PAR_DEFAUT = 3100
+const PORT_FICHES_PAR_DEFAUT = 3101
 const DEBUT = '2026-06-01T10:00:00.000Z'
 /** Tout ce qu'un parcours écrit : on le vide entre deux scénarios, le plan et les fiches restent. */
 const TABLES_A_VIDER = [
@@ -48,7 +51,7 @@ const Avancer = z.strictObject({ ms: z.number().int().min(0) })
 
 const config = lireConfig({
   ORIGINE_APPLI: 'http://localhost:4173',
-  FICHES_URL: 'http://localhost:3100/fiches',
+  FICHES_URL: `http://localhost:${process.env['PORT_FICHES'] ?? String(PORT_FICHES_PAR_DEFAUT)}`,
   COOKIE_SECURE: 'false',
   VAPID_PUBLIC_KEY: 'banc',
   VAPID_PRIVATE_KEY: 'banc',
@@ -59,7 +62,8 @@ const config = lireConfig({
 const base = creerBase(config.DATABASE_URL)
 const proprietaire = creerBase(config.DATABASE_URL_PROPRIETAIRE)
 const horloge = horlogeFausse(DEBUT)
-await planterLaGraine(proprietaire, horloge, await mkdtemp(join(tmpdir(), 'janus-banc-')))
+const dossierFiches = await mkdtemp(join(tmpdir(), 'janus-banc-'))
+await planterLaGraine(proprietaire, horloge, dossierFiches)
 
 const app = await creerServeur(
   { config, horloge, base, proprietaire, correcteur: creerFaux() },
@@ -86,3 +90,21 @@ app.post(
 )
 
 await app.listen({ host: '127.0.0.1', port: Number(process.env['PORT'] ?? PORT_PAR_DEFAUT) })
+
+// Les fiches sont servies à part, sans les en-têtes de l'API (sa politique de contenu bloquerait
+// leurs scripts), comme le ferait l'hébergeur statique de `FICHES_URL`.
+createServer((requete, reponse) => {
+  const chemin = decodeURIComponent((requete.url ?? '/').split('?')[0] ?? '/')
+  if (chemin.includes('..')) {
+    reponse.writeHead(400).end()
+    return
+  }
+  readFile(join(dossierFiches, chemin)).then(
+    (contenu) => {
+      reponse.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }).end(contenu)
+    },
+    () => {
+      reponse.writeHead(404).end()
+    },
+  )
+}).listen(Number(process.env['PORT_FICHES'] ?? PORT_FICHES_PAR_DEFAUT), '127.0.0.1')

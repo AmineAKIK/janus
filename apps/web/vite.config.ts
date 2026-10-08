@@ -46,6 +46,8 @@ export default defineConfig({
       },
     }),
   ],
+  // Les parcours contre l'API réelle (`playwright.api.config.ts`) passent par ce proxy : même origine que l'appli.
+  preview: { proxy: { '/api': 'http://127.0.0.1:3100' } },
   build: {
     rollupOptions: {
       input: { index: 'index.html', vitrine: 'vitrine.html' },
