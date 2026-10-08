@@ -9,6 +9,7 @@ import {
   ecartEnJours,
   echeances,
   erreursRecurrentes,
+  fiabilite,
   retention,
   tempsActif,
   ouverturesSansPrerequis,
@@ -94,6 +95,7 @@ export const ROUTES_TABLEAU_DE_BORD_DEMO = [
 
     const mesureAutonomie = autonomie(faits, maintenant, reglages)
     const semainesRetention = retention(faits, etat.revuesCartes, maintenant, reglages)
+    const controle = fiabilite(etat.controlesCorrections, faits, periode, maintenant, reglages)
     const temps = tempsActif(etat.tempsActif, maintenant, reglages)
     const calibre = calibration(faits, periode, maintenant, reglages)
     const aisance = aisanceDesBlocs(
@@ -166,6 +168,13 @@ export const ROUTES_TABLEAU_DE_BORD_DEMO = [
                   jours_requis: cible.joursRequis,
                 },
         })),
+        fiabilite: {
+          copies_relues: controle.copiesRelues,
+          desaccords: controle.desaccords,
+          non_verifiees: controle.nonVerifiees,
+          contestations: controle.contestations,
+          alerte: controle.alerte,
+        },
         temps: {
           total_s: temps.totalS,
           lecture_s: temps.groupes.lecture,

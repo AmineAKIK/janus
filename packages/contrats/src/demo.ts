@@ -128,6 +128,18 @@ export const EtatDemo = z.strictObject({
     )
     .default({}),
   /** Chaque carte notée, dans l'ordre : de quoi mesurer la rétention par semaine. */
+  /** Chaque correction rendue : mise à l'avis d'Amine ou non, vérifiée ou non, et son avis une fois donné. */
+  controlesCorrections: z
+    .array(
+      z.strictObject({
+        correction: Identifiant,
+        date: InstantUtc,
+        echantillon: z.boolean(),
+        nonVerifiee: z.boolean(),
+        accord: z.boolean().nullable(),
+      }),
+    )
+    .default([]),
   /** Le temps actif reçu, minute par minute, avec le type de l'étape quand l'appli le donnait. */
   tempsActif: z
     .array(

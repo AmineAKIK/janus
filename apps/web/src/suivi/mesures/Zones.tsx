@@ -1,4 +1,4 @@
-import { BarreProgression, CarteZone, EtatVideZone } from '@janus/ui'
+import { BandeauAlerte, BarreProgression, CarteZone, EtatVideZone } from '@janus/ui'
 import styles from '../Suivi.module.css'
 import type { DonneesSuivi } from '../useSuivi.ts'
 import {
@@ -8,6 +8,7 @@ import {
   TEXTES_MESURES as T,
   texteAideMoyenne,
   texteCartes,
+  texteDesaccords,
   texteDuree,
   texteLundi,
   texteSur,
@@ -181,6 +182,30 @@ export function ZoneTemps({ donnees }: { readonly donnees: Mesures['temps'] }) {
           </ul>
         </>
       )}
+    </CarteZone>
+  )
+}
+
+export function ZoneFiabilite({ donnees }: { readonly donnees: Mesures['fiabilite'] }) {
+  return (
+    <CarteZone titre={T.fiabilite}>
+      <p className={`${styles['complement'] ?? ''} texte-petit-14`}>{T.fiabiliteSousTitre}</p>
+      {donnees.alerte && <BandeauAlerte type="avertissement">{T.alerteDesaccords}</BandeauAlerte>}
+      <ul className={styles['liste']}>
+        <li>
+          {T.copiesRelues} · {String(donnees.copies_relues)}
+        </li>
+        <li>
+          {T.desaccords} · {texteDesaccords(donnees.desaccords, donnees.copies_relues)}
+        </li>
+        <li>
+          {T.nonVerifiees} · {String(donnees.non_verifiees)}
+        </li>
+        <li>
+          {T.contestations} · {String(donnees.contestations)}
+        </li>
+      </ul>
+      <p className={`${styles['complement'] ?? ''} texte-petit-14`}>{T.fiabiliteRegle}</p>
     </CarteZone>
   )
 }

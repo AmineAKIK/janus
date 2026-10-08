@@ -8,7 +8,14 @@ import {
   texteMeilleur,
   texteReussites,
 } from './textes.ts'
-import { ZoneAisance, ZoneAutonomie, ZoneCalibration, ZoneRetention, ZoneTemps } from './Zones.tsx'
+import {
+  ZoneAisance,
+  ZoneAutonomie,
+  ZoneCalibration,
+  ZoneFiabilite,
+  ZoneRetention,
+  ZoneTemps,
+} from './Zones.tsx'
 
 type Autonomie = DonneesSuivi['mesures']['autonomie']
 
@@ -211,5 +218,64 @@ describe('Temps', () => {
     )
 
     expect(screen.getByText('Pas encore de temps actif cette semaine.')).toBeVisible()
+  })
+})
+
+describe('Fiabilité de la correction IA', () => {
+  it('montre les quatre comptes et la règle, sans alerte quand tout va bien', () => {
+    render(
+      <ZoneFiabilite
+        donnees={{
+          copies_relues: 10,
+          desaccords: 1,
+          non_verifiees: 2,
+          contestations: 3,
+          alerte: false,
+        }}
+      />,
+    )
+
+    expect(screen.getByRole('heading', { name: 'Fiabilité de la correction IA' })).toBeVisible()
+    expect(screen.getByText('Contrôle humain et signalements')).toBeVisible()
+    expect(screen.getByText('Copies relues · 10')).toBeVisible()
+    expect(screen.getByText('Désaccords · 1 sur 10')).toBeVisible()
+    expect(screen.getByText('Réponses non vérifiées · 2')).toBeVisible()
+    expect(screen.getByText('Contestations · 3')).toBeVisible()
+    expect(screen.getByText('Une contestation ne change jamais le niveau.')).toBeVisible()
+    expect(screen.queryByText(/Le tuteur se trompe souvent/)).toBeNull()
+  })
+
+  it('alerte quand le tuteur se trompe souvent', () => {
+    render(
+      <ZoneFiabilite
+        donnees={{
+          copies_relues: 5,
+          desaccords: 2,
+          non_verifiees: 0,
+          contestations: 0,
+          alerte: true,
+        }}
+      />,
+    )
+
+    expect(
+      screen.getByText('Le tuteur se trompe souvent : revois la consigne ou le modèle.'),
+    ).toBeVisible()
+  })
+
+  it('met un tiret sans copie relue', () => {
+    render(
+      <ZoneFiabilite
+        donnees={{
+          copies_relues: 0,
+          desaccords: 0,
+          non_verifiees: 0,
+          contestations: 0,
+          alerte: false,
+        }}
+      />,
+    )
+
+    expect(screen.getByText('Désaccords · –')).toBeVisible()
   })
 })

@@ -12,6 +12,7 @@ import {
   ZoneAisance,
   ZoneAutonomie,
   ZoneCalibration,
+  ZoneFiabilite,
   ZoneRetention,
   ZoneTemps,
 } from './mesures/Zones.tsx'
@@ -56,6 +57,7 @@ function Corps({
         />
         <ZoneRetention donnees={donnees.mesures.retention} />
         <ZoneCalibration donnees={donnees.mesures.calibration} />
+        <ZoneFiabilite donnees={donnees.mesures.fiabilite} />
         <ZoneCout cout={donnees.cout_ia} />
       </div>
       {dialogue && (
