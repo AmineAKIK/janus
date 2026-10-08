@@ -434,4 +434,77 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('POST /corrections contre Postgr
       await reglages({})
     })
   })
+
+  describe('POST /corrections/:id/accord et /trancher', () => {
+    const poster = (chemin: string, corps: Record<string, unknown>) =>
+      s.app.inject({
+        method: 'POST',
+        url: `/api/corrections/${chemin}`,
+        headers: { cookie, origin: ORIGINE_TEST },
+        payload: corps,
+      })
+    let correction = ''
+
+    beforeAll(async () => {
+      const reponse = await corriger(demande({ question: 'R5' }))
+      correction = reponse.json<{ id: string }>().id
+    })
+
+    it('enregistre l’avis d’Amine (204), le dernier fait foi, sans changer de statut', async () => {
+      const statuts = await compter('statuts_courants')
+
+      const accord = await poster(`${correction}/accord`, { accord: true })
+      const desaccord = await poster(`${correction}/accord`, { accord: false })
+
+      expect([accord.statusCode, desaccord.statusCode]).toEqual([204, 204])
+      const { rows } = await bases.pool.query<{ donnees: { accord: boolean } }>(
+        "SELECT donnees FROM evenements WHERE type = 'correction.accord' AND donnees->>'correction' = $1 ORDER BY date_serveur, id",
+        [correction],
+      )
+      expect(rows.map(({ donnees }) => donnees.accord)).toEqual([true, false])
+      expect(await compter('statuts_courants')).toBe(statuts)
+    })
+
+    it('répond 404 pour une correction inconnue', async () => {
+      expect((await poster(`${identifiant()}/accord`, { accord: true })).statusCode).toBe(404)
+      expect(
+        (await poster(`${identifiant()}/trancher`, { id: identifiant(), compte: true })).statusCode,
+      ).toBe(404)
+    })
+
+    it('tranche : le fait est gardé et le bloc recalculé', async () => {
+      const id = identifiant()
+
+      const reponse = await poster(`${correction}/trancher`, {
+        id,
+        compte: true,
+        niveau: 'solide',
+        raison: 'Je retiens ce niveau.',
+      })
+
+      expect(reponse.statusCode).toBe(200)
+      expect(reponse.json()).toHaveProperty('statut')
+      const { rows } = await bases.pool.query<{ donnees: Record<string, unknown> }>(
+        'SELECT donnees FROM evenements WHERE id = $1',
+        [id],
+      )
+      expect(rows[0]?.donnees).toEqual({
+        correction,
+        compte: true,
+        niveau: 'solide',
+        raison: 'Je retiens ce niveau.',
+      })
+    })
+
+    it('ignore un doublon et refuse le même identifiant pour une autre décision (422)', async () => {
+      const decision = { id: identifiant(), compte: false }
+      await poster(`${correction}/trancher`, decision)
+
+      const doublon = await poster(`${correction}/trancher`, decision)
+      const autre = await poster(`${correction}/trancher`, { ...decision, compte: true })
+
+      expect(doublon.statusCode).toBe(200)
+      expect(autre.statusCode).toBe(422)
+    })
+  })
 })

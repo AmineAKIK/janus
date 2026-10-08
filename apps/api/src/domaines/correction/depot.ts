@@ -1,4 +1,4 @@
-import { and, asc, count, eq, gt, sql } from 'drizzle-orm'
+import { and, asc, count, desc, eq, gt, sql } from 'drizzle-orm'
 import { instantIso } from '../../base/instant.ts'
 import * as t from '../../base/schema/index.ts'
 import type { Db, Tx } from '../../base/transaction.ts'
@@ -51,12 +51,14 @@ export interface EchecCorrection {
   readonly dateServeur: string
 }
 
-export interface ContestationCorrection {
+/** Un fait de plus sur une correction : contestation, avis d'Amine, décision d'Amine. */
+export interface FaitDeCorrection {
   readonly id: string
   readonly userId: string
   readonly blocId: string
   readonly ficheVersionId: string
-  readonly donnees: { readonly correction: string }
+  readonly type: 'correction_contestee' | 'correction.accord' | 'correction_tranchee'
+  readonly donnees: Readonly<Record<string, unknown>>
   readonly empreinte: string
   readonly dateServeur: string
 }
@@ -225,12 +227,33 @@ export function creerDepotCorrection() {
       await tx.insert(t.correctionsEchecs).values({ ...echec, bruts: [...echec.bruts] })
     },
 
-    ajouterContestation: async (tx: Tx, c: ContestationCorrection): Promise<void> => {
-      await tx.insert(t.evenements).values({
-        ...c,
-        type: 'correction_contestee',
-        aide: null,
-      })
+    ajouterFait: async (tx: Tx, fait: FaitDeCorrection): Promise<void> => {
+      await tx.insert(t.evenements).values({ ...fait, aide: null })
+    },
+
+    evenementParId: async (lecteur: Db | Tx, id: string) => {
+      const [ligne] = await lecteur
+        .select({ userId: t.evenements.userId, empreinte: t.evenements.empreinte })
+        .from(t.evenements)
+        .where(eq(t.evenements.id, id))
+      return ligne
+    },
+
+    /** Une correction de cet utilisateur, avec son bloc et le manifeste en service. */
+    correctionEtBloc: async (lecteur: Db | Tx, userId: string, id: string) => {
+      const [ligne] = await lecteur
+        .select({ blocId: t.corrections.blocId, code: t.blocs.code })
+        .from(t.corrections)
+        .innerJoin(t.blocs, eq(t.blocs.id, t.corrections.blocId))
+        .where(and(eq(t.corrections.id, id), eq(t.corrections.userId, userId)))
+      if (ligne === undefined) return undefined
+      const [version] = await lecteur
+        .select({ id: t.fichesVersions.id, manifeste: t.fichesVersions.manifeste })
+        .from(t.fichesVersions)
+        .where(eq(t.fichesVersions.blocId, ligne.blocId))
+        .orderBy(desc(t.fichesVersions.version))
+        .limit(1)
+      return version === undefined ? undefined : { ...ligne, version }
     },
   }
 }

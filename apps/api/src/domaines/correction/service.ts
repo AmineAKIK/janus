@@ -14,7 +14,7 @@ import {
   TropDeTentatives,
 } from '../../erreurs.ts'
 import type { Horloge } from '../../horloge.ts'
-import { recalculer } from '../../recalcul.ts'
+import { recalculer, versStatutBloc } from '../../recalcul.ts'
 import { coutMillioniemes } from '../../adaptateurs/correcteur/cout.ts'
 import type { Tarifs } from '../../adaptateurs/correcteur/cout.ts'
 import type {
@@ -52,6 +52,13 @@ export interface DemandeCorrection {
   conteste?: boolean | undefined
   bloc?: string | undefined
   version?: number | undefined
+}
+
+export interface Tranchage {
+  id: string
+  compte: boolean
+  niveau?: 'solide' | 'partiel' | 'fragile' | 'pas_encore' | undefined
+  raison?: string | undefined
 }
 
 export interface DependancesService {
@@ -372,11 +379,12 @@ export function creerServiceCorrection({
         }
         if (contestee !== undefined) {
           const donnees = { correction: contestee.id }
-          await depot.ajouterContestation(tx, {
+          await depot.ajouterFait(tx, {
             id: identifiant(),
             userId,
             blocId: bloc.id,
             ficheVersionId: trouve.versionId,
+            type: 'correction_contestee',
             donnees,
             empreinte: empreinte(donnees),
             dateServeur: maintenant,
@@ -394,6 +402,66 @@ export function creerServiceCorrection({
         )
       }
       return correctionRecue(resultat.gardee)
+    },
+
+    /** L'avis d'Amine sur une correction de l'échantillon : un fait de plus, le dernier fait foi. */
+    async donnerAvis(userId: string, correctionId: string, accord: boolean): Promise<void> {
+      const trouvee = await depot.correctionEtBloc(base.db, userId, correctionId)
+      if (trouvee === undefined) throw introuvable(`La correction « ${correctionId} »`)
+      const donnees = { correction: correctionId, accord }
+      await base.enTransaction((tx) =>
+        depot.ajouterFait(tx, {
+          id: identifiant(),
+          userId,
+          blocId: trouvee.blocId,
+          ficheVersionId: trouvee.version.id,
+          type: 'correction.accord',
+          donnees,
+          empreinte: empreinte(donnees),
+          dateServeur: horloge.maintenant(),
+        }),
+      )
+    },
+
+    /**
+     * Amine tranche une correction : elle compte ou non, avec un autre niveau s'il le change (raison
+     * exigée par le contrat). Le même identifiant avec le même contenu est un doublon.
+     */
+    async trancher(userId: string, correctionId: string, decision: Tranchage) {
+      const trouvee = await depot.correctionEtBloc(base.db, userId, correctionId)
+      if (trouvee === undefined) throw introuvable(`La correction « ${correctionId} »`)
+      const bloc = { id: trouvee.blocId, code: trouvee.code }
+      const manifeste = Manifeste.parse(trouvee.version.manifeste)
+      const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
+      const donnees = {
+        correction: correctionId,
+        compte: decision.compte,
+        ...(decision.niveau === undefined ? {} : { niveau: decision.niveau }),
+        ...(decision.raison === undefined ? {} : { raison: decision.raison }),
+      }
+      const signature = empreinte(donnees)
+      return base.enTransaction(async (tx) => {
+        await verrouBloc(tx, userId, bloc.id)
+        const maintenant = horloge.maintenant()
+        const existant = await depot.evenementParId(tx, decision.id)
+        if (existant === undefined) {
+          await depot.ajouterFait(tx, {
+            id: decision.id,
+            userId,
+            blocId: bloc.id,
+            ficheVersionId: trouvee.version.id,
+            type: 'correction_tranchee',
+            donnees,
+            empreinte: signature,
+            dateServeur: maintenant,
+          })
+        } else if (existant.userId !== userId || existant.empreinte !== signature) {
+          throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
+        }
+        return versStatutBloc(
+          await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant }),
+        )
+      })
     },
   }
 }
