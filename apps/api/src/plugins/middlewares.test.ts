@@ -1,4 +1,5 @@
 import { nouvelId } from '@janus/contrats'
+import Fastify from 'fastify'
 import type { FastifyInstance, RouteOptions } from 'fastify'
 import { describe, expect, it } from 'vitest'
 import { z } from 'zod'
@@ -13,7 +14,7 @@ import {
 import { ORIGINE_TEST, serveurDeTest } from '../testeur.ts'
 import { NOMS_MIDDLEWARES } from '../types.ts'
 import { REQUETES_PAR_MINUTE } from './ordre.ts'
-import { DELAI_DEFAUT_MS, LIMITE_CORPS_DEFAUT } from './limites.ts'
+import { DELAI_DEFAUT_MS, LIMITE_CORPS_DEFAUT, limitesParRoute } from './limites.ts'
 
 const ECRITURE = { origin: ORIGINE_TEST, 'content-type': 'application/json' }
 const KO = 1024
@@ -65,9 +66,6 @@ async function ajouterRoutesDEssai(app: FastifyInstance): Promise<RouteOptions[]
         await new Promise((resolu) => setTimeout(resolu, 400))
         return { tard: true }
       })
-      interne.post('/api/corrections', { config: { publique: true, identifiant: true } }, () => ({
-        fait: true,
-      }))
       interne.post('/essai/gros', { config: { publique: true, identifiant: false } }, () => ({
         fait: true,
       }))
@@ -109,6 +107,25 @@ describe('1. identifiant de requête et journal', () => {
 })
 
 describe('2. limite de corps et délai', () => {
+  it('donne 75 s à POST /api/corrections et 256 ko à PUT /api/blocs/:id/etat-page', async () => {
+    const app = Fastify()
+    limitesParRoute(app)
+    const routes: RouteOptions[] = []
+    app.addHook('onRoute', (route) => {
+      routes.push(route)
+    })
+    app.post('/api/corrections', () => ({}))
+    app.put('/api/blocs/:id/etat-page', () => ({}))
+    await app.ready()
+
+    expect(
+      routes.map(({ url, handlerTimeout, bodyLimit }) => [url, handlerTimeout, bodyLimit]),
+    ).toEqual([
+      ['/api/corrections', 75_000, 64 * KO],
+      ['/api/blocs/:id/etat-page', 15_000, 256 * KO],
+    ])
+  })
+
   it('refuse en 413 un corps de plus de 64 ko', async () => {
     const { app } = await serveurDeTest()
     await ajouterRoutesDEssai(app)
@@ -125,7 +142,7 @@ describe('2. limite de corps et délai', () => {
     expect(refuse.json()).toMatchObject({ code: 'donnees_invalides', status: 413 })
   })
 
-  it('donne 15 s à chaque route, 75 s à POST /api/corrections, et 64 ko de corps par défaut', async () => {
+  it('donne 15 s à chaque route et 64 ko de corps par défaut', async () => {
     const { app } = await serveurDeTest()
     const routes = await ajouterRoutesDEssai(app)
     const de = (methode: string, url: string) =>
@@ -133,7 +150,6 @@ describe('2. limite de corps et délai', () => {
 
     expect(DELAI_DEFAUT_MS).toBe(15_000)
     expect(LIMITE_CORPS_DEFAUT).toBe(64 * KO)
-    expect(de('POST', '/api/corrections')?.handlerTimeout).toBe(75_000)
     expect(de('POST', '/essai/gros')?.handlerTimeout).toBe(15_000)
     expect(de('POST', '/essai/gros')?.bodyLimit).toBe(64 * KO)
   })

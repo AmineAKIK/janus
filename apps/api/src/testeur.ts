@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import { creerBase } from './base/base.ts'
 import type { Base } from './base/base.ts'
 import { lireConfig } from './config.ts'
+import type { Correcteur } from './adaptateurs/correcteur/correcteur.ts'
 import type { Hacheur } from './domaines/auth/composition.ts'
 import type { Config } from './config.ts'
 import type { Horloge } from './horloge.ts'
@@ -79,6 +80,8 @@ export async function serveurDeTest(
     readonly base?: Base
     readonly proprietaire?: Base
     readonly hacheur?: Hacheur
+    readonly correcteur?: Correcteur
+    readonly hasard?: () => number
   } = {},
 ): Promise<ServeurDeTest> {
   const passages: NomMiddleware[] = []
@@ -92,6 +95,8 @@ export async function serveurDeTest(
       horloge,
       base,
       proprietaire: options.proprietaire ?? base,
+      ...(options.correcteur === undefined ? {} : { correcteur: options.correcteur }),
+      ...(options.hasard === undefined ? {} : { hasard: options.hasard }),
       observer: (nom) => passages.push(nom),
     },
     {

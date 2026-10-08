@@ -96,6 +96,10 @@ export const corrections = pgTable(
     coutMillioniemes: integer('cout_millioniemes').notNull(),
     /** L'empreinte de la consigne (`prompts/correction/v1.md`) qui a corrigé. */
     consigneEmpreinte: text('consigne_empreinte').notNull(),
+    /** Le texte tel que le correcteur l'a rendu, avant toute validation. */
+    brut: text('brut').notNull().default(''),
+    /** Vrai pour une correction de premier tour tirée au sort : Amine est invité à donner son avis. */
+    echantillon: boolean('echantillon').notNull().default(false),
     dateServeur: instant('date_serveur').notNull(),
   },
   (table) => [
@@ -131,6 +135,26 @@ export const corrections = pgTable(
     check('corrections_consigne_sha256', SHA256(table.consigneEmpreinte)),
   ],
 )
+
+/**
+ * Un appel au correcteur qui n'a rien donné de valide, même au second essai : la réponse brute est
+ * gardée pour comprendre, et le coût déjà payé reste compté.
+ */
+export const correctionsEchecs = pgTable('corrections_echecs', {
+  id: uuid('id').primaryKey(),
+  ...duBloc(),
+  questionId: text('question_id').notNull(),
+  serie: text('serie').notNull(),
+  tentative: integer('tentative').notNull(),
+  tour: integer('tour').notNull(),
+  /** Pourquoi la réponse a été refusée. */
+  motif: text('motif').notNull(),
+  /** Les textes reçus, un par essai. */
+  bruts: jsonb('bruts').notNull(),
+  modele: text('modele').notNull(),
+  coutMillioniemes: integer('cout_millioniemes').notNull(),
+  dateServeur: instant('date_serveur').notNull(),
+})
 
 /** « Forcer » un statut ou lever le forçage : une ligne par décision d'Amine. */
 export const statutsForces = pgTable(
@@ -312,6 +336,7 @@ export const rappelsEnvoyes = pgTable(
 export const TABLES_DE_FAITS = [
   'evenements',
   'corrections',
+  'corrections_echecs',
   'statuts_forces',
   'decisions_erreurs',
   'notes_journal',
