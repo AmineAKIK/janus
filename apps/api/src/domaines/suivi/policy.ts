@@ -1,5 +1,5 @@
 import { Manifeste, TypeEtape } from '@janus/contrats'
-import type { Fait, NoteCarte, Reglages, TacheDuJour } from '@janus/contrats'
+import type { Fait, NoteCarte, Reglages, TacheDuJour, TypeJournal } from '@janus/contrats'
 import {
   aisanceDesBlocs,
   autonomie,
@@ -11,8 +11,11 @@ import {
   ecartEnJours,
   echeances,
   erreursRecurrentes,
+  exportTexte,
   fiabilite,
+  lignesDuJournal,
   ouverturesSansPrerequis,
+  pageDuJournal,
   retention,
   revueMethode,
   statutsForces,
@@ -255,4 +258,124 @@ export function composerTableau(entree: EntreeTableau) {
     },
     cout_ia: { depense_millioniemes: depense, plafond_millioniemes: plafond },
   }
+}
+
+/** Une note du journal telle que l'écran la lit : la dernière version du texte, la date de la première. */
+export interface NoteLue {
+  readonly id: string
+  readonly entree: string
+  readonly date: string
+  readonly texte: string
+}
+
+/** Les notes courantes : une note modifiée est une version de plus, la plus récente fait foi. */
+export function notesCourantes(
+  versions: readonly {
+    readonly noteId: string
+    readonly entree: string
+    readonly texte: string
+    readonly date: string
+  }[],
+): NoteLue[] {
+  const notes = new Map<string, NoteLue>()
+  for (const { noteId, entree, texte, date } of versions) {
+    const precedente = notes.get(noteId)
+    notes.set(noteId, { id: noteId, entree, texte, date: precedente?.date ?? date })
+  }
+  return [...notes.values()]
+}
+
+export interface EntreeJournal {
+  readonly modules: readonly { readonly id: string; readonly titre: string }[]
+  readonly blocs: readonly BlocImporte[]
+  readonly faits: readonly Fait[]
+  readonly reglages: Reglages
+  readonly maintenant: string
+  readonly requete: {
+    readonly module?: string | undefined
+    readonly bloc?: string | undefined
+    readonly type?: TypeJournal | undefined
+    readonly avant?: string | undefined
+  }
+  readonly notes: readonly NoteLue[]
+  readonly idees: readonly { readonly id: string; readonly date: string; readonly texte: string }[]
+}
+
+const manifestesParCode = (blocs: readonly BlocImporte[]) =>
+  Object.fromEntries(blocs.map(({ code, manifeste }) => [code, Manifeste.parse(manifeste)]))
+
+/** Une page du journal : les lignes du moteur, filtrées, avec les notes d'Amine. */
+export function composerJournal(entree: EntreeJournal) {
+  const { blocs, faits, reglages, maintenant, requete } = entree
+  const manifestes = manifestesParCode(blocs)
+  const module = entree.modules.find(({ id }) => id === requete.module)
+  const blocsDuModule =
+    module === undefined
+      ? null
+      : new Set(blocs.filter(({ moduleCode }) => moduleCode === module.id).map(({ code }) => code))
+  const lignes = lignesDuJournal(faits, { manifestes, reglages }).filter(
+    ({ bloc }) => blocsDuModule === null || blocsDuModule.has(bloc),
+  )
+  const page = pageDuJournal(lignes, {
+    ...(requete.bloc === undefined ? {} : { bloc: requete.bloc }),
+    ...(requete.type === undefined ? {} : { type: requete.type }),
+    ...(requete.avant === undefined ? {} : { avant: requete.avant }),
+  })
+  const affiche = module ?? entree.modules[0]
+  return {
+    modules: entree.modules.map(({ id, titre }) => ({ id, titre })),
+    entrees: page.lignes.map((ligne) => ({
+      id: ligne.id,
+      date: ligne.date,
+      bloc: ligne.bloc,
+      type: ligne.type,
+      resume: ligne.resume,
+      detail: [...ligne.detail],
+      ...(ligne.contestationEnAttente === undefined
+        ? {}
+        : { contestation_en_attente: ligne.contestationEnAttente }),
+      note: entree.notes.find(({ entree: cible }) => cible === ligne.id) ?? null,
+    })),
+    suivant: page.suivant,
+    blocs: blocs
+      .filter(({ moduleCode }) => moduleCode === affiche?.id)
+      .map(({ code }) => {
+        const manifeste = manifestes[code]
+        return manifeste === undefined
+          ? []
+          : [
+              {
+                bloc: code,
+                titre_court: manifeste.titre_court,
+                statut: calculerBloc(
+                  faits.filter((fait) => fait.bloc === code),
+                  manifeste,
+                  reglages,
+                  maintenant,
+                ).statut,
+              },
+            ]
+      })
+      .flat(),
+    idees: [...entree.idees].reverse(),
+  }
+}
+
+/** Le journal au format de la méthode, en texte brut. */
+export function composerExport(entree: {
+  readonly blocs: readonly BlocImporte[]
+  readonly faits: readonly Fait[]
+  readonly reglages: Reglages
+  readonly tachesReservees: readonly string[]
+  readonly idees: readonly { readonly texte: string }[]
+  readonly derniereRevue: string | null
+}): string {
+  return exportTexte({
+    manifestes: entree.blocs.map(({ manifeste }) => Manifeste.parse(manifeste)),
+    faits: entree.faits,
+    reglages: entree.reglages,
+    tachesReservees: entree.tachesReservees,
+    idees: entree.idees.map(({ texte }) => texte),
+    derniereRevue: entree.derniereRevue,
+  })
 }
