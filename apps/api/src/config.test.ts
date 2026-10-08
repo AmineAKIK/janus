@@ -26,6 +26,33 @@ describe('lireConfig', () => {
     expect(config.DEEPSEEK_API_KEY).toBe('sk-test')
   })
 
+  it('lit le modèle et les tarifs de correction dans la configuration, avec des valeurs par défaut', () => {
+    const defaut = lireConfig(ENVIRONNEMENT_TEST)
+    const choisie = lireConfig({
+      ...ENVIRONNEMENT_TEST,
+      DEEPSEEK_MODELE: 'deepseek-v4-pro',
+      DEEPSEEK_TEMPERATURE: '0.1',
+      DEEPSEEK_PRIX_SORTIE: '2000000',
+    })
+
+    expect(defaut).toMatchObject({
+      DEEPSEEK_MODELE: 'deepseek-flash',
+      DEEPSEEK_URL: 'https://api.deepseek.com',
+      DEEPSEEK_TEMPERATURE: 0.2,
+      DEEPSEEK_PRIX_ENTREE_CACHE: 6_000,
+      DEEPSEEK_PRIX_ENTREE: 300_000,
+      DEEPSEEK_PRIX_SORTIE: 1_200_000,
+    })
+    expect(choisie).toMatchObject({
+      DEEPSEEK_MODELE: 'deepseek-v4-pro',
+      DEEPSEEK_TEMPERATURE: 0.1,
+      DEEPSEEK_PRIX_SORTIE: 2_000_000,
+    })
+    expect(() => lireConfig({ ...ENVIRONNEMENT_TEST, DEEPSEEK_TEMPERATURE: '0.9' })).toThrow(
+      /DEEPSEEK_TEMPERATURE/,
+    )
+  })
+
   it('arrête le démarrage en nommant chaque variable qui manque', () => {
     const sans = sansVariables('DATABASE_URL', 'VAPID_SUJET')
 

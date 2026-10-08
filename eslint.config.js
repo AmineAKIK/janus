@@ -133,7 +133,11 @@ export default defineConfig(
   }, // Aucun composant n'appelle `fetch` : tout passe par le `Transport`, dont `transportHttp.ts` est le seul HTTP.
   {
     files: ['**/*.{js,ts,tsx}'],
-    ignores: ['apps/web/src/api/transportHttp.ts'],
+    // Côté API, seul le client DeepSeek sort sur le réseau.
+    ignores: [
+      'apps/web/src/api/transportHttp.ts',
+      'apps/api/src/adaptateurs/correcteur/deepseek.ts',
+    ],
     rules: {
       'no-restricted-globals': [
         'error',
