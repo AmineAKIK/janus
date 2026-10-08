@@ -1,7 +1,11 @@
+import { nouvelId, ROUTES } from '@janus/contrats'
 import type { ModificationReglages, Reglages } from '@janus/contrats'
 import { Bouton, ChampTexte, LigneReglage } from '@janus/ui'
 import { useState } from 'react'
 import { modeTransport } from '../../api/client.ts'
+import { useEcriture, useLecture } from '../../api/requetes.tsx'
+import { instantReel } from '../../demo/horlogeDemo.ts'
+import { abonnerCetAppareil } from '../push.ts'
 import styles from '../Parametres.module.css'
 import { TEXTES_PARAMETRES as TP, TEXTES_RAPPELS as T } from '../textes.ts'
 
@@ -18,6 +22,9 @@ const permissionConnue = () => typeof Notification !== 'undefined'
 
 export function SectionRappels({ reglages, enregistrer }: Proprietes) {
   const enDemo = modeTransport(import.meta.env.VITE_TRANSPORT) === 'demo'
+  const moi = useLecture(ROUTES['GET /moi'], {})
+  const abonnement = useEcriture(ROUTES['POST /push/abonnements'])
+  const cleVapid = moi.data?.cle_vapid
   const [permission, setPermission] = useState<NotificationPermission | null>(
     permissionConnue() ? Notification.permission : null,
   )
@@ -30,7 +37,14 @@ export function SectionRappels({ reglages, enregistrer }: Proprietes) {
   }
 
   function demander() {
-    void Notification.requestPermission().then(setPermission)
+    if (cleVapid === undefined) return
+    void abonnerCetAppareil(cleVapid).then((donnees) => {
+      setPermission(Notification.permission)
+      if (donnees === null) return
+      abonnement.mutate({
+        corps: { id: nouvelId(Date.parse(instantReel())), ...donnees },
+      })
+    })
   }
 
   const pause = reglages.rappelsEnPauseJusquAu
@@ -44,7 +58,7 @@ export function SectionRappels({ reglages, enregistrer }: Proprietes) {
           <Bouton
             type="button"
             variante="secondaire"
-            disabled={enDemo || permission === null || permission === 'granted'}
+            disabled={enDemo || cleVapid === undefined || permission === null}
             onClick={demander}
           >
             {T.activer}
@@ -52,6 +66,7 @@ export function SectionRappels({ reglages, enregistrer }: Proprietes) {
         }
       />
       {!enDemo && permission === 'granted' && <p className="texte-petit-14">{T.autorisees}</p>}
+      {abonnement.isError && <p className="texte-petit-14">{T.abonnementEchoue}</p>}
       {!enDemo && permission === 'denied' && <p className="texte-petit-14">{T.refusees}</p>}
       <div className={styles['reglage']}>
         <LigneReglage

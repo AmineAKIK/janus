@@ -101,6 +101,7 @@ export const TEXTES_RAPPELS = {
   indisponible: 'Disponible quand l’appli tourne sur le serveur.',
   autorisees: 'Autorisées sur cet appareil.',
   refusees: 'Refusées par ce navigateur.',
+  abonnementEchoue: 'L’appareil n’a pas pu être enregistré sur le serveur. Réessaie.',
   heure: 'Heure du rappel',
   pause: 'Pause jusqu’au',
   aucunePause: 'Aucune',
