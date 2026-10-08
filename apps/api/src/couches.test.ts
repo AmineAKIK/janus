@@ -63,4 +63,13 @@ describe('les couches de l’API (eslint-plugin-boundaries)', () => {
       'boundaries/dependencies',
     )
   })
+
+  it('db.transaction est interdit hors de base/transaction.ts', async () => {
+    const code = `export const f = (db: { transaction: (fn: () => void) => void }) => db.transaction(() => undefined)\n`
+
+    expect(await regles(`${DOMAINES}/sante/depot.ts`, code)).toContain('no-restricted-syntax')
+    expect(await regles('apps/api/src/base/transaction.ts', code)).not.toContain(
+      'no-restricted-syntax',
+    )
+  })
 })
