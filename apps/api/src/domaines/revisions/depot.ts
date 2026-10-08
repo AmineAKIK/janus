@@ -2,6 +2,7 @@ import { and, asc, desc, eq, inArray } from 'drizzle-orm'
 import { instantIso } from '../../base/instant.ts'
 import * as t from '../../base/schema/index.ts'
 import type { Db, Tx } from '../../base/transaction.ts'
+import { VERSION_MOTEUR } from '../../recalcul.ts'
 
 export interface QuestionTiree {
   readonly bloc: string
@@ -37,6 +38,62 @@ export function creerDepotRevisions() {
       // Une ligne par version : la plus récente vient en premier pour chaque bloc.
       const vus = new Set<string>()
       return lignes.filter(({ id }) => (vus.has(id) ? false : (vus.add(id), true)))
+    },
+
+    /** Les cartes actives des modules importés, dans l'ordre du plan. */
+    cartesActives: (lecteur: Db | Tx) =>
+      lecteur
+        .select({
+          id: t.cartes.id,
+          blocId: t.cartes.blocId,
+          bloc: t.blocs.code,
+          carte: t.cartes.carteId,
+          recto: t.cartes.recto,
+          verso: t.cartes.verso,
+        })
+        .from(t.cartes)
+        .innerJoin(t.blocs, eq(t.blocs.id, t.cartes.blocId))
+        .innerJoin(t.modules, eq(t.modules.id, t.blocs.moduleId))
+        .where(and(eq(t.cartes.active, true), eq(t.modules.importe, true)))
+        .orderBy(asc(t.modules.ordre), asc(t.blocs.ordre), asc(t.cartes.carteId)),
+
+    /** Les états gardés des cartes de cet utilisateur. */
+    revuesDe: (lecteur: Db | Tx, userId: string) =>
+      lecteur
+        .select({ carteId: t.revuesFsrs.carteId, etat: t.revuesFsrs.etat })
+        .from(t.revuesFsrs)
+        .where(eq(t.revuesFsrs.userId, userId)),
+
+    /** La carte active de ce bloc et de ce code. */
+    carteParCode: async (lecteur: Db | Tx, bloc: string, carte: string) => {
+      const [ligne] = await lecteur
+        .select({ id: t.cartes.id, blocId: t.cartes.blocId })
+        .from(t.cartes)
+        .innerJoin(t.blocs, eq(t.blocs.id, t.cartes.blocId))
+        .where(and(eq(t.blocs.code, bloc), eq(t.cartes.carteId, carte), eq(t.cartes.active, true)))
+      return ligne
+    },
+
+    revueDe: async (lecteur: Db | Tx, userId: string, carteId: string): Promise<unknown> => {
+      const [ligne] = await lecteur
+        .select({ etat: t.revuesFsrs.etat })
+        .from(t.revuesFsrs)
+        .where(and(eq(t.revuesFsrs.userId, userId), eq(t.revuesFsrs.carteId, carteId)))
+      return ligne?.etat
+    },
+
+    /** Écrit l'état de la carte : le premier est inséré, les suivants remplacent le précédent. */
+    ecrireRevue: async (
+      tx: Tx,
+      o: { id: string; userId: string; carteId: string; dueLe: string; etat: unknown },
+    ): Promise<void> => {
+      await tx
+        .insert(t.revuesFsrs)
+        .values({ ...o, versionMoteur: VERSION_MOTEUR })
+        .onConflictDoUpdate({
+          target: [t.revuesFsrs.userId, t.revuesFsrs.carteId],
+          set: { dueLe: o.dueLe, etat: o.etat, versionMoteur: VERSION_MOTEUR },
+        })
     },
 
     /** La série tirée pour ce jour, si elle l'a déjà été. */
