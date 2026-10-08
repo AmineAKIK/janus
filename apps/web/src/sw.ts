@@ -7,6 +7,7 @@ import {
 } from 'workbox-precaching'
 import { NavigationRoute, registerRoute } from 'workbox-routing'
 import { CacheFirst } from 'workbox-strategies'
+import { lireNotification } from './pwa/notificationPush.ts'
 
 declare const self: ServiceWorkerGlobalScope & {
   readonly __WB_MANIFEST: Parameters<typeof precacheAndRoute>[0]
@@ -47,8 +48,18 @@ self.addEventListener('message', (evenement) => {
   }
 })
 
-// Point d'entrée des notifications (PR-088) : rien n'est encore envoyé.
-self.addEventListener('push', () => undefined)
+// Le rappel du jour : une seule notification (même étiquette), qui remplace la précédente.
+self.addEventListener('push', (evenement) => {
+  const notification = lireNotification(evenement.data)
+  if (notification === null) return
+  evenement.waitUntil(
+    self.registration.showNotification(notification.titre, {
+      body: notification.corps,
+      tag: 'rappel-du-jour',
+      icon: `${BASE}icones/icone-192.png`,
+    }),
+  )
+})
 
 self.addEventListener('notificationclick', (evenement) => {
   evenement.notification.close()
