@@ -64,6 +64,22 @@ export function jourDe(instantIso: string, fuseau: string, heureBascule: number)
   return Number(champs['hour']) < heureBascule ? ajouterJours(dateLocale, -1) : dateLocale
 }
 
+/**
+ * Le premier instant qui compte pour ce jour : minuit du fuseau plus l'heure de bascule. C'est
+ * l'inverse de `jourDe`, trouvé par dichotomie (`jourDe` ne fait que croître avec l'instant).
+ */
+export function debutDuJour(jour: Jour, fuseau: string, heureBascule: number): string {
+  const minuitUtc = lireJour(jour).getTime()
+  let avant = minuitUtc - 2 * MS_PAR_JOUR
+  let apres = minuitUtc + 2 * MS_PAR_JOUR
+  while (apres - avant > 1) {
+    const milieu = Math.floor((avant + apres) / 2)
+    if (jourDe(instantEnIso(milieu), fuseau, heureBascule) < jour) avant = milieu
+    else apres = milieu
+  }
+  return instantEnIso(apres)
+}
+
 /** Ajoute (ou retire, si négatif) des jours calendaires : aucun changement d'heure ne s'en mêle. */
 export function ajouterJours(jour: Jour, nombre: number): Jour {
   return enJour(new Date(lireJour(jour).getTime() + nombre * MS_PAR_JOUR))

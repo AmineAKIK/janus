@@ -7,12 +7,12 @@ const TYPE_PROBLEME = 'application/problem+json'
 
 function envoyer(
   reponse: FastifyReply,
-  [status, code, titre, detail]: Parameters<typeof versProbleme>,
+  [status, code, titre, detail, extras]: Parameters<typeof versProbleme>,
 ): FastifyReply {
   return reponse
     .code(status)
     .type(TYPE_PROBLEME)
-    .send(versProbleme(status, code, titre, detail))
+    .send(versProbleme(status, code, titre, detail, extras))
 }
 
 function aUnStatut(
@@ -39,7 +39,13 @@ export function gestionnaireErreurs(app: FastifyInstance, { observer }: Dependan
       if (erreur instanceof TropDeTentatives) {
         void reponse.header('retry-after', String(erreur.reessayerDansS))
       }
-      return envoyer(reponse, [erreur.status, erreur.code, erreur.titre, erreur.message])
+      return envoyer(reponse, [
+        erreur.status,
+        erreur.code,
+        erreur.titre,
+        erreur.message,
+        erreur.extras,
+      ])
     }
     if (hasZodFastifySchemaValidationErrors(erreur)) {
       const detail = erreur.validation

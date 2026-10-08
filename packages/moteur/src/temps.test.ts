@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ajouterJours, ajouterMois, ecartEnJours, jourDe } from './temps.ts'
+import { ajouterJours, ajouterMois, debutDuJour, ecartEnJours, jourDe } from './temps.ts'
 
 const PARIS = 'Europe/Paris'
 
@@ -116,5 +116,31 @@ describe('ecartEnJours', () => {
     expect(ecartEnJours('2026-03-28', '2026-03-30')).toBe(2)
     expect(ecartEnJours('2026-10-24', '2026-10-26')).toBe(2)
     expect(ecartEnJours('2026-01-01', '2027-01-01')).toBe(365)
+  })
+})
+
+describe('debutDuJour', () => {
+  it('rend minuit du fuseau plus l’heure de bascule', () => {
+    expect(debutDuJour('2026-07-15', PARIS, 4)).toBe('2026-07-15T02:00:00.000Z')
+    expect(debutDuJour('2026-07-15', PARIS, 0)).toBe('2026-07-14T22:00:00.000Z')
+  })
+
+  it('suit le changement d’heure', () => {
+    expect(debutDuJour('2026-03-29', PARIS, 4)).toBe('2026-03-29T02:00:00.000Z')
+    expect(debutDuJour('2026-10-25', PARIS, 4)).toBe('2026-10-25T03:00:00.000Z')
+  })
+
+  it('est l’inverse de jourDe : l’instant d’avant est la veille', () => {
+    for (const jour of ['2026-07-15', '2026-03-29', '2026-10-25']) {
+      const debut = debutDuJour(jour, PARIS, 4)
+      const veille = new Date(Date.parse(debut) - 1).toISOString()
+
+      expect(jourDe(debut, PARIS, 4)).toBe(jour)
+      expect(jourDe(veille, PARIS, 4)).toBe(ajouterJours(jour, -1))
+    }
+  })
+
+  it('marche pour un fuseau à l’ouest', () => {
+    expect(debutDuJour('2026-07-15', 'America/New_York', 4)).toBe('2026-07-15T08:00:00.000Z')
   })
 })
