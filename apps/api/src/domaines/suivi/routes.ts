@@ -23,6 +23,13 @@ export function routesSuivi(controleur: ControleurSuivi): FastifyPluginAsync {
       { schema: schemaDe(ROUTES['GET /tableau-de-bord']) },
       controleur.tableauDeBord,
     )
+    app.get(
+      ROUTES['GET /journal'].chemin,
+      { schema: schemaDe(ROUTES['GET /journal']) },
+      controleur.journal,
+    )
+    // La réponse est du texte brut : le schéma de sortie est celui du contrat, mais il ne sérialise pas.
+    app.get(ROUTES['GET /journal/export.txt'].chemin, controleur.exportTexte)
     return Promise.resolve()
   }
 }
