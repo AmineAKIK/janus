@@ -8,7 +8,13 @@ import styles from './Suivi.module.css'
 import { OPTIONS_PERIODE, TEXTES_SUIVI as T } from './textes.ts'
 import { useSuivi } from './useSuivi.ts'
 import type { DonneesSuivi } from './useSuivi.ts'
-import { ZoneAisance, ZoneAutonomie, ZoneCalibration, ZoneRetention } from './mesures/Zones.tsx'
+import {
+  ZoneAisance,
+  ZoneAutonomie,
+  ZoneCalibration,
+  ZoneRetention,
+  ZoneTemps,
+} from './mesures/Zones.tsx'
 import { ZoneAFaire, ZoneCout, ZoneDecisions, ZoneErreurs } from './Zones.tsx'
 import { CarteZone } from '@janus/ui'
 
@@ -35,6 +41,7 @@ function Corps({
         <ZoneAFaire donnees={donnees.a_faire} titreBloc={titreBloc} />
         <ZoneAutonomie donnees={donnees.mesures.autonomie} />
         <ZoneAisance donnees={donnees.mesures.aisance} />
+        <ZoneTemps donnees={donnees.mesures.temps} />
       </div>
       <div className={styles['colonne']}>
         <ZoneErreurs erreurs={donnees.erreurs} />

@@ -163,7 +163,21 @@ export const ROUTES_BLOCS_DEMO = [
     if (corps.type === 'temps.actif') {
       verifierBloc(corps.bloc)
       const doublon = dejaRecu(magasin.lire(), corps.id)
-      if (!doublon) enregistrer(magasin, corps.id, [])
+      if (!doublon) {
+        enregistrer(magasin, corps.id, [])
+        magasin.ecrire((etat) => ({
+          ...etat,
+          tempsActif: [
+            ...etat.tempsActif,
+            {
+              date: maintenant,
+              bloc: corps.bloc,
+              secondes: corps.secondes,
+              ...(corps.etape === undefined ? {} : { etape: corps.etape }),
+            },
+          ],
+        }))
+      }
       return { doublon, statut: null }
     }
     verifierBloc(corps.bloc)

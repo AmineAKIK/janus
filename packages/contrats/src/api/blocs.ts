@@ -3,6 +3,7 @@ import { Statut } from '../enums.ts'
 import { MessagePage, EtatPage } from '../pont.ts'
 import { InstantUtc } from '../faits.ts'
 import { AccesBloc } from './catalogue.ts'
+import { TypeEtape } from '../manifeste.ts'
 import { CodeBloc, IdUuid, Identifiant, StatutBloc } from './commun.ts'
 import type { DefinitionRoute } from './routes.ts'
 
@@ -15,6 +16,8 @@ export const TempsActif = z.strictObject({
   type: z.literal('temps.actif'),
   bloc: CodeBloc,
   secondes: z.number().int().min(1),
+  /** Le type de l'étape affichée pendant ce temps ; absent quand la page ne le sait pas. */
+  etape: TypeEtape.optional(),
 })
 export type TempsActif = z.infer<typeof TempsActif>
 

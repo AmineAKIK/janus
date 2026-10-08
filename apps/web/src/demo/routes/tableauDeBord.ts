@@ -10,6 +10,7 @@ import {
   echeances,
   erreursRecurrentes,
   retention,
+  tempsActif,
   ouverturesSansPrerequis,
   statutsForces,
 } from '@janus/moteur'
@@ -93,6 +94,7 @@ export const ROUTES_TABLEAU_DE_BORD_DEMO = [
 
     const mesureAutonomie = autonomie(faits, maintenant, reglages)
     const semainesRetention = retention(faits, etat.revuesCartes, maintenant, reglages)
+    const temps = tempsActif(etat.tempsActif, maintenant, reglages)
     const calibre = calibration(faits, periode, maintenant, reglages)
     const aisance = aisanceDesBlocs(
       blocs.map(({ manifeste }) => manifeste),
@@ -164,6 +166,17 @@ export const ROUTES_TABLEAU_DE_BORD_DEMO = [
                   jours_requis: cible.joursRequis,
                 },
         })),
+        temps: {
+          total_s: temps.totalS,
+          lecture_s: temps.groupes.lecture,
+          pratique_s: temps.groupes.pratique,
+          restitution_s: temps.groupes.restitution,
+          blocs: temps.blocs.map(({ bloc, secondes }) => ({
+            bloc,
+            titre_court: MANIFESTES_GRAINE[bloc]?.titre_court ?? bloc,
+            secondes,
+          })),
+        },
       },
       cout_ia: { depense_millioniemes: depense, plafond_millioniemes: plafond },
     }

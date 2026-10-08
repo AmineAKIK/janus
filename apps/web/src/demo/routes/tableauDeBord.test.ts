@@ -150,4 +150,43 @@ describe('tableau de bord de la démo, avec la graine', () => {
     const apres = await lire(banc)
     expect(apres.mesures.retention.at(-1)?.cartes).toEqual({ reussis: 1, total: 2 })
   })
+
+  it('compte le temps actif de la semaine par groupe d’étapes et par bloc, sans doublon', async () => {
+    const banc = monterDemo()
+    expect((await lire(banc)).mesures.temps).toEqual({
+      total_s: 0,
+      lecture_s: 0,
+      pratique_s: 0,
+      restitution_s: 0,
+      blocs: [],
+    })
+
+    const envoyer = (id: string, bloc: string, secondes: number, etape?: 'carte' | 'bilan') =>
+      banc.transport.appeler(ROUTES['POST /evenements'], {
+        corps: {
+          id,
+          type: 'temps.actif',
+          bloc,
+          secondes,
+          ...(etape === undefined ? {} : { etape }),
+        },
+      })
+    const repete = nouvelId(22)
+    await envoyer(nouvelId(21), 'B01', 60, 'carte')
+    await envoyer(repete, 'B01', 30, 'bilan')
+    await envoyer(repete, 'B01', 30, 'bilan')
+    await envoyer(nouvelId(23), 'B02', 15)
+
+    const { temps } = (await lire(banc)).mesures
+    expect(temps).toMatchObject({
+      total_s: 105,
+      lecture_s: 60,
+      pratique_s: 0,
+      restitution_s: 30,
+    })
+    expect(temps.blocs.map(({ bloc, secondes }) => ({ bloc, secondes }))).toEqual([
+      { bloc: 'B01', secondes: 90 },
+      { bloc: 'B02', secondes: 15 },
+    ])
+  })
 })

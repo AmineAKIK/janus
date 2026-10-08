@@ -51,7 +51,7 @@ function FicheOuverte({
   readonly src: string
 }) {
   const iframe = useRef<HTMLIFrameElement>(null)
-  const { signalerActivite } = useTempsActif(donnees.bloc)
+  const { signalerActivite, changerEtape } = useTempsActif(donnees.bloc)
   const hote = useHoteFiche(donnees, iframe, signalerActivite, relireBloc)
   const envoi = useEtatEnvoi(donnees.bloc)
   const sauvee = donnees.etatPage?.etat['etape']
@@ -79,6 +79,9 @@ function FicheOuverte({
   }
   const verrouillees = etapesVerrouillees(etapes, courante, restantes)
   const typeCourant = etapes.find(({ id }) => id === courante)?.type
+  useEffect(() => {
+    changerEtape(typeCourant)
+  }, [changerEtape, typeCourant])
   const consolidationAttendue =
     hote.statut.manque.find(({ code }) => code === 'consolidation_trop_tot')?.apres ?? null
   const montrerConsolidation =

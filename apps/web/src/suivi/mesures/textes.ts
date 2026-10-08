@@ -26,6 +26,13 @@ export const TEXTES_MESURES = {
   aisanceSousTitre: 'Temps observé face aux objectifs réels',
   nonRequis: 'non requis',
   aucunTemps: 'aucun temps',
+  temps: 'Temps actif de la semaine',
+  tempsSousTitre: 'Une mesure, jamais un objectif.',
+  tempsVide: 'Pas encore de temps actif cette semaine.',
+  lecture: 'Lecture',
+  pratique: 'Pratique',
+  restitution: 'Restitution',
+  parBloc: 'Par bloc',
 } as const
 
 export const LIBELLE_CONFIANCE: Readonly<Record<Confiance, string>> = {
@@ -68,3 +75,11 @@ export const texteMeilleur = (meilleurS: number | null, objectifS: number) =>
 
 export const texteReussites = (reussites: number, requises: number, jours: number) =>
   `${nombre(reussites, 'réussite', 'réussites')} sur ${String(requises)}, sur ${nombre(jours, 'jour différent', 'jours différents')}`
+
+/** « 45 s », « 12 min », « 1 h 05 » : un temps actif en secondes. */
+export function texteDuree(secondes: number): string {
+  if (secondes < 60) return `${String(secondes)} s`
+  const minutes = Math.round(secondes / 60)
+  if (minutes < 60) return `${String(minutes)} min`
+  return `${String(Math.floor(minutes / 60))} h ${String(minutes % 60).padStart(2, '0')}`
+}
