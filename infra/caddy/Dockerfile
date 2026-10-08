@@ -5,6 +5,7 @@ RUN corepack enable
 WORKDIR /depot
 COPY . .
 RUN pnpm install --frozen-lockfile --filter @janus/web...
+ARG VITE_SENTRY_DSN=
 ENV VITE_BASE=/ VITE_TRANSPORT=http VITE_HISTORIQUE=chemins VITE_API=/api
 RUN pnpm --filter @janus/web exec vite build --outDir /front
 
