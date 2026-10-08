@@ -48,6 +48,14 @@ export function routesRevisions(controleur: ControleurRevisions): FastifyPluginA
       },
       controleur.reporterVerification,
     )
+    app.post(
+      ROUTES['POST /verifications/:id/reponses'].chemin,
+      {
+        schema: schemaDe(ROUTES['POST /verifications/:id/reponses']),
+        config: { identifiant: true },
+      },
+      controleur.repondre,
+    )
     return Promise.resolve()
   }
 }

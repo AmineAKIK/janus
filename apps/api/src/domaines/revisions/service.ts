@@ -1,12 +1,20 @@
 import { createHash } from 'node:crypto'
 import { CorrectionRecue, Manifeste, Reglages, TypeVerification, nouvelId } from '@janus/contrats'
 import type { NoteCarte } from '@janus/contrats'
-import { ajouterJours, instantEnMs, jourDe } from '@janus/moteur'
+import {
+  ajouterJours,
+  calculerBloc,
+  instantEnMs,
+  jourDe,
+  validiteVerification,
+} from '@janus/moteur'
 import { z } from 'zod'
 import type { Base } from '../../base/base.ts'
 import { lireFaits } from '../../base/faits.ts'
 import { verrouBloc } from '../../base/transaction.ts'
-import { Conflit, ContenuDifferent, Introuvable } from '../../erreurs.ts'
+import { Conflit, ContenuDifferent, ErreurProtocole, Introuvable } from '../../erreurs.ts'
+import { recalculer } from '../../recalcul.ts'
+import type { CorrigerPartie } from '../../types.ts'
 import type { Horloge } from '../../horloge.ts'
 import type { DepotRevisions } from './depot.ts'
 import {
@@ -17,11 +25,14 @@ import {
   tirerQuestionsDuJour,
 } from './policy.ts'
 import {
+  construireResultat,
+  corrigerTache,
   dateDue,
   EvenementPartie,
   EvenementReport,
   EvenementResultat,
   partieVisible,
+  reponseDeFait,
   revuRecemment,
   Tirage,
   tirerParties,
@@ -30,6 +41,7 @@ import {
 const SerieGardee = z.array(z.strictObject({ bloc: z.string(), question: z.string() }))
 
 export interface DependancesService {
+  readonly corrigerPartie: CorrigerPartie
   readonly base: Base
   readonly depot: DepotRevisions
   readonly horloge: Horloge
@@ -39,7 +51,12 @@ function empreinte(contenu: unknown): string {
   return createHash('sha256').update(JSON.stringify(contenu)).digest('hex')
 }
 
-export function creerServiceRevisions({ base, depot, horloge }: DependancesService) {
+export function creerServiceRevisions({
+  base,
+  depot,
+  horloge,
+  corrigerPartie,
+}: DependancesService) {
   /** Les réglages, le plan, les faits et le contexte du jour : le point de départ de chaque route. */
   async function charger(userId: string) {
     const maintenant = horloge.maintenant()
@@ -137,6 +154,168 @@ export function creerServiceRevisions({ base, depot, horloge }: DependancesServi
         }),
         resultat: resultat ?? null,
       }
+    },
+
+    /**
+     * Reçoit la réponse à une partie. Les parties à l'IA passent par la correction (budget, brut,
+     * échantillon) avant d'être rangées ; à la dernière, le fait `verification_terminee` est écrit, le
+     * bloc recalculé et le résultat rendu. Aucune correction n'est montrée avant.
+     */
+    async repondre(
+      userId: string,
+      id: string,
+      corps: {
+        id: string
+        partie: string
+        reponse: string
+        confiance: 'sur' | 'hesitant' | 'hasard'
+        support: { colle: boolean; retour_cours: boolean }
+        code?: { reussis: number; total: number } | undefined
+      },
+    ) {
+      const charge = await chargerVerification(userId, id)
+      const { ligne, bloc, manifeste, reglages } = charge
+      const tirage = Tirage.parse(ligne.tirage)
+      const tiree = tirage.find(({ id: autre }) => autre === corps.partie)
+      const differee = manifeste.differees.find(({ id: autre }) => autre === corps.partie)
+      if (tiree === undefined || differee === undefined) {
+        throw new Introuvable(`La partie « ${corps.partie} » n'existe pas.`)
+      }
+      const lues = (evenements: readonly { type: string; donnees: unknown }[]) => ({
+        parties: evenements.flatMap(({ type, donnees }) =>
+          type === 'verification_partie' ? [EvenementPartie.parse(donnees)] : [],
+        ),
+        resultat: evenements
+          .filter(({ type }) => type === 'verification_resultat')
+          .map(({ donnees }) => EvenementResultat.parse(donnees).resultat)
+          .at(-1),
+      })
+      const dejaVu = lues(charge.evenements)
+      const rendre = (resultat: typeof dejaVu.resultat) => ({
+        partie: corps.partie,
+        terminee: resultat !== undefined,
+        ...(resultat === undefined ? {} : { resultat }),
+      })
+      if (
+        dejaVu.resultat !== undefined ||
+        dejaVu.parties.some(({ partie }) => partie === corps.partie)
+      ) {
+        return rendre(dejaVu.resultat)
+      }
+
+      // La correction se fait hors transaction : elle appelle le fournisseur.
+      let corrigee: Omit<EvenementPartie, 'partie' | 'type' | 'reponse'>
+      if (differee.type === 'tache') {
+        const tache = corrigerTache(differee, corps)
+        if (tache === undefined) {
+          throw new ErreurProtocole(
+            400,
+            'donnees_invalides',
+            'Code non testé',
+            "Teste ton code avant de l'envoyer.",
+          )
+        }
+        corrigee = { ...tache, erreurs: [] }
+      } else {
+        const recue = await corrigerPartie(userId, {
+          id: corps.id,
+          verification: id,
+          question: corps.partie,
+          reponse: corps.reponse,
+          confiance: corps.confiance,
+          support: corps.support,
+        })
+        corrigee = {
+          niveau: recue.niveau,
+          compte: recue.compte,
+          correction: recue.message,
+          correctionId: recue.id,
+          erreurs: recue.erreurs_critiques,
+        }
+      }
+
+      return base.enTransaction(async (tx) => {
+        await verrouBloc(tx, userId, bloc.id)
+        const maintenant = horloge.maintenant()
+        const donnees = {
+          verification: id,
+          partie: corps.partie,
+          type: differee.type,
+          reponse: corps.reponse,
+          confiance: corps.confiance,
+          ...corrigee,
+        }
+        const ajoute = await depot.ajouterEvenement(tx, {
+          id: corps.id,
+          userId,
+          blocId: bloc.id,
+          ficheVersionId: bloc.versionId,
+          type: 'verification_partie',
+          donnees,
+          empreinte: empreinte(donnees),
+          dateServeur: maintenant,
+        })
+        const apresCoup = lues(await depot.evenementsDeVerification(tx, userId, id))
+        if (!ajoute || apresCoup.parties.length < tirage.length) {
+          return rendre(apresCoup.resultat)
+        }
+
+        // Dernière partie : le fait est écrit, le moteur recalcule, le résultat est gardé.
+        const parties = tirage.flatMap(({ id: partie }) =>
+          apresCoup.parties.filter((autre) => autre.partie === partie),
+        )
+        const reponses = parties.map(reponseDeFait)
+        const faitsDuBloc = await lireFaits(tx, userId, [bloc])
+        const debut = (await depot.evenementsDeVerification(tx, userId, id))[0]?.date ?? maintenant
+        const validite = validiteVerification(faitsDuBloc, debut, reponses, reglages)
+        const statutAvant = calculerBloc(faitsDuBloc, manifeste, reglages, maintenant).statut
+        const fait = {
+          verification: TypeVerification.parse(ligne.type),
+          valable: validite.valable,
+          ...(validite.valable ? {} : { raisonInvalide: validite.raison }),
+          reponses,
+        }
+        await depot.ajouterEvenement(tx, {
+          id: nouvelId(instantEnMs(maintenant)),
+          userId,
+          blocId: bloc.id,
+          ficheVersionId: bloc.versionId,
+          type: 'verification_terminee',
+          donnees: fait,
+          empreinte: empreinte(fait),
+          dateServeur: maintenant,
+        })
+        const apres = await recalculer(tx, {
+          userId,
+          bloc: { id: bloc.id, code: bloc.code },
+          manifeste,
+          reglages,
+          maintenant,
+        })
+        const resultat = construireResultat({
+          bloc: { code: bloc.code, titre: manifeste.titre },
+          manifeste,
+          type: TypeVerification.parse(ligne.type),
+          parties,
+          validite,
+          statutAvant,
+          apres,
+          reglages,
+          maintenant,
+        })
+        const gardee = { verification: id, resultat }
+        await depot.ajouterEvenement(tx, {
+          id: nouvelId(instantEnMs(maintenant) + 1),
+          userId,
+          blocId: bloc.id,
+          ficheVersionId: bloc.versionId,
+          type: 'verification_resultat',
+          donnees: gardee,
+          empreinte: empreinte(gardee),
+          dateServeur: maintenant,
+        })
+        return rendre(resultat)
+      })
     },
 
     /** Reporte la vérification à demain ; rejouer le même message rend le même jour. */

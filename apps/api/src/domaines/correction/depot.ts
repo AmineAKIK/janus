@@ -114,6 +114,29 @@ export function creerDepotCorrection() {
       return ligne
     },
 
+    /** Le bloc d'une vérification tirée pour cet utilisateur, avec sa dernière version de fiche. */
+    blocDeLaVerification: async (lecteur: Db | Tx, userId: string, verificationId: string) => {
+      const [ligne] = await lecteur
+        .select({
+          blocId: t.blocs.id,
+          code: t.blocs.code,
+          versionId: t.fichesVersions.id,
+          manifeste: t.fichesVersions.manifeste,
+        })
+        .from(t.verificationsTirees)
+        .innerJoin(t.blocs, eq(t.blocs.id, t.verificationsTirees.blocId))
+        .innerJoin(t.fichesVersions, eq(t.fichesVersions.blocId, t.blocs.id))
+        .where(
+          and(
+            eq(t.verificationsTirees.id, verificationId),
+            eq(t.verificationsTirees.userId, userId),
+          ),
+        )
+        .orderBy(desc(t.fichesVersions.version))
+        .limit(1)
+      return ligne
+    },
+
     /** La dernière version de fiche d'un bloc : celle d'un rappel, dont la page n'est pas ouverte. */
     derniereVersion: async (lecteur: Db | Tx, code: string) => {
       const [ligne] = await lecteur
