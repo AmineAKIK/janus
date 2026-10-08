@@ -114,6 +114,34 @@ export function creerDepotCorrection() {
       return ligne
     },
 
+    /** La dernière version de fiche d'un bloc : celle d'un rappel, dont la page n'est pas ouverte. */
+    derniereVersion: async (lecteur: Db | Tx, code: string) => {
+      const [ligne] = await lecteur
+        .select({
+          blocId: t.blocs.id,
+          code: t.blocs.code,
+          versionId: t.fichesVersions.id,
+          manifeste: t.fichesVersions.manifeste,
+        })
+        .from(t.blocs)
+        .innerJoin(t.fichesVersions, eq(t.fichesVersions.blocId, t.blocs.id))
+        .where(eq(t.blocs.code, code))
+        .orderBy(desc(t.fichesVersions.version))
+        .limit(1)
+      return ligne
+    },
+
+    /** La série de questions de début de séance gardée pour ce jour, telle que stockée. */
+    serieDuJour: async (lecteur: Db | Tx, userId: string, jour: string): Promise<unknown> => {
+      const [ligne] = await lecteur
+        .select({ questions: t.seriesQuestionsDebut.questions })
+        .from(t.seriesQuestionsDebut)
+        .where(
+          and(eq(t.seriesQuestionsDebut.userId, userId), eq(t.seriesQuestionsDebut.jour, jour)),
+        )
+      return ligne?.questions
+    },
+
     reglagesDe: async (lecteur: Db | Tx, userId: string): Promise<unknown> => {
       const [ligne] = await lecteur
         .select({ reglages: t.users.reglages })

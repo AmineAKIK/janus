@@ -179,9 +179,9 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('POST /corrections contre Postgr
     expect((await corriger(demande({ version: 9 }))).statusCode).toBe(404)
   })
 
-  it('ne corrige pas encore les séries rappel et verification (400)', async () => {
+  it('ne corrige pas encore la série verification (400)', async () => {
     const { id, serie, tentative, question, reponse, confiance, relance, support } = demande({
-      serie: 'rappel',
+      serie: 'verification',
     })
     const sansBloc = { id, serie, tentative, question, reponse, confiance, relance, support }
 

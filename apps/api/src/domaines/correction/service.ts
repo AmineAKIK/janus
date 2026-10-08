@@ -2,7 +2,8 @@ import { createHash } from 'node:crypto'
 import { Manifeste, Reglages, nouvelId } from '@janus/contrats'
 import { CorrectionRecue } from '@janus/contrats'
 import type { CorrectionRecue as CorrectionRecueApi } from '@janus/contrats'
-import { compte, estRecopiee, instantEnIso, instantEnMs } from '@janus/moteur'
+import { compte, estRecopiee, instantEnIso, instantEnMs, jourDe } from '@janus/moteur'
+import { z } from 'zod'
 import type { Base } from '../../base/base.ts'
 import { verrouBloc } from '../../base/transaction.ts'
 import {
@@ -33,6 +34,8 @@ export class CorrectionIndisponible extends ErreurMetier {
   readonly code = 'erreur_interne'
   readonly titre = 'Correction indisponible'
 }
+
+const SerieGardee = z.array(z.strictObject({ bloc: z.string(), question: z.string() }))
 
 const HEURE_MS = 3_600_000
 /** Un appel, plus son nouvel essai : la réservation couvre les deux. */
@@ -171,7 +174,7 @@ export function creerServiceCorrection({
      * validation, enregistrement, recalcul du bloc.
      */
     async corriger(userId: string, demande: DemandeCorrection): Promise<CorrectionRecueApi> {
-      if (demande.serie !== 'restitution' && demande.serie !== 'consolidation') {
+      if (demande.serie === 'verification') {
         throw new ErreurProtocole(
           400,
           'donnees_invalides',
@@ -180,7 +183,7 @@ export function creerServiceCorrection({
         )
       }
       const { serie } = demande
-      if (demande.bloc === undefined || demande.version === undefined) {
+      if (serie !== 'rappel' && (demande.bloc === undefined || demande.version === undefined)) {
         throw new ErreurProtocole(
           400,
           'donnees_invalides',
@@ -197,14 +200,28 @@ export function creerServiceCorrection({
         return correctionRecue(gardee)
       }
 
-      const trouve = await depot.blocEtVersion(base.db, demande.bloc, demande.version)
-      if (trouve === undefined) {
-        throw introuvable(`Le bloc « ${demande.bloc} » en version ${String(demande.version)}`)
+      const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
+      let trouve
+      if (serie === 'rappel') {
+        // Le rappel ne dit pas son bloc : le serveur le retrouve dans la série gardée pour aujourd'hui.
+        const jour = jourDe(horloge.maintenant(), reglages.fuseau, reglages.heureBascule)
+        const gardee = SerieGardee.safeParse(await depot.serieDuJour(base.db, userId, jour))
+        const code = gardee.success
+          ? gardee.data.find(({ question: q }) => q === demande.question)?.bloc
+          : undefined
+        trouve = code === undefined ? undefined : await depot.derniereVersion(base.db, code)
+        if (trouve === undefined) throw introuvable(`La question « ${demande.question} »`)
+      } else {
+        const code = demande.bloc ?? ''
+        const version = demande.version ?? 0
+        trouve = await depot.blocEtVersion(base.db, code, version)
+        if (trouve === undefined) {
+          throw introuvable(`Le bloc « ${code} » en version ${String(version)}`)
+        }
       }
       const manifeste = Manifeste.parse(trouve.manifeste)
       const question = manifeste[serie].find(({ id }) => id === demande.question)
       if (question === undefined) throw introuvable(`La question « ${demande.question} »`)
-      const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
       const bloc = { id: trouve.blocId, code: trouve.code }
 
       // Le tour : 1 sans relance, sinon le suivant de cette tentative.
