@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify'
-import type { CorrigerPartie, Dependances } from '../../types.ts'
+import type { CorrigerPartie, Dependances, LireAujourdhui } from '../../types.ts'
 import { creerControleurRevisions } from './controleur.ts'
 import { creerDepotRevisions } from './depot.ts'
 import { routesRevisions } from './routes.ts'
@@ -9,12 +9,15 @@ import { creerServiceRevisions } from './service.ts'
 export function monterRevisions(
   { base, horloge }: Dependances,
   corrigerPartie: CorrigerPartie,
-): FastifyPluginAsync {
+): { routes: FastifyPluginAsync; aujourdhui: LireAujourdhui } {
   const service = creerServiceRevisions({
     base,
     depot: creerDepotRevisions(),
     horloge,
     corrigerPartie,
   })
-  return routesRevisions(creerControleurRevisions(service))
+  return {
+    routes: routesRevisions(creerControleurRevisions(service)),
+    aujourdhui: (userId) => service.aujourdhui(userId),
+  }
 }
