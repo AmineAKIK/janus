@@ -84,6 +84,16 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('GET /questions-debut contre Pos
     expect(reponse.statusCode).toBe(401)
   })
 
+  it('ne donne aucune carte tant qu’aucun bloc n’est vu', async () => {
+    const reponse = await s.app.inject({
+      method: 'GET',
+      url: '/api/cartes/dues',
+      headers: { cookie },
+    })
+
+    expect(reponse.json()).toEqual({ dues: [], nouvelles: [], prochaine: null })
+  })
+
   it('ne tire rien tant qu’aucun bloc n’est vu', async () => {
     const reponse = await lire()
 
@@ -158,6 +168,76 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('GET /questions-debut contre Pos
       }>()
       const traitee = relue.questions.find(({ id }) => id === premiere.id)
       expect(traitee?.deja).toMatchObject({ bloc: 'D01', confiance: 'hesitant' })
+    })
+
+    describe('cartes', () => {
+      type Carte = { id: string; bloc: string; nouvelle: boolean; apercu: Record<string, number> }
+      type Dues = { dues: Carte[]; nouvelles: Carte[]; prochaine: string | null }
+      const cartes = async () =>
+        (
+          await s.app.inject({ method: 'GET', url: '/api/cartes/dues', headers: { cookie } })
+        ).json<Dues>()
+      const noter = (id: string, corps: Record<string, unknown>) =>
+        s.app.inject({
+          method: 'POST',
+          url: `/api/cartes/${encodeURIComponent(id)}/note`,
+          headers: { cookie, origin: ORIGINE_TEST },
+          payload: corps,
+        })
+
+      it('donne les nouvelles cartes du bloc vu, avec l’aperçu de chaque note', async () => {
+        const { dues, nouvelles, prochaine } = await cartes()
+
+        expect(dues).toEqual([])
+        expect(prochaine).toBeNull()
+        expect(nouvelles.length).toBeGreaterThan(0)
+        for (const carte of nouvelles) {
+          expect(carte).toMatchObject({ bloc: 'D01', nouvelle: true })
+          expect(carte.id.startsWith('D01:')).toBe(true)
+          expect(carte.apercu['a_revoir'] ?? 0).toBeLessThan(carte.apercu['facile'] ?? 0)
+        }
+      })
+
+      it('note une carte : FSRS programme la suite et la nouvelle carte sort de la liste', async () => {
+        const avant = await cartes()
+        const carte = avant.nouvelles[0]
+        if (carte === undefined) throw new Error('aucune carte')
+        const corps = { id: nouvelId(Date.parse('2026-10-02T10:00:00.000Z')), note: 'bien' }
+
+        const reponse = await noter(carte.id, corps)
+
+        expect(reponse.statusCode).toBe(200)
+        const { echeance } = reponse.json<{ echeance: string }>()
+        expect(echeance > s.horloge.maintenant()).toBe(true)
+        const apres = await cartes()
+        expect(apres.nouvelles.map(({ id }) => id)).not.toContain(carte.id)
+        expect(apres.nouvelles).toHaveLength(avant.nouvelles.length - 1)
+        expect(apres.dues.map(({ id }) => id)).not.toContain(carte.id)
+        expect(apres.prochaine).toBe(echeance)
+      })
+
+      it('rejouer la même note ne change rien', async () => {
+        const carte = (await cartes()).nouvelles[0]
+        if (carte === undefined) throw new Error('aucune carte')
+        const corps = { id: nouvelId(Date.parse('2026-10-02T10:00:01.000Z')), note: 'facile' }
+
+        const premiere = await noter(carte.id, corps)
+        const seconde = await noter(carte.id, corps)
+
+        expect(seconde.json()).toEqual(premiere.json())
+        const { rows } = await bases.pool.query<{ n: string }>(
+          'SELECT count(*) AS n FROM revues_fsrs WHERE user_id = $1',
+          [userId],
+        )
+        expect(Number(rows[0]?.n ?? 0)).toBe(2)
+      })
+
+      it('refuse une carte inconnue (404) et une note invalide (400)', async () => {
+        const id = nouvelId(Date.parse('2026-10-02T10:00:02.000Z'))
+        expect((await noter('D01:NOPE', { id, note: 'bien' })).statusCode).toBe(404)
+        expect((await noter('sans-separateur', { id, note: 'bien' })).statusCode).toBe(404)
+        expect((await noter('D01:CA1', { id, note: 'nulle' })).statusCode).toBe(400)
+      })
     })
 
     it('refuse un rappel dont la question n’est pas dans la série du jour', async () => {

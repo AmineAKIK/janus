@@ -1,3 +1,4 @@
+import type { NoteCarte } from '@janus/contrats'
 import type { FastifyRequest } from 'fastify'
 import { NonAuthentifie } from '../../erreurs.ts'
 import type { ServiceRevisions } from './service.ts'
@@ -11,6 +12,19 @@ function utilisateurDe(requete: FastifyRequest): string {
 export function creerControleurRevisions(service: ServiceRevisions) {
   return {
     questionsDebut: (requete: FastifyRequest) => service.questionsDebut(utilisateurDe(requete)),
+    cartesDues: (requete: FastifyRequest) => service.cartesDues(utilisateurDe(requete)),
+    noterCarte: (
+      requete: FastifyRequest<{
+        Params: { id: string }
+        Body: { id: string; note: NoteCarte }
+      }>,
+    ) =>
+      service.noterCarte(
+        utilisateurDe(requete),
+        requete.params.id,
+        requete.body.id,
+        requete.body.note,
+      ),
   }
 }
 export type ControleurRevisions = ReturnType<typeof creerControleurRevisions>
