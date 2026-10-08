@@ -182,6 +182,7 @@ async function effacerLesDonnees(tx: Tx, userId: string): Promise<void> {
     t.evenements,
     t.statutsForces,
     t.notesJournal,
+    t.notesCartes,
     t.idees,
     t.revuesMethode,
     t.verificationsTirees,

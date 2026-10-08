@@ -13,7 +13,7 @@ import {
   unique,
   uuid,
 } from 'drizzle-orm/pg-core'
-import { blocs, fichesVersions } from './catalogue.ts'
+import { blocs, cartes, fichesVersions } from './catalogue.ts'
 import { users } from './utilisateurs.ts'
 
 // Les faits : ajout seul. Le rôle `janus_app` n'a ni UPDATE ni DELETE dessus (migration 0003).
@@ -255,6 +255,24 @@ export const revuesMethode = pgTable(
   ],
 )
 
+/** Chaque note donnée à une carte : de quoi mesurer la rétention par semaine (l'état FSRS ne garde que la dernière). */
+export const notesCartes = pgTable(
+  'notes_cartes',
+  {
+    id: uuid('id').primaryKey(),
+    ...proprietaire(),
+    carteId: uuid('carte_id')
+      .notNull()
+      .references(() => cartes.id),
+    note: text('note').notNull(),
+    dateServeur: instant('date_serveur').notNull(),
+  },
+  (table) => [
+    index('notes_cartes_user_date').on(table.userId, table.dateServeur),
+    check('notes_cartes_note', parmi(table.note, ['a_revoir', 'difficile', 'bien', 'facile'])),
+  ],
+)
+
 /** Les questions et tâches tirées pour une vérification : de quoi la rendre à l'identique si on la rouvre. */
 export const verificationsTirees = pgTable(
   'verifications_tirees',
@@ -342,6 +360,7 @@ export const TABLES_DE_FAITS = [
   'notes_journal',
   'idees',
   'revues_methode',
+  'notes_cartes',
   'verifications_tirees',
   'series_questions_debut',
   'sessions',

@@ -230,6 +230,11 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('GET /questions-debut contre Pos
           [userId],
         )
         expect(Number(rows[0]?.n ?? 0)).toBe(2)
+        const notes = await bases.pool.query<{ note: string }>(
+          'SELECT note FROM notes_cartes WHERE user_id = $1 ORDER BY date_serveur, note',
+          [userId],
+        )
+        expect(notes.rows.map(({ note }) => note).sort()).toEqual(['bien', 'facile'])
       })
 
       it('refuse une carte inconnue (404) et une note invalide (400)', async () => {
