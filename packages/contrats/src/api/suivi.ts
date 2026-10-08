@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { Confiance, Statut } from '../enums.ts'
 import { InstantUtc } from '../faits.ts'
+import { TypeEtape } from '../manifeste.ts'
 import { TacheDuJour } from './apprentissage.ts'
 import { CodeBloc, IdUuid, Identifiant, TexteLibre } from './commun.ts'
 import type { DefinitionRoute } from './routes.ts'
@@ -181,6 +182,28 @@ export const ROUTES_SUIVI = {
               .nullable(),
           }),
         ),
+        /** La revue de la méthode : à proposer quand assez de blocs sont passés à Vu depuis la dernière. */
+        revue: z.strictObject({
+          a_proposer: z.boolean(),
+          /** Les blocs passés à Vu depuis la dernière revue, et le réglage `blocsEntreRevues`. */
+          blocs_depuis: z.number().int().min(0),
+          blocs_requis: z.number().int().min(1),
+          /** Le temps actif depuis la dernière revue, dont celui passé à pratiquer. */
+          temps_s: z.number().int().min(0),
+          pratique_s: z.number().int().min(0),
+          /** Les notions dont la correction de premier tour n'était pas solide plusieurs fois. */
+          a_reprendre: z.array(
+            z.strictObject({
+              bloc: CodeBloc,
+              question: Identifiant,
+              fois: z.number().int().min(2),
+            }),
+          ),
+          /** Les types d'étape jamais vus dans plusieurs blocs vus. */
+          etapes_sautees: z.array(
+            z.strictObject({ etape: TypeEtape, blocs: z.number().int().min(2) }),
+          ),
+        }),
         /** Le contrôle humain de la correction IA ; `alerte` porte sur les 30 derniers échantillons relus. */
         fiabilite: z.strictObject({
           copies_relues: z.number().int().min(0),
@@ -280,7 +303,8 @@ export const ROUTES_SUIVI = {
   'POST /revues-methode': {
     methode: 'POST',
     chemin: '/revues-methode',
-    corps: z.strictObject({ id: IdUuid, texte: TexteLibre }),
+    /** Le texte est facultatif : la revue se marque faite d'un seul geste. */
+    corps: z.strictObject({ id: IdUuid, texte: TexteLibre.optional() }),
     reponse: null,
     succes: 204,
   },

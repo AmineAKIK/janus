@@ -43,7 +43,13 @@ describe('creerTransport', () => {
     delete window.__janusDemo
 
     const erreur: unknown = await creerTransport({})
-      .appeler(ROUTES['POST /revues-methode'], { corps: { id: nouvelId(1), texte: 'Bien.' } })
+      .appeler(ROUTES['POST /push/abonnements'], {
+        corps: {
+          id: nouvelId(1),
+          endpoint: 'https://push.example.org/abonnement/abc',
+          cles: { p256dh: 'BKey', auth: 'cleauth' },
+        },
+      })
       .catch((e: unknown) => e)
 
     expect(erreur).toMatchObject({ status: 501 })

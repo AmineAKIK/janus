@@ -1,4 +1,4 @@
-import type { Confiance } from '@janus/contrats'
+import type { Confiance, TypeEtape } from '@janus/contrats'
 import { texteJourCourt } from '../../revision/textes.ts'
 import { nombreFrancais } from '../../parametres/textes.ts'
 
@@ -33,6 +33,11 @@ export const TEXTES_MESURES = {
   pratique: 'Pratique',
   restitution: 'Restitution',
   parBloc: 'Par bloc',
+  revue: 'Revue de la méthode',
+  revueSousTitre: 'Point de synthèse du module',
+  revueFaite: 'Revue faite',
+  revueATitre: 'Notions à reprendre plusieurs fois',
+  revueEtapes: 'Étapes souvent sautées',
   fiabilite: 'Fiabilité de la correction IA',
   fiabiliteSousTitre: 'Contrôle humain et signalements',
   copiesRelues: 'Copies relues',
@@ -95,3 +100,33 @@ export function texteDuree(secondes: number): string {
 /** « 1 sur 4 » : les désaccords sur les copies relues ; « – » sans copie relue. */
 export const texteDesaccords = (desaccords: number, relues: number) =>
   relues === 0 ? TEXTES_MESURES.aucune : `${String(desaccords)} sur ${String(relues)}`
+
+export const LIBELLE_ETAPE: Readonly<Record<TypeEtape, string>> = {
+  carte: 'Carte',
+  pretest: 'Pré-test',
+  explication: 'Explication',
+  pratique: 'Pratique',
+  atelier: 'Atelier',
+  aisance: 'Aisance',
+  restitution: 'Restitution',
+  consolidation: 'Consolidation',
+  bilan: 'Bilan',
+}
+
+export const texteProchaineRevue = (restants: number) =>
+  `Prochaine revue après ${nombre(restants, 'bloc', 'blocs')}.`
+
+export const texteBlocsVus = (n: number) =>
+  `${nombre(n, 'bloc est passé', 'blocs sont passés')} à Vu depuis la dernière revue.`
+
+/** « Temps actif depuis la dernière revue : 1 h 30, dont 33 % à pratiquer » ; sans temps, sans la part. */
+export const texteTempsDeRevue = (tempsS: number, pratiqueS: number) =>
+  tempsS === 0
+    ? 'Pas encore de temps actif depuis la dernière revue.'
+    : `Temps actif depuis la dernière revue : ${texteDuree(tempsS)}, dont ${pourcent(pratiqueS / tempsS)} à pratiquer`
+
+export const texteNotion = (bloc: string, question: string, fois: number) =>
+  `${bloc} · ${question} · ${String(fois)} fois`
+
+export const texteEtapeSautee = (etape: TypeEtape, blocs: number) =>
+  `${LIBELLE_ETAPE[etape]} · ${String(blocs)} blocs`

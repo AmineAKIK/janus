@@ -11,6 +11,7 @@ import {
   erreursRecurrentes,
   fiabilite,
   retention,
+  revueMethode,
   tempsActif,
   ouverturesSansPrerequis,
   statutsForces,
@@ -96,6 +97,13 @@ export const ROUTES_TABLEAU_DE_BORD_DEMO = [
     const mesureAutonomie = autonomie(faits, maintenant, reglages)
     const semainesRetention = retention(faits, etat.revuesCartes, maintenant, reglages)
     const controle = fiabilite(etat.controlesCorrections, faits, periode, maintenant, reglages)
+    const revue = revueMethode(
+      faits,
+      etat.tempsActif,
+      Object.values(MANIFESTES_GRAINE),
+      etat.revuesMethode.at(-1)?.date ?? null,
+      reglages,
+    )
     const temps = tempsActif(etat.tempsActif, maintenant, reglages)
     const calibre = calibration(faits, periode, maintenant, reglages)
     const aisance = aisanceDesBlocs(
@@ -168,6 +176,15 @@ export const ROUTES_TABLEAU_DE_BORD_DEMO = [
                   jours_requis: cible.joursRequis,
                 },
         })),
+        revue: {
+          a_proposer: revue.aProposer,
+          blocs_depuis: revue.blocsDepuis,
+          blocs_requis: revue.blocsRequis,
+          temps_s: revue.tempsS,
+          pratique_s: revue.pratiqueS,
+          a_reprendre: revue.aReprendre.map((notion) => ({ ...notion })),
+          etapes_sautees: revue.etapesSautees.map((etape) => ({ ...etape })),
+        },
         fiabilite: {
           copies_relues: controle.copiesRelues,
           desaccords: controle.desaccords,

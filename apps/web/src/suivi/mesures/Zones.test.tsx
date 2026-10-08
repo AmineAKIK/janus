@@ -1,5 +1,5 @@
-import { render, screen, within } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { fireEvent, render, screen, within } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
 import type { DonneesSuivi } from '../useSuivi.ts'
 import {
   libelleSemaine,
@@ -14,6 +14,7 @@ import {
   ZoneCalibration,
   ZoneFiabilite,
   ZoneRetention,
+  ZoneRevue,
   ZoneTemps,
 } from './Zones.tsx'
 
@@ -277,5 +278,76 @@ describe('Fiabilité de la correction IA', () => {
     )
 
     expect(screen.getByText('Désaccords · –')).toBeVisible()
+  })
+})
+
+describe('Revue de la méthode', () => {
+  const revue = {
+    a_proposer: true,
+    blocs_depuis: 3,
+    blocs_requis: 3,
+    temps_s: 5400,
+    pratique_s: 1800,
+    a_reprendre: [{ bloc: 'B02', question: 'R1', fois: 2 }],
+    etapes_sautees: [{ etape: 'pretest' as const, blocs: 2 }],
+  }
+
+  it('propose la revue avec ce qui s’est passé, et « Revue faite » la marque', () => {
+    const surRevue = vi.fn()
+    render(<ZoneRevue donnees={revue} enCours={false} surRevue={surRevue} />)
+
+    expect(screen.getByRole('heading', { name: 'Revue de la méthode' })).toBeVisible()
+    expect(screen.getByText('3 blocs sont passés à Vu depuis la dernière revue.')).toBeVisible()
+    expect(
+      screen.getByText('Temps actif depuis la dernière revue : 1 h 30, dont 33 % à pratiquer'),
+    ).toBeVisible()
+    expect(screen.getByRole('link', { name: 'B02 · R1 · 2 fois' })).toHaveAttribute(
+      'href',
+      '#/blocs/B02',
+    )
+    expect(screen.getByText('Pré-test · 2 blocs')).toBeVisible()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Revue faite' }))
+    expect(surRevue).toHaveBeenCalledTimes(1)
+  })
+
+  it('désactive le bouton pendant l’envoi et cache les listes vides', () => {
+    render(
+      <ZoneRevue
+        donnees={{ ...revue, temps_s: 0, a_reprendre: [], etapes_sautees: [] }}
+        enCours
+        surRevue={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByRole('button', { name: 'Revue faite' })).toBeDisabled()
+    expect(screen.getByText('Pas encore de temps actif depuis la dernière revue.')).toBeVisible()
+    expect(screen.queryByText('Notions à reprendre plusieurs fois')).toBeNull()
+    expect(screen.queryByText('Étapes souvent sautées')).toBeNull()
+  })
+
+  it('annonce la prochaine revue sans bouton quand il manque des blocs', () => {
+    render(
+      <ZoneRevue
+        donnees={{ ...revue, a_proposer: false, blocs_depuis: 2 }}
+        enCours={false}
+        surRevue={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByText('Prochaine revue après 1 bloc.')).toBeVisible()
+    expect(screen.queryByRole('button', { name: 'Revue faite' })).toBeNull()
+  })
+
+  it('dit « 1 bloc est passé » au singulier', () => {
+    render(
+      <ZoneRevue
+        donnees={{ ...revue, blocs_depuis: 1, blocs_requis: 1 }}
+        enCours={false}
+        surRevue={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByText('1 bloc est passé à Vu depuis la dernière revue.')).toBeVisible()
   })
 })

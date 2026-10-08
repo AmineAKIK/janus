@@ -17,6 +17,7 @@ export function useSuivi(requete: { readonly module?: string; readonly periode?:
     },
   })
   const ecriture = useEcriture(ROUTES['POST /blocs/:id/forcer'])
+  const revue = useEcriture(ROUTES['POST /revues-methode'])
 
   const apres = {
     onSuccess: () => {
@@ -41,6 +42,10 @@ export function useSuivi(requete: { readonly module?: string; readonly periode?:
           },
         },
       )
+    },
+    revueEnCours: revue.isPending,
+    revueFaite: () => {
+      revue.mutate({ corps: { id: id() } }, apres)
     },
     lever: (bloc: string) => {
       ecriture.mutate({ params: { id: bloc }, corps: { action: 'lever', id: id() } }, apres)

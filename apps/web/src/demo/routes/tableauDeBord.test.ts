@@ -1,5 +1,7 @@
 import { nouvelId, ROUTES } from '@janus/contrats'
 import { describe, expect, it } from 'vitest'
+import type { Fait } from '@janus/contrats'
+import { MANIFESTES_GRAINE } from '../graine.ts'
 import { monterDemo, PREMIER_LANCEMENT } from './banc.ts'
 
 const lire = (banc: ReturnType<typeof monterDemo>, requete = {}) =>
@@ -233,5 +235,43 @@ describe('tableau de bord de la démo, avec la graine', () => {
       contestations: 1,
       alerte: true,
     })
+  })
+
+  it('propose la revue de la méthode quand assez de blocs sont passés à Vu, puis la remet à zéro', async () => {
+    const banc = monterDemo()
+    const avant = (await lire(banc)).mesures.revue
+    expect(avant).toMatchObject({ blocs_requis: 3, a_proposer: avant.blocs_depuis >= 3 })
+
+    // Trois blocs de plus passent à Vu : les cinq questions de restitution de chacun.
+    for (const [rang, bloc] of ['B16', 'B17', 'B18'].entries()) {
+      const manifeste = MANIFESTES_GRAINE[bloc]
+      if (manifeste === undefined) throw new Error(bloc)
+      banc.magasin.ecrire((etat) => ({
+        ...etat,
+        faits: [
+          ...etat.faits,
+          ...manifeste.restitution.map((question, i): Fait => ({
+            id: `rev-${bloc}-${String(i)}`,
+            bloc,
+            date: `2026-10-0${String(1 + rang)}T10:0${String(i)}:00Z`,
+            type: 'correction',
+            serie: 'restitution',
+            question: question.id,
+            tour: 1,
+            niveau: 'solide',
+            compte: true,
+            confiance: 'sur',
+            erreursIa: [],
+          })),
+        ],
+      }))
+    }
+    const apres = (await lire(banc)).mesures.revue
+    expect(apres.blocs_depuis).toBeGreaterThanOrEqual(3)
+    expect(apres.a_proposer).toBe(true)
+
+    await banc.transport.appeler(ROUTES['POST /revues-methode'], { corps: { id: nouvelId(41) } })
+
+    expect((await lire(banc)).mesures.revue).toMatchObject({ blocs_depuis: 0, a_proposer: false })
   })
 })
