@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
 import {
+  boolean,
   check,
   integer,
   jsonb,
@@ -18,6 +19,7 @@ export const formations = pgTable('formations', {
   id: uuid('id').primaryKey(),
   code: text('code').notNull().unique(),
   titre: text('titre').notNull(),
+  description: text('description').notNull().default(''),
 })
 
 export const modules = pgTable(
@@ -29,7 +31,10 @@ export const modules = pgTable(
       .references(() => formations.id),
     code: text('code').notNull(),
     titre: text('titre').notNull(),
+    description: text('description').notNull().default(''),
     ordre: integer('ordre').notNull(),
+    /** Faux pour un module dont les fiches ne sont pas encore importées. */
+    importe: boolean('importe').notNull().default(false),
   },
   (table) => [unique('modules_formation_code').on(table.formationId, table.code)],
 )
@@ -101,6 +106,8 @@ export const cartes = pgTable(
     carteId: text('carte_id').notNull(),
     recto: text('recto').notNull(),
     verso: text('verso').notNull(),
+    /** Une carte retirée de la fiche est marquée inactive, jamais effacée : l'historique la garde. */
+    active: boolean('active').notNull().default(true),
   },
   (table) => [unique('cartes_bloc_carte').on(table.blocId, table.carteId)],
 )
