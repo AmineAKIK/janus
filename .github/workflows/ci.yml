@@ -49,4 +49,20 @@ jobs:
       - run: pnpm test
         env:
           DATABASE_URL: postgres://janus:janus@localhost:5432/janus_test
+      # La suite de contrat écrite pour la démo, rejouée contre l'API réelle sur PostgreSQL (PR-089).
+      - name: Suite de contrat contre l'API réelle
+        env:
+          DATABASE_URL: postgres://janus:janus@localhost:5432/janus_banc
+          DATABASE_URL_PROPRIETAIRE: postgres://janus:janus@localhost:5432/janus_banc
+          JANUS_BANC_URL: http://127.0.0.1:3100
+        run: |
+          psql postgres://janus:janus@localhost:5432/janus_test -c 'CREATE DATABASE janus_banc'
+          pnpm --filter @janus/api migrer
+          pnpm --filter @janus/api banc > banc.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -fs "$JANUS_BANC_URL/api/sante" > /dev/null && break
+            sleep 1
+          done
+          curl -fs "$JANUS_BANC_URL/api/sante" || { cat banc.log; exit 1; }
+          pnpm --filter @janus/web exec vitest run src/api/contratHttp.test.ts
       - run: pnpm build

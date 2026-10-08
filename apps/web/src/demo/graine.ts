@@ -1,6 +1,13 @@
-import { Catalogue, Manifeste, Reglages } from '@janus/contrats'
-import type { EtatDemo, Fait } from '@janus/contrats'
+import {
+  ERREUR_COMPILATEUR,
+  MANIFESTES_GRAINE,
+  PLAN_GRAINE,
+  Manifeste,
+  Reglages,
+  catalogueGraine,
+} from '@janus/contrats'
 import demo from '@janus/contrats/fixtures/manifeste-demo.json'
+import type { Catalogue, EtatDemo, Fait } from '@janus/contrats'
 import { ajouterJours, instantEnIso, instantEnMs, jourDe } from '@janus/moteur'
 import { etatVide } from './store.ts'
 
@@ -8,124 +15,11 @@ import { etatVide } from './store.ts'
 // données d'exemple, pas des données du produit. Les statuts ne sont jamais écrits ici : on écrit des
 // faits, datés par rapport au premier lancement, et le moteur en tire les statuts.
 
-interface BlocDuPlan {
-  readonly code: string
-  readonly titre: string
-  readonly prerequis: readonly string[]
-  readonly partie: string
-}
-
-const PARTIES = [
-  { code: 'P1', titre: 'Machine et logique' },
-  { code: 'P2', titre: 'Réseaux et Web' },
-  { code: 'P3', titre: 'Poste de travail' },
-  { code: 'P4', titre: 'Sécurité et droit' },
-  { code: 'P5', titre: 'Veille et synthèse' },
-] as const
-
-/** Les 20 blocs du module 1 : code, titre, prérequis et partie. */
-const bloc = (
-  code: string,
-  titre: string,
-  prerequis: readonly string[],
-  partie: string,
-): BlocDuPlan => ({ code, titre, prerequis, partie })
-
-export const PLAN: readonly BlocDuPlan[] = [
-  bloc('B01', 'Bits et codages', [], 'P1'),
-  bloc('B02', 'Logique booléenne', ['B01'], 'P1'),
-  bloc('B03', 'Ordinateur et composants', ['B01'], 'P1'),
-  bloc('B04', 'Langages', ['B01', 'B03'], 'P1'),
-  bloc('B05', 'Internet et le Web', ['B01'], 'P2'),
-  bloc('B06', 'Réseau local', ['B01', 'B05'], 'P2'),
-  bloc('B07', 'DNS, URL, HTTP', ['B05', 'B06'], 'P2'),
-  bloc('B08', 'Environnement UNIX', ['B03', 'B04'], 'P3'),
-  bloc('B09', 'Shell et man', ['B08'], 'P3'),
-  bloc('B10', 'VS Code', ['B08', 'B09'], 'P3'),
-  bloc('B11', 'IDE JetBrains', ['B04', 'B09', 'B10'], 'P3'),
-  bloc('B12', 'Serveur local', ['B04', 'B07', 'B09', 'B10'], 'P3'),
-  bloc('B13', 'GitHub et hébergement', ['B07', 'B12'], 'P3'),
-  bloc('B14', 'Menaces', ['B06', 'B07'], 'P4'),
-  bloc('B15', 'Se protéger', ['B12', 'B14'], 'P4'),
-  bloc('B16', 'RGPD', ['B07', 'B14', 'B15'], 'P4'),
-  bloc('B17', 'Droit d’auteur', ['B07', 'B13'], 'P4'),
-  bloc('B18', 'Veille', ['B07', 'B13', 'B15', 'B17'], 'P5'),
-  bloc('B19', 'Écosystème numérique', ['B04', 'B12', 'B18'], 'P5'),
-  bloc('B20', 'Mise en situation', ['B02', 'B10', 'B11', 'B12', 'B13', 'B14', 'B15', 'B16'], 'P5'),
-]
-
-export const ERREUR_COMPILATEUR = 'confond_compilateur_interpreteur'
+// Le plan, les manifestes et le catalogue viennent de `@janus/contrats` : l'API de la CI les partage.
+export { catalogueGraine, ERREUR_COMPILATEUR, MANIFESTES_GRAINE }
+export const PLAN = PLAN_GRAINE
 
 const MODELE = Manifeste.parse(demo)
-
-/** Un manifeste par bloc : le manifeste de démonstration cloné, avec le code, le titre et les prérequis du bloc. */
-function manifesteDuBloc({ code, titre, prerequis }: BlocDuPlan): Manifeste {
-  const erreurs =
-    code === 'B04'
-      ? [
-          ...MODELE.erreurs_critiques,
-          { id: ERREUR_COMPILATEUR, libelle: 'Confond compilateur et interpréteur.' },
-        ]
-      : MODELE.erreurs_critiques
-  return Manifeste.parse({
-    ...MODELE,
-    bloc: code,
-    titre,
-    titre_court: titre,
-    prerequis,
-    erreurs_critiques: erreurs,
-  })
-}
-
-export const MANIFESTES_GRAINE: Readonly<Record<string, Manifeste>> = Object.fromEntries(
-  PLAN.map((bloc) => [bloc.code, manifesteDuBloc(bloc)]),
-)
-
-/** Le plan de la formation : le module 1 est importé, les autres attendent leurs fiches. */
-export function catalogueGraine(): Catalogue {
-  return Catalogue.parse({
-    formation: {
-      code: 'DWWM',
-      titre: 'Développeur web et web mobile',
-      description: 'Une formation d’exemple pour montrer l’appli.',
-    },
-    modules: [
-      {
-        code: 'M1',
-        titre: 'Environnement numérique et poste de travail',
-        description: 'Les bases de la machine, du réseau, du poste de travail et de la sécurité.',
-        ordre: 1,
-        importe: true,
-        parties: PARTIES.map(({ code, titre }) => ({
-          code,
-          titre,
-          blocs: PLAN.filter((bloc) => bloc.partie === code).map((bloc) => bloc.code),
-        })),
-      },
-      {
-        code: 'M2',
-        titre: 'Réaliser une interface web statique',
-        description: 'HTML et CSS.',
-        ordre: 2,
-        importe: false,
-      },
-      {
-        code: 'M3',
-        titre: 'Réaliser une interface web dynamique',
-        description: 'JavaScript et accès aux données.',
-        ordre: 3,
-        importe: false,
-      },
-      {
-        code: 'M4',
-        titre: 'Créer une base de données',
-        description: 'Modélisation et SQL.',
-        ordre: 4,
-        importe: false,
-      },
-    ],
-  })
-}
 
 /** Les formations que l'interrupteur « deuxFormations » ajoute : aucun de leurs modules n'est importé. */
 export function formationsSupplementairesGraine(): readonly Pick<

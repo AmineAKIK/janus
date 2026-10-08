@@ -136,6 +136,8 @@ export default defineConfig(
     // Côté API, seul le client DeepSeek sort sur le réseau.
     ignores: [
       'apps/web/src/api/transportHttp.ts',
+      // Le banc de la CI parle à l'API réelle avec un cookie de session, hors navigateur.
+      'apps/web/src/api/contratHttp.test.ts',
       'apps/api/src/adaptateurs/correcteur/deepseek.ts',
     ],
     rules: {
