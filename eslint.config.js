@@ -40,7 +40,15 @@ const autorises = {
 }
 
 export default defineConfig(
-  { ignores: ['**/dist/**', '**/coverage/**', '**/captures/**', '**/node_modules/**'] },
+  {
+    ignores: [
+      '**/dist/**',
+      '**/dist-api/**',
+      '**/coverage/**',
+      '**/captures/**',
+      '**/node_modules/**',
+    ],
+  },
   ...tseslint.configs.strictTypeChecked,
   {
     languageOptions: {
