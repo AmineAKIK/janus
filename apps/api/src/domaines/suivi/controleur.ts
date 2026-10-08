@@ -20,6 +20,23 @@ export function creerControleurSuivi(service: ServiceSuivi) {
       const texte = await service.exportTexte(utilisateurDe(requete))
       return reponse.type('text/plain; charset=utf-8').send(texte)
     },
+    ajouterNote: async (
+      requete: FastifyRequest<{ Body: { id: string; entree: string; texte: string } }>,
+      reponse: FastifyReply,
+    ) => reponse.code(201).send(await service.ajouterNote(utilisateurDe(requete), requete.body)),
+    modifierNote: (requete: FastifyRequest<{ Params: { id: string }; Body: { texte: string } }>) =>
+      service.modifierNote(utilisateurDe(requete), requete.params.id, requete.body.texte),
+    ajouterIdee: async (
+      requete: FastifyRequest<{ Body: { id: string; texte: string } }>,
+      reponse: FastifyReply,
+    ) => reponse.code(201).send(await service.ajouterIdee(utilisateurDe(requete), requete.body)),
+    ajouterRevue: async (
+      requete: FastifyRequest<{ Body: { id: string; texte?: string } }>,
+      reponse: FastifyReply,
+    ) => {
+      await service.ajouterRevue(utilisateurDe(requete), requete.body)
+      return reponse.code(204).send()
+    },
     tableauDeBord: (
       requete: FastifyRequest<{ Querystring: { module?: string; periode?: Periode } }>,
     ) => service.tableauDeBord(utilisateurDe(requete), requete.query),

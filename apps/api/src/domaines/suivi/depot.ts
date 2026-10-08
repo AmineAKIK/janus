@@ -73,6 +73,70 @@ export function creerDepotSuivi() {
         .where(eq(t.notesJournal.userId, userId))
         .orderBy(asc(t.notesJournal.dateServeur), asc(t.notesJournal.id)),
 
+    /** Les versions d'une note, de la plus ancienne à la plus récente. */
+    versionsDeLaNote: (lecteur: Db | Tx, userId: string, noteId: string) =>
+      lecteur
+        .select({
+          entree: t.notesJournal.entree,
+          texte: t.notesJournal.texte,
+          date: instantIso(t.notesJournal.dateServeur),
+        })
+        .from(t.notesJournal)
+        .where(and(eq(t.notesJournal.userId, userId), eq(t.notesJournal.noteId, noteId)))
+        .orderBy(asc(t.notesJournal.dateServeur), asc(t.notesJournal.id)),
+
+    /** Le `note_id` de la note qui annote déjà cette ligne, s'il y en a une. */
+    noteDeLEntree: async (lecteur: Db | Tx, userId: string, entree: string) => {
+      const [ligne] = await lecteur
+        .select({ noteId: t.notesJournal.noteId })
+        .from(t.notesJournal)
+        .where(and(eq(t.notesJournal.userId, userId), eq(t.notesJournal.entree, entree)))
+        .limit(1)
+      return ligne?.noteId
+    },
+
+    ajouterVersionDeNote: async (
+      tx: Tx,
+      o: {
+        id: string
+        noteId: string
+        userId: string
+        entree: string
+        texte: string
+        dateServeur: string
+      },
+    ): Promise<void> => {
+      await tx.insert(t.notesJournal).values(o)
+    },
+
+    /** Ajoute une idée ; `false` si cet identifiant était déjà là. */
+    ajouterIdee: async (
+      tx: Tx,
+      o: { id: string; userId: string; texte: string; dateServeur: string },
+    ): Promise<boolean> => {
+      const ajoutees = await tx
+        .insert(t.idees)
+        .values(o)
+        .onConflictDoNothing()
+        .returning({ id: t.idees.id })
+      return ajoutees.length > 0
+    },
+
+    ideeParId: async (lecteur: Db | Tx, userId: string, id: string) => {
+      const [ligne] = await lecteur
+        .select({ id: t.idees.id, date: instantIso(t.idees.dateServeur), texte: t.idees.texte })
+        .from(t.idees)
+        .where(and(eq(t.idees.id, id), eq(t.idees.userId, userId)))
+      return ligne
+    },
+
+    ajouterRevueDeLaMethode: async (
+      tx: Tx,
+      o: { id: string; userId: string; texte: string | null; dateServeur: string },
+    ): Promise<void> => {
+      await tx.insert(t.revuesMethode).values(o).onConflictDoNothing()
+    },
+
     /** Le texte de la dernière revue de la méthode qui en a un. */
     dernierTexteDeRevue: async (lecteur: Db | Tx, userId: string) => {
       const [ligne] = await lecteur

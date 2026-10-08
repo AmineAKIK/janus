@@ -379,3 +379,18 @@ export function composerExport(entree: {
     derniereRevue: entree.derniereRevue,
   })
 }
+
+/** La ligne du journal qui porte cet identifiant, avec le code de son bloc. */
+export function ligneDuJournal(
+  entree: string,
+  contexte: {
+    readonly blocs: readonly BlocImporte[]
+    readonly faits: readonly Fait[]
+    readonly reglages: Reglages
+  },
+): { readonly id: string; readonly bloc: string } | undefined {
+  return lignesDuJournal(contexte.faits, {
+    manifestes: manifestesParCode(contexte.blocs),
+    reglages: contexte.reglages,
+  }).find(({ id }) => id === entree)
+}
