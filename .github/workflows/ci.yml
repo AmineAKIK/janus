@@ -61,7 +61,7 @@ jobs:
           pnpm --filter @janus/pont build
           pnpm --filter @janus/api migrer
           pnpm --filter @janus/api banc > banc.log 2>&1 &
-          for i in $(seq 1 60); do
+          for _ in $(seq 1 60); do
             curl -fs "$JANUS_BANC_URL/api/sante" > /dev/null && break
             sleep 1
           done
@@ -112,3 +112,13 @@ jobs:
         if: failure()
         working-directory: infra
         run: docker compose logs --no-color
+
+  # Les workflows eux-mêmes sont validés (PR-091).
+  workflows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: actionlint
+        run: docker run --rm -v "$PWD:/depot" -w /depot rhysd/actionlint:1.7.7 -color .github/workflows/ci.yml .github/workflows/deployer.yml

@@ -110,3 +110,44 @@ vers le stockage objet. Il garde 7 sauvegardes quotidiennes, 4 hebdomadaires et 
 
 Les fiches (volume `fiches`) ne sont pas dans la sauvegarde : réimportez-les depuis leurs fichiers
 sources.
+
+## 8. Déployer depuis GitHub
+
+Le workflow **Déployer** (onglet Actions, bouton « Run workflow », ou en poussant une étiquette `v*`
+comme `v1.0.0`) construit les trois images, les publie sur `ghcr.io/amineakik/janus-*`, puis se
+connecte au VPS en SSH, met le dépôt sur le bon commit, lance `docker compose pull` et `up -d`, et
+attend jusqu'à 60 secondes que `https://app.<DOMAINE>/api/sante` réponde 200. Sinon, le workflow est
+rouge et les derniers journaux de l'API s'affichent dans l'étape.
+
+À préparer une fois :
+
+1. **Les secrets** du dépôt (Settings, Secrets and variables, Actions) : `VPS_HOTE` (adresse du
+   serveur), `VPS_UTILISATEUR` (l'utilisateur SSH, membre du groupe `docker`) et `VPS_CLE_SSH`
+   (la clé privée dédiée au déploiement ; sa clé publique va dans `~/.ssh/authorized_keys` du VPS).
+2. **Le dépôt sur le VPS**, dans `~/janus` (étape 1.6), avec son `infra/.env`.
+3. **Le droit de télécharger les images** : soit rendre les paquets `janus-api`, `janus-caddy` et
+   `janus-sauvegarde` publics (GitHub, onglet Packages), soit se connecter une fois sur le VPS avec
+   un jeton `read:packages` : `docker login ghcr.io -u <utilisateur>`.
+4. Facultatif : la variable de dépôt `SENTRY_DSN` (ci-dessous), écrite dans le front à la construction.
+
+Le déploiement redémarre les conteneurs : il y a une courte interruption (pas de déploiement sans
+coupure).
+
+## 9. Suivre les erreurs (facultatif)
+
+Sans configuration, rien n'est envoyé. Pour recevoir les erreurs inattendues, créez un projet chez
+Sentry (formule gratuite) ou sur un GlitchTip auto-hébergé, puis :
+
+- `.env` du VPS : `SENTRY_DSN` (l'adresse du projet) et `SENTRY_ORIGINE` (son origine, par exemple
+  `https://o123.ingest.sentry.io`), pour l'API et pour la politique de sécurité du front ;
+- variable de dépôt GitHub `SENTRY_DSN` (la même adresse), pour que le front l'ait à sa construction.
+
+L'API envoie le type, la pile, la méthode et le modèle de route. Le front envoie le type et la pile.
+Jamais le message de l'erreur, une réponse ou un texte saisi.
+
+## 10. Surveiller de l'extérieur
+
+Un service gratuit au choix (UptimeRobot, Better Stack, Healthchecks.io, etc.) peut interroger
+`https://app.<DOMAINE>/api/sante` toutes les 5 minutes et vous écrire s'il n'obtient pas 200. Cette
+adresse répond 200 seulement si la base répond : c'est la bonne sonde. Créez-la une fois le domaine en
+service, avec votre adresse e-mail comme destinataire.

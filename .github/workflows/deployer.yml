@@ -1,0 +1,88 @@
+name: Déployer
+
+# À la main depuis l'onglet Actions, ou en poussant une étiquette `v*`.
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+# Un seul déploiement à la fois, jamais interrompu en cours de route.
+concurrency:
+  group: deploiement
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  REGISTRE: ghcr.io/amineakik
+
+jobs:
+  images:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Se connecter au registre
+        env:
+          JETON: ${{ secrets.GITHUB_TOKEN }}
+          ACTEUR: ${{ github.actor }}
+        run: echo "$JETON" | docker login ghcr.io -u "$ACTEUR" --password-stdin
+      - name: Construire et publier les images
+        env:
+          # L'adresse du suivi d'erreurs du front est publique : elle est écrite dans l'image.
+          SENTRY_DSN: ${{ vars.SENTRY_DSN }}
+        run: |
+          version="${GITHUB_SHA::12}"
+          docker build -f apps/api/Dockerfile -t "$REGISTRE/janus-api:$version" -t "$REGISTRE/janus-api:latest" .
+          docker build -f infra/caddy/Dockerfile --build-arg VITE_SENTRY_DSN="$SENTRY_DSN" \
+            -t "$REGISTRE/janus-caddy:$version" -t "$REGISTRE/janus-caddy:latest" .
+          docker build -t "$REGISTRE/janus-sauvegarde:$version" -t "$REGISTRE/janus-sauvegarde:latest" infra/sauvegarde
+          for image in api caddy sauvegarde; do
+            docker push --all-tags "$REGISTRE/janus-$image"
+          done
+
+  deployer:
+    needs: images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Préparer la connexion SSH
+        env:
+          CLE: ${{ secrets.VPS_CLE_SSH }}
+          HOTE: ${{ secrets.VPS_HOTE }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$CLE" > ~/.ssh/id_deploiement
+          chmod 600 ~/.ssh/id_deploiement
+          ssh-keyscan -H "$HOTE" >> ~/.ssh/known_hosts
+      - name: Mettre à jour le serveur et attendre /api/sante
+        env:
+          HOTE: ${{ secrets.VPS_HOTE }}
+          UTILISATEUR: ${{ secrets.VPS_UTILISATEUR }}
+        run: |
+          version="${GITHUB_SHA::12}"
+          ssh -i ~/.ssh/id_deploiement "$UTILISATEUR@$HOTE" bash -s "$GITHUB_SHA" "$version" <<'DISTANT'
+          set -euo pipefail
+          cd ~/janus
+          git fetch --quiet origin
+          git checkout --quiet "$1"
+          cd infra
+          export JANUS_VERSION="$2"
+          docker compose pull
+          docker compose up -d
+          . ./.env
+          for _ in $(seq 1 30); do
+            if curl -fsS "https://app.$DOMAINE/api/sante" > /dev/null; then
+              echo "/api/sante répond 200."
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "/api/sante ne répond pas 200 après 60 secondes." >&2
+          docker compose logs --no-color --tail 50 api >&2
+          exit 1
+          DISTANT
