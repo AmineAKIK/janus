@@ -29,7 +29,7 @@ const parcours: readonly Parcours[] = [
     nom: 'verification',
     chemin: './#/verifications/0190a000-0000-7000-8000-000423032000',
   },
-  { nom: 'suivi', chemin: './#/tableau-de-bord', aReparer: 'AMI-342' },
+  { nom: 'suivi', chemin: './#/tableau-de-bord' },
   { nom: 'journal', chemin: './#/journal', aReparer: 'AMI-344' },
   { nom: 'parametres', chemin: './#/parametres', aReparer: 'AMI-343' },
   { nom: 'parametres-section', chemin: './#/parametres/revision', aReparer: 'AMI-343' },
@@ -59,6 +59,10 @@ async function mesurer(page: Page): Promise<readonly Probleme[]> {
     }
 
     const visible = (element: Element): boolean => {
+      // Contenu d'un <details> refermé : pas à l'écran, même s'il garde un rectangle.
+      if (!element.checkVisibility({ contentVisibilityAuto: true, visibilityProperty: true })) {
+        return false
+      }
       const style = getComputedStyle(element)
       if (style.visibility === 'hidden' || style.display === 'none' || style.opacity === '0') {
         return false

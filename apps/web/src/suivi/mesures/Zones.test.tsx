@@ -127,7 +127,7 @@ describe('Calibration', () => {
       />,
     )
 
-    expect(screen.getByText('Confiance déclarée avant correction')).toBeVisible()
+    expect(screen.getByText('Depuis le début · confiance déclarée avant correction')).toBeVisible()
     const lignes = screen.getAllByRole('row').map((ligne) => ligne.textContent)
     expect(lignes).toEqual(['ConfianceJusteFaux', 'Sûr61', 'Hésitant22', 'Au hasard01'])
     expect(screen.getByText('Erreurs en étant sûr : 1 cette semaine')).toBeVisible()
@@ -177,7 +177,32 @@ describe('Aisance', () => {
     expect(
       premiere?.getByText('25 s · objectif 30 s · 1 réussite sur 2, sur 2 jours différents'),
     ).toBeVisible()
-    expect(seconde?.getByText('non requis')).toBeVisible()
+    expect(seconde?.getByText('non requis')).toBeInTheDocument()
+  })
+
+  it('range les blocs sans mesure dans un résumé repliable et n’écrit l’objectif commun qu’une fois', () => {
+    const cible = (meilleur: number | null) => ({
+      libelle: 'Dire les étapes',
+      objectif_s: 30,
+      meilleur_s: meilleur,
+      reussites: 0,
+      reussites_requises: 2,
+      jours: 0,
+      jours_requis: 2,
+    })
+    render(
+      <ZoneAisance
+        donnees={[
+          { bloc: 'B01', titre_court: 'Bits', cible: cible(25) },
+          { bloc: 'B02', titre_court: 'Logique', cible: cible(null) },
+          { bloc: 'B03', titre_court: 'Fonctions', cible: cible(null) },
+        ]}
+      />,
+    )
+
+    expect(screen.getAllByText('Dire les étapes')).toHaveLength(1)
+    const resume = screen.getByText('2 blocs sans mesure')
+    expect(resume.closest('details')).not.toHaveAttribute('open')
   })
 })
 
