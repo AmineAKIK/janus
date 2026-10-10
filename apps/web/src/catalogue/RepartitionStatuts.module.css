@@ -36,9 +36,9 @@
 }
 
 .legende {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--espacement-12);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--espacement-4) var(--espacement-12);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -49,4 +49,16 @@
   align-items: center;
   gap: var(--espacement-4);
   color: var(--couleur-texte-secondaire);
+}
+
+/* Dans la légende, le badge n'est pas une cible tactile : il ne réserve pas 44 px de haut. */
+.legende .etat > * {
+  min-block-size: 0;
+}
+
+@media (min-width: 480px) {
+  .legende {
+    display: flex;
+    flex-wrap: wrap;
+  }
 }

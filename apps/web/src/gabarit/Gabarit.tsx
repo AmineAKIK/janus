@@ -34,7 +34,7 @@ function LienNavigation({
  * sur le `h1` et la page revient en haut.
  */
 export function Gabarit() {
-  const { chemin, titre, navigation, large } = useRouterState({
+  const { chemin, titre, navigation, large, introuvable } = useRouterState({
     select: (etat) => {
       const ecran = etat.matches.findLast((route) => route.staticData.titre !== '')
       return {
@@ -43,6 +43,7 @@ export function Gabarit() {
         titre: ecran?.staticData.titre ?? TITRE_INTROUVABLE,
         navigation: ecran?.staticData.navigation ?? null,
         large: ecran?.staticData.large ?? false,
+        introuvable: ecran === undefined,
       }
     },
   })
@@ -66,9 +67,11 @@ export function Gabarit() {
     contenu.current?.querySelector('h1')?.focus()
   }, [chemin])
 
+  // La page introuvable garde la navigation, sans entrée courante.
+  const avecNavigation = navigation !== null || introuvable
   return (
     <div
-      className={`${styles['gabarit'] ?? ''}${navigation === null ? '' : ` ${styles['avecNavigation'] ?? ''}`}`}
+      className={`${styles['gabarit'] ?? ''}${avecNavigation ? ` ${styles['avecNavigation'] ?? ''}` : ''}`}
     >
       <a
         href={`#${ID_CONTENU}`}
@@ -81,7 +84,7 @@ export function Gabarit() {
       >
         Aller au contenu
       </a>
-      {navigation === null ? null : (
+      {avecNavigation && (
         <Navigation
           actif={navigation}
           lien={LienNavigation}
