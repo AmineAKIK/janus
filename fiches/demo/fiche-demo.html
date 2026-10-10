@@ -63,6 +63,10 @@
         background: var(--couleur-surface-douce);
         font-size: 0.875rem;
       }
+      /* Dans l'appli, le fil d'étapes est celui de la page : la fiche n'en montre pas un second. */
+      html[data-integree] nav {
+        display: none;
+      }
       nav ol {
         display: flex;
         gap: 0.25rem;
@@ -651,6 +655,7 @@
       let etat = { etape: etapes[0].id, envoyees: {}, retourCours: false, pratique: {} }
       const corrections = {}
       const pont = window.JanusPont
+      if (window.parent !== window) document.documentElement.dataset.integree = ''
 
       function enregistrer() {
         pont.sauver(etat)
