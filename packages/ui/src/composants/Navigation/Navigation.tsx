@@ -17,7 +17,8 @@ export interface ProprietesLienNavigation {
 }
 
 export interface ProprietesNavigation {
-  readonly actif: CleNavigation
+  /** `null` : aucune entrée n'est la page courante (page introuvable). */
+  readonly actif: CleNavigation | null
   /** Rend un lien du routeur, pour que `ui` ne dépende pas du routeur. */
   readonly lien: (proprietes: ProprietesLienNavigation) => ReactNode
   readonly className?: string

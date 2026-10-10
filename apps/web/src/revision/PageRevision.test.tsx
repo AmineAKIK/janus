@@ -118,8 +118,9 @@ describe('Révision', () => {
   it('termine la file par « N cartes revues » et « Étape suivante »', async () => {
     const utilisateur = userEvent.setup()
     await afficher()
-    const rang = screen.getByText(/ sur \d+ · dont \d+ nouvelle/).textContent
-    const total = Number(/ sur (\d+)/.exec(rang)?.[1])
+    expect(screen.getByText(/^dont \d+ nouvelles?$/)).toBeVisible()
+    const rang = screen.getByText(/^\d+ \/ \d+$/).textContent
+    const total = Number(/ \/ (\d+)/.exec(rang)?.[1])
 
     for (let carte = 0; carte < total; carte += 1) {
       await utilisateur.keyboard(' ')

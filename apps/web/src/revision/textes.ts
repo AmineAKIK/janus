@@ -3,6 +3,7 @@ import { accorder } from '../catalogue/calculs.ts'
 
 export const TEXTES_REVISION = {
   titre: 'Révision',
+  progression: 'Progression',
   quitter: 'Quitter',
   voirReponse: 'Voir la réponse',
   nouvelle: 'Nouvelle',
@@ -53,8 +54,12 @@ export function texteIntervalle(ms: number): string {
   return `${String(Math.round(jours / JOURS_PAR_MOIS))} mois`
 }
 
-export const texteProgression = (rang: number, total: number, nouvelles: number) =>
-  `${String(rang)} sur ${String(total)} · dont ${String(nouvelles)} ${nouvelles < 2 ? 'nouvelle' : 'nouvelles'}`
+/** « 1 / 20 » : la position dans la file, sur une seule ligne. */
+export const texteRang = (rang: number, total: number) => `${String(rang)} / ${String(total)}`
+
+/** « dont 20 nouvelles » : le détail sous la position. */
+export const texteDontNouvelles = (nouvelles: number) =>
+  `dont ${String(nouvelles)} ${nouvelles < 2 ? 'nouvelle' : 'nouvelles'}`
 
 export const texteBandeau = (note: NoteCarte, intervalle: string) =>
   `Notée ${LIBELLES_NOTE[note]} · revient dans ${intervalle}`

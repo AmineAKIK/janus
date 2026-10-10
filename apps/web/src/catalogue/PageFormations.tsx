@@ -1,5 +1,5 @@
 import { ROUTES } from '@janus/contrats'
-import { BadgeStatut, EtatVideZone } from '@janus/ui'
+import { BadgeStatut, ChevronRight, EtatVideZone } from '@janus/ui'
 import { Link } from '@tanstack/react-router'
 import { useLecture } from '../api/requetes.tsx'
 import { compter, statutGlobal } from './calculs.ts'
@@ -34,19 +34,23 @@ function CarteFormation({ id, titre }: { readonly id: string; readonly titre: st
               className={styles['lien']}
             >
               {id} · {titre}
+              <ChevronRight aria-hidden="true" className={styles['fleche']} />
             </Link>
           </h2>
           <p className={`${styles['meta'] ?? ''} texte-petit-14`}>
             {texteResume(modules.length, enCours === undefined ? null : enCours.statuts.length)}
           </p>
         </div>
-        <BadgeStatut statut={statutGlobal(statuts)} taille="compacte" />
+        <BadgeStatut statut={statutGlobal(statuts)} />
       </div>
       <RepartitionStatuts statuts={commencee ? statuts : []} />
       {commencee ? (
         <>
           <p className="texte-corps-16">{texteAcquis(acquis, total)}</p>
-          <LegendeStatuts titre={TEXTES.legende} />
+          <details className={styles['legendeRepliable']}>
+            <summary className="texte-petit-14">{TEXTES.legende}</summary>
+            <LegendeStatuts titre={TEXTES.legende} />
+          </details>
         </>
       ) : (
         <p className={`${styles['meta'] ?? ''} texte-petit-14`}>{TEXTES.formationNonCommencee}</p>

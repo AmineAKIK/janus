@@ -38,3 +38,5 @@ export const NOTE_MAX = 1000
 export const texteFiltres = (actifs: number) => `Filtres · ${String(actifs)}`
 export const texteRetirer = (filtre: string) => `Retirer le filtre ${filtre}`
 export const texteEtatBloc = (bloc: string, statut: string) => `${bloc} · ${statut}`
+
+export const texteEvenements = (n: number) => `${String(n)} ${n < 2 ? 'événement' : 'événements'}`

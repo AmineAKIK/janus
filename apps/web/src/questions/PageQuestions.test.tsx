@@ -35,6 +35,19 @@ describe('Questions de début de séance', () => {
     expect(corriger).toBeEnabled()
   })
 
+  it('« Faire corriger » grisé dit ce qui manque, et le lie au bouton', async () => {
+    const utilisateur = userEvent.setup()
+    await afficher()
+    const corriger = screen.getByRole('button', { name: 'Faire corriger' })
+    expect(corriger).toHaveAccessibleDescription('Choisis ton niveau de confiance.')
+
+    await utilisateur.click(screen.getByRole('radio', { name: 'Sûr' }))
+    expect(corriger).toHaveAccessibleDescription('Écris ta réponse.')
+
+    await utilisateur.type(screen.getByRole('textbox', { name: 'Ta réponse' }), 'Une réponse')
+    expect(corriger).not.toHaveAccessibleDescription()
+  })
+
   it('n’affiche aucun nom de bloc avant la correction', async () => {
     await afficher()
 
