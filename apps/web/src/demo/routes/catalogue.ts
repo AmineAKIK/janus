@@ -24,7 +24,8 @@ export interface OptionsCatalogue {
 }
 
 /** La fiche de démonstration sert tous les blocs : elle prend le bloc et la version dans `etat.init`. */
-const FICHE_DEMO = 'demo/fiche-demo.html'
+// Le numéro change avec le contenu : les fiches sont servies cache d'abord, par adresse.
+const FICHE_DEMO = 'demo/fiche-demo.html?v=2'
 
 /** Ce que rend l'interrupteur « Fiche refusée ». */
 const PROBLEMES_DEMO = [
