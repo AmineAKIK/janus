@@ -37,3 +37,9 @@ export function etape(page: Page, nom: string): Locator {
 export async function serieEnregistree(page: Page): Promise<void> {
   await expect(page.frameLocator('iframe').getByText(/_incomplete/)).toHaveCount(0)
 }
+
+/** Ouvre une étape et attend que la fiche l'ait affichée : ce qu'on lit ensuite est celui de l'étape. */
+export async function allerEtape(page: Page, nom: string): Promise<void> {
+  await etape(page, nom).click()
+  await expect(etape(page, nom)).toHaveAttribute('aria-current', 'step')
+}

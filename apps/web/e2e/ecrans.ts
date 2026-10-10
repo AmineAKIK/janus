@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
-import { etape, ouvrirSession, serieEnregistree } from './session.ts'
+import { allerEtape, ouvrirSession, serieEnregistree } from './session.ts'
 
 /** La vérification de B02 de la démo : son identifiant se lit à l'envers (bloc, type, numéro). */
 const VERIFICATION_B02 = '0190a000-0000-7000-8000-000423032000'
@@ -46,10 +46,10 @@ async function repondreALaSerie(page: Page) {
 async function apresRestitution(page: Page) {
   const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
   await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
-  await etape(page, 'Restitution').click()
+  await allerEtape(page, 'Restitution')
   await repondreALaSerie(page)
   await serieEnregistree(page)
-  await etape(page, 'Consolidation').click()
+  await allerEtape(page, 'Consolidation')
 }
 
 /** Écrans photographiés à chaque PR, en 4 captures chacun. */
@@ -201,7 +201,7 @@ export const ecrans: readonly Ecran[] = [
       await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
       await page.evaluate(() => window.__janusDemo?.interrupteur('horsConnexion', true))
       for (const titre of ['Explication', 'Pratique guidée', 'Restitution']) {
-        await etape(page, titre).click()
+        await allerEtape(page, titre)
       }
       await expect(page.getByText('En attente de réseau · 3 réponses gardées')).toBeVisible()
     },
@@ -214,7 +214,7 @@ export const ecrans: readonly Ecran[] = [
     scenario: async (page) => {
       const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
       await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
-      await etape(page, 'Restitution').click()
+      await allerEtape(page, 'Restitution')
       await page
         .getByRole('navigation', { name: 'Étapes de la fiche' })
         .getByRole('button', { name: 'Explication' })
@@ -229,23 +229,7 @@ export const ecrans: readonly Ecran[] = [
     titre: 'Page de bloc',
     scenario: async (page) => {
       await apresRestitution(page)
-      try {
-        await expect(page.getByText(/Consolidation disponible à/)).toBeVisible({ timeout: 2000 })
-      } catch {
-        const lire = async () => (await page.locator('body').innerText()).replace(/\s+/g, ' ')
-        const f = page.frameLocator('iframe').locator('body')
-        const a = await lire()
-        await page.waitForTimeout(6000)
-        const b = await lire()
-        throw new Error(
-          'DIAG1 ' +
-            a.slice(0, 380) +
-            ' DIAG2 ' +
-            b.slice(0, 380) +
-            ' FICHE ' +
-            (await f.innerText()).replace(/\s+/g, ' ').slice(0, 250),
-        )
-      }
+      await expect(page.getByText(/Consolidation disponible à/)).toBeVisible()
     },
   },
   {
