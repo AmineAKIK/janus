@@ -51,6 +51,7 @@ export function ChampReglage({
         controle={
           <ChampTexte
             libelle={libelle}
+            libelleMasque
             inputMode="decimal"
             className={styles['champNombre']}
             value={saisie ?? affiche}

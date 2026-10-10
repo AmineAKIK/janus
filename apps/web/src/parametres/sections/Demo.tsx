@@ -25,7 +25,7 @@ export function SectionDemo() {
       <p className="texte-corps-16">
         {T.heure} : <time dateTime={maintenant}>{maintenant.slice(0, 16).replace('T', ' ')}</time>
       </p>
-      <div className={styles['actions']}>
+      <div className={styles['actionsDemo']}>
         {T.avancer.map(({ libelle, ms }) => (
           <Bouton
             key={libelle}

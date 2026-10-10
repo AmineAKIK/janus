@@ -74,6 +74,7 @@ export function SectionRappels({ reglages, enregistrer }: Proprietes) {
           controle={
             <ChampTexte
               libelle={T.heure}
+              libelleMasque
               type="time"
               value={heure ?? reglages.heureRappel}
               onChange={(evenement) => {
@@ -106,6 +107,7 @@ export function SectionRappels({ reglages, enregistrer }: Proprietes) {
           controle={
             <ChampTexte
               libelle={T.pause}
+              libelleMasque
               type="date"
               value={pause ?? ''}
               onChange={(evenement) => {

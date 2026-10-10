@@ -1,4 +1,4 @@
-import { BandeauAlerte, EnTeteSection, NOM_APPLI } from '@janus/ui'
+import { BandeauAlerte, ChevronRight, EnTeteSection, NOM_APPLI } from '@janus/ui'
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
 import { Chargement, Erreur } from '../catalogue/EtatEcran.tsx'
@@ -73,8 +73,9 @@ export function PageParametres({ section }: { readonly section?: string }) {
         <ul className={styles['liste']}>
           {SECTIONS.map(({ cle, titre }) => (
             <li key={cle}>
-              <a href={`#/parametres/${cle}`} className={styles['lien']}>
+              <a href={`#/parametres/${cle}`} className={styles['ligneNavigation']}>
                 {titre}
+                <ChevronRight aria-hidden="true" className={styles['chevron']} />
               </a>
             </li>
           ))}

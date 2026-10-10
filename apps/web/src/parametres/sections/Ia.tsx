@@ -50,6 +50,7 @@ export function SectionIa({ reglages, enregistrer }: Proprietes) {
           controle={
             <ChampTexte
               libelle={T.plafond}
+              libelleMasque
               inputMode="decimal"
               className={styles['champNombre']}
               value={saisie ?? nombreFrancais(plafond / MILLIONIEMES, 2)}
