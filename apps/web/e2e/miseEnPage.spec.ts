@@ -24,7 +24,7 @@ const parcours: readonly Parcours[] = [
   { nom: 'formation', chemin: './#/formations/DWWM' },
   { nom: 'liste-des-blocs', chemin: './#/modules/M1' },
   { nom: 'detail-du-bloc', chemin: './#/modules/M1?detail=B04' },
-  { nom: 'bloc', chemin: './#/blocs/B03', aReparer: 'AMI-341' },
+  { nom: 'bloc', chemin: './#/blocs/B03' },
   {
     nom: 'verification',
     chemin: './#/verifications/0190a000-0000-7000-8000-000423032000',
@@ -155,3 +155,17 @@ for (const theme of themes) {
     })
   }
 }
+
+test.describe('page de bloc à 320 px', () => {
+  test.use({ viewport: { width: 320, height: 800 } })
+
+  test('l’étape courante est visible dans la rangée d’onglets et le nom du bloc aussi', async ({
+    page,
+  }) => {
+    await ouvrirSession(page)
+    await page.goto('./#/blocs/B03')
+    const courante = page.locator('nav [aria-current="step"]')
+    await expect(courante).toBeInViewport({ ratio: 1 })
+    await expect(page.getByRole('heading', { level: 1 })).toBeInViewport()
+  })
+})

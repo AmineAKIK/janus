@@ -8,8 +8,9 @@
 .barre {
   box-sizing: border-box;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--espacement-12);
+  gap: var(--espacement-8) var(--espacement-12);
   min-block-size: 56px;
   padding: var(--espacement-8) var(--espacement-16);
   background: var(--couleur-surface);
@@ -40,7 +41,7 @@
 }
 
 .titre {
-  flex: 1 1 0;
+  flex: 1 1 140px;
   min-inline-size: 0;
   margin: 0;
   overflow: hidden;
@@ -105,16 +106,28 @@
 }
 
 .fil {
+  position: relative;
   background: var(--couleur-surface);
   border-block-end: 1px solid var(--couleur-ligne);
+}
+
+/* Un dégradé à droite annonce qu'il y a d'autres étapes quand la rangée défile. */
+.fil::after {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: 24px;
+  background: linear-gradient(to right, transparent, var(--couleur-surface));
+  content: '';
+  pointer-events: none;
 }
 
 .etapes {
   display: flex;
   gap: var(--espacement-8);
-  justify-content: center;
+  justify-content: safe center;
   margin: 0;
-  padding: 0 var(--espacement-16);
+  padding: 0 var(--espacement-24) 0 var(--espacement-16);
   overflow-x: auto;
   list-style: none;
   scrollbar-width: none;
