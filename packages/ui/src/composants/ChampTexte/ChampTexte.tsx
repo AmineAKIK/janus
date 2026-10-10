@@ -9,6 +9,8 @@ export interface ProprietesChampTexte extends Omit<ComponentProps<'input'>, 'chi
   /** Message d'aide, ou d'erreur quand `erreur` est vrai. */
   readonly message?: string
   readonly erreur?: boolean
+  /** Le libellé reste dans le DOM pour le nom accessible mais n'est pas affiché (la ligne parente le porte). */
+  readonly libelleMasque?: boolean
   /** Élément placé à droite dans le champ (par exemple le bouton œil du mot de passe). */
   readonly accessoire?: ReactNode
 }
@@ -17,6 +19,7 @@ export function ChampTexte({
   libelle,
   message,
   erreur = false,
+  libelleMasque = false,
   accessoire,
   id,
   className,
@@ -30,7 +33,10 @@ export function ChampTexte({
 
   return (
     <div className={classes(styles['champ'], disabled === true && styles['desactive'], className)}>
-      <label htmlFor={idChamp} className={classes(styles['libelle'], 'texte-petit-14')}>
+      <label
+        htmlFor={idChamp}
+        className={classes(styles['libelle'], libelleMasque && styles['masque'], 'texte-petit-14')}
+      >
         {libelle}
       </label>
       <div className={classes(styles['cadre'], erreur && styles['erreur'])}>

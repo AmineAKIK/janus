@@ -31,8 +31,8 @@ const parcours: readonly Parcours[] = [
   },
   { nom: 'suivi', chemin: './#/tableau-de-bord' },
   { nom: 'journal', chemin: './#/journal', aReparer: 'AMI-344' },
-  { nom: 'parametres', chemin: './#/parametres', aReparer: 'AMI-343' },
-  { nom: 'parametres-section', chemin: './#/parametres/revision', aReparer: 'AMI-343' },
+  { nom: 'parametres', chemin: './#/parametres' },
+  { nom: 'parametres-section', chemin: './#/parametres/revision' },
   { nom: 'introuvable', chemin: './#/n-existe-pas' },
 ]
 

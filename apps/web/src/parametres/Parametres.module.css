@@ -87,3 +87,43 @@
   justify-content: space-between;
   gap: var(--espacement-16);
 }
+
+/* Liste des sections sur mobile : une ligne de navigation avec chevron par section. */
+.ligneNavigation {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacement-8);
+  min-block-size: 52px;
+  padding: var(--espacement-8) var(--espacement-16);
+  background: var(--couleur-surface);
+  border: 1px solid var(--couleur-ligne);
+  border-radius: var(--rayon-champ-bouton);
+  color: var(--couleur-encre);
+  text-decoration: none;
+}
+
+.chevron {
+  flex: none;
+  inline-size: 18px;
+  block-size: 18px;
+  color: var(--couleur-texte-secondaire);
+}
+
+/* Boutons « Avancer de… » : deux colonnes sur mobile, une rangée au bureau, même hauteur. */
+.actionsDemo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--espacement-8);
+}
+
+.actionsDemo > * {
+  min-block-size: 44px;
+}
+
+@media (min-width: 64rem) {
+  .actionsDemo {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
