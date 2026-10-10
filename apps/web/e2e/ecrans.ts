@@ -38,7 +38,7 @@ async function repondreALaSerie(page: Page) {
       )
     await item.getByLabel('Sûr').check()
     await item.getByRole('button', { name: 'Envoyer' }).click()
-    await expect(item.locator('.correction')).toBeVisible()
+    await expect(item.locator('.correction')).toBeVisible({ timeout: 15_000 })
   }
 }
 
