@@ -1,6 +1,6 @@
 import { ROUTES } from '@janus/contrats'
 import { ecartEnJours, jourDe } from '@janus/moteur'
-import { Bouton, Dialogue, TexteCarte } from '@janus/ui'
+import { BarreProgression, Bouton, Dialogue, TexteCarte } from '@janus/ui'
 import { useEffect, useState } from 'react'
 import { useLecture } from '../api/requetes.tsx'
 import { texteTache } from '../aujourdhui/textesTaches.ts'
@@ -14,7 +14,8 @@ import {
   texteCartesRevues,
   texteIntervalle,
   texteProchaine,
-  texteProgression,
+  texteDontNouvelles,
+  texteRang,
   texteRepartition,
   texteReviennentDans,
 } from './textes.ts'
@@ -197,9 +198,15 @@ export function PageRevision() {
           {T.titre}
         </h1>
         {total > 0 && carte !== undefined && (
-          <p className={`${styles['rang'] ?? ''} texte-petit-14`}>
-            {texteProgression(revision.position + 1, total, revision.nouvelles)}
-          </p>
+          <div className={styles['rang']}>
+            <BarreProgression
+              valeur={revision.position + 1}
+              max={total}
+              libelle={T.progression}
+              texteValeur={texteRang(revision.position + 1, total)}
+            />
+            <p className="texte-petit-14">{texteDontNouvelles(revision.nouvelles)}</p>
+          </div>
         )}
       </header>
       {contenu}

@@ -12,7 +12,7 @@ async function afficher(chemin = '/journal', banc = creerContexteTest()) {
     render(banc.application(routeur))
     await routeur.load()
   })
-  await screen.findByRole('heading', { level: 2, name: 'État des blocs' })
+  await screen.findByText('État des blocs')
   return { banc, routeur }
 }
 
@@ -40,6 +40,30 @@ describe('Journal', () => {
     expect(screen.getAllByRole('heading', { level: 3 }).length).toBeGreaterThan(0)
     expect(screen.getByRole('button', { name: 'Exporter en texte' })).toBeVisible()
     expect(screen.getByRole('button', { name: 'Exporter en JSON' })).toBeVisible()
+  })
+
+  it('compte les « événements » de chaque jour', async () => {
+    simulerEcran(true)
+    await afficher()
+
+    expect(screen.getAllByText(/^\d+ événements?$/).length).toBeGreaterThan(0)
+    expect(screen.queryByText(/^\d+ lignes?$/)).toBeNull()
+  })
+
+  it('sur mobile, l’état des blocs est un résumé replié sous les filtres', async () => {
+    simulerEcran(false)
+    const banc = creerContexteTest()
+    const routeur = creerRouteur(
+      createMemoryHistory({ initialEntries: ['/journal'] }),
+      banc.contexte,
+    )
+    await act(async () => {
+      render(banc.application(routeur))
+      await routeur.load()
+    })
+
+    const resume = await screen.findByText('État des blocs')
+    expect(resume.closest('details')).not.toHaveAttribute('open')
   })
 
   it('filtre par bloc dans l’adresse, avec la puce « B04 × » qui le retire', async () => {

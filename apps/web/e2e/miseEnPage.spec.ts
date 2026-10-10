@@ -30,7 +30,7 @@ const parcours: readonly Parcours[] = [
     chemin: './#/verifications/0190a000-0000-7000-8000-000423032000',
   },
   { nom: 'suivi', chemin: './#/tableau-de-bord' },
-  { nom: 'journal', chemin: './#/journal', aReparer: 'AMI-344' },
+  { nom: 'journal', chemin: './#/journal' },
   { nom: 'parametres', chemin: './#/parametres' },
   { nom: 'parametres-section', chemin: './#/parametres/revision' },
   { nom: 'introuvable', chemin: './#/n-existe-pas' },

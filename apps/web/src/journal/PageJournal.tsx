@@ -25,6 +25,7 @@ import {
   NOTE_MAX,
   TEXTES_JOURNAL as T,
   texteEtatBloc,
+  texteEvenements,
   texteFiltres,
   texteRetirer,
 } from './textes.ts'
@@ -288,6 +289,18 @@ function Corps({
     })
   }
 
+  const listeEtat = (
+    <ul className={styles['liste']}>
+      {premiere.blocs.map(({ bloc, statut, titre_court: titre }) => (
+        <li key={bloc}>
+          <a href={adresse(`/blocs/${bloc}`)} title={titre}>
+            {texteEtatBloc(bloc, LIBELLES_STATUT[statut])}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+
   const exporterTexte = () => {
     setEchecExport(false)
     journal.exportTexte.mutate(
@@ -433,6 +446,13 @@ function Corps({
           {echecIdee && <BandeauAlerte type="erreur">{T.erreurIdee}</BandeauAlerte>}
         </details>
 
+        {!bureau && (
+          <details className={styles['idees']}>
+            <summary className="texte-sous-titre-18">{T.etatBlocs}</summary>
+            {listeEtat}
+          </details>
+        )}
+
         <div className={styles['actions']}>
           <Bouton
             type="button"
@@ -472,10 +492,7 @@ function Corps({
         ) : (
           [...jours].map(([jour, lignes]) => (
             <section key={jour} className={styles['jour']} aria-label={dateLongue(jour)}>
-              <EnTeteJour
-                date={dateLongue(jour)}
-                resume={`${String(lignes.length)} ${lignes.length < 2 ? 'ligne' : 'lignes'}`}
-              />
+              <EnTeteJour date={dateLongue(jour)} resume={texteEvenements(lignes.length)} />
               {lignes.map((ligne) => (
                 <LigneEvenement
                   key={ligne.id}
@@ -507,19 +524,11 @@ function Corps({
         )}
       </div>
 
-      <aside className={`${styles['colonne'] ?? ''} ${styles['etatBlocs'] ?? ''}`}>
-        <CarteZone titre={T.etatBlocs}>
-          <ul className={styles['liste']}>
-            {premiere.blocs.map(({ bloc, statut, titre_court: titre }) => (
-              <li key={bloc}>
-                <a href={adresse(`/blocs/${bloc}`)} title={titre}>
-                  {texteEtatBloc(bloc, LIBELLES_STATUT[statut])}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </CarteZone>
-      </aside>
+      {bureau && (
+        <aside className={`${styles['colonne'] ?? ''} ${styles['etatBlocs'] ?? ''}`}>
+          <CarteZone titre={T.etatBlocs}>{listeEtat}</CarteZone>
+        </aside>
+      )}
 
       {feuille && !bureau && (
         <Dialogue

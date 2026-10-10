@@ -1,7 +1,7 @@
 import { ROUTES } from '@janus/contrats'
 import { Bouton, ChoixConfiance, ZoneDeTexte } from '@janus/ui'
 import type { Confiance } from '@janus/contrats'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { useLecture } from '../api/requetes.tsx'
 import { Chargement, Erreur } from '../catalogue/EtatEcran.tsx'
 import { CorrectionAffichee } from './CorrectionAffichee.tsx'
@@ -30,6 +30,11 @@ function Saisie({
   const [reponse, setReponse] = useState(depart?.reponse ?? '')
   const [colle, setColle] = useState(depart?.colle ?? false)
   const peutCorriger = confiance !== null && reponse.trim() !== '' && !enAttente
+  const idRaison = useId()
+  // Ce qui manque quand le bouton est grisé ; rien tant que la correction est en cours.
+  let raison: string | null = null
+  if (!enAttente && confiance === null) raison = T.manqueConfiance
+  else if (!enAttente && reponse.trim() === '') raison = T.manqueReponse
 
   return (
     <form
@@ -59,8 +64,18 @@ function Saisie({
           {T.attente}
         </p>
       )}
+      {raison !== null && (
+        <p id={idRaison} className={`${styles['raison'] ?? ''} texte-petit-14`}>
+          {raison}
+        </p>
+      )}
       <div className={styles['actions']}>
-        <Bouton type="submit" variante="principal" disabled={!peutCorriger}>
+        <Bouton
+          type="submit"
+          variante="principal"
+          disabled={!peutCorriger}
+          aria-describedby={raison === null ? undefined : idRaison}
+        >
           {T.corriger}
         </Bouton>
         <Bouton

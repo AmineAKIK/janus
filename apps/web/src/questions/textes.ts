@@ -9,6 +9,8 @@ export const TEXTES_QUESTIONS = {
   reponse: 'Ta réponse',
   aide: 'Écris ta réponse sans consulter le cours.',
   corriger: 'Faire corriger',
+  manqueConfiance: 'Choisis ton niveau de confiance.',
+  manqueReponse: 'Écris ta réponse.',
   jeNeSaisPas: 'Je ne sais pas',
   attente: 'Le tuteur lit ta réponse…',
   indisponible: 'Correction indisponible pour l’instant. Ta réponse est gardée.',

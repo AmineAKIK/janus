@@ -5,13 +5,13 @@ test.describe('révision des cartes', () => {
   test('la file se note au clavier puis mène à l’étape suivante', async ({ page }) => {
     await ouvrirSession(page)
     await page.goto('./#/revision')
-    const rang = await page.getByText(/^1 sur \d+ · dont \d+ nouvelle/).textContent()
-    const total = Number(/ sur (\d+)/.exec(rang ?? '')?.[1])
+    const rang = await page.getByText(/^1 \/ \d+$/).textContent()
+    const total = Number(/ \/ (\d+)/.exec(rang ?? '')?.[1])
     expect(total).toBeGreaterThan(0)
 
     for (let carte = 1; carte <= total; carte += 1) {
       await expect(
-        page.getByText(new RegExp(`^${String(carte)} sur ${String(total)}`)),
+        page.getByText(new RegExp(`^${String(carte)} / ${String(total)}$`)),
       ).toBeVisible()
       await page.keyboard.press('Space')
       await expect(page.getByRole('button', { name: /^Bien/ })).toBeVisible()
@@ -37,14 +37,14 @@ test.describe('révision des cartes', () => {
     await page.getByRole('button', { name: 'Annuler' }).click()
 
     await expect(page.getByRole('button', { name: 'Voir la réponse' })).toBeVisible()
-    await expect(page.getByText(/^1 sur \d+/)).toBeVisible()
+    await expect(page.getByText(/^1 \/ \d+$/)).toBeVisible()
   })
 
   test('une carte « À revoir » propose de la revoir maintenant', async ({ page }) => {
     await ouvrirSession(page)
     await page.goto('./#/revision')
-    const rang = await page.getByText(/^1 sur \d+ · dont \d+ nouvelle/).textContent()
-    const total = Number(/ sur (\d+)/.exec(rang ?? '')?.[1])
+    const rang = await page.getByText(/^1 \/ \d+$/).textContent()
+    const total = Number(/ \/ (\d+)/.exec(rang ?? '')?.[1])
     for (let carte = 1; carte <= total; carte += 1) {
       await page.keyboard.press('Space')
       await expect(page.getByRole('button', { name: /^Bien/ })).toBeVisible()
