@@ -30,9 +30,10 @@ export function etape(page: Page, nom: string): Locator {
     .getByRole('button', { name: new RegExp(`${nom}$`) })
 }
 
-/** Attend que l'appli ait reçu toute la série : tant qu'il en manque, les étapes de cours sont verrouillées. */
+/**
+ * Attend que le serveur ait recalculé le statut après la dernière réponse d'une série : la fiche
+ * n'affiche alors plus de série « incomplète » dans ce qui manque.
+ */
 export async function serieEnregistree(page: Page): Promise<void> {
-  await expect(
-    page.getByRole('navigation', { name: 'Étapes de la fiche' }).locator('button[title]'),
-  ).toHaveCount(0)
+  await expect(page.frameLocator('iframe').getByText(/_incomplete/)).toHaveCount(0)
 }

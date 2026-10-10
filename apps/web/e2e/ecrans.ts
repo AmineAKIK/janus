@@ -229,22 +229,7 @@ export const ecrans: readonly Ecran[] = [
     titre: 'Page de bloc',
     scenario: async (page) => {
       await apresRestitution(page)
-      try {
-        await expect(page.getByText(/Consolidation disponible à/)).toBeVisible()
-      } catch {
-        const f = page.frameLocator('iframe').locator('body')
-        const avant = (await page.locator('body').innerText()).replace(/\s+/g, ' ')
-        await page.waitForTimeout(8000)
-        const apres = (await page.locator('body').innerText()).replace(/\s+/g, ' ')
-        throw new Error(
-          'DIAG1 ' +
-            avant.slice(0, 400) +
-            ' DIAG2 ' +
-            apres.slice(0, 400) +
-            ' FICHE ' +
-            (await f.innerText()).replace(/\s+/g, ' ').slice(0, 300),
-        )
-      }
+      await expect(page.getByText(/Consolidation disponible à/)).toBeVisible()
     },
   },
   {
