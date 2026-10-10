@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
-import { etape, ouvrirSession } from './session.ts'
+import { etape, ouvrirSession, serieEnregistree } from './session.ts'
 
 /** La vérification de B02 de la démo : son identifiant se lit à l'envers (bloc, type, numéro). */
 const VERIFICATION_B02 = '0190a000-0000-7000-8000-000423032000'
@@ -48,6 +48,7 @@ async function apresRestitution(page: Page) {
   await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
   await etape(page, 'Restitution').click()
   await repondreALaSerie(page)
+  await serieEnregistree(page)
   await etape(page, 'Consolidation').click()
 }
 
@@ -228,12 +229,7 @@ export const ecrans: readonly Ecran[] = [
     titre: 'Page de bloc',
     scenario: async (page) => {
       await apresRestitution(page)
-      try {
-        await expect(page.getByText(/Consolidation disponible à/)).toBeVisible()
-      } catch (e) {
-        const f = page.frameLocator('iframe').locator('body')
-        throw new Error('DIAG ' + (await page.locator('body').innerText()).slice(0, 700) + ' || FICHE ' + (await f.innerText()).slice(0, 500))
-      }
+      await expect(page.getByText(/Consolidation disponible à/)).toBeVisible()
     },
   },
   {

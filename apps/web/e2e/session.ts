@@ -29,3 +29,10 @@ export function etape(page: Page, nom: string): Locator {
     .getByRole('navigation', { name: 'Étapes de la fiche' })
     .getByRole('button', { name: new RegExp(`${nom}$`) })
 }
+
+/** Attend que l'appli ait reçu toute la série : tant qu'il en manque, les étapes de cours sont verrouillées. */
+export async function serieEnregistree(page: Page): Promise<void> {
+  await expect(
+    page.getByRole('navigation', { name: 'Étapes de la fiche' }).locator('button[title]'),
+  ).toHaveCount(0)
+}

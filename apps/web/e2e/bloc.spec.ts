@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { etape, ouvrirSession } from './session.ts'
+import { etape, ouvrirSession, serieEnregistree } from './session.ts'
 
 test.describe('page d’un bloc', () => {
   test.beforeEach(async ({ page }) => {
@@ -111,6 +111,7 @@ test.describe('page d’un bloc', () => {
         await item.getByRole('button', { name: 'Envoyer' }).click()
         await expect(item.locator('.correction')).toBeVisible()
       }
+      await serieEnregistree(page)
     }
 
     await etape(page, 'Pratique guidée').click()
