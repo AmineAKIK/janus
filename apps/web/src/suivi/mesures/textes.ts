@@ -17,7 +17,7 @@ export const TEXTES_MESURES = {
   verifications: 'Vérifications',
   aucune: '–',
   calibration: 'Calibration',
-  calibrationSousTitre: 'Confiance déclarée avant correction',
+  calibrationSousTitre: 'Depuis le début · confiance déclarée avant correction',
   confiance: 'Confiance',
   justes: 'Juste',
   faux: 'Faux',
@@ -85,6 +85,9 @@ export const texteErreursSures = (n: number) => `Erreurs en étant sûr : ${Stri
 
 export const texteMeilleur = (meilleurS: number | null, objectifS: number) =>
   `${meilleurS === null ? TEXTES_MESURES.aucunTemps : `${nombreFrancais(meilleurS, 0)} s`} · objectif ${String(objectifS)} s`
+
+/** Le résumé repliable des blocs dont on n'a encore rien mesuré. */
+export const texteSansMesure = (n: number) => nombre(n, 'bloc sans mesure', 'blocs sans mesure')
 
 export const texteReussites = (reussites: number, requises: number, jours: number) =>
   `${nombre(reussites, 'réussite', 'réussites')} sur ${String(requises)}, sur ${nombre(jours, 'jour différent', 'jours différents')}`

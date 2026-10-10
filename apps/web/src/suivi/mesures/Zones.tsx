@@ -16,6 +16,7 @@ import {
   texteTempsDeRevue,
   texteDuree,
   texteLundi,
+  texteSansMesure,
   texteSur,
   texteErreursSures,
   texteMeilleur,
@@ -61,26 +62,28 @@ export function ZoneRetention({ donnees }: { readonly donnees: Mesures['retentio
   return (
     <CarteZone titre={T.retention}>
       <p className={`${styles['complement'] ?? ''} texte-petit-14`}>{T.retentionSousTitre}</p>
-      <table className={styles['tableau']}>
-        <thead>
-          <tr>
-            <th scope="col">{T.semaine}</th>
-            <th scope="col">{T.cartes}</th>
-            <th scope="col">{T.questions}</th>
-            <th scope="col">{T.verifications}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {donnees.map(({ debut, cartes, questions, verifications }) => (
-            <tr key={debut}>
-              <th scope="row">{texteLundi(debut)}</th>
-              <td>{texteCartes(cartes.reussis, cartes.total)}</td>
-              <td>{texteSur(questions.reussis, questions.total)}</td>
-              <td>{texteSur(verifications.reussis, verifications.total)}</td>
+      <div className={styles['tableDefilante']} tabIndex={0} role="region" aria-label={T.retention}>
+        <table className={styles['tableau']}>
+          <thead>
+            <tr>
+              <th scope="col">{T.semaine}</th>
+              <th scope="col">{T.cartes}</th>
+              <th scope="col">{T.questions}</th>
+              <th scope="col">{T.verifications}</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {donnees.map(({ debut, cartes, questions, verifications }) => (
+              <tr key={debut}>
+                <th scope="row">{texteLundi(debut)}</th>
+                <td>{texteCartes(cartes.reussis, cartes.total)}</td>
+                <td>{texteSur(questions.reussis, questions.total)}</td>
+                <td>{texteSur(verifications.reussis, verifications.total)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </CarteZone>
   )
 }
@@ -125,30 +128,53 @@ export function ZoneCalibration({ donnees }: { readonly donnees: Mesures['calibr
 }
 
 export function ZoneAisance({ donnees }: { readonly donnees: Mesures['aisance'] }) {
+  const mesures = donnees.flatMap((ligne) =>
+    ligne.cible !== null && ligne.cible.meilleur_s !== null
+      ? [{ ...ligne, cible: ligne.cible }]
+      : [],
+  )
+  const sansMesure = donnees.filter(({ cible }) => cible === null || cible.meilleur_s === null)
+  // Le même objectif sur toutes les lignes ne s'écrit qu'une fois, en tête.
+  const libelles = new Set(mesures.map(({ cible }) => cible.libelle))
+  const objectifCommun = libelles.size === 1 ? [...libelles][0] : undefined
   return (
     <CarteZone titre={T.aisance}>
       <p className={`${styles['complement'] ?? ''} texte-petit-14`}>{T.aisanceSousTitre}</p>
-      <ul className={styles['liste']}>
-        {donnees.map(({ bloc, titre_court: titre, cible }) => (
-          <li key={bloc}>
-            <a href={`#/blocs/${bloc}`}>
-              {bloc} · {titre}
-            </a>{' '}
-            {cible === null ? (
-              <span className={styles['complement']}>{T.nonRequis}</span>
-            ) : (
-              <>
-                <span>{cible.libelle}</span>
-                <br />
+      {objectifCommun !== undefined && <p>{objectifCommun}</p>}
+      {mesures.length > 0 && (
+        <ul className={styles['liste']}>
+          {mesures.map(({ bloc, titre_court: titre, cible }) => (
+            <li key={bloc}>
+              <a href={`#/blocs/${bloc}`}>
+                {bloc} · {titre}
+              </a>{' '}
+              {objectifCommun === undefined && <span>{cible.libelle}</span>}
+              <br />
+              <span className={styles['complement']}>
+                {texteMeilleur(cible.meilleur_s, cible.objectif_s)} ·{' '}
+                {texteReussites(cible.reussites, cible.reussites_requises, cible.jours_requis)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {sansMesure.length > 0 && (
+        <details className={styles['repliable']}>
+          <summary>{texteSansMesure(sansMesure.length)}</summary>
+          <ul className={styles['liste']}>
+            {sansMesure.map(({ bloc, titre_court: titre, cible }) => (
+              <li key={bloc}>
+                <a href={`#/blocs/${bloc}`}>
+                  {bloc} · {titre}
+                </a>{' '}
                 <span className={styles['complement']}>
-                  {texteMeilleur(cible.meilleur_s, cible.objectif_s)} ·{' '}
-                  {texteReussites(cible.reussites, cible.reussites_requises, cible.jours_requis)}
+                  {cible === null ? T.nonRequis : texteMeilleur(cible.meilleur_s, cible.objectif_s)}
                 </span>
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
     </CarteZone>
   )
 }
