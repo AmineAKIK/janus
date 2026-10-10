@@ -75,7 +75,7 @@ const module = createRoute({
   getParentRoute: () => racine,
   path: '/modules/$moduleId',
   validateSearch: validerRechercheModule,
-  staticData: { titre: 'Blocs', navigation: 'formations' },
+  staticData: { titre: 'Blocs', navigation: 'formations', large: true },
   component: function RoutePageBlocs() {
     const { moduleId } = module.useParams()
     const { statut, detail } = module.useSearch()

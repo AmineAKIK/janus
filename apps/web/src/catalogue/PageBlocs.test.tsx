@@ -2,11 +2,25 @@ import { ROUTES } from '@janus/contrats'
 import { createMemoryHistory } from '@tanstack/react-router'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { creerRouteur } from '../routes/arbre.tsx'
 import { creerContexteTest } from '../routes/contexteTest.tsx'
 
-async function afficher(chemin: string) {
+function simulerBureau(actif: boolean) {
+  vi.stubGlobal('matchMedia', (requete: string) => ({
+    matches: actif && requete.includes('1024px'),
+    media: requete,
+    addEventListener: () => undefined,
+    removeEventListener: () => undefined,
+  }))
+}
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+})
+
+async function afficher(chemin: string, bureau = true) {
+  simulerBureau(bureau)
   const banc = creerContexteTest()
   const routeur = creerRouteur(createMemoryHistory({ initialEntries: [chemin] }), banc.contexte)
   await act(async () => {
@@ -259,5 +273,36 @@ describe('Blocs d’un module', () => {
         expect(routeur.state.location.search).toEqual({ detail: 'B03' })
       })
     })
+  })
+
+  describe('sous 1024 px', () => {
+    it('toucher un bloc ouvre le détail dans une feuille, Échap la ferme et rend le focus', async () => {
+      const utilisateur = userEvent.setup()
+      await afficher('/modules/M1', false)
+      expect(screen.queryByRole('dialog')).toBeNull()
+
+      await utilisateur.click(ligne('B05'))
+      const feuille = await screen.findByRole('dialog', { name: 'Détail du bloc' })
+      expect(within(feuille).getByRole('complementary', { name: 'Détail du bloc' })).toBeVisible()
+
+      await utilisateur.keyboard('{Escape}')
+      await waitFor(() => {
+        expect(screen.queryByRole('dialog')).toBeNull()
+      })
+      expect(ligne('B05')).toHaveFocus()
+    })
+
+    it('sur un bloc de bureau, le détail reste à côté de la liste', async () => {
+      await afficher('/modules/M1?detail=B05', true)
+
+      expect(screen.queryByRole('dialog')).toBeNull()
+      expect(await screen.findByRole('complementary', { name: 'Détail du bloc' })).toBeVisible()
+    })
+  })
+
+  it('un bloc ouvert sans ses prérequis le dit par écrit', async () => {
+    await afficher('/modules/M1')
+
+    expect(within(ligne('B07')).getByText('ouvert sans les prérequis')).toBeVisible()
   })
 })

@@ -39,6 +39,9 @@ export const TEXTES_BLOCS = {
   aucunBlocFiltre: 'Aucun bloc ne correspond à ce filtre.',
   aucunBloc: 'Aucun bloc dans ce module.',
   filAriane: 'Fil d’Ariane',
+  detail: 'Détail du bloc',
+  fermerDetail: 'Fermer le détail',
+  ouvertSansPrerequis: 'ouvert sans les prérequis',
 } as const
 
 export const texteBlocs = (nombre: number) => accorder(nombre, 'bloc', 'blocs')

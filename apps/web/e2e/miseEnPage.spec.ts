@@ -22,8 +22,8 @@ const parcours: readonly Parcours[] = [
   { nom: 'revision', chemin: './#/revision' },
   { nom: 'formations', chemin: './#/formations' },
   { nom: 'formation', chemin: './#/formations/DWWM' },
-  { nom: 'liste-des-blocs', chemin: './#/modules/M1', aReparer: 'AMI-340' },
-  { nom: 'detail-du-bloc', chemin: './#/modules/M1?detail=B04', aReparer: 'AMI-340' },
+  { nom: 'liste-des-blocs', chemin: './#/modules/M1' },
+  { nom: 'detail-du-bloc', chemin: './#/modules/M1?detail=B04' },
   { nom: 'bloc', chemin: './#/blocs/B03', aReparer: 'AMI-341' },
   {
     nom: 'verification',
