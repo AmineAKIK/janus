@@ -41,6 +41,10 @@
   list-style: none;
 }
 
+.item {
+  container-type: inline-size;
+}
+
 .bloc {
   box-sizing: border-box;
   display: flex;
@@ -65,7 +69,7 @@
 }
 
 .avecErreur {
-  border-inline-start: 4px solid var(--couleur-erreur);
+  box-shadow: inset 4px 0 0 var(--couleur-erreur);
 }
 
 .grise {
@@ -91,14 +95,16 @@
 
 .prerequis {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--espacement-4);
   color: var(--couleur-texte-secondaire);
 }
 
 .cadenas {
+  flex: none;
   inline-size: 14px;
   block-size: 14px;
+  margin-block-start: 1px;
 }
 
 .date {
@@ -119,6 +125,33 @@
   display: flex;
   flex-direction: column;
   gap: var(--espacement-24);
+}
+
+/* Sous 600 px de large de ligne, l'état passe sous le titre, jamais à côté. */
+@container (max-width: 599px) {
+  .bloc {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+    column-gap: var(--espacement-8);
+    row-gap: 2px;
+  }
+
+  .libelles {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .chevron {
+    grid-column: 4;
+    grid-row: 1;
+  }
+
+  .date {
+    grid-column: 3;
+    grid-row: 2;
+    max-inline-size: none;
+    text-align: start;
+  }
 }
 
 @media (min-width: 1024px) {

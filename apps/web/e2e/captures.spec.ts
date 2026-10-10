@@ -32,7 +32,7 @@ for (const ecran of ecrans) {
         for (const nom of ecran.clics ?? []) {
           await page.getByRole('button', { name: nom, exact: true }).click()
         }
-        if (ecran.clics !== undefined) await expect(page.getByRole('dialog')).toBeVisible()
+        if (ecran.clics !== undefined) await expect(page.getByRole('dialog').last()).toBeVisible()
         await page.screenshot({
           path: `captures/${ecran.nom}-${String(taille.width)}-${theme.nom}.png`,
           fullPage: true,

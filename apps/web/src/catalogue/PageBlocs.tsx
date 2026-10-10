@@ -1,7 +1,15 @@
-import { BadgeStatut, GroupeSegmente, ChevronRight, EtatVideZone, LockOpen } from '@janus/ui'
+import {
+  BadgeStatut,
+  Dialogue,
+  GroupeSegmente,
+  ChevronRight,
+  EtatVideZone,
+  LockOpen,
+} from '@janus/ui'
 import { Link, useNavigate } from '@tanstack/react-router'
 import styles from './Blocs.module.css'
 import catalogue from './Catalogue.module.css'
+import { useBureau } from '../parametres/useBureau.ts'
 import { Chargement, Erreur } from './EtatEcran.tsx'
 import { correspond, grouper, lireFiltre } from './filtre.ts'
 import type { FiltreBlocs } from './filtre.ts'
@@ -24,7 +32,7 @@ function LigneBloc({
 }) {
   const { date, erreur, prerequis } = bloc.echeance
   return (
-    <li>
+    <li className={styles['item']}>
       <Link
         to="/modules/$moduleId"
         params={{ moduleId }}
@@ -43,6 +51,12 @@ function LigneBloc({
           <span className="texte-petit-14">{bloc.titre}</span>
           {erreur !== null && (
             <span className={`${styles['erreur'] ?? ''} texte-legende-12`}>{erreur}</span>
+          )}
+          {prerequis === null && bloc.grise && bloc.statut !== 'non_commence' && (
+            <span className={`${styles['prerequis'] ?? ''} texte-legende-12`}>
+              <LockOpen aria-hidden="true" className={styles['cadenas']} />
+              {TEXTES_BLOCS.ouvertSansPrerequis}
+            </span>
           )}
           {prerequis !== null && (
             <span className={`${styles['prerequis'] ?? ''} texte-legende-12`}>
@@ -70,6 +84,7 @@ export function PageBlocs({
   readonly detail: string | undefined
 }) {
   const navigate = useNavigate()
+  const bureau = useBureau()
   const etat = useBlocs(moduleId)
   const filtre = lireFiltre(statut)
 
@@ -132,9 +147,26 @@ export function PageBlocs({
               </section>
             ))}
           </div>
-          {detail !== undefined && blocs.some(({ bloc }) => bloc === detail) && (
-            <PanneauDetail bloc={detail} contexte={etat.contexte} />
-          )}
+          {detail !== undefined &&
+            blocs.some(({ bloc }) => bloc === detail) &&
+            (bureau ? (
+              <PanneauDetail bloc={detail} contexte={etat.contexte} />
+            ) : (
+              <Dialogue
+                titre={TEXTES_BLOCS.detail}
+                libelleFermer={TEXTES_BLOCS.fermerDetail}
+                surFermeture={() => {
+                  void navigate({
+                    to: '.',
+                    search: (precedent) => ({
+                      ...(precedent.statut === undefined ? {} : { statut: precedent.statut }),
+                    }),
+                  })
+                }}
+              >
+                <PanneauDetail bloc={detail} contexte={etat.contexte} dansDialogue />
+              </Dialogue>
+            ))}
         </div>
       )
     }

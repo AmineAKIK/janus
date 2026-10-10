@@ -25,10 +25,16 @@ export interface ContexteDetail {
 export function PanneauDetail({
   bloc,
   contexte,
+  dansDialogue = false,
 }: {
   readonly bloc: string
   readonly contexte: ContexteDetail
+  /** Dans une feuille de dialogue, le cadre est celui du dialogue. */
+  readonly dansDialogue?: boolean
 }) {
+  const cadre = dansDialogue
+    ? `${styles['panneau'] ?? ''} ${styles['sansCadre'] ?? ''}`
+    : styles['panneau']
   const lecture = useLecture(ROUTES['GET /blocs/:id'], { params: { id: bloc } })
   const ecriture = useEcriture(ROUTES['POST /blocs/:id/ouvrir'])
   const client = useQueryClient()
@@ -36,7 +42,7 @@ export function PanneauDetail({
   const [dialogue, setDialogue] = useState(false)
   if (lecture.isError) {
     return (
-      <aside className={styles['panneau']} aria-label={TEXTES_DETAIL.panneau}>
+      <aside className={cadre} aria-label={TEXTES_DETAIL.panneau}>
         <Erreur
           reessayer={() => {
             void lecture.refetch()
@@ -47,7 +53,7 @@ export function PanneauDetail({
   }
   if (lecture.data === undefined) {
     return (
-      <aside className={styles['panneau']} aria-label={TEXTES_DETAIL.panneau}>
+      <aside className={cadre} aria-label={TEXTES_DETAIL.panneau}>
         <Chargement />
       </aside>
     )
@@ -86,7 +92,7 @@ export function PanneauDetail({
   }
 
   return (
-    <aside className={styles['panneau']} aria-label={TEXTES_DETAIL.panneau}>
+    <aside className={cadre} aria-label={TEXTES_DETAIL.panneau}>
       <header className={styles['entete']}>
         <span className={`${styles['reference'] ?? ''} texte-code-14`}>{detail.bloc}</span>
         <BadgeStatut statut={detail.statut} />
