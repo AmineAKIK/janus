@@ -111,9 +111,16 @@ test.describe('fiche de démonstration', () => {
     const fiche = page.frameLocator('iframe')
 
     await expect(fiche.getByRole('status').first()).toHaveText('Dans l’appli')
-    await fiche.getByRole('button', { name: 'Consolidation' }).click()
+    // La navigation de la fiche est masquée dans l'appli : c'est l'appli qui demande l'étape.
+    const aller = (etape: string) =>
+      page.evaluate((cible) => {
+        document
+          .querySelector('iframe')
+          ?.contentWindow?.postMessage({ type: 'etape.aller', etape: cible }, '*')
+      }, etape)
+    await aller('ET8')
     await expect(fiche.getByText('Quelle différence entre vu et acquis ?')).toBeVisible()
-    await fiche.getByRole('button', { name: 'Restitution' }).click()
+    await aller('ET7')
     await expect(fiche.getByText('Cette série n’est pas ouverte.')).toBeVisible()
 
     const recus = await page.evaluate(

@@ -130,7 +130,7 @@ describe('Modules', () => {
 
     const lien = await screen.findByRole('link', { name: /Module 1/ })
     expect(lien).toHaveAttribute('href', '/modules/M1')
-    expect(lien).toHaveTextContent('20 blocs · 7 ouverts · 2 acquis')
+    expect(lien).toHaveTextContent('20 blocs · 5 en cours · 2 acquis')
   })
 
   it('module non importé : « Pas encore importé », pas de lien', async () => {

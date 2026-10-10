@@ -23,7 +23,7 @@ function LigneModule({ module }: { readonly module: ModuleChiffre }) {
       </li>
     )
   }
-  const { total, ouverts, acquis } = compter(module.statuts)
+  const { total, enCours, acquis } = compter(module.statuts)
   return (
     <li>
       <Link
@@ -36,7 +36,7 @@ function LigneModule({ module }: { readonly module: ModuleChiffre }) {
           <div className={styles['libelles']}>
             <p className="texte-sous-titre-18">{titre}</p>
             <p className={`${styles['meta'] ?? ''} texte-petit-14`}>
-              {texteCompteursModule(total, ouverts, acquis)}
+              {texteCompteursModule(total, enCours, acquis)}
             </p>
           </div>
           <ChevronRight aria-hidden="true" className={styles['chevron']} />

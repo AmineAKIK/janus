@@ -44,15 +44,19 @@
   box-shadow: var(--focus-anneau);
 }
 
-/* Dès 1024 px : barre latérale de 240 px, colonne de 720 px à 48 px de la barre et du haut. */
+/* Dès 1024 px : barre latérale de 240 px, colonne de 960 px centrée dans le reste de la page. */
 @media (min-width: 1024px) {
   .contenu {
-    margin: 0;
+    margin: 0 auto;
     padding: var(--espacement-48) var(--espacement-48);
   }
 
+  .avecNavigation {
+    padding-inline-start: var(--largeur-navigation);
+  }
+
   .avecNavigation .contenu {
-    margin-left: var(--largeur-navigation);
+    max-width: calc(960px + 2 * var(--espacement-48));
     padding-bottom: var(--espacement-48);
   }
 

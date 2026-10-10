@@ -4,6 +4,8 @@ export interface Compteurs {
   readonly total: number
   /** Les blocs commencés, quel que soit leur statut. */
   readonly ouverts: number
+  /** Les blocs commencés et pas encore acquis (ni « acquis », ni « maîtrisé »). */
+  readonly enCours: number
   /** « Acquis » et « maîtrisé » comptent, pas « acquis provisoirement ». */
   readonly acquis: number
 }
@@ -12,6 +14,9 @@ export function compter(statuts: readonly Statut[]): Compteurs {
   return {
     total: statuts.length,
     ouverts: statuts.filter((statut) => statut !== 'non_commence').length,
+    enCours: statuts.filter(
+      (statut) => statut !== 'non_commence' && statut !== 'acquis' && statut !== 'maitrise',
+    ).length,
     acquis: statuts.filter((statut) => statut === 'acquis' || statut === 'maitrise').length,
   }
 }

@@ -42,8 +42,8 @@ describe('textes des mesures', () => {
     expect(texteAideMoyenne(0.5)).toBe('Aide moyenne cette semaine : 0,5')
     expect(texteMeilleur(45, 60)).toBe('45 s · objectif 60 s')
     expect(texteMeilleur(null, 30)).toBe('aucun temps · objectif 30 s')
-    expect(texteReussites(1, 3, 2)).toBe('1 réussite sur 3, sur 2 jours différents')
-    expect(texteReussites(2, 2, 1)).toBe('2 réussites sur 2, sur 1 jour différent')
+    expect(texteReussites(1, 3, 2)).toBe('1 réussite sur 3, sur 2 jours distincts')
+    expect(texteReussites(2, 2, 1)).toBe('2 réussites sur 2, sur 1 jour distinct')
   })
 })
 
@@ -175,7 +175,7 @@ describe('Aisance', () => {
     const [premiere, seconde] = screen.getAllByRole('listitem').map((ligne) => within(ligne))
     expect(premiere?.getByRole('link')).toHaveAttribute('href', '#/blocs/B01')
     expect(
-      premiere?.getByText('25 s · objectif 30 s · 1 réussite sur 2, sur 2 jours différents'),
+      premiere?.getByText('25 s · objectif 30 s · 1 réussite sur 2, sur 2 jours distincts'),
     ).toBeVisible()
     expect(seconde?.getByText('non requis')).toBeInTheDocument()
   })

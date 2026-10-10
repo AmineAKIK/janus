@@ -23,12 +23,9 @@ export function Sessions() {
           <li key={session.id} className={styles['session']}>
             <div>
               <p className="texte-petit-14">{session.appareil}</p>
-              <p className="texte-legende-12">
-                {session.courante
-                  ? T.cetteSession
-                  : texteActivite(
-                      texteIntervalle(maintenant - Date.parse(session.derniere_activite)),
-                    )}
+              <p className="texte-petit-14">
+                {texteActivite(texteIntervalle(maintenant - Date.parse(session.derniere_activite)))}
+                {session.courante && <span className={styles['repere']}> · {T.cetAppareil}</span>}
               </p>
             </div>
             {!session.courante && (

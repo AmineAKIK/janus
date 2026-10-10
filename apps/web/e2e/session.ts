@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test'
-import type { Page } from '@playwright/test'
+import type { Locator, Page } from '@playwright/test'
 
 /** Ouvre une session de démonstration par l'écran de connexion, comme le ferait Amine. */
 export async function ouvrirSession(page: Page): Promise<void> {
@@ -21,4 +21,11 @@ export async function activerInterrupteurs(page: Page, noms: readonly string[]):
     localStorage.setItem(cle, JSON.stringify(etat))
   }, noms)
   await page.reload()
+}
+
+/** Le bouton d'une étape dans le fil de la page (la fiche intégrée n'a plus de fil à elle). */
+export function etape(page: Page, nom: string): Locator {
+  return page
+    .getByRole('navigation', { name: 'Étapes de la fiche' })
+    .getByRole('button', { name: new RegExp(`${nom}$`) })
 }

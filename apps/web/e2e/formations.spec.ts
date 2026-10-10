@@ -14,7 +14,7 @@ test.describe('formations et modules', () => {
 
     await expect(page).toHaveURL(/#\/formations\/DWWM$/)
     await expect(page.getByRole('link', { name: /Module 1/ })).toContainText(
-      '20 blocs · 7 ouverts · 2 acquis',
+      '20 blocs · 5 en cours · 2 acquis',
     )
     await expect(page.getByText('Pas encore importé')).toHaveCount(3)
   })

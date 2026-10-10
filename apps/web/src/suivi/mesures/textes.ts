@@ -90,7 +90,7 @@ export const texteMeilleur = (meilleurS: number | null, objectifS: number) =>
 export const texteSansMesure = (n: number) => nombre(n, 'bloc sans mesure', 'blocs sans mesure')
 
 export const texteReussites = (reussites: number, requises: number, jours: number) =>
-  `${nombre(reussites, 'réussite', 'réussites')} sur ${String(requises)}, sur ${nombre(jours, 'jour différent', 'jours différents')}`
+  `${nombre(reussites, 'réussite', 'réussites')} sur ${String(requises)}, sur ${nombre(jours, 'jour distinct', 'jours distincts')}`
 
 /** « 45 s », « 12 min », « 1 h 05 » : un temps actif en secondes. */
 export function texteDuree(secondes: number): string {

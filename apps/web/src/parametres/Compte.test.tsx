@@ -140,7 +140,7 @@ describe('Compte', () => {
     const banc = await afficher()
     const liste = await screen.findByRole('region', { name: 'Sessions ouvertes' })
 
-    expect(await within(liste).findByText('Cette session')).toBeVisible()
+    expect(await within(liste).findByText(/· Cet appareil/)).toBeVisible()
     expect(within(liste).getAllByRole('button', { name: /^Déconnecter/ })).toHaveLength(2)
     expect(
       within(liste).getByText(/^Dernière activité : il y a \d+ h$/, { selector: 'p' }),
