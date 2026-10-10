@@ -37,7 +37,11 @@ export async function ouvrirEtape(page: Page, etape: string) {
   await page.reload()
   const fiche = page.frameLocator('iframe[title^="Fiche du bloc B01"]')
   await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
-  await fiche.getByRole('button', { name: etape }).click()
+  const onglet = page
+    .getByRole('navigation', { name: 'Étapes de la fiche' })
+    .getByRole('button', { name: new RegExp(`${etape}$`) })
+  await onglet.click()
+  await expect(onglet).toHaveAttribute('aria-current', 'step')
   return fiche
 }
 

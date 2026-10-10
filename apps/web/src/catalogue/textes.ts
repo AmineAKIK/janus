@@ -27,8 +27,8 @@ export const texteAcquis = (acquis: number, total: number) =>
 
 export const texteModule = (ordre: number, titre: string) => `Module ${String(ordre)} · ${titre}`
 
-export const texteCompteursModule = (total: number, ouverts: number, acquis: number) =>
-  `${accorder(total, 'bloc', 'blocs')} · ${accorder(ouverts, 'ouvert', 'ouverts')} · ${accorder(acquis, 'acquis', 'acquis')}`
+export const texteCompteursModule = (total: number, enCours: number, acquis: number) =>
+  `${accorder(total, 'bloc', 'blocs')} · ${String(enCours)} en cours · ${accorder(acquis, 'acquis', 'acquis')}`
 
 export const TEXTES_BLOCS = {
   titreParDefaut: 'Blocs',

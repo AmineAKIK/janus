@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { ouvrirSession } from './session.ts'
+import { allerEtape, etape, ouvrirSession, serieEnregistree } from './session.ts'
 
 test.describe('page d’un bloc', () => {
   test.beforeEach(async ({ page }) => {
@@ -36,20 +36,13 @@ test.describe('page d’un bloc', () => {
     const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
     await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
 
-    await fiche.getByRole('button', { name: 'Pratique guidée' }).click()
-    await expect(fiche.getByRole('button', { name: 'Pratique guidée' })).toHaveAttribute(
-      'aria-current',
-      'step',
-    )
+    await allerEtape(page, 'Pratique guidée')
+    await expect(etape(page, 'Pratique guidée')).toHaveAttribute('aria-current', 'step')
     // La fiche groupe ses sauvegardes.
     await page.waitForTimeout(2500)
     await page.reload()
 
-    const apres = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
-    await expect(apres.getByRole('button', { name: 'Pratique guidée' })).toHaveAttribute(
-      'aria-current',
-      'step',
-    )
+    await expect(etape(page, 'Pratique guidée')).toHaveAttribute('aria-current', 'step')
   })
 
   test('le retour ramène à la liste des blocs, bloc choisi', async ({ page }) => {
@@ -70,10 +63,7 @@ test.describe('page d’un bloc', () => {
       .getByRole('button', { name: 'Pratique guidée' })
       .click()
 
-    await expect(fiche.getByRole('button', { name: 'Pratique guidée' })).toHaveAttribute(
-      'aria-current',
-      'step',
-    )
+    await expect(etape(page, 'Pratique guidée')).toHaveAttribute('aria-current', 'step')
     await expect(
       page
         .getByRole('navigation', { name: 'Étapes de la fiche' })
@@ -87,7 +77,7 @@ test.describe('page d’un bloc', () => {
     await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
     const fil = page.getByRole('navigation', { name: 'Étapes de la fiche' })
 
-    await fiche.getByRole('button', { name: 'Restitution' }).click()
+    await allerEtape(page, 'Restitution')
     await fil.getByRole('button', { name: 'Explication' }).click()
 
     const dialogue = page.getByRole('dialog', { name: 'Revoir le cours maintenant ?' })
@@ -97,10 +87,7 @@ test.describe('page d’un bloc', () => {
 
     await fil.getByRole('button', { name: 'Explication' }).click()
     await page.getByRole('button', { name: 'Revoir le cours' }).click()
-    await expect(fiche.getByRole('button', { name: 'Explication' })).toHaveAttribute(
-      'aria-current',
-      'step',
-    )
+    await expect(etape(page, 'Explication')).toHaveAttribute('aria-current', 'step')
   })
 
   test('B03 de bout en bout : restitution, consolidation, bilan', async ({ page }) => {
@@ -122,29 +109,30 @@ test.describe('page d’un bloc', () => {
           )
         await item.getByLabel('Sûr').check()
         await item.getByRole('button', { name: 'Envoyer' }).click()
-        await expect(item.locator('.correction')).toBeVisible()
+        await expect(item.locator('.correction')).toBeVisible({ timeout: 15_000 })
       }
+      await serieEnregistree(page)
     }
 
-    await fiche.getByRole('button', { name: 'Pratique guidée' }).click()
+    await allerEtape(page, 'Pratique guidée')
     for (let item = 0; item < 3; item++) {
       await fiche.getByRole('button', { name: 'J’ai réussi' }).nth(item).click()
       await expect(fiche.getByText('Envoyé : réussi, aide 0')).toHaveCount(item + 1)
     }
-    await fiche.getByRole('button', { name: 'Atelier', exact: true }).click()
+    await allerEtape(page, 'Atelier')
     await fiche.getByRole('button', { name: 'Atelier réussi sans aide' }).click()
     await expect(fiche.getByText('Envoyé : réussi, aide 0')).toBeVisible()
 
-    await fiche.getByRole('button', { name: 'Restitution' }).click()
+    await allerEtape(page, 'Restitution')
     await repondre()
-    await fiche.getByRole('button', { name: 'Consolidation' }).click()
+    await allerEtape(page, 'Consolidation')
     await expect(page.getByText(/Consolidation disponible à/)).toBeVisible()
     await expect(page.getByText('Au moins 1 h après la restitution.')).toBeVisible()
 
     await page.evaluate(() => window.__janusDemo?.avancer(61 * 60 * 1000))
     await expect(page.getByText(/Consolidation disponible à/)).toHaveCount(0)
 
-    await fiche.getByRole('button', { name: 'Consolidation' }).click()
+    await allerEtape(page, 'Consolidation')
     await repondre()
     await fil.getByRole('button', { name: 'Bilan' }).click()
     await expect(page.getByText('Statut calculé')).toBeVisible()

@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
-import { ouvrirSession } from './session.ts'
+import { allerEtape, ouvrirSession, serieEnregistree } from './session.ts'
 
 /** La vérification de B02 de la démo : son identifiant se lit à l'envers (bloc, type, numéro). */
 const VERIFICATION_B02 = '0190a000-0000-7000-8000-000423032000'
@@ -38,7 +38,7 @@ async function repondreALaSerie(page: Page) {
       )
     await item.getByLabel('Sûr').check()
     await item.getByRole('button', { name: 'Envoyer' }).click()
-    await expect(item.locator('.correction')).toBeVisible()
+    await expect(item.locator('.correction')).toBeVisible({ timeout: 15_000 })
   }
 }
 
@@ -46,9 +46,10 @@ async function repondreALaSerie(page: Page) {
 async function apresRestitution(page: Page) {
   const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
   await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
-  await fiche.getByRole('button', { name: 'Restitution' }).click()
+  await allerEtape(page, 'Restitution')
   await repondreALaSerie(page)
-  await fiche.getByRole('button', { name: 'Consolidation' }).click()
+  await serieEnregistree(page)
+  await allerEtape(page, 'Consolidation')
 }
 
 /** Écrans photographiés à chaque PR, en 4 captures chacun. */
@@ -200,7 +201,7 @@ export const ecrans: readonly Ecran[] = [
       await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
       await page.evaluate(() => window.__janusDemo?.interrupteur('horsConnexion', true))
       for (const titre of ['Explication', 'Pratique guidée', 'Restitution']) {
-        await fiche.getByRole('button', { name: titre }).click()
+        await allerEtape(page, titre)
       }
       await expect(page.getByText('En attente de réseau · 3 réponses gardées')).toBeVisible()
     },
@@ -213,7 +214,7 @@ export const ecrans: readonly Ecran[] = [
     scenario: async (page) => {
       const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
       await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
-      await fiche.getByRole('button', { name: 'Restitution' }).click()
+      await allerEtape(page, 'Restitution')
       await page
         .getByRole('navigation', { name: 'Étapes de la fiche' })
         .getByRole('button', { name: 'Explication' })

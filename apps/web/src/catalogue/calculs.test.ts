@@ -6,12 +6,13 @@ describe('compter', () => {
     expect(compter(['acquis', 'maitrise', 'acquis_provisoirement', 'vu', 'non_commence'])).toEqual({
       total: 5,
       ouverts: 4,
+      enCours: 2,
       acquis: 2,
     })
   })
 
   it('rend zéro partout pour une liste vide', () => {
-    expect(compter([])).toEqual({ total: 0, ouverts: 0, acquis: 0 })
+    expect(compter([])).toEqual({ total: 0, ouverts: 0, enCours: 0, acquis: 0 })
   })
 })
 

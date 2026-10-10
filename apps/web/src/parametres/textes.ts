@@ -42,7 +42,7 @@ export const TEXTES_COMPTE = {
   annuler: 'Annuler',
   motDePasseChange: 'Mot de passe changé.',
   sessions: 'Sessions ouvertes',
-  cetteSession: 'Cette session',
+  cetAppareil: 'Cet appareil',
   deconnecter: 'Déconnecter',
   seDeconnecter: 'Se déconnecter',
 } as const

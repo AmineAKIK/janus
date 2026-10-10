@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
-import { ouvrirSession } from './session.ts'
+import { allerEtape, ouvrirSession } from './session.ts'
 
 const FICHE = 'iframe[title^="Fiche du bloc B03"]'
 
@@ -37,8 +37,7 @@ async function ouvrirBloc(page: Page) {
 }
 
 async function parcourirEtapes(page: Page, titres: readonly string[]) {
-  const fiche = page.frameLocator(FICHE)
-  for (const titre of titres) await fiche.getByRole('button', { name: titre }).click()
+  for (const titre of titres) await allerEtape(page, titre)
 }
 
 test.describe('boîte d’envoi', () => {
