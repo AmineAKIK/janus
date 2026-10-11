@@ -1,7 +1,7 @@
 // Textes de l'écran de connexion, repris mot pour mot des cadres Figma (page 01, 6:1010 à 6:1565).
 export const TEXTES = {
   titre: 'Janus',
-  sousTitre: 'Apprendre pour de vrai, à ton rythme.',
+  sousTitre: 'Chaque boucle te fait monter.',
   identifiant: 'Nom d’utilisateur',
   motDePasse: 'Mot de passe',
   rester: 'Rester connecté sur cet appareil',
