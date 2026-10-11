@@ -65,11 +65,14 @@ test.describe('routes', () => {
     await expect(page.getByRole('navigation', { name: 'Navigation principale' })).toHaveCount(0)
   })
 
-  test('la page introuvable renvoie à Aujourd’hui', async ({ page }) => {
+  test('la page introuvable laisse la navigation pour repartir', async ({ page }) => {
     await ouvrirSession(page)
     await page.goto('./#/n-existe-pas')
 
-    await page.getByRole('link', { name: 'Aller à Aujourd’hui' }).click()
+    await page
+      .getByRole('navigation', { name: 'Navigation principale' })
+      .getByRole('link', { name: 'Aujourd’hui' })
+      .click()
 
     await expect(page.getByRole('heading', { level: 1, name: 'Aujourd’hui' })).toBeVisible()
   })

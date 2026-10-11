@@ -255,11 +255,11 @@ test.describe('lisibilité à 375 px', () => {
     expect(hauteur).toBeLessThan(4 * 32)
   })
 
-  test('la page introuvable garde la navigation et propose deux sorties', async ({ page }) => {
+  test('la page introuvable garde la navigation sans bouton en double', async ({ page }) => {
     await ouvrirSession(page)
     await page.goto('./#/n-existe-pas')
     await expect(page.getByRole('navigation', { name: 'Navigation principale' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Aller à Aujourd’hui' })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Retour' })).toBeVisible()
+    await expect(page.getByRole('main').getByRole('link')).toHaveCount(0)
+    await expect(page.getByRole('main').getByRole('button')).toHaveCount(0)
   })
 })
