@@ -70,8 +70,7 @@
   border-radius: var(--rayon-champ);
   font-size: 0.75rem;
 }
-.defilement {
-  overflow-x: auto;
+.zoneCarte {
   padding-block: var(--espacement-8);
 }
 .carte {
@@ -113,9 +112,6 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
-.tableDefilante {
-  overflow-x: auto;
-}
 .tableau {
   inline-size: 100%;
   border-collapse: collapse;
@@ -125,6 +121,44 @@
   padding: var(--espacement-8);
   border-block-end: 1px solid var(--couleur-ligne);
   text-align: start;
+}
+/* Étroit, chaque semaine devient un petit bloc « libellé : valeur » : jamais de défilement latéral. */
+.tableAdaptative {
+  container-type: inline-size;
+}
+.etiquette {
+  display: none;
+}
+@container (max-width: 30rem) {
+  .tableAdaptative thead {
+    display: none;
+  }
+  .tableAdaptative tr,
+  .tableAdaptative th {
+    display: block;
+  }
+  .tableAdaptative tr {
+    padding-block: var(--espacement-8);
+    border-block-end: 1px solid var(--couleur-ligne);
+  }
+  .tableAdaptative th,
+  .tableAdaptative td {
+    padding: var(--espacement-4) 0;
+    border: 0;
+  }
+  .tableAdaptative th {
+    color: var(--couleur-encre);
+    font-weight: 600;
+  }
+  .tableAdaptative td {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--espacement-12);
+  }
+  .etiquette {
+    display: inline;
+    color: var(--couleur-texte-secondaire);
+  }
 }
 
 .repliable summary {
