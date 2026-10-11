@@ -5,11 +5,11 @@ const donnees = (valeur: unknown) => ({ json: () => valeur })
 
 describe('lireNotification', () => {
   it('rend le message envoyé par l’API', () => {
-    const message = { titre: 'Atelier', corps: '12 cartes t’attendent' }
+    const message = { titre: 'Janus', corps: '12 cartes t’attendent' }
     expect(lireNotification(donnees(message))).toEqual(message)
   })
 
-  it.each([null, undefined, 'texte', { titre: 'Atelier' }, []])('ignore %j', (valeur) => {
+  it.each([null, undefined, 'texte', { titre: 'Janus' }, []])('ignore %j', (valeur) => {
     expect(lireNotification(donnees(valeur))).toBeNull()
   })
 

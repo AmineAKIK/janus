@@ -88,7 +88,7 @@ export const ecrans: readonly Ecran[] = [
   {
     nom: 'connexion',
     chemin: './#/connexion',
-    etat: 'Atelier',
+    etat: 'Janus',
     titre: 'Connexion',
     session: false,
   },

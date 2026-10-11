@@ -28,7 +28,7 @@ const NAVIGATION = { name: 'Navigation principale' }
 
 // Titre de l'écran et présence de la navigation d'après les cadres Figma.
 const ECRANS = [
-  { chemin: '/connexion', titre: 'Connexion', h1: 'Atelier', navigation: false },
+  { chemin: '/connexion', titre: 'Connexion', h1: 'Janus', navigation: false },
   { chemin: '/', titre: 'Aujourd’hui', navigation: true },
   { chemin: '/questions', titre: 'Questions de début de séance', navigation: false },
   { chemin: '/formations', titre: 'Formations', navigation: true },
@@ -72,7 +72,7 @@ describe('routes', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'h1' in ecran ? ecran.h1 : titre }),
     ).toBeInTheDocument()
-    expect(document.title).toBe(`${titre} · Atelier`)
+    expect(document.title).toBe(`${titre} · Janus`)
     expect(screen.queryByRole('navigation', NAVIGATION) !== null).toBe(navigation)
   })
 
@@ -95,7 +95,7 @@ describe('garde des routes', () => {
 
     expect(routeur.state.location.pathname).toBe('/connexion')
     expect(routeur.state.location.search).toEqual({ retour: '/journal?bloc=B04' })
-    expect(screen.getByRole('heading', { level: 1, name: 'Atelier' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: 'Janus' })).toBeInTheDocument()
   })
 
   it('la connexion elle-même reste accessible sans session', async () => {
@@ -163,7 +163,7 @@ describe('changement de route', () => {
       await routeur.navigate({ to: '/journal' })
     })
 
-    expect(document.title).toBe('Journal · Atelier')
+    expect(document.title).toBe('Journal · Janus')
     expect(screen.getByRole('heading', { level: 1, name: 'Journal' })).toHaveFocus()
     expect(defilement).toHaveBeenCalledWith(0, 0)
   })
@@ -201,7 +201,7 @@ describe('changement de route', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Aujourd’hui' }),
     ).toBeInTheDocument()
-    expect(document.title).toBe('Aujourd’hui · Atelier')
+    expect(document.title).toBe('Aujourd’hui · Janus')
   })
 })
 
@@ -226,7 +226,7 @@ describe('page introuvable', () => {
     expect(
       screen.getByRole('heading', { level: 1, name: 'Cette page n’existe pas' }),
     ).toBeInTheDocument()
-    expect(document.title).toBe('Cette page n’existe pas · Atelier')
+    expect(document.title).toBe('Cette page n’existe pas · Janus')
     expect(screen.getByRole('link', { name: 'Aller à Aujourd’hui' })).toHaveAttribute('href', '/')
   })
 })

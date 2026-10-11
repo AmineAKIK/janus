@@ -11,7 +11,7 @@ test.describe('navigation', () => {
     await expect(navigation).toBeVisible()
     const boite = await navigation.boundingBox()
     expect(boite?.height).toBe(72)
-    await expect(navigation.getByText('Atelier')).toBeHidden()
+    await expect(navigation.getByText('Janus')).toBeHidden()
   })
 
   test('à 1024 px, barre latérale de 240 px avec le nom de l’appli', async ({ page }) => {
@@ -21,7 +21,7 @@ test.describe('navigation', () => {
 
     const boite = await navigation.boundingBox()
     expect(boite?.width).toBe(240)
-    await expect(navigation.getByText('Atelier')).toBeVisible()
+    await expect(navigation.getByText('Janus')).toBeVisible()
   })
 
   test('les entrées font au moins 44 px de haut en mobile', async ({ page }) => {

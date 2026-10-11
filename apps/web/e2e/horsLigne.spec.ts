@@ -21,8 +21,8 @@ test.describe('appli installable et hors ligne', () => {
     const manifeste = (await reponse.json()) as Record<string, unknown>
 
     expect(manifeste).toMatchObject({
-      name: 'Atelier',
-      short_name: 'Atelier',
+      name: 'Janus',
+      short_name: 'Janus',
       start_url: './',
       scope: './',
       display: 'standalone',
