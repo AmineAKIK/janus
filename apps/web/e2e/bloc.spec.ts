@@ -109,7 +109,15 @@ test.describe('page d’un bloc', () => {
           )
         await item.getByLabel('Sûr').check()
         await item.getByRole('button', { name: 'Envoyer' }).click()
-        await expect(item.locator('.correction')).toBeVisible({ timeout: 15_000 })
+        try {
+          await expect(item.locator('.correction')).toBeVisible({ timeout: 15_000 })
+        } catch {
+          const dedans = await fiche.locator('body').innerText()
+          const dehors = await page.locator('body').innerText()
+          throw new Error(
+            `DIAG ${String(rang)}/${String(nombre)} APPLI ${dehors.replace(/\s+/g, ' ').slice(0, 400)} FICHE ${dedans.replace(/\s+/g, ' ').slice(0, 700)}`,
+          )
+        }
       }
       await serieEnregistree(page)
     }
