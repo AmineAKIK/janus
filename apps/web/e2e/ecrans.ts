@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
-import { allerEtape, ouvrirSession, serieEnregistree } from './session.ts'
+import { allerEtape, cliquerEtape, ouvrirSession, serieEnregistree } from './session.ts'
 
 /** La vérification de B02 de la démo : son identifiant se lit à l'envers (bloc, type, numéro). */
 const VERIFICATION_B02 = '0190a000-0000-7000-8000-000423032000'
@@ -215,10 +215,7 @@ export const ecrans: readonly Ecran[] = [
       const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
       await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
       await allerEtape(page, 'Restitution')
-      await page
-        .getByRole('navigation', { name: 'Étapes de la fiche' })
-        .getByRole('button', { name: 'Explication' })
-        .click()
+      await cliquerEtape(page, 'Explication')
       await expect(page.getByRole('dialog', { name: 'Revoir le cours maintenant ?' })).toBeVisible()
     },
   },
@@ -239,10 +236,7 @@ export const ecrans: readonly Ecran[] = [
     titre: 'Page de bloc',
     scenario: async (page) => {
       await apresRestitution(page)
-      await page
-        .getByRole('navigation', { name: 'Étapes de la fiche' })
-        .getByRole('button', { name: 'Bilan' })
-        .click()
+      await cliquerEtape(page, 'Bilan')
       await expect(page.getByText(/Statut calculé/)).toBeVisible()
     },
   },

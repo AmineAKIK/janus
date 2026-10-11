@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { etapesFaites, FilEtapes } from './FilEtapes.tsx'
@@ -28,7 +28,7 @@ describe('FilEtapes', () => {
   it('liste un onglet par étape, dans l’ordre, la première est courante par défaut', () => {
     render(<FilEtapes etapes={ETAPES} courante={null} vues={[]} surChoix={() => undefined} />)
 
-    const onglets = screen.getAllByRole('button')
+    const onglets = within(screen.getByRole('list')).getAllByRole('button')
     expect(onglets.map((onglet) => onglet.textContent)).toEqual([
       'Carte',
       'Pré-test',

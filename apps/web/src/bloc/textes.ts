@@ -7,6 +7,8 @@ export const TEXTES_BLOC = {
   erreur: 'Impossible de charger ce bloc.',
   reessayer: 'Réessayer',
   etapes: 'Étapes de la fiche',
+  etapeSurTotal: (titre: string, rang: number, total: number) =>
+    `${titre} · étape ${String(rang)} sur ${String(total)}`,
   envoyee: 'Envoyée dès le retour du réseau.',
   stockageIndisponible: 'Les réponses ne peuvent pas être gardées sur cet appareil.',
   conflit: 'Ce bloc a été modifié sur un autre appareil.',

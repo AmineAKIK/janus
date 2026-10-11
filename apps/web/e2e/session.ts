@@ -25,6 +25,7 @@ export async function activerInterrupteurs(page: Page, noms: readonly string[]):
 
 /** Le bouton d'une étape dans le fil de la page (la fiche intégrée n'a plus de fil à elle). */
 export function etape(page: Page, nom: string): Locator {
+  // Étroit, le fil est replié derrière un bouton : l'ouvrir est un clic comme un autre (voir `ouvrirFil`).
   return page
     .getByRole('navigation', { name: 'Étapes de la fiche' })
     .getByRole('button', { name: new RegExp(`${nom}$`) })
@@ -40,6 +41,31 @@ export async function serieEnregistree(page: Page, statut: string): Promise<void
 
 /** Ouvre une étape et attend que la fiche l'ait affichée : ce qu'on lit ensuite est celui de l'étape. */
 export async function allerEtape(page: Page, nom: string): Promise<void> {
+  await ouvrirFil(page)
   await etape(page, nom).click()
+  // Étroit, le fil se replie après le choix : on le rouvre pour lire l'étape courante, puis on le referme.
+  await ouvrirFil(page)
   await expect(etape(page, nom)).toHaveAttribute('aria-current', 'step')
+  const bascule = page
+    .getByRole('navigation', { name: 'Étapes de la fiche' })
+    .getByRole('button', { expanded: true })
+  if (await bascule.isVisible()) await bascule.click()
+}
+
+/** Étroit, le fil des étapes est replié derrière un bouton ; large, il n'y a rien à ouvrir. */
+export async function ouvrirFil(page: Page): Promise<void> {
+  const bascule = page
+    .getByRole('navigation', { name: 'Étapes de la fiche' })
+    .getByRole('button', { expanded: false })
+    .first()
+  if (await bascule.isVisible()) await bascule.click()
+}
+
+/** Clique une étape du fil, replié ou non, sans attendre que la fiche l'affiche. */
+export async function cliquerEtape(page: Page, nom: string): Promise<void> {
+  await ouvrirFil(page)
+  await page
+    .getByRole('navigation', { name: 'Étapes de la fiche' })
+    .getByRole('button', { name: nom, exact: true })
+    .click()
 }

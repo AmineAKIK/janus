@@ -11,6 +11,7 @@ export const TEXTES_PARAMETRES = {
   revenir: 'Revenir à la valeur par défaut',
   conflit: 'Ces réglages ont changé sur un autre appareil.',
   erreurEnregistrement: 'Le réglage n’a pas été enregistré. Réessaie.',
+  version: (commit: string) => `Version ${commit}`,
   pied: (nom: string) => `${nom} ne vend pas tes données.`,
   chargement: 'Chargement…',
   erreur: 'Les paramètres ne se sont pas chargés.',

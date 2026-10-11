@@ -66,7 +66,7 @@ describe('routes de catalogue de la démo', () => {
       module: 'M1',
       problemes: [],
       serie_ouverte: { restitution: true, consolidation: false },
-      fiche_url: `${RACINE_FICHES}demo/fiche-demo.html?v=4`,
+      fiche_url: `${RACINE_FICHES}demo/fiche-demo.html?v=5`,
     })
     expect(b04.manifeste.bloc).toBe('B04')
     expect(b08).toMatchObject({ statut: 'non_commence', acces: 'raison_requise' })
