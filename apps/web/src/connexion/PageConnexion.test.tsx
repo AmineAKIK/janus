@@ -47,7 +47,7 @@ describe('écran de connexion', () => {
   it('Vide : titre, champs pour le gestionnaire de mots de passe, case et bouton', async () => {
     await afficher()
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Atelier' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: 'Janus' })).toBeInTheDocument()
     expect(screen.getByText('Apprendre pour de vrai, à ton rythme.')).toBeInTheDocument()
     expect(champ('Nom d’utilisateur')).toHaveAttribute('autocomplete', 'username')
     expect(champ('Mot de passe')).toHaveAttribute('autocomplete', 'current-password')

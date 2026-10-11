@@ -15,7 +15,7 @@ test.describe('routes', () => {
       await page.goto(ecran.chemin)
       if (ecran.interrupteurs !== undefined) await activerInterrupteurs(page, ecran.interrupteurs)
       await expect(titre).toBeVisible()
-      await expect(page).toHaveTitle(`${ecran.titre ?? ecran.etat} · Atelier`)
+      await expect(page).toHaveTitle(`${ecran.titre ?? ecran.etat} · Janus`)
 
       await page.reload()
       await expect(titre).toBeVisible()
@@ -36,7 +36,7 @@ test.describe('routes', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Formations' })).toBeVisible()
     await page.goBack()
     await expect(page.getByRole('heading', { level: 1, name: 'Aujourd’hui' })).toBeVisible()
-    await expect(page).toHaveTitle('Aujourd’hui · Atelier')
+    await expect(page).toHaveTitle('Aujourd’hui · Janus')
   })
 
   test('au clavier, le lien d’évitement est le premier arrêt et mène au contenu', async ({
@@ -61,7 +61,7 @@ test.describe('routes', () => {
   test('l’écran de connexion n’a pas de navigation', async ({ page }) => {
     await page.goto('./#/connexion')
 
-    await expect(page.getByRole('heading', { level: 1, name: 'Atelier' })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1, name: 'Janus' })).toBeVisible()
     await expect(page.getByRole('navigation', { name: 'Navigation principale' })).toHaveCount(0)
   })
 

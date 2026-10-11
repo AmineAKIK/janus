@@ -17,7 +17,7 @@ test.describe('connexion', () => {
 
   test('Vide puis Rempli : le bouton ouvre la session et mène à Aujourd’hui', async ({ page }) => {
     await page.goto('./#/connexion')
-    await expect(page.getByRole('heading', { level: 1, name: 'Atelier' })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1, name: 'Janus' })).toBeVisible()
     await capture(page, 'vide')
 
     await saisir(page, 'amine', 'demo-janus')
@@ -79,7 +79,7 @@ test.describe('connexion', () => {
   }) => {
     await page.goto('./#/journal')
 
-    await expect(page.getByRole('heading', { level: 1, name: 'Atelier' })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1, name: 'Janus' })).toBeVisible()
     await saisir(page, 'amine', 'demo-janus')
     await bouton(page).click()
 

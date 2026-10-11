@@ -10,7 +10,7 @@ Ils font foi dans cet ordre en cas de désaccord :
 2. [Janus : architecture technique](https://claude.ai/code/artifact/7fbc288e-336f-4729-b554-4e5158fe7c83) : comment c'est construit.
 3. [Janus : backlog](https://claude.ai/code/artifact/c5ceabc7-e9dd-452d-b48d-bb9ac0f1f021) : les PR à coder, avec leurs critères d'acceptation. Les tickets sont dans [Linear](https://linear.app/amineakik/project/janus-bebc61cb3a5c).
 4. [Maquettes Figma](https://www.figma.com/design/VhGXcHKlzhx9GYEmu2eVWg/Janus) : référence de parcours. Leurs textes et leurs chiffres sont des exemples.
-5. Refonte esthétique « Atelier » (le calme maîtrisé) : **référence visuelle actuelle**, elle prime sur les couleurs des maquettes Figma. Source de vérité : `packages/ui/src/tokens.css` (palette, rayons, ombres, transitions), accent `#2c5d92`, colonne de lecture `--largeur-lecture` (62ch) sur les écrans d'étude de l'appli. Les fiches gardent un contrat léger (grandes lignes) défini plus tard.
+5. Refonte esthétique de Janus (le calme maîtrisé) : **référence visuelle actuelle**, elle prime sur les couleurs des maquettes Figma. Source de vérité : `packages/ui/src/tokens.css` (palette, rayons, ombres, transitions), accent `#2c5d92`, colonne de lecture `--largeur-lecture` (62ch) sur les écrans d'étude de l'appli. Les fiches gardent un contrat léger (grandes lignes) défini plus tard.
 
 ## Règles permanentes pour l'IA qui code
 

@@ -8,7 +8,7 @@ import type { BilanDesRappels, LireAujourdhui } from '../../types.ts'
 import type { DepotRappels } from './depot.ts'
 import { ceQuiEstDu, rappelAEnvoyer, texteDuRappel } from './policy.ts'
 
-const TITRE = 'Atelier'
+const TITRE = 'Janus'
 
 export interface DependancesService {
   readonly base: Base

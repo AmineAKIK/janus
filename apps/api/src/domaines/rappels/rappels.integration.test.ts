@@ -231,7 +231,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('rappels contre PostgreSQL', () 
       expect(faux.envois).toHaveLength(1)
       expect(faux.envois[0]).toMatchObject({
         destinataire: { endpoint: ABONNEMENT.endpoint },
-        notification: { titre: 'Atelier', corps: '1 carte t’attend' },
+        notification: { titre: 'Janus', corps: '1 carte t’attend' },
       })
       const { rows } = await bases.pool.query<{ jour: string }>(
         'SELECT jour::text FROM rappels_envoyes WHERE user_id = $1',

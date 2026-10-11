@@ -41,8 +41,8 @@ describe('Navigation', () => {
 
   it('affiche le nom de l’appli', () => {
     render(<Navigation actif="aujourdhui" lien={lien} />)
-    expect(NOM_APPLI).toBe('Atelier')
-    expect(screen.getByText('Atelier')).toBeInTheDocument()
+    expect(NOM_APPLI).toBe('Janus')
+    expect(screen.getByText('Janus')).toBeInTheDocument()
   })
 
   it.each([
