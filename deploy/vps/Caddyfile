@@ -1,0 +1,40 @@
+{
+    auto_https off
+    admin off
+}
+
+http://janus.akiksystems.fr:8080 {
+    encode gzip
+    header {
+        Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src https://fiches.janus.akiksystems.fr; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+        X-Content-Type-Options nosniff
+        Referrer-Policy same-origin
+        -Server
+    }
+    handle /api/* {
+        reverse_proxy api:3000 {
+            header_up X-Forwarded-Proto https
+        }
+    }
+    handle {
+        root * /srv/app
+        @empreinte path /assets/*
+        header @empreinte Cache-Control "public, max-age=31536000, immutable"
+        @jamais not path /assets/*
+        header @jamais Cache-Control "no-cache"
+        try_files {path} /index.html
+        file_server
+    }
+}
+
+http://fiches.janus.akiksystems.fr:8080 {
+    encode gzip
+    header {
+        Content-Security-Policy "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; img-src data: 'self'; font-src data:; media-src data: 'self'; connect-src 'none'; frame-ancestors https://janus.akiksystems.fr"
+        X-Content-Type-Options nosniff
+        Cache-Control "public, max-age=31536000, immutable"
+        -Server
+    }
+    root * /fiches
+    file_server
+}
