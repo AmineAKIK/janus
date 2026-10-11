@@ -39,7 +39,13 @@ services:
     volumes:
       - fiches:/fiches
     healthcheck:
-      test: ['CMD', 'node', '-e', "fetch('http://127.0.0.1:3000/api/sante').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/api/sante').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))",
+        ]
       interval: 5s
       timeout: 3s
       retries: 24
