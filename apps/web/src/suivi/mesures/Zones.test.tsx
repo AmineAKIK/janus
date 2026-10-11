@@ -106,8 +106,8 @@ describe('Rétention', () => {
     const lignes = screen.getAllByRole('row').map((ligne) => ligne.textContent)
     expect(lignes).toEqual([
       'Semaine duCartesQuestions de débutVérifications',
-      '16 sept.10 · 80 %4 sur 61 sur 1',
-      '23 sept.–––',
+      '16 sept.Cartes10 · 80 %Questions de début4 sur 6Vérifications1 sur 1',
+      '23 sept.Cartes–Questions de début–Vérifications–',
     ])
   })
 })

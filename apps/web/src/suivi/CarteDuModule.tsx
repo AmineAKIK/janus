@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { LegendeStatuts } from '../catalogue/RepartitionStatuts.tsx'
 import { NoeudBloc } from '@janus/ui'
 import type { DonneesSuivi } from './useSuivi.ts'
@@ -24,8 +25,48 @@ export function rangees(blocs: readonly BlocCarte[]): readonly (readonly BlocCar
   return resultat
 }
 
+/** Coupe les rangées trop larges pour la place disponible : la carte passe à la ligne, jamais de défilement. */
+export function rangeesRepliees(
+  blocs: readonly BlocCarte[],
+  colonnesMax: number,
+): readonly (readonly BlocCarte[])[] {
+  return rangees(blocs).flatMap((ligne) => {
+    const morceaux: (readonly BlocCarte[])[] = []
+    for (let debut = 0; debut < ligne.length; debut += colonnesMax) {
+      morceaux.push(ligne.slice(debut, debut + colonnesMax))
+    }
+    return morceaux
+  })
+}
+
+/** La largeur de la zone, ou null tant qu'elle n'est pas mesurée (et dans un environnement sans mise en page). */
+function useLargeur(zone: React.RefObject<HTMLElement | null>): number | null {
+  const [largeur, definir] = useState<number | null>(null)
+  useEffect(() => {
+    const element = zone.current
+    if (element === null) return
+    const lire = () => {
+      definir(element.clientWidth > 0 ? element.clientWidth : null)
+    }
+    lire()
+    if (typeof ResizeObserver === 'undefined') return
+    const observateur = new ResizeObserver(lire)
+    observateur.observe(element)
+    return () => {
+      observateur.disconnect()
+    }
+  }, [zone])
+  return largeur
+}
+
 export function CarteDuModule({ blocs }: { readonly blocs: DonneesSuivi['blocs'] }) {
-  const lignes = rangees(blocs)
+  const zone = useRef<HTMLDivElement>(null)
+  const disponible = useLargeur(zone)
+  const colonnesMax =
+    disponible === null
+      ? Number.POSITIVE_INFINITY
+      : Math.max(1, Math.floor((disponible + ECART_X) / (LARGEUR + ECART_X)))
+  const lignes = rangeesRepliees(blocs, colonnesMax)
   const positions = new Map<string, { x: number; y: number }>()
   lignes.forEach((ligne, rang) => {
     ligne.forEach((bloc, colonne) => {
@@ -52,7 +93,7 @@ export function CarteDuModule({ blocs }: { readonly blocs: DonneesSuivi['blocs']
   return (
     <div>
       <p className={`${styles['complement'] ?? ''} texte-petit-14`}>{texteCarte(blocs.length)}</p>
-      <div className={styles['defilement']}>
+      <div ref={zone} className={styles['zoneCarte']}>
         <div className={styles['carte']} style={{ width: largeur, height: hauteur }}>
           <svg className={styles['traits']} width={largeur} height={hauteur} aria-hidden="true">
             {traits.map(({ cle, de, vers }) => (

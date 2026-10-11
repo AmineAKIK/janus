@@ -58,11 +58,16 @@ export function ZoneAutonomie({ donnees }: { readonly donnees: Mesures['autonomi
   )
 }
 
+/** Le nom de la colonne, rappelé dans la cellule quand le tableau est empilé (voir `tableAdaptative`). */
+function Etiquette({ children }: { readonly children: string }) {
+  return <span className={styles['etiquette']}>{children}</span>
+}
+
 export function ZoneRetention({ donnees }: { readonly donnees: Mesures['retention'] }) {
   return (
     <CarteZone titre={T.retention}>
       <p className={`${styles['complement'] ?? ''} texte-petit-14`}>{T.retentionSousTitre}</p>
-      <div className={styles['tableDefilante']} tabIndex={0} role="region" aria-label={T.retention}>
+      <div className={styles['tableAdaptative']}>
         <table className={styles['tableau']}>
           <thead>
             <tr>
@@ -76,9 +81,18 @@ export function ZoneRetention({ donnees }: { readonly donnees: Mesures['retentio
             {donnees.map(({ debut, cartes, questions, verifications }) => (
               <tr key={debut}>
                 <th scope="row">{texteLundi(debut)}</th>
-                <td>{texteCartes(cartes.reussis, cartes.total)}</td>
-                <td>{texteSur(questions.reussis, questions.total)}</td>
-                <td>{texteSur(verifications.reussis, verifications.total)}</td>
+                <td>
+                  <Etiquette>{T.cartes}</Etiquette>
+                  {texteCartes(cartes.reussis, cartes.total)}
+                </td>
+                <td>
+                  <Etiquette>{T.questions}</Etiquette>
+                  {texteSur(questions.reussis, questions.total)}
+                </td>
+                <td>
+                  <Etiquette>{T.verifications}</Etiquette>
+                  {texteSur(verifications.reussis, verifications.total)}
+                </td>
               </tr>
             ))}
           </tbody>
