@@ -4,6 +4,7 @@ import { NoeudBloc } from '@janus/ui'
 import type { DonneesSuivi } from './useSuivi.ts'
 import styles from './Suivi.module.css'
 import { TEXTES_SUIVI as T, texteCarte } from './textes.ts'
+import { adresse } from '../routes/navigation.ts'
 
 type BlocCarte = DonneesSuivi['blocs'][number]
 
@@ -11,8 +12,6 @@ const LARGEUR = 48
 const HAUTEUR = 44
 const ECART_X = 24
 const ECART_Y = 40
-
-const adresse = (lien: string) => `#${lien}`
 
 /** Les blocs rangés par partie, dans l'ordre du plan : une rangée par partie. */
 export function rangees(blocs: readonly BlocCarte[]): readonly (readonly BlocCarte[])[] {

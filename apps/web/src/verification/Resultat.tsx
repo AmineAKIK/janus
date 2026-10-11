@@ -17,6 +17,7 @@ import {
 } from './textes.ts'
 import type { ResultatVerification } from './textes.ts'
 import styles from './Verification.module.css'
+import { aller } from '../routes/navigation.ts'
 
 type PartieCorrigee = ResultatVerification['parties'][number]
 
@@ -160,7 +161,7 @@ export function Resultat({
           type="button"
           variante="secondaire"
           onClick={() => {
-            window.location.hash = '/'
+            aller('/')
           }}
         >
           {T.retour}

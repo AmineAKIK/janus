@@ -11,6 +11,7 @@ import {
   tronquer,
 } from './textes.ts'
 import type { EtatQuestion } from './useSerie.ts'
+import { aller } from '../routes/navigation.ts'
 
 type Aujourdhui = SortieRoute<(typeof ROUTES)['GET /aujourdhui']>
 type Corrigee = Extract<EtatQuestion, { phase: 'corrigee' }>
@@ -81,7 +82,7 @@ export function FinDeSerie({
         type="button"
         variante="principal"
         onClick={() => {
-          window.location.hash = suivante?.lien ?? '/'
+          aller(suivante?.lien ?? '/')
         }}
       >
         {texteSuivante}

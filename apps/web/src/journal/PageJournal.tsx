@@ -31,8 +31,7 @@ import {
 } from './textes.ts'
 import { useJournal } from './useJournal.ts'
 import type { Ligne } from './useJournal.ts'
-
-const adresse = (lien: string) => `#${lien}`
+import { adresse } from '../routes/navigation.ts'
 
 function NoteDeLigne({
   ligne,

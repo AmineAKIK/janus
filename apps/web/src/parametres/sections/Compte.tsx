@@ -9,6 +9,7 @@ import styles from '../Parametres.module.css'
 import { TEXTES_COMPTE as T } from '../textes.ts'
 import { ChangerMotDePasse } from './ChangerMotDePasse.tsx'
 import { Sessions } from './Sessions.tsx'
+import { aller } from '../../routes/navigation.ts'
 
 const FUSEAUX = Intl.supportedValuesOf('timeZone')
 
@@ -83,7 +84,7 @@ export function SectionCompte({ reglages, enregistrer }: Proprietes) {
             {
               onSuccess: () => {
                 client.clear()
-                window.location.hash = '/connexion'
+                aller('/connexion')
               },
             },
           )

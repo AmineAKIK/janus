@@ -24,15 +24,9 @@ import {
   texteRetour,
 } from './textes.ts'
 import { texteTache } from './textesTaches.ts'
+import { adresse, aller } from '../routes/navigation.ts'
 
 type Donnees = SortieRoute<(typeof ROUTES)['GET /aujourdhui']>
-
-/** Les liens de l'appli sont des chemins du routeur à adresse en `#`. */
-const adresse = (lien: string) => `#${lien}`
-
-function allerA(lien: string) {
-  window.location.hash = lien
-}
 
 function Corps({ donnees }: { readonly donnees: Donnees }) {
   const { jour, retour, premiere_connexion: premiere, taches, module } = donnees
@@ -73,7 +67,7 @@ function Corps({ donnees }: { readonly donnees: Donnees }) {
             variante="principal"
             type="button"
             onClick={() => {
-              allerA(prochaine.lien)
+              aller(prochaine.lien)
             }}
           >
             {T.commencerPremier}
@@ -90,7 +84,7 @@ function Corps({ donnees }: { readonly donnees: Donnees }) {
             variante="principal"
             type="button"
             onClick={() => {
-              allerA(lienBlocEnCours)
+              aller(lienBlocEnCours)
             }}
           >
             {T.avancer}
@@ -99,7 +93,7 @@ function Corps({ donnees }: { readonly donnees: Donnees }) {
             variante="secondaire"
             type="button"
             onClick={() => {
-              allerA('/journal')
+              aller('/journal')
             }}
           >
             {T.voirJournal}
@@ -126,7 +120,7 @@ function Corps({ donnees }: { readonly donnees: Donnees }) {
           variante="principal"
           type="button"
           onClick={() => {
-            allerA(prochaine.lien)
+            aller(prochaine.lien)
           }}
         >
           {faites === 0 ? T.commencer : T.continuer}

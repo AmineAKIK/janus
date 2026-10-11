@@ -20,6 +20,7 @@ import {
   texteReviennentDans,
 } from './textes.ts'
 import { useRevision } from './useRevision.ts'
+import { aller } from '../routes/navigation.ts'
 
 const ESPACE = ' '
 
@@ -69,7 +70,7 @@ export function PageRevision() {
     aujourdhui.data?.module?.blocs.find(({ bloc }) => bloc === code)?.titre_court ?? ''
   const allerALEtapeSuivante = () => {
     revision.vider()
-    window.location.hash = suivante?.lien ?? '/'
+    aller(suivante?.lien ?? '/')
   }
   const etapeSuivante = (
     <Bouton type="button" variante="principal" onClick={allerALEtapeSuivante}>
@@ -234,7 +235,7 @@ export function PageRevision() {
               variante="secondaire"
               onClick={() => {
                 revision.vider()
-                window.location.hash = '/'
+                aller('/')
               }}
             >
               {T.quitter}

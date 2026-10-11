@@ -16,6 +16,7 @@ import { MiseAJour } from './pwa/MiseAJour.tsx'
 import { creerRouteur } from './routes/arbre.tsx'
 import { allerALaConnexion } from './routes/connexion.ts'
 import { creerHistorique, modeHistorique } from './routes/historique.ts'
+import { garderLesLiensDansLAppli } from './routes/navigation.ts'
 
 suivreLesErreurs({
   dsn: import.meta.env.VITE_SENTRY_DSN,
@@ -51,6 +52,8 @@ const routeur = creerRouteur(creerHistorique(modeHistorique(import.meta.env.VITE
   client,
   transport,
 })
+
+garderLesLiensDansLAppli(document)
 
 const miseAJour = creerMiseAJour(registerSW, import.meta.env.BASE_URL)
 miseAJour.demarrer()

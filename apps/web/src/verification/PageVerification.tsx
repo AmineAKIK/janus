@@ -14,6 +14,7 @@ import { Resultat } from './Resultat.tsx'
 import { LIBELLES_PARTIE, TEXTES_VERIFICATION as T, texteEnTete, texteRevuLe } from './textes.ts'
 import styles from './Verification.module.css'
 import { useVerification } from './useVerification.ts'
+import { aller } from '../routes/navigation.ts'
 
 type Aujourdhui = SortieRoute<(typeof ROUTES)['GET /aujourdhui']>
 
@@ -34,7 +35,7 @@ function EtapeSuivante({
       type="button"
       variante="principal"
       onClick={() => {
-        window.location.hash = suivante?.lien ?? '/'
+        aller(suivante?.lien ?? '/')
       }}
     >
       {suivante === undefined
@@ -61,7 +62,7 @@ export function PageVerification({ id }: { readonly id: string }) {
       params: { id },
       corps: { id: message },
     })
-    window.location.hash = '/'
+    aller('/')
   }
 
   let contenu
@@ -208,7 +209,7 @@ export function PageVerification({ id }: { readonly id: string }) {
               type="button"
               variante="secondaire"
               onClick={() => {
-                window.location.hash = '/'
+                aller('/')
               }}
             >
               {T.quitter}

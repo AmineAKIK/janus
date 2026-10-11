@@ -6,6 +6,7 @@ import { useEcriture } from '../../api/requetes.tsx'
 import { supprimerStockageIndexedDB } from '../../envoi/stockageEnvoi.ts'
 import styles from '../Parametres.module.css'
 import { TEXTES_COMPTE, TEXTES_ZONE as T } from '../textes.ts'
+import { aller } from '../../routes/navigation.ts'
 
 export function SupprimerCompte({ surFermeture }: { readonly surFermeture: () => void }) {
   const client = useQueryClient()
@@ -30,7 +31,7 @@ export function SupprimerCompte({ surFermeture }: { readonly surFermeture: () =>
               onSuccess: () => {
                 client.clear()
                 void supprimerStockageIndexedDB().then(() => {
-                  window.location.hash = '/connexion'
+                  aller('/connexion')
                 })
               },
             },
