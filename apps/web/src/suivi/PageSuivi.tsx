@@ -19,7 +19,7 @@ import {
 } from './mesures/Zones.tsx'
 import { ZoneAFaire, ZoneCout, ZoneDecisions, ZoneErreurs } from './Zones.tsx'
 import { CarteZone } from '@janus/ui'
-import { adresse, aller } from '../routes/navigation.ts'
+import { aller } from '../routes/navigation.ts'
 
 function allerA(recherche: string) {
   aller(`/tableau-de-bord${recherche}`)
@@ -116,14 +116,9 @@ export function PageSuivi({
 
   return (
     <div className={styles['page']}>
-      <div className={styles['enteteTitre']}>
-        <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-titre-28`}>
-          {T.titreEcran}
-        </h1>
-        <a href={adresse('/journal')} className={`${styles['lienJournal'] ?? ''} texte-petit-14`}>
-          {T.journal}
-        </a>
-      </div>
+      <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-titre-28`}>
+        {T.titreEcran}
+      </h1>
       <div className={styles['entete']}>
         {donnees !== undefined && donnees.modules.length > 0 && (
           <label className={`${styles['champ'] ?? ''} texte-petit-14`}>
