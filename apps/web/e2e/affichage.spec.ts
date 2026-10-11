@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test'
 
 const VITRINE = './vitrine.html'
-const FOND_CLAIR = 'rgb(247, 244, 238)'
-const FOND_SOMBRE = 'rgb(23, 21, 18)'
+const FOND_CLAIR = 'rgb(255, 255, 255)'
+const FOND_SOMBRE = 'rgb(20, 23, 26)'
 
 test('en thème Système, le réglage du téléphone change les couleurs sans recharger', async ({
   page,
