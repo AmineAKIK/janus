@@ -37,10 +37,29 @@
   grid-template-columns: minmax(0, 1fr);
   gap: var(--espacement-24);
 }
+/* Large, les cartes s'écoulent en deux colonnes équilibrées, sans trou sous la plus courte. */
 @media (min-width: 64rem) {
   .colonnes {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    display: block;
+    column-count: 2;
+    column-gap: var(--espacement-24);
   }
+  .colonnes > * {
+    break-inside: avoid;
+    margin-block-end: var(--espacement-24);
+  }
+}
+.enteteTitre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacement-8) var(--espacement-16);
+}
+.lienJournal {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--cible-tactile-min);
 }
 .colonne {
   display: flex;

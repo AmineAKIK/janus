@@ -35,17 +35,12 @@ function Corps({
   const titreBloc = (code: string) =>
     donnees.blocs.find(({ bloc }) => bloc === code)?.titre_court ?? ''
   return (
-    <div className={styles['colonnes']}>
-      <div className={styles['colonne']}>
+    <>
+      <div className={styles['colonnes']}>
         <CarteZone titre={T.carte}>
           <CarteDuModule blocs={donnees.blocs} />
         </CarteZone>
         <ZoneAFaire donnees={donnees.a_faire} titreBloc={titreBloc} />
-        <ZoneAutonomie donnees={donnees.mesures.autonomie} />
-        <ZoneAisance donnees={donnees.mesures.aisance} />
-        <ZoneTemps donnees={donnees.mesures.temps} />
-      </div>
-      <div className={styles['colonne']}>
         <ZoneErreurs erreurs={donnees.erreurs} />
         <ZoneDecisions
           decisions={donnees.decisions}
@@ -56,6 +51,9 @@ function Corps({
           }}
           surLever={suivi.lever}
         />
+        <ZoneAutonomie donnees={donnees.mesures.autonomie} />
+        <ZoneAisance donnees={donnees.mesures.aisance} />
+        <ZoneTemps donnees={donnees.mesures.temps} />
         <ZoneRetention donnees={donnees.mesures.retention} />
         <ZoneCalibration donnees={donnees.mesures.calibration} />
         <ZoneRevue
@@ -81,7 +79,7 @@ function Corps({
           }}
         />
       )}
-    </div>
+    </>
   )
 }
 
@@ -117,9 +115,14 @@ export function PageSuivi({
 
   return (
     <div className={styles['page']}>
-      <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-titre-28`}>
-        {T.titreEcran}
-      </h1>
+      <div className={styles['enteteTitre']}>
+        <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-titre-28`}>
+          {T.titreEcran}
+        </h1>
+        <a href="#/journal" className={`${styles['lienJournal'] ?? ''} texte-petit-14`}>
+          {T.journal}
+        </a>
+      </div>
       <div className={styles['entete']}>
         {donnees !== undefined && donnees.modules.length > 0 && (
           <label className={`${styles['champ'] ?? ''} texte-petit-14`}>
@@ -146,7 +149,6 @@ export function PageSuivi({
             recherche({ periode: valeur })
           }}
         />
-        <a href="#/journal">{T.journal}</a>
       </div>
       {contenu}
     </div>
