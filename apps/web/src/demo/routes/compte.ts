@@ -93,7 +93,7 @@ export const ROUTES_COMPTE_DEMO = [
       sessions: [
         {
           id: SESSION_COURANTE,
-          appareil: 'Cet appareil',
+          appareil: 'Navigateur de démonstration',
           creee_le: magasin.lire().premierLancement,
           derniere_activite: maintenant,
           courante: true,

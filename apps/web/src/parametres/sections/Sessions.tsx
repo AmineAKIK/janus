@@ -17,7 +17,7 @@ export function Sessions() {
 
   return (
     <section aria-label={T.sessions} className={styles['lignes']}>
-      <h3 className="texte-petit-14">{T.sessions}</h3>
+      <h3 className={`${styles['titreSessions'] ?? ''} texte-corps-16`}>{T.sessions}</h3>
       <ul className={styles['liste']}>
         {lecture.data?.sessions.map((session) => (
           <li key={session.id} className={styles['session']}>

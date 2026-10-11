@@ -10,7 +10,9 @@
   outline: none;
 }
 .retour {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--cible-tactile-min, 44px);
   margin-block-end: var(--espacement-8);
 }
 .corps {
@@ -79,13 +81,33 @@
   gap: var(--espacement-8);
 }
 .selection {
-  max-inline-size: 100%;
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: var(--hauteur-champ);
+}
+/* Réglage dont le contrôle est large (liste déroulante) : libellé au-dessus, contrôle pleine largeur. */
+.ligneChamp.ligneChamp {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+.ligneChamp > :last-child {
+  max-width: 100%;
+}
+.titreSessions {
+  margin: 0;
+  font-weight: 600;
 }
 .session {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--espacement-16);
+  padding-block: var(--espacement-12);
+  border-block-start: 1px solid var(--couleur-ligne);
+}
+.session:first-child {
+  border-block-start: 0;
 }
 
 /* Liste des sections sur mobile : une ligne de navigation avec chevron par section. */
