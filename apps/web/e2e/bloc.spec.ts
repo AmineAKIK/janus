@@ -109,15 +109,7 @@ test.describe('page d’un bloc', () => {
           )
         await item.getByLabel('Sûr').check()
         await item.getByRole('button', { name: 'Envoyer' }).click()
-        try {
-          await expect(item.locator('.correction')).toBeVisible({ timeout: 15_000 })
-        } catch {
-          const dedans = await fiche.locator('body').innerText()
-          const dehors = await page.locator('body').innerText()
-          throw new Error(
-            `DIAG ${String(rang)}/${String(nombre)} APPLI ${dehors.replace(/\s+/g, ' ').slice(0, 400)} FICHE ${dedans.replace(/\s+/g, ' ').slice(0, 700)}`,
-          )
-        }
+        await expect(item.locator('.correction')).toBeVisible({ timeout: 15_000 })
       }
       await serieEnregistree(page)
     }
@@ -141,6 +133,8 @@ test.describe('page d’un bloc', () => {
     await expect(page.getByText(/Consolidation disponible à/)).toHaveCount(0)
 
     await allerEtape(page, 'Consolidation')
+    // La fiche se redessine quand l'appli lui renvoie le statut : on ne tape qu'après.
+    await expect(fiche.getByText(/consolidation_a_faire/)).toBeVisible()
     await repondre()
     await fil.getByRole('button', { name: 'Bilan' }).click()
     await expect(page.getByText('Statut calculé')).toBeVisible()
