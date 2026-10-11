@@ -55,8 +55,8 @@ describe('tokens.css', () => {
     expect(css).toContain('--hauteur-bouton: 48px;')
     expect(css).toContain('--taille-icone: 24px;')
     expect(css).toContain('@media (min-width: 1024px)')
-    expect(css).toContain('--hauteur-champ: 40px;')
-    expect(css).toContain('--hauteur-bouton: 40px;')
+    expect(css).toContain('--hauteur-champ: 44px;')
+    expect(css).toContain('--hauteur-bouton: 44px;')
     expect(css).toContain('--taille-icone: 20px;')
   })
 
