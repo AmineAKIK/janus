@@ -1,4 +1,5 @@
 import type { TypeEtape } from '@janus/contrats'
+import { useState } from 'react'
 import styles from './Bloc.module.css'
 import { TEXTES_BLOC } from './textes.ts'
 
@@ -38,9 +39,27 @@ export function FilEtapes({
 }) {
   const faites = etapesFaites(etapes, vues)
   const active = courante ?? etapes[0]?.id
+  const [ouvert, setOuvert] = useState(false)
+  const rang = Math.max(
+    0,
+    etapes.findIndex(({ id }) => id === active),
+  )
   return (
-    <nav aria-label={TEXTES_BLOC.etapes} className={styles['fil']}>
-      <ol className={styles['etapes']}>
+    <nav aria-label={TEXTES_BLOC.etapes} className={styles['fil']} data-ouvert={ouvert}>
+      {/* Étroit, le fil tient sur une ligne : l'étape en cours, et la liste au toucher. */}
+      <button
+        type="button"
+        className={`${styles['bascule'] ?? ''} texte-petit-14`}
+        aria-expanded={ouvert}
+        aria-controls="liste-etapes"
+        onClick={() => {
+          setOuvert((courant) => !courant)
+        }}
+      >
+        <span>{TEXTES_BLOC.etapeSurTotal(etapes[rang]?.titre ?? '', rang + 1, etapes.length)}</span>
+        <span aria-hidden="true">{ouvert ? '▴' : '▾'}</span>
+      </button>
+      <ol id="liste-etapes" className={styles['etapes']}>
         {etapes.map(({ id, titre }) => (
           <li key={id}>
             <button
@@ -49,6 +68,7 @@ export function FilEtapes({
               className={`${styles['onglet'] ?? ''} ${id === active ? (styles['courant'] ?? '') : ''} texte-petit-14`}
               title={verrouillees.has(id) ? TEXTES_BLOC.verrouillee : undefined}
               onClick={() => {
+                setOuvert(false)
                 if (verrouillees.has(id) && surVerrou !== undefined) surVerrou(id)
                 else surChoix(id)
               }}

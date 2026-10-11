@@ -84,7 +84,7 @@ export function PageParametres({ section }: { readonly section?: string }) {
     )
   } else {
     contenu = visibles.map(({ cle, titre }) => (
-      <section key={cle} id={idSection(cle)} aria-label={titre}>
+      <section key={cle} id={idSection(cle)} aria-label={titre} className={styles['section']}>
         <EnTeteSection titre={titre} />
         <div className={styles['lignes']}>{corps(cle)}</div>
       </section>
@@ -124,6 +124,9 @@ export function PageParametres({ section }: { readonly section?: string }) {
         <div className={styles['sections']}>{contenu}</div>
       </div>
       <p className="texte-petit-14">{T.pied(NOM_APPLI)}</p>
+      <p className={`${styles['version'] ?? ''} texte-legende-12`}>
+        {T.version(import.meta.env.VITE_COMMIT ?? 'local')}
+      </p>
     </div>
   )
 }

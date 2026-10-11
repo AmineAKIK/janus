@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
-import { ouvrirSession } from './session'
+import { ouvrirFil, ouvrirSession } from './session'
 
 /**
  * Garde-fous de mise en page : chaque écran de la démo est parcouru à quatre largeurs et dans les
@@ -188,6 +188,7 @@ for (const largeur of [320, 1280]) {
       const onglets = page
         .getByRole('navigation', { name: 'Étapes de la fiche' })
         .getByRole('button')
+      await ouvrirFil(page)
       await expect(onglets.first()).toBeVisible()
       for (const onglet of await onglets.all()) {
         await expect(onglet).toBeInViewport({ ratio: 1 })

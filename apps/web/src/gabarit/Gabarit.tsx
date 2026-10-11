@@ -98,9 +98,6 @@ export function Gabarit() {
         className={`${styles['contenu'] ?? ''}${large ? ` ${styles['large'] ?? ''}` : ''}`}
       >
         <Outlet />
-        <p className={`${styles['commit'] ?? ''} texte-legende-12`}>
-          {import.meta.env.VITE_COMMIT ?? 'local'}
-        </p>
       </main>
     </div>
   )

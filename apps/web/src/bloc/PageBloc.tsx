@@ -206,27 +206,6 @@ function FicheOuverte({
               surChanger={setChangerNiveau}
             />
           )}
-        {typeCourant === 'bilan' && (
-          <EncartBilan
-            erreurEnAttente={enAttente.length > 0}
-            libelleErreur={(id) =>
-              (erreursCritiques.find((erreur) => erreur.id === id)?.libelle ?? id).replace(
-                /\.$/,
-                '',
-              )
-            }
-            statut={hote.statut.statut}
-            manque={hote.statut.manque}
-            maintenant={instantReel()}
-            reponsesApresRetourCours={hote.reponsesApresRetourCours.map(
-              ({ correction, reponse }) => ({
-                id: correction.id,
-                question: texteQuestion(correction.question),
-                reponse,
-              }),
-            )}
-          />
-        )}
         {envoi.etat === 'attente' && (
           <EncartHorsConnexion derniereReponse={envoi.derniereReponse} />
         )}
@@ -262,6 +241,27 @@ function FicheOuverte({
             code={donnees.bloc}
             titre={titre}
             src={src}
+          />
+        )}
+        {typeCourant === 'bilan' && (
+          <EncartBilan
+            erreurEnAttente={enAttente.length > 0}
+            libelleErreur={(id) =>
+              (erreursCritiques.find((erreur) => erreur.id === id)?.libelle ?? id).replace(
+                /\.$/,
+                '',
+              )
+            }
+            statut={hote.statut.statut}
+            manque={hote.statut.manque}
+            maintenant={instantReel()}
+            reponsesApresRetourCours={hote.reponsesApresRetourCours.map(
+              ({ correction, reponse }) => ({
+                id: correction.id,
+                question: texteQuestion(correction.question),
+                reponse,
+              }),
+            )}
           />
         )}
       </div>
