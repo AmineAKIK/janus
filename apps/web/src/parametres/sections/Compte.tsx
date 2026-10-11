@@ -37,12 +37,13 @@ export function SectionCompte({ reglages, enregistrer }: Proprietes) {
           <Bouton
             type="button"
             variante="secondaire"
+            aria-label={T.changer}
             onClick={() => {
               setChange(false)
               setDialogue(true)
             }}
           >
-            {T.changer}
+            {T.modifier}
           </Bouton>
         }
       />

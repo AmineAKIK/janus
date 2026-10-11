@@ -1,4 +1,4 @@
-import { BandeauAlerte, ChevronRight, EnTeteSection, NOM_APPLI } from '@janus/ui'
+import { BandeauAlerte, ChevronRight, EnTeteSection } from '@janus/ui'
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
 import { Chargement, Erreur } from '../catalogue/EtatEcran.tsx'
@@ -24,6 +24,7 @@ const idSection = (cle: CleSection) => `section-${cle}`
 
 /** Sur le bureau, la page montre toutes les sections ; une adresse de section y mène par son ancre. */
 export function PageParametres({ section }: { readonly section?: string }) {
+  const commit = import.meta.env.VITE_COMMIT
   const bureau = useBureau()
   const { reglages, erreur, recharger, etat, enregistrer } = useReglages()
   const choisie = estSection(section) ? section : undefined
@@ -124,10 +125,10 @@ export function PageParametres({ section }: { readonly section?: string }) {
         )}
         <div className={styles['sections']}>{contenu}</div>
       </div>
-      <p className="texte-petit-14">{T.pied(NOM_APPLI)}</p>
-      <p className={`${styles['version'] ?? ''} texte-legende-12`}>
-        {T.version(import.meta.env.VITE_COMMIT ?? 'local')}
-      </p>
+      <p className="texte-petit-14">{T.pied}</p>
+      {commit !== undefined && commit !== '' && (
+        <p className={`${styles['version'] ?? ''} texte-legende-12`}>{T.version(commit)}</p>
+      )}
     </div>
   )
 }

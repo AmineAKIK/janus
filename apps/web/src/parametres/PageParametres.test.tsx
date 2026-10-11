@@ -80,7 +80,9 @@ describe('Paramètres sur mobile', () => {
       'Zone sensible',
       'Démo',
     ])
-    expect(screen.getByText(/ne vend pas tes données/)).toBeVisible()
+    expect(
+      screen.getByText('Tes données t’appartiennent : Janus ne les vend à personne.'),
+    ).toBeVisible()
     await utilisateur.click(within(liste).getByRole('link', { name: 'Révision' }))
   })
 

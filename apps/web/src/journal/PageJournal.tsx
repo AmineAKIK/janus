@@ -478,16 +478,11 @@ function Corps({
         {echecExport && <BandeauAlerte type="erreur">{T.erreurExport}</BandeauAlerte>}
 
         {journal.entrees.length === 0 ? (
-          <div className={styles['vide']}>
-            <p aria-hidden="true" className={styles['icone']}>
-              ◷
-            </p>
-            <EtatVideZone
-              message={
-                actifs > 0 || recherche.module !== undefined ? T.videFiltres : T.videSansFiltre
-              }
-            />
-          </div>
+          <EtatVideZone
+            message={
+              actifs > 0 || recherche.module !== undefined ? T.videFiltres : T.videSansFiltre
+            }
+          />
         ) : (
           [...jours].map(([jour, lignes]) => (
             <section key={jour} className={styles['jour']} aria-label={dateLongue(jour)}>
