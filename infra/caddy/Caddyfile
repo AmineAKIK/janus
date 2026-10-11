@@ -21,6 +21,7 @@ app.{$DOMAINE} {
 	}
 
 	handle /api/* {
+		header X-Robots-Tag "noindex, nofollow"
 		reverse_proxy api:3000
 	}
 
@@ -44,6 +45,7 @@ fiches.{$DOMAINE} {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		Content-Security-Policy "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; img-src data: 'self'; font-src data:; media-src data: 'self'; connect-src 'none'; frame-ancestors https://app.{$DOMAINE}"
 		X-Content-Type-Options nosniff
+		X-Robots-Tag "noindex, nofollow"
 		Cache-Control "public, max-age=31536000, immutable"
 		-Server
 	}
