@@ -106,31 +106,18 @@
 }
 
 .fil {
-  position: relative;
   background: var(--couleur-surface);
   border-block-end: 1px solid var(--couleur-ligne);
 }
 
-/* Un dégradé à droite annonce qu'il y a d'autres étapes quand la rangée défile. */
-.fil::after {
-  position: absolute;
-  inset-block: 0;
-  inset-inline-end: 0;
-  inline-size: 24px;
-  background: linear-gradient(to right, transparent, var(--couleur-surface));
-  content: '';
-  pointer-events: none;
-}
-
 .etapes {
   display: flex;
-  gap: var(--espacement-8);
-  justify-content: safe center;
+  flex-wrap: wrap;
+  gap: 0 var(--espacement-4);
+  justify-content: center;
   margin: 0;
-  padding: 0 var(--espacement-24) 0 var(--espacement-16);
-  overflow-x: auto;
+  padding: 0 var(--espacement-12);
   list-style: none;
-  scrollbar-width: none;
 }
 
 .onglet {
@@ -152,10 +139,8 @@
 .courant::after {
   position: absolute;
   inset-block-end: 0;
-  inset-inline-start: 50%;
-  inline-size: 84px;
+  inset-inline: var(--espacement-12);
   block-size: 2px;
-  margin-inline-start: -42px;
   background: var(--couleur-accent);
   content: '';
 }
