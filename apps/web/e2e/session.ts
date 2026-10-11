@@ -43,7 +43,13 @@ export async function serieEnregistree(page: Page, statut: string): Promise<void
 export async function allerEtape(page: Page, nom: string): Promise<void> {
   await ouvrirFil(page)
   await etape(page, nom).click()
+  // Étroit, le fil se replie après le choix : on le rouvre pour lire l'étape courante, puis on le referme.
+  await ouvrirFil(page)
   await expect(etape(page, nom)).toHaveAttribute('aria-current', 'step')
+  const bascule = page
+    .getByRole('navigation', { name: 'Étapes de la fiche' })
+    .getByRole('button', { expanded: true })
+  if (await bascule.isVisible()) await bascule.click()
 }
 
 /** Étroit, le fil des étapes est replié derrière un bouton ; large, il n'y a rien à ouvrir. */
@@ -53,4 +59,13 @@ export async function ouvrirFil(page: Page): Promise<void> {
     .getByRole('button', { expanded: false })
     .first()
   if (await bascule.isVisible()) await bascule.click()
+}
+
+/** Clique une étape du fil, replié ou non, sans attendre que la fiche l'affiche. */
+export async function cliquerEtape(page: Page, nom: string): Promise<void> {
+  await ouvrirFil(page)
+  await page
+    .getByRole('navigation', { name: 'Étapes de la fiche' })
+    .getByRole('button', { name: nom, exact: true })
+    .click()
 }
