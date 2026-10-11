@@ -47,6 +47,7 @@ export function SectionCompte({ reglages, enregistrer }: Proprietes) {
       />
       {change && <BandeauAlerte type="succes">{T.motDePasseChange}</BandeauAlerte>}
       <LigneReglage
+        className={styles['ligneChamp'] ?? ''}
         libelle={T.fuseau}
         controle={
           <select
