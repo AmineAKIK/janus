@@ -10,12 +10,15 @@ export function EncartBilan({
   maintenant,
   erreurEnAttente = false,
   reponsesApresRetourCours = [],
+  libelleErreur,
 }: {
   readonly statut: Statut
   readonly manque: readonly Manque[]
   readonly maintenant: string
   /** Une erreur repérée par l'IA attend la décision d'Amine. */
   readonly erreurEnAttente?: boolean
+  /** Le nom lisible d'une erreur critique, depuis le manifeste du bloc. */
+  readonly libelleErreur?: (id: string) => string
   /** Réponses faites après « Revoir le cours », visibles comme preuves non comptées. */
   readonly reponsesApresRetourCours?: readonly {
     readonly id: string
@@ -45,7 +48,7 @@ export function EncartBilan({
                 <li
                   key={`${element.code}:${(element.questions ?? element.exercices ?? element.erreurs ?? []).join()}`}
                 >
-                  {texteManque(element, maintenant)}
+                  {texteManque(element, maintenant, libelleErreur)}
                 </li>
               ))}
             </ul>

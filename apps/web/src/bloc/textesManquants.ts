@@ -7,7 +7,11 @@ const liste = (elements: readonly string[] | undefined) => (elements ?? []).join
  * Une phrase par code de manque du moteur. `maintenant` sert à écrire les heures (« 15 h 20 »,
  * précédée de la date si ce n'est pas aujourd'hui).
  */
-export function texteManque(manque: Manque, maintenant: string): string {
+export function texteManque(
+  manque: Manque,
+  maintenant: string,
+  libelleErreur: (id: string) => string = (id) => id,
+): string {
   const quand = manque.apres === undefined ? '' : formaterInstant(manque.apres, maintenant)
   switch (manque.code) {
     case 'restitution_incomplete':
@@ -31,7 +35,7 @@ export function texteManque(manque: Manque, maintenant: string): string {
     case 'erreur_ouverte':
       return manque.erreurs === undefined
         ? 'Réussis une question sur chaque erreur ouverte.'
-        : `Réussis une question sur chaque erreur ouverte : ${liste(manque.erreurs)}.`
+        : `Réussis une question sur chaque erreur ouverte : ${liste(manque.erreurs.map(libelleErreur))}.`
     case 'verification_a_venir':
       return `La vérification sera possible à partir de ${quand}.`
     case 'verification_a_faire':

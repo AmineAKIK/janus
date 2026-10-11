@@ -31,6 +31,7 @@ function FicheOuverte({
   src,
   etapes,
   problemes,
+  erreursCritiques,
   questions,
   relire,
   relireBloc,
@@ -42,6 +43,7 @@ function FicheOuverte({
   readonly delaiConsolidationMinutes: number
   readonly etapes: readonly EtapeAffichee[]
   readonly problemes: readonly string[]
+  readonly erreursCritiques: readonly { readonly id: string; readonly libelle: string }[]
   readonly questions: Readonly<
     Record<SerieVerrou, readonly { readonly id: string; readonly question: string }[]>
   >
@@ -207,6 +209,12 @@ function FicheOuverte({
         {typeCourant === 'bilan' && (
           <EncartBilan
             erreurEnAttente={enAttente.length > 0}
+            libelleErreur={(id) =>
+              (erreursCritiques.find((erreur) => erreur.id === id)?.libelle ?? id).replace(
+                /\.$/,
+                '',
+              )
+            }
             statut={hote.statut.statut}
             manque={hote.statut.manque}
             maintenant={instantReel()}
@@ -318,6 +326,7 @@ export function PageBloc({ blocId }: { readonly blocId: string }) {
       src={detail.fiche_url}
       etapes={detail.manifeste.etapes}
       problemes={detail.problemes}
+      erreursCritiques={detail.manifeste.erreurs_critiques}
       questions={{
         restitution: detail.manifeste.restitution,
         consolidation: detail.manifeste.consolidation,

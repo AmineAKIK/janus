@@ -96,7 +96,7 @@ test.describe('page d’un bloc', () => {
     await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
     const fil = page.getByRole('navigation', { name: 'Étapes de la fiche' })
 
-    const repondre = async () => {
+    const repondre = async (statutApres: string) => {
       const items = fiche.locator('.item')
       const nombre = await items.count()
       for (let rang = 0; rang < nombre; rang++) {
@@ -111,7 +111,7 @@ test.describe('page d’un bloc', () => {
         await item.getByRole('button', { name: 'Envoyer' }).click()
         await expect(item.locator('.correction')).toBeVisible({ timeout: 15_000 })
       }
-      await serieEnregistree(page)
+      await serieEnregistree(page, statutApres)
     }
 
     await allerEtape(page, 'Pratique guidée')
@@ -124,7 +124,7 @@ test.describe('page d’un bloc', () => {
     await expect(fiche.getByText('Envoyé : réussi, aide 0')).toBeVisible()
 
     await allerEtape(page, 'Restitution')
-    await repondre()
+    await repondre('Vu')
     await allerEtape(page, 'Consolidation')
     await expect(page.getByText(/Consolidation disponible à/)).toBeVisible()
     await expect(page.getByText('Au moins 1 h après la restitution.')).toBeVisible()
@@ -134,8 +134,8 @@ test.describe('page d’un bloc', () => {
 
     await allerEtape(page, 'Consolidation')
     // La fiche se redessine quand l'appli lui renvoie le statut : on ne tape qu'après.
-    await expect(fiche.getByText(/consolidation_a_faire/)).toBeVisible()
-    await repondre()
+    await expect(fiche.getByText('Statut : Vu')).toBeVisible()
+    await repondre('Acquis provisoirement')
     await fil.getByRole('button', { name: 'Bilan' }).click()
     await expect(page.getByText('Statut calculé')).toBeVisible()
     await expect(page.getByText(/Statut calculé/)).toContainText('Acquis provisoirement')
