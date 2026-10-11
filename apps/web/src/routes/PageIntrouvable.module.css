@@ -1,10 +1,23 @@
+/* Centrée dans la place que laisse la navigation : barre basse sur mobile, barre latérale dès 1024 px. */
 .page {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--espacement-16);
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacement-12);
+  box-sizing: border-box;
   max-inline-size: var(--largeur-lecture);
-  margin-block-start: var(--espacement-48);
+  min-block-size: calc(
+    100dvh - var(--hauteur-barre-navigation) - env(safe-area-inset-bottom, 0px) - 2 *
+      var(--espacement-24) - var(--espacement-24)
+  );
+  margin-inline: auto;
+  text-align: center;
+}
+
+.marque {
+  margin-block-end: var(--espacement-8);
+  color: var(--couleur-texte-discret);
 }
 
 .code {
@@ -12,36 +25,26 @@
   color: var(--couleur-texte-discret);
 }
 
+.adresse {
+  max-inline-size: 100%;
+  margin: 0;
+  padding: var(--espacement-4) var(--espacement-12);
+  border: 1px solid var(--couleur-ligne);
+  border-radius: var(--rayon-champ);
+  background: var(--couleur-surface);
+  color: var(--couleur-texte-secondaire);
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
 .explication {
   margin: 0;
   color: var(--couleur-texte-secondaire);
 }
 
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--espacement-12);
-  margin-block-start: var(--espacement-8);
-}
-
-/* Le lien principal a la forme du bouton principal. */
-.principal {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  min-block-size: var(--hauteur-bouton);
-  padding: 0 var(--espacement-24);
-  border-radius: var(--rayon-champ);
-  background: var(--couleur-accent);
-  color: var(--couleur-accent-sur-fond);
-  font-weight: 600;
-  text-decoration: none;
-  transition: opacity var(--duree-transition);
-}
-
-.principal:hover {
-  color: var(--couleur-accent-sur-fond);
-  opacity: 0.9;
+@media (min-width: 1024px) {
+  .page {
+    min-block-size: calc(100dvh - 2 * var(--espacement-48));
+  }
 }

@@ -1,5 +1,5 @@
 import { createMemoryHistory } from '@tanstack/react-router'
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { MANIFESTES_GRAINE } from '../demo/graine.ts'
@@ -220,14 +220,17 @@ describe('lien d’évitement', () => {
 })
 
 describe('page introuvable', () => {
-  it('annonce que la page n’existe pas et renvoie à Aujourd’hui', async () => {
+  it('annonce que la page n’existe pas, montre l’adresse et laisse la navigation', async () => {
     await afficher('/n-importe-quoi')
 
     expect(
       screen.getByRole('heading', { level: 1, name: 'Cette page n’existe pas' }),
     ).toBeInTheDocument()
     expect(document.title).toBe('Cette page n’existe pas · Janus')
-    expect(screen.getByRole('link', { name: 'Aller à Aujourd’hui' })).toHaveAttribute('href', '/')
+    expect(within(screen.getByRole('main')).getByText('/n-importe-quoi')).toBeInTheDocument()
+    expect(within(screen.getByRole('main')).queryByRole('link')).toBeNull()
+    expect(within(screen.getByRole('main')).queryByRole('button')).toBeNull()
+    expect(screen.getByRole('navigation', { name: 'Navigation principale' })).toBeInTheDocument()
   })
 })
 
