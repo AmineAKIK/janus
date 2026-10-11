@@ -81,6 +81,7 @@ fi
 phase=bascule
 if [[ -z $precedent ]]; then
   composition "$cible" up -d --no-build --wait --wait-timeout 120 postgres
+  composition "$cible" run --rm --no-deps -T --user root --entrypoint chown api node:node /fiches
 fi
 composition "$cible" up -d --no-build --no-deps api web
 verifier "$cible"
