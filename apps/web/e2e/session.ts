@@ -32,10 +32,10 @@ export function etape(page: Page, nom: string): Locator {
 
 /**
  * Attend que le serveur ait recalculé le statut après la dernière réponse d'une série : la fiche
- * n'affiche alors plus de série « incomplète » dans ce qui manque.
+ * affiche alors le statut attendu (« Vu » après la restitution, par exemple).
  */
-export async function serieEnregistree(page: Page): Promise<void> {
-  await expect(page.frameLocator('iframe').getByText(/_incomplete/)).toHaveCount(0)
+export async function serieEnregistree(page: Page, statut: string): Promise<void> {
+  await expect(page.frameLocator('iframe').getByText(`Statut : ${statut}`)).toBeVisible()
 }
 
 /** Ouvre une étape et attend que la fiche l'ait affichée : ce qu'on lit ensuite est celui de l'étape. */

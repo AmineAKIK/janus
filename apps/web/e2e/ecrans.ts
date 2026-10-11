@@ -48,7 +48,7 @@ async function apresRestitution(page: Page) {
   await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
   await allerEtape(page, 'Restitution')
   await repondreALaSerie(page)
-  await serieEnregistree(page)
+  await serieEnregistree(page, 'Vu')
   await allerEtape(page, 'Consolidation')
 }
 

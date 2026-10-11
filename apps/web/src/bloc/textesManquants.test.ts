@@ -76,4 +76,15 @@ describe('formaterDelai', () => {
   ])('%i minutes : %s', (minutes, attendu) => {
     expect(formaterDelai(minutes)).toBe(attendu)
   })
+
+  it('erreur_ouverte : écrit le nom de l’erreur, pas son identifiant', () => {
+    const phrase = texteManque(
+      { code: 'erreur_ouverte', erreurs: ['confond_compilateur_interpreteur'] },
+      '2026-10-10T12:00:00Z',
+      () => 'Confond compilateur et interpréteur',
+    )
+    expect(phrase).toBe(
+      'Réussis une question sur chaque erreur ouverte : Confond compilateur et interpréteur.',
+    )
+  })
 })
