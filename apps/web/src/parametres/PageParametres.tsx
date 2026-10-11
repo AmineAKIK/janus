@@ -97,7 +97,7 @@ export function PageParametres({ section }: { readonly section?: string }) {
       <header>
         {!bureau && choisie !== undefined && (
           <a href={adresse('/parametres')} className={`${styles['retour'] ?? ''} texte-petit-14`}>
-            ← {T.retour}
+            {T.retour}
           </a>
         )}
         <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-titre-28`}>
