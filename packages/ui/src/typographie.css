@@ -111,3 +111,40 @@ a {
   line-height: 1.25rem;
   font-variant-ligatures: none;
 }
+
+/* Liste déroulante native, restylée : même contour, même hauteur et même focus que les champs.
+   Le menu ouvert reste celui du navigateur, accessible au clavier et sur mobile. */
+select {
+  box-sizing: border-box;
+  min-height: var(--hauteur-champ);
+  padding: 0 var(--espacement-32) 0 var(--espacement-12);
+  border: 1px solid var(--couleur-controle);
+  border-radius: var(--rayon-champ);
+  appearance: none;
+  background-color: var(--couleur-fond);
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentcolor 50%),
+    linear-gradient(135deg, currentcolor 50%, transparent 50%);
+  background-position:
+    calc(100% - 1.125rem) 50%,
+    calc(100% - 0.8125rem) 50%;
+  background-repeat: no-repeat;
+  background-size:
+    0.3125rem 0.3125rem,
+    0.3125rem 0.3125rem;
+  color: var(--couleur-encre);
+  font: inherit;
+  transition: border-color var(--duree-transition) ease;
+}
+
+select:focus-visible {
+  outline: none;
+  border-color: var(--couleur-accent);
+  box-shadow: var(--focus-anneau);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  select {
+    transition: none;
+  }
+}

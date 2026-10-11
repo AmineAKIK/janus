@@ -37,15 +37,7 @@
   gap: var(--espacement-4);
   color: var(--couleur-texte-secondaire);
 }
-.champ select {
-  min-height: 44px;
-  padding: 0 var(--espacement-8);
-  border: 1px solid var(--couleur-ligne);
-  border-radius: var(--rayon-champ);
-  background: var(--couleur-surface);
-  color: var(--couleur-encre);
-  font: inherit;
-}
+
 .puces {
   display: flex;
   flex-wrap: wrap;
@@ -155,12 +147,21 @@
 .choixFiltre {
   min-height: 44px;
   padding: 0 var(--espacement-12);
-  border: 1px solid var(--couleur-ligne);
+  border: 1px solid var(--couleur-controle);
   border-radius: var(--rayon-champ);
-  background: var(--couleur-surface);
+  background: var(--couleur-fond);
   color: var(--couleur-encre);
   font: inherit;
   cursor: pointer;
+  transition:
+    background-color var(--duree-transition) ease,
+    border-color var(--duree-transition) ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .choixFiltre {
+    transition: none;
+  }
 }
 
 .choixFiltreActif {
