@@ -4,7 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 import { NOM_APPLI } from '../../packages/ui/src/nomAppli.ts'
 
 // `couleur/fond` clair, de `packages/ui/src/tokens.css`.
-const FOND_CLAIR = '#f7f4ee'
+const FOND_CLAIR = '#ffffff'
 
 // `VITE_BASE` vaut `/janus/` en production et `/janus/pr-preview/pr-<numéro>/` pour un aperçu de PR.
 export default defineConfig({

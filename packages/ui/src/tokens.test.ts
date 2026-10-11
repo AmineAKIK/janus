@@ -6,31 +6,35 @@ const css = readFileSync(new URL('./tokens.css', import.meta.url), 'utf8')
 
 /** Variable Figma `groupe/nom` -> variable CSS `--groupe-nom`, avec sa valeur claire et sombre. */
 const COULEURS: Record<string, readonly [string, string]> = {
-  '--couleur-fond': ['#f7f4ee', '#171512'],
-  '--couleur-surface': ['#fffdf9', '#211e1a'],
-  '--couleur-surface-douce': ['#efe9df', '#2c2822'],
-  '--couleur-ligne': ['#d6cec2', '#4a433a'],
-  '--couleur-encre': ['#201d19', '#f6f1e9'],
-  '--couleur-texte-secondaire': ['#655f57', '#c9c0b5'],
-  '--couleur-accent': ['#164a8a', '#78a9ef'],
-  '--couleur-accent-sur-fond': ['#ffffff', '#101c2c'],
-  '--couleur-succes': ['#176b45', '#58c690'],
-  '--couleur-alerte': ['#8a5a00', '#f2bc52'],
-  '--couleur-erreur': ['#a62434', '#ff8795'],
+  '--couleur-fond': ['#ffffff', '#14171a'],
+  '--couleur-surface': ['#f7f8f9', '#1a1e22'],
+  '--couleur-surface-elevee': ['#ffffff', '#21262b'],
+  '--couleur-surface-douce': ['#eff1f3', '#272d33'],
+  '--couleur-ligne': ['#e5e7ea', '#2a3036'],
+  '--couleur-controle': ['#858b94', '#707a85'],
+  '--couleur-encre': ['#1b1f24', '#e8eaed'],
+  '--couleur-texte-secondaire': ['#5b626b', '#a3a9b0'],
+  '--couleur-texte-discret': ['#666d76', '#8b929a'],
+  '--couleur-accent': ['#2c5d92', '#8fb6e4'],
+  '--couleur-accent-sur-fond': ['#ffffff', '#0f1a28'],
+  '--couleur-accent-douce': ['#e8eff8', '#1f2b3a'],
+  '--couleur-succes': ['#276f50', '#5dc196'],
+  '--couleur-alerte': ['#95620a', '#e0ac4a'],
+  '--couleur-erreur': ['#ae3846', '#ee8591'],
   '--couleur-focus': ['#2b6cb0', '#8bb9f5'],
-  '--effet-ombre-carte': ['#201d19', '#000000'],
-  '--statut-non-commence': ['#8e887f', '#a9a198'],
+  '--effet-ombre-carte': ['#1b1f24', '#000000'],
+  '--statut-non-commence': ['#858b94', '#8d949c'],
   '--statut-en-cours': ['#6f7f91', '#91a7bf'],
-  '--statut-vu': ['#4d8ed8', '#73adec'],
-  '--statut-acquis-provisoirement': ['#b87808', '#e0a943'],
-  '--statut-acquis': ['#27885b', '#58b985'],
+  '--statut-vu': ['#2b66a3', '#7db3ea'],
+  '--statut-acquis-provisoirement': ['#95620a', '#e0ac4a'],
+  '--statut-acquis': ['#276f50', '#5dc196'],
   '--statut-maitrise': ['#15613e', '#3e9b6b'],
-  '--statut-a-reprendre': ['#b12a3c', '#f07886'],
+  '--statut-a-reprendre': ['#ae3846', '#ee8591'],
 }
 
 describe('tokens.css', () => {
-  it('définit les 20 couleurs', () => {
-    expect(Object.keys(COULEURS)).toHaveLength(20)
+  it('définit les 24 couleurs', () => {
+    expect(Object.keys(COULEURS)).toHaveLength(24)
   })
 
   it.each(Object.entries(COULEURS))('%s a ses valeurs claire et sombre', (nom, [clair, sombre]) => {
@@ -42,9 +46,12 @@ describe('tokens.css', () => {
   })
 
   it('définit les rayons, l’ombre de carte et l’anneau de focus', () => {
-    expect(css).toContain('--rayon-champ: 0.5rem;')
-    expect(css).toContain('--rayon-carte: 0.75rem;')
-    expect(css).toContain('--ombre-carte: 0 6px 20px')
+    expect(css).toContain('--rayon-champ: 0.625rem;')
+    expect(css).toContain('--rayon-carte: 0.875rem;')
+    expect(css).toContain('--rayon-hero: 1rem;')
+    expect(css).toContain('--ombre-carte:')
+    expect(css).toContain('--duree-transition: 160ms;')
+    expect(css).toContain('--largeur-lecture: 62ch;')
     expect(css).toContain(
       '--focus-anneau: 0 0 0 2px var(--couleur-fond), 0 0 0 4px var(--couleur-focus);',
     )

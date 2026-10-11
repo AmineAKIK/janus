@@ -19,28 +19,32 @@
 
 :root {
   /* Couleurs */
-  --couleur-fond: light-dark(#f7f4ee, #171512);
-  --couleur-surface: light-dark(#fffdf9, #211e1a);
-  --couleur-surface-douce: light-dark(#efe9df, #2c2822);
-  --couleur-ligne: light-dark(#d6cec2, #4a433a);
-  --couleur-encre: light-dark(#201d19, #f6f1e9);
-  --couleur-texte-secondaire: light-dark(#655f57, #c9c0b5);
-  --couleur-accent: light-dark(#164a8a, #78a9ef);
-  --couleur-accent-sur-fond: light-dark(#ffffff, #101c2c);
-  --couleur-succes: light-dark(#176b45, #58c690);
-  --couleur-alerte: light-dark(#8a5a00, #f2bc52);
-  --couleur-erreur: light-dark(#a62434, #ff8795);
+  --couleur-fond: light-dark(#ffffff, #14171a);
+  --couleur-surface: light-dark(#f7f8f9, #1a1e22);
+  --couleur-surface-elevee: light-dark(#ffffff, #21262b);
+  --couleur-surface-douce: light-dark(#eff1f3, #272d33);
+  --couleur-ligne: light-dark(#e5e7ea, #2a3036);
+  --couleur-controle: light-dark(#858b94, #707a85);
+  --couleur-encre: light-dark(#1b1f24, #e8eaed);
+  --couleur-texte-secondaire: light-dark(#5b626b, #a3a9b0);
+  --couleur-texte-discret: light-dark(#666d76, #8b929a);
+  --couleur-accent: light-dark(#2c5d92, #8fb6e4);
+  --couleur-accent-sur-fond: light-dark(#ffffff, #0f1a28);
+  --couleur-accent-douce: light-dark(#e8eff8, #1f2b3a);
+  --couleur-succes: light-dark(#276f50, #5dc196);
+  --couleur-alerte: light-dark(#95620a, #e0ac4a);
+  --couleur-erreur: light-dark(#ae3846, #ee8591);
   --couleur-focus: light-dark(#2b6cb0, #8bb9f5);
-  --effet-ombre-carte: light-dark(#201d19, #000000);
+  --effet-ombre-carte: light-dark(#1b1f24, #000000);
 
   /* Statuts */
-  --statut-non-commence: light-dark(#8e887f, #a9a198);
+  --statut-non-commence: light-dark(#858b94, #8d949c);
   --statut-en-cours: light-dark(#6f7f91, #91a7bf);
-  --statut-vu: light-dark(#4d8ed8, #73adec);
-  --statut-acquis-provisoirement: light-dark(#b87808, #e0a943);
-  --statut-acquis: light-dark(#27885b, #58b985);
+  --statut-vu: light-dark(#2b66a3, #7db3ea);
+  --statut-acquis-provisoirement: light-dark(#95620a, #e0ac4a);
+  --statut-acquis: light-dark(#276f50, #5dc196);
   --statut-maitrise: light-dark(#15613e, #3e9b6b);
-  --statut-a-reprendre: light-dark(#b12a3c, #f07886);
+  --statut-a-reprendre: light-dark(#ae3846, #ee8591);
 
   /* Espacements (1 rem = 16 px, ils suivent la taille du texte choisie) */
   --espacement-2: 0.125rem;
@@ -53,11 +57,19 @@
   --espacement-48: 3rem;
 
   /* Rayons */
-  --rayon-champ: 0.5rem;
-  --rayon-carte: 0.75rem;
+  --rayon-champ: 0.625rem;
+  --rayon-carte: 0.875rem;
+  --rayon-hero: 1rem;
 
-  /* Ombre de carte : décalage vertical 6 px, flou 20 px, 8 % d'opacité */
-  --ombre-carte: 0 6px 20px color-mix(in srgb, var(--effet-ombre-carte) 8%, transparent);
+  /* Élévation : en clair une ombre douce, en sombre un liseré clair et une ombre profonde
+     (la profondeur vient de l'écart de luminosité entre les surfaces). */
+  --ombre-carte:
+    0 1px 2px light-dark(rgb(27 31 36 / 5%), rgb(255 255 255 / 3.5%)),
+    0 10px 28px light-dark(rgb(27 31 36 / 8%), rgb(0 0 0 / 38%));
+
+  /* Mouvement fonctionnel : survol, focus, sélection */
+  --duree-transition: 160ms;
+  --largeur-lecture: 62ch;
 
   /* Focus : épaisseur 2 px, décalage 2 px */
   --focus-anneau: 0 0 0 2px var(--couleur-fond), 0 0 0 4px var(--couleur-focus);
