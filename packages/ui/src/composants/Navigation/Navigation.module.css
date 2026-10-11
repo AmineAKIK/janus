@@ -4,8 +4,9 @@
   display: flex;
   align-items: center;
   width: 100%;
-  height: var(--hauteur-barre-navigation);
-  padding: 0 var(--espacement-2);
+  /* La barre du système (gestes) ne doit pas recouvrir les entrées : on ajoute sa hauteur sous la barre. */
+  height: calc(var(--hauteur-barre-navigation) + env(safe-area-inset-bottom, 0px));
+  padding: 0 var(--espacement-2) env(safe-area-inset-bottom, 0px);
   border: 1px solid var(--couleur-ligne);
   background: var(--couleur-surface);
 }
