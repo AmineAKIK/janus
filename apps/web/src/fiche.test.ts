@@ -24,4 +24,9 @@ describe('fiche-demo.html', () => {
   it('attend la bibliothèque du pont à sa place, pour que le build l’y insère', () => {
     expect(fiche.match(/<script id="pont"><\/script>/g)).toHaveLength(1)
   })
+
+  it('dans l’appli, ne montre ni son fil d’étapes ni sa barre de défilement', () => {
+    expect(fiche).toMatch(/html\[data-integree\] nav\s*\{\s*display: none/)
+    expect(fiche).toMatch(/html\[data-integree\]\s*\{\s*scrollbar-width: none/)
+  })
 })
