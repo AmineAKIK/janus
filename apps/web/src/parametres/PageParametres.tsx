@@ -18,6 +18,7 @@ import { SectionRevision } from './sections/Revision.tsx'
 import { TEXTES_PARAMETRES as T } from './textes.ts'
 import { useBureau } from './useBureau.ts'
 import { useReglages } from './useReglages.ts'
+import { adresse } from '../routes/navigation.ts'
 
 const idSection = (cle: CleSection) => `section-${cle}`
 
@@ -73,7 +74,7 @@ export function PageParametres({ section }: { readonly section?: string }) {
         <ul className={styles['liste']}>
           {SECTIONS.map(({ cle, titre }) => (
             <li key={cle}>
-              <a href={`#/parametres/${cle}`} className={styles['ligneNavigation']}>
+              <a href={adresse(`/parametres/${cle}`)} className={styles['ligneNavigation']}>
                 {titre}
                 <ChevronRight aria-hidden="true" className={styles['chevron']} />
               </a>
@@ -95,7 +96,7 @@ export function PageParametres({ section }: { readonly section?: string }) {
     <div className={styles['page']}>
       <header>
         {!bureau && choisie !== undefined && (
-          <a href="#/parametres" className={`${styles['retour'] ?? ''} texte-petit-14`}>
+          <a href={adresse('/parametres')} className={`${styles['retour'] ?? ''} texte-petit-14`}>
             ← {T.retour}
           </a>
         )}
@@ -113,7 +114,7 @@ export function PageParametres({ section }: { readonly section?: string }) {
             <ul className={styles['liste']}>
               {SECTIONS.map(({ cle, titre }) => (
                 <li key={cle}>
-                  <a href={`#/parametres/${cle}`} className={styles['lien']}>
+                  <a href={adresse(`/parametres/${cle}`)} className={styles['lien']}>
                     {titre}
                   </a>
                 </li>

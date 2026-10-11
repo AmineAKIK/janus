@@ -19,9 +19,10 @@ import {
 } from './mesures/Zones.tsx'
 import { ZoneAFaire, ZoneCout, ZoneDecisions, ZoneErreurs } from './Zones.tsx'
 import { CarteZone } from '@janus/ui'
+import { adresse, aller } from '../routes/navigation.ts'
 
 function allerA(recherche: string) {
-  window.location.hash = `/tableau-de-bord${recherche}`
+  aller(`/tableau-de-bord${recherche}`)
 }
 
 function Corps({
@@ -119,7 +120,7 @@ export function PageSuivi({
         <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-titre-28`}>
           {T.titreEcran}
         </h1>
-        <a href="#/journal" className={`${styles['lienJournal'] ?? ''} texte-petit-14`}>
+        <a href={adresse('/journal')} className={`${styles['lienJournal'] ?? ''} texte-petit-14`}>
           {T.journal}
         </a>
       </div>

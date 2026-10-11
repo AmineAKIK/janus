@@ -11,8 +11,8 @@ import {
   texteSansPrerequis,
 } from './textes.ts'
 import type { DonneesSuivi } from './useSuivi.ts'
+import { adresse } from '../routes/navigation.ts'
 
-const adresse = (lien: string) => `#${lien}`
 const jour = (instant: string) => texteJourCourt(instant.slice(0, 10))
 const sousTitre = 'texte-petit-14'
 

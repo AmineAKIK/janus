@@ -23,6 +23,7 @@ import {
   textePhraseAutonomie,
   texteReussites,
 } from './textes.ts'
+import { adresse } from '../../routes/navigation.ts'
 
 type Mesures = DonneesSuivi['mesures']
 
@@ -130,7 +131,7 @@ export function ZoneCalibration({ donnees }: { readonly donnees: Mesures['calibr
         <ul className={styles['liste']}>
           {erreurs.map(({ bloc, question, date }) => (
             <li key={`${bloc}-${question}-${date}`}>
-              <a href={`#/blocs/${bloc}`}>{bloc}</a>{' '}
+              <a href={adresse(`/blocs/${bloc}`)}>{bloc}</a>{' '}
               <span className={styles['complement']}>{question}</span>
             </li>
           ))}
@@ -159,7 +160,7 @@ export function ZoneAisance({ donnees }: { readonly donnees: Mesures['aisance'] 
         <ul className={styles['liste']}>
           {mesures.map(({ bloc, titre_court: titre, cible }) => (
             <li key={bloc}>
-              <a href={`#/blocs/${bloc}`}>
+              <a href={adresse(`/blocs/${bloc}`)}>
                 {bloc} · {titre}
               </a>{' '}
               {objectifCommun === undefined && <span>{cible.libelle}</span>}
@@ -178,7 +179,7 @@ export function ZoneAisance({ donnees }: { readonly donnees: Mesures['aisance'] 
           <ul className={styles['liste']}>
             {sansMesure.map(({ bloc, titre_court: titre, cible }) => (
               <li key={bloc}>
-                <a href={`#/blocs/${bloc}`}>
+                <a href={adresse(`/blocs/${bloc}`)}>
                   {bloc} · {titre}
                 </a>{' '}
                 <span className={styles['complement']}>
@@ -218,7 +219,7 @@ export function ZoneTemps({ donnees }: { readonly donnees: Mesures['temps'] }) {
           <ul className={styles['liste']}>
             {donnees.blocs.map(({ bloc, titre_court: titre, secondes }) => (
               <li key={bloc}>
-                <a href={`#/blocs/${bloc}`}>
+                <a href={adresse(`/blocs/${bloc}`)}>
                   {bloc} · {titre}
                 </a>{' '}
                 · {texteDuree(secondes)}
@@ -277,7 +278,7 @@ export function ZoneRevue({
               <ul className={styles['liste']}>
                 {donnees.a_reprendre.map(({ bloc, question, fois }) => (
                   <li key={`${bloc}-${question}`}>
-                    <a href={`#/blocs/${bloc}`}>{texteNotion(bloc, question, fois)}</a>
+                    <a href={adresse(`/blocs/${bloc}`)}>{texteNotion(bloc, question, fois)}</a>
                   </li>
                 ))}
               </ul>

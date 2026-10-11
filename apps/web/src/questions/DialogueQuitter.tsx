@@ -1,6 +1,7 @@
 import { Bouton, Dialogue } from '@janus/ui'
 import styles from './Questions.module.css'
 import { TEXTES_QUESTIONS as T, texteReprise } from './textes.ts'
+import { aller } from '../routes/navigation.ts'
 
 export function DialogueQuitter({
   rang,
@@ -17,7 +18,7 @@ export function DialogueQuitter({
           type="button"
           variante="secondaire"
           onClick={() => {
-            window.location.hash = '/'
+            aller('/')
           }}
         >
           {T.reprendrePlusTard}
