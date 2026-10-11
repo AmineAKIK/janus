@@ -10,6 +10,24 @@
   border: 1px solid transparent;
   border-radius: var(--rayon-champ);
   cursor: pointer;
+  transition:
+    background-color var(--duree-transition) ease,
+    border-color var(--duree-transition) ease,
+    transform var(--duree-transition) ease;
+}
+
+/* Appui : le bouton descend d'un pixel. */
+.bouton:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bouton {
+    transition: none;
+  }
+  .bouton:active:not(:disabled) {
+    transform: none;
+  }
 }
 
 .bouton .libelle {
@@ -63,9 +81,9 @@
 
 /* Secondaire */
 .secondaire {
-  background: var(--couleur-surface);
-  border-color: var(--couleur-ligne);
-  color: var(--couleur-accent);
+  background: transparent;
+  border-color: var(--couleur-controle);
+  color: var(--couleur-encre);
 }
 
 .secondaire:hover:not(:disabled),

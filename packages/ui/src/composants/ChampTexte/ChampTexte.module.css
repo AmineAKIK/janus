@@ -17,9 +17,16 @@
   gap: var(--espacement-8);
   min-height: var(--hauteur-champ);
   padding: 0 var(--espacement-12);
-  border: 1px solid var(--couleur-ligne);
+  border: 1px solid var(--couleur-controle);
   border-radius: var(--rayon-champ);
-  background: var(--couleur-surface);
+  background: var(--couleur-fond);
+  transition: border-color var(--duree-transition) ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cadre {
+    transition: none;
+  }
 }
 
 .cadre.erreur {
@@ -28,7 +35,7 @@
 
 .cadre:focus-within,
 :global(.etat-demo-focus) .cadre {
-  border-color: var(--couleur-focus);
+  border-color: var(--couleur-accent);
   box-shadow: var(--focus-anneau);
 }
 
