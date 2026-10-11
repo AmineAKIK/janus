@@ -42,9 +42,22 @@ body {
   line-height: 1.5rem;
 }
 
-/* Un lien a la couleur d'accent, visité ou non : pas de violet du navigateur. */
+/* Un lien est sobre : encre, sans soulignement, visité ou non (pas de violet du navigateur). */
 a {
+  color: var(--couleur-encre);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color var(--duree-transition);
+}
+
+a:hover {
   color: var(--couleur-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a {
+    transition: none;
+  }
 }
 
 .texte-titre-28 {

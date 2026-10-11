@@ -89,7 +89,7 @@ describe('Paramètres sur mobile', () => {
 
     expect(await screen.findByLabelText('Nouvelles cartes par jour')).toHaveValue('20')
     expect(screen.queryByText('Règle protégée')).toBeNull()
-    expect(screen.getByRole('link', { name: '← Paramètres' })).toBeVisible()
+    expect(within(screen.getByRole('main')).getByRole('link', { name: 'Paramètres' })).toBeVisible()
   })
 })
 

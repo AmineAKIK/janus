@@ -26,6 +26,14 @@
   z-index: 10;
 }
 
+/* Sur un écran qui ne défile pas, `bottom: 0` peut dépasser la zone visible : on cale la barre sur la hauteur visible. */
+@supports (height: 100dvh) {
+  .navigation {
+    top: calc(100dvh - var(--hauteur-barre-navigation));
+    bottom: auto;
+  }
+}
+
 .evitement {
   position: absolute;
   top: var(--espacement-8);

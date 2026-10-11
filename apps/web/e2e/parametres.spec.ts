@@ -28,7 +28,7 @@ test.describe('paramètres', () => {
 
     await expect(page).toHaveURL(/#\/parametres\/regles$/)
     await expect(page.getByText('Règle protégée')).toBeVisible()
-    await page.getByRole('link', { name: '← Paramètres' }).click()
+    await page.getByRole('main').getByRole('link', { name: 'Paramètres' }).click()
     await expect(page.getByRole('navigation', { name: 'Choisis une section' })).toBeVisible()
   })
 
