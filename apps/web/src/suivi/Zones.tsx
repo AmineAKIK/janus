@@ -104,14 +104,7 @@ export function ZoneDecisions({
 }) {
   const { forces, sans_prerequis: sans } = decisions
   return (
-    <CarteZone
-      titre={T.decisions}
-      action={
-        <Bouton variante="secondaire" type="button" onClick={surForcer}>
-          {T.forcer}
-        </Bouton>
-      }
-    >
+    <CarteZone titre={T.decisions}>
       {forces.length === 0 && sans.length === 0 ? (
         <EtatVideZone message={T.vide} />
       ) : (
@@ -165,6 +158,11 @@ export function ZoneDecisions({
           )}
         </>
       )}
+      <div className={styles['pied']}>
+        <Bouton variante="secondaire" type="button" onClick={surForcer}>
+          {T.forcer}
+        </Bouton>
+      </div>
     </CarteZone>
   )
 }

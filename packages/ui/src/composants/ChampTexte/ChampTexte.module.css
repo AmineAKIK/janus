@@ -50,6 +50,16 @@
   color: var(--couleur-encre);
 }
 
+/* Le remplissage automatique du navigateur colore le champ et ne s'efface pas : on garde le fond du cadre. */
+.saisie:-webkit-autofill,
+.saisie:-webkit-autofill:hover,
+.saisie:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--couleur-encre);
+  caret-color: var(--couleur-encre);
+  -webkit-box-shadow: 0 0 0 1000px var(--couleur-fond) inset;
+  transition: background-color 600000s 0s;
+}
+
 .saisie::placeholder {
   color: var(--couleur-texte-secondaire);
   opacity: 1;

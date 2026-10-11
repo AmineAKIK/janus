@@ -90,7 +90,7 @@ export function CarteDuModule({ blocs }: { readonly blocs: DonneesSuivi['blocs']
   )
 
   return (
-    <div>
+    <div className={styles['corpsCarte']}>
       <p className={`${styles['complement'] ?? ''} texte-petit-14`}>{texteCarte(blocs.length)}</p>
       <div ref={zone} className={styles['zoneCarte']}>
         <div className={styles['carte']} style={{ width: largeur, height: hauteur }}>

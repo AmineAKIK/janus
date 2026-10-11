@@ -74,7 +74,7 @@ phase=construction
 git -C "$depot" checkout --quiet --detach "$cible"
 cd "$depot"
 docker build --pull --label "org.opencontainers.image.revision=$cible" -f apps/api/Dockerfile -t "janus-api:$cible" .
-docker build --pull --label "org.opencontainers.image.revision=$cible" -f infra/caddy/Dockerfile -t "janus-web:$cible" .
+docker build --pull --label "org.opencontainers.image.revision=$cible" --build-arg "VITE_COMMIT=${cible:0:7}" -f infra/caddy/Dockerfile -t "janus-web:$cible" .
 if [[ -n $precedent ]]; then
   /usr/local/bin/janus-backup
 fi
