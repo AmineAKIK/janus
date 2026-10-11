@@ -1100,7 +1100,8 @@
         $('mode').textContent = mode === 'appli' ? 'Dans l’appli' : 'Mode autonome'
         if (depart.init) {
           serieOuverte = depart.init.serie_ouverte
-          $('statut').textContent = 'Statut : ' + depart.init.statut
+          $('statut').textContent =
+            'Statut : ' + (LIBELLES_STATUT[depart.init.statut] ?? depart.init.statut)
         }
         pont.surInit((init) => {
           const consolidationChangee =
