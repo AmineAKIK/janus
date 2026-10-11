@@ -4,7 +4,6 @@ export const TEXTES_SUIVI = {
   titreEcran: 'Suivi',
   module: 'Module',
   periode: 'Période',
-  journal: 'Journal',
   vide: 'Pas encore de données.',
   carte: 'Carte du module',
   legende: 'Légende des statuts',

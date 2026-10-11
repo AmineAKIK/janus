@@ -44,7 +44,7 @@ describe('Suivi', () => {
     expect(screen.getByText(/blocs · les traits indiquent les prérequis/)).toBeVisible()
     expect(screen.getByRole('list', { name: 'Légende des statuts' })).toBeVisible()
     expect(screen.getByRole('radio', { name: '30 jours' })).toBeChecked()
-    expect(screen.getAllByRole('link', { name: 'Journal' })[0]).toBeVisible()
+    expect(within(screen.getByRole('main')).queryByRole('link', { name: 'Journal' })).toBeNull()
     expect(
       screen
         .getAllByRole('link')
