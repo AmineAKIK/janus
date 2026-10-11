@@ -133,6 +133,8 @@ test.describe('page d’un bloc', () => {
     await expect(page.getByText(/Consolidation disponible à/)).toHaveCount(0)
 
     await allerEtape(page, 'Consolidation')
+    // La fiche se redessine quand l'appli lui renvoie le statut : on ne tape qu'après.
+    await expect(fiche.getByText(/consolidation_a_faire/)).toBeVisible()
     await repondre()
     await fil.getByRole('button', { name: 'Bilan' }).click()
     await expect(page.getByText('Statut calculé')).toBeVisible()

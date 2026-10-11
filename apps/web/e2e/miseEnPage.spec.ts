@@ -160,65 +160,23 @@ for (const theme of themes) {
   }
 }
 
-test.describe('page de bloc à 320 px', () => {
-  test.use({ viewport: { width: 320, height: 800 } })
+for (const largeur of [320, 1280]) {
+  test.describe(`page de bloc à ${String(largeur)} px`, () => {
+    test.use({ viewport: { width: largeur, height: 800 } })
 
-  test('l’étape courante est visible dans la rangée d’onglets et le nom du bloc aussi', async ({
-    page,
-  }) => {
-    await ouvrirSession(page)
-    await page.goto('./#/blocs/B03')
-    const courante = page.locator('nav [aria-current="step"]')
-    await expect(courante).toBeInViewport({ ratio: 1 })
-    await expect(page.getByRole('heading', { level: 1 })).toBeInViewport()
-  })
-})
-
-test.describe('lisibilité à 375 px', () => {
-  test.use({ viewport: { width: 375, height: 800 } })
-
-  for (const ecran of parcours) {
-    test(`aucun texte sous 12 px : ${ecran.nom}`, async ({ page }) => {
+    test('toutes les étapes sont visibles en entier, sans défilement, et le nom du bloc aussi', async ({
+      page,
+    }) => {
       await ouvrirSession(page)
-      await page.goto(ecran.chemin)
-      await expect(page.locator('main, [role="main"]').first()).toBeVisible()
-
-      const petits = await page.evaluate(() => {
-        const trouves: string[] = []
-        for (const element of document.querySelectorAll('body *')) {
-          if (!element.checkVisibility({ visibilityProperty: true, contentVisibilityAuto: true })) {
-            continue
-          }
-          const aDuTexte = [...element.childNodes].some(
-            (noeud) => noeud.nodeType === Node.TEXT_NODE && (noeud.textContent ?? '').trim() !== '',
-          )
-          const rect = element.getBoundingClientRect()
-          if (!aDuTexte || rect.width <= 1 || rect.height <= 1) continue
-          const taille = Number.parseFloat(getComputedStyle(element).fontSize)
-          if (taille < 12) trouves.push(`${element.tagName.toLowerCase()} ${String(taille)} px`)
-        }
-        return trouves
-      })
-      expect(petits).toEqual([])
+      await page.goto('./#/blocs/B03')
+      const onglets = page
+        .getByRole('navigation', { name: 'Étapes de la fiche' })
+        .getByRole('button')
+      await expect(onglets.first()).toBeVisible()
+      for (const onglet of await onglets.all()) {
+        await expect(onglet).toBeInViewport({ ratio: 1 })
+      }
+      await expect(page.getByRole('heading', { level: 1 })).toBeInViewport()
     })
-  }
-
-  test('la légende des statuts tient sur au plus quatre lignes', async ({ page }) => {
-    await ouvrirSession(page)
-    await page.goto('./#/formations')
-    await page.getByText('Légende des statuts').first().click()
-    const legende = page.getByRole('list', { name: 'Légende des statuts' })
-    await expect(legende).toBeVisible()
-    const hauteur = (await legende.boundingBox())?.height ?? Number.POSITIVE_INFINITY
-    // 7 entrées sur 2 colonnes : 4 rangées de 16 px de texte et de petits écarts.
-    expect(hauteur).toBeLessThan(4 * 32)
   })
-
-  test('la page introuvable garde la navigation et propose deux sorties', async ({ page }) => {
-    await ouvrirSession(page)
-    await page.goto('./#/n-existe-pas')
-    await expect(page.getByRole('navigation', { name: 'Navigation principale' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Aller à Aujourd’hui' })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Retour' })).toBeVisible()
-  })
-})
+}

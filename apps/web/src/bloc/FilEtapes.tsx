@@ -47,9 +47,6 @@ export function FilEtapes({
               type="button"
               aria-current={id === active ? 'step' : undefined}
               className={`${styles['onglet'] ?? ''} ${id === active ? (styles['courant'] ?? '') : ''} texte-petit-14`}
-              ref={(bouton) => {
-                if (id === active) bouton?.scrollIntoView({ inline: 'center', block: 'nearest' })
-              }}
               title={verrouillees.has(id) ? TEXTES_BLOC.verrouillee : undefined}
               onClick={() => {
                 if (verrouillees.has(id) && surVerrou !== undefined) surVerrou(id)
