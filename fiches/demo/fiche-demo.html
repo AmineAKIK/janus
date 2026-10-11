@@ -582,6 +582,15 @@
         'consolidation',
         'bilan',
       ]
+      const LIBELLES_STATUT = {
+        non_commence: 'Non commencé',
+        en_cours: 'En cours',
+        vu: 'Vu',
+        acquis_provisoirement: 'Acquis provisoirement',
+        acquis: 'Acquis',
+        maitrise: 'Maîtrisé',
+        a_reprendre: 'À reprendre',
+      }
       const etapes = manifeste.etapes.filter((etape) => ETAPES_FICHE.includes(etape.type))
       const $ = (id) => document.getElementById(id)
 
@@ -1074,11 +1083,8 @@
           $('mode').textContent = 'Pont indisponible'
           return
         }
-        pont.surStatut(({ statut, manque }) => {
-          $('statut').textContent =
-            'Statut : ' +
-            statut +
-            (manque.length ? ' (' + manque.map((m) => m.code).join(', ') + ')' : '')
+        pont.surStatut(({ statut }) => {
+          $('statut').textContent = 'Statut : ' + (LIBELLES_STATUT[statut] ?? statut)
         })
         pont.surErreur((erreur) => {
           $('statut').textContent = 'Erreur : ' + erreur.detail
