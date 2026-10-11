@@ -48,7 +48,7 @@ describe('écran de connexion', () => {
     await afficher()
 
     expect(screen.getByRole('heading', { level: 1, name: 'Janus' })).toBeInTheDocument()
-    expect(screen.getByText('Apprendre pour de vrai, à ton rythme.')).toBeInTheDocument()
+    expect(screen.getByText('Chaque boucle te fait monter.')).toBeInTheDocument()
     expect(champ('Nom d’utilisateur')).toHaveAttribute('autocomplete', 'username')
     expect(champ('Mot de passe')).toHaveAttribute('autocomplete', 'current-password')
     expect(

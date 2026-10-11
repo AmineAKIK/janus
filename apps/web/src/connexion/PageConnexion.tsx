@@ -1,4 +1,11 @@
-import { BandeauAlerte, Bouton, CaseACocher, ChampMotDePasse, ChampTexte } from '@janus/ui'
+import {
+  BandeauAlerte,
+  Bouton,
+  CaseACocher,
+  ChampMotDePasse,
+  ChampTexte,
+  MarqueJanus,
+} from '@janus/ui'
 import { getRouteApi } from '@tanstack/react-router'
 import { modeTransport } from '../api/client.ts'
 import { IDENTIFIANT_DEMO, MOT_DE_PASSE_DEMO } from '../demo/routes/compte.ts'
@@ -25,6 +32,7 @@ export function PageConnexion() {
     <div className={styles['page']}>
       <section className={styles['carte']}>
         <header className={styles['identite']}>
+          <MarqueJanus taille={64} className={styles['marque']} />
           <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-titre-28`}>
             {TEXTES.titre}
           </h1>

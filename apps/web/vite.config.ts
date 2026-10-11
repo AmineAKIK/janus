@@ -3,8 +3,8 @@ import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import { NOM_APPLI } from '../../packages/ui/src/nomAppli.ts'
 
-// `couleur/fond` clair, de `packages/ui/src/tokens.css`.
-const FOND_CLAIR = '#ffffff'
+// Fond de la tuile des icônes : le fond du thème sombre de `packages/ui/src/tokens.css`.
+const FOND_MARQUE = '#14171a'
 
 // `VITE_BASE` vaut `/janus/` en production et `/janus/pr-preview/pr-<numéro>/` pour un aperçu de PR.
 export default defineConfig({
@@ -24,8 +24,9 @@ export default defineConfig({
         start_url: './',
         scope: './',
         display: 'standalone',
-        theme_color: FOND_CLAIR,
-        background_color: FOND_CLAIR,
+        theme_color: FOND_MARQUE,
+        background_color: FOND_MARQUE,
+        description: 'Chaque boucle te fait monter.',
         lang: 'fr',
         icons: [
           { src: 'icones/icone-192.png', sizes: '192x192', type: 'image/png' },
