@@ -46,7 +46,7 @@ export function creerInstallation(fenetre: Window) {
   }
   // L'état est un texte simple : `useSyncExternalStore` n'a pas à comparer d'objet.
   return {
-    demarrer(): () => void {
+    demarrer: (): (() => void) => {
       const surInvitation = (evenement: Event) => {
         if (!estInvitation(evenement)) return
         // Pas de bandeau du navigateur : l'appli propose elle-même l'installation, dans les paramètres.
@@ -68,7 +68,7 @@ export function creerInstallation(fenetre: Window) {
     },
     etat,
     /** Ouvre la boîte d'installation du navigateur ; vrai si l'utilisateur accepte. */
-    async installer(): Promise<boolean> {
+    installer: async (): Promise<boolean> => {
       const courante = invitation
       if (courante === null) return false
       // Une invitation ne sert qu'une fois, qu'elle soit acceptée ou non.
@@ -78,7 +78,7 @@ export function creerInstallation(fenetre: Window) {
       const { outcome } = await courante.userChoice
       return outcome === 'accepted'
     },
-    abonner(abonne: () => void): () => void {
+    abonner: (abonne: () => void): (() => void) => {
       abonnes.add(abonne)
       return () => {
         abonnes.delete(abonne)
