@@ -25,6 +25,15 @@ async function afficher(chemin = '/connexion') {
   }
 }
 
+// Le chargement de la page d'arrivee doit finir avant la fin du test : sinon il reprend apres la
+// destruction de jsdom et leve « window is not defined » (rejet non gere, CI en echec).
+async function chargementFini(routeur: Awaited<ReturnType<typeof afficher>>['routeur']) {
+  await waitFor(() => {
+    expect(routeur.state.status).toBe('idle')
+    expect(routeur.state.isLoading).toBe(false)
+  })
+}
+
 const champ = (nom: string) => screen.getByLabelText(nom)
 const bouton = () => screen.getByRole('button', { name: /Se connecter|Réessayer dans/ })
 
@@ -73,6 +82,7 @@ describe('écran de connexion', () => {
     await waitFor(() => {
       expect(routeur.state.location.pathname).toBe('/')
     })
+    await chargementFini(routeur)
   })
 
   it('Erreur : même message, mot de passe vidé et refocalisé', async () => {
@@ -178,5 +188,6 @@ describe('écran de connexion', () => {
       expect(routeur.state.location.pathname).toBe('/journal')
     })
     expect(routeur.state.location.search).toEqual({ bloc: 'B04' })
+    await chargementFini(routeur)
   })
 })
