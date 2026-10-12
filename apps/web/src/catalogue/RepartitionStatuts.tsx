@@ -23,25 +23,26 @@ export function RepartitionStatuts({
   )
 }
 
-const ORDRE_LEGENDE: readonly Statut[] = [
-  'acquis',
-  'acquis_provisoirement',
-  'maitrise',
-  'a_reprendre',
-  'en_cours',
-  'vu',
-  'non_commence',
+/** Les statuts de la légende, par groupes : acquis, en chemin, pas commencé. */
+const GROUPES_LEGENDE: readonly (readonly Statut[])[] = [
+  ['acquis', 'acquis_provisoirement', 'maitrise'],
+  ['a_reprendre', 'en_cours', 'vu'],
+  ['non_commence'],
 ]
 
 export function LegendeStatuts({ titre }: { readonly titre: string }) {
   return (
-    <ul className={styles['legende']} aria-label={titre}>
-      {ORDRE_LEGENDE.map((statut) => (
-        <li key={statut} className={`${styles['etat'] ?? ''} texte-legende-12`}>
-          <BadgeStatut statut={statut} taille="compacte" />
-          <span aria-hidden="true">{LIBELLES_STATUT[statut]}</span>
-        </li>
+    <div role="group" aria-label={titre} className={styles['legende']}>
+      {GROUPES_LEGENDE.map((groupe) => (
+        <ul key={groupe.join()} className={styles['groupe']}>
+          {groupe.map((statut) => (
+            <li key={statut} className={`${styles['etat'] ?? ''} texte-legende-12`}>
+              <BadgeStatut statut={statut} taille="compacte" />
+              <span aria-hidden="true">{LIBELLES_STATUT[statut]}</span>
+            </li>
+          ))}
+        </ul>
       ))}
-    </ul>
+    </div>
   )
 }

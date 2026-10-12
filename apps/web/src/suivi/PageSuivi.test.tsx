@@ -42,7 +42,7 @@ describe('Suivi', () => {
 
     expect(screen.getByRole('heading', { level: 1, name: 'Suivi' })).toBeVisible()
     expect(screen.getByText(/blocs · les traits indiquent les prérequis/)).toBeVisible()
-    expect(screen.getByRole('list', { name: 'Légende des statuts' })).toBeVisible()
+    expect(screen.getByRole('group', { name: 'Légende des statuts' })).toBeVisible()
     expect(screen.getByRole('radio', { name: '30 jours' })).toBeChecked()
     expect(within(screen.getByRole('main')).queryByRole('link', { name: 'Journal' })).toBeNull()
     expect(

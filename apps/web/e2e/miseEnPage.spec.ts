@@ -244,15 +244,15 @@ test.describe('lisibilité à 375 px', () => {
     })
   }
 
-  test('la légende des statuts tient sur au plus quatre lignes', async ({ page }) => {
+  test('la légende des statuts reste compacte', async ({ page }) => {
     await ouvrirSession(page)
     await page.goto('./#/formations')
     await page.getByText('Légende des statuts').first().click()
-    const legende = page.getByRole('list', { name: 'Légende des statuts' })
+    const legende = page.getByRole('group', { name: 'Légende des statuts' })
     await expect(legende).toBeVisible()
     const hauteur = (await legende.boundingBox())?.height ?? Number.POSITIVE_INFINITY
-    // 7 entrées sur 2 colonnes : 4 rangées de 16 px de texte et de petits écarts.
-    expect(hauteur).toBeLessThan(4 * 32)
+    // 3 groupes séparés par des filets : jusqu'à 5 lignes de 16 px de texte avec leurs écarts.
+    expect(hauteur).toBeLessThan(5 * 32)
   })
 
   test('la page introuvable garde la navigation sans bouton en double', async ({ page }) => {

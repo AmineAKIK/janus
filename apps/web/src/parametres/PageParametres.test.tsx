@@ -27,6 +27,16 @@ async function afficher(chemin: string) {
   return banc
 }
 
+async function afficherAvecRouteur(chemin: string) {
+  const banc = creerContexteTest()
+  const routeur = creerRouteur(createMemoryHistory({ initialEntries: [chemin] }), banc.contexte)
+  await act(async () => {
+    render(banc.application(routeur))
+    await routeur.load()
+  })
+  return { banc, routeur }
+}
+
 afterEach(() => {
   vi.unstubAllGlobals()
 })
@@ -111,6 +121,25 @@ describe('Paramètres sur bureau', () => {
         'Les délais méthodologiques restent en lecture seule pour préserver la preuve.',
       ),
     ).toBeVisible()
+  })
+})
+
+describe('Paramètres : aller à une section sur bureau', () => {
+  it('défile jusqu’à la section après le retour en haut de la page', async () => {
+    simulerBureau(true)
+    const defilement = vi.fn()
+    Element.prototype.scrollIntoView = defilement
+    const { routeur } = await afficherAvecRouteur('/parametres')
+    await screen.findByRole('region', { name: 'Zone sensible' })
+    defilement.mockClear()
+
+    await act(async () => {
+      await routeur.navigate({ to: '/parametres/$section', params: { section: 'zone' } })
+    })
+
+    await waitFor(() => {
+      expect(defilement).toHaveBeenCalled()
+    })
   })
 })
 
