@@ -80,11 +80,7 @@ const PREFIXE_IDENTIFIANT = '0190a000-0000-7000-8000-'
  * L'identifiant d'une vérification de la démo : il se lit à l'envers (bloc, type, numéro), ce qui
  * permet d'ouvrir une adresse `/verifications/<identifiant>` sans passer par Aujourd'hui.
  */
-export function identifiantVerification(
-  bloc: string,
-  type: TypeVerification,
-  numero: number,
-): string {
+function identifiantVerification(bloc: string, type: TypeVerification, numero: number): string {
   const hex = (valeur: number, largeur: number) => valeur.toString(16).padStart(largeur, '0')
   const codes = Array.from(bloc, (lettre) => hex(lettre.charCodeAt(0), 2)).join('')
   return `${PREFIXE_IDENTIFIANT}${hex(TYPES_ENCODES.indexOf(type), 1)}${hex(numero, 2)}${codes}`.padEnd(

@@ -13,7 +13,7 @@ const lignesDeLEtat = (etat: EtatDemo) =>
   lignesDuJournal(etat.faits, { manifestes: MANIFESTES_GRAINE, reglages: etat.reglages })
 
 /** Le journal au format de la méthode. Les tâches inédites réservées et la dernière revue n'ont pas encore de données en démo. */
-export function exportDuJournal(etat: EtatDemo): string {
+function exportDuJournal(etat: EtatDemo): string {
   const manifestes = catalogueGraine().modules.flatMap((module) =>
     module.importe
       ? module.parties.flatMap(({ blocs }) =>

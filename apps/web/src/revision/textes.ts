@@ -31,7 +31,7 @@ export const NOTES: readonly { readonly note: NoteCarte; readonly libelle: strin
   { note: 'facile', libelle: 'Facile' },
 ]
 
-export const LIBELLES_NOTE: Readonly<Record<NoteCarte, string>> = {
+const LIBELLES_NOTE: Readonly<Record<NoteCarte, string>> = {
   a_revoir: 'À revoir',
   difficile: 'Difficile',
   bien: 'Bien',

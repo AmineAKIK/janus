@@ -1,6 +1,6 @@
 import type { Destinataire, Envoyeur, Notification } from './envoyeur.ts'
 
-export interface EnvoiNote {
+interface EnvoiNote {
   readonly destinataire: Destinataire
   readonly notification: Notification
 }

@@ -11,8 +11,6 @@ import { ouvrirFil, ouvrirSession } from './session'
 interface Parcours {
   readonly nom: string
   readonly chemin: string
-  /** Numéro du ticket qui répare cet écran : tant que ce n'est pas fait, le cas est suspendu. */
-  readonly aReparer?: string
 }
 
 const parcours: readonly Parcours[] = [
@@ -160,9 +158,6 @@ for (const theme of themes) {
 
       for (const ecran of parcours) {
         test(ecran.nom, async ({ page }) => {
-          if (ecran.aReparer !== undefined) {
-            test.fixme(true, `Défaut connu, réparé par ${ecran.aReparer}.`)
-          }
           await ouvrirSession(page)
           await page.goto(ecran.chemin)
           await expect(page.locator('main, [role="main"]').first()).toBeVisible()

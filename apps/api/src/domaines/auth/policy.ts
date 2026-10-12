@@ -8,10 +8,10 @@ export const DUREE_PERSISTANTE_JOURS = 30
 /** Une session sans « Rester connecté » expire après 12 h sans activité. */
 export const INACTIVITE_MAX_MS = 12 * HEURE_MS
 /** La dernière activité se met à jour au plus une fois par minute. */
-export const PAS_ACTIVITE_MS = MINUTE_MS
+const PAS_ACTIVITE_MS = MINUTE_MS
 /** Les essais de connexion : 5 par minute. */
 export const ESSAIS_PAR_MINUTE = 5
-export const FENETRE_ESSAIS_MS = MINUTE_MS
+const FENETRE_ESSAIS_MS = MINUTE_MS
 /** Changer le mot de passe ou supprimer le compte : le mot de passe actuel est redemandé, 5 essais par minute. */
 export const VERIFICATIONS_PAR_MINUTE = 5
 

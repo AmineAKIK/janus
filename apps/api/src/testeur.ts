@@ -34,7 +34,7 @@ export function configDeTest(surcharge: Readonly<Record<string, string>> = {}): 
 }
 
 /** Une base qui répond (ou non) au `SELECT 1`. */
-export function baseFactice(repond = true): Base & { readonly requetes: string[] } {
+function baseFactice(repond = true): Base & { readonly requetes: string[] } {
   const requetes: string[] = []
   // Une vraie connexion paresseuse qui ne s'ouvre jamais : seules les requêtes factices répondent.
   return {

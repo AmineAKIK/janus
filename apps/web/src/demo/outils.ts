@@ -3,7 +3,7 @@ import type { HorlogeDemo } from './horlogeDemo.ts'
 import { etatVide } from './store.ts'
 import type { Magasin } from './store.ts'
 
-export type ModeReinitialisation = 'graine' | 'vide'
+type ModeReinitialisation = 'graine' | 'vide'
 
 /** Ce que le build de démo expose aux tests Playwright, avant que les boutons de PR-072 existent. */
 export interface OutilsDemo {

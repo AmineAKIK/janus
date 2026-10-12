@@ -6,7 +6,7 @@ import type { SyntheticEvent } from 'react'
 import { useEcriture } from '../api/requetes.tsx'
 import { CLE_MOI } from '../routes/garde.ts'
 
-export type Phase = 'repos' | 'chargement' | 'erreur' | 'trop_d_essais' | 'hors_connexion'
+type Phase = 'repos' | 'chargement' | 'erreur' | 'trop_d_essais' | 'hors_connexion'
 
 /** Ce que l'écran sait de la dernière tentative. */
 type Echec =

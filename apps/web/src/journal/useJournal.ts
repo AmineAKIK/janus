@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useEcriture, useLectures } from '../api/requetes.tsx'
 
-export type DonneesJournal = SortieRoute<(typeof ROUTES)['GET /journal']>
+type DonneesJournal = SortieRoute<(typeof ROUTES)['GET /journal']>
 export type Ligne = DonneesJournal['entrees'][number]
 
 export interface FiltresJournal {

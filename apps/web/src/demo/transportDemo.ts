@@ -45,7 +45,7 @@ function attendre(ms: number, signal: AbortSignal | undefined): Promise<void> {
 }
 
 /** Le délai de l'interrupteur « Réseau lent ». */
-export const DELAI_RESEAU_LENT_MS = 2000
+const DELAI_RESEAU_LENT_MS = 2000
 
 /**
  * Le faux serveur : le même `Transport` que le HTTP, mais les réponses viennent de fonctions qui

@@ -14,6 +14,7 @@ const MOI = {
 }
 
 afterEach(() => {
+  localStorage.clear()
   vi.unstubAllEnvs()
   vi.unstubAllGlobals()
 })
@@ -47,6 +48,7 @@ function afficherSurServeur(reponseAbonnement: () => Response) {
 }
 
 function navigateur() {
+  const desabonner = vi.fn(() => Promise.resolve(true))
   const subscribe = vi.fn(() =>
     Promise.resolve({
       toJSON: () => ({
@@ -66,9 +68,16 @@ function navigateur() {
     }),
   )
   vi.stubGlobal('navigator', {
-    serviceWorker: { ready: Promise.resolve({ pushManager: { subscribe } }) },
+    serviceWorker: {
+      ready: Promise.resolve({
+        pushManager: {
+          subscribe,
+          getSubscription: () => Promise.resolve({ unsubscribe: desabonner }),
+        },
+      }),
+    },
   })
-  return subscribe
+  return Object.assign(subscribe, { desabonner })
 }
 
 describe('Activer les notifications', () => {
@@ -116,5 +125,40 @@ describe('Activer les notifications', () => {
     await utilisateur.click(bouton)
 
     expect(await screen.findByText(/n’a pas pu être enregistré/)).toBeVisible()
+  })
+
+  it('permet de désactiver : le serveur retire l’appareil, le navigateur aussi', async () => {
+    const utilisateur = userEvent.setup()
+    const subscribe = navigateur()
+    const fetchImpl = afficherSurServeur(() =>
+      json({ id: '0190a000-0000-7000-8000-000000000002' }, 201),
+    )
+    const activer = await screen.findByRole('button', { name: 'Activer' })
+    await waitFor(() => {
+      expect(activer).toBeEnabled()
+    })
+    await utilisateur.click(activer)
+
+    const desactiver = await screen.findByRole('button', { name: 'Désactiver sur cet appareil' })
+    fetchImpl.mockImplementation((adresse) =>
+      Promise.resolve(
+        adresseDe(adresse).endsWith('/moi') ? json(MOI) : new Response(null, { status: 204 }),
+      ),
+    )
+    await utilisateur.click(desactiver)
+
+    await waitFor(() => {
+      expect(
+        fetchImpl.mock.calls.some(
+          ([adresse, init]) =>
+            init?.method === 'DELETE' &&
+            /\/push\/abonnements\/[0-9a-f-]{36}$/.test(adresseDe(adresse)),
+        ),
+      ).toBe(true)
+    })
+    await waitFor(() => {
+      expect(subscribe.desabonner).toHaveBeenCalled()
+    })
+    expect(await screen.findByRole('button', { name: 'Activer' })).toBeVisible()
   })
 })

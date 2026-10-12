@@ -11,7 +11,7 @@ export const ESSAIS_MAX = 10
 const STATUTS_A_REESSAYER = new Set([401, 408, 429])
 export const DELAIS_REESSAI_S = [2, 4, 8, 16, 32, 60] as const
 /** Le délai de l'envoi périodique tant qu'il reste des messages. */
-export const PERIODE_ENVOI_MS = 30_000
+const PERIODE_ENVOI_MS = 30_000
 
 /** Exécute le travail en exclusivité : un seul expéditeur à la fois, même entre onglets. */
 export type Verrou = <T>(travail: () => Promise<T>) => Promise<T>

@@ -104,7 +104,7 @@ export function texteDuree(secondes: number): string {
 export const texteDesaccords = (desaccords: number, relues: number) =>
   relues === 0 ? TEXTES_MESURES.aucune : `${String(desaccords)} sur ${String(relues)}`
 
-export const LIBELLE_ETAPE: Readonly<Record<TypeEtape, string>> = {
+const LIBELLE_ETAPE: Readonly<Record<TypeEtape, string>> = {
   carte: 'Carte',
   pretest: 'Pré-test',
   explication: 'Explication',

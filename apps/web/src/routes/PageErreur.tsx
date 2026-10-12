@@ -1,11 +1,11 @@
 import { BandeauAlerte, Bouton } from '@janus/ui'
-import { PageProvisoire } from './PageProvisoire.tsx'
+import { PageSimple } from './PageSimple.tsx'
 
 /** Frontière d'erreur : un bandeau et un bouton pour recharger la page. */
 export function PageErreur() {
   return (
     <>
-      <PageProvisoire titre="Une erreur est survenue" />
+      <PageSimple titre="Une erreur est survenue" />
       <BandeauAlerte type="erreur">
         <p>Quelque chose s’est mal passé. Recharge la page pour réessayer.</p>
         <Bouton

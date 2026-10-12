@@ -2,7 +2,7 @@ import { createHash, randomBytes } from 'node:crypto'
 import bcrypt from 'bcrypt'
 
 /** Le coût de bcrypt (décision de l'architecture). */
-export const COUT_BCRYPT = 12
+const COUT_BCRYPT = 12
 
 /** bcrypt, derrière une interface : le hachage factice sert à répondre aussi lentement à un nom inconnu. */
 export function creerHacheur(cout: number = COUT_BCRYPT) {

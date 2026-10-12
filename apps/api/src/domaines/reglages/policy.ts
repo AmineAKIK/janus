@@ -4,7 +4,7 @@ import type { ModificationReglages } from '@janus/contrats'
  * Les règles de la méthode : les délais qui fondent la preuve. L'écran les montre en lecture seule,
  * le serveur refuse donc de les écrire tant que le point à trancher ne l'est pas.
  */
-export const REGLES_DE_LA_METHODE = [
+const REGLES_DE_LA_METHODE = [
   'delaiConsolidationMinutes',
   'delaiVerificationJours',
   'delaiRetestJours',

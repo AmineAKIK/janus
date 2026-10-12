@@ -6,7 +6,7 @@ export const LIMITE_CORPS_DEFAUT = 64 * KO
 export const DELAI_DEFAUT_MS = 15_000
 
 /** Les routes qui ont droit à plus que la limite générale. */
-export const EXCEPTIONS_LIMITES: readonly {
+const EXCEPTIONS_LIMITES: readonly {
   readonly methode: string
   readonly chemin: string
   readonly corpsOctets?: number

@@ -4,7 +4,7 @@ import { useBoiteEnvoi } from '../envoi/FournisseurEnvoi.tsx'
 import type { MiseAJourAppli } from './miseAJour.ts'
 import styles from './MiseAJour.module.css'
 
-export const TEXTES_MISE_A_JOUR = {
+const TEXTES_MISE_A_JOUR = {
   prete: 'Une nouvelle version est prête.',
   metteAJour: 'Mettre à jour',
   apresEnvoi: 'La mise à jour se fera dès que tes réponses seront envoyées.',

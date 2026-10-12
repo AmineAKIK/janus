@@ -14,7 +14,7 @@ export interface Revue {
 }
 
 /** Pendant ce délai, la note reste annulable : elle n'est envoyée qu'après. */
-export const DELAI_ANNULATION_MS = 5000
+const DELAI_ANNULATION_MS = 5000
 
 const SEUIL_BIENTOT_MS = 20 * 60_000
 

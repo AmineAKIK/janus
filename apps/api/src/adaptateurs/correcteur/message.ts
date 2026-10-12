@@ -7,7 +7,7 @@ const FICHIER_CONSIGNE = new URL('../../../../../prompts/correction/v1.md', impo
 export const CONSIGNE = readFileSync(FICHIER_CONSIGNE, 'utf8')
 export const EMPREINTE_CONSIGNE = createHash('sha256').update(CONSIGNE).digest('hex')
 
-export const REPONSE_MAX = 2000
+const REPONSE_MAX = 2000
 export const RAPPEL_JSON = 'Réponds uniquement avec le JSON demandé.'
 
 export interface MessageChat {
@@ -16,7 +16,7 @@ export interface MessageChat {
 }
 
 /** Le message utilisateur du cadrage : le cours, la question, l'attendu, la réponse entre délimiteurs. */
-export function messageUtilisateur(requete: RequeteCorrection, reponse: string): string {
+function messageUtilisateur(requete: RequeteCorrection, reponse: string): string {
   return [
     `Bloc : ${requete.titre}`,
     'Cours du bloc :',

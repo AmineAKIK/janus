@@ -14,7 +14,7 @@ export interface HorlogeDemo {
 }
 
 /** Où le décalage est gardé : le store de la démo, pour qu'un rechargement le retrouve. */
-export interface StockageDecalage {
+interface StockageDecalage {
   readonly lire: () => number
   readonly ecrire: (ms: number) => void
 }
