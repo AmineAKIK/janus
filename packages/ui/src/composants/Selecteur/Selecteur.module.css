@@ -1,0 +1,146 @@
+.champ {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-libelle);
+  width: 100%;
+}
+
+.libelle {
+  font-weight: 500;
+  color: var(--couleur-encre);
+}
+
+.bouton {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacement-8);
+  width: 100%;
+  min-height: var(--hauteur-champ);
+  padding: 0 var(--espacement-12);
+  border: 1px solid var(--couleur-controle);
+  border-radius: var(--rayon-champ);
+  background: var(--couleur-fond);
+  color: var(--couleur-encre);
+  text-align: start;
+  cursor: pointer;
+  transition: border-color var(--duree-transition) ease;
+}
+
+.bouton:focus-visible,
+.bouton[aria-expanded='true'] {
+  border-color: var(--couleur-accent);
+  outline: none;
+}
+
+.bouton:focus-visible {
+  box-shadow: var(--focus-anneau);
+}
+
+.valeur {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fleche {
+  flex: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--couleur-texte-secondaire);
+  transition: transform var(--duree-transition) ease;
+}
+
+.fleche.ouvert {
+  transform: rotate(180deg);
+}
+
+.desactive {
+  opacity: 0.65;
+}
+
+.desactive .bouton {
+  background: var(--couleur-surface-douce);
+  cursor: not-allowed;
+}
+
+.liste {
+  z-index: 300;
+  box-sizing: border-box;
+  margin: 0;
+  padding: var(--espacement-4);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+  background: var(--couleur-surface-elevee);
+  border: 1px solid var(--couleur-ligne);
+  border-radius: var(--rayon-carte);
+  box-shadow: var(--ombre-carte);
+  color: var(--couleur-encre);
+  scrollbar-width: thin;
+  scrollbar-color: var(--couleur-controle) transparent;
+  animation: ouverture var(--duree-transition) ease;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacement-8);
+  min-height: var(--hauteur-option-selecteur);
+  padding: 0 var(--espacement-12);
+  border-radius: var(--rayon-option);
+  cursor: pointer;
+}
+
+.option[data-actif] {
+  background: var(--couleur-surface-douce);
+}
+
+.option[aria-selected='true'] {
+  color: var(--couleur-accent);
+  font-weight: 600;
+}
+
+.texteOption {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.coche {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+}
+
+@keyframes ouverture {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bouton,
+  .fleche {
+    transition: none;
+  }
+
+  .liste {
+    animation: none;
+  }
+}
+
+/* Réservé aux lecteurs d'écran. */
+.champ .masque {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}

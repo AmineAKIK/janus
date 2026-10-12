@@ -7,13 +7,14 @@ test.describe('Journal', () => {
     await page.goto('./#/journal')
     await expect(page.getByRole('heading', { level: 1, name: 'Journal' })).toBeVisible()
 
-    await page.getByRole('combobox', { name: /^Bloc/ }).selectOption('B04')
+    await page.getByRole('combobox', { name: /^Bloc/ }).click()
+    await page.getByRole('option', { name: 'B04', exact: true }).click()
     await expect(page.getByRole('button', { name: 'Retirer le filtre B04' })).toBeVisible()
     await expect(page).toHaveURL(/bloc=B04/)
 
     await page.reload()
     await expect(page.getByRole('button', { name: 'Retirer le filtre B04' })).toBeVisible()
-    await expect(page.getByRole('combobox', { name: /^Bloc/ })).toHaveValue('B04')
+    await expect(page.getByRole('combobox', { name: /^Bloc/ })).toHaveText('B04')
   })
 
   test('ajoute une note sur une ligne et la retrouve', async ({ page }) => {

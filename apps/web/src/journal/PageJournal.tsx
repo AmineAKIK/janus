@@ -11,6 +11,7 @@ import {
   LIBELLES_STATUT,
   LigneEvenement,
   ZoneDeTexte,
+  Selecteur,
 } from '@janus/ui'
 import { useState } from 'react'
 import { useLecture } from '../api/requetes.tsx'
@@ -163,21 +164,13 @@ function SelecteurFiltre({
   readonly onChange: (valeur: string) => void
 }) {
   return (
-    <label className={`${styles['champ'] ?? ''} texte-petit-14`}>
-      {libelle}
-      <select
-        value={valeur}
-        onChange={(evenement) => {
-          onChange(evenement.target.value)
-        }}
-      >
-        {options.map((option) => (
-          <option key={option.valeur} value={option.valeur}>
-            {option.libelle}
-          </option>
-        ))}
-      </select>
-    </label>
+    <Selecteur
+      libelle={libelle}
+      valeur={valeur}
+      options={options}
+      onChange={onChange}
+      className={styles['champ']}
+    />
   )
 }
 

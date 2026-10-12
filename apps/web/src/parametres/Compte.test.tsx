@@ -35,17 +35,17 @@ describe('Compte', () => {
 
     expect(screen.getByText('amine')).toBeVisible()
     expect(screen.getByLabelText('Heure de bascule du jour')).toHaveValue('4')
-    expect(screen.getByRole('combobox', { name: 'Fuseau horaire' })).toHaveValue('Europe/Paris')
+    expect(screen.getByRole('combobox', { name: 'Fuseau horaire' })).toHaveTextContent(
+      'Europe/Paris',
+    )
   })
 
   it('change le fuseau horaire', async () => {
     const utilisateur = userEvent.setup()
     const banc = await afficher()
 
-    await utilisateur.selectOptions(
-      screen.getByRole('combobox', { name: 'Fuseau horaire' }),
-      'Europe/Lisbon',
-    )
+    await utilisateur.click(screen.getByRole('combobox', { name: 'Fuseau horaire' }))
+    await utilisateur.click(screen.getByRole('option', { name: 'Europe/Lisbon' }))
 
     await waitFor(() => {
       expect(banc.magasin.lire().reglages.fuseau).toBe('Europe/Lisbon')

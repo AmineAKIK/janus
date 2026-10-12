@@ -1,6 +1,6 @@
 import { ROUTES } from '@janus/contrats'
 import type { ModificationReglages, Reglages } from '@janus/contrats'
-import { BandeauAlerte, Bouton, LigneLectureSeule, LigneReglage } from '@janus/ui'
+import { BandeauAlerte, Bouton, LigneLectureSeule, LigneReglage, Selecteur } from '@janus/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useEcriture, useLecture } from '../../api/requetes.tsx'
@@ -52,20 +52,16 @@ export function SectionCompte({ reglages, enregistrer }: Proprietes) {
         className={styles['ligneChamp'] ?? ''}
         libelle={T.fuseau}
         controle={
-          <select
-            aria-label={T.fuseau}
-            className={`${styles['selection'] ?? ''} texte-corps-16`}
-            value={reglages.fuseau}
-            onChange={(evenement) => {
-              enregistrer({ fuseau: evenement.target.value })
+          <Selecteur
+            libelle={T.fuseau}
+            libelleMasque
+            valeur={reglages.fuseau}
+            options={fuseaux.map((fuseau) => ({ valeur: fuseau, libelle: fuseau }))}
+            onChange={(fuseau) => {
+              enregistrer({ fuseau })
             }}
-          >
-            {fuseaux.map((fuseau) => (
-              <option key={fuseau} value={fuseau}>
-                {fuseau}
-              </option>
-            ))}
-          </select>
+            className={styles['selection']}
+          />
         }
       />
       <ChampReglage

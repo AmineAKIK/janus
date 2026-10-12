@@ -1,4 +1,4 @@
-import { BandeauAlerte, Bouton, Dialogue, LIBELLES_STATUT, ZoneDeTexte } from '@janus/ui'
+import { BandeauAlerte, Bouton, Dialogue, LIBELLES_STATUT, Selecteur, ZoneDeTexte } from '@janus/ui'
 import { Statut } from '@janus/contrats'
 import { useState } from 'react'
 import styles from './Suivi.module.css'
@@ -31,36 +31,21 @@ export function DialogueForcer({
           if (valide && !enCours) surForcer(bloc, statut, raison.trim())
         }}
       >
-        <label className={`${styles['champ'] ?? ''} texte-petit-14`}>
-          {T.champBloc}
-          <select
-            value={bloc}
-            onChange={(evenement) => {
-              setBloc(evenement.target.value)
-            }}
-          >
-            {blocs.map((code) => (
-              <option key={code} value={code}>
-                {code}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className={`${styles['champ'] ?? ''} texte-petit-14`}>
-          {T.champStatut}
-          <select
-            value={statut}
-            onChange={(evenement) => {
-              setStatut(Statut.parse(evenement.target.value))
-            }}
-          >
-            {Statut.options.map((valeur) => (
-              <option key={valeur} value={valeur}>
-                {LIBELLES_STATUT[valeur]}
-              </option>
-            ))}
-          </select>
-        </label>
+        <Selecteur
+          libelle={T.champBloc}
+          valeur={bloc}
+          options={blocs.map((code) => ({ valeur: code, libelle: code }))}
+          onChange={setBloc}
+          data-focus-initial
+        />
+        <Selecteur
+          libelle={T.champStatut}
+          valeur={statut}
+          options={Statut.options.map((valeur) => ({ valeur, libelle: LIBELLES_STATUT[valeur] }))}
+          onChange={(valeur) => {
+            setStatut(Statut.parse(valeur))
+          }}
+        />
         <ZoneDeTexte
           libelle={T.champRaison}
           message={T.raisonAide}

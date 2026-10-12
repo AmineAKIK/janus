@@ -106,6 +106,7 @@ export const TEXTES_RAPPELS = {
   abonnementEchoue: 'L’appareil n’a pas pu être enregistré sur le serveur. Réessaie.',
   heure: 'Heure du rappel',
   pause: 'Pause jusqu’au',
+  choisirDate: 'Choisir une date',
   aucunePause: 'Aucune',
   reprendre: 'Reprendre les rappels',
 } as const
