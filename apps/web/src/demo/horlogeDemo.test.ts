@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from 'vitest'
-import { creerHorlogeDemo, instantReel } from './horlogeDemo.ts'
+import { describe, expect, it } from 'vitest'
+import { creerHorlogeDemo } from './horlogeDemo.ts'
 
 const REELLE = Date.parse('2026-10-05T10:00:00.000Z')
 
@@ -64,13 +64,5 @@ describe('horloge de démo', () => {
 
     expect(range).toBe(6000)
     expect(horloge.maintenantMs()).toBe(REELLE + 6000)
-  })
-
-  it('instantReel lit l’horloge du système', () => {
-    vi.useFakeTimers()
-    vi.setSystemTime(new Date('2026-10-05T10:00:00.000Z'))
-
-    expect(instantReel()).toBe('2026-10-05T10:00:00.000Z')
-    vi.useRealTimers()
   })
 })

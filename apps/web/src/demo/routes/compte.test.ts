@@ -1,7 +1,7 @@
 import { ErreurApi, ROUTES } from '@janus/contrats'
 import { describe, expect, it } from 'vitest'
 import { monterDemo } from './banc.ts'
-import { IDENTIFIANT_DEMO, MOT_DE_PASSE_DEMO } from './compte.ts'
+import { IDENTIFIANT_DEMO, MOT_DE_PASSE_DEMO } from '../identifiants.ts'
 
 const connexion = (mot_de_passe: string) => ({
   corps: { nom_utilisateur: IDENTIFIANT_DEMO, mot_de_passe },

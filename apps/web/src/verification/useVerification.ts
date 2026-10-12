@@ -3,7 +3,7 @@ import type { Confiance, SortieRoute } from '@janus/contrats'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useLecture } from '../api/requetes.tsx'
-import { instantReel } from '../demo/horlogeDemo.ts'
+import { instantReel } from '../horloge.ts'
 import { useBoiteEnvoi } from '../envoi/FournisseurEnvoi.tsx'
 import type { ResultatVerification } from './textes.ts'
 

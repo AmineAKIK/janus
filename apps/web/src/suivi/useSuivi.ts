@@ -2,7 +2,7 @@ import { nomRoute, nouvelId, ROUTES } from '@janus/contrats'
 import type { SortieRoute, Statut } from '@janus/contrats'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEcriture, useLecture } from '../api/requetes.tsx'
-import { instantReel } from '../demo/horlogeDemo.ts'
+import { instantReel } from '../horloge.ts'
 
 export type DonneesSuivi = SortieRoute<(typeof ROUTES)['GET /tableau-de-bord']>
 

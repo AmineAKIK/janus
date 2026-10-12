@@ -101,7 +101,13 @@ function lireStocke(stockage: Stockage | null): EtatDemo | null {
   try {
     const brut = stockage.getItem(CLE_STOCKAGE)
     if (brut === null) return null
-    const resultat = EtatDemo.safeParse(JSON.parse(brut))
+    const stocke: unknown = JSON.parse(brut)
+    // Les états gardés avant que le mot de passe n'y figure n'en ont pas : ils reprennent celui de la graine.
+    const resultat = EtatDemo.safeParse(
+      typeof stocke === 'object' && stocke !== null && !('motDePasse' in stocke)
+        ? { ...stocke, motDePasse: MOT_DE_PASSE_INITIAL }
+        : stocke,
+    )
     return resultat.success ? resultat.data : null
   } catch {
     return null

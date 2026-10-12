@@ -68,7 +68,7 @@ export const EtatDemo = z.strictObject({
     fuseau: z.string().min(1),
   }),
   /** Le mot de passe du compte de démo, que « Changer le mot de passe » modifie. */
-  motDePasse: z.string().min(1).default('demo-janus'),
+  motDePasse: z.string().min(1),
   /** Les autres appareils connectés (la session courante est implicite). */
   sessions: z
     .array(

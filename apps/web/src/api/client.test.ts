@@ -25,11 +25,10 @@ describe('creerTransport', () => {
     )
     vi.stubGlobal('fetch', fetchMock)
 
-    await creerTransport({ VITE_TRANSPORT: 'http' }).appeler(ROUTES['DELETE /session'], {})
-    await creerTransport({ VITE_TRANSPORT: 'http', VITE_API: 'https://api.example/v1' }).appeler(
-      ROUTES['DELETE /session'],
-      {},
-    )
+    await (await creerTransport({ VITE_TRANSPORT: 'http' })).appeler(ROUTES['DELETE /session'], {})
+    await (
+      await creerTransport({ VITE_TRANSPORT: 'http', VITE_API: 'https://api.example/v1' })
+    ).appeler(ROUTES['DELETE /session'], {})
 
     expect(fetchMock.mock.calls.map(([adresse]) => adresse)).toEqual([
       '/api/session',
@@ -42,7 +41,9 @@ describe('creerTransport', () => {
     vi.stubGlobal('fetch', fetchMock)
     delete window.__janusDemo
 
-    const erreur: unknown = await creerTransport({})
+    const erreur: unknown = await (
+      await creerTransport({})
+    )
       .appeler(ROUTES['POST /push/abonnements'], {
         corps: {
           id: nouvelId(1),
@@ -62,23 +63,23 @@ describe('creerTransport', () => {
     ])
   })
 
-  it('au premier lancement, la démo part de la graine, puis la retrouve au rechargement', () => {
+  it('au premier lancement, la démo part de la graine, puis la retrouve au rechargement', async () => {
     localStorage.clear()
 
-    creerTransport({})
+    await creerTransport({})
     const lire = (): unknown => JSON.parse(localStorage.getItem('janus.demo.v1') ?? 'null')
     const premier = lire()
-    creerTransport({})
+    await creerTransport({})
 
     expect(JSON.stringify(premier)).toContain('"graine-B01-01"')
     expect(lire()).toEqual(premier)
   })
 
-  it('en http, window.__janusDemo n’existe pas', () => {
+  it('en http, window.__janusDemo n’existe pas', async () => {
     delete window.__janusDemo
     vi.stubGlobal('fetch', vi.fn())
 
-    creerTransport({ VITE_TRANSPORT: 'http' })
+    await creerTransport({ VITE_TRANSPORT: 'http' })
 
     expect(window.__janusDemo).toBeUndefined()
   })

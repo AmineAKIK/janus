@@ -3,7 +3,7 @@ import type { NoteCarte, SortieRoute } from '@janus/contrats'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
 import { useLecture } from '../api/requetes.tsx'
-import { instantReel } from '../demo/horlogeDemo.ts'
+import { instantReel } from '../horloge.ts'
 import { useBoiteEnvoi } from '../envoi/FournisseurEnvoi.tsx'
 
 export type Carte = SortieRoute<(typeof ROUTES)['GET /cartes/dues']>['dues'][number]

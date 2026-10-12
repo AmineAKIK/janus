@@ -1,7 +1,7 @@
 import { nouvelId } from '@janus/contrats'
 import type { TypeEtape } from '@janus/contrats'
 import { useCallback, useEffect, useRef } from 'react'
-import { instantReel } from '../demo/horlogeDemo.ts'
+import { instantReel } from '../horloge.ts'
 import { useBoiteEnvoi } from '../envoi/FournisseurEnvoi.tsx'
 import { creerCompteurTempsActif } from '../envoi/tempsActif.ts'
 
