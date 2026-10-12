@@ -2,10 +2,12 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { nouvelId, Reglages } from '@janus/contrats'
+import { VERSION_MOTEUR } from '@janus/moteur'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { baseDepuisPool } from '../../base/base.ts'
 import * as t from '../../base/schema/index.ts'
 import { creerBaseDeTest, URL_SERVEUR_TEST } from '../../base/testeurBase.ts'
+import { recalculerLesPerimes } from '../../recalcul.ts'
 import { configDeTest, ORIGINE_TEST, serveurDeTest } from '../../testeur.ts'
 import { creerHacheur } from '../auth/composition.ts'
 import { monterImportation } from '../catalogue/composition.ts'
@@ -187,6 +189,66 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
 
         expect(reponse.statusCode).toBe(400)
         expect(reponse.json()).toMatchObject({ code: 'donnees_invalides' })
+      })
+
+      it('refuse un fait sur une étape, un exercice ou un item que la fiche ne connaît pas (400)', async () => {
+        const avant = [await compter('etape_vue'), await compter('pratique_resultat')]
+        const messages = [
+          { type: 'etape.vue', etape: 'ET999' },
+          {
+            type: 'pratique.resultat',
+            exercice: 'PR999',
+            item: 'X',
+            reussi: true,
+            aide: 0,
+            essais: 1,
+          },
+        ]
+        for (const message of messages) {
+          const reponse = await envoyer({ ...commun(), ...message })
+          expect(reponse.statusCode).toBe(400)
+          expect(reponse.json()).toMatchObject({ code: 'donnees_invalides' })
+        }
+        expect([await compter('etape_vue'), await compter('pratique_resultat')]).toEqual(avant)
+      })
+
+      it('ne garde pas page.prete et garde la réponse au pré-test avec sa question', async () => {
+        const prete = await envoyer({ ...commun(), type: 'page.prete', schema: 2 })
+        const pretest = await envoyer({
+          ...commun(),
+          type: 'pretest.reponse',
+          question: 'P1',
+          reponse: 'Je pense que c’est une liste.',
+        })
+
+        expect(prete.json()).toEqual({ doublon: false, statut: null })
+        expect(pretest.statusCode).toBe(200)
+        expect(await compter('page.prete')).toBe(0)
+        const lignes = await bases.pool.query(
+          "SELECT donnees FROM evenements WHERE type = 'pretest.reponse'",
+        )
+        expect(lignes.rows[0]).toEqual({
+          donnees: { question: 'P1', reponse: 'Je pense que c’est une liste.' },
+        })
+      })
+
+      it('recalcule au démarrage les lignes venues d’une autre version du moteur', async () => {
+        await bases.pool.query(
+          "UPDATE statuts_courants SET version_moteur = 0, statut_calcule = 'non_commence'",
+        )
+
+        const recalcules = await recalculerLesPerimes(
+          baseDepuisPool(bases.db, bases.pool),
+          s.horloge,
+        )
+
+        const { rows } = await bases.pool.query<{ version: number; statut: string }>(
+          'SELECT version_moteur AS version, statut_calcule AS statut FROM statuts_courants',
+        )
+        expect(recalcules).toBeGreaterThan(0)
+        expect(rows.every(({ version }) => version === VERSION_MOTEUR)).toBe(true)
+        expect(rows.some(({ statut }) => statut !== 'non_commence')).toBe(true)
+        expect(await recalculerLesPerimes(baseDepuisPool(bases.db, bases.pool), s.horloge)).toBe(0)
       })
 
       it('range une seule échéance ouverte par bloc et des lignes de journal', async () => {

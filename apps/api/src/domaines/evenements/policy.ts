@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import type { MessagePage, TempsActif } from '@janus/contrats'
+import type { Manifeste, MessagePage, TempsActif } from '@janus/contrats'
 
 export type Message = MessagePage | TempsActif
 
@@ -81,6 +81,13 @@ export function enregistrementDe(message: Message): Enregistrement {
         aide: null,
         changeLeStatut: true,
       }
+    case 'pretest.reponse':
+      return {
+        type: 'pretest.reponse',
+        donnees: { question: message.question, reponse: message.reponse },
+        aide: null,
+        changeLeStatut: false,
+      }
     case 'temps.actif':
       return {
         type: 'temps.actif',
@@ -93,6 +100,43 @@ export function enregistrementDe(message: Message): Enregistrement {
       }
     default:
       return { type: message.type, donnees: {}, aide: null, changeLeStatut: false }
+  }
+}
+
+/** `page.prete` dit seulement que la page est chargée : rien à garder, le statut n'en dépend pas. */
+export function estSansEffet(message: Message): boolean {
+  return message.type === 'page.prete'
+}
+
+/**
+ * Ce que le message cite et que la version du manifeste ne connaît pas (étape, exercice, item,
+ * atelier, aisance, erreur critique), ou `undefined` si tout est connu. Le moteur ne doit jamais
+ * recevoir un fait sur un élément qui n'existe pas.
+ */
+export function incoherence(message: Message, manifeste: Manifeste): string | undefined {
+  switch (message.type) {
+    case 'etape.vue':
+      return manifeste.etapes.some(({ id }) => id === message.etape)
+        ? undefined
+        : `l'étape « ${message.etape} »`
+    case 'pratique.resultat': {
+      const exercice = manifeste.pratique.find(({ id }) => id === message.exercice)
+      if (exercice === undefined) return `l'exercice « ${message.exercice} »`
+      return exercice.items.some(({ id }) => id === message.item)
+        ? undefined
+        : `l'item « ${message.item} » de l'exercice « ${message.exercice} »`
+    }
+    case 'atelier.resultat':
+      return manifeste.atelier === undefined ? "un atelier (il n'en a pas)" : undefined
+    case 'aisance.resultat':
+      return manifeste.aisance === undefined ? "un exercice d'aisance (il n'en a pas)" : undefined
+    case 'bilan.erreurs': {
+      const connues = new Set(manifeste.erreurs_critiques.map(({ id }) => id))
+      const inconnues = message.ids.filter((id) => !connues.has(id))
+      return inconnues.length === 0 ? undefined : `l'erreur « ${inconnues.join('», «')} »`
+    }
+    default:
+      return undefined
   }
 }
 

@@ -1,18 +1,25 @@
-import { Reglages, StatutBloc } from '@janus/contrats'
-import type { Manifeste, StatutBloc as StatutBlocApi } from '@janus/contrats'
-import { calculerBloc, debutDuJour, echeances, lignesDuJournal } from '@janus/moteur'
+import { Manifeste, Reglages, StatutBloc } from '@janus/contrats'
+import type { StatutBloc as StatutBlocApi } from '@janus/contrats'
+import {
+  calculerBloc,
+  debutDuJour,
+  echeances,
+  lignesDuJournal,
+  VERSION_MOTEUR,
+} from '@janus/moteur'
 import type { Echeance } from '@janus/moteur'
 import type { ResultatBloc } from '@janus/moteur'
-import { and, eq, isNull, sql } from 'drizzle-orm'
+import { and, desc, eq, isNull, ne, sql } from 'drizzle-orm'
 import { lireFaits } from './base/faits.ts'
 import { nouvelId } from '@janus/contrats'
 import { instantEnMs } from '@janus/moteur'
 import * as t from './base/schema/index.ts'
 import { verrouBloc } from './base/transaction.ts'
+import type { Base } from './base/base.ts'
 import type { Tx } from './base/transaction.ts'
+import type { Horloge } from './horloge.ts'
 
-/** La version des règles du moteur qui ont produit une ligne calculée : si elle change, on recalcule tout. */
-export const VERSION_MOTEUR = 1
+export { VERSION_MOTEUR }
 
 export interface OptionsRecalcul {
   readonly userId: string
@@ -74,6 +81,44 @@ export async function recalculer(
   await rangerEcheance(tx, { userId, blocId: bloc.id, echeance, reglages, maintenant })
   await refaireJournal(tx, { userId, bloc: bloc.id, faits, manifeste, reglages, maintenant })
   return resultat
+}
+
+/**
+ * Recalcule les blocs dont les lignes calculées viennent d'une autre version des règles du moteur,
+ * un bloc par transaction. Rend le nombre de blocs recalculés.
+ */
+export async function recalculerLesPerimes(base: Base, horloge: Horloge): Promise<number> {
+  const perimes = await base.db
+    .select({ userId: t.statutsCourants.userId, blocId: t.statutsCourants.blocId })
+    .from(t.statutsCourants)
+    .where(ne(t.statutsCourants.versionMoteur, VERSION_MOTEUR))
+  for (const { userId, blocId } of perimes) {
+    await base.enTransaction(async (tx) => {
+      const [bloc] = await tx
+        .select({ id: t.blocs.id, code: t.blocs.code })
+        .from(t.blocs)
+        .where(eq(t.blocs.id, blocId))
+      const [enService] = await tx
+        .select({ manifeste: t.fichesVersions.manifeste })
+        .from(t.fichesVersions)
+        .where(eq(t.fichesVersions.blocId, blocId))
+        .orderBy(desc(t.fichesVersions.version))
+        .limit(1)
+      const [utilisateur] = await tx
+        .select({ reglages: t.users.reglages })
+        .from(t.users)
+        .where(eq(t.users.id, userId))
+      if (bloc === undefined || enService === undefined || utilisateur === undefined) return
+      await recalculer(tx, {
+        userId,
+        bloc,
+        manifeste: Manifeste.parse(enService.manifeste),
+        reglages: Reglages.parse(utilisateur.reglages),
+        maintenant: horloge.maintenant(),
+      })
+    })
+  }
+  return perimes.length
 }
 
 /** L'instant à partir duquel une échéance est due : tel quel, ou le début du jour. */

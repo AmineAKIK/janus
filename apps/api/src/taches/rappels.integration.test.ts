@@ -11,13 +11,15 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('tâche des rappels contre Postg
     Promise.resolve({ rappels: 0, abonnementsSupprimes: 0, echecs: 0 }),
   )
 
+  const erreursDeLaFile: unknown[] = []
+
   beforeAll(async () => {
     bases = await creerBaseDeTest(URL_SERVEUR_TEST ?? '')
     taches = await demarrerLesTaches({
       proprietaire: baseDepuisPool(bases.db, bases.pool),
       envoyerLesRappels,
-      erreur: (message, cause) => {
-        throw new Error(message, { cause })
+      erreur: (_message, cause) => {
+        erreursDeLaFile.push(cause)
       },
     })
   })
@@ -45,6 +47,12 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('tâche des rappels contre Postg
       },
       { timeout: 15_000 },
     )
+  })
+
+  it('la supervision de la file (expiration, archivage) passe sans erreur', async () => {
+    await taches.boss.supervise(FILE_RAPPELS)
+
+    expect(erreursDeLaFile).toEqual([])
   })
 
   it('replanifier au démarrage suivant ne double pas le planning', async () => {

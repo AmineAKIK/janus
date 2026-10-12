@@ -1,9 +1,12 @@
 import { EXEMPLES_PAGE, MessagePage } from '@janus/contrats'
+import type { Manifeste } from '@janus/contrats'
 import { describe, expect, it } from 'vitest'
 import {
   decisionsDuBilan,
   empreinteDuMessage,
   enregistrementDe,
+  estSansEffet,
+  incoherence,
   MESSAGES_AILLEURS,
 } from './policy.ts'
 
@@ -40,7 +43,13 @@ describe('enregistrementDe', () => {
     ['aisance.resultat', 'aisance_resultat', { reussi: true, dureeS: 42.5 }, null, true],
     ['bilan.erreurs', 'bilan.erreurs', { ids: ['E1', 'E3'] }, null, true],
     ['page.prete', 'page.prete', {}, null, false],
-    ['pretest.reponse', 'pretest.reponse', {}, null, false],
+    [
+      'pretest.reponse',
+      'pretest.reponse',
+      { question: 'P1', reponse: 'Je pense que c’est une liste.' },
+      null,
+      false,
+    ],
   ] as const)('%s est gardé comme %s', (type, attendu, donnees, aide, change) => {
     expect(enregistrementDe(exemple(type))).toEqual({
       type: attendu,
@@ -80,5 +89,50 @@ describe('decisionsDuBilan', () => {
     [[], [], [], []],
   ])('ouvertes %j, cochées %j', (ouvertes, cochees, aCocher, aDecocher) => {
     expect(decisionsDuBilan(ouvertes, cochees)).toEqual({ aCocher, aDecocher })
+  })
+})
+
+describe('incoherence et estSansEffet', () => {
+  // Seuls les champs que la règle lit.
+  const fiche = {
+    etapes: [{ id: 'ET3' }],
+    pratique: [{ id: 'PR1', items: [{ id: 'PR1-2' }] }],
+    erreurs_critiques: [{ id: 'E1' }, { id: 'E3' }],
+    atelier: { id: 'AT1' },
+    aisance: { libelle: 'Aisance' },
+  } as unknown as Manifeste
+  const sansAtelierNiAisance = { ...fiche, atelier: undefined, aisance: undefined } as Manifeste
+
+  it('accepte les exemples du contrat quand la fiche connaît ce qu’ils citent', () => {
+    for (const type of [
+      'etape.vue',
+      'pratique.resultat',
+      'atelier.resultat',
+      'aisance.resultat',
+      'bilan.erreurs',
+    ] as const) {
+      expect(incoherence(exemple(type), fiche), type).toBeUndefined()
+    }
+    expect(incoherence(exemple('pretest.reponse'), fiche)).toBeUndefined()
+  })
+
+  it('nomme ce que la fiche ne connaît pas', () => {
+    expect(incoherence({ ...exemple('etape.vue'), etape: 'ET9' } as never, fiche)).toContain('ET9')
+    expect(
+      incoherence({ ...exemple('pratique.resultat'), exercice: 'PR9' } as never, fiche),
+    ).toContain('PR9')
+    expect(
+      incoherence({ ...exemple('pratique.resultat'), item: 'PR1-9' } as never, fiche),
+    ).toContain('PR1-9')
+    expect(
+      incoherence({ ...exemple('bilan.erreurs'), ids: ['E1', 'E8', 'E9'] } as never, fiche),
+    ).toContain('E8')
+    expect(incoherence(exemple('atelier.resultat'), sansAtelierNiAisance)).toContain('atelier')
+    expect(incoherence(exemple('aisance.resultat'), sansAtelierNiAisance)).toContain('aisance')
+  })
+
+  it('seul page.prete est sans effet', () => {
+    expect(estSansEffet(exemple('page.prete'))).toBe(true)
+    expect(estSansEffet(exemple('pretest.reponse'))).toBe(false)
   })
 })

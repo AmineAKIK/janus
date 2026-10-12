@@ -10,6 +10,7 @@ import { baseDepuisPool } from '../../base/base.ts'
 import * as t from '../../base/schema/index.ts'
 import { creerBaseDeTest, URL_SERVEUR_TEST } from '../../base/testeurBase.ts'
 import { configDeTest, ORIGINE_TEST, serveurDeTest } from '../../testeur.ts'
+import { libererLesReservations } from './composition.ts'
 import { creerHacheur } from '../auth/composition.ts'
 import { monterImportation } from '../catalogue/composition.ts'
 
@@ -451,6 +452,44 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('POST /corrections contre Postgr
       expect(apres?.consomme).toBe(consommeAvant + 540 * reussies)
       expect(apres?.consomme).toBeLessThanOrEqual(plafond)
       await reglages({})
+    })
+
+    it('un même envoi reçu trois fois à la fois n’appelle le correcteur qu’une fois', async () => {
+      const envoi = demande()
+      const avant = faux.requetes.length
+      const consommeAvant = (await budget())?.consomme ?? 0
+
+      const reponses = await Promise.all([corriger(envoi), corriger(envoi), corriger(envoi)])
+
+      expect(reponses.map(({ statusCode }) => statusCode)).toEqual([200, 200, 200])
+      expect(new Set(reponses.map((r) => r.json<{ id: string }>().id)).size).toBe(1)
+      expect(faux.requetes.length - avant).toBe(1)
+      const apres = await budget()
+      expect(apres?.reserve).toBe(0)
+      expect(apres?.consomme).toBe(consommeAvant + 540)
+    })
+
+    it('rejouer un envoi après une panne du fournisseur rend 503 à chaque fois, sans fuite de budget', async () => {
+      const envoi = demande()
+      const avant = await budget()
+      scenario = () => new Error('fournisseur en panne')
+
+      const codes: number[] = []
+      for (let rejeu = 0; rejeu < 3; rejeu += 1) {
+        codes.push((await corriger(envoi)).statusCode)
+      }
+      scenario = undefined
+
+      expect(codes).toEqual([503, 503, 503])
+      expect((await budget())?.reserve).toBe(avant?.reserve)
+    })
+
+    it('rend au démarrage les réservations qu’un arrêt brutal a laissées', async () => {
+      await bases.pool.query('UPDATE budget_ia SET reserve_millioniemes = 5000')
+
+      await libererLesReservations(baseDepuisPool(bases.db, bases.pool))
+
+      expect((await budget())?.reserve).toBe(0)
     })
 
     it('limite le nombre d’appels par heure (429, trop_de_requetes)', async () => {

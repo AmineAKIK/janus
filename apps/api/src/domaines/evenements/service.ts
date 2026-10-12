@@ -14,6 +14,8 @@ import {
   empreinteDuMessage,
   erreurProposee,
   enregistrementDe,
+  estSansEffet,
+  incoherence,
 } from './policy.ts'
 import type { Message } from './policy.ts'
 
@@ -71,18 +73,16 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
       const { bloc, versionDemandee } = trouve
       const manifeste = Manifeste.parse(trouve.manifeste)
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
-      if (message.type === 'bilan.erreurs') {
-        const connues = new Set(manifeste.erreurs_critiques.map(({ id }) => id))
-        const inconnues = message.ids.filter((id) => !connues.has(id))
-        if (inconnues.length > 0) {
-          throw new ErreurProtocole(
-            400,
-            'donnees_invalides',
-            'Erreur inconnue',
-            `Ce bloc ne connaît pas : ${inconnues.join(', ')}.`,
-          )
-        }
+      const inconnu = incoherence(message, manifeste)
+      if (inconnu !== undefined) {
+        throw new ErreurProtocole(
+          400,
+          'donnees_invalides',
+          'Message incohérent avec la fiche',
+          `Ce bloc, en version ${versionDemandee}, ne connaît pas ${inconnu}.`,
+        )
       }
+      if (estSansEffet(message)) return { doublon: false, statut: null }
       const enregistrement = enregistrementDe(message)
 
       return base.enTransaction(async (tx) => {

@@ -191,170 +191,172 @@ export function creerServiceCorrection({
     return { sortie: undefined, dernier, bruts, motif, jetonsEntree, jetonsSortie, cout }
   }
 
-  return {
-    /**
-     * Corrige une réponse : doublon, relances, réservation du budget, appel hors transaction,
-     * validation, enregistrement, recalcul du bloc.
-     */
-    async corriger(userId: string, demande: DemandeCorrection): Promise<CorrectionRecueApi> {
-      if (demande.serie === 'verification' && demande.verification === undefined) {
-        throw new ErreurProtocole(
-          400,
-          'donnees_invalides',
-          'Série non corrigée',
-          `Le serveur ne corrige pas encore la série « ${demande.serie} ».`,
-        )
-      }
-      const { serie } = demande
-      if (
-        serie !== 'rappel' &&
-        serie !== 'verification' &&
-        (demande.bloc === undefined || demande.version === undefined)
-      ) {
-        throw new ErreurProtocole(
-          400,
-          'donnees_invalides',
-          'Bloc manquant',
-          'Le bloc et sa version sont exigés.',
-        )
-      }
+  /** Les envois en cours, par utilisateur et identifiant. */
+  const enCours = new Map<string, Promise<CorrectionRecueApi>>()
 
-      const gardee = await depot.correctionParId(base.db, demande.id)
-      if (gardee !== undefined) {
-        if (gardee.userId !== userId) {
-          throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
-        }
-        return correctionRecue(gardee)
-      }
+  async function corrigerUneFois(
+    userId: string,
+    demande: DemandeCorrection,
+  ): Promise<CorrectionRecueApi> {
+    if (demande.serie === 'verification' && demande.verification === undefined) {
+      throw new ErreurProtocole(
+        400,
+        'donnees_invalides',
+        'Série non corrigée',
+        `Le serveur ne corrige pas encore la série « ${demande.serie} ».`,
+      )
+    }
+    const { serie } = demande
+    if (
+      serie !== 'rappel' &&
+      serie !== 'verification' &&
+      (demande.bloc === undefined || demande.version === undefined)
+    ) {
+      throw new ErreurProtocole(
+        400,
+        'donnees_invalides',
+        'Bloc manquant',
+        'Le bloc et sa version sont exigés.',
+      )
+    }
 
-      const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
-      let trouve
-      if (serie === 'verification') {
-        // Une partie d'une vérification : le bloc est celui de la vérification tirée.
-        trouve = await depot.blocDeLaVerification(base.db, userId, demande.verification ?? '')
-        if (trouve === undefined) throw introuvable('La vérification')
-      } else if (serie === 'rappel') {
-        // Le rappel ne dit pas son bloc : le serveur le retrouve dans la série gardée pour aujourd'hui.
-        const jour = jourDe(horloge.maintenant(), reglages.fuseau, reglages.heureBascule)
-        const gardee = SerieGardee.safeParse(await depot.serieDuJour(base.db, userId, jour))
-        const code = gardee.success
-          ? gardee.data.find(({ question: q }) => q === demande.question)?.bloc
-          : undefined
-        trouve = code === undefined ? undefined : await depot.derniereVersion(base.db, code)
-        if (trouve === undefined) throw introuvable(`La question « ${demande.question} »`)
-      } else {
-        const code = demande.bloc ?? ''
-        const version = demande.version ?? 0
-        trouve = await depot.blocEtVersion(base.db, code, version)
-        if (trouve === undefined) {
-          throw introuvable(`Le bloc « ${code} » en version ${String(version)}`)
-        }
+    const gardee = await depot.correctionParId(base.db, demande.id)
+    if (gardee !== undefined) {
+      if (gardee.userId !== userId) {
+        throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
       }
-      const manifeste = Manifeste.parse(trouve.manifeste)
-      const question =
-        serie === 'verification'
-          ? manifeste.differees
-              .filter(({ id }) => id === demande.question)
-              .map(({ id, consigne, attendu }) => ({ id, question: consigne, attendu }))[0]
-          : manifeste[serie].find(({ id }) => id === demande.question)
-      if (question === undefined) throw introuvable(`La question « ${demande.question} »`)
-      const bloc = { id: trouve.blocId, code: trouve.code }
+      return correctionRecue(gardee)
+    }
 
-      // Le tour : 1 sans relance, sinon le suivant de cette tentative.
-      const deLaQuestion = await depot.correctionsDeLaQuestion(base.db, {
+    const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
+    let trouve
+    if (serie === 'verification') {
+      // Une partie d'une vérification : le bloc est celui de la vérification tirée.
+      trouve = await depot.blocDeLaVerification(base.db, userId, demande.verification ?? '')
+      if (trouve === undefined) throw introuvable('La vérification')
+    } else if (serie === 'rappel') {
+      // Le rappel ne dit pas son bloc : le serveur le retrouve dans la série gardée pour aujourd'hui.
+      const jour = jourDe(horloge.maintenant(), reglages.fuseau, reglages.heureBascule)
+      const gardee = SerieGardee.safeParse(await depot.serieDuJour(base.db, userId, jour))
+      const code = gardee.success
+        ? gardee.data.find(({ question: q }) => q === demande.question)?.bloc
+        : undefined
+      trouve = code === undefined ? undefined : await depot.derniereVersion(base.db, code)
+      if (trouve === undefined) throw introuvable(`La question « ${demande.question} »`)
+    } else {
+      const code = demande.bloc ?? ''
+      const version = demande.version ?? 0
+      trouve = await depot.blocEtVersion(base.db, code, version)
+      if (trouve === undefined) {
+        throw introuvable(`Le bloc « ${code} » en version ${String(version)}`)
+      }
+    }
+    const manifeste = Manifeste.parse(trouve.manifeste)
+    const question =
+      serie === 'verification'
+        ? manifeste.differees
+            .filter(({ id }) => id === demande.question)
+            .map(({ id, consigne, attendu }) => ({ id, question: consigne, attendu }))[0]
+        : manifeste[serie].find(({ id }) => id === demande.question)
+    if (question === undefined) throw introuvable(`La question « ${demande.question} »`)
+    const bloc = { id: trouve.blocId, code: trouve.code }
+
+    // Le tour : 1 sans relance, sinon le suivant de cette tentative.
+    const deLaQuestion = await depot.correctionsDeLaQuestion(base.db, {
+      userId,
+      blocId: bloc.id,
+      question: question.id,
+      serie,
+    })
+    // Le serveur numérote seul les tentatives : une réponse sans relance ouvre la suivante
+    // (la question peut revenir), une relance prolonge la dernière. Le client n'a rien à retenir.
+    const sansRelance = serie === 'verification' || demande.relance.trim() === ''
+    const { tentative, tour } = numeroter(deLaQuestion, sansRelance)
+    const deLaTentative = deLaQuestion.filter((autre) => autre.tentative === tentative)
+    if (tour > 1 + reglages.relancesMax) throw trop(reglages.relancesMax)
+    const contestee = demande.conteste === true ? deLaQuestion.at(-1) : undefined
+    if (demande.conteste === true && contestee === undefined) {
+      throw new ErreurProtocole(
+        400,
+        'donnees_invalides',
+        'Contestation invalide',
+        'Aucune correction précédente à contester.',
+      )
+    }
+
+    if (correcteur === undefined) {
+      throw new CorrectionIndisponible('La correction n’est pas branchée sur le serveur.')
+    }
+    const recopiee = estRecopiee(
+      demande.reponse,
+      [manifeste.contexte_ia, question.attendu],
+      reglages.seuilRecopie,
+    )
+    const requete: RequeteCorrection = {
+      titre: manifeste.titre,
+      contexteIa: manifeste.contexte_ia,
+      sources: manifeste.sources.map(({ id, titre }) => ({ id, ref: titre })),
+      erreursCritiques: manifeste.erreurs_critiques.map(({ id, libelle }) => ({
+        id,
+        texte: libelle,
+      })),
+      question: question.question,
+      attendu: question.attendu,
+      confiance: demande.confiance,
+      reponse: demande.reponse,
+      historique: deLaTentative
+        .filter(({ tour: t }) => t < tour)
+        .map(({ reponse, message }) => ({ reponse, message })),
+      strict: false,
+    }
+
+    // 1. Réservation, dans une transaction courte.
+    const debut = horloge.maintenant()
+    const mois = moisDe(debut)
+    const caracteres = messagesDeLaRequete(requete).reduce(
+      (total, m) => total + m.content.length,
+      0,
+    )
+    const estime =
+      ESSAIS *
+      coutMillioniemes(
+        {
+          jetonsEntree: Math.ceil(caracteres / CARACTERES_PAR_JETON),
+          jetonsEntreeCache: 0,
+          jetonsSortie: jetonsSortieMax,
+        },
+        tarifs,
+      )
+    await base.enTransaction(async (tx) => {
+      const reserve = await depot.reserver(tx, {
         userId,
-        blocId: bloc.id,
-        question: question.id,
-        serie,
+        mois,
+        plafond: reglages.plafondIaMillioniemes,
+        estime,
       })
-      // Le serveur numérote seul les tentatives : une réponse sans relance ouvre la suivante
-      // (la question peut revenir), une relance prolonge la dernière. Le client n'a rien à retenir.
-      const sansRelance = serie === 'verification' || demande.relance.trim() === ''
-      const { tentative, tour } = numeroter(deLaQuestion, sansRelance)
-      const deLaTentative = deLaQuestion.filter((autre) => autre.tentative === tentative)
-      if (tour > 1 + reglages.relancesMax) throw trop(reglages.relancesMax)
-      const contestee = demande.conteste === true ? deLaQuestion.at(-1) : undefined
-      if (demande.conteste === true && contestee === undefined) {
-        throw new ErreurProtocole(
-          400,
-          'donnees_invalides',
-          'Contestation invalide',
-          'Aucune correction précédente à contester.',
-        )
-      }
-
-      if (correcteur === undefined) {
-        throw new CorrectionIndisponible('La correction n’est pas branchée sur le serveur.')
-      }
-      const recopiee = estRecopiee(
-        demande.reponse,
-        [manifeste.contexte_ia, question.attendu],
-        reglages.seuilRecopie,
+      if (!reserve) throw new BudgetAtteint('Le plafond mensuel de l’IA est atteint.')
+      const appels = await depot.appelsDepuis(
+        tx,
+        userId,
+        instantEnIso(instantEnMs(debut) - HEURE_MS),
       )
-      const requete: RequeteCorrection = {
-        titre: manifeste.titre,
-        contexteIa: manifeste.contexte_ia,
-        sources: manifeste.sources.map(({ id, titre }) => ({ id, ref: titre })),
-        erreursCritiques: manifeste.erreurs_critiques.map(({ id, libelle }) => ({
-          id,
-          texte: libelle,
-        })),
-        question: question.question,
-        attendu: question.attendu,
-        confiance: demande.confiance,
-        reponse: demande.reponse,
-        historique: deLaTentative
-          .filter(({ tour: t }) => t < tour)
-          .map(({ reponse, message }) => ({ reponse, message })),
-        strict: false,
+      if (appels >= reglages.appelsIaParHeure) {
+        throw new TropDeTentatives(60)
       }
+    })
 
-      // 1. Réservation, dans une transaction courte.
-      const debut = horloge.maintenant()
-      const mois = moisDe(debut)
-      const caracteres = messagesDeLaRequete(requete).reduce(
-        (total, m) => total + m.content.length,
-        0,
-      )
-      const estime =
-        ESSAIS *
-        coutMillioniemes(
-          {
-            jetonsEntree: Math.ceil(caracteres / CARACTERES_PAR_JETON),
-            jetonsEntreeCache: 0,
-            jetonsSortie: jetonsSortieMax,
-          },
-          tarifs,
-        )
-      await base.enTransaction(async (tx) => {
-        const reserve = await depot.reserver(tx, {
-          userId,
-          mois,
-          plafond: reglages.plafondIaMillioniemes,
-          estime,
-        })
-        if (!reserve) throw new BudgetAtteint('Le plafond mensuel de l’IA est atteint.')
-        const appels = await depot.appelsDepuis(
-          tx,
-          userId,
-          instantEnIso(instantEnMs(debut) - HEURE_MS),
-        )
-        if (appels >= reglages.appelsIaParHeure) {
-          throw new TropDeTentatives(60)
-        }
-      })
+    // 2. L'appel, hors transaction.
+    let essais: Essais
+    try {
+      essais = await demander(requete, manifeste, correcteur)
+    } catch (erreur) {
+      await base.enTransaction((tx) => depot.solder(tx, { userId, mois, estime, cout: 0 }))
+      throw erreur
+    }
 
-      // 2. L'appel, hors transaction.
-      let essais: Essais
-      try {
-        essais = await demander(requete, manifeste, correcteur)
-      } catch (erreur) {
-        await base.enTransaction((tx) => depot.solder(tx, { userId, mois, estime, cout: 0 }))
-        throw erreur
-      }
-
-      // 3. L'enregistrement et le recalcul, sous le verrou du bloc.
-      const resultat = await base.enTransaction(async (tx) => {
+    // 3. L'enregistrement et le recalcul, sous le verrou du bloc.
+    const enregistrer = () =>
+      base.enTransaction(async (tx) => {
         await verrouBloc(tx, userId, bloc.id)
         const maintenant = horloge.maintenant()
         await depot.solder(tx, { userId, mois, estime, cout: essais.cout })
@@ -445,15 +447,40 @@ export function creerServiceCorrection({
         await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant })
         return { gardee: ligne }
       })
+    let resultat: Awaited<ReturnType<typeof enregistrer>>
+    try {
+      resultat = await enregistrer()
+    } catch (erreur) {
+      // La transaction annulée emporte aussi le solde : l'appel est payé, la réservation est rendue.
+      await base.enTransaction((tx) =>
+        depot.solder(tx, { userId, mois, estime, cout: essais.cout }),
+      )
+      throw erreur
+    }
 
-      if ('tropDeRelances' in resultat) throw trop(reglages.relancesMax)
-      // L'échec est signalé après le commit, pour que la réponse brute reste gardée.
-      if ('echec' in resultat) {
-        throw new CorrectionIndisponible(
-          'La correction n’a pas donné de réponse valable : réessaie.',
-        )
-      }
-      return correctionRecue(resultat.gardee)
+    if ('tropDeRelances' in resultat) throw trop(reglages.relancesMax)
+    // L'échec est signalé après le commit, pour que la réponse brute reste gardée.
+    if ('echec' in resultat) {
+      throw new CorrectionIndisponible('La correction n’a pas donné de réponse valable : réessaie.')
+    }
+    return correctionRecue(resultat.gardee)
+  }
+
+  return {
+    /**
+     * Corrige une réponse : doublon, relances, réservation du budget, appel hors transaction,
+     * validation, enregistrement, recalcul du bloc.
+     */
+    corriger(userId: string, demande: DemandeCorrection): Promise<CorrectionRecueApi> {
+      // Le même envoi en double (double tap, file qui rejoue) attend le premier : un seul appel, un seul coût.
+      const cle = `${userId}:${demande.id}`
+      const enVol = enCours.get(cle)
+      if (enVol !== undefined) return enVol
+      const travail = corrigerUneFois(userId, demande).finally(() => {
+        enCours.delete(cle)
+      })
+      enCours.set(cle, travail)
+      return travail
     },
 
     /** L'avis d'Amine sur une correction de l'échantillon : un fait de plus, le dernier fait foi. */
