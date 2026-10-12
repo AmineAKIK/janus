@@ -170,27 +170,26 @@ function verdictSerie(
   trio: readonly Correction[],
   manifeste: Manifeste,
   reglages: Reglages,
+  restitutionFinie: string,
 ): Verdict {
   const premierRang = Math.min(...trio.map((correction) => ordonnes.indexOf(correction)))
   const premierMs = Math.min(...trio.map((correction) => instantEnMs(correction.date)))
   const derniereDate = trio.map((correction) => correction.date).reduce(plusTardQue)
-  const restitution = ordonnes.findLast(
-    (fait, rang) => rang < premierRang && estCorrectionDe('restitution')(fait),
-  )
-  if (restitution === undefined) {
-    return { ok: false, manque: { code: 'consolidation_trop_tot' } }
-  }
-  const finDelai =
-    instantEnMs(restitution.date) + reglages.delaiConsolidationMinutes * MS_PAR_MINUTE
+  // Une série commencée avant la fin de la restitution ne compte pas : « vu » vient d'abord.
+  // Le délai court depuis la dernière réponse de restitution ou, si le cours a été rouvert depuis,
+  // depuis la dernière étape de cours.
+  const coursOuRestitution = ouvreLeCours(manifeste)
+  const dernierCours = ordonnes
+    .slice(0, premierRang)
+    .filter((fait) => estCorrectionDe('restitution')(fait) || coursOuRestitution(fait))
+    .map(({ date }) => date)
+    .reduce<string>(plusTardQue, restitutionFinie)
+  const finDelai = instantEnMs(dernierCours) + reglages.delaiConsolidationMinutes * MS_PAR_MINUTE
   if (premierMs < finDelai) {
     return {
       ok: false,
       manque: { code: 'consolidation_trop_tot', apres: instantEnIso(finDelai) },
     }
-  }
-  const entre = ordonnes.slice(ordonnes.indexOf(restitution) + 1, premierRang)
-  if (entre.some(ouvreLeCours(manifeste))) {
-    return { ok: false, manque: { code: 'consolidation_cours_rouvert' } }
   }
   const obtenus =
     trio.reduce((total, correction) => total + points(niveauEffectif(ordonnes, correction)), 0) /
@@ -209,7 +208,25 @@ function verdictSerie(
 }
 
 /**
- * Les réponses qui comptent (premier tour, `compte` vrai) forment des séries de 3 dans l'ordre :
+ * Découpe en séries de 3 questions différentes : une réponse à une question déjà dans la série en
+ * cours ne compte pas pour la série (répéter la même question ne remplace pas les deux autres).
+ */
+function seriesDeTrois(comptees: readonly Correction[]): Correction[][] {
+  const series: Correction[][] = []
+  let courante: Correction[] = []
+  for (const correction of comptees) {
+    if (courante.some(({ question }) => question === correction.question)) continue
+    courante.push(correction)
+    if (courante.length === 3) {
+      series.push(courante)
+      courante = []
+    }
+  }
+  return series
+}
+
+/**
+ * Les réponses qui comptent (premier tour, `compte` vrai) forment des séries de 3 questions différentes dans l'ordre :
  * une réponse qui ne compte pas est remplacée par la suivante. Une série valable suffit.
  */
 function evaluerConsolidation(
@@ -225,8 +242,8 @@ function evaluerConsolidation(
     .filter(
       (correction) => compteEffectif(ordonnes, correction) && reserve.has(correction.question),
     )
-  const verdicts = Array.from({ length: Math.floor(comptees.length / 3) }, (_, rang) =>
-    verdictSerie(ordonnes, comptees.slice(3 * rang, 3 * rang + 3), manifeste, reglages),
+  const verdicts = seriesDeTrois(comptees).map((trio) =>
+    verdictSerie(ordonnes, trio, manifeste, reglages, restitutionFinie),
   )
   const valable = verdicts.find((verdict) => verdict.ok)
   if (valable !== undefined) return valable
@@ -520,12 +537,16 @@ export function calculerBloc(
   )
 
   if (provisoire !== null && verifications !== null) {
-    const echeance = ajouterJours(
-      jour(verifications.palier === 'provisoire' ? provisoire : verifications.dateAcquis),
-      verifications.palier === 'provisoire'
-        ? reglages.delaiVerificationJours
-        : reglages.delaiRetestJours,
-    )
+    // Même règle que `echeances` : après un échec, le nouvel essai est dû `delaiNouvelEssaiJours` plus tard.
+    const echeance =
+      verifications.dernierEchec === null
+        ? ajouterJours(
+            jour(verifications.palier === 'provisoire' ? provisoire : verifications.dateAcquis),
+            verifications.palier === 'provisoire'
+              ? reglages.delaiVerificationJours
+              : reglages.delaiRetestJours,
+          )
+        : ajouterJours(jour(verifications.dernierEchec), reglages.delaiNouvelEssaiJours)
     const futur = jour(maintenant) < echeance
     if (verifications.palier === 'provisoire') {
       manque.push({

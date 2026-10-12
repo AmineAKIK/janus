@@ -23,7 +23,7 @@ export function texteManque(
     case 'consolidation_a_faire':
       return 'Fais la consolidation, sans rouvrir le cours.'
     case 'consolidation_cours_rouvert':
-      return 'Tu as rouvert le cours pendant la restitution : refais la consolidation sans le cours.'
+      return 'Tu as rouvert le cours : la consolidation reste possible une fois le délai écoulé.'
     case 'consolidation_insuffisante':
       return `Atteins le seuil à la consolidation : ${String(manque.points ?? 0)} points sur ${String(manque.requis ?? 0)} requis.`
     case 'pratique_aide':

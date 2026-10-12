@@ -182,6 +182,13 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
         ).toEqual(['E3'])
       })
 
+      it('refuse une erreur que le bloc ne connaît pas (400)', async () => {
+        const reponse = await envoyer({ ...commun(), type: 'bilan.erreurs', ids: ['E999'] })
+
+        expect(reponse.statusCode).toBe(400)
+        expect(reponse.json()).toMatchObject({ code: 'donnees_invalides' })
+      })
+
       it('range une seule échéance ouverte par bloc et des lignes de journal', async () => {
         const { rows } = await bases.pool.query<{ n: string }>(
           'SELECT count(*) AS n FROM echeances WHERE faite_le IS NULL',

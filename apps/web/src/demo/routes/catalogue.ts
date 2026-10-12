@@ -1,5 +1,5 @@
-import type { Statut } from '@janus/contrats'
 import { ErreurApi, ROUTES } from '@janus/contrats'
+import { seriesOuvertes } from '@janus/moteur'
 import {
   catalogueGraine,
   formationsSupplementairesGraine,
@@ -36,17 +36,6 @@ const PROBLEMES_DEMO = [
 
 /** Seul le module 1 est importé dans la démo. */
 const MODULE_DEMO = 'M1'
-
-/**
- * Les séries que la page propose. Règle de la démo (à confirmer dans la PR) : la restitution tant
- * qu'elle n'est pas faite, la consolidation une fois le bloc vu et le délai de consolidation passé, jusqu'au bout de la série même si le seuil est atteint avant.
- */
-function serieOuverte(statut: Statut, tropTot: boolean) {
-  return {
-    restitution: statut === 'non_commence' || statut === 'en_cours' || statut === 'a_reprendre',
-    consolidation: (statut === 'vu' || statut === 'acquis_provisoirement') && !tropTot,
-  }
-}
 
 export function routesCatalogueDemo({ racineFiches }: OptionsCatalogue) {
   const catalogue = catalogueGraine()
@@ -125,10 +114,7 @@ export function routesCatalogueDemo({ racineFiches }: OptionsCatalogue) {
         version: manifeste.version,
         manifeste,
         problemes: etat.interrupteurs.ficheRefusee ? PROBLEMES_DEMO : [],
-        serie_ouverte: serieOuverte(
-          resultat.statut,
-          resultat.manque.some(({ code }) => code === 'consolidation_trop_tot'),
-        ),
+        serie_ouverte: seriesOuvertes(resultat),
         force: resultat.force,
         acces: accesDuBloc(etat, params.id, maintenant),
         preuves: preuvesDuBlocApi(resultat, etat.reglages),

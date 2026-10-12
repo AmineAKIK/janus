@@ -1,7 +1,7 @@
 import type { Manifeste, Reglages, Statut } from '@janus/contrats'
 import type { Fait } from '../faits.ts'
 import { calculerBloc } from '../statut.ts'
-import { instantEnMs } from '../temps.ts'
+import { instantEnMs, jourDe } from '../temps.ts'
 
 /** Les types de ligne du journal, dans l'ordre des filtres de Figma. */
 export const TYPES_JOURNAL = [
@@ -99,7 +99,6 @@ const estSeance = (fait: Fait): fait is FaitSeance =>
 const pluriel = (n: number, singulier: string, plurielTexte: string) =>
   `${String(n)} ${n < 2 ? singulier : plurielTexte}`
 
-const jourUtc = (instant: string) => instant.slice(0, 10)
 const parDate = (a: Fait, b: Fait) => instantEnMs(a.date) - instantEnMs(b.date)
 
 /** Le résumé et le détail des faits d'une séance de travail sur un bloc. */
@@ -264,7 +263,7 @@ export function lignesDuJournal(faits: readonly Fait[], contexte: ContexteJourna
     for (const { fait, avant, apres } of suivi) {
       const type = typeDeGroupe(fait)
       if (type === null) continue
-      const cle = `${type}|${jourUtc(fait.date)}`
+      const cle = `${type}|${jourDe(fait.date, contexte.reglages.fuseau, contexte.reglages.heureBascule)}`
       const groupe = groupes.get(cle)
       if (groupe === undefined) {
         groupes.set(cle, { type, id: fait.id, avant, apres, date: fait.date, faits: [fait] })

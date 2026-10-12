@@ -35,6 +35,22 @@ describe('lignesDuJournal', () => {
     expect(seance?.detail).toContain('Étape ET1 vue')
   })
 
+  it('séance : le jour est celui de la bascule réglée, pas celui d’UTC', () => {
+    const f = fabrique()
+    const avantMinuit = lignesDuJournal(
+      [f.etape('2026-06-01T23:40:00Z', 'ET1'), f.etape('2026-06-02T00:10:00Z', 'ET2')],
+      CONTEXTE,
+    )
+    // 03 h 50 et 04 h 10 à Paris : de part et d'autre de la bascule de 4 h, donc deux jours.
+    const autourBascule = lignesDuJournal(
+      [f.etape('2026-06-02T01:50:00Z', 'ET1'), f.etape('2026-06-02T02:10:00Z', 'ET2')],
+      CONTEXTE,
+    )
+
+    expect(du('seance', avantMinuit)).toHaveLength(1)
+    expect(du('seance', autourBascule)).toHaveLength(2)
+  })
+
   it('séance : un bloc ouvert sans prérequis le dit, avec sa raison dans le détail', () => {
     const f = fabrique()
     const ouvert = f.fait(DEBUT, {

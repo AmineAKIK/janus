@@ -65,7 +65,8 @@ describe('routes de catalogue de la démo', () => {
       etat_page: null,
       module: 'M1',
       problemes: [],
-      serie_ouverte: { restitution: true, consolidation: false },
+      // Une erreur rouvre la restitution sans fermer la consolidation d'un bloc déjà vu.
+      serie_ouverte: { restitution: true, consolidation: true },
       fiche_url: `${RACINE_FICHES}demo/fiche-demo.html?v=6`,
     })
     expect(b04.manifeste.bloc).toBe('B04')

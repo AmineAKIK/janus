@@ -1,7 +1,8 @@
 import { InstantUtc, Manifeste } from '@janus/contrats'
-import type { Fait, NoteCarte, Reglages, Statut } from '@janus/contrats'
+import type { Fait, NoteCarte, Reglages } from '@janus/contrats'
 import {
   apercuCarte,
+  auMoinsVu,
   blocEnCours,
   calculerBloc,
   carteNeuve,
@@ -12,14 +13,6 @@ import {
 } from '@janus/moteur'
 import type { ApercuCarte, BlocDeLaFile, EtatCarte, QuestionDebut } from '@janus/moteur'
 import { z } from 'zod'
-
-/** Les statuts à partir desquels un bloc compte comme « vu » pour les questions et les cartes. */
-const AU_MOINS_VU: ReadonlySet<Statut> = new Set([
-  'vu',
-  'acquis_provisoirement',
-  'acquis',
-  'maitrise',
-])
 
 /** Un bloc importé du plan, avec son manifeste en service. */
 export interface BlocDuPlan {
@@ -74,7 +67,7 @@ export function contexteDuJour(
   )
   return {
     blocs,
-    vus: blocs.filter(({ etat }) => AU_MOINS_VU.has(etat.statut)),
+    vus: blocs.filter(({ etat }) => auMoinsVu(etat)),
     derniereActivite,
     enCours,
     jour: jourDe(maintenant, reglages.fuseau, reglages.heureBascule),

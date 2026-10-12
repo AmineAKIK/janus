@@ -26,7 +26,6 @@ export const ModificationReglages = z.strictObject({
   joursAvantReutilisation: shape.joursAvantReutilisation.unwrap().optional(),
   seuilRecopie: shape.seuilRecopie.unwrap().optional(),
   relancesMax: shape.relancesMax.unwrap().optional(),
-  caracteresReponseMax: shape.caracteresReponseMax.unwrap().optional(),
   echantillonControle: shape.echantillonControle.unwrap().optional(),
   seuilDesaccord: shape.seuilDesaccord.unwrap().optional(),
   plafondIaMillioniemes: shape.plafondIaMillioniemes.unwrap().optional(),

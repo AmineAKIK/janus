@@ -18,7 +18,6 @@ const DEFAUTS = {
   joursAvantReutilisation: 60,
   seuilRecopie: 0.5,
   relancesMax: 4,
-  caracteresReponseMax: 2000,
   echantillonControle: 10,
   seuilDesaccord: 0.15,
   plafondIaMillioniemes: 10_000_000,
@@ -69,8 +68,34 @@ describe('Reglages', () => {
 
   it('refuse un type incorrect pour les clés sans bornes', () => {
     expect(Reglages.safeParse({ fuseau: 3 }).success).toBe(false)
-    expect(Reglages.safeParse({ caracteresReponseMax: '2000' }).success).toBe(false)
     expect(Reglages.safeParse({ entretienMois: 'trois' }).success).toBe(false)
+  })
+
+  it('refuse un fuseau inconnu et accepte un fuseau réel', () => {
+    expect(Reglages.safeParse({ fuseau: 'Foo/Bar' }).success).toBe(false)
+    expect(Reglages.safeParse({ fuseau: 'America/Montreal' }).success).toBe(true)
+  })
+
+  it.each([[[]], [[-1, 3]], [[3, 3]], [[12, 3]], [[2.5]], [[0, 6]]])(
+    'refuse les mois d’entretien %j',
+    (mois) => {
+      expect(Reglages.safeParse({ entretienMois: mois }).success).toBe(false)
+    },
+  )
+
+  it('accepte des mois d’entretien croissants', () => {
+    expect(Reglages.parse({ entretienMois: [2, 5, 18] }).entretienMois).toEqual([2, 5, 18])
+  })
+
+  it.each(['99:99', '7:30', '19h00', ''])('refuse l’heure de rappel « %s »', (heure) => {
+    expect(Reglages.safeParse({ heureRappel: heure }).success).toBe(false)
+  })
+
+  it('borne les autres réglages numériques', () => {
+    expect(Reglages.safeParse({ heuresSansPageAvantVerification: -5 }).success).toBe(false)
+    expect(Reglages.safeParse({ joursAvantReutilisation: -1 }).success).toBe(false)
+    expect(Reglages.safeParse({ seuilRecopie: 7 }).success).toBe(false)
+    expect(Reglages.safeParse({ echantillonControle: 0 }).success).toBe(false)
   })
 
   describe.each(BORNES)('%s', (cle, min, max) => {
