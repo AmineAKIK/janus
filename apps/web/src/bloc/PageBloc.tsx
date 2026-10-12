@@ -11,6 +11,7 @@ import { DialogueRevoirCours } from './DialogueRevoirCours.tsx'
 import { DialogueChangerNiveau } from './DialogueChangerNiveau.tsx'
 import { EncartDecisionsIa } from './EncartDecisionsIa.tsx'
 import { EncartErreurIa } from './EncartErreurIa.tsx'
+import { GardeOuverture } from './GardeOuverture.tsx'
 import { EncartHorsConnexion } from './EncartHorsConnexion.tsx'
 import { useEtatEnvoi } from './useEtatEnvoi.ts'
 import { useTempsActif } from './useTempsActif.ts'
@@ -37,6 +38,7 @@ function FicheOuverte({
   relireBloc,
   delaiConsolidationMinutes,
   fuseau,
+  etapeDemandee,
 }: {
   readonly relire: () => void
   /** Relit le bloc sans repartir de zéro : statut, ce qui manque, séries ouvertes. */
@@ -44,6 +46,8 @@ function FicheOuverte({
   readonly delaiConsolidationMinutes: number
   /** Le fuseau des réglages : les heures affichées sont les siennes. */
   readonly fuseau: string | undefined
+  /** L'étape désignée par le lien, si elle existe dans la fiche. */
+  readonly etapeDemandee: string | undefined
   readonly etapes: readonly EtapeAffichee[]
   readonly problemes: readonly string[]
   readonly erreursCritiques: readonly { readonly id: string; readonly libelle: string }[]
@@ -57,7 +61,13 @@ function FicheOuverte({
 }) {
   const iframe = useRef<HTMLIFrameElement>(null)
   const { signalerActivite, changerEtape } = useTempsActif(donnees.bloc)
-  const hote = useHoteFiche(donnees, iframe, signalerActivite, relireBloc)
+  const hote = useHoteFiche(
+    donnees,
+    iframe,
+    signalerActivite,
+    relireBloc,
+    etapes.some(({ id }) => id === etapeDemandee) ? etapeDemandee : undefined,
+  )
   const envoi = useEtatEnvoi(donnees.bloc)
   const sauvee = donnees.etatPage?.etat['etape']
   const courante =
@@ -273,7 +283,14 @@ function FicheOuverte({
 }
 
 /** La page d'un bloc : barre du haut et fiche dans son iframe. */
-export function PageBloc({ blocId }: { readonly blocId: string }) {
+export function PageBloc({
+  blocId,
+  etape,
+}: {
+  readonly blocId: string
+  /** L'étape à montrer à l'ouverture, quand le lien la désigne. */
+  readonly etape?: string | undefined
+}) {
   const lecture = useLecture(
     ROUTES['GET /blocs/:id'],
     { params: { id: blocId } },
@@ -308,37 +325,40 @@ export function PageBloc({ blocId }: { readonly blocId: string }) {
 
   const detail = lecture.data
   return (
-    <FicheOuverte
-      // Un autre bloc, ou une relecture après un conflit, repart d'une poignée de main neuve.
-      key={`${detail.bloc}:${String(relecture)}`}
-      relire={() => {
-        void lecture.refetch().then(() => {
-          setRelecture((valeur) => valeur + 1)
-        })
-      }}
-      relireBloc={() => {
-        void lecture.refetch()
-      }}
-      delaiConsolidationMinutes={reglages.data?.delaiConsolidationMinutes ?? 60}
-      fuseau={reglages.data?.fuseau}
-      donnees={{
-        bloc: detail.bloc,
-        version: detail.version,
-        statut: detail.statut,
-        manque: detail.manque,
-        serieOuverte: detail.serie_ouverte,
-        etatPage: detail.etat_page,
-      }}
-      titre={detail.manifeste.titre}
-      moduleId={detail.module}
-      src={detail.fiche_url}
-      etapes={detail.manifeste.etapes}
-      problemes={detail.problemes}
-      erreursCritiques={detail.manifeste.erreurs_critiques}
-      questions={{
-        restitution: detail.manifeste.restitution,
-        consolidation: detail.manifeste.consolidation,
-      }}
-    />
+    <GardeOuverture detail={detail}>
+      <FicheOuverte
+        // Un autre bloc, ou une relecture après un conflit, repart d'une poignée de main neuve.
+        key={`${detail.bloc}:${String(relecture)}`}
+        relire={() => {
+          void lecture.refetch().then(() => {
+            setRelecture((valeur) => valeur + 1)
+          })
+        }}
+        relireBloc={() => {
+          void lecture.refetch()
+        }}
+        delaiConsolidationMinutes={reglages.data?.delaiConsolidationMinutes ?? 60}
+        fuseau={reglages.data?.fuseau}
+        etapeDemandee={etape}
+        donnees={{
+          bloc: detail.bloc,
+          version: detail.version,
+          statut: detail.statut,
+          manque: detail.manque,
+          serieOuverte: detail.serie_ouverte,
+          etatPage: detail.etat_page,
+        }}
+        titre={detail.manifeste.titre}
+        moduleId={detail.module}
+        src={detail.fiche_url}
+        etapes={detail.manifeste.etapes}
+        problemes={detail.problemes}
+        erreursCritiques={detail.manifeste.erreurs_critiques}
+        questions={{
+          restitution: detail.manifeste.restitution,
+          consolidation: detail.manifeste.consolidation,
+        }}
+      />
+    </GardeOuverture>
   )
 }

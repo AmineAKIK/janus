@@ -8,6 +8,16 @@ export interface RechercheModule {
   readonly detail?: string
 }
 
+export interface RechercheBloc {
+  /** L'étape de la fiche à montrer à l'ouverture. */
+  readonly etape?: string
+}
+
+export function validerRechercheBloc(brut: Record<string, unknown>): RechercheBloc {
+  const etape = texte(brut['etape'])
+  return etape === undefined ? {} : { etape }
+}
+
 export interface RechercheJournal {
   readonly module?: string
   readonly bloc?: string

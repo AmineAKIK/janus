@@ -15,6 +15,7 @@ import { PageAujourdhui } from '../aujourdhui/PageAujourdhui.tsx'
 import {
   validerRechercheConnexion,
   validerRechercheJournal,
+  validerRechercheBloc,
   validerRechercheModule,
   validerRechercheSuivi,
 } from './recherche.ts'
@@ -118,11 +119,13 @@ const module = createRoute({
 const bloc = createRoute({
   getParentRoute: () => racine,
   path: '/blocs/$blocId',
+  validateSearch: validerRechercheBloc,
   staticData: { titre: 'Page de bloc', navigation: null },
   loader: prechargerPage(PageBloc),
   component: function RoutePageBloc() {
     const { blocId } = bloc.useParams()
-    return <PageBloc blocId={blocId} />
+    const { etape } = bloc.useSearch()
+    return <PageBloc blocId={blocId} etape={etape} />
   },
 })
 

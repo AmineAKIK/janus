@@ -9,7 +9,8 @@ async function erreurs(code: string, fichier: string) {
   return (resultat?.messages ?? []).filter((message) => message.severity === 2)
 }
 
-describe('interdiction de fetch', () => {
+// ESLint charge le programme TypeScript du dépôt à la première analyse : plus de 5 s sous charge.
+describe('interdiction de fetch', { timeout: 60_000 }, () => {
   it.each([
     ["fetch('/api/moi')", 'composant.js'],
     ["window.fetch('/api/moi')", 'composant.js'],
