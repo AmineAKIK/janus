@@ -110,7 +110,7 @@ jobs:
         run: sudo env "PATH=$PATH" bash deploy/vps/essai-hebergement.sh "$SHA"
       - name: Journaux en cas d'échec
         if: failure()
-        run: sudo docker compose -p janus -f /etc/janus/compose.yml --env-file /etc/janus/janus.env logs --no-color
+        run: sudo env "JANUS_SHA=$JANUS_SHA" docker compose -p janus -f /etc/janus/compose.yml --env-file /etc/janus/janus.env logs --no-color --timestamps
         env:
           JANUS_SHA: '0000000000000000000000000000000000000001'
 
