@@ -32,7 +32,8 @@ type Locale = Exclude<EtatQuestion, { phase: 'saisie' }>
 const ROUTE_QUESTIONS = ROUTES['GET /questions-debut']
 
 /** Le serveur a refusé parce que le plafond de corrections est atteint (et non parce que l'IA est en panne). */
-const plafondAtteint = (erreur: unknown) => erreur instanceof ErreurApi && erreur.status === 429
+const plafondAtteint = (erreur: unknown) =>
+  erreur instanceof ErreurApi && erreur.code === 'budget_atteint'
 
 export type RefusRelance = 'plafond' | 'indisponible'
 

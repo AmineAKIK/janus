@@ -96,7 +96,7 @@ export const Reglages = z.object({
     .string()
     .regex(HEURE_RAPPEL, { error: 'L’heure du rappel doit être au format HH:MM.' })
     .default('19:00'),
-  rappelsEnPauseJusquAu: z.string().nullable().default(null),
+  rappelsEnPauseJusquAu: z.iso.date().nullable().default(null),
   blocsEntreRevues: entierBorne('Le nombre de blocs entre deux revues', 3, 4, 3),
 })
 export type Reglages = z.infer<typeof Reglages>

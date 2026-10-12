@@ -44,7 +44,10 @@ purger() {
   while IFS= read -r dossier; do
     [[ -e $dossier/PARTIELLE ]] && rm -rf -- "$dossier"
   done < <(find "$racine" -mindepth 1 -maxdepth 1 -type d -name 'sauvegarde-*' -mtime +0 | sort)
-  mapfile -t valides < <(find "$racine" -mindepth 1 -maxdepth 1 -type d -name 'sauvegarde-*' | sort)
+  # Une sauvegarde encore marquee PARTIELLE n'est pas une sauvegarde : elle ne protege aucune autre.
+  while IFS= read -r dossier; do
+    [[ -e $dossier/PARTIELLE ]] || valides+=("$dossier")
+  done < <(find "$racine" -mindepth 1 -maxdepth 1 -type d -name 'sauvegarde-*' | sort)
   for ((i = 0; i < ${#valides[@]} - conservation_minimale; i++)); do
     dossier=${valides[i]}
     [[ -n $(find "$dossier" -maxdepth 0 -mtime +"$conservation_jours") ]] || continue
