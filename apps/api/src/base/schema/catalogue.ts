@@ -68,6 +68,8 @@ export const blocs = pgTable(
   },
   (table) => [
     unique('blocs_module_code').on(table.moduleId, table.code),
+    // L'API désigne un bloc par son code seul (`/blocs/:id`) : il est unique dans toute l'appli.
+    unique('blocs_code').on(table.code),
     check('blocs_code_format', sql`${table.code} ~ '^[A-Z]{1,3}[0-9]{2,3}$'`),
   ],
 )
@@ -89,6 +91,8 @@ export const fichesVersions = pgTable(
   },
   (table) => [
     unique('fiches_versions_bloc_version').on(table.blocId, table.version),
+    // Pour que les événements puissent exiger une version qui appartient à leur bloc.
+    unique('fiches_versions_bloc_id').on(table.blocId, table.id),
     uniqueIndex('fiches_versions_bloc_empreinte').on(table.blocId, table.empreinte),
     check('fiches_versions_version_positive', sql`${table.version} >= 1`),
     check('fiches_versions_empreinte_sha256', sql`${table.empreinte} ~ '^[0-9a-f]{64}$'`),

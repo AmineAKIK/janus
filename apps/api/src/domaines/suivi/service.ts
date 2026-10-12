@@ -130,7 +130,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
         depot.ajouterIdee(tx, { id: idee.id, userId, texte: idee.texte, dateServeur: maintenant }),
       )
       const gardee = await depot.ideeParId(base.db, userId, idee.id)
-      if (gardee === undefined) {
+      if (gardee?.texte !== idee.texte) {
         throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
       }
       return gardee
@@ -138,14 +138,20 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
 
     /** Marque la revue de la méthode comme faite, avec son texte s'il y en a un. */
     async ajouterRevue(userId: string, revue: { id: string; texte?: string | undefined }) {
-      await base.enTransaction((tx) =>
-        depot.ajouterRevueDeLaMethode(tx, {
+      const texte = revue.texte ?? null
+      await base.enTransaction(async (tx) => {
+        const ajoutee = await depot.ajouterRevueDeLaMethode(tx, {
           id: revue.id,
           userId,
-          texte: revue.texte ?? null,
+          texte,
           dateServeur: horloge.maintenant(),
-        }),
-      )
+        })
+        if (ajoutee) return
+        const gardee = await depot.revueParId(tx, revue.id)
+        if (gardee?.userId !== userId || gardee.texte !== texte) {
+          throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
+        }
+      })
     },
 
     /** Une page du journal, les plus récentes lignes d'abord. */

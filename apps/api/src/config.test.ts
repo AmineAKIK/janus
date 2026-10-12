@@ -43,6 +43,7 @@ describe('lireConfig', () => {
       DEEPSEEK_PRIX_SORTIE: '2000000',
     })
 
+    expect(lireConfig(sansVariables('CORRECTIONS_PAR_MINUTE')).CORRECTIONS_PAR_MINUTE).toBe(20)
     expect(defaut).toMatchObject({
       DEEPSEEK_MODELE: 'deepseek-flash',
       DEEPSEEK_URL: 'https://api.deepseek.com',

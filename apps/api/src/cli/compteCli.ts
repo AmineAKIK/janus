@@ -3,7 +3,7 @@ import { Writable } from 'node:stream'
 import { creerBase } from '../base/base.ts'
 import { creerHacheur } from '../domaines/auth/composition.ts'
 import { horlogeSysteme } from '../horloge.ts'
-import { creerCompte, ErreurCompte } from './compte.ts'
+import { creerCompte, ErreurCompte, motsDePasseFournis } from './compte.ts'
 
 /** Pose des questions dont la réponse (un mot de passe) ne s'affiche pas à l'écran. */
 function ouvrirQuestions() {
@@ -35,6 +35,13 @@ function ouvrirQuestions() {
   }
 }
 
+/** Tout ce qui arrive sur l'entrée standard, jusqu'à sa fermeture. */
+async function lireEntree(): Promise<string> {
+  const morceaux: Buffer[] = []
+  for await (const morceau of process.stdin) morceaux.push(Buffer.from(morceau as Uint8Array))
+  return Buffer.concat(morceaux).toString('utf8')
+}
+
 const nom = process.argv[2]
 const url = process.env['DATABASE_URL']
 if (nom === undefined || url === undefined) {
@@ -43,10 +50,20 @@ if (nom === undefined || url === undefined) {
 }
 const base = creerBase(url)
 try {
-  const questions = ouvrirQuestions()
-  const motDePasse = await questions.demander('Mot de passe : ')
-  const confirmation = await questions.demander('Encore une fois : ')
-  questions.fermer()
+  // Sans terminal (script d'installation, `docker compose exec` sans -t) : variable ou entrée tubée.
+  const sansTerminal = !process.stdin.isTTY || process.env['JANUS_MOT_DE_PASSE'] !== undefined
+  let saisies: { motDePasse: string; confirmation: string }
+  if (sansTerminal) {
+    const entree = process.stdin.isTTY ? '' : await lireEntree()
+    saisies = motsDePasseFournis(process.env, entree)
+  } else {
+    const questions = ouvrirQuestions()
+    const motDePasse = await questions.demander('Mot de passe : ')
+    const confirmation = await questions.demander('Encore une fois : ')
+    questions.fermer()
+    saisies = { motDePasse, confirmation }
+  }
+  const { motDePasse, confirmation } = saisies
   if (motDePasse !== confirmation) throw new ErreurCompte('Les deux mots de passe diffèrent.')
   await creerCompte({ base, hacheur: creerHacheur(), horloge: horlogeSysteme }, nom, motDePasse)
   process.stdout.write(`Compte « ${nom} » créé.\n`)

@@ -1,4 +1,4 @@
-import { ErreurApi, ROUTES } from '@janus/contrats'
+import { ErreurApi, memeContenu, ROUTES } from '@janus/contrats'
 import type { Fait, MessagePage } from '@janus/contrats'
 import { MANIFESTES_GRAINE } from '../graine.ts'
 import {
@@ -109,7 +109,12 @@ export const ROUTES_BLOCS_DEMO = [
   definir(ROUTES['PUT /blocs/:id/etat-page'], ({ magasin, params, corps }) => {
     verifierBloc(params.id)
     // La démo n'a qu'un onglet : l'état n'a qu'une version, 0 tant qu'il n'existe pas, 1 ensuite.
-    const actuelle = params.id in magasin.lire().etatsPage ? 1 : 0
+    const existant = magasin.lire().etatsPage[params.id]
+    const actuelle = existant === undefined ? 0 : 1
+    // Comme l'API : rejouer l'écriture qui vient d'avoir lieu (réponse perdue) réussit.
+    if (corps.version === 0 && existant !== undefined && memeContenu(existant, corps.etat)) {
+      return { version: 1 }
+    }
     if (corps.version !== actuelle) {
       throw new ErreurApi({
         status: 409,

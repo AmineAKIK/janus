@@ -45,3 +45,17 @@ export async function creerCompte(
   }
   return id
 }
+
+/**
+ * Les deux saisies du mot de passe quand rien n'est tapé à la main : `JANUS_MOT_DE_PASSE` s'il est
+ * défini, sinon les deux premières lignes de l'entrée (`printf 'mdp\nmdp\n' | pnpm compte:creer nom`).
+ */
+export function motsDePasseFournis(
+  environnement: Readonly<Record<string, string | undefined>>,
+  entree: string,
+): { readonly motDePasse: string; readonly confirmation: string } {
+  const fourni = environnement['JANUS_MOT_DE_PASSE']
+  if (fourni !== undefined && fourni !== '') return { motDePasse: fourni, confirmation: fourni }
+  const [motDePasse = '', confirmation = ''] = entree.split(/\r?\n/)
+  return { motDePasse, confirmation }
+}

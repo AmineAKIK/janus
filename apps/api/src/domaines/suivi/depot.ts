@@ -207,11 +207,25 @@ export function creerDepotSuivi() {
       return ligne
     },
 
+    /** Rend faux si l'identifiant existait déjà. */
     ajouterRevueDeLaMethode: async (
       tx: Tx,
       o: { id: string; userId: string; texte: string | null; dateServeur: string },
-    ): Promise<void> => {
-      await tx.insert(t.revuesMethode).values(o).onConflictDoNothing()
+    ): Promise<boolean> => {
+      const ajoutees = await tx
+        .insert(t.revuesMethode)
+        .values(o)
+        .onConflictDoNothing()
+        .returning({ id: t.revuesMethode.id })
+      return ajoutees.length > 0
+    },
+
+    revueParId: async (lecteur: Db | Tx, id: string) => {
+      const [ligne] = await lecteur
+        .select({ userId: t.revuesMethode.userId, texte: t.revuesMethode.texte })
+        .from(t.revuesMethode)
+        .where(eq(t.revuesMethode.id, id))
+      return ligne
     },
 
     /** Le texte de la dernière revue de la méthode qui en a un. */

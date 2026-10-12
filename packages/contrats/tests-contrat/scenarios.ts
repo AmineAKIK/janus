@@ -249,5 +249,25 @@ export function scenariosContrat(creer: CreerBanc): void {
       expect(second.doublon).toBe(true)
       expect(second.statut).toEqual(premier.statut)
     })
+
+    it('état de page : rejouer l’écriture qui vient d’avoir lieu réussit, un autre contenu est un conflit', async () => {
+      const banc = await creer()
+      await connecter(banc)
+      await ouvrir(banc)
+      const ecrire = (version: number, etat: { etape: string }) =>
+        banc.transport.appeler(ROUTES['PUT /blocs/:id/etat-page'], {
+          params: { id: BLOC },
+          corps: { version, etat },
+        })
+
+      const premiere = await ecrire(0, { etape: 'ET2' })
+      const rejeu = await ecrire(0, { etape: 'ET2' })
+
+      expect(rejeu).toEqual(premiere)
+      await expect(ecrire(0, { etape: 'ET3' })).rejects.toMatchObject({
+        status: 409,
+        code: 'conflit',
+      })
+    })
   })
 }

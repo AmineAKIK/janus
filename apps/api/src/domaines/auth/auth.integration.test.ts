@@ -193,6 +193,46 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('authentification contre Postgre
       expect(absente.statusCode).toBe(403)
     })
 
+    it('limite aussi par adresse : 20 faux noms en une minute, puis 429', async () => {
+      const s = await serveur()
+      for (let essai = 0; essai < 20; essai += 1) {
+        const reponse = await connecter(s, { nom_utilisateur: `inconnu${String(essai)}` })
+        expect(reponse.statusCode).toBe(401)
+      }
+
+      const suivante = await connecter(s, { nom_utilisateur: 'inconnu99' })
+
+      expect(suivante.statusCode).toBe(429)
+    })
+
+    it('ignore X-Forwarded-For quand la requête ne vient pas d’un relais interne', async () => {
+      const s = await serveur()
+      const depuisInternet = (essai: number) =>
+        s.app.inject({
+          method: 'POST',
+          url: '/api/session',
+          remoteAddress: '203.0.113.9',
+          headers: { ...ENTETES_ECRITURE, 'x-forwarded-for': `198.51.100.${String(essai)}` },
+          payload: { nom_utilisateur: 'amine', mot_de_passe: 'faux faux faux' },
+        })
+      for (let essai = 0; essai < 5; essai += 1) {
+        expect((await depuisInternet(essai)).statusCode).toBe(401)
+      }
+
+      expect((await depuisInternet(99)).statusCode).toBe(429)
+    })
+
+    it('une connexion réussie remet le compteur du nom à zéro', async () => {
+      const s = await serveur()
+      for (let essai = 0; essai < 4; essai += 1)
+        await connecter(s, { mot_de_passe: 'faux faux faux' })
+      expect((await connecter(s)).statusCode).toBe(200)
+
+      for (let essai = 0; essai < 5; essai += 1) {
+        expect((await connecter(s, { mot_de_passe: 'faux faux faux' })).statusCode).toBe(401)
+      }
+    })
+
     it('refuse 6 essais en une minute pour une même adresse et un même nom, avec retry-after', async () => {
       const s = await serveur()
       for (let essai = 0; essai < 5; essai += 1) {
@@ -421,6 +461,30 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('authentification contre Postgre
       expect(reponse.json()).toMatchObject({ code: 'refus' })
     })
 
+    it('limite les essais de l’ancien mot de passe (429 au 6e), les réussites ne comptent pas', async () => {
+      const s = await serveur()
+      const { cookie } = await ouvrir(s)
+      const changer = (ancien: string, nouveau = NOUVEAU) =>
+        s.app.inject({
+          method: 'PATCH',
+          url: '/api/moi/mot-de-passe',
+          headers: { ...ENTETES_ECRITURE, cookie },
+          payload: { ancien, nouveau },
+        })
+
+      for (let essai = 0; essai < 4; essai += 1) {
+        expect((await changer('pas le bon mot de passe')).statusCode).toBe(403)
+      }
+      expect((await changer(MOT_DE_PASSE, MOT_DE_PASSE)).statusCode).toBe(204)
+      for (let essai = 0; essai < 5; essai += 1) {
+        expect((await changer('pas le bon mot de passe')).statusCode).toBe(403)
+      }
+      const refuse = await changer(MOT_DE_PASSE, MOT_DE_PASSE)
+
+      expect(refuse.statusCode).toBe(429)
+      expect(refuse.json()).toMatchObject({ code: 'trop_de_requetes' })
+    })
+
     it('refuse un nouveau mot de passe trop court ou de plus de 72 octets', async () => {
       const s = await serveur()
       const { cookie } = await ouvrir(s)
@@ -469,6 +533,28 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('authentification contre Postgre
   })
 
   describe('DELETE /compte', () => {
+    it('limite les essais de suppression (429 au 6e) sans rien supprimer', async () => {
+      const id = await creerUtilisateur('prudent', MOT_DE_PASSE)
+      const s = await serveur()
+      const connexion = await connecter(s, { nom_utilisateur: 'prudent' })
+      const cookie = `janus_session=${connexion.cookies[0]?.value ?? ''}`
+      const supprimer = (motDePasse: string) =>
+        s.app.inject({
+          method: 'DELETE',
+          url: '/api/compte',
+          headers: { ...ENTETES_ECRITURE, cookie },
+          payload: { mot_de_passe: motDePasse },
+        })
+
+      for (let essai = 0; essai < 5; essai += 1) {
+        expect((await supprimer('pas le bon mot de passe')).statusCode).toBe(403)
+      }
+      const sixieme = await supprimer(MOT_DE_PASSE)
+
+      expect(sixieme.statusCode).toBe(429)
+      expect(await bases.db.select().from(t.users).where(eq(t.users.id, id))).toHaveLength(1)
+    })
+
     it('refuse un mauvais mot de passe et ne supprime rien', async () => {
       const id = await creerUtilisateur('gardé', MOT_DE_PASSE)
       const s = await serveur()

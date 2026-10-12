@@ -57,6 +57,9 @@ const config = lireConfig({
   VAPID_PRIVATE_KEY: 'banc',
   VAPID_SUJET: 'mailto:banc@example.test',
   NIVEAU_JOURNAL: 'warn',
+  // Les parcours enchaînent connexions et corrections bien plus vite qu'un usage réel.
+  CORRECTIONS_PAR_MINUTE: '1000',
+  CONNEXIONS_PAR_ADRESSE_PAR_MINUTE: '1000',
   ...process.env,
 })
 const base = creerBase(config.DATABASE_URL)

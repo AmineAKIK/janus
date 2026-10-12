@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto'
+import { canonique } from '@janus/contrats'
 import type { Manifeste, MessagePage, TempsActif } from '@janus/contrats'
 
 export type Message = MessagePage | TempsActif
@@ -8,18 +9,6 @@ export const MESSAGES_AILLEURS: Readonly<Record<string, string>> = {
   'etat.sauver': 'PUT /blocs/:id/etat-page',
   'restitution.demande': 'POST /corrections',
   'correction.accord': 'POST /corrections/:id/accord',
-}
-
-function canonique(valeur: unknown): unknown {
-  if (Array.isArray(valeur)) return valeur.map(canonique)
-  if (typeof valeur === 'object' && valeur !== null) {
-    return Object.fromEntries(
-      Object.entries(valeur)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([cle, contenu]) => [cle, canonique(contenu)]),
-    )
-  }
-  return valeur
 }
 
 /** L'empreinte du contenu d'un message : le même message renvoyé donne la même, quel que soit l'ordre des champs. */

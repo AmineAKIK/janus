@@ -12,6 +12,7 @@ import {
   OCTETS_MAX,
   activiteAReecrire,
   creerLimiteur,
+  VERIFICATIONS_PAR_MINUTE,
   octets,
   sessionActive,
 } from './policy.ts'
@@ -49,6 +50,8 @@ export interface DependancesService {
   readonly horloge: Horloge
   /** La clé publique VAPID, donnée à l'appli pour qu'elle s'abonne aux rappels. */
   readonly cleVapid: string
+  /** Connexions par minute et par adresse, tous noms confondus. */
+  readonly connexionsParAdresseParMinute: number
 }
 
 function moiDeLaCle(cleVapid: string) {
@@ -60,9 +63,31 @@ function moiDeLaCle(cleVapid: string) {
   })
 }
 
-export function creerServiceAuth({ depot, hacheur, horloge, cleVapid }: DependancesService) {
+export function creerServiceAuth({
+  depot,
+  hacheur,
+  horloge,
+  cleVapid,
+  connexionsParAdresseParMinute,
+}: DependancesService) {
   const moiDe = moiDeLaCle(cleVapid)
   const limiteur = creerLimiteur()
+  const limiteurAdresse = creerLimiteur(connexionsParAdresseParMinute)
+  const limiteurVerification = creerLimiteur(VERIFICATIONS_PAR_MINUTE)
+
+  /** Redemande le mot de passe actuel : 5 essais par minute et par utilisateur, les réussites ne comptent pas. */
+  async function verifierAvecLimite(
+    userId: string,
+    motDePasse: string,
+    utilisateur: Utilisateur,
+    maintenant: string,
+  ) {
+    const essai = limiteurVerification.tenter(userId, maintenant)
+    if (!essai.autorise) throw new TropDeTentatives(essai.reessayerDansS)
+    const correspond = await verifier(motDePasse, utilisateur)
+    if (correspond) limiteurVerification.oublier(userId)
+    return correspond
+  }
 
   /** Vrai si le mot de passe correspond ; un mot de passe trop long ne correspond jamais (bcrypt le tronquerait). */
   async function verifier(motDePasse: string, utilisateur: Utilisateur | undefined) {
@@ -82,14 +107,15 @@ export function creerServiceAuth({ depot, hacheur, horloge, cleVapid }: Dependan
     /** Ouvre une session : le même refus quel que soit le champ faux, et la même lenteur. */
     async connecter(connexion: Connexion): Promise<SessionOuverte> {
       const maintenant = horloge.maintenant()
-      const essai = limiteur.tenter(
-        `${connexion.adresse}|${connexion.nomUtilisateur.toLowerCase()}`,
-        maintenant,
-      )
+      const parAdresse = limiteurAdresse.tenter(connexion.adresse, maintenant)
+      if (!parAdresse.autorise) throw new TropDeTentatives(parAdresse.reessayerDansS)
+      const cle = `${connexion.adresse}|${connexion.nomUtilisateur.toLowerCase()}`
+      const essai = limiteur.tenter(cle, maintenant)
       if (!essai.autorise) throw new TropDeTentatives(essai.reessayerDansS)
       const utilisateur = await depot.utilisateurParNom(connexion.nomUtilisateur)
       const correspond = await verifier(connexion.motDePasse, utilisateur)
       if (utilisateur === undefined || !correspond) throw new NonAuthentifie(MESSAGE_CONNEXION)
+      limiteur.oublier(cle)
       const jeton = nouveauJeton()
       await depot.creerSession({
         id: nouvelId(instantEnMs(maintenant)),
@@ -154,7 +180,7 @@ export function creerServiceAuth({ depot, hacheur, horloge, cleVapid }: Dependan
       nouveau: string,
     ): Promise<void> {
       const utilisateur = await utilisateurConnecte(userId)
-      if (!(await verifier(ancien, utilisateur)))
+      if (!(await verifierAvecLimite(userId, ancien, utilisateur, horloge.maintenant())))
         throw new Refus('Le mot de passe actuel est incorrect.')
       await depot.changerMotDePasse(
         userId,
@@ -167,7 +193,7 @@ export function creerServiceAuth({ depot, hacheur, horloge, cleVapid }: Dependan
     /** Efface le compte et tout ce qui le concerne, mot de passe exigé. */
     async supprimerCompte(userId: string, motDePasse: string): Promise<void> {
       const utilisateur = await utilisateurConnecte(userId)
-      if (!(await verifier(motDePasse, utilisateur)))
+      if (!(await verifierAvecLimite(userId, motDePasse, utilisateur, horloge.maintenant())))
         throw new Refus('Le mot de passe est incorrect.')
       await depot.supprimerCompte(userId)
     },

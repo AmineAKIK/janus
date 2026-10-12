@@ -72,6 +72,17 @@ describe('le limiteur d’essais', () => {
     expect(limiteur.tenter('autre-ip|amine', DEBUT).autorise).toBe(true)
   })
 
+  it('accepte un autre maximum et oublie une clé après un succès', () => {
+    const limiteur = creerLimiteur(2)
+    limiteur.tenter('u', DEBUT)
+    limiteur.tenter('u', DEBUT)
+    expect(limiteur.tenter('u', DEBUT).autorise).toBe(false)
+
+    limiteur.oublier('u')
+
+    expect(limiteur.tenter('u', DEBUT).autorise).toBe(true)
+  })
+
   it('libère la clé quand la minute est passée', () => {
     const limiteur = creerLimiteur()
     for (let essai = 0; essai < ESSAIS_PAR_MINUTE; essai += 1) limiteur.tenter('ip|amine', DEBUT)

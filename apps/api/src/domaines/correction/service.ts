@@ -483,13 +483,18 @@ export function creerServiceCorrection({
       return travail
     },
 
-    /** L'avis d'Amine sur une correction de l'échantillon : un fait de plus, le dernier fait foi. */
+    /**
+     * L'avis d'Amine sur une correction de l'échantillon : un fait de plus, le dernier fait foi.
+     * Redonner le même avis (renvoi après une réponse perdue) n'ajoute rien.
+     */
     async donnerAvis(userId: string, correctionId: string, accord: boolean): Promise<void> {
       const trouvee = await depot.correctionEtBloc(base.db, userId, correctionId)
       if (trouvee === undefined) throw introuvable(`La correction « ${correctionId} »`)
       const donnees = { correction: correctionId, accord }
-      await base.enTransaction((tx) =>
-        depot.ajouterFait(tx, {
+      await base.enTransaction(async (tx) => {
+        await verrouBloc(tx, userId, trouvee.blocId)
+        if ((await depot.dernierAvis(tx, userId, correctionId)) === accord) return
+        await depot.ajouterFait(tx, {
           id: identifiant(),
           userId,
           blocId: trouvee.blocId,
@@ -498,8 +503,8 @@ export function creerServiceCorrection({
           donnees,
           empreinte: empreinte(donnees),
           dateServeur: horloge.maintenant(),
-        }),
-      )
+        })
+      })
     },
 
     /**

@@ -1,4 +1,4 @@
-import Fastify from 'fastify'
+import Fastify, { LogController } from 'fastify'
 import type { FastifyInstance } from 'fastify'
 import { monterAuth } from './domaines/auth/composition.ts'
 import type { OptionsAuth } from './domaines/auth/composition.ts'
@@ -14,6 +14,9 @@ import { genererIdentifiant } from './plugins/identifiantRequete.ts'
 import { declarerMiddlewares } from './plugins/ordre.ts'
 import { serialiserErreur } from './plugins/serialiseurErreur.ts'
 import type { Dependances } from './types.ts'
+
+/** Les relais internes : boucle locale, réseaux privés (Docker, VPS). Toute autre adresse ne peut pas dicter `X-Forwarded-For`. */
+const ADRESSES_DE_CONFIANCE = ['loopback', 'linklocal', 'uniquelocal']
 
 export interface OptionsServeur extends OptionsAuth {
   /** Où va le journal pino ; la sortie standard par défaut. */
@@ -32,10 +35,10 @@ export async function creerServeur(
       ...(options.fluxJournal === undefined ? {} : { stream: options.fluxJournal }),
     },
     // Une seule ligne par requête, celle de `journalFin` (sans adresse ni paramètres d'adresse).
-    disableRequestLogging: true,
+    logController: new LogController({ disableRequestLogging: true }),
     genReqId: genererIdentifiant,
-    // Le proxy de l'hébergeur est le seul devant l'API : son `x-forwarded-for` fait foi.
-    trustProxy: true,
+    // Seul un relais interne (Caddy, nginx, le réseau Docker) peut dire de quelle adresse vient la requête.
+    trustProxy: ADRESSES_DE_CONFIANCE,
   })
   const auth = monterAuth(dependances, options)
   await declarerMiddlewares(app, dependances, auth.resoudreSession)

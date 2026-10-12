@@ -297,6 +297,24 @@ export function creerDepotCorrection() {
       await tx.insert(t.evenements).values({ ...fait, aide: null })
     },
 
+    /** Le dernier avis d'Amine sur une correction (`true` : d'accord), ou `undefined` s'il n'en a pas donné. */
+    dernierAvis: async (lecteur: Db | Tx, userId: string, correctionId: string) => {
+      const [ligne] = await lecteur
+        .select({ donnees: t.evenements.donnees })
+        .from(t.evenements)
+        .where(
+          and(
+            eq(t.evenements.userId, userId),
+            eq(t.evenements.type, 'correction.accord'),
+            sql`${t.evenements.donnees}->>'correction' = ${correctionId}`,
+          ),
+        )
+        .orderBy(desc(t.evenements.dateServeur), desc(t.evenements.id))
+        .limit(1)
+      const accord = (ligne?.donnees as { accord?: unknown } | undefined)?.accord
+      return typeof accord === 'boolean' ? accord : undefined
+    },
+
     evenementParId: async (lecteur: Db | Tx, id: string) => {
       const [ligne] = await lecteur
         .select({ userId: t.evenements.userId, empreinte: t.evenements.empreinte })

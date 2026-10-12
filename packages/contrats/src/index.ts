@@ -1,6 +1,7 @@
 export * from './enums.ts'
 export * from './reglages.ts'
 export * from './ids.ts'
+export * from './contenu.ts'
 export * from './manifeste.ts'
 export * from './validerManifeste.ts'
 export * from './catalogue.ts'

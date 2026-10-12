@@ -16,6 +16,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('lecture des faits', () => {
   const blocId = id()
   const autreBlocId = id()
   const ficheVersionId = id()
+  const autreFicheVersionId = id()
   const cible = { id: blocId, code: 'B01' }
 
   beforeAll(async () => {
@@ -42,15 +43,26 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('lecture des faits', () => {
       { id: blocId, moduleId: module, code: 'B01', titre: 'B', ordre: 1 },
       { id: autreBlocId, moduleId: module, code: 'B02', titre: 'B', ordre: 2 },
     ])
-    await base.db.insert(t.fichesVersions).values({
-      id: ficheVersionId,
-      blocId,
-      version: 1,
-      empreinte: HASH,
-      chemin: 'B01/x.html',
-      manifeste: {},
-      creeLe: DATE,
-    })
+    await base.db.insert(t.fichesVersions).values([
+      {
+        id: ficheVersionId,
+        blocId,
+        version: 1,
+        empreinte: HASH,
+        chemin: 'B01/x.html',
+        manifeste: {},
+        creeLe: DATE,
+      },
+      {
+        id: autreFicheVersionId,
+        blocId: autreBlocId,
+        version: 1,
+        empreinte: HASH,
+        chemin: 'B02/x.html',
+        manifeste: {},
+        creeLe: DATE,
+      },
+    ])
   })
   afterAll(async () => {
     await base.supprimer()
@@ -65,7 +77,8 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('lecture des faits', () => {
       id: id(),
       userId: surcharge.userId ?? userId,
       blocId: surcharge.blocId ?? blocId,
-      ficheVersionId,
+      ficheVersionId:
+        (surcharge.blocId ?? blocId) === autreBlocId ? autreFicheVersionId : ficheVersionId,
       type,
       donnees,
       empreinte: HASH,
