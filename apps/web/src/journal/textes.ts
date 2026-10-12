@@ -26,9 +26,9 @@ export const TEXTES_JOURNAL = {
   exporterJson: 'Exporter en JSON',
   nomFichierTexte: 'journal-janus.txt',
   nomFichierJson: 'journal-janus.json',
-  exportTitre: 'Exporter ton journal ?',
+  exportTitre: 'Exporter le journal ?',
   exportMessage:
-    'Le fichier contient tout ton journal, lisible par quiconque l’ouvre. Garde-le à l’abri.',
+    'Le fichier téléchargé contient tout le journal, sans chiffrement. À conserver en lieu sûr.',
   exporter: 'Exporter',
   erreurExport: 'L’export n’a pas pu être fait. Réessaie.',
   videFiltres: 'Rien dans le journal pour ces filtres.',

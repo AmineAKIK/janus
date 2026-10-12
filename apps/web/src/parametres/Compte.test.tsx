@@ -167,7 +167,7 @@ describe('Compte', () => {
     const banc = await afficher()
 
     await utilisateur.click(screen.getByRole('button', { name: 'Se déconnecter' }))
-    const dialogue = await screen.findByRole('dialog', { name: 'Te déconnecter ?' })
+    const dialogue = await screen.findByRole('dialog', { name: 'Se déconnecter ?' })
     expect(banc.magasin.lire().sessionOuverte).toBe(true)
     await utilisateur.click(within(dialogue).getByRole('button', { name: 'Se déconnecter' }))
 
@@ -193,8 +193,8 @@ describe('Compte', () => {
     })
 
     await utilisateur.click(screen.getByRole('button', { name: 'Se déconnecter' }))
-    const dialogue = await screen.findByRole('dialog', { name: 'Te déconnecter ?' })
-    expect(await within(dialogue).findByText(/1 réponse n’a pas encore été envoyée/)).toBeVisible()
+    const dialogue = await screen.findByRole('dialog', { name: 'Se déconnecter ?' })
+    expect(await within(dialogue).findByText(/1 réponse en attente sera envoyée/)).toBeVisible()
     await utilisateur.click(within(dialogue).getByRole('button', { name: 'Se déconnecter' }))
 
     expect(await within(dialogue).findByRole('alert')).toHaveTextContent(
@@ -224,7 +224,7 @@ describe('Compte', () => {
 
     await utilisateur.click(screen.getByRole('button', { name: 'Se déconnecter' }))
     await utilisateur.click(
-      within(await screen.findByRole('dialog', { name: 'Te déconnecter ?' })).getByRole('button', {
+      within(await screen.findByRole('dialog', { name: 'Se déconnecter ?' })).getByRole('button', {
         name: 'Se déconnecter',
       }),
     )
@@ -241,7 +241,7 @@ describe('Compte', () => {
 
     await utilisateur.click(screen.getByRole('button', { name: 'Se déconnecter' }))
     await utilisateur.click(
-      within(await screen.findByRole('dialog', { name: 'Te déconnecter ?' })).getByRole('button', {
+      within(await screen.findByRole('dialog', { name: 'Se déconnecter ?' })).getByRole('button', {
         name: 'Annuler',
       }),
     )

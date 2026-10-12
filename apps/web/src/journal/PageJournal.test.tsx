@@ -50,7 +50,7 @@ describe('Journal', () => {
     await afficher()
 
     await utilisateur.click(screen.getByRole('button', { name: 'Exporter en JSON' }))
-    const dialogue = await screen.findByRole('dialog', { name: 'Exporter ton journal ?' })
+    const dialogue = await screen.findByRole('dialog', { name: 'Exporter le journal ?' })
     expect(clic).not.toHaveBeenCalled()
     await utilisateur.click(within(dialogue).getByRole('button', { name: 'Annuler' }))
     expect(screen.queryByRole('dialog')).toBeNull()

@@ -23,11 +23,11 @@ export const TEXTES_SUIVI = {
   revenir: 'Revenir au statut calculé',
   revenirTitre: 'Revenir au statut calculé ?',
   revenirMessage: (bloc: string) =>
-    `Le statut forcé de ${bloc} est levé : Janus reprend le statut calculé d’après tes preuves. La décision reste dans le journal.`,
+    `Le statut forcé de ${bloc} est levé : le statut calculé d’après les preuves est rétabli. La décision reste dans le journal.`,
   annuler: 'Annuler',
   revueConfirmerTitre: 'Marquer la revue comme faite ?',
   revueConfirmerMessage:
-    'Janus enregistre que tu as fait ta revue. Le décompte avant la prochaine revue repart de zéro.',
+    'La revue est enregistrée comme faite. Le décompte avant la prochaine revue repart de zéro.',
   cout: 'Coût IA',
   budget: 'Budget mensuel de correction',
   dialogueTitre: 'Forcer un statut',

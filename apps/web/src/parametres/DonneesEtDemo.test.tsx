@@ -47,7 +47,7 @@ describe('Données', () => {
 
     expect(await screen.findByText('Fiches, réponses, réglages et historique · JSON')).toBeVisible()
     await utilisateur.click(screen.getByRole('button', { name: 'Exporter' }))
-    const dialogue = await screen.findByRole('dialog', { name: 'Exporter tes données ?' })
+    const dialogue = await screen.findByRole('dialog', { name: 'Exporter les données ?' })
     expect(clic).not.toHaveBeenCalled()
     await utilisateur.click(within(dialogue).getByRole('button', { name: 'Exporter' }))
 
