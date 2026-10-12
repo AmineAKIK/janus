@@ -1,0 +1,19 @@
+name: diag
+on:
+  push:
+    branches: [ami-diag-hebergement]
+permissions:
+  contents: read
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Construit l'API et le web
+        run: |
+          docker build -f apps/api/Dockerfile -t "janus-api:0000000000000000000000000000000000000001" .
+          docker build -f infra/caddy/Dockerfile -t "janus-web:0000000000000000000000000000000000000001" .
+      - name: Demarrages repetes
+        run: sudo env "PATH=$PATH" bash diag.sh 25
