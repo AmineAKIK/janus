@@ -97,6 +97,7 @@ describe('service worker', () => {
     expect(enregistrement.gestionnaire).toHaveBeenCalledWith('/index.html')
     const options = enregistrement.navigation.mock.calls[0]?.[1] as { denylist: RegExp[] }
     expect(options.denylist.some((motif) => motif.test('/janus/pr-preview/pr-12/'))).toBe(true)
+    expect(options.denylist.some((motif) => motif.test('/api/aujourdhui'))).toBe(true)
     expect(options.denylist.some((motif) => motif.test('/revision'))).toBe(false)
   })
 
