@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
 
@@ -104,5 +105,65 @@ test.describe('exécuteur de code', () => {
       reseau: 'ferme',
       base: 'refuse',
     })
+  })
+})
+
+/** Les politiques de sécurité que le Caddyfile de production pose, lues telles quelles. */
+function politiquesDeProduction() {
+  const caddyfile = readFileSync(new URL('../../../deploy/vps/Caddyfile', import.meta.url), 'utf8')
+  const appli = caddyfile.split('http://fiches.')[0] ?? ''
+  const pour = (bloc: string) => {
+    const debut = appli.indexOf(bloc)
+    const politique = /Content-Security-Policy "([^"]+)"/.exec(appli.slice(debut))?.[1]
+    if (debut < 0 || politique === undefined) throw new Error(`Politique introuvable : ${bloc}`)
+    return politique
+  }
+  return { executeur: pour('handle /executeur.html'), appli: pour('\n    handle {') }
+}
+
+test.describe('exécuteur de code derrière la politique de production', () => {
+  test.use({ serviceWorkers: 'block' })
+
+  test.beforeEach(async ({ page }) => {
+    const politiques = politiquesDeProduction()
+    // Chaque document et chaque iframe reçoit l'en-tête que Caddy poserait, et le navigateur l'applique.
+    await page.route('**/*', async (route) => {
+      const reponse = await route.fetch()
+      const type = reponse.headers()['content-type'] ?? ''
+      if (!type.includes('text/html')) return route.fulfill({ response: reponse })
+      const executeur = new URL(route.request().url()).pathname.endsWith('/executeur.html')
+      return route.fulfill({
+        response: reponse,
+        headers: {
+          ...reponse.headers(),
+          'content-security-policy': executeur ? politiques.executeur : politiques.appli,
+        },
+      })
+    })
+  })
+
+  test('rend la sortie du code testé, pas un délai dépassé', async ({ page }) => {
+    const refus: string[] = []
+    page.on('console', (message) => {
+      if (/Content Security Policy|Refused to/.test(message.text())) refus.push(message.text())
+    })
+    await page.goto('./')
+
+    const reponses = await executer(page, 'function somme(a, b) { return a + b }', [[1, 2]], 3000)
+
+    expect(reponses).toEqual([{ ok: true, sortie: 3 }])
+    expect(refus).toEqual([])
+  })
+
+  test('l’en-tête de l’exécuteur ne laisse encadrer que par l’appli, sans réseau', async ({
+    page,
+  }) => {
+    const politiques = politiquesDeProduction()
+
+    expect(politiques.executeur).toContain("frame-ancestors 'self'")
+    expect(politiques.executeur).toContain("connect-src 'none'")
+    expect(politiques.executeur).not.toContain('allow-same-origin')
+    expect(politiques.appli).toContain("frame-src 'self' https://fiches.")
+    await page.goto('./')
   })
 })
