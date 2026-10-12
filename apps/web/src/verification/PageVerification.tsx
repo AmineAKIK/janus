@@ -1,6 +1,6 @@
 import { ROUTES } from '@janus/contrats'
 import type { SortieRoute } from '@janus/contrats'
-import { Bouton, Dialogue } from '@janus/ui'
+import { Bouton, Dialogue, DialogueConfirmation } from '@janus/ui'
 import { useState } from 'react'
 import { useLecture } from '../api/requetes.tsx'
 import { texteTache } from '../aujourdhui/textesTaches.ts'
@@ -52,6 +52,7 @@ export function PageVerification({ id }: { readonly id: string }) {
   const [quitter, setQuitter] = useState(false)
   const [lance, setLance] = useState(false)
   const [quandMeme, setQuandMeme] = useState(false)
+  const [reportDemande, setReportDemande] = useState(false)
   const { phase, vue, parties, courante, resultat } = verification
 
   const reporter = () => {
@@ -103,7 +104,13 @@ export function PageVerification({ id }: { readonly id: string }) {
           <p className="texte-corps-16">{texteRevuLe(vue.revu_recemment)}</p>
           <p className="texte-corps-16">{T.revuExplication}</p>
           <div className={styles['actions']}>
-            <Bouton type="button" variante="principal" onClick={reporter}>
+            <Bouton
+              type="button"
+              variante="principal"
+              onClick={() => {
+                setReportDemande(true)
+              }}
+            >
               {T.reporter}
             </Bouton>
             <Bouton
@@ -196,6 +203,19 @@ export function PageVerification({ id }: { readonly id: string }) {
         )}
       </header>
       {contenu}
+      {reportDemande && (
+        <DialogueConfirmation
+          titre={T.reporterTitre}
+          libelleConfirmer={T.reporter}
+          libelleAnnuler={T.annuler}
+          surAnnuler={() => {
+            setReportDemande(false)
+          }}
+          surConfirmer={reporter}
+        >
+          <p>{T.reporterMessage}</p>
+        </DialogueConfirmation>
+      )}
       {quitter && (
         <Dialogue
           titre={T.dialogueTitre}

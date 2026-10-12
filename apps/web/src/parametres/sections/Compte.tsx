@@ -1,12 +1,20 @@
 import { ROUTES } from '@janus/contrats'
 import type { ModificationReglages, Reglages } from '@janus/contrats'
-import { BandeauAlerte, Bouton, LigneLectureSeule, LigneReglage, Selecteur } from '@janus/ui'
+import {
+  BandeauAlerte,
+  Bouton,
+  DialogueConfirmation,
+  LigneLectureSeule,
+  LigneReglage,
+  Selecteur,
+} from '@janus/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useEcriture, useLecture } from '../../api/requetes.tsx'
 import { ChampReglage } from '../ChampReglage.tsx'
 import styles from '../Parametres.module.css'
-import { TEXTES_COMPTE as T } from '../textes.ts'
+import { useEnAttente } from '../../envoi/useEnAttente.ts'
+import { TEXTES_COMPTE as T, TEXTES_CONFIRMATION as C } from '../textes.ts'
 import { ChangerMotDePasse } from './ChangerMotDePasse.tsx'
 import { Sessions } from './Sessions.tsx'
 import { aller } from '../../routes/navigation.ts'
@@ -24,6 +32,8 @@ export function SectionCompte({ reglages, enregistrer }: Proprietes) {
   const deconnexion = useEcriture(ROUTES['DELETE /session'])
   const [dialogue, setDialogue] = useState(false)
   const [change, setChange] = useState(false)
+  const [sortir, setSortir] = useState(false)
+  const enAttente = useEnAttente()
   const fuseaux = FUSEAUX.includes(reglages.fuseau) ? FUSEAUX : [reglages.fuseau, ...FUSEAUX]
 
   return (
@@ -76,19 +86,39 @@ export function SectionCompte({ reglages, enregistrer }: Proprietes) {
         type="button"
         variante="secondaire"
         onClick={() => {
-          deconnexion.mutate(
-            {},
-            {
-              onSuccess: () => {
-                client.clear()
-                aller('/connexion')
-              },
-            },
-          )
+          setSortir(true)
         }}
       >
         {T.seDeconnecter}
       </Bouton>
+      {sortir && (
+        <DialogueConfirmation
+          titre={C.deconnexion.titre}
+          libelleConfirmer={T.seDeconnecter}
+          libelleAnnuler={C.annuler}
+          enCours={deconnexion.isPending}
+          surAnnuler={() => {
+            setSortir(false)
+          }}
+          surConfirmer={() => {
+            deconnexion.mutate(
+              {},
+              {
+                onSuccess: () => {
+                  client.clear()
+                  aller('/connexion')
+                },
+                onSettled: () => {
+                  setSortir(false)
+                },
+              },
+            )
+          }}
+        >
+          <p>{C.deconnexion.message}</p>
+          {enAttente > 0 && <p>{C.deconnexion.enAttente(enAttente)}</p>}
+        </DialogueConfirmation>
+      )}
       {dialogue && (
         <ChangerMotDePasse
           surFermeture={() => {

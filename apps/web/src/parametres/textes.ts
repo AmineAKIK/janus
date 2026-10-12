@@ -191,3 +191,35 @@ export function lignesRegles(reglages: Reglages): readonly LigneRegle[] {
     { libelle: 'Revue', valeur: `Tous les ${String(reglages.blocsEntreRevues)} blocs` },
   ]
 }
+
+/** Les demandes de confirmation avant une action des paramètres. */
+export const TEXTES_CONFIRMATION = {
+  annuler: 'Annuler',
+  deconnexion: {
+    titre: 'Te déconnecter ?',
+    message: 'Tu devras saisir ton mot de passe pour revenir.',
+    enAttente: (nombre: number) =>
+      `${nombre === 1 ? '1 réponse n’a' : `${String(nombre)} réponses n’ont`} pas encore été envoyée${nombre === 1 ? '' : 's'}. Elle${nombre === 1 ? ' partira' : 's partiront'} à ta prochaine connexion sur cet appareil.`,
+  },
+  appareil: {
+    titre: 'Déconnecter cet appareil ?',
+    message: (appareil: string) =>
+      `${appareil} sera déconnecté. Il faudra s’y reconnecter avec ton mot de passe.`,
+  },
+  export: {
+    titre: 'Exporter tes données ?',
+    message:
+      'Le fichier contient toutes tes données, lisibles par quiconque l’ouvre. Garde-le à l’abri.',
+    confirmer: 'Exporter',
+  },
+  demoZero: {
+    titre: 'Remettre la démo à zéro ?',
+    message: 'Les données de démo reviennent à leur état de départ. Ce que tu as fait est perdu.',
+    confirmer: 'Remettre à zéro',
+  },
+  demoVide: {
+    titre: 'Vider le compte de démo ?',
+    message: 'Les données de démo sont toutes effacées. Ce que tu as fait est perdu.',
+    confirmer: 'Vider le compte',
+  },
+} as const

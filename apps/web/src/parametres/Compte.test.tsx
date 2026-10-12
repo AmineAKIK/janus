@@ -149,6 +149,9 @@ describe('Compte', () => {
     await utilisateur.click(
       within(liste).getByRole('button', { name: 'Déconnecter Pixel 8 · Chrome' }),
     )
+    const dialogue = await screen.findByRole('dialog', { name: 'Déconnecter cet appareil ?' })
+    expect(banc.magasin.lire().sessions).toHaveLength(2)
+    await utilisateur.click(within(dialogue).getByRole('button', { name: 'Déconnecter' }))
 
     await waitFor(() => {
       expect(banc.magasin.lire().sessions).toHaveLength(1)
@@ -161,9 +164,27 @@ describe('Compte', () => {
     const banc = await afficher()
 
     await utilisateur.click(screen.getByRole('button', { name: 'Se déconnecter' }))
+    const dialogue = await screen.findByRole('dialog', { name: 'Te déconnecter ?' })
+    expect(banc.magasin.lire().sessionOuverte).toBe(true)
+    await utilisateur.click(within(dialogue).getByRole('button', { name: 'Se déconnecter' }))
 
     await waitFor(() => {
       expect(banc.magasin.lire().sessionOuverte).toBe(false)
     })
+  })
+
+  it('« Se déconnecter » demande confirmation et reste connecté si on annule', async () => {
+    const utilisateur = userEvent.setup()
+    const banc = await afficher()
+
+    await utilisateur.click(screen.getByRole('button', { name: 'Se déconnecter' }))
+    await utilisateur.click(
+      within(await screen.findByRole('dialog', { name: 'Te déconnecter ?' })).getByRole('button', {
+        name: 'Annuler',
+      }),
+    )
+
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(banc.magasin.lire().sessionOuverte).toBe(true)
   })
 })

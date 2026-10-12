@@ -83,6 +83,12 @@ describe('Suivi', () => {
 
     expect(await screen.findByText(/Raison : court mais maintenant assez long/)).toBeVisible()
     await utilisateur.click(screen.getByRole('button', { name: /Revenir au statut calculé/ }))
+    await utilisateur.click(
+      within(await screen.findByRole('dialog', { name: 'Revenir au statut calculé ?' })).getByRole(
+        'button',
+        { name: 'Revenir au statut calculé' },
+      ),
+    )
     await waitFor(() => {
       expect(screen.queryByRole('button', { name: /Revenir au statut calculé/ })).toBeNull()
     })

@@ -1,9 +1,9 @@
-import { Bouton, Interrupteur, LigneReglage } from '@janus/ui'
+import { Bouton, DialogueConfirmation, Interrupteur, LigneReglage } from '@janus/ui'
 import { InterrupteursDemo } from '@janus/contrats'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import styles from '../Parametres.module.css'
-import { LIBELLES_INTERRUPTEURS, TEXTES_DEMO as T } from '../textes.ts'
+import { LIBELLES_INTERRUPTEURS, TEXTES_CONFIRMATION as C, TEXTES_DEMO as T } from '../textes.ts'
 
 const NOMS = InterrupteursDemo.keyof().options
 
@@ -12,6 +12,7 @@ export function SectionDemo() {
   const client = useQueryClient()
   const outils = window.__janusDemo
   const [, redessiner] = useState(0)
+  const [remise, setRemise] = useState<'graine' | 'vide' | null>(null)
   if (outils === undefined) return null
   const { maintenant, interrupteurs } = outils.lire()
   /** Les données déjà lues ne valent plus rien après un saut dans le temps ou un retour à zéro. */
@@ -45,8 +46,7 @@ export function SectionDemo() {
           type="button"
           variante="secondaire"
           onClick={() => {
-            outils.reinitialiser('graine')
-            apres()
+            setRemise('graine')
           }}
         >
           {T.zero}
@@ -55,13 +55,30 @@ export function SectionDemo() {
           type="button"
           variante="secondaire"
           onClick={() => {
-            outils.reinitialiser('vide')
-            apres()
+            setRemise('vide')
           }}
         >
           {T.vide}
         </Bouton>
       </div>
+      {remise !== null && (
+        <DialogueConfirmation
+          titre={C[remise === 'graine' ? 'demoZero' : 'demoVide'].titre}
+          libelleConfirmer={C[remise === 'graine' ? 'demoZero' : 'demoVide'].confirmer}
+          libelleAnnuler={C.annuler}
+          danger
+          surAnnuler={() => {
+            setRemise(null)
+          }}
+          surConfirmer={() => {
+            outils.reinitialiser(remise)
+            setRemise(null)
+            apres()
+          }}
+        >
+          <p>{C[remise === 'graine' ? 'demoZero' : 'demoVide'].message}</p>
+        </DialogueConfirmation>
+      )}
       <section aria-label={T.interrupteurs} className={styles['lignes']}>
         <h3 className="texte-petit-14">{T.interrupteurs}</h3>
         {NOMS.map((nom) => (

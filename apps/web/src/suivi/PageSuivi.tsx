@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { GroupeSegmente, Selecteur } from '@janus/ui'
+import { DialogueConfirmation, GroupeSegmente, Selecteur } from '@janus/ui'
 import { Periode } from '@janus/contrats'
 import { Chargement, Erreur } from '../catalogue/EtatEcran.tsx'
 import { CarteDuModule } from './CarteDuModule.tsx'
 import { DialogueForcer } from './DialogueForcer.tsx'
 import styles from './Suivi.module.css'
 import { OPTIONS_PERIODE, TEXTES_SUIVI as T } from './textes.ts'
+import { TEXTES_MESURES as M } from './mesures/textes.ts'
 import { useSuivi } from './useSuivi.ts'
 import type { DonneesSuivi } from './useSuivi.ts'
 import {
@@ -33,6 +34,8 @@ function Corps({
   readonly suivi: ReturnType<typeof useSuivi>
 }) {
   const [dialogue, setDialogue] = useState(false)
+  const [aLever, setALever] = useState<string | null>(null)
+  const [revue, setRevue] = useState(false)
   const titreBloc = (code: string) =>
     donnees.blocs.find(({ bloc }) => bloc === code)?.titre_court ?? ''
   return (
@@ -50,7 +53,7 @@ function Corps({
             suivi.reinitialiserEchec()
             setDialogue(true)
           }}
-          surLever={suivi.lever}
+          surLever={setALever}
         />
         <ZoneAutonomie donnees={donnees.mesures.autonomie} />
         <ZoneAisance donnees={donnees.mesures.aisance} />
@@ -60,11 +63,47 @@ function Corps({
         <ZoneRevue
           donnees={donnees.mesures.revue}
           enCours={suivi.revueEnCours}
-          surRevue={suivi.revueFaite}
+          surRevue={() => {
+            setRevue(true)
+          }}
         />
         <ZoneFiabilite donnees={donnees.mesures.fiabilite} />
         <ZoneCout cout={donnees.cout_ia} />
       </div>
+      {aLever !== null && (
+        <DialogueConfirmation
+          titre={T.revenirTitre}
+          libelleConfirmer={T.revenir}
+          libelleAnnuler={T.annuler}
+          enCours={suivi.enCours}
+          surAnnuler={() => {
+            setALever(null)
+          }}
+          surConfirmer={() => {
+            suivi.lever(aLever)
+            setALever(null)
+          }}
+        >
+          <p>{T.revenirMessage(aLever)}</p>
+        </DialogueConfirmation>
+      )}
+      {revue && (
+        <DialogueConfirmation
+          titre={T.revueConfirmerTitre}
+          libelleConfirmer={M.revueFaite}
+          libelleAnnuler={T.annuler}
+          enCours={suivi.revueEnCours}
+          surAnnuler={() => {
+            setRevue(false)
+          }}
+          surConfirmer={() => {
+            suivi.revueFaite()
+            setRevue(false)
+          }}
+        >
+          <p>{T.revueConfirmerMessage}</p>
+        </DialogueConfirmation>
+      )}
       {dialogue && (
         <DialogueForcer
           blocs={donnees.blocs.map(({ bloc }) => bloc)}

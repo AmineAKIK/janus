@@ -2,7 +2,7 @@ import { nouvelId, ROUTES } from '@janus/contrats'
 import { createMemoryHistory } from '@tanstack/react-router'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { creerRouteur } from '../routes/arbre.tsx'
 import { creerContexteTest } from '../routes/contexteTest.tsx'
 
@@ -40,6 +40,29 @@ describe('Journal', () => {
     expect(screen.getAllByRole('heading', { level: 3 }).length).toBeGreaterThan(0)
     expect(screen.getByRole('button', { name: 'Exporter en texte' })).toBeVisible()
     expect(screen.getByRole('button', { name: 'Exporter en JSON' })).toBeVisible()
+  })
+
+  it('demande confirmation avant d’exporter le journal', async () => {
+    simulerEcran(true)
+    const utilisateur = userEvent.setup()
+    vi.stubGlobal('URL', { createObjectURL: () => 'blob:export', revokeObjectURL: () => undefined })
+    const clic = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined)
+    await afficher()
+
+    await utilisateur.click(screen.getByRole('button', { name: 'Exporter en JSON' }))
+    const dialogue = await screen.findByRole('dialog', { name: 'Exporter ton journal ?' })
+    expect(clic).not.toHaveBeenCalled()
+    await utilisateur.click(within(dialogue).getByRole('button', { name: 'Annuler' }))
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(clic).not.toHaveBeenCalled()
+
+    await utilisateur.click(screen.getByRole('button', { name: 'Exporter en JSON' }))
+    await utilisateur.click(
+      within(await screen.findByRole('dialog')).getByRole('button', { name: 'Exporter' }),
+    )
+    expect(clic).toHaveBeenCalledOnce()
+    clic.mockRestore()
+    vi.unstubAllGlobals()
   })
 
   it('compte les « événements » de chaque jour', async () => {
