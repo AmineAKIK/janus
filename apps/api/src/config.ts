@@ -34,6 +34,8 @@ export const SchemaConfig = z.object({
   SENTRY_DSN: z.preprocess((valeur) => (valeur === '' ? undefined : valeur), z.url().optional()),
   /** Demandes de correction par minute et par adresse (le plafond horaire en base borne le coût). */
   CORRECTIONS_PAR_MINUTE: z.coerce.number().int().positive().default(20),
+  /** Connexions par minute et par adresse, tous noms confondus : borne le hachage d'un flot de faux noms. */
+  CONNEXIONS_PAR_ADRESSE_PAR_MINUTE: z.coerce.number().int().positive().default(20),
   NIVEAU_JOURNAL: z
     .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
     .default('info'),

@@ -11,7 +11,6 @@ import {
   DUREE_PERSISTANTE_JOURS,
   OCTETS_MAX,
   activiteAReecrire,
-  CONNEXIONS_PAR_ADRESSE_PAR_MINUTE,
   creerLimiteur,
   VERIFICATIONS_PAR_MINUTE,
   octets,
@@ -51,6 +50,8 @@ export interface DependancesService {
   readonly horloge: Horloge
   /** La clé publique VAPID, donnée à l'appli pour qu'elle s'abonne aux rappels. */
   readonly cleVapid: string
+  /** Connexions par minute et par adresse, tous noms confondus. */
+  readonly connexionsParAdresseParMinute: number
 }
 
 function moiDeLaCle(cleVapid: string) {
@@ -62,10 +63,16 @@ function moiDeLaCle(cleVapid: string) {
   })
 }
 
-export function creerServiceAuth({ depot, hacheur, horloge, cleVapid }: DependancesService) {
+export function creerServiceAuth({
+  depot,
+  hacheur,
+  horloge,
+  cleVapid,
+  connexionsParAdresseParMinute,
+}: DependancesService) {
   const moiDe = moiDeLaCle(cleVapid)
   const limiteur = creerLimiteur()
-  const limiteurAdresse = creerLimiteur(CONNEXIONS_PAR_ADRESSE_PAR_MINUTE)
+  const limiteurAdresse = creerLimiteur(connexionsParAdresseParMinute)
   const limiteurVerification = creerLimiteur(VERIFICATIONS_PAR_MINUTE)
 
   /** Redemande le mot de passe actuel : 5 essais par minute et par utilisateur, les réussites ne comptent pas. */

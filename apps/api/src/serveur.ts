@@ -1,4 +1,4 @@
-import Fastify from 'fastify'
+import Fastify, { LogController } from 'fastify'
 import type { FastifyInstance } from 'fastify'
 import { monterAuth } from './domaines/auth/composition.ts'
 import type { OptionsAuth } from './domaines/auth/composition.ts'
@@ -35,7 +35,7 @@ export async function creerServeur(
       ...(options.fluxJournal === undefined ? {} : { stream: options.fluxJournal }),
     },
     // Une seule ligne par requête, celle de `journalFin` (sans adresse ni paramètres d'adresse).
-    disableRequestLogging: true,
+    logController: new LogController({ disableRequestLogging: true }),
     genReqId: genererIdentifiant,
     // Seul un relais interne (Caddy, nginx, le réseau Docker) peut dire de quelle adresse vient la requête.
     trustProxy: ADRESSES_DE_CONFIANCE,

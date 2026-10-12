@@ -12,8 +12,6 @@ export const PAS_ACTIVITE_MS = MINUTE_MS
 /** Les essais de connexion : 5 par minute. */
 export const ESSAIS_PAR_MINUTE = 5
 export const FENETRE_ESSAIS_MS = MINUTE_MS
-/** Par adresse, tous noms confondus : borne le travail de hachage d'un flot de faux noms. */
-export const CONNEXIONS_PAR_ADRESSE_PAR_MINUTE = 20
 /** Changer le mot de passe ou supprimer le compte : le mot de passe actuel est redemandé, 5 essais par minute. */
 export const VERIFICATIONS_PAR_MINUTE = 5
 

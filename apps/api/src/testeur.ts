@@ -26,6 +26,7 @@ export const ENVIRONNEMENT_TEST = {
   NIVEAU_JOURNAL: 'info',
   // Les suites enchaînent plus de demandes par minute que l'usage réel : le plafond y est desserré.
   CORRECTIONS_PAR_MINUTE: '1000',
+  CONNEXIONS_PAR_ADRESSE_PAR_MINUTE: '20',
 }
 
 export function configDeTest(surcharge: Readonly<Record<string, string>> = {}): Config {

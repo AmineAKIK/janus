@@ -25,6 +25,7 @@ export function monterAuth(
     hacheur,
     horloge,
     cleVapid: config.VAPID_PUBLIC_KEY,
+    connexionsParAdresseParMinute: config.CONNEXIONS_PAR_ADRESSE_PAR_MINUTE,
   })
   return {
     routes: routesAuth(creerControleurAuth(service, config)),
