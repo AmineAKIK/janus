@@ -49,7 +49,8 @@ export function useSurface({
       const gauche = Math.max(MARGE, Math.min(alignee, window.innerWidth - voulue - MARGE))
       const dessous = window.innerHeight - boite.bottom - MARGE - ECART
       const dessus = boite.top - MARGE - ECART
-      const enHaut = dessous < Math.min(hauteur, 200) && dessus > dessous
+      // Dessous si elle y tient en entier ; sinon là où il y a le plus de place.
+      const enHaut = dessous < hauteur && dessus > dessous
       const place = Math.max(120, enHaut ? dessus : dessous)
       setStyle({
         position: 'fixed',

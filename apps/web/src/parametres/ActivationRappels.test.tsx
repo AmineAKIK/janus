@@ -47,7 +47,7 @@ function afficherSurServeur(reponseAbonnement: () => Response) {
   return fetchImpl
 }
 
-function navigateur() {
+function navigateur(resultat: NotificationPermission = 'granted') {
   const desabonner = vi.fn(() => Promise.resolve(true))
   const subscribe = vi.fn(() =>
     Promise.resolve({
@@ -62,8 +62,8 @@ function navigateur() {
     Object.assign(vi.fn(), {
       permission: 'default',
       requestPermission: vi.fn(() => {
-        Object.defineProperty(Notification, 'permission', { value: 'granted' })
-        return Promise.resolve('granted')
+        Object.defineProperty(Notification, 'permission', { value: resultat })
+        return Promise.resolve(resultat)
       }),
     }),
   )
@@ -111,6 +111,37 @@ describe('Activer les notifications', () => {
       cles: { p256dh: 'clef', auth: 'secret' },
     })
     expect(await screen.findByText('Autorisées sur cet appareil.')).toBeVisible()
+  })
+
+  it('un retour sans choisir laisse le bouton actif et le dit, sans parler de refus', async () => {
+    const utilisateur = userEvent.setup()
+    navigateur('default')
+    afficherSurServeur(() => json({ id: '0190a000-0000-7000-8000-000000000002' }, 201))
+
+    const bouton = await screen.findByRole('button', { name: 'Activer' })
+    await waitFor(() => {
+      expect(bouton).toBeEnabled()
+    })
+    await utilisateur.click(bouton)
+
+    expect(await screen.findByText(/ni accepté ni refusé/)).toBeVisible()
+    expect(screen.queryByText(/Refusées/)).toBeNull()
+    expect(screen.getByRole('button', { name: 'Activer' })).toBeEnabled()
+  })
+
+  it('un refus désactive le bouton et dit où changer l’autorisation', async () => {
+    const utilisateur = userEvent.setup()
+    navigateur('denied')
+    afficherSurServeur(() => json({ id: '0190a000-0000-7000-8000-000000000002' }, 201))
+
+    const bouton = await screen.findByRole('button', { name: 'Activer' })
+    await waitFor(() => {
+      expect(bouton).toBeEnabled()
+    })
+    await utilisateur.click(bouton)
+
+    expect(await screen.findByText(/Refusées par ce navigateur/)).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Activer' })).toBeDisabled()
   })
 
   it('dit quand le serveur n’a pas enregistré l’appareil', async () => {
