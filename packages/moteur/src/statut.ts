@@ -175,30 +175,15 @@ function verdictSerie(
   const premierRang = Math.min(...trio.map((correction) => ordonnes.indexOf(correction)))
   const premierMs = Math.min(...trio.map((correction) => instantEnMs(correction.date)))
   const derniereDate = trio.map((correction) => correction.date).reduce(plusTardQue)
-  const restitution = ordonnes.findLast(
-    (fait, rang) => rang < premierRang && estCorrectionDe('restitution')(fait),
-  )
   // Une série commencée avant la fin de la restitution ne compte pas : « vu » vient d'abord.
-  if (premierMs < instantEnMs(restitutionFinie)) {
-    return {
-      ok: false,
-      manque: {
-        code: 'consolidation_trop_tot',
-        apres: instantEnIso(
-          instantEnMs(restitutionFinie) + reglages.delaiConsolidationMinutes * MS_PAR_MINUTE,
-        ),
-      },
-    }
-  }
-  if (restitution === undefined) {
-    return { ok: false, manque: { code: 'consolidation_trop_tot' } }
-  }
-  // Rouvrir le cours après la restitution relance le délai à partir de la dernière étape de cours.
+  // Le délai court depuis la dernière réponse de restitution ou, si le cours a été rouvert depuis,
+  // depuis la dernière étape de cours.
+  const coursOuRestitution = ouvreLeCours(manifeste)
   const dernierCours = ordonnes
-    .slice(ordonnes.indexOf(restitution) + 1, premierRang)
-    .filter(ouvreLeCours(manifeste))
+    .slice(0, premierRang)
+    .filter((fait) => estCorrectionDe('restitution')(fait) || coursOuRestitution(fait))
     .map(({ date }) => date)
-    .reduce<string>(plusTardQue, restitution.date)
+    .reduce<string>(plusTardQue, restitutionFinie)
   const finDelai = instantEnMs(dernierCours) + reglages.delaiConsolidationMinutes * MS_PAR_MINUTE
   if (premierMs < finDelai) {
     return {
