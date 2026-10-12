@@ -1,5 +1,5 @@
 import { ROUTES } from '@janus/contrats'
-import type { Manifeste, Statut, Tache, TacheDuJour, TypeVerification } from '@janus/contrats'
+import type { Manifeste, Statut, Tache, TacheDuJour } from '@janus/contrats'
 import type { EtatDemo } from '@janus/contrats/demo'
 import {
   auMoinsVu,
@@ -17,13 +17,10 @@ import { faitsDuBloc, resultatDuBloc } from './calculs.ts'
 import type { Magasin } from '../store.ts'
 import type { HorlogeDemo } from '../horlogeDemo.ts'
 import { definir } from './definir.ts'
-import { blocsReportes, verificationPour } from './verifications.ts'
+import { blocsReportes } from './verifications.ts'
 
 /** Où mène une tâche : les écrans de séance des PR suivantes, ou le bloc. */
-function lienDeLaTache(
-  tache: Tache,
-  verification: (bloc: string, type: TypeVerification) => string,
-): string {
+function lienDeLaTache(tache: Tache): string {
   switch (tache.type) {
     case 'reprendre_erreur':
       return tache.lien
@@ -34,7 +31,7 @@ function lienDeLaTache(
     case 'verification':
     case 'retest':
     case 'entretien':
-      return `/verifications/${verification(tache.bloc, tache.type)}`
+      return `/verifications/ouvrir/${tache.bloc}/${tache.type}`
     case 'consolidation': {
       const etape = MANIFESTES_GRAINE[tache.bloc]?.etapes.find(
         ({ type }) => type === 'consolidation',
@@ -96,7 +93,7 @@ export function contexteDuJour(etat: EtatDemo, maintenant: string) {
   return { blocs, derniereActivite, enCours, vus, questions, jourDu, reglages }
 }
 
-/** La série du jour : tirée à la première lecture puis gardée, pour qu'elle ne bouge pas après une réponse. */
+/** La série du jour : tirée au premier appel puis gardée, pour qu'elle ne bouge pas après une réponse. */
 export function serieDuJour(magasin: Magasin, maintenant: string) {
   const etat = magasin.lire()
   const { questions, jourDu } = contexteDuJour(etat, maintenant)
@@ -178,11 +175,7 @@ export function aujourdhuiDemo(magasin: Magasin, horloge: HorlogeDemo) {
           ),
       ),
       { questionsRepondues, cartesRevues },
-      (tache) =>
-        lienDeLaTache(
-          tache,
-          (bloc, type) => verificationPour(magasin, bloc, type, maintenant) ?? bloc,
-        ),
+      lienDeLaTache,
     ).map((tache): TacheDuJour => ({ ...tache, faite: toutFait || tache.faite })),
     module:
       module === undefined

@@ -292,19 +292,25 @@ describe('page introuvable', () => {
   })
 })
 
-describe('page introuvable et moteurs de recherche', () => {
-  it('se déclare non indexable tant qu’elle est affichée, puis rend la balise', async () => {
+describe('moteurs de recherche', () => {
+  const robots = async (chemin: string) => {
     const balise = document.createElement('meta')
     balise.name = 'robots'
-    balise.content = 'index, follow'
+    balise.content = 'index, follow, max-image-preview:large'
     document.head.append(balise)
-    const routeur = await afficher('/n-importe-quoi')
-    expect(balise.content).toBe('noindex')
-    await act(async () => {
-      await routeur.navigate({ to: '/revision' })
-    })
-    expect(balise.content).toBe('index, follow')
+    await afficher(chemin)
+    const contenu = balise.content
     balise.remove()
+    return contenu
+  }
+
+  it('la connexion, vitrine de l’appli, reste indexable', async () => {
+    expect(await robots('/connexion')).toBe('index, follow, max-image-preview:large')
+  })
+
+  it('la page introuvable et les écrans derrière le compte se déclarent non indexables', async () => {
+    expect(await robots('/n-importe-quoi')).toBe('noindex, nofollow')
+    expect(await robots('/revision')).toBe('noindex, nofollow')
   })
 })
 

@@ -49,6 +49,7 @@ export function formationsSupplementairesGraine(): readonly Pick<
         description: '',
         ordre: i + 1,
         importe: false as const,
+        taches_reservees: [],
       })),
     },
   ]

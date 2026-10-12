@@ -250,7 +250,13 @@ export function creerDepotSuivi() {
         .select({ intitule: t.tachesReservees.intitule })
         .from(t.tachesReservees)
         .innerJoin(t.modules, eq(t.modules.id, t.tachesReservees.moduleId))
-        .where(and(eq(t.modules.importe, true), deLaFormation(formationId)))
+        .where(
+          and(
+            eq(t.modules.importe, true),
+            eq(t.tachesReservees.active, true),
+            deLaFormation(formationId),
+          ),
+        )
         .orderBy(asc(t.modules.ordre), asc(t.tachesReservees.id))
       return lignes.map(({ intitule }) => intitule)
     },

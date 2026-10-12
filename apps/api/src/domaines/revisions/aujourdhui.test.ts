@@ -14,25 +14,16 @@ describe('blocsReportes', () => {
 
 describe('lienDeLaTache', () => {
   const sansManifeste = () => undefined
-  const verification = (bloc: string, type: string) => `${type}-${bloc}`
 
   it('mène chaque tâche à son écran', () => {
-    expect(lienDeLaTache({ type: 'questions_debut', nombre: 3 }, sansManifeste, verification)).toBe(
-      '/questions',
+    expect(lienDeLaTache({ type: 'questions_debut', nombre: 3 }, sansManifeste)).toBe('/questions')
+    expect(lienDeLaTache({ type: 'cartes', dues: 1, nouvelles: 2 }, sansManifeste)).toBe(
+      '/revision',
     )
-    expect(
-      lienDeLaTache({ type: 'cartes', dues: 1, nouvelles: 2 }, sansManifeste, verification),
-    ).toBe('/revision')
-    expect(lienDeLaTache({ type: 'bloc', bloc: 'B1' }, sansManifeste, verification)).toBe(
-      '/blocs/B1',
+    expect(lienDeLaTache({ type: 'bloc', bloc: 'B1' }, sansManifeste)).toBe('/blocs/B1')
+    expect(lienDeLaTache({ type: 'retest', bloc: 'B1', apres: '2026-10-01' }, sansManifeste)).toBe(
+      '/verifications/ouvrir/B1/retest',
     )
-    expect(
-      lienDeLaTache(
-        { type: 'retest', bloc: 'B1', apres: '2026-10-01' },
-        sansManifeste,
-        verification,
-      ),
-    ).toBe('/verifications/retest-B1')
   })
 
   it('reconnaît les tâches de vérification', () => {

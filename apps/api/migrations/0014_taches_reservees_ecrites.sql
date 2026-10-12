@@ -1,0 +1,2 @@
+ALTER TABLE "taches_reservees" ADD COLUMN "active" boolean DEFAULT true NOT NULL;--> statement-breakpoint
+ALTER TABLE "taches_reservees" ADD CONSTRAINT "taches_reservees_module_intitule" UNIQUE("module_id","intitule");

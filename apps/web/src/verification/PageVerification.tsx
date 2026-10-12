@@ -20,14 +20,13 @@ type Aujourdhui = SortieRoute<(typeof ROUTES)['GET /aujourdhui']>
 
 function EtapeSuivante({
   aujourdhui,
-  idVerification,
+  lienCourant,
 }: {
   readonly aujourdhui: Aujourdhui | undefined
-  readonly idVerification: string
+  /** Le lien de la file du jour qui mène à cette vérification : elle ne se propose pas à elle-même. */
+  readonly lienCourant: string
 }) {
-  const suivante = aujourdhui?.taches.find(
-    ({ faite, lien }) => !faite && lien !== `/verifications/${idVerification}`,
-  )
+  const suivante = aujourdhui?.taches.find(({ faite, lien }) => !faite && lien !== lienCourant)
   const titreBloc = (code: string) =>
     aujourdhui?.module?.blocs.find(({ bloc }) => bloc === code)?.titre_court ?? ''
   return (
@@ -74,7 +73,12 @@ export function PageVerification({ id }: { readonly id: string }) {
     contenu = (
       <Resultat
         resultat={resultat}
-        etapeSuivante={<EtapeSuivante aujourdhui={aujourdhui.data} idVerification={id} />}
+        etapeSuivante={
+          <EtapeSuivante
+            aujourdhui={aujourdhui.data}
+            lienCourant={`/verifications/ouvrir/${resultat.bloc.code}/${vue.type}`}
+          />
+        }
       />
     )
   } else if (

@@ -27,6 +27,11 @@ export function routesRevisions(controleur: ControleurRevisions): FastifyPluginA
       { schema: schemaDe(ROUTES['GET /questions-debut']) },
       controleur.questionsDebut,
     )
+    app.post(
+      ROUTES['POST /questions-debut'].chemin,
+      { schema: schemaDe(ROUTES['POST /questions-debut']), config: { identifiant: false } },
+      controleur.garderQuestionsDebut,
+    )
     app.get(
       ROUTES['GET /cartes/dues'].chemin,
       { schema: schemaDe(ROUTES['GET /cartes/dues']) },
@@ -44,6 +49,11 @@ export function routesRevisions(controleur: ControleurRevisions): FastifyPluginA
       ROUTES['GET /verifications/:id'].chemin,
       { schema: schemaDe(ROUTES['GET /verifications/:id']) },
       controleur.verification,
+    )
+    app.post(
+      ROUTES['POST /verifications'].chemin,
+      { schema: schemaDe(ROUTES['POST /verifications']), config: { identifiant: false } },
+      controleur.ouvrirVerification,
     )
     app.post(
       ROUTES['POST /verifications/:id/reporter'].chemin,

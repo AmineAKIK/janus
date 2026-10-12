@@ -98,6 +98,8 @@ jobs:
           persist-credentials: false
       - name: shellcheck des scripts du VPS
         run: shellcheck deploy/vps/*.sh
+      - name: Essai de deployer.sh (déploiement, retour arrière, migration, refus)
+        run: sudo bash deploy/vps/essai-deployer.sh
       - name: Construit les images
         run: |
           docker build -f apps/api/Dockerfile -t "janus-api:$SHA" .

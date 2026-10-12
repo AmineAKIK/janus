@@ -25,10 +25,14 @@ describe('réglages de la démo', () => {
 
   it('« questions de début à 8 » donne des séries de 8 questions', async () => {
     const { transport } = monterDemo()
-    const avant = await transport.appeler(ROUTES['GET /questions-debut'], {})
+    const avant = await transport.appeler(ROUTES['POST /questions-debut'], {})
 
     await transport.appeler(ROUTES['PATCH /reglages'], { corps: { questionsDebut: 8 } })
-    const apres = await transport.appeler(ROUTES['GET /questions-debut'], {})
+    expect(await transport.appeler(ROUTES['GET /questions-debut'], {})).toEqual({
+      questions: [],
+      gardee: false,
+    })
+    const apres = await transport.appeler(ROUTES['POST /questions-debut'], {})
 
     expect(avant.questions).toHaveLength(6)
     expect(apres.questions).toHaveLength(8)

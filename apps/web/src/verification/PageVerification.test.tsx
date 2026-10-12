@@ -35,7 +35,12 @@ async function afficher(
     render(banc.application(routeur))
     await routeur.load()
   })
-  return { banc, lien }
+  const id = await waitFor(() => {
+    const trouve = /^\/verifications\/([0-9a-f-]{36})$/u.exec(routeur.state.location.pathname)?.[1]
+    if (trouve === undefined) throw new Error('La vérification n’est pas encore ouverte')
+    return trouve
+  })
+  return { banc, lien: `/verifications/${id}`, id }
 }
 
 const reponseSolide = (attendu: string) => attendu.split(/\s+/u).reverse().join(' ')
@@ -186,14 +191,12 @@ describe('Vérification', () => {
 
   it('reprend à la partie suivante après un départ', async () => {
     const utilisateur = userEvent.setup()
-    const { banc, lien } = await afficher()
+    const { banc, lien, id } = await afficher()
     await utilisateur.click(await screen.findByRole('button', { name: 'Commencer' }))
     await repondre(utilisateur)
     await screen.findByText('✓ Réponse enregistrée')
     await waitFor(() => {
-      expect(
-        banc.magasin.lire().verifications[lien.replace('/verifications/', '')]?.debut,
-      ).not.toBeNull()
+      expect(banc.magasin.lire().verifications[id]?.debut).not.toBeNull()
     })
 
     banc.client.clear()

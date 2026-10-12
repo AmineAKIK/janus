@@ -41,6 +41,13 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('GET /questions-debut contre Pos
   const lire = () =>
     s.app.inject({ method: 'GET', url: '/api/questions-debut', headers: { cookie } })
 
+  const garder = () =>
+    s.app.inject({
+      method: 'POST',
+      url: '/api/questions-debut',
+      headers: { cookie, origin: ORIGINE_TEST },
+    })
+
   beforeAll(async () => {
     bases = await creerBaseDeTest(URL_SERVEUR_TEST ?? '')
     dossier = await mkdtemp(join(tmpdir(), 'janus-fiches-'))
@@ -94,11 +101,23 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('GET /questions-debut contre Pos
     expect(reponse.json()).toEqual({ dues: [], nouvelles: [], prochaine: null })
   })
 
-  it('ne tire rien tant qu’aucun bloc n’est vu', async () => {
+  it('la lecture ne tire ni ne garde rien', async () => {
     const reponse = await lire()
 
     expect(reponse.statusCode).toBe(200)
-    expect(reponse.json()).toEqual({ questions: [] })
+    expect(reponse.json()).toEqual({ questions: [], gardee: false })
+    const { rows } = await bases.pool.query<{ n: string }>(
+      'SELECT count(*) AS n FROM series_questions_debut WHERE user_id = $1',
+      [userId],
+    )
+    expect(Number(rows[0]?.n)).toBe(0)
+  })
+
+  it('ne tire aucune question tant qu’aucun bloc n’est vu', async () => {
+    const reponse = await garder()
+
+    expect(reponse.statusCode).toBe(200)
+    expect(reponse.json()).toEqual({ questions: [], gardee: true })
   })
 
   describe('avec un bloc vu', () => {
@@ -117,7 +136,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('GET /questions-debut contre Pos
     })
 
     it('rend la même série à deux appels simultanés, sans dévoiler le bloc', async () => {
-      const [a, b] = await Promise.all([lire(), lire()])
+      const [a, b] = await Promise.all([garder(), garder()])
 
       expect(a.statusCode).toBe(200)
       expect(a.json()).toEqual(b.json())
@@ -135,14 +154,16 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('GET /questions-debut contre Pos
     })
 
     it('garde la série du jour d’un appel à l’autre', async () => {
-      const premiere: unknown = (await lire()).json()
-      const seconde: unknown = (await lire()).json()
+      const premiere: unknown = (await garder()).json()
+      const seconde: unknown = (await garder()).json()
+      const lue: unknown = (await lire()).json()
 
       expect(seconde).toEqual(premiere)
+      expect(lue).toEqual(premiere)
     })
 
     it('corrige un rappel de la série sans bloc ni version, puis le rend en « deja »', async () => {
-      const { questions } = (await lire()).json<{ questions: { id: string }[] }>()
+      const { questions } = (await garder()).json<{ questions: { id: string }[] }>()
       const premiere = questions[0]
       if (premiere === undefined) throw new Error('aucune question tirée')
 
@@ -274,7 +295,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('GET /questions-debut contre Pos
         jour.taches.find(({ tache }) => tache.type === type)
 
       it('marque les questions de début de séance faites une fois toute la série répondue', async () => {
-        const { questions } = (await lire()).json<{
+        const { questions } = (await garder()).json<{
           questions: { id: string; deja: unknown }[]
         }>()
         const restantes = questions.filter(({ deja }) => deja === null)
