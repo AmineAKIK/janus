@@ -5,6 +5,8 @@ export const TEXTES_BLOC = {
   muette: 'La fiche ne répond pas.',
   recharger: 'Recharger la fiche',
   erreur: 'Impossible de charger ce bloc.',
+  introuvable: 'Ce bloc n’existe pas.',
+  retourFormations: 'Retour aux formations',
   reessayer: 'Réessayer',
   etapes: 'Étapes de la fiche',
   etapeSurTotal: (titre: string, rang: number, total: number) =>
@@ -37,6 +39,7 @@ export const TEXTES_ERREUR_IA = {
   titre: 'Erreur critique repérée par l’IA · À confirmer',
   consequence: (code: string) =>
     `Si tu confirmes, ${code} passe à À reprendre jusqu’à ce que tu réussisses une question sur ce point.`,
+  erreur: (libelle: string) => `Erreur visée : ${libelle}`,
   confirmer: 'C’est bien une erreur',
   rejeter: 'Ce n’en est pas une',
 } as const

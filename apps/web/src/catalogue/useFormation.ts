@@ -1,6 +1,6 @@
 import type { Statut } from '@janus/contrats'
 import { ROUTES } from '@janus/contrats'
-import { useLecture, useLectures } from '../api/requetes.tsx'
+import { useLecture, useLectures, estIntrouvable } from '../api/requetes.tsx'
 
 export interface ModuleChiffre {
   readonly id: string
@@ -13,7 +13,7 @@ export interface ModuleChiffre {
 
 export type EtatFormation =
   | { readonly phase: 'chargement' }
-  | { readonly phase: 'erreur'; readonly reessayer: () => void }
+  | { readonly phase: 'erreur'; readonly reessayer: () => void; readonly introuvable: boolean }
   | { readonly phase: 'pret'; readonly modules: readonly ModuleChiffre[] }
 
 /** Les modules d'une formation avec le statut de chacun de leurs blocs (calculés par le serveur). */
@@ -25,9 +25,21 @@ export function useFormation(formationId: string): EtatFormation {
     importes.map(({ id }) => ({ params: { id } })),
   )
 
-  if (modules.isError) return { phase: 'erreur', reessayer: () => void modules.refetch() }
+  if (modules.isError) {
+    return {
+      phase: 'erreur',
+      reessayer: () => void modules.refetch(),
+      introuvable: estIntrouvable(modules.error),
+    }
+  }
   const enErreur = blocs.find(({ isError }) => isError)
-  if (enErreur !== undefined) return { phase: 'erreur', reessayer: () => void enErreur.refetch() }
+  if (enErreur !== undefined) {
+    return {
+      phase: 'erreur',
+      reessayer: () => void enErreur.refetch(),
+      introuvable: estIntrouvable(enErreur.error),
+    }
+  }
   if (modules.data === undefined || blocs.some(({ data }) => data === undefined)) {
     return { phase: 'chargement' }
   }

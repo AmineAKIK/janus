@@ -73,8 +73,11 @@ export function useHoteFiche(
   surActivite?: () => void,
   /** Appelé quand une correction est rendue : le statut et les séries ouvertes ont pu changer. */
   surCorrection?: () => void,
+  /** L'étape à montrer à l'ouverture (le lien « partie du bloc concernée »), une seule fois. */
+  etapeDemandee?: string,
 ) {
   const boite = useBoiteEnvoi()
+  const etapeAMontrer = useRef(etapeDemandee)
 
   const [phase, setPhase] = useState<PhaseFiche>('attente')
   const [chargement, setChargement] = useState(0)
@@ -163,6 +166,10 @@ export function useHoteFiche(
           if (courantes.etatPage !== null)
             boite.fixerVersion(courantes.bloc, courantes.etatPage.version)
           envoyerInit()
+          if (etapeAMontrer.current !== undefined) {
+            vers({ type: 'etape.aller', etape: etapeAMontrer.current })
+            etapeAMontrer.current = undefined
+          }
           return
         default: {
           if (message.type === 'etat.sauver') dernieres.current.etat = message.etat
@@ -330,6 +337,12 @@ export function useHoteFiche(
         surReponse: (reponse) => {
           const recalcule = statutDeReponse(route, reponse)
           if (recalcule !== null) appliquerStatut(recalcule)
+        },
+        // Le serveur a refusé : la décision reste à prendre, la proposition revient.
+        surRefus: () => {
+          setPropositions((avant) =>
+            avant.includes(proposition) ? avant : [...avant, proposition],
+          )
         },
       },
     )

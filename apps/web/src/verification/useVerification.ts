@@ -2,7 +2,7 @@ import { nomRoute, nouvelId, ROUTES } from '@janus/contrats'
 import type { Confiance, SortieRoute } from '@janus/contrats'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { useLecture } from '../api/requetes.tsx'
+import { estIntrouvable, useLecture } from '../api/requetes.tsx'
 import { instantReel } from '../horloge.ts'
 import { useBoiteEnvoi } from '../envoi/FournisseurEnvoi.tsx'
 import type { ResultatVerification } from './textes.ts'
@@ -81,6 +81,7 @@ export function useVerification(id: string) {
       : lecture.data === undefined
         ? ('chargement' as const)
         : ('prete' as const),
+    introuvable: estIntrouvable(lecture.error),
     recharger: () => {
       void lecture.refetch()
     },

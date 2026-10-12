@@ -4,8 +4,10 @@ import type { NoteCarte } from '@janus/contrats'
 import {
   ajouterJours,
   calculerBloc,
+  debutDuJour,
   ecartEnJours,
   fileDuJour,
+  tachesDuJour,
   instantEnMs,
   JOURS_AVANT_RETARD,
   jourDe,
@@ -108,6 +110,24 @@ export function creerServiceRevisions({
       }),
     )
     return cartesAFaire(catalogue, etats, contexte, reglages, maintenant)
+  }
+
+  /** Les corrections données aujourd'hui aux questions de la série du jour. */
+  async function rappelsDuJour(
+    userId: string,
+    serie: readonly { bloc: string; question: string }[],
+    donnees: Pick<Awaited<ReturnType<typeof charger>>, 'plan' | 'reglages' | 'contexte'>,
+  ) {
+    const { plan, reglages, contexte } = donnees
+    const blocsDeLaSerie = plan.filter(({ code }) => serie.some(({ bloc }) => bloc === code))
+    const rappels = await depot.rappelsDe(
+      base.db,
+      userId,
+      blocsDeLaSerie.map(({ id }) => id),
+    )
+    return rappels.filter(
+      ({ date }) => jourDe(date, reglages.fuseau, reglages.heureBascule) === contexte.jour,
+    )
   }
 
   return {
@@ -418,6 +438,22 @@ export function creerServiceRevisions({
           await this.verificationPour(userId, tache.bloc, tache.type),
         )
       }
+      // Ce qui s'est fait dans la journée : les réponses à la série, les cartes notées.
+      const serieGardee = gardee.success ? gardee.data : []
+      const rappelsDuJourFaits = await rappelsDuJour(userId, serieGardee, charge)
+      const questionsRepondues = serieGardee.filter(({ bloc, question }) => {
+        const idDuBloc = plan.find(({ code }) => code === bloc)?.id
+        return rappelsDuJourFaits.some(
+          (ligne) => ligne.blocId === idDuBloc && ligne.questionId === question,
+        )
+      }).length
+      const cartesRevues = (
+        await depot.notesDepuis(
+          base.db,
+          userId,
+          debutDuJour(contexte.jour, reglages.fuseau, reglages.heureBascule),
+        )
+      ).length
       const jourDeLaDerniere =
         contexte.derniereActivite === null
           ? null
@@ -428,15 +464,13 @@ export function creerServiceRevisions({
         en_retard: file.enRetard,
         ...(pause >= JOURS_AVANT_RETARD ? { retour: { jours: pause } } : {}),
         premiere_connexion: faits.length === 0,
-        taches: aFaire.map((tache) => ({
-          tache,
-          lien: lienDeLaTache(
+        taches: tachesDuJour(aFaire, { questionsRepondues, cartesRevues }, (tache) =>
+          lienDeLaTache(
             tache,
             (bloc) => contexte.blocs.find(({ manifeste }) => manifeste.bloc === bloc)?.manifeste,
             (bloc, type) => verifications.get(`${bloc}:${type}`) ?? bloc,
           ),
-          faite: false,
-        })),
+        ),
         module: moduleEnCours(plan, contexte),
       }
     },
@@ -507,15 +541,7 @@ export function creerServiceRevisions({
       }
       const serie = SerieGardee.parse(gardee)
 
-      const blocsDeLaSerie = plan.filter(({ code }) => serie.some(({ bloc }) => bloc === code))
-      const rappels = await depot.rappelsDe(
-        base.db,
-        userId,
-        blocsDeLaSerie.map(({ id }) => id),
-      )
-      const duJour = rappels.filter(
-        ({ date }) => jourDe(date, reglages.fuseau, reglages.heureBascule) === contexte.jour,
-      )
+      const duJour = await rappelsDuJour(userId, serie, { plan, reglages, contexte })
       return {
         questions: serie.flatMap(({ bloc, question }) => {
           const leBloc = contexte.blocs.find(({ manifeste }) => manifeste.bloc === bloc)

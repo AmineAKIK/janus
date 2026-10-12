@@ -49,7 +49,7 @@ function Corps({ donnees }: { readonly donnees: Donnees }) {
   const faites = taches.length - restantes.length
   const prochaine = restantes[0]
   const enCours = module?.blocs.find(({ statut }) => statut === 'en_cours')
-  const lienBlocEnCours = enCours === undefined ? '/' : `/blocs/${enCours.bloc}`
+  const lienAvancer = enCours === undefined ? '/formations' : `/blocs/${enCours.bloc}`
 
   let principal
   if (premiere) {
@@ -84,10 +84,10 @@ function Corps({ donnees }: { readonly donnees: Donnees }) {
             variante="principal"
             type="button"
             onClick={() => {
-              aller(lienBlocEnCours)
+              aller(lienAvancer)
             }}
           >
-            {T.avancer}
+            {enCours === undefined ? T.choisirBloc : T.avancer}
           </Bouton>
           <Bouton
             variante="secondaire"

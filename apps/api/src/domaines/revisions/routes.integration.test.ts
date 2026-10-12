@@ -263,5 +263,72 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('GET /questions-debut contre Pos
       })
       expect(reponse.statusCode).toBe(404)
     })
+
+    describe('GET /aujourdhui : les tâches faites dans la journée', () => {
+      type Jour = { taches: { tache: { type: string }; faite: boolean }[] }
+      const aujourdhui = async () =>
+        (
+          await s.app.inject({ method: 'GET', url: '/api/aujourdhui', headers: { cookie } })
+        ).json<Jour>()
+      const tacheDe = (jour: Jour, type: string) =>
+        jour.taches.find(({ tache }) => tache.type === type)
+
+      it('marque les questions de début de séance faites une fois toute la série répondue', async () => {
+        const { questions } = (await lire()).json<{
+          questions: { id: string; deja: unknown }[]
+        }>()
+        const restantes = questions.filter(({ deja }) => deja === null)
+        if (restantes.length === 0) throw new Error('la série est déjà répondue')
+
+        expect(tacheDe(await aujourdhui(), 'questions_debut')?.faite).toBe(false)
+        for (const [rang, question] of restantes.entries()) {
+          const reponse = await s.app.inject({
+            method: 'POST',
+            url: '/api/corrections',
+            headers: { cookie, origin: ORIGINE_TEST },
+            payload: {
+              id: nouvelId(Date.parse('2026-10-01T11:00:00.000Z') + rang),
+              serie: 'rappel',
+              tentative: 1,
+              question: question.id,
+              reponse: REPONSE_LONGUE,
+              confiance: 'sur',
+              relance: '',
+              support: { colle: false, retour_cours: false },
+            },
+          })
+          expect(reponse.statusCode).toBe(200)
+        }
+
+        expect(tacheDe(await aujourdhui(), 'questions_debut')?.faite).toBe(true)
+      })
+
+      it('garde la révision des cartes, faite, quand plus rien n’est à réviser', async () => {
+        const dues = async () =>
+          (
+            await s.app.inject({ method: 'GET', url: '/api/cartes/dues', headers: { cookie } })
+          ).json<{ dues: { id: string }[]; nouvelles: { id: string }[] }>()
+        let restantes = await dues()
+        expect(tacheDe(await aujourdhui(), 'cartes')?.faite).toBe(false)
+        let rang = 0
+        while (restantes.dues.length + restantes.nouvelles.length > 0) {
+          const carte = [...restantes.dues, ...restantes.nouvelles][0]
+          if (carte === undefined) break
+          rang += 1
+          await s.app.inject({
+            method: 'POST',
+            url: `/api/cartes/${encodeURIComponent(carte.id)}/note`,
+            headers: { cookie, origin: ORIGINE_TEST },
+            payload: { id: nouvelId(Date.parse('2026-10-02T11:00:00.000Z') + rang), note: 'bien' },
+          })
+          restantes = await dues()
+        }
+
+        expect(tacheDe(await aujourdhui(), 'cartes')).toMatchObject({
+          tache: { dues: 0, nouvelles: 0 },
+          faite: true,
+        })
+      })
+    })
   })
 })

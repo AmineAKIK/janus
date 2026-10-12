@@ -5,12 +5,15 @@ import { TEXTES_ERREUR_IA } from './textes.ts'
 /** Une erreur critique repérée par l'IA, que seul Amine peut confirmer. */
 export function EncartErreurIa({
   code,
+  libelle,
   reponse,
   surConfirmer,
   surRejeter,
 }: {
   /** Le code du bloc, « B03 ». */
   readonly code: string
+  /** Le nom de l'erreur critique visée, depuis le manifeste du bloc. */
+  readonly libelle: string
   readonly reponse: string
   readonly surConfirmer: () => void
   readonly surRejeter: () => void
@@ -18,6 +21,9 @@ export function EncartErreurIa({
   return (
     <section className={styles['encart']} aria-label={TEXTES_ERREUR_IA.titre}>
       <p className={`${styles['encartTitre'] ?? ''} texte-corps-16`}>{TEXTES_ERREUR_IA.titre}</p>
+      <p className={`${styles['encartTexte'] ?? ''} texte-petit-14`}>
+        {TEXTES_ERREUR_IA.erreur(libelle)}
+      </p>
       {reponse !== '' && (
         <p className={`${styles['encartTexte'] ?? ''} texte-petit-14`}>« {reponse} »</p>
       )}

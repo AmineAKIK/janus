@@ -1,6 +1,7 @@
-import { nomRoute, nouvelId, ROUTES } from '@janus/contrats'
+import { nouvelId, ROUTES } from '@janus/contrats'
 import type { SortieRoute, Statut } from '@janus/contrats'
 import { useQueryClient } from '@tanstack/react-query'
+import { invaliderApprentissage } from '../api/invalidations.ts'
 import { useEcriture, useLecture } from '../api/requetes.tsx'
 import { instantReel } from '../horloge.ts'
 
@@ -21,8 +22,7 @@ export function useSuivi(requete: { readonly module?: string; readonly periode?:
 
   const apres = {
     onSuccess: () => {
-      void client.invalidateQueries({ queryKey: [nomRoute(ROUTES['GET /tableau-de-bord'])] })
-      void client.invalidateQueries({ queryKey: [nomRoute(ROUTES['GET /aujourdhui'])] })
+      void invaliderApprentissage(client)
     },
   }
   const id = () => nouvelId(Date.parse(instantReel()))
@@ -44,11 +44,29 @@ export function useSuivi(requete: { readonly module?: string; readonly periode?:
       )
     },
     revueEnCours: revue.isPending,
-    revueFaite: () => {
-      revue.mutate({ corps: { id: id() } }, apres)
+    echecRevue: revue.isError,
+    reinitialiserEchecRevue: revue.reset,
+    revueFaite: (surSucces: () => void) => {
+      revue.mutate(
+        { corps: { id: id() } },
+        {
+          onSuccess: () => {
+            apres.onSuccess()
+            surSucces()
+          },
+        },
+      )
     },
-    lever: (bloc: string) => {
-      ecriture.mutate({ params: { id: bloc }, corps: { action: 'lever', id: id() } }, apres)
+    lever: (bloc: string, surSucces: () => void) => {
+      ecriture.mutate(
+        { params: { id: bloc }, corps: { action: 'lever', id: id() } },
+        {
+          onSuccess: () => {
+            apres.onSuccess()
+            surSucces()
+          },
+        },
+      )
     },
   }
 }

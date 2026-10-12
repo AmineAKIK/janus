@@ -31,6 +31,8 @@ export function niveauAffiche(etat: Corrigee): string {
 /** Ce que l'écran offre en plus pour échanger avec le tuteur ; absent en lecture seule. */
 export interface Echange {
   readonly enAttente: boolean
+  /** La dernière relance a été refusée : pourquoi. */
+  readonly refus: 'plafond' | 'indisponible' | null
   readonly relancer: (texte: string, conteste: boolean) => void
   readonly donnerAccord: (accord: boolean) => void
 }
@@ -99,6 +101,11 @@ function Relances({
               </Bouton>
             )}
           </div>
+          {echange.refus !== null && !ouvert && (
+            <p role="alert" className="texte-petit-14">
+              {echange.refus === 'plafond' ? T.relancePlafond : T.relanceIndisponible}
+            </p>
+          )}
           {ouvert && (
             <form
               className={styles['formulaire']}

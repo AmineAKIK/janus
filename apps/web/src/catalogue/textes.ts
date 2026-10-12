@@ -9,6 +9,8 @@ export const TEXTES = {
   aucunModule: 'Aucun module pour le moment.',
   chargement: 'Chargement…',
   erreur: 'Impossible de charger cet écran.',
+  introuvable: 'Cette page n’existe pas ou plus.',
+  retourAuxFormations: 'Retour aux formations',
   reessayer: 'Réessayer',
   legende: 'Légende des statuts',
   repartition: 'Répartition des statuts',

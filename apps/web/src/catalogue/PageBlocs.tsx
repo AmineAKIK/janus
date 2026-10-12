@@ -97,7 +97,7 @@ export function PageBlocs({
   )
   let filAriane = null
   if (etat.phase === 'erreur') {
-    contenu = <Erreur reessayer={etat.reessayer} />
+    contenu = <Erreur reessayer={etat.reessayer} introuvable={etat.introuvable} />
   } else if (etat.phase === 'chargement') {
     contenu = <Chargement nombre={4} />
   } else {

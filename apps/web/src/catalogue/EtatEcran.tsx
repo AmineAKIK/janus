@@ -1,4 +1,5 @@
 import { BandeauAlerte, Bouton } from '@janus/ui'
+import { adresse } from '../routes/navigation.ts'
 import styles from './Catalogue.module.css'
 import { TEXTES } from './textes.ts'
 
@@ -16,7 +17,22 @@ export function Chargement({ nombre = 1 }: { readonly nombre?: number }) {
   )
 }
 
-export function Erreur({ reessayer }: { readonly reessayer: () => void }) {
+export function Erreur({
+  reessayer,
+  introuvable = false,
+}: {
+  readonly reessayer: () => void
+  /** Le serveur ne connaît pas cette adresse : pas de nouvel essai, un chemin de sortie. */
+  readonly introuvable?: boolean
+}) {
+  if (introuvable) {
+    return (
+      <div className={styles['erreur']}>
+        <BandeauAlerte type="erreur">{TEXTES.introuvable}</BandeauAlerte>
+        <a href={adresse('/formations')}>{TEXTES.retourAuxFormations}</a>
+      </div>
+    )
+  }
   return (
     <div className={styles['erreur']}>
       <BandeauAlerte type="erreur">{TEXTES.erreur}</BandeauAlerte>

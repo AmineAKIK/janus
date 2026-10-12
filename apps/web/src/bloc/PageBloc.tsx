@@ -1,7 +1,8 @@
 import { ROUTES } from '@janus/contrats'
 import { BandeauAlerte, Bouton } from '@janus/ui'
 import { useEffect, useRef, useState } from 'react'
-import { useLecture } from '../api/requetes.tsx'
+import { estIntrouvable, useLecture } from '../api/requetes.tsx'
+import { adresse } from '../routes/navigation.ts'
 import { BarreBloc } from './BarreBloc.tsx'
 import { EncartBilan } from './EncartBilan.tsx'
 import { EncartConsolidation } from './EncartConsolidation.tsx'
@@ -11,6 +12,7 @@ import { DialogueRevoirCours } from './DialogueRevoirCours.tsx'
 import { DialogueChangerNiveau } from './DialogueChangerNiveau.tsx'
 import { EncartDecisionsIa } from './EncartDecisionsIa.tsx'
 import { EncartErreurIa } from './EncartErreurIa.tsx'
+import { GardeOuverture } from './GardeOuverture.tsx'
 import { EncartHorsConnexion } from './EncartHorsConnexion.tsx'
 import { useEtatEnvoi } from './useEtatEnvoi.ts'
 import { useTempsActif } from './useTempsActif.ts'
@@ -36,11 +38,17 @@ function FicheOuverte({
   relire,
   relireBloc,
   delaiConsolidationMinutes,
+  fuseau,
+  etapeDemandee,
 }: {
   readonly relire: () => void
   /** Relit le bloc sans repartir de zéro : statut, ce qui manque, séries ouvertes. */
   readonly relireBloc: () => void
   readonly delaiConsolidationMinutes: number
+  /** Le fuseau des réglages : les heures affichées sont les siennes. */
+  readonly fuseau: string | undefined
+  /** L'étape désignée par le lien, si elle existe dans la fiche. */
+  readonly etapeDemandee: string | undefined
   readonly etapes: readonly EtapeAffichee[]
   readonly problemes: readonly string[]
   readonly erreursCritiques: readonly { readonly id: string; readonly libelle: string }[]
@@ -54,7 +62,13 @@ function FicheOuverte({
 }) {
   const iframe = useRef<HTMLIFrameElement>(null)
   const { signalerActivite, changerEtape } = useTempsActif(donnees.bloc)
-  const hote = useHoteFiche(donnees, iframe, signalerActivite, relireBloc)
+  const hote = useHoteFiche(
+    donnees,
+    iframe,
+    signalerActivite,
+    relireBloc,
+    etapes.some(({ id }) => id === etapeDemandee) ? etapeDemandee : undefined,
+  )
   const envoi = useEtatEnvoi(donnees.bloc)
   const sauvee = donnees.etatPage?.etat['etape']
   const courante =
@@ -63,6 +77,8 @@ function FicheOuverte({
   const [revoir, setRevoir] = useState<string | null>(null)
   const [changerNiveau, setChangerNiveau] = useState<CorrectionSuivie | null>(null)
   const toutesQuestions = [...questions.restitution, ...questions.consolidation]
+  const nomErreur = (id: string) =>
+    (erreursCritiques.find((erreur) => erreur.id === id)?.libelle ?? id).replace(/\.$/, '')
   const texteQuestion = (id: string) =>
     toutesQuestions.find((question) => question.id === id)?.question ?? id
   const restantes = {
@@ -167,15 +183,11 @@ function FicheOuverte({
         {typeCourant === 'bilan' && (
           <EncartBilan
             erreurEnAttente={enAttente.length > 0}
-            libelleErreur={(id) =>
-              (erreursCritiques.find((erreur) => erreur.id === id)?.libelle ?? id).replace(
-                /\.$/,
-                '',
-              )
-            }
+            libelleErreur={nomErreur}
             statut={hote.statut.statut}
             manque={hote.statut.manque}
             maintenant={instantReel()}
+            {...(fuseau === undefined ? {} : { fuseau })}
             reponsesApresRetourCours={hote.reponsesApresRetourCours.map(
               ({ correction, reponse }) => ({
                 id: correction.id,
@@ -187,7 +199,7 @@ function FicheOuverte({
         )}
         {montrerConsolidation && (
           <EncartConsolidation
-            heure={formaterInstant(consolidationAttendue, instantReel())}
+            heure={formaterInstant(consolidationAttendue, instantReel(), fuseau)}
             delai={formaterDelai(delaiConsolidationMinutes)}
           />
         )}
@@ -196,6 +208,7 @@ function FicheOuverte({
             <EncartErreurIa
               key={`${proposition.correction}:${proposition.erreur}`}
               code={donnees.bloc}
+              libelle={nomErreur(proposition.erreur)}
               reponse={proposition.reponse}
               surConfirmer={() => {
                 hote.trancherErreur(proposition, 'confirmee')
@@ -212,6 +225,7 @@ function FicheOuverte({
               erreurs={enAttente}
               corrections={hote.correctionsAVerifier}
               question={texteQuestion}
+              libelleErreur={nomErreur}
               surConfirmer={(proposition) => {
                 hote.trancherErreur(proposition, 'confirmee')
               }}
@@ -270,13 +284,32 @@ function FicheOuverte({
 }
 
 /** La page d'un bloc : barre du haut et fiche dans son iframe. */
-export function PageBloc({ blocId }: { readonly blocId: string }) {
-  const lecture = useLecture(ROUTES['GET /blocs/:id'], { params: { id: blocId } })
+export function PageBloc({
+  blocId,
+  etape,
+}: {
+  readonly blocId: string
+  /** L'étape à montrer à l'ouverture, quand le lien la désigne. */
+  readonly etape?: string | undefined
+}) {
+  const lecture = useLecture(
+    ROUTES['GET /blocs/:id'],
+    { params: { id: blocId } },
+    { toujoursRelire: true },
+  )
   const reglages = useLecture(ROUTES['GET /reglages'], {})
   const [relecture, setRelecture] = useState(0)
 
   // Une relecture qui échoue (réseau coupé) ne retire pas la fiche déjà affichée.
   if (lecture.isError && lecture.data === undefined) {
+    if (estIntrouvable(lecture.error)) {
+      return (
+        <div className={styles['erreur']}>
+          <BandeauAlerte type="erreur">{TEXTES_BLOC.introuvable}</BandeauAlerte>
+          <a href={adresse('/formations')}>{TEXTES_BLOC.retourFormations}</a>
+        </div>
+      )
+    }
     return (
       <div className={styles['erreur']}>
         <BandeauAlerte type="erreur">{TEXTES_BLOC.erreur}</BandeauAlerte>
@@ -301,36 +334,40 @@ export function PageBloc({ blocId }: { readonly blocId: string }) {
 
   const detail = lecture.data
   return (
-    <FicheOuverte
-      // Un autre bloc, ou une relecture après un conflit, repart d'une poignée de main neuve.
-      key={`${detail.bloc}:${String(relecture)}`}
-      relire={() => {
-        void lecture.refetch().then(() => {
-          setRelecture((valeur) => valeur + 1)
-        })
-      }}
-      relireBloc={() => {
-        void lecture.refetch()
-      }}
-      delaiConsolidationMinutes={reglages.data?.delaiConsolidationMinutes ?? 60}
-      donnees={{
-        bloc: detail.bloc,
-        version: detail.version,
-        statut: detail.statut,
-        manque: detail.manque,
-        serieOuverte: detail.serie_ouverte,
-        etatPage: detail.etat_page,
-      }}
-      titre={detail.manifeste.titre}
-      moduleId={detail.module}
-      src={detail.fiche_url}
-      etapes={detail.manifeste.etapes}
-      problemes={detail.problemes}
-      erreursCritiques={detail.manifeste.erreurs_critiques}
-      questions={{
-        restitution: detail.manifeste.restitution,
-        consolidation: detail.manifeste.consolidation,
-      }}
-    />
+    <GardeOuverture detail={detail}>
+      <FicheOuverte
+        // Un autre bloc, ou une relecture après un conflit, repart d'une poignée de main neuve.
+        key={`${detail.bloc}:${String(relecture)}`}
+        relire={() => {
+          void lecture.refetch().then(() => {
+            setRelecture((valeur) => valeur + 1)
+          })
+        }}
+        relireBloc={() => {
+          void lecture.refetch()
+        }}
+        delaiConsolidationMinutes={reglages.data?.delaiConsolidationMinutes ?? 60}
+        fuseau={reglages.data?.fuseau}
+        etapeDemandee={etape}
+        donnees={{
+          bloc: detail.bloc,
+          version: detail.version,
+          statut: detail.statut,
+          manque: detail.manque,
+          serieOuverte: detail.serie_ouverte,
+          etatPage: detail.etat_page,
+        }}
+        titre={detail.manifeste.titre}
+        moduleId={detail.module}
+        src={detail.fiche_url}
+        etapes={detail.manifeste.etapes}
+        problemes={detail.problemes}
+        erreursCritiques={detail.manifeste.erreurs_critiques}
+        questions={{
+          restitution: detail.manifeste.restitution,
+          consolidation: detail.manifeste.consolidation,
+        }}
+      />
+    </GardeOuverture>
   )
 }

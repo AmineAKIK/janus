@@ -1,7 +1,7 @@
 import type { Manque, Statut } from '@janus/contrats'
 import { ROUTES } from '@janus/contrats'
 import { jourDe } from '@janus/moteur'
-import { useLecture, useLectures } from '../api/requetes.tsx'
+import { useLecture, useLectures, estIntrouvable } from '../api/requetes.tsx'
 import { instantReel } from '../horloge.ts'
 import { ligneEcheance } from './echeance.ts'
 import type { LigneEcheance } from './echeance.ts'
@@ -31,7 +31,7 @@ export interface ModuleAffiche {
 
 export type EtatBlocs =
   | { readonly phase: 'chargement' }
-  | { readonly phase: 'erreur'; readonly reessayer: () => void }
+  | { readonly phase: 'erreur'; readonly reessayer: () => void; readonly introuvable: boolean }
   | {
       readonly phase: 'pret'
       readonly module: ModuleAffiche | null
@@ -72,7 +72,13 @@ export function useBlocs(moduleId: string): EtatBlocs {
   const enErreur = [reglages, formations, liste, ...modulesParFormation, ...details].find(
     ({ isError }) => isError,
   )
-  if (enErreur !== undefined) return { phase: 'erreur', reessayer: () => void enErreur.refetch() }
+  if (enErreur !== undefined) {
+    return {
+      phase: 'erreur',
+      reessayer: () => void enErreur.refetch(),
+      introuvable: estIntrouvable(enErreur.error),
+    }
+  }
   if (
     reglages.data === undefined ||
     formations.data === undefined ||

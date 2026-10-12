@@ -12,7 +12,9 @@ import { useFormation } from './useFormation.ts'
 function CarteFormation({ id, titre }: { readonly id: string; readonly titre: string }) {
   const formation = useFormation(id)
   if (formation.phase === 'chargement') return <div className={styles['squelette']} />
-  if (formation.phase === 'erreur') return <Erreur reessayer={formation.reessayer} />
+  if (formation.phase === 'erreur') {
+    return <Erreur reessayer={formation.reessayer} introuvable={formation.introuvable} />
+  }
 
   const { modules } = formation
   const statuts = modules.flatMap((module) => module.statuts)
