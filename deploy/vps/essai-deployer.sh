@@ -223,8 +223,8 @@ verifier 'sauvegarde avant la migration' appels_dit sauvegarde
 verifier 'ne restaure rien' appels_ne_dit_pas restauration
 verifier 'note la nouvelle version' en_service "$E"
 verifier 'journalise la migration' sortie_dit "precedent=$B migration=1"
-images_sont() { [[ $(sort "$faux/images" | tr '\n' ' ') == "$*" ]]; }
-verifier 'ne garde que l image en service et la precedente' images_sont "janus-api:$B janus-api:$E janus-web:$B janus-web:$E "
+images_sont() { [[ $(sort "$faux/images" | tr '\n' ' ') == "$(printf '%s\n' "$@" | sort | tr '\n' ' ')" ]]; }
+verifier 'ne garde que l image en service et la precedente' images_sont "janus-api:$B" "janus-api:$E" "janus-web:$B" "janus-web:$E"
 
 echo '== Refus : commit hors de main, argument invalide, disque presque plein'
 lancer "$X"
