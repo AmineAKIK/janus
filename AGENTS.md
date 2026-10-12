@@ -12,6 +12,11 @@ Ils font foi dans cet ordre en cas de désaccord :
 4. [Maquettes Figma](https://www.figma.com/design/VhGXcHKlzhx9GYEmu2eVWg/Janus) : référence de parcours. Leurs textes et leurs chiffres sont des exemples.
 5. Refonte esthétique de Janus (le calme maîtrisé) : **référence visuelle actuelle**, elle prime sur les couleurs des maquettes Figma. Source de vérité : `packages/ui/src/tokens.css` (palette, rayons, ombres, transitions), accent `#2c5d92`, colonne de lecture `--largeur-lecture` (62ch) sur les écrans d'étude de l'appli. Les fiches gardent un contrat léger (grandes lignes) défini plus tard.
 
+Décisions prises depuis le cadrage, qui s'y ajoutent :
+
+- Les règles de méthode (délais de vérification, seuil de 80 %) sont affichées en lecture seule dans les réglages : aucun écran ne les modifie. Les changer passe par une PR sur le moteur.
+- Le référencement et la vitrine publique ne sont pas des objectifs de la v1 : l'appli est privée, derrière un compte.
+
 ## Règles permanentes pour l'IA qui code
 
 Ces règles valent pour toutes les PR. La PR-001 les recopie dans `AGENTS.md` à la racine du dépôt (avec un `CLAUDE.md` qui contient seulement `Lire AGENTS.md.`), pour que n'importe quelle IA les trouve.
@@ -31,7 +36,7 @@ Ces règles valent pour toutes les PR. La PR-001 les recopie dans `AGENTS.md` à
 | Données externes | Tout ce qui entre (réponse d'API, message de fiche, `localStorage`, variables d'environnement) passe par un schéma Zod de `packages/contrats` avant usage |
 | Dates | Jamais `new Date()` ni `Date.now()` hors du module `horloge`. Les dates circulent en chaînes ISO 8601 UTC. Le jour qui bascule à 4 h se calcule uniquement avec `jourDe()` du moteur |
 | Style | CSS Modules + variables de `packages/ui/src/tokens.css`. Interdits : couleur, taille ou espacement en dur, `!important`, styles en ligne sauf valeur calculée |
-| Textes | Tous les textes affichés dans le composant qui les utilise, en français, tutoiement, sans tiret cadratin. Pas de bibliothèque de traduction |
+| Textes | Tous les textes affichés dans le composant qui les utilise, ou dans le `textes.ts` de sa fonctionnalité, en français, tutoiement, sans tiret cadratin. Pas de bibliothèque de traduction |
 | Accessibilité | Chaque élément interactif est atteignable au clavier, a un nom accessible, et montre le focus défini dans les tokens. Zone tactile minimale 44 × 44 px en mobile. Contraste AA |
 | Dépendances | Seulement celles nommées dans l'architecture ou dans le ticket. Toute autre dépendance doit être justifiée dans la PR |
 | Couches | Respecter les couches de l'architecture. Le lint `eslint-plugin-boundaries` fait foi |

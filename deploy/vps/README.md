@@ -48,8 +48,8 @@ noms. Auditer et tester le vhost Nginx avant activation ; `nginx.conf.example`
 suppose ce certificat deja present. L'automatisation ne modifie jamais Nginx.
 
 Renseigner la cle DeepSeek directement dans le fichier protege. Les mots de passe
-PostgreSQL et les cles VAPID sont generes lors de l'installation ; le contact est
-`mailto:thedonkami@gmail.com`. Ne pas les mettre dans le depot.
+PostgreSQL et les cles VAPID sont generes lors de l'installation ; le contact (`VAPID_SUJET`, de la forme
+`mailto:<adresse>`) se renseigne dans le meme fichier. Ne rien de cela dans le depot.
 
 Apres CI verte, effectuer la premiere publication manuelle :
 
@@ -73,10 +73,10 @@ ignore les anciennes CI qui arriveraient apres une version plus recente.
 Dans l'environnement GitHub `production`, creer :
 
 - Secret `VPS_CLE_SSH` : cle privee dediee Janus.
-- Variable `VPS_HOTE` : `79.137.34.84`.
-- Variable `VPS_PORT` : `4242`.
+- Variable `VPS_HOTE` : l'adresse du VPS.
+- Variable `VPS_PORT` : le port SSH du serveur.
 - Variable `VPS_UTILISATEUR` : `janus-deploy`.
-- Variable `VPS_KNOWN_HOSTS` : ligne ed25519 avec `[79.137.34.84]:4242`,
+- Variable `VPS_KNOWN_HOSTS` : ligne ed25519 avec `[<adresse>]:<port>`,
   verifiee contre la cle d'hote locale du serveur.
 
 La cle privee ne doit pas etre affichee dans les journaux ou une conversation.

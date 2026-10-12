@@ -1,12 +1,12 @@
 import type {
   CinqPreuves,
-  EtatDemo,
   Fait,
   Manque as ManqueContrat,
   Reglages,
   Statut,
   StatutBloc,
 } from '@janus/contrats'
+import type { EtatDemo } from '@janus/contrats/demo'
 import { accesBloc, calculerBloc, preuvesDuBloc } from '@janus/moteur'
 import type { ResultatBloc } from '@janus/moteur'
 import { MANIFESTES_GRAINE } from '../graine.ts'

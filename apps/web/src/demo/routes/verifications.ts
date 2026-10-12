@@ -8,7 +8,6 @@ import {
 } from '@janus/contrats'
 import type {
   Differee,
-  EtatDemo,
   Fait,
   Manifeste,
   ReponseVerification,
@@ -16,8 +15,8 @@ import type {
   Statut,
   TypeDifferee,
   TypeVerification,
-  VerificationDemo,
 } from '@janus/contrats'
+import type { EtatDemo, VerificationDemo } from '@janus/contrats/demo'
 import {
   ajouterJours,
   compositionReussie,

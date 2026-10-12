@@ -15,7 +15,6 @@ RUN pnpm install --frozen-lockfile --prod --filter @janus/api...
 COPY apps/api/src apps/api/src
 COPY apps/api/migrations apps/api/migrations
 COPY packages/contrats/src packages/contrats/src
-COPY packages/contrats/fixtures packages/contrats/fixtures
 COPY packages/moteur/src packages/moteur/src
 COPY prompts prompts
 

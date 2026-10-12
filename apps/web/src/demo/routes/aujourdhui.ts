@@ -1,12 +1,6 @@
 import { ROUTES } from '@janus/contrats'
-import type {
-  EtatDemo,
-  Manifeste,
-  Statut,
-  Tache,
-  TacheDuJour,
-  TypeVerification,
-} from '@janus/contrats'
+import type { Manifeste, Statut, Tache, TacheDuJour, TypeVerification } from '@janus/contrats'
+import type { EtatDemo } from '@janus/contrats/demo'
 import {
   auMoinsVu,
   blocEnCours,

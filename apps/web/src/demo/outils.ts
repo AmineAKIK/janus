@@ -1,4 +1,4 @@
-import type { EtatDemo, InterrupteursDemo } from '@janus/contrats'
+import type { EtatDemo, InterrupteursDemo } from '@janus/contrats/demo'
 import type { HorlogeDemo } from './horlogeDemo.ts'
 import { etatVide } from './store.ts'
 import type { Magasin } from './store.ts'

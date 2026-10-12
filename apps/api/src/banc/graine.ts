@@ -1,11 +1,6 @@
 import { readFile } from 'node:fs/promises'
-import {
-  catalogueGraine,
-  MANIFESTES_GRAINE,
-  nouvelId,
-  PLAN_GRAINE,
-  Reglages,
-} from '@janus/contrats'
+import { nouvelId, Reglages } from '@janus/contrats'
+import { catalogueGraine, MANIFESTES_GRAINE, PLAN_GRAINE } from '@janus/contrats/demo'
 import { instantEnMs } from '@janus/moteur'
 import { eq } from 'drizzle-orm'
 import type { Base } from '../base/base.ts'

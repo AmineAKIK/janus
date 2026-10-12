@@ -1,5 +1,6 @@
 import { ErreurApi, ROUTES } from '@janus/contrats'
-import type { EtatDemo, LigneJournal } from '@janus/contrats'
+import type { LigneJournal } from '@janus/contrats'
+import type { EtatDemo } from '@janus/contrats/demo'
 import { exportTexte, lignesDuJournal, pageDuJournal } from '@janus/moteur'
 import { catalogueGraine, MANIFESTES_GRAINE } from '../graine.ts'
 import { resultatDuBloc } from './calculs.ts'

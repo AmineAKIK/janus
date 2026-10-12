@@ -1,4 +1,5 @@
-import { EtatDemo, Reglages } from '@janus/contrats'
+import { Reglages } from '@janus/contrats'
+import { EtatDemo } from '@janus/contrats/demo'
 import { instantEnIso } from '@janus/moteur'
 
 /** La clé de `localStorage` : la version est dans le nom, un changement de format repart de zéro. */

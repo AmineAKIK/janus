@@ -24,16 +24,18 @@ const UTILISATEUR = {
 
 describe('types des routes', () => {
   it("l'entrée suit les schémas de la route", () => {
-    const connexion: EntreeRoute<typeof CONNEXION> = {
-      corps: { nom_utilisateur: 'amine', mot_de_passe: 'demo-janus' },
-    }
+    // Le contrôle est celui de `tsc` (les `@ts-expect-error` échouent s'ils ne servent à rien) :
+    // vitest ne vérifie ici que la forme des types.
+    expectTypeOf<EntreeRoute<typeof CONNEXION>['corps']>().toHaveProperty('nom_utilisateur')
     // @ts-expect-error le corps est obligatoire pour cette route
     const sansCorps: EntreeRoute<typeof CONNEXION> = {}
     // @ts-expect-error cette route n'a pas de corps
     const corpsEnTrop: EntreeRoute<typeof MOI> = { corps: {} }
     const lecture: EntreeRoute<typeof MOI> = {}
 
-    expect([connexion, sansCorps, corpsEnTrop, lecture]).toHaveLength(4)
+    expectTypeOf(lecture).toEqualTypeOf<EntreeRoute<typeof MOI>>()
+    expectTypeOf(sansCorps).toEqualTypeOf<EntreeRoute<typeof CONNEXION>>()
+    expectTypeOf(corpsEnTrop).toEqualTypeOf<EntreeRoute<typeof MOI>>()
   })
 
   it('la sortie est la réponse validée, ou null pour un 204', () => {
@@ -46,8 +48,12 @@ describe('types des routes', () => {
     expectTypeOf<SortieRoute<typeof SUPPRIMER>>().toEqualTypeOf<null>()
   })
 
-  it('un transport est appelé avec la définition de la route', () => {
-    expectTypeOf<Transport['appeler']>().toBeFunction()
+  it("un transport rend la sortie de la route qu'on lui donne", () => {
+    const lire = (transport: Transport) => transport.appeler(MOI, {})
+    const supprimer = (transport: Transport) => transport.appeler(SUPPRIMER, {})
+
+    expectTypeOf(lire).returns.resolves.toEqualTypeOf<SortieRoute<typeof MOI>>()
+    expectTypeOf(supprimer).returns.resolves.toBeNull()
   })
 })
 

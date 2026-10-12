@@ -68,6 +68,9 @@ export default defineConfig(
       'boundaries/ignore': ['**/*.test.ts'],
       'boundaries/elements': [
         { type: 'app-web', pattern: 'apps/web' },
+        // `mode: 'file'` est signalé comme déprécié, mais `partialMatch: false` le remplace mal : les fichiers
+        // ne sont plus classés et la règle cesse de s'appliquer en silence (vérifié avec un import interdit).
+        // À migrer avec une montée de version du plugin, en rejouant ce contrôle.
         // Les couches d'abord : `app-api` (le reste de l'API : plugins, base, erreurs) vient après.
         ...couchesApi.map((type) => ({
           type,
@@ -182,6 +185,24 @@ export default defineConfig(
             "CallExpression[callee.type='MemberExpression'][callee.property.name='transaction']",
           message:
             'Ouvre une transaction avec transaction() de base/transaction.ts, jamais avec db.transaction.',
+        },
+      ],
+    },
+  },
+  // Le SQL vit dans les dépôts : ni un service, ni un contrôleur, ni une route n'importe drizzle-orm.
+  {
+    files: ['apps/api/src/domaines/**/*.ts'],
+    ignores: ['apps/api/src/domaines/**/depot.ts', 'apps/api/src/**/*.test.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['drizzle-orm', 'drizzle-orm/*'],
+              message: 'Les ordres SQL se posent dans le depot.ts du domaine.',
+            },
+          ],
         },
       ],
     },
