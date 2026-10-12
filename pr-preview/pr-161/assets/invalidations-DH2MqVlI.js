@@ -1,1 +1,0 @@
-import{m as e,v as t}from"./src-CV5FKA_5.js";var n=new Set([`GET /aujourdhui`,`GET /tableau-de-bord`,`GET /blocs/:id`,`GET /modules/:id/blocs`,`GET /cartes/dues`,`GET /questions-debut`,`GET /verifications/:id`,`GET /journal`].map(n=>e(t[n])));function r(e){return e.invalidateQueries({predicate:({queryKey:e})=>typeof e[0]==`string`&&n.has(e[0])})}export{r as t};
