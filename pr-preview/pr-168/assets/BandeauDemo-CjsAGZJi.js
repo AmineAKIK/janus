@@ -1,0 +1,1 @@
+import{G as e,I as t}from"./src-By5Yh1Wr.js";import{n,t as r}from"./identifiants-DF_sK9gb.js";var i=e();function a({className:e}){return(0,i.jsxs)(t,{type:`info`,...e===void 0?{}:{className:e},children:[`Démo : identifiant « `,r,` », mot de passe « `,n,` ».`]})}export{a as default};
