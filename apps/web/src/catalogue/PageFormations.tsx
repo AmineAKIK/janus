@@ -9,7 +9,15 @@ import { LegendeStatuts, RepartitionStatuts } from './RepartitionStatuts.tsx'
 import { TEXTES, texteAcquis, texteResume } from './textes.ts'
 import { useFormation } from './useFormation.ts'
 
-function CarteFormation({ id, titre }: { readonly id: string; readonly titre: string }) {
+function CarteFormation({
+  id,
+  code,
+  titre,
+}: {
+  readonly id: string
+  readonly code: string
+  readonly titre: string
+}) {
   const formation = useFormation(id)
   if (formation.phase === 'chargement') return <div className={styles['squelette']} />
   if (formation.phase === 'erreur') {
@@ -35,7 +43,7 @@ function CarteFormation({ id, titre }: { readonly id: string; readonly titre: st
               params={{ formationId: id }}
               className={styles['lien']}
             >
-              {id} · {titre}
+              {code} · {titre}
               <ChevronRight aria-hidden="true" className={styles['fleche']} />
             </Link>
           </h2>
@@ -74,8 +82,8 @@ export function PageFormations() {
   } else {
     contenu = (
       <div className={styles['liste']}>
-        {formations.data.formations.map(({ id, titre }) => (
-          <CarteFormation key={id} id={id} titre={titre} />
+        {formations.data.formations.map(({ id, code, titre }) => (
+          <CarteFormation key={id} id={id} code={code} titre={titre} />
         ))}
       </div>
     )

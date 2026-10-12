@@ -129,7 +129,13 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('routes du catalogue contre Post
       expect(reponse.statusCode).toBe(200)
       expect(reponse.json()).toEqual({
         formations: [
-          { id: formationId, titre: 'Développeur web', description: 'Titre pro', active: true },
+          {
+            id: formationId,
+            code: 'DWWM',
+            titre: 'Développeur web',
+            description: 'Titre pro',
+            active: true,
+          },
         ],
       })
     })

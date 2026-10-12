@@ -56,6 +56,7 @@ export function routesCatalogueDemo({ racineFiches }: OptionsCatalogue) {
       return {
         formations: visibles.map(({ formation }) => ({
           id: formation.code,
+          code: formation.code,
           titre: formation.titre,
           description: formation.description,
           active: formation.code === active,

@@ -9,6 +9,8 @@ const Texte = z.string().trim().min(1)
 
 const Formation = z.strictObject({
   id: Identifiant,
+  /** Le code court affiché (`DWWM`) : l'identifiant, lui, reste technique. */
+  code: Texte,
   titre: Texte,
   description: z.string(),
   /** Vrai pour la formation que l'application affiche : une seule à la fois. */

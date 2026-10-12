@@ -118,7 +118,13 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
   'GET /formations': {
     reponse: {
       formations: [
-        { id: 'dwwm', titre: 'DWWM', description: 'Titre professionnel.', active: true },
+        {
+          id: 'dwwm',
+          code: 'DWWM',
+          titre: 'Développeur web',
+          description: 'Titre professionnel.',
+          active: true,
+        },
       ],
     },
     invalides: [{ partie: 'reponse', valeur: { formations: [{ id: 'dwwm' }] } }],
