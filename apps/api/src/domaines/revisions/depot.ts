@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm'
+import { and, asc, desc, eq, gte, inArray, sql } from 'drizzle-orm'
 import { instantIso } from '../../base/instant.ts'
 import * as t from '../../base/schema/index.ts'
 import type { Db, Tx } from '../../base/transaction.ts'
@@ -228,6 +228,15 @@ export function creerDepotRevisions() {
         .from(t.notesCartes)
         .where(and(eq(t.notesCartes.id, id), eq(t.notesCartes.userId, userId)))
       return ligne
+    },
+
+    /** Les instants des notes données depuis `depuis` ; l'appelant garde celles de son jour. */
+    notesDepuis: async (lecteur: Db | Tx, userId: string, depuis: string): Promise<string[]> => {
+      const lignes = await lecteur
+        .select({ date: instantIso(t.notesCartes.dateServeur) })
+        .from(t.notesCartes)
+        .where(and(eq(t.notesCartes.userId, userId), gte(t.notesCartes.dateServeur, depuis)))
+      return lignes.map(({ date }) => date)
     },
 
     ajouterNote: async (

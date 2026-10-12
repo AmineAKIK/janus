@@ -48,6 +48,18 @@ describe('textes des tâches', () => {
       texte: '18 cartes dues. Quelques minutes, et ce que tu sais reste en mémoire.',
       complement: '18 dues',
     })
+    expect(texte({ type: 'cartes', dues: 4, nouvelles: 2 })).toMatchObject({
+      texte:
+        '4 cartes dues et 2 nouvelles cartes. Quelques minutes, et ce que tu sais reste en mémoire.',
+      complement: '4 dues, 2 nouvelles',
+    })
+    expect(texte({ type: 'cartes', dues: 0, nouvelles: 1 })).toMatchObject({
+      texte: '1 nouvelle carte. Quelques minutes, et ce que tu sais reste en mémoire.',
+      complement: '1 nouvelle',
+    })
+    expect(texte({ type: 'cartes', dues: 0, nouvelles: 0 })).toMatchObject({
+      complement: 'révisées',
+    })
     expect(texte({ type: 'bloc', bloc: 'B03' })).toMatchObject({
       texte: 'Reprendre B03 Langages à l’étape 3 sur 8.',
       complement: 'étape 3 sur 8',

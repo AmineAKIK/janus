@@ -57,12 +57,32 @@ export function texteTache(tache: Tache, contexte: ContexteTexte): TexteTache {
         texte: `Des questions sur ${bloc(tache.bloc)}, sans revoir le cours.`,
         complement: 'sans indice',
       }
-    case 'cartes':
+    case 'cartes': {
+      const total = tache.dues + tache.nouvelles
+      if (total === 0) {
+        return {
+          titre: 'Révision des cartes',
+          texte: 'Les cartes du jour sont révisées. Elles reviendront quand il sera temps.',
+          complement: 'révisées',
+        }
+      }
+      const detail = [
+        tache.dues > 0 ? nombre(tache.dues, 'carte due', 'cartes dues') : null,
+        tache.nouvelles > 0 ? nombre(tache.nouvelles, 'nouvelle carte', 'nouvelles cartes') : null,
+      ]
+        .filter((partie) => partie !== null)
+        .join(' et ')
       return {
         titre: 'Révision des cartes',
-        texte: `${nombre(tache.dues, 'carte due', 'cartes dues')}. Quelques minutes, et ce que tu sais reste en mémoire.`,
-        complement: nombre(tache.dues, 'due', 'dues'),
+        texte: `${detail}. Quelques minutes, et ce que tu sais reste en mémoire.`,
+        complement: [
+          tache.dues > 0 ? nombre(tache.dues, 'due', 'dues') : null,
+          tache.nouvelles > 0 ? nombre(tache.nouvelles, 'nouvelle', 'nouvelles') : null,
+        ]
+          .filter((partie) => partie !== null)
+          .join(', '),
       }
+    }
     case 'bloc': {
       const etape = contexte.etape(tache.bloc)
       const suffixe =

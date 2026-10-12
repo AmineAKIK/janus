@@ -14,6 +14,7 @@ import {
   choisirQuestionsDebut,
   ecartEnJours,
   fileDuJour,
+  tachesDuJour,
   JOURS_AVANT_RETARD,
   jourDe,
 } from '@janus/moteur'
@@ -144,9 +145,12 @@ export function aujourdhuiDemo(magasin: Magasin, horloge: HorlogeDemo) {
   const { blocs, derniereActivite, questions, jourDu, reglages } = contexteDuJour(etat, maintenant)
   const cartes = cartesDuJourDemo(etat, maintenant)
 
+  // La série gardée le jour même fait foi, comme à l'API ; sinon celle qui serait tirée.
+  const serieDuJourGardee =
+    etat.serieDuJour?.jour === jourDu(maintenant) ? etat.serieDuJour.questions : questions
   const file = fileDuJour({
     blocs,
-    questionsDebut: questions.length,
+    questionsDebut: serieDuJourGardee.length,
     cartes,
     derniereActivite,
     maintenant,
@@ -155,6 +159,12 @@ export function aujourdhuiDemo(magasin: Magasin, horloge: HorlogeDemo) {
   const jour = jourDu(maintenant)
   const joursDePause = derniereActivite === null ? 0 : ecartEnJours(jourDu(derniereActivite), jour)
   const toutFait = etat.interrupteurs.toutFait
+  const questionsRepondues = serieDuJourGardee.filter(
+    ({ question }) => etat.rappels[question]?.jour === jour,
+  ).length
+  const cartesRevues = Object.values(etat.cartes).filter(
+    (carte) => carte.derniereRevision !== null && jourDu(carte.derniereRevision) === jour,
+  ).length
   const reportes = blocsReportes(etat, jour)
   const module = catalogueGraine().modules.find(({ code }) => code === 'M1')
 
@@ -163,8 +173,8 @@ export function aujourdhuiDemo(magasin: Magasin, horloge: HorlogeDemo) {
     en_retard: file.enRetard,
     ...(joursDePause >= JOURS_AVANT_RETARD ? { retour: { jours: joursDePause } } : {}),
     premiere_connexion: etat.faits.length === 0,
-    taches: file.taches
-      .filter(
+    taches: tachesDuJour(
+      file.taches.filter(
         (tache) =>
           !(
             (tache.type === 'verification' ||
@@ -172,15 +182,14 @@ export function aujourdhuiDemo(magasin: Magasin, horloge: HorlogeDemo) {
               tache.type === 'entretien') &&
             reportes.has(tache.bloc)
           ),
-      )
-      .map((tache): TacheDuJour => ({
-        tache,
-        lien: lienDeLaTache(
+      ),
+      { questionsRepondues, cartesRevues },
+      (tache) =>
+        lienDeLaTache(
           tache,
           (bloc, type) => verificationPour(magasin, bloc, type, maintenant) ?? bloc,
         ),
-        faite: toutFait,
-      })),
+    ).map((tache): TacheDuJour => ({ ...tache, faite: toutFait || tache.faite })),
     module:
       module === undefined
         ? null

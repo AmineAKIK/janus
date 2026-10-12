@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import type { Manifeste } from '@janus/contrats'
+import type { Manifeste, Tache } from '@janus/contrats'
 import { apres, DEBUT, fabrique, jusquaProvisoire, MANIFESTE, REGLAGES } from './fabrique.ts'
 import type { Fait } from './faits.ts'
-import { enRetard, fileDuJour } from './fileDuJour.ts'
+import { enRetard, fileDuJour, tachesDuJour } from './fileDuJour.ts'
 import type { BlocDeLaFile, EntreeFile } from './fileDuJour.ts'
 import { calculerBloc } from './statut.ts'
 
@@ -198,5 +198,48 @@ describe('enRetard', () => {
   it('vaut faux sans aucune activité et sans cartes en retard', () => {
     expect(enRetard(null, 0, MAINTENANT, REGLAGES)).toBe(false)
     expect(enRetard(null, 80, MAINTENANT, REGLAGES)).toBe(true)
+  })
+})
+
+describe('tachesDuJour', () => {
+  const lien = (tache: Tache) => `/${tache.type}`
+  const questions: Tache = { type: 'questions_debut', nombre: 3 }
+  const cartes: Tache = { type: 'cartes', dues: 4, nouvelles: 2 }
+  const bloc: Tache = { type: 'bloc', bloc: 'B01' }
+  const rien = { questionsRepondues: 0, cartesRevues: 0 }
+
+  it('ne marque rien de fait quand rien ne s’est fait', () => {
+    const jour = tachesDuJour([questions, cartes, bloc], rien, lien)
+
+    expect(jour.map(({ faite }) => faite)).toEqual([false, false, false])
+    expect(jour.map(({ lien: chemin }) => chemin)).toEqual(['/questions_debut', '/cartes', '/bloc'])
+  })
+
+  it('marque les questions de début de séance faites quand toute la série a sa réponse', () => {
+    const partielles = tachesDuJour([questions], { ...rien, questionsRepondues: 2 }, lien)
+    const toutes = tachesDuJour([questions], { ...rien, questionsRepondues: 3 }, lien)
+
+    expect(partielles[0]?.faite).toBe(false)
+    expect(toutes[0]?.faite).toBe(true)
+  })
+
+  it('garde la révision terminée dans la journée, avant le bloc en cours', () => {
+    const jour = tachesDuJour([questions, bloc], { ...rien, cartesRevues: 5 }, lien)
+
+    expect(jour.map(({ tache }) => tache.type)).toEqual(['questions_debut', 'cartes', 'bloc'])
+    expect(jour[1]).toMatchObject({ tache: { dues: 0, nouvelles: 0 }, faite: true })
+  })
+
+  it('ajoute la révision terminée à la fin quand il n’y a pas de bloc en cours', () => {
+    const jour = tachesDuJour([questions], { ...rien, cartesRevues: 1 }, lien)
+
+    expect(jour.map(({ tache }) => tache.type)).toEqual(['questions_debut', 'cartes'])
+  })
+
+  it('ne duplique pas les cartes quand il en reste à faire', () => {
+    const jour = tachesDuJour([cartes, bloc], { ...rien, cartesRevues: 3 }, lien)
+
+    expect(jour.map(({ tache }) => tache.type)).toEqual(['cartes', 'bloc'])
+    expect(jour[0]?.faite).toBe(false)
   })
 })

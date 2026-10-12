@@ -1,4 +1,4 @@
-import type { Manifeste, Reglages, Tache } from '@janus/contrats'
+import type { Manifeste, Reglages, Tache, TacheDuJour } from '@janus/contrats'
 import { blocEnCours } from './definitions.ts'
 import { echeances, estDue } from './echeances.ts'
 import type { ResultatBloc } from './statut.ts'
@@ -133,4 +133,41 @@ export function fileDuJour(entree: EntreeFile): { enRetard: boolean; taches: Tac
       ...(enCours === null ? [] : [{ type: 'bloc', bloc: enCours } satisfies Tache]),
     ],
   }
+}
+
+/** Ce qui s'est fait dans la journée et que la file ne montre plus ou ne dit pas. */
+export interface FaitsDuJour {
+  /** Les questions de la série du jour qui ont reçu une réponse corrigée aujourd'hui. */
+  readonly questionsRepondues: number
+  /** Les cartes notées aujourd'hui. */
+  readonly cartesRevues: number
+}
+
+/**
+ * Les tâches de la journée : la file du moteur, chacune avec « faite aujourd'hui ». Les questions
+ * de début de séance sont faites quand la série entière a reçu sa réponse. Une révision de cartes
+ * terminée sort de la file (plus rien n'est dû) : elle y reste, faite, tant que des cartes ont été
+ * notées dans la journée.
+ */
+export function tachesDuJour(
+  taches: readonly Tache[],
+  faits: FaitsDuJour,
+  lien: (tache: Tache) => string,
+): TacheDuJour[] {
+  const terminees: Tache[] =
+    faits.cartesRevues > 0 && !taches.some(({ type }) => type === 'cartes')
+      ? [{ type: 'cartes', dues: 0, nouvelles: 0 }]
+      : []
+  const rangDuBloc = taches.findIndex(({ type }) => type === 'bloc')
+  const toutes =
+    rangDuBloc < 0
+      ? [...taches, ...terminees]
+      : [...taches.slice(0, rangDuBloc), ...terminees, ...taches.slice(rangDuBloc)]
+  return toutes.map((tache) => ({
+    tache,
+    lien: lien(tache),
+    faite:
+      (tache.type === 'questions_debut' && faits.questionsRepondues >= tache.nombre) ||
+      (tache.type === 'cartes' && tache.dues + tache.nouvelles === 0),
+  }))
 }

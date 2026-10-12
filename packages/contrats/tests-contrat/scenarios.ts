@@ -269,5 +269,36 @@ export function scenariosContrat(creer: CreerBanc): void {
         code: 'conflit',
       })
     })
+
+    it('Aujourd’hui : les questions de début de séance sont faites quand toute la série a sa réponse', async () => {
+      const banc = await creer()
+      await connecter(banc)
+      await ouvrir(banc)
+      await repondre(banc, 'restitution')
+      const { questions } = await banc.transport.appeler(ROUTES['GET /questions-debut'], {})
+      const taches = async () =>
+        (await banc.transport.appeler(ROUTES['GET /aujourdhui'], {})).taches
+      const debut = async () =>
+        (await taches()).find(({ tache }) => tache.type === 'questions_debut')
+      expect(questions.length).toBeGreaterThan(0)
+      expect(await debut()).toMatchObject({ faite: false })
+
+      for (const question of questions) {
+        await banc.transport.appeler(ROUTES['POST /corrections'], {
+          corps: {
+            id: nouvelId(),
+            serie: 'rappel',
+            tentative: 1,
+            question: question.id,
+            reponse: 'Voilà ce que j’en retiens, avec mes propres mots, sans regarder le cours.',
+            confiance: 'sur',
+            relance: '',
+            support: { colle: false, retour_cours: false },
+          },
+        })
+      }
+
+      expect(await debut()).toMatchObject({ faite: true })
+    })
   })
 }
