@@ -80,6 +80,7 @@ export function creerDepotCatalogue(base: Base) {
       lecteur
         .select({
           id: t.formations.id,
+          code: t.formations.code,
           titre: t.formations.titre,
           description: t.formations.description,
         })

@@ -79,7 +79,7 @@ export function PageModules({ formationId }: { readonly formationId: string }) {
           /
         </span>
         <span aria-current="page" className="texte-petit-14">
-          {formationId}
+          {connue?.code ?? formationId}
         </span>
       </nav>
       <Link
@@ -91,7 +91,7 @@ export function PageModules({ formationId }: { readonly formationId: string }) {
       </Link>
       <header className={styles['entete']}>
         <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-titre-28`}>
-          {connue === undefined ? formationId : `${formationId} · ${connue.titre}`}
+          {connue === undefined ? formationId : `${connue.code} · ${connue.titre}`}
         </h1>
         {connue !== undefined && connue.description !== '' && (
           <p className={`${styles['intro'] ?? ''} texte-corps-16`}>{connue.description}</p>
