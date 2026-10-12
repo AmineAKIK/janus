@@ -8,6 +8,20 @@ import { TITRE_INTROUVABLE, titreDocument } from '../routes/ecrans.ts'
 import styles from './Gabarit.module.css'
 
 const ID_CONTENU = 'contenu'
+const DUREE_FONDU_MS = 180
+
+/** Un fondu court à l'arrivée d'une page ; rien pour qui réduit les animations ou si le navigateur ne sait pas. */
+function fondu(element: HTMLElement | null) {
+  if (element === null || typeof element.animate !== 'function') return
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  element.animate(
+    [
+      { opacity: 0, transform: 'translateY(4px)' },
+      { opacity: 1, transform: 'none' },
+    ],
+    { duration: DUREE_FONDU_MS, easing: 'ease' },
+  )
+}
 
 function LienNavigation({
   cle,
@@ -67,6 +81,7 @@ export function Gabarit() {
     precedent.current = chemin
     window.scrollTo(0, 0)
     contenu.current?.querySelector('h1')?.focus()
+    fondu(contenu.current)
   }, [chemin])
 
   // La page introuvable garde la navigation, sans entrée courante.
