@@ -102,6 +102,22 @@ describe('Questions de début de séance', () => {
     expect(screen.getByRole('button', { name: 'Réessayer' })).toBeVisible()
   })
 
+  it('le plafond atteint le dit, au lieu de parler de panne', async () => {
+    const utilisateur = userEvent.setup()
+    const banc = await afficher()
+    banc.magasin.ecrire((etat) => ({
+      ...etat,
+      interrupteurs: { ...etat.interrupteurs, plafondAtteint: true },
+    }))
+
+    await utilisateur.type(screen.getByRole('textbox', { name: 'Ta réponse' }), 'Ma réponse')
+    await utilisateur.click(screen.getByRole('radio', { name: 'Sûr' }))
+    await utilisateur.click(screen.getByRole('button', { name: 'Faire corriger' }))
+
+    await screen.findByText(/plafond de corrections/)
+    expect(screen.queryByText(/Correction indisponible/)).not.toBeInTheDocument()
+  })
+
   it('une correction non vérifiée annonce « À vérifier »', async () => {
     const utilisateur = userEvent.setup()
     const banc = await afficher()

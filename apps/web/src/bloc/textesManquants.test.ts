@@ -42,6 +42,14 @@ describe('texteManque', () => {
   })
 })
 
+describe('consolidation_insuffisante : les nombres à la française', () => {
+  it('écrit la virgule et accorde « point »', () => {
+    expect(
+      texteManque({ code: 'consolidation_insuffisante', points: 0.5, requis: 0.8 }, MAINTENANT),
+    ).toBe('Atteins le seuil à la consolidation : 0,5 point sur 0,8 requis.')
+  })
+})
+
 describe('STATUT_SUIVANT', () => {
   it('suit l’échelle des statuts, maîtrisé n’a pas de suivant', () => {
     expect(STATUT_SUIVANT.vu).toBe('acquis_provisoirement')

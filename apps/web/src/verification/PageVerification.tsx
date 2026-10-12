@@ -67,7 +67,8 @@ export function PageVerification({ id }: { readonly id: string }) {
   }
 
   let contenu
-  if (phase === 'erreur') contenu = <Erreur reessayer={verification.recharger} />
+  if (phase === 'erreur')
+    contenu = <Erreur reessayer={verification.recharger} introuvable={verification.introuvable} />
   else if (phase === 'chargement' || vue === undefined) contenu = <Chargement nombre={2} />
   else if (resultat !== null) {
     contenu = (

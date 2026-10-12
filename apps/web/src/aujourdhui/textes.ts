@@ -39,6 +39,7 @@ export const TEXTES_AUJOURDHUI = {
   auProgramme: 'Au programme',
   toutFait: 'Rien d’autre n’est dû aujourd’hui.',
   avancer: 'Avancer dans le bloc en cours',
+  choisirBloc: 'Choisir un bloc',
   voirJournal: 'Voir le journal',
   chaqueBloc:
     'Chaque bloc alterne cours, questions, restitution et vérifications pour construire une maîtrise durable.',

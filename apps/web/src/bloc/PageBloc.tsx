@@ -1,7 +1,8 @@
 import { ROUTES } from '@janus/contrats'
 import { BandeauAlerte, Bouton } from '@janus/ui'
 import { useEffect, useRef, useState } from 'react'
-import { useLecture } from '../api/requetes.tsx'
+import { estIntrouvable, useLecture } from '../api/requetes.tsx'
+import { adresse } from '../routes/navigation.ts'
 import { BarreBloc } from './BarreBloc.tsx'
 import { EncartBilan } from './EncartBilan.tsx'
 import { EncartConsolidation } from './EncartConsolidation.tsx'
@@ -301,6 +302,14 @@ export function PageBloc({
 
   // Une relecture qui échoue (réseau coupé) ne retire pas la fiche déjà affichée.
   if (lecture.isError && lecture.data === undefined) {
+    if (estIntrouvable(lecture.error)) {
+      return (
+        <div className={styles['erreur']}>
+          <BandeauAlerte type="erreur">{TEXTES_BLOC.introuvable}</BandeauAlerte>
+          <a href={adresse('/formations')}>{TEXTES_BLOC.retourFormations}</a>
+        </div>
+      )
+    }
     return (
       <div className={styles['erreur']}>
         <BandeauAlerte type="erreur">{TEXTES_BLOC.erreur}</BandeauAlerte>

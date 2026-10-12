@@ -54,7 +54,7 @@ export function PageModules({ formationId }: { readonly formationId: string }) {
 
   let contenu
   if (formation.phase === 'erreur') {
-    contenu = <Erreur reessayer={formation.reessayer} />
+    contenu = <Erreur reessayer={formation.reessayer} introuvable={formation.introuvable} />
   } else if (formation.phase === 'chargement') {
     contenu = <Chargement nombre={3} />
   } else if (formation.modules.length === 0) {

@@ -5,6 +5,8 @@ export const TEXTES_BLOC = {
   muette: 'La fiche ne répond pas.',
   recharger: 'Recharger la fiche',
   erreur: 'Impossible de charger ce bloc.',
+  introuvable: 'Ce bloc n’existe pas.',
+  retourFormations: 'Retour aux formations',
   reessayer: 'Réessayer',
   etapes: 'Étapes de la fiche',
   etapeSurTotal: (titre: string, rang: number, total: number) =>

@@ -127,6 +127,7 @@ export function PageQuestions() {
             surSuivante={serie.suivante}
             echange={{
               enAttente: serie.enRelance.has(question.id),
+              refus: serie.relancesRefusees[question.id] ?? null,
               relancer: (texte, conteste) => {
                 serie.relancer(question, etat, texte, conteste)
               },
@@ -141,7 +142,7 @@ export function PageQuestions() {
             {etat.phase === 'indisponible' && (
               <div className={styles['indisponible']}>
                 <p role="alert" className="texte-petit-14">
-                  {T.indisponible}
+                  {etat.plafond ? T.plafond : T.indisponible}
                 </p>
                 <Bouton
                   type="button"

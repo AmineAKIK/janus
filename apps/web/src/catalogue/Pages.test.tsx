@@ -141,10 +141,11 @@ describe('Modules', () => {
     expect(screen.getAllByText('Pas encore importé')).toHaveLength(3)
   })
 
-  it('une formation inconnue affiche une erreur avec Réessayer', async () => {
+  it('une formation inconnue le dit et propose de revenir, sans Réessayer', async () => {
     await afficher('/formations/INCONNUE')
 
-    expect(await screen.findByRole('alert')).toBeVisible()
-    expect(screen.getByRole('button', { name: 'Réessayer' })).toBeVisible()
+    expect(await screen.findByRole('alert')).toHaveTextContent('Cette page n’existe pas ou plus.')
+    expect(screen.queryByRole('button', { name: 'Réessayer' })).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Retour aux formations' })).toBeVisible()
   })
 })

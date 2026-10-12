@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { DialogueConfirmation, GroupeSegmente, Selecteur } from '@janus/ui'
+import { BandeauAlerte, DialogueConfirmation, GroupeSegmente, Selecteur } from '@janus/ui'
 import { Periode } from '@janus/contrats'
 import { Chargement, Erreur } from '../catalogue/EtatEcran.tsx'
 import { CarteDuModule } from './CarteDuModule.tsx'
@@ -53,7 +53,10 @@ function Corps({
             suivi.reinitialiserEchec()
             setDialogue(true)
           }}
-          surLever={setALever}
+          surLever={(bloc) => {
+            suivi.reinitialiserEchec()
+            setALever(bloc)
+          }}
         />
         <ZoneAutonomie donnees={donnees.mesures.autonomie} />
         <ZoneAisance donnees={donnees.mesures.aisance} />
@@ -64,6 +67,7 @@ function Corps({
           donnees={donnees.mesures.revue}
           enCours={suivi.revueEnCours}
           surRevue={() => {
+            suivi.reinitialiserEchecRevue()
             setRevue(true)
           }}
         />
@@ -80,11 +84,13 @@ function Corps({
             setALever(null)
           }}
           surConfirmer={() => {
-            suivi.lever(aLever)
-            setALever(null)
+            suivi.lever(aLever, () => {
+              setALever(null)
+            })
           }}
         >
           <p>{T.revenirMessage(aLever)}</p>
+          {suivi.echec && <BandeauAlerte type="erreur">{T.erreurLever}</BandeauAlerte>}
         </DialogueConfirmation>
       )}
       {revue && (
@@ -97,11 +103,13 @@ function Corps({
             setRevue(false)
           }}
           surConfirmer={() => {
-            suivi.revueFaite()
-            setRevue(false)
+            suivi.revueFaite(() => {
+              setRevue(false)
+            })
           }}
         >
           <p>{T.revueConfirmerMessage}</p>
+          {suivi.echecRevue && <BandeauAlerte type="erreur">{T.erreurRevue}</BandeauAlerte>}
         </DialogueConfirmation>
       )}
       {dialogue && (

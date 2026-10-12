@@ -37,6 +37,8 @@ export const TEXTES_SUIVI = {
   raisonAide: 'Au moins 10 caractères : la décision reste dans le journal.',
   valider: 'Forcer le statut',
   erreurServeur: 'Le statut n’a pas pu être forcé. Réessaie.',
+  erreurLever: 'Le statut forcé n’a pas pu être levé. Réessaie.',
+  erreurRevue: 'La revue n’a pas pu être enregistrée. Réessaie.',
   fermer: 'Fermer',
 } as const
 

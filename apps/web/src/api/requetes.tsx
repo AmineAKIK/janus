@@ -26,6 +26,10 @@ export interface ReactionsErreurs {
   readonly surNonAuthentifie: () => void
 }
 
+/** Le serveur répond « introuvable » : réessayer ne servirait à rien. */
+export const estIntrouvable = (erreur: unknown) =>
+  erreur instanceof ErreurApi && erreur.status === 404
+
 const estErreurClient = (erreur: unknown) =>
   erreur instanceof ErreurApi && erreur.status >= 400 && erreur.status < 500
 

@@ -14,6 +14,10 @@ export const TEXTES_QUESTIONS = {
   jeNeSaisPas: 'Je ne sais pas',
   attente: 'Le tuteur lit ta réponse…',
   indisponible: 'Correction indisponible pour l’instant. Ta réponse est gardée.',
+  plafond:
+    'Tu as atteint le plafond de corrections pour le moment. Ta réponse est gardée, réessaie dans quelques minutes.',
+  relanceIndisponible: 'Le tuteur n’a pas pu répondre. Réessaie dans un instant.',
+  relancePlafond: 'Plafond de corrections atteint : réessaie dans quelques minutes.',
   reessayer: 'Réessayer',
   suivante: 'Question suivante',
   voirBilan: 'Voir le bilan',

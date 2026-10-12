@@ -1,4 +1,5 @@
 import { CorrectionRecue, nomRoute, nouvelId, ROUTES } from '@janus/contrats'
+import { ErreurApi } from '@janus/contrats'
 import type { Confiance, SortieRoute } from '@janus/contrats'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
@@ -18,7 +19,7 @@ export interface Saisie {
 export type EtatQuestion =
   | { readonly phase: 'saisie' }
   | ({ readonly phase: 'attente' } & Saisie)
-  | ({ readonly phase: 'indisponible' } & Saisie)
+  | ({ readonly phase: 'indisponible'; readonly plafond: boolean } & Saisie)
   | ({
       readonly phase: 'corrigee'
       readonly correction: CorrectionRecue
@@ -30,6 +31,11 @@ type Locale = Exclude<EtatQuestion, { phase: 'saisie' }>
 
 const ROUTE_QUESTIONS = ROUTES['GET /questions-debut']
 
+/** Le serveur a refusé parce que le plafond de corrections est atteint (et non parce que l'IA est en panne). */
+const plafondAtteint = (erreur: unknown) => erreur instanceof ErreurApi && erreur.status === 429
+
+export type RefusRelance = 'plafond' | 'indisponible'
+
 export function useSerie() {
   const boite = useBoiteEnvoi()
   const client = useQueryClient()
@@ -37,6 +43,9 @@ export function useSerie() {
   const [locales, setLocales] = useState<Readonly<Record<string, Locale>>>({})
   const [choisi, setChoisi] = useState<number | null>(null)
   const [enRelance, setEnRelance] = useState<ReadonlySet<string>>(new Set())
+  const [relancesRefusees, setRelancesRefusees] = useState<Readonly<Record<string, RefusRelance>>>(
+    {},
+  )
 
   const questions: readonly Question[] = lecture.data?.questions ?? []
 
@@ -96,8 +105,8 @@ export function useSerie() {
           })
           void client.invalidateQueries({ queryKey: [nomRoute(ROUTE_QUESTIONS), {}] })
         },
-        surRefus: () => {
-          poser(question.id, { phase: 'indisponible', ...saisie })
+        surRefus: (erreur) => {
+          poser(question.id, { phase: 'indisponible', plafond: plafondAtteint(erreur), ...saisie })
         },
       },
     )
@@ -115,6 +124,9 @@ export function useSerie() {
       setEnRelance((avant) => new Set([...avant].filter((autre) => autre !== question.id)))
     }
     setEnRelance((avant) => new Set([...avant, question.id]))
+    setRelancesRefusees((avant) =>
+      Object.fromEntries(Object.entries(avant).filter(([id]) => id !== question.id)),
+    )
     void boite.ajouter(
       {
         id,
@@ -142,7 +154,13 @@ export function useSerie() {
           })
           fin()
         },
-        surRefus: fin,
+        surRefus: (erreur) => {
+          setRelancesRefusees((avant) => ({
+            ...avant,
+            [question.id]: plafondAtteint(erreur) ? 'plafond' : 'indisponible',
+          }))
+          fin()
+        },
       },
     )
   }
@@ -162,6 +180,7 @@ export function useSerie() {
     relancer,
     donnerAccord,
     enRelance,
+    relancesRefusees,
     phase: lecture.isError
       ? ('erreur' as const)
       : lecture.isPending

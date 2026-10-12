@@ -44,11 +44,29 @@ export function useSuivi(requete: { readonly module?: string; readonly periode?:
       )
     },
     revueEnCours: revue.isPending,
-    revueFaite: () => {
-      revue.mutate({ corps: { id: id() } }, apres)
+    echecRevue: revue.isError,
+    reinitialiserEchecRevue: revue.reset,
+    revueFaite: (surSucces: () => void) => {
+      revue.mutate(
+        { corps: { id: id() } },
+        {
+          onSuccess: () => {
+            apres.onSuccess()
+            surSucces()
+          },
+        },
+      )
     },
-    lever: (bloc: string) => {
-      ecriture.mutate({ params: { id: bloc }, corps: { action: 'lever', id: id() } }, apres)
+    lever: (bloc: string, surSucces: () => void) => {
+      ecriture.mutate(
+        { params: { id: bloc }, corps: { action: 'lever', id: id() } },
+        {
+          onSuccess: () => {
+            apres.onSuccess()
+            surSucces()
+          },
+        },
+      )
     },
   }
 }

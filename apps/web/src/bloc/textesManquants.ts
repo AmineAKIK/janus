@@ -1,6 +1,10 @@
 import type { Manque, Statut } from '@janus/contrats'
 import { formaterInstant } from './instant.ts'
 
+/** Un nombre à la française : « 0,5 », jamais « 0.5 ». */
+const nombre = (valeur: number) =>
+  new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(valeur)
+
 const liste = (elements: readonly string[] | undefined) => (elements ?? []).join(', ')
 
 /**
@@ -26,7 +30,7 @@ export function texteManque(
     case 'consolidation_cours_rouvert':
       return 'Tu as rouvert le cours : la consolidation reste possible une fois le délai écoulé.'
     case 'consolidation_insuffisante':
-      return `Atteins le seuil à la consolidation : ${String(manque.points ?? 0)} points sur ${String(manque.requis ?? 0)} requis.`
+      return `Atteins le seuil à la consolidation : ${nombre(manque.points ?? 0)} ${(manque.points ?? 0) < 2 ? 'point' : 'points'} sur ${nombre(manque.requis ?? 0)} requis.`
     case 'pratique_aide':
       return manque.exercices === undefined
         ? 'Refais sans aide les exercices de la pratique.'

@@ -1,7 +1,7 @@
 import type { Statut } from '@janus/contrats'
 import { nouvelId, ROUTES } from '@janus/contrats'
 import { jourDe } from '@janus/moteur'
-import { BadgeStatut, Bouton, LIBELLES_STATUT } from '@janus/ui'
+import { BadgeStatut, BandeauAlerte, Bouton, LIBELLES_STATUT } from '@janus/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
@@ -12,7 +12,7 @@ import styles from './Detail.module.css'
 import { Chargement, Erreur } from './EtatEcran.tsx'
 import { lignesPreuves } from './preuves.ts'
 import { ACQUIS_AU_MOINS_PROVISOIRE } from './useBlocs.ts'
-import { TEXTES_DETAIL } from './textes.ts'
+import { TEXTES_DETAIL, TEXTES_PREREQUIS } from './textes.ts'
 
 export interface ContexteDetail {
   readonly fuseau: string
@@ -153,6 +153,9 @@ export function PanneauDetail({
       >
         {reprise ? TEXTES_DETAIL.reprendre : TEXTES_DETAIL.ouvrir}
       </Bouton>
+      {ecriture.isError && !dialogue && (
+        <BandeauAlerte type="erreur">{TEXTES_PREREQUIS.erreurServeur}</BandeauAlerte>
+      )}
       {dialogue && (
         <DialoguePrerequis
           manquants={manquants}
