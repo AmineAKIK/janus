@@ -176,6 +176,17 @@ describe('3. en-têtes de sécurité', () => {
     expect(headers['strict-transport-security']).toBeDefined()
     expect(headers['x-powered-by']).toBeUndefined()
   })
+
+  it('interdit tout cache sur les réponses de l’API, erreurs comprises', async () => {
+    const { app } = await serveurDeTest()
+
+    const ok = await app.inject({ method: 'GET', url: '/api/sante' })
+    const refuse = await app.inject({ method: 'GET', url: '/api/essai/prive' })
+
+    expect(ok.headers['cache-control']).toBe('no-store')
+    expect(refuse.statusCode).toBe(401)
+    expect(refuse.headers['cache-control']).toBe('no-store')
+  })
 })
 
 describe('4. CORS fermé', () => {

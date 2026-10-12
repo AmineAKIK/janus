@@ -85,7 +85,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('routes du catalogue contre Post
       headers: { origin: ORIGINE_TEST },
       payload: { nom_utilisateur: 'amine', mot_de_passe: MOT_DE_PASSE },
     })
-    cookie = `janus_session=${connexion.cookies[0]?.value ?? ''}`
+    cookie = `__Host-janus_session=${connexion.cookies[0]?.value ?? ''}`
     const [m1] = await bases.db
       .select({ id: t.modules.id })
       .from(t.modules)

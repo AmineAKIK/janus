@@ -25,7 +25,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('gel d’une formation contre Po
       payload: { nom_utilisateur: 'amine', mot_de_passe: MOT_DE_PASSE },
     })
     expect(connexion.statusCode).toBe(200)
-    cookie = `janus_session=${connexion.cookies[0]?.value ?? ''}`
+    cookie = `__Host-janus_session=${connexion.cookies[0]?.value ?? ''}`
   }
   const choisir = async (formationActive: string) => {
     await connecter()
