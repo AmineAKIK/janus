@@ -1,5 +1,5 @@
 import { createMemoryHistory } from '@tanstack/react-router'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { creerRouteur } from '../routes/arbre.tsx'
@@ -35,12 +35,16 @@ describe('Rappels', () => {
   it('enregistre l’heure du rappel et revient à 19:00', async () => {
     const utilisateur = userEvent.setup()
     const banc = await afficher('rappels')
-    const champ = await screen.findByLabelText('Heure du rappel')
-    expect(champ).toHaveValue('19:00')
+    const champ = await screen.findByRole('button', { name: /Heure du rappel/ })
+    expect(champ).toHaveTextContent('19:00')
 
-    await utilisateur.clear(champ)
-    await utilisateur.type(champ, '08:30')
-    await utilisateur.tab()
+    await utilisateur.click(champ)
+    await utilisateur.click(
+      within(screen.getByRole('listbox', { name: 'Heures' })).getByRole('option', { name: '08' }),
+    )
+    await utilisateur.click(
+      within(screen.getByRole('listbox', { name: 'Minutes' })).getByRole('option', { name: '30' }),
+    )
     await waitFor(() => {
       expect(banc.magasin.lire().reglages.heureRappel).toBe('08:30')
     })
@@ -57,10 +61,14 @@ describe('Rappels', () => {
   it('met les rappels en pause jusqu’à une date, puis les reprend', async () => {
     const utilisateur = userEvent.setup()
     const banc = await afficher('rappels')
-    const champ = await screen.findByLabelText('Pause jusqu’au')
+    const champ = await screen.findByRole('button', { name: /Pause jusqu’au/ })
     expect(screen.getByText('Aucune')).toBeVisible()
 
-    await utilisateur.type(champ, '2026-11-01')
+    await utilisateur.click(champ)
+    await utilisateur.click(screen.getByRole('button', { name: 'Mois suivant' }))
+    await utilisateur.click(
+      screen.getByRole('button', { name: /^1er novembre 2026$|^1 novembre 2026$/ }),
+    )
     await waitFor(() => {
       expect(banc.magasin.lire().reglages.rappelsEnPauseJusquAu).toBe('2026-11-01')
     })

@@ -1,0 +1,234 @@
+.champ {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-libelle);
+  width: 100%;
+}
+
+.libelle {
+  font-weight: 500;
+  color: var(--couleur-encre);
+}
+
+.bouton {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacement-8);
+  width: 100%;
+  min-height: var(--hauteur-champ);
+  padding: 0 var(--espacement-12);
+  border: 1px solid var(--couleur-controle);
+  border-radius: var(--rayon-champ);
+  background: var(--couleur-fond);
+  color: var(--couleur-encre);
+  text-align: start;
+  cursor: pointer;
+  transition: border-color var(--duree-transition) ease;
+}
+
+.bouton:focus-visible,
+.bouton[aria-expanded='true'] {
+  border-color: var(--couleur-accent);
+  outline: none;
+}
+
+.bouton:focus-visible {
+  box-shadow: var(--focus-anneau);
+}
+
+.valeur {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.desactive {
+  opacity: 0.65;
+}
+
+.desactive .bouton {
+  background: var(--couleur-surface-douce);
+  cursor: not-allowed;
+}
+
+/* Réservé aux lecteurs d'écran. */
+.champ .masque {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.vide {
+  color: var(--couleur-texte-secondaire);
+}
+
+.icone {
+  flex: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--couleur-texte-secondaire);
+}
+
+.calendrier {
+  z-index: 300;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-8);
+  padding: var(--espacement-8);
+  background: var(--couleur-surface-elevee);
+  border: 1px solid var(--couleur-ligne);
+  border-radius: var(--rayon-carte);
+  box-shadow: var(--ombre-carte);
+  color: var(--couleur-encre);
+  animation: ouverture var(--duree-transition) ease;
+}
+
+.entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mois {
+  margin: 0;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.navigation {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--cible-tactile-min);
+  block-size: var(--cible-tactile-min);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--rayon-option);
+  color: var(--couleur-texte-secondaire);
+  cursor: pointer;
+}
+
+.navigation:hover {
+  background: var(--couleur-surface-douce);
+  color: var(--couleur-encre);
+}
+
+.chevron {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+
+.grille {
+  display: flex;
+  flex-direction: column;
+}
+
+.semaine {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.jourSemaine {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: var(--espacement-24);
+  color: var(--couleur-texte-secondaire);
+  text-transform: capitalize;
+}
+
+.jour {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 100%;
+  block-size: var(--cible-tactile-min);
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--rayon-option);
+  color: var(--couleur-encre);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.jour:hover {
+  background: var(--couleur-surface-douce);
+}
+
+.jour[data-autre-mois] {
+  color: var(--couleur-texte-secondaire);
+  opacity: 0.7;
+}
+
+/* Aujourd'hui : un liseré. Le jour choisi : plein, comme le segment actif du reste de l'appli. */
+.jour[data-aujourdhui] {
+  border-color: var(--couleur-accent);
+}
+
+.jour[aria-pressed='true'] {
+  background: var(--couleur-accent);
+  border-color: var(--couleur-accent);
+  color: var(--couleur-accent-sur-fond);
+  font-weight: 600;
+  opacity: 1;
+}
+
+.jour:focus-visible,
+.navigation:focus-visible,
+.action:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-anneau);
+}
+
+.pied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block-start: var(--espacement-4);
+  border-block-start: 1px solid var(--couleur-ligne);
+}
+
+.action {
+  min-block-size: var(--cible-tactile-min);
+  padding: 0 var(--espacement-12);
+  background: transparent;
+  border: 0;
+  border-radius: var(--rayon-option);
+  color: var(--couleur-accent);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.action:hover:not(:disabled) {
+  background: var(--couleur-accent-douce);
+}
+
+.action:disabled {
+  color: var(--couleur-texte-secondaire);
+  cursor: default;
+  opacity: 0.6;
+}
+
+@keyframes ouverture {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendrier {
+    animation: none;
+  }
+}

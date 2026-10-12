@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { GroupeSegmente } from '@janus/ui'
+import { GroupeSegmente, Selecteur } from '@janus/ui'
 import { Periode } from '@janus/contrats'
 import { Chargement, Erreur } from '../catalogue/EtatEcran.tsx'
 import { CarteDuModule } from './CarteDuModule.tsx'
@@ -121,21 +121,15 @@ export function PageSuivi({
       </h1>
       <div className={styles['entete']}>
         {donnees !== undefined && donnees.modules.length > 0 && (
-          <label className={`${styles['champ'] ?? ''} texte-petit-14`}>
-            {T.module}
-            <select
-              value={donnees.module?.id ?? ''}
-              onChange={(evenement) => {
-                recherche({ module: evenement.target.value })
-              }}
-            >
-              {donnees.modules.map(({ id, titre }) => (
-                <option key={id} value={id}>
-                  {titre}
-                </option>
-              ))}
-            </select>
-          </label>
+          <Selecteur
+            libelle={T.module}
+            valeur={donnees.module?.id ?? ''}
+            options={donnees.modules.map(({ id, titre }) => ({ valeur: id, libelle: titre }))}
+            onChange={(valeur) => {
+              recherche({ module: valeur })
+            }}
+            className={styles['champ']}
+          />
         )}
         <GroupeSegmente
           libelle={T.periode}
