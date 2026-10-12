@@ -1,7 +1,7 @@
 import { nouvelId, ROUTES } from '@janus/contrats'
 import type { ModificationReglages, Reglages } from '@janus/contrats'
 import { Bouton, ChampDate, ChampHeure, LigneReglage } from '@janus/ui'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { modeTransport } from '../../api/client.ts'
 import { useEcriture, useLecture } from '../../api/requetes.tsx'
 import { instantReel } from '../../horloge.ts'
@@ -40,22 +40,47 @@ export function SectionRappels({ reglages, enregistrer }: Proprietes) {
     permissionConnue() ? Notification.permission : null,
   )
 
+  const [sansChoix, setSansChoix] = useState(false)
+  const [echec, setEchec] = useState(false)
+
+  // L'autorisation se change aussi dans les réglages du navigateur : on la relit au retour sur l'appli.
+  useEffect(() => {
+    if (!permissionConnue()) return
+    const relire = () => {
+      setPermission(Notification.permission)
+    }
+    document.addEventListener('visibilitychange', relire)
+    window.addEventListener('focus', relire)
+    return () => {
+      document.removeEventListener('visibilitychange', relire)
+      window.removeEventListener('focus', relire)
+    }
+  }, [])
+
   function demander() {
     if (cleVapid === undefined) return
-    void abonnerCetAppareil(cleVapid).then((donnees) => {
-      setPermission(Notification.permission)
-      if (donnees === null) return
-      const id = nouvelId(Date.parse(instantReel()))
-      abonnement.mutate(
-        { corps: { id, ...donnees } },
-        {
-          onSuccess: () => {
-            garderAbonnement(id)
-            setAbonne(id)
+    setEchec(false)
+    void abonnerCetAppareil(cleVapid)
+      .catch(() => {
+        setEchec(true)
+        return null
+      })
+      .then((donnees) => {
+        setPermission(Notification.permission)
+        // Retour sans choisir : la demande reste possible, l'appli le dit au lieu de faire comme un refus.
+        setSansChoix(Notification.permission === 'default')
+        if (donnees === null) return
+        const id = nouvelId(Date.parse(instantReel()))
+        abonnement.mutate(
+          { corps: { id, ...donnees } },
+          {
+            onSuccess: () => {
+              garderAbonnement(id)
+              setAbonne(id)
+            },
           },
-        },
-      )
-    })
+        )
+      })
   }
 
   function desactiver() {
@@ -88,7 +113,9 @@ export function SectionRappels({ reglages, enregistrer }: Proprietes) {
             <Bouton
               type="button"
               variante="secondaire"
-              disabled={enDemo || cleVapid === undefined || permission === null}
+              disabled={
+                enDemo || cleVapid === undefined || permission === null || permission === 'denied'
+              }
               onClick={demander}
             >
               {T.activer}
@@ -107,7 +134,10 @@ export function SectionRappels({ reglages, enregistrer }: Proprietes) {
       />
       {retrait.isError && <p className="texte-petit-14">{T.desactivationEchouee}</p>}
       {!enDemo && permission === 'granted' && <p className="texte-petit-14">{T.autorisees}</p>}
-      {abonnement.isError && <p className="texte-petit-14">{T.abonnementEchoue}</p>}
+      {(abonnement.isError || echec) && <p className="texte-petit-14">{T.abonnementEchoue}</p>}
+      {!enDemo && permission === 'default' && sansChoix && (
+        <p className="texte-petit-14">{T.sansChoix}</p>
+      )}
       {!enDemo && permission === 'denied' && <p className="texte-petit-14">{T.refusees}</p>}
       <div className={styles['reglage']}>
         <LigneReglage

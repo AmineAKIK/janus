@@ -105,7 +105,9 @@ export const TEXTES_RAPPELS = {
   nonSupporte: 'Ce navigateur ne sait pas afficher de notifications.',
   indisponible: 'Disponible quand l’appli tourne sur le serveur.',
   autorisees: 'Autorisées sur cet appareil.',
-  refusees: 'Refusées par ce navigateur.',
+  refusees:
+    'Refusées par ce navigateur. Pour les autoriser, ouvre les réglages du site dans ton navigateur (le cadenas près de l’adresse), puis reviens ici.',
+  sansChoix: 'Tu n’as ni accepté ni refusé. Appuie sur Activer pour réessayer.',
   abonnementEchoue: 'L’appareil n’a pas pu être enregistré sur le serveur. Réessaie.',
   heure: 'Heure du rappel',
   pause: 'Pause jusqu’au',
