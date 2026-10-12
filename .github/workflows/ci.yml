@@ -86,47 +86,31 @@ jobs:
             exit 1
           fi
 
-  # Tout l'hébergement démarre sur une machine vide avec un `.env` de test (PR-090).
+  # L'hébergement du VPS, tel qu'il tourne : les mêmes fichiers et scripts, sur une machine vide
+  # (démarrage, en-têtes, sauvegarde, rétention, restauration).
   hebergement:
     runs-on: ubuntu-latest
+    env:
+      SHA: '0000000000000000000000000000000000000001'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Démarre les services (compose)
-        working-directory: infra
+      - name: shellcheck des scripts du VPS
+        run: shellcheck deploy/vps/*.sh
+      - name: Construit les images
         run: |
-          {
-            echo DOMAINE=localhost
-            echo POSTGRES_PASSWORD=essai0postgres
-            echo JANUS_APP_MOT_DE_PASSE=essai0application
-            echo DEEPSEEK_API_KEY=essai
-            echo VAPID_PUBLIC_KEY=essai
-            echo VAPID_PRIVATE_KEY=essai
-            echo VAPID_SUJET=mailto:essai@exemple.fr
-            echo RESTIC_REPOSITORY=/depot-essai
-            echo RESTIC_PASSWORD=essai0restic
-          } > .env
-          docker compose up -d --build --wait
-      - name: /api/sante répond 200 par Caddy
-        run: curl -fsk https://app.localhost/api/sante
-      - name: Les en-têtes de sécurité de l'appli et de l'exécuteur de code
-        run: |
-          executeur=$(curl -fsSkI https://app.localhost/executeur.html | tr -d '\r')
-          appli=$(curl -fsSkI https://app.localhost/ | tr -d '\r')
-          echo "$executeur" | grep -i '^content-security-policy:' | grep -q "frame-ancestors 'self'"
-          echo "$executeur" | grep -i '^content-security-policy:' | grep -q "connect-src 'none'"
-          echo "$appli" | grep -i '^content-security-policy:' | grep -q "frame-src 'self' https://fiches.localhost"
-          echo "$appli" | grep -i '^content-security-policy:' | grep -q "frame-ancestors 'none'"
-      - name: Sauvegarde puis restauration dans une base vide
-        working-directory: infra
-        run: |
-          docker compose exec -T sauvegarde sauvegarder.sh
-          docker compose exec -T sauvegarde essai-restauration.sh
+          docker build -f apps/api/Dockerfile -t "janus-api:$SHA" .
+          docker build -f infra/caddy/Dockerfile -t "janus-web:$SHA" .
+      - name: La configuration de Caddy est valide
+        run: docker run --rm --entrypoint caddy "janus-web:$SHA" validate --config /etc/caddy/Caddyfile --adapter caddyfile
+      - name: Essai de l'hébergement (démarrage, en-têtes, sauvegarde, restauration)
+        run: sudo env "PATH=$PATH" bash deploy/vps/essai-hebergement.sh "$SHA"
       - name: Journaux en cas d'échec
         if: failure()
-        working-directory: infra
-        run: docker compose logs --no-color
+        run: sudo docker compose -p janus -f /etc/janus/compose.yml --env-file /etc/janus/janus.env logs --no-color
+        env:
+          JANUS_SHA: '0000000000000000000000000000000000000001'
 
   # Les workflows eux-mêmes sont validés (PR-091).
   workflows:
@@ -136,4 +120,7 @@ jobs:
         with:
           persist-credentials: false
       - name: actionlint
-        run: docker run --rm -v "$PWD:/depot" -w /depot rhysd/actionlint:1.7.7 -color .github/workflows/ci.yml .github/workflows/deployer.yml
+        run: |
+          # Tous les workflows : syntaxe et expressions. Les deux qui déploient : aussi shellcheck.
+          docker run --rm -v "$PWD:/depot" -w /depot rhysd/actionlint:1.7.7 -color -shellcheck= .github/workflows/*.yml
+          docker run --rm -v "$PWD:/depot" -w /depot rhysd/actionlint:1.7.7 -color .github/workflows/ci.yml .github/workflows/deployer.yml

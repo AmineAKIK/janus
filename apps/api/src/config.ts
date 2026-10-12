@@ -13,6 +13,8 @@ export const SchemaConfig = z.object({
   /** L'adresse (sans barre finale ou avec) d'où les fiches sont servies : `<FICHES_URL>/<code>/<empreinte>.html`. */
   FICHES_URL: z.url(),
   COOKIE_SECURE: Booleen,
+  /** Le port d'écoute de l'API. */
+  PORT: z.coerce.number().int().min(1).max(65_535).default(3000),
   /** Facultative en test : sans elle, la correction par l'IA est indisponible. */
   DEEPSEEK_API_KEY: z.string().min(1).optional(),
   /** Le modèle de correction (`deepseek-flash` à la date du cadrage). */
@@ -41,6 +43,12 @@ export const SchemaConfig = z.object({
     .default('info'),
 })
 export type Config = z.infer<typeof SchemaConfig>
+
+/** Ce que lit la commande d'import des fiches : la base et le dossier où elles sont servies. */
+export const SchemaImport = z.object({
+  DATABASE_URL: z.string().min(1),
+  FICHES_DIR: z.string().min(1),
+})
 
 export class ErreurConfig extends Error {
   readonly problemes: readonly string[]

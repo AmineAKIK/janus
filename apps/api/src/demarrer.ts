@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto'
+import { verifierCleVapid } from './adaptateurs/push/webpush.ts'
 import { envoyerEnveloppe } from './adaptateurs/suiviErreurs/envoyeurHttp.ts'
 import { creerBase } from './base/base.ts'
 import { migrer } from './base/migrer.ts'
@@ -11,12 +12,16 @@ import { creerSuiviErreurs } from './plugins/suiviErreurs.ts'
 import { creerServeur } from './serveur.ts'
 import { demarrerLesTaches } from './taches/rappels.ts'
 
-const PORT_PAR_DEFAUT = 3000
 /** Au-delà, l'arrêt est forcé : mieux vaut un redémarrage qu'un processus qui ne finit pas. */
 const DELAI_ARRET_MS = 9000
 
 try {
   const config = lireConfig(process.env)
+  verifierCleVapid({
+    sujet: config.VAPID_SUJET,
+    clePublique: config.VAPID_PUBLIC_KEY,
+    clePrivee: config.VAPID_PRIVATE_KEY,
+  })
   // Une migration qui échoue arrête le démarrage : l'ancienne version, déjà en marche, reste en place.
   await migrer(config.DATABASE_URL_PROPRIETAIRE)
   await poserMotDePasseApplication(config.DATABASE_URL_PROPRIETAIRE, config.DATABASE_URL)
@@ -43,12 +48,15 @@ try {
     proprietaire,
     ...(signalerErreur === undefined ? {} : { signalerErreur }),
   })
-  await app.listen({ host: '0.0.0.0', port: Number(process.env['PORT'] ?? PORT_PAR_DEFAUT) })
+  await app.listen({ host: '0.0.0.0', port: config.PORT })
   const taches = await demarrerLesTaches({
     proprietaire,
     envoyerLesRappels: () => app.envoyerLesRappels(),
     erreur: (message, cause) => {
       app.log.error({ err: cause }, message)
+    },
+    info: (message, bilan) => {
+      app.log.info(bilan, message)
     },
   })
   // Arrêt dans l'ordre : plus de requêtes, les tâches en cours finissent, puis les connexions se ferment.

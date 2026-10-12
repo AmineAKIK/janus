@@ -107,4 +107,6 @@ export interface BilanDesRappels {
   readonly abonnementsSupprimes: number
   /** Les envois qui ont échoué pour une autre raison (réseau, service de push). */
   readonly echecs: number
+  /** Pourquoi, sans l'adresse de l'abonnement : un message court par échec. */
+  readonly causes: readonly string[]
 }
