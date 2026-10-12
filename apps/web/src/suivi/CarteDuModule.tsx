@@ -25,7 +25,7 @@ export function rangees(blocs: readonly BlocCarte[]): readonly (readonly BlocCar
 }
 
 /** Coupe les rangées trop larges pour la place disponible : la carte passe à la ligne, jamais de défilement. */
-export function rangeesRepliees(
+function rangeesRepliees(
   blocs: readonly BlocCarte[],
   colonnesMax: number,
 ): readonly (readonly BlocCarte[])[] {

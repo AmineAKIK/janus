@@ -5,7 +5,7 @@ import type { StockageDonnees } from './stockageDonnees.ts'
 /** L'attente avant d'écrire : les lectures d'un écran arrivent en rafale, une seule écriture suffit. */
 export const DELAI_ECRITURE_MS = 1000
 /** Au démarrage on n'attend pas le stockage plus longtemps : mieux vaut s'ouvrir sans données gardées. */
-export const DELAI_LECTURE_MS = 800
+const DELAI_LECTURE_MS = 800
 
 /** Remet dans le cache les dernières données gardées ; sans réponse du stockage à temps, rien n'est repris. */
 export async function reprendreLesDonnees(

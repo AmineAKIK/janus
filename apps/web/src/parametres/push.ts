@@ -29,3 +29,30 @@ export async function abonnerCetAppareil(cleVapid: string): Promise<AbonnementPu
   if (endpoint === undefined || p256dh === undefined || auth === undefined) return null
   return { endpoint, cles: { p256dh, auth } }
 }
+
+const CLE_ABONNEMENT = 'janus.abonnement-push'
+
+/** L'identifiant sous lequel le serveur connaît l'abonnement de cet appareil, s'il y en a un. */
+export function abonnementGarde(): string | null {
+  try {
+    return localStorage.getItem(CLE_ABONNEMENT)
+  } catch {
+    return null
+  }
+}
+
+export function garderAbonnement(id: string | null): void {
+  try {
+    if (id === null) localStorage.removeItem(CLE_ABONNEMENT)
+    else localStorage.setItem(CLE_ABONNEMENT, id)
+  } catch {
+    // Sans stockage local, l'appareil ne pourra pas se désabonner depuis les Paramètres.
+  }
+}
+
+/** Retire l'abonnement de cet appareil auprès du navigateur : il ne reçoit plus rien. */
+export async function retirerCetAppareil(): Promise<void> {
+  if (!('serviceWorker' in navigator)) return
+  const enregistrement = await navigator.serviceWorker.ready
+  await (await enregistrement.pushManager.getSubscription())?.unsubscribe()
+}

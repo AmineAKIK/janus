@@ -17,7 +17,7 @@ export function blocDeEntree(entree: EntreeEnvoi): string | null {
   return null
 }
 
-export const ROUTE_ETAT_PAGE = 'PUT /blocs/:id/etat-page'
+const ROUTE_ETAT_PAGE = 'PUT /blocs/:id/etat-page'
 
 /** Ce qui attend pour un bloc, l'état de la page mis à part (il se renvoie tout seul). */
 export function reponsesGardees(

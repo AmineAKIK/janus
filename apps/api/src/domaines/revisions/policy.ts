@@ -120,12 +120,12 @@ export interface CarteDuCatalogue {
   readonly verso: string
 }
 
-export function idDeLaCarte({ bloc, carte }: Pick<CarteDuCatalogue, 'bloc' | 'carte'>): string {
+function idDeLaCarte({ bloc, carte }: Pick<CarteDuCatalogue, 'bloc' | 'carte'>): string {
   return `${bloc}:${carte}`
 }
 
 /** Ce que la page reçoit pour une carte. */
-export interface CarteRendue {
+interface CarteRendue {
   readonly id: string
   readonly bloc: string
   readonly recto: string

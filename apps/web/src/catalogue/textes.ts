@@ -13,11 +13,10 @@ export const TEXTES = {
   retourAuxFormations: 'Retour aux formations',
   reessayer: 'Réessayer',
   legende: 'Légende des statuts',
-  repartition: 'Répartition des statuts',
   aucunBloc: 'Aucun bloc n’est encore importé.',
 } as const
 
-export const texteModules = (nombre: number) => accorder(nombre, 'module', 'modules')
+const texteModules = (nombre: number) => accorder(nombre, 'module', 'modules')
 
 export const texteResume = (modules: number, blocsDuModuleEnCours: number | null) =>
   blocsDuModuleEnCours === null
@@ -68,7 +67,6 @@ export const TEXTES_PREREQUIS = {
   champ: 'Pourquoi l’ouvrir quand même ?',
   exemple: 'Ex. : je veux seulement survoler le sujet',
   ouvrirQuandMeme: 'Ouvrir quand même',
-  raisonTropCourte: 'Écris au moins 3 caractères.',
   erreurServeur: 'Impossible d’ouvrir le bloc. Réessaie.',
 } as const
 

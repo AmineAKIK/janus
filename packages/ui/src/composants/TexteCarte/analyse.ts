@@ -13,7 +13,7 @@ const MOTIF_EN_LIGNE = /`([^`\n]+)`|\*\*([^*\n]+)\*\*/g
 const MOTIF_LISTE = /^\s*\d+[.)]\s+(.*)$/
 
 /** Le sous-ensemble de Markdown d'une carte : `code` en ligne et **gras**, rien d'autre n'est interprété. */
-export function analyserEnLigne(texte: string): Segment[] {
+function analyserEnLigne(texte: string): Segment[] {
   const segments: Segment[] = []
   let fin = 0
   for (const trouve of texte.matchAll(MOTIF_EN_LIGNE)) {

@@ -2,7 +2,7 @@ import { MarqueJanus } from '@janus/ui'
 import { useRouterState } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { TITRE_INTROUVABLE } from './ecrans.ts'
-import { PageProvisoire } from './PageProvisoire.tsx'
+import { PageSimple } from './PageSimple.tsx'
 import styles from './PageIntrouvable.module.css'
 
 /** Le serveur répond 200 à toute adresse (c'est l'appli qui juge) : la page dit elle-même aux moteurs de recherche de l'ignorer. */
@@ -25,7 +25,7 @@ export function PageIntrouvable() {
     <div className={styles['page']}>
       <MarqueJanus taille={72} className={styles['marque']} />
       <p className={`${styles['code'] ?? ''} texte-petit-14`}>Erreur 404</p>
-      <PageProvisoire titre={TITRE_INTROUVABLE} />
+      <PageSimple titre={TITRE_INTROUVABLE} />
       <p className={`${styles['adresse'] ?? ''} texte-corps-16`}>{adresse}</p>
       <p className={`${styles['explication'] ?? ''} texte-corps-16`}>
         Cette adresse n’existe pas ou plus. Reprends ton chemin depuis le menu.

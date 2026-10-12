@@ -35,7 +35,7 @@ const EXTENSIONS_SON: Readonly<Record<string, string>> = {
   'audio/aac': 'aac',
 }
 
-export interface FichierExtrait {
+interface FichierExtrait {
   readonly nom: string
   readonly contenu: Uint8Array
 }

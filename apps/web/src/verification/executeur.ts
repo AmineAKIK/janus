@@ -2,7 +2,7 @@ import { ResultatExecuteur } from '@janus/contrats'
 import type { ReponseCas } from '@janus/contrats'
 
 /** Le temps accordé à chaque cas avant qu'on arrête son exécution. */
-export const DELAI_PAR_CAS_MS = 2000
+const DELAI_PAR_CAS_MS = 2000
 
 export interface CasDeTest {
   readonly entree: readonly unknown[]

@@ -5,7 +5,12 @@ import { useState } from 'react'
 import { modeTransport } from '../../api/client.ts'
 import { useEcriture, useLecture } from '../../api/requetes.tsx'
 import { instantReel } from '../../horloge.ts'
-import { abonnerCetAppareil } from '../push.ts'
+import {
+  abonnementGarde,
+  abonnerCetAppareil,
+  garderAbonnement,
+  retirerCetAppareil,
+} from '../push.ts'
 import styles from '../Parametres.module.css'
 import { TEXTES_PARAMETRES as TP, TEXTES_RAPPELS as T } from '../textes.ts'
 
@@ -28,6 +33,8 @@ export function SectionRappels({ reglages, enregistrer }: Proprietes) {
   const enDemo = modeTransport(import.meta.env.VITE_TRANSPORT) === 'demo'
   const moi = useLecture(ROUTES['GET /moi'], {})
   const abonnement = useEcriture(ROUTES['POST /push/abonnements'])
+  const retrait = useEcriture(ROUTES['DELETE /push/abonnements/:id'])
+  const [abonne, setAbonne] = useState(abonnementGarde)
   const cleVapid = moi.data?.cle_vapid
   const [permission, setPermission] = useState<NotificationPermission | null>(
     permissionConnue() ? Notification.permission : null,
@@ -38,10 +45,31 @@ export function SectionRappels({ reglages, enregistrer }: Proprietes) {
     void abonnerCetAppareil(cleVapid).then((donnees) => {
       setPermission(Notification.permission)
       if (donnees === null) return
-      abonnement.mutate({
-        corps: { id: nouvelId(Date.parse(instantReel())), ...donnees },
-      })
+      const id = nouvelId(Date.parse(instantReel()))
+      abonnement.mutate(
+        { corps: { id, ...donnees } },
+        {
+          onSuccess: () => {
+            garderAbonnement(id)
+            setAbonne(id)
+          },
+        },
+      )
     })
+  }
+
+  function desactiver() {
+    if (abonne === null) return
+    retrait.mutate(
+      { params: { id: abonne } },
+      {
+        onSuccess: () => {
+          garderAbonnement(null)
+          setAbonne(null)
+          void retirerCetAppareil()
+        },
+      },
+    )
   }
 
   const pause = reglages.rappelsEnPauseJusquAu
@@ -50,18 +78,34 @@ export function SectionRappels({ reglages, enregistrer }: Proprietes) {
       <p className="texte-corps-16">{T.introduction}</p>
       <LigneReglage
         libelle={T.notifications}
-        {...(enDemo ? { aide: T.indisponible } : {})}
+        {...(enDemo
+          ? { aide: T.indisponible }
+          : permission === null
+            ? { aide: T.nonSupporte }
+            : {})}
         controle={
-          <Bouton
-            type="button"
-            variante="secondaire"
-            disabled={enDemo || cleVapid === undefined || permission === null}
-            onClick={demander}
-          >
-            {T.activer}
-          </Bouton>
+          abonne === null ? (
+            <Bouton
+              type="button"
+              variante="secondaire"
+              disabled={enDemo || cleVapid === undefined || permission === null}
+              onClick={demander}
+            >
+              {T.activer}
+            </Bouton>
+          ) : (
+            <Bouton
+              type="button"
+              variante="secondaire"
+              chargement={retrait.isPending}
+              onClick={desactiver}
+            >
+              {T.desactiver}
+            </Bouton>
+          )
         }
       />
+      {retrait.isError && <p className="texte-petit-14">{T.desactivationEchouee}</p>}
       {!enDemo && permission === 'granted' && <p className="texte-petit-14">{T.autorisees}</p>}
       {abonnement.isError && <p className="texte-petit-14">{T.abonnementEchoue}</p>}
       {!enDemo && permission === 'denied' && <p className="texte-petit-14">{T.refusees}</p>}

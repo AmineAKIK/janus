@@ -18,7 +18,7 @@ export function erreurEnEtantSur({ confiance, correction }: Corrigee): boolean {
   )
 }
 
-export function estJeNeSaisPas({ confiance, reponse }: Corrigee): boolean {
+function estJeNeSaisPas({ confiance, reponse }: Corrigee): boolean {
   return confiance === 'hasard' && reponse === 'Je ne sais pas'
 }
 

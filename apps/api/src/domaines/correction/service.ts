@@ -29,7 +29,7 @@ import { moisDe, tireeAuSort, validerSortie } from './policy.ts'
 import type { SortieValide } from './policy.ts'
 
 /** Le correcteur n'a rien rendu de valide, même au second essai. */
-export class CorrectionIndisponible extends ErreurMetier {
+class CorrectionIndisponible extends ErreurMetier {
   readonly status = 503
   readonly code = 'erreur_interne'
   readonly titre = 'Correction indisponible'
@@ -84,7 +84,7 @@ function empreinte(contenu: unknown): string {
 }
 
 /** La correction telle que la page la reçoit, relue de ce qui est gardé. */
-export function correctionRecue(ligne: LigneCorrection): CorrectionRecueApi {
+function correctionRecue(ligne: LigneCorrection): CorrectionRecueApi {
   return CorrectionRecue.parse({
     id: ligne.id,
     echantillon: ligne.echantillon,

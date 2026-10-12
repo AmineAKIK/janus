@@ -8,7 +8,7 @@ export interface ContexteFiltre {
   readonly version: number
 }
 
-export type RefusMessage = 'source_inconnue' | 'schema' | 'bloc' | 'version'
+type RefusMessage = 'source_inconnue' | 'schema' | 'bloc' | 'version'
 
 export type ResultatFiltre =
   | { readonly accepte: true; readonly message: MessagePage }

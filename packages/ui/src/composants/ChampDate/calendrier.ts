@@ -22,7 +22,7 @@ export function formater({ annee, mois, jour }: Jour): string {
   return `${String(annee).padStart(4, '0')}-${String(mois).padStart(2, '0')}-${String(jour).padStart(2, '0')}`
 }
 
-export function joursDuMois(annee: number, mois: number): number {
+function joursDuMois(annee: number, mois: number): number {
   return new Date(Date.UTC(annee, mois, 0)).getUTCDate()
 }
 

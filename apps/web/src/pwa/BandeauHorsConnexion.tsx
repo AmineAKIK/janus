@@ -4,7 +4,7 @@ import { derniereMiseAJour } from '../donnees/instantane.ts'
 import styles from './BandeauHorsConnexion.module.css'
 import { useEnLigne } from './useEnLigne.ts'
 
-export const TEXTES_HORS_CONNEXION = {
+const TEXTES_HORS_CONNEXION = {
   titre: 'Hors connexion.',
   donnees: (instant: string) => `Données du ${instant}.`,
   envoi: 'Les réponses seront envoyées dès le retour du réseau.',

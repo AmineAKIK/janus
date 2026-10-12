@@ -24,7 +24,7 @@ export interface BlocDeLaListe {
   readonly echeance: LigneEcheance
 }
 
-export interface ModuleAffiche {
+interface ModuleAffiche {
   readonly formation: { readonly id: string; readonly titre: string }
   readonly module: { readonly id: string; readonly ordre: number; readonly description: string }
 }

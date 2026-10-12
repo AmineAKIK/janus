@@ -1,4 +1,4 @@
-import type { Confiance, Niveau } from '@janus/contrats'
+import type { Confiance } from '@janus/contrats'
 import { accorder } from '../catalogue/calculs.ts'
 
 export const TEXTES_QUESTIONS = {
@@ -31,7 +31,6 @@ export const TEXTES_QUESTIONS = {
   aucune: 'Aucune question aujourd’hui.',
   legendeSure: '⚠ Erreur en étant sûr',
   etapeSuivante: 'Étape suivante',
-  retourAujourdhui: 'Retour à Aujourd’hui',
   dialogueTitre: 'Quitter la séance ?',
   reprendrePlusTard: 'Reprendre plus tard',
   continuer: 'Continuer',
@@ -46,7 +45,7 @@ export const TEXTES_QUESTIONS = {
   pourAllerPlusLoin: 'Pour aller plus loin, parles-en dans le projet Claude.',
 } as const
 
-export const LIBELLES_CONFIANCE: Record<Confiance, string> = {
+const LIBELLES_CONFIANCE: Record<Confiance, string> = {
   sur: 'sûr',
   hesitant: 'hésitant',
   hasard: 'au hasard',
@@ -72,12 +71,4 @@ export const texteEtapeSuivante = (tache: string) => `Étape suivante : ${tache}
 /** L'énoncé tronqué à 48 caractères, avec « … » quand il est plus long. */
 export function tronquer(texte: string, max = 48): string {
   return texte.length <= max ? texte : `${texte.slice(0, max)}…`
-}
-
-export const LIBELLES_NIVEAU_BILAN: Record<Niveau | 'a_verifier', string> = {
-  solide: 'Solide',
-  partiel: 'Partiel',
-  fragile: 'Fragile',
-  pas_encore: 'Pas encore',
-  a_verifier: 'À vérifier',
 }

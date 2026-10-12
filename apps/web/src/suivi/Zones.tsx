@@ -1,3 +1,4 @@
+import { budgetEnAlerte, partDuBudget } from '@janus/moteur'
 import { BarreProgression, Bouton, CarteZone, EtatVideZone, LIBELLES_STATUT } from '@janus/ui'
 import { texteJourCourt } from '../revision/textes.ts'
 import { texteTache } from '../aujourdhui/textesTaches.ts'
@@ -169,7 +170,7 @@ export function ZoneDecisions({
 
 export function ZoneCout({ cout }: { readonly cout: DonneesSuivi['cout_ia'] }) {
   const { depense_millioniemes: depense, plafond_millioniemes: plafond } = cout
-  const alerte = plafond > 0 && depense / plafond > 0.8
+  const alerte = budgetEnAlerte(partDuBudget(depense, plafond))
   return (
     <CarteZone titre={T.cout}>
       <div className={alerte ? styles['alerte'] : undefined}>

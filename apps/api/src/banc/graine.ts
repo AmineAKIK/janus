@@ -15,8 +15,8 @@ import { monterImportation } from '../domaines/catalogue/composition.ts'
 import type { Horloge } from '../horloge.ts'
 
 /** Le compte de la démo : la suite de contrat s'y connecte comme elle le fait sur le faux serveur. */
-export const UTILISATEUR_BANC = 'amine'
-export const MOT_DE_PASSE_BANC = 'demo-janus'
+const UTILISATEUR_BANC = 'amine'
+const MOT_DE_PASSE_BANC = 'demo-janus'
 
 const FICHE_MODELE = new URL('../../../web/public/fiches/demo/fiche-demo.html', import.meta.url)
 /** La bibliothèque de la fiche (`pnpm --filter @janus/pont build`) : le navigateur en a besoin pour parler à l'appli. */

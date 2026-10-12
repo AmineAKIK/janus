@@ -1,7 +1,7 @@
 import type { Confiance } from '@janus/contrats'
 
 /** Un échange précédent d'une relance : ce que l'apprenant a écrit et ce que le tuteur a répondu. */
-export interface TourPrecedent {
+interface TourPrecedent {
   readonly reponse: string
   readonly message: string
 }

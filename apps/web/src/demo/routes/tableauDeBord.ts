@@ -23,7 +23,7 @@ import { resultatDuBloc } from './calculs.ts'
 import { definir } from './definir.ts'
 
 /** Ce que coûte une correction de l'IA dans la démo : un prix de démonstration, pas une règle du cadrage. */
-export const COUT_CORRECTION_DEMO_MILLIONIEMES = 5_000
+const COUT_CORRECTION_DEMO_MILLIONIEMES = 5_000
 
 const JOURS_A_VENIR = 7
 const PERIODE_PAR_DEFAUT: Periode = '30j'

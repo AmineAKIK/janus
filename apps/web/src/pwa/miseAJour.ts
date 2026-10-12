@@ -18,7 +18,7 @@ function serviceWorkerDisponible(): boolean {
 }
 
 /** Ce que `virtual:pwa-register` rend : appliquer la version en attente (et recharger). */
-export type Appliquer = (recharger?: boolean) => Promise<void>
+type Appliquer = (recharger?: boolean) => Promise<void>
 
 /** Le `registerSW` de `vite-plugin-pwa`, réduit à ce que l'appli utilise. */
 export type EnregistrerSw = (options: {
