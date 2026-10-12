@@ -250,6 +250,22 @@ describe('page introuvable', () => {
   })
 })
 
+describe('page introuvable et moteurs de recherche', () => {
+  it('se déclare non indexable tant qu’elle est affichée, puis rend la balise', async () => {
+    const balise = document.createElement('meta')
+    balise.name = 'robots'
+    balise.content = 'index, follow'
+    document.head.append(balise)
+    const routeur = await afficher('/n-importe-quoi')
+    expect(balise.content).toBe('noindex')
+    await act(async () => {
+      await routeur.navigate({ to: '/revision' })
+    })
+    expect(balise.content).toBe('index, follow')
+    balise.remove()
+  })
+})
+
 describe('frontière d’erreur', () => {
   it('affiche un bandeau d’erreur avec un bouton Recharger', () => {
     const recharger = vi.fn()

@@ -28,6 +28,8 @@ async function afficher(section: string) {
 
 afterEach(() => {
   delete window.__janusDemo
+  Reflect.deleteProperty(URL, 'createObjectURL')
+  Reflect.deleteProperty(URL, 'revokeObjectURL')
   vi.unstubAllGlobals()
 })
 
@@ -35,7 +37,8 @@ describe('Données', () => {
   it('exporte toutes les données en JSON', async () => {
     const utilisateur = userEvent.setup()
     const adresses: Blob[] = []
-    vi.stubGlobal('URL', {
+    // Seules les deux méthodes sont remplacées : le reste de `URL` sert au chargement des écrans.
+    Object.assign(URL, {
       createObjectURL: (blob: Blob) => {
         adresses.push(blob)
         return 'blob:export'
