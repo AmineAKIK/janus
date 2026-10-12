@@ -103,6 +103,14 @@ jobs:
           docker compose up -d --build --wait
       - name: /api/sante répond 200 par Caddy
         run: curl -fsk https://app.localhost/api/sante
+      - name: Les en-têtes de sécurité de l'appli et de l'exécuteur de code
+        run: |
+          executeur=$(curl -fsSkI https://app.localhost/executeur.html | tr -d '\r')
+          appli=$(curl -fsSkI https://app.localhost/ | tr -d '\r')
+          echo "$executeur" | grep -i '^content-security-policy:' | grep -q "frame-ancestors 'self'"
+          echo "$executeur" | grep -i '^content-security-policy:' | grep -q "connect-src 'none'"
+          echo "$appli" | grep -i '^content-security-policy:' | grep -q "frame-src 'self' https://fiches.localhost"
+          echo "$appli" | grep -i '^content-security-policy:' | grep -q "frame-ancestors 'none'"
       - name: Sauvegarde puis restauration dans une base vide
         working-directory: infra
         run: |
