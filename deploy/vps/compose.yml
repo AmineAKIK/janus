@@ -70,7 +70,9 @@ services:
     volumes:
       - donnees:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U janus -d janus']
+      # Par TCP, comme l'API : au premier demarrage, le serveur temporaire d'initialisation de l'image
+      # n'ecoute que sur sa socket et repond deja a pg_isready, jusqu'a 0,4 s avant le vrai serveur.
+      test: ['CMD-SHELL', 'pg_isready -h 127.0.0.1 -U janus -d janus']
       interval: 5s
       timeout: 3s
       retries: 20
