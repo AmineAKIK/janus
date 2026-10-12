@@ -8,6 +8,7 @@ export function EncartDecisionsIa({
   erreurs,
   corrections,
   question,
+  libelleErreur,
   surConfirmer,
   surRejeter,
   surCompter,
@@ -18,6 +19,8 @@ export function EncartDecisionsIa({
   readonly erreurs: readonly PropositionErreur[]
   readonly corrections: readonly CorrectionSuivie[]
   readonly question: (id: string) => string
+  /** Le nom d'une erreur critique, depuis le manifeste du bloc. */
+  readonly libelleErreur: (id: string) => string
   readonly surConfirmer: (proposition: PropositionErreur) => void
   readonly surRejeter: (proposition: PropositionErreur) => void
   readonly surCompter: (correction: CorrectionSuivie) => void
@@ -33,6 +36,9 @@ export function EncartDecisionsIa({
         >
           <p className={`${styles['encartTitre'] ?? ''} texte-corps-16`}>
             {TEXTES_ERREUR_IA.titre}
+          </p>
+          <p className={`${styles['encartTexte'] ?? ''} texte-petit-14`}>
+            {TEXTES_ERREUR_IA.erreur(libelleErreur(proposition.erreur))}
           </p>
           {proposition.reponse !== '' && (
             <p className={`${styles['encartTexte'] ?? ''} texte-petit-14`}>

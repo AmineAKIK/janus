@@ -88,3 +88,19 @@ describe('formaterDelai', () => {
     )
   })
 })
+
+describe('formaterInstant dans le fuseau des réglages', () => {
+  it("écrit l'heure du fuseau demandé, quel que soit celui de l'appareil", () => {
+    const instant = '2026-10-06T13:20:00Z'
+    const midi = '2026-10-06T10:00:00Z'
+    expect(formaterInstant(instant, midi, 'Europe/Paris')).toBe('15 h 20')
+    expect(formaterInstant(instant, midi, 'America/New_York')).toBe('9 h 20')
+  })
+
+  it('compare les jours dans ce fuseau : 23 h 30 à Paris est encore le même jour', () => {
+    const tard = '2026-10-06T21:30:00Z'
+    const minuit = '2026-10-06T22:30:00Z'
+    expect(formaterInstant(minuit, tard, 'Europe/Paris')).toBe('7 octobre à 0 h 30')
+    expect(formaterInstant(minuit, tard, 'UTC')).toBe('22 h 30')
+  })
+})

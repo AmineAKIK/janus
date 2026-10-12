@@ -1,18 +1,19 @@
 import type { Manque, Statut } from '@janus/contrats'
-import { formaterInstant, formaterJour } from './instant.ts'
+import { formaterInstant } from './instant.ts'
 
 const liste = (elements: readonly string[] | undefined) => (elements ?? []).join(', ')
 
 /**
  * Une phrase par code de manque du moteur. `maintenant` sert à écrire les heures (« 15 h 20 »,
- * précédée de la date si ce n'est pas aujourd'hui).
+ * précédée de la date si ce n'est pas aujourd'hui) dans le `fuseau` des réglages.
  */
 export function texteManque(
   manque: Manque,
   maintenant: string,
   libelleErreur: (id: string) => string = (id) => id,
+  fuseau?: string,
 ): string {
-  const quand = manque.apres === undefined ? '' : formaterInstant(manque.apres, maintenant)
+  const quand = manque.apres === undefined ? '' : formaterInstant(manque.apres, maintenant, fuseau)
   switch (manque.code) {
     case 'restitution_incomplete':
       return manque.questions === undefined
@@ -68,5 +69,4 @@ export const TEXTES_ENCARTS = {
   bilanPour: (statut: string) => `Pour passer à ${statut}`,
   bilanRien: 'Rien ne manque pour le moment.',
   trancherD: 'Tranche d’abord l’erreur repérée ci-dessous.',
-  jour: formaterJour,
 } as const

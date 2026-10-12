@@ -7,6 +7,7 @@ import { registerSW } from 'virtual:pwa-register'
 import { creerTransport } from './api/client.ts'
 import { garderLesDonnees, reprendreLesDonnees } from './donnees/persistance.ts'
 import { ouvrirStockageDonnees } from './donnees/stockageDonnees.ts'
+import { invaliderApprentissage } from './api/invalidations.ts'
 import { creerClientRequetes, FournisseurApi } from './api/requetes.tsx'
 import { creerBoiteEnvoi, creerVerrouNavigateur } from './envoi/boiteEnvoi.ts'
 import { FournisseurEnvoi } from './envoi/FournisseurEnvoi.tsx'
@@ -46,12 +47,20 @@ const transport = await creerTransport(import.meta.env, {
   },
 })
 const { stockage } = creerStockageParesseux(ouvrirStockageIndexedDB())
-const boite = creerBoiteEnvoi({
-  stockage,
-  transport,
-  verrou: creerVerrouNavigateur(),
-  maintenant: instantReel,
-})
+const boite = creerBoiteEnvoi(
+  {
+    stockage,
+    transport,
+    verrou: creerVerrouNavigateur(),
+    maintenant: instantReel,
+  },
+  {
+    // Tout message accepté (réponse, carte, report, vérification) change l'avancement affiché.
+    surReponse: () => {
+      void invaliderApprentissage(client)
+    },
+  },
+)
 const routeur = creerRouteur(creerHistorique(modeHistorique(import.meta.env.VITE_HISTORIQUE)), {
   client,
   transport,

@@ -36,11 +36,14 @@ function FicheOuverte({
   relire,
   relireBloc,
   delaiConsolidationMinutes,
+  fuseau,
 }: {
   readonly relire: () => void
   /** Relit le bloc sans repartir de zéro : statut, ce qui manque, séries ouvertes. */
   readonly relireBloc: () => void
   readonly delaiConsolidationMinutes: number
+  /** Le fuseau des réglages : les heures affichées sont les siennes. */
+  readonly fuseau: string | undefined
   readonly etapes: readonly EtapeAffichee[]
   readonly problemes: readonly string[]
   readonly erreursCritiques: readonly { readonly id: string; readonly libelle: string }[]
@@ -63,6 +66,8 @@ function FicheOuverte({
   const [revoir, setRevoir] = useState<string | null>(null)
   const [changerNiveau, setChangerNiveau] = useState<CorrectionSuivie | null>(null)
   const toutesQuestions = [...questions.restitution, ...questions.consolidation]
+  const nomErreur = (id: string) =>
+    (erreursCritiques.find((erreur) => erreur.id === id)?.libelle ?? id).replace(/\.$/, '')
   const texteQuestion = (id: string) =>
     toutesQuestions.find((question) => question.id === id)?.question ?? id
   const restantes = {
@@ -167,15 +172,11 @@ function FicheOuverte({
         {typeCourant === 'bilan' && (
           <EncartBilan
             erreurEnAttente={enAttente.length > 0}
-            libelleErreur={(id) =>
-              (erreursCritiques.find((erreur) => erreur.id === id)?.libelle ?? id).replace(
-                /\.$/,
-                '',
-              )
-            }
+            libelleErreur={nomErreur}
             statut={hote.statut.statut}
             manque={hote.statut.manque}
             maintenant={instantReel()}
+            {...(fuseau === undefined ? {} : { fuseau })}
             reponsesApresRetourCours={hote.reponsesApresRetourCours.map(
               ({ correction, reponse }) => ({
                 id: correction.id,
@@ -187,7 +188,7 @@ function FicheOuverte({
         )}
         {montrerConsolidation && (
           <EncartConsolidation
-            heure={formaterInstant(consolidationAttendue, instantReel())}
+            heure={formaterInstant(consolidationAttendue, instantReel(), fuseau)}
             delai={formaterDelai(delaiConsolidationMinutes)}
           />
         )}
@@ -196,6 +197,7 @@ function FicheOuverte({
             <EncartErreurIa
               key={`${proposition.correction}:${proposition.erreur}`}
               code={donnees.bloc}
+              libelle={nomErreur(proposition.erreur)}
               reponse={proposition.reponse}
               surConfirmer={() => {
                 hote.trancherErreur(proposition, 'confirmee')
@@ -212,6 +214,7 @@ function FicheOuverte({
               erreurs={enAttente}
               corrections={hote.correctionsAVerifier}
               question={texteQuestion}
+              libelleErreur={nomErreur}
               surConfirmer={(proposition) => {
                 hote.trancherErreur(proposition, 'confirmee')
               }}
@@ -271,7 +274,11 @@ function FicheOuverte({
 
 /** La page d'un bloc : barre du haut et fiche dans son iframe. */
 export function PageBloc({ blocId }: { readonly blocId: string }) {
-  const lecture = useLecture(ROUTES['GET /blocs/:id'], { params: { id: blocId } })
+  const lecture = useLecture(
+    ROUTES['GET /blocs/:id'],
+    { params: { id: blocId } },
+    { toujoursRelire: true },
+  )
   const reglages = useLecture(ROUTES['GET /reglages'], {})
   const [relecture, setRelecture] = useState(0)
 
@@ -313,6 +320,7 @@ export function PageBloc({ blocId }: { readonly blocId: string }) {
         void lecture.refetch()
       }}
       delaiConsolidationMinutes={reglages.data?.delaiConsolidationMinutes ?? 60}
+      fuseau={reglages.data?.fuseau}
       donnees={{
         bloc: detail.bloc,
         version: detail.version,

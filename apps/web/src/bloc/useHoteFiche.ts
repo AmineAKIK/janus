@@ -331,6 +331,10 @@ export function useHoteFiche(
           const recalcule = statutDeReponse(route, reponse)
           if (recalcule !== null) appliquerStatut(recalcule)
         },
+        // Le serveur a refusé : la décision reste à prendre, la proposition revient.
+        surRefus: () => {
+          setPropositions((avant) => (avant.includes(proposition) ? avant : [...avant, proposition]))
+        },
       },
     )
   }

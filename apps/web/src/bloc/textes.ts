@@ -37,6 +37,7 @@ export const TEXTES_ERREUR_IA = {
   titre: 'Erreur critique repérée par l’IA · À confirmer',
   consequence: (code: string) =>
     `Si tu confirmes, ${code} passe à À reprendre jusqu’à ce que tu réussisses une question sur ce point.`,
+  erreur: (libelle: string) => `Erreur visée : ${libelle}`,
   confirmer: 'C’est bien une erreur',
   rejeter: 'Ce n’en est pas une',
 } as const

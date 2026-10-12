@@ -283,6 +283,12 @@ describe('erreur critique repérée par l’IA', () => {
     return { ...banc, encart }
   }
 
+  it('nomme l’erreur visée, pas seulement la réponse', async () => {
+    const { encart } = await avecErreurIa()
+
+    expect(encart).toHaveTextContent('Erreur visée : Confondre une fiche et un cours complet')
+  })
+
   it('cite la réponse et dit ce que la confirmation change', async () => {
     const { encart } = await avecErreurIa()
 

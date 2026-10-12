@@ -124,11 +124,21 @@ function gardantLesDonnees<T>(resultat: UseQueryResult<T>): UseQueryResult<T> {
   }
 }
 
-export function useLecture<D extends RouteLecture>(route: D, entree: EntreeRoute<D>) {
+export interface OptionsLecture {
+  /** Relit à chaque affichage, même si la lecture est encore fraîche (un bloc rouvert ne montre pas l'ancien état). */
+  readonly toujoursRelire?: boolean
+}
+
+export function useLecture<D extends RouteLecture>(
+  route: D,
+  entree: EntreeRoute<D>,
+  options: OptionsLecture = {},
+) {
   const transport = useTransport()
   return gardantLesDonnees(
     useQuery({
       queryKey: [nomRoute(route), entree],
+      ...(options.toujoursRelire === true ? { refetchOnMount: 'always' as const } : {}),
       queryFn: ({ signal }) => transport.appeler(route, entree, { signal } satisfies OptionsAppel),
     }),
   )
