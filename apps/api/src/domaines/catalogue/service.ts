@@ -12,6 +12,7 @@ import type { CinqPreuves } from '@janus/contrats'
 import { accesBloc, calculerBloc, instantEnMs, preuvesDuBloc, seriesOuvertes } from '@janus/moteur'
 import type { ResultatBloc } from '@janus/moteur'
 import { z } from 'zod'
+import { maintenantDuBloc } from '../../base/axeTemps.ts'
 import type { Base } from '../../base/base.ts'
 import { formationActiveDe } from '../../base/formationActive.ts'
 import { lireFaits } from '../../base/faits.ts'
@@ -269,8 +270,8 @@ export function creerServiceLecture({ base, depot, horloge, fichesUrl }: Dependa
     },
 
     async bloc(userId: string, code: string) {
-      const maintenant = horloge.maintenant()
       const { bloc: leBloc, version, manifeste } = await bloc(base.db, code)
+      const maintenant = await maintenantDuBloc(base.db, horloge, userId, leBloc.id)
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
       const faits = await lireFaits(base.db, userId, [leBloc])
       const resultat = calculerBloc(faits, manifeste, reglages, maintenant)
@@ -312,7 +313,7 @@ export function creerServiceLecture({ base, depot, horloge, fichesUrl }: Dependa
       )
       return base.enTransaction(async (tx) => {
         await verrouBloc(tx, userId, leBloc.id)
-        const maintenant = horloge.maintenant()
+        const maintenant = await maintenantDuBloc(tx, horloge, userId, leBloc.id)
         const acces = accesBloc(await statutsDesPrerequis(tx, userId, manifeste.prerequis))
         const existant = await depot.evenementParId(tx, demande.id)
         if (existant === undefined) {

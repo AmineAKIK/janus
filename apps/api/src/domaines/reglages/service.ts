@@ -1,16 +1,20 @@
 import { Reglages } from '@janus/contrats'
 import type { ModificationReglages } from '@janus/contrats'
+import { changerDeFormation } from '../../base/axeTemps.ts'
 import type { Base } from '../../base/base.ts'
+import { formationActiveDe } from '../../base/formationActive.ts'
 import { ErreurProtocole, Introuvable, PreconditionEchouee, Refus } from '../../erreurs.ts'
+import type { Horloge } from '../../horloge.ts'
 import type { DepotReglages } from './depot.ts'
 import { etagDe, reglagesDonnes, reglesTouchees, versionDeIfMatch } from './policy.ts'
 
 export interface DependancesService {
   readonly base: Base
   readonly depot: DepotReglages
+  readonly horloge: Horloge
 }
 
-export function creerServiceReglages({ base, depot }: DependancesService) {
+export function creerServiceReglages({ base, depot, horloge }: DependancesService) {
   return {
     async lire(userId: string) {
       const ligne = await depot.lire(base.db, userId)
@@ -48,12 +52,20 @@ export function creerServiceReglages({ base, depot }: DependancesService) {
             'Cette formation n’existe pas.',
           )
         }
-        const reglages = Reglages.parse({
-          ...Reglages.parse(ligne.reglages),
-          ...reglagesDonnes(modification),
-        })
+        const anciens = Reglages.parse(ligne.reglages)
+        const reglages = Reglages.parse({ ...anciens, ...reglagesDonnes(modification) })
         const suivante = await depot.ecrire(tx, userId, version, reglages)
         if (suivante === undefined) throw new PreconditionEchouee('Les réglages ont changé.')
+        // La formation qu'on quitte se gèle, celle qu'on ouvre reprend là où elle s'était arrêtée.
+        await changerDeFormation(
+          tx,
+          userId,
+          {
+            avant: await formationActiveDe(tx, anciens.formationActive),
+            apres: await formationActiveDe(tx, reglages.formationActive),
+          },
+          horloge.maintenant(),
+        )
         return { reglages, etag: etagDe(suivante) }
       })
     },

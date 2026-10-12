@@ -4,6 +4,7 @@ import type { TypeJournal } from '@janus/contrats'
 import type { Periode } from '@janus/moteur'
 import { instantEnIso, instantEnMs } from '@janus/moteur'
 import { nouvelId } from '@janus/contrats'
+import { maintenantActif, maintenantDeLaFormation } from '../../base/axeTemps.ts'
 import type { Base } from '../../base/base.ts'
 import { formationActiveDe } from '../../base/formationActive.ts'
 import { verrouBloc } from '../../base/transaction.ts'
@@ -75,7 +76,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
     async ajouterNote(userId: string, note: { id: string; entree: string; texte: string }) {
       const deja = await depot.versionsDeLaNote(base.db, userId, note.id)
       if (deja.length > 0) return noteLue(note.id, deja)
-      const maintenant = horloge.maintenant()
+      const maintenant = await maintenantActif(base.db, horloge, userId)
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
       const { lignes, blocs } = await plan(reglages)
       const faits = await lireFaits(
@@ -113,6 +114,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
       const versions = await depot.versionsDeLaNote(base.db, userId, noteId)
       const courante = noteLue(noteId, versions)
       if (courante.texte === texte) return courante
+      const maintenant = await maintenantActif(base.db, horloge, userId)
       await base.enTransaction((tx) =>
         depot.ajouterVersionDeNote(tx, {
           id: identifiant(),
@@ -120,7 +122,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
           userId,
           entree: courante.entree,
           texte,
-          dateServeur: horloge.maintenant(),
+          dateServeur: maintenant,
         }),
       )
       return noteLue(noteId, await depot.versionsDeLaNote(base.db, userId, noteId))
@@ -128,7 +130,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
 
     /** Range une idée « à explorer plus tard » ; rejouer le même message rend la même idée. */
     async ajouterIdee(userId: string, idee: { id: string; texte: string }) {
-      const maintenant = horloge.maintenant()
+      const maintenant = await maintenantActif(base.db, horloge, userId)
       await base.enTransaction((tx) =>
         depot.ajouterIdee(tx, { id: idee.id, userId, texte: idee.texte, dateServeur: maintenant }),
       )
@@ -142,12 +144,13 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
     /** Marque la revue de la méthode comme faite, avec son texte s'il y en a un. */
     async ajouterRevue(userId: string, revue: { id: string; texte?: string | undefined }) {
       const texte = revue.texte ?? null
+      const maintenant = await maintenantActif(base.db, horloge, userId)
       await base.enTransaction(async (tx) => {
         const ajoutee = await depot.ajouterRevueDeLaMethode(tx, {
           id: revue.id,
           userId,
           texte,
-          dateServeur: horloge.maintenant(),
+          dateServeur: maintenant,
         })
         if (ajoutee) return
         const gardee = await depot.revueParId(tx, revue.id)
@@ -167,9 +170,9 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
         avant?: string | undefined
       },
     ) {
-      const maintenant = horloge.maintenant()
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
-      const { modules, lignes, blocs } = await plan(reglages)
+      const { modules, lignes, blocs, formationId } = await plan(reglages)
+      const maintenant = await maintenantDeLaFormation(base.db, horloge, userId, formationId)
       const faits = await lireFaits(
         base.db,
         userId,
@@ -217,9 +220,9 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
       userId: string,
       requete: { module?: string | undefined; periode?: Periode | undefined },
     ) {
-      const maintenant = horloge.maintenant()
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
       const formationId = await formationActiveDe(base.db, reglages.formationActive)
+      const maintenant = await maintenantDeLaFormation(base.db, horloge, userId, formationId)
       const [modules, blocs] = await Promise.all([
         depot.modulesImportes(base.db, formationId),
         depot.blocsImportes(base.db, formationId),
@@ -245,7 +248,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
           depot.coutsDepuis(
             base.db,
             userId,
-            instantEnIso(instantEnMs(maintenant) - HISTORIQUE_DES_COUTS_JOURS * JOUR_MS),
+            instantEnIso(instantEnMs(horloge.maintenant()) - HISTORIQUE_DES_COUTS_JOURS * JOUR_MS),
           ),
           aujourdhui(userId),
         ])

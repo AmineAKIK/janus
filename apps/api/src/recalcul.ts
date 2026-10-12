@@ -10,6 +10,7 @@ import {
 import type { Echeance } from '@janus/moteur'
 import type { ResultatBloc } from '@janus/moteur'
 import { and, desc, eq, isNull, ne, sql } from 'drizzle-orm'
+import { maintenantDuBloc } from './base/axeTemps.ts'
 import { lireFaits } from './base/faits.ts'
 import { nouvelId } from '@janus/contrats'
 import { instantEnMs } from '@janus/moteur'
@@ -114,7 +115,7 @@ export async function recalculerLesPerimes(base: Base, horloge: Horloge): Promis
         bloc,
         manifeste: Manifeste.parse(enService.manifeste),
         reglages: Reglages.parse(utilisateur.reglages),
-        maintenant: horloge.maintenant(),
+        maintenant: await maintenantDuBloc(tx, horloge, userId, blocId),
       })
     })
   }

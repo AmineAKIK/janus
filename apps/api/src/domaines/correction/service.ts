@@ -4,6 +4,7 @@ import { CorrectionRecue } from '@janus/contrats'
 import type { CorrectionRecue as CorrectionRecueApi } from '@janus/contrats'
 import { compte, estRecopiee, instantEnIso, instantEnMs, jourDe } from '@janus/moteur'
 import { z } from 'zod'
+import { maintenantActif, maintenantDuBloc } from '../../base/axeTemps.ts'
 import type { Base } from '../../base/base.ts'
 import { verrouBloc } from '../../base/transaction.ts'
 import {
@@ -236,7 +237,11 @@ export function creerServiceCorrection({
       if (trouve === undefined) throw introuvable('La vérification')
     } else if (serie === 'rappel') {
       // Le rappel ne dit pas son bloc : le serveur le retrouve dans la série gardée pour aujourd'hui.
-      const jour = jourDe(horloge.maintenant(), reglages.fuseau, reglages.heureBascule)
+      const jour = jourDe(
+        await maintenantActif(base.db, horloge, userId),
+        reglages.fuseau,
+        reglages.heureBascule,
+      )
       const gardee = SerieGardee.safeParse(await depot.serieDuJour(base.db, userId, jour))
       const code = gardee.success
         ? gardee.data.find(({ question: q }) => q === demande.question)?.bloc
@@ -358,7 +363,7 @@ export function creerServiceCorrection({
     const enregistrer = () =>
       base.enTransaction(async (tx) => {
         await verrouBloc(tx, userId, bloc.id)
-        const maintenant = horloge.maintenant()
+        const maintenant = await maintenantDuBloc(tx, horloge, userId, bloc.id)
         await depot.solder(tx, { userId, mois, estime, cout: essais.cout })
         const apresCoup = await depot.correctionParId(tx, demande.id)
         if (apresCoup !== undefined) return { gardee: apresCoup }
@@ -502,7 +507,7 @@ export function creerServiceCorrection({
           type: 'correction.accord',
           donnees,
           empreinte: empreinte(donnees),
-          dateServeur: horloge.maintenant(),
+          dateServeur: await maintenantDuBloc(tx, horloge, userId, trouvee.blocId),
         })
       })
     },
@@ -526,7 +531,7 @@ export function creerServiceCorrection({
       const signature = empreinte(donnees)
       return base.enTransaction(async (tx) => {
         await verrouBloc(tx, userId, bloc.id)
-        const maintenant = horloge.maintenant()
+        const maintenant = await maintenantDuBloc(tx, horloge, userId, bloc.id)
         const existant = await depot.evenementParId(tx, decision.id)
         if (existant === undefined) {
           await depot.ajouterFait(tx, {

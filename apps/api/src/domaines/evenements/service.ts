@@ -1,6 +1,7 @@
 import { Manifeste, Reglages, memeContenu, nouvelId } from '@janus/contrats'
 import type { Statut, StatutBloc } from '@janus/contrats'
 import { calculerBloc, instantEnMs } from '@janus/moteur'
+import { maintenantDuBloc } from '../../base/axeTemps.ts'
 import type { Base } from '../../base/base.ts'
 import { lireFaits } from '../../base/faits.ts'
 import { verrouBloc } from '../../base/transaction.ts'
@@ -87,7 +88,7 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
 
       return base.enTransaction(async (tx) => {
         await verrouBloc(tx, userId, bloc.id)
-        const maintenant = horloge.maintenant()
+        const maintenant = await maintenantDuBloc(tx, horloge, userId, bloc.id)
         // Le doublon rend le statut que la première réception a rendu (il se recalcule à l'identique).
         const doublon = async (existant: { userId: string; empreinte: string }) => {
           if (existant.userId !== userId || existant.empreinte !== empreinte) {
@@ -158,7 +159,7 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
           : { action: 'lever', statut: null, raison: null }
       return base.enTransaction(async (tx) => {
         await verrouBloc(tx, userId, bloc.id)
-        const maintenant = horloge.maintenant()
+        const maintenant = await maintenantDuBloc(tx, horloge, userId, bloc.id)
         const existant = await depot.forceParId(tx, demande.id)
         if (existant === undefined) {
           await depot.ajouterForce(tx, {
@@ -195,7 +196,7 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
       return base.enTransaction(async (tx) => {
         await verrouBloc(tx, userId, bloc.id)
-        const maintenant = horloge.maintenant()
+        const maintenant = await maintenantDuBloc(tx, horloge, userId, bloc.id)
         const existant = await depot.decisionParId(tx, demande.id)
         if (existant === undefined) {
           const correction = await depot.correctionParId(tx, userId, demande.correction)
@@ -241,7 +242,7 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
     async sauverEtat(userId: string, code: string, demande: { version: number; etat: unknown }) {
       const bloc = await depot.blocParCode(base.db, code)
       if (bloc === undefined) throw introuvable(`Le bloc « ${code} »`)
-      const maintenant = horloge.maintenant()
+      const maintenant = await maintenantDuBloc(base.db, horloge, userId, bloc.id)
       const version = await depot.ecrireEtat(base.db, {
         userId,
         blocId: bloc.id,

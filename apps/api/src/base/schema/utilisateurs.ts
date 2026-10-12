@@ -10,7 +10,7 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core'
-import { blocs } from './catalogue.ts'
+import { blocs, formations } from './catalogue.ts'
 
 export const users = pgTable(
   'users',
@@ -46,5 +46,32 @@ export const etatsPage = pgTable(
   (table) => [
     primaryKey({ columns: [table.userId, table.blocId] }),
     check('etats_page_version_positive', sql`${table.version} >= 1`),
+  ],
+)
+
+/**
+ * Les périodes où une formation était gelée pour un utilisateur : `debut` à la mise en pause,
+ * `fin` à la reprise (nulle tant que la formation est gelée). Le temps de la formation ne compte
+ * pas ces périodes (`base/axeTemps.ts`).
+ */
+export const pausesFormation = pgTable(
+  'pauses_formation',
+  {
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id),
+    formationId: uuid('formation_id')
+      .notNull()
+      .references(() => formations.id),
+    debut: timestamp('debut', { withTimezone: true, mode: 'string' }).notNull(),
+    fin: timestamp('fin', { withTimezone: true, mode: 'string' }),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.formationId, table.debut] }),
+    check('pauses_formation_ordre', sql`${table.fin} IS NULL OR ${table.fin} >= ${table.debut}`),
+    // Une seule pause ouverte par formation et par utilisateur.
+    uniqueIndex('pauses_formation_ouverte')
+      .on(table.userId, table.formationId)
+      .where(sql`${table.fin} IS NULL`),
   ],
 )
