@@ -22,7 +22,7 @@ export const TEXTES_VERIFICATION = {
     'Attendre un jour permet de mesurer une mémoire durable, sans confondre reconnaissance récente et maîtrise.',
   reporter: 'La reporter à demain',
   reporterTitre: 'Reporter la vérification ?',
-  reporterMessage: 'Elle reviendra demain. Tu ne la fais pas maintenant.',
+  reporterMessage: 'La vérification est reportée à demain.',
   annuler: 'Annuler',
   faireQuandMeme: 'La faire quand même',
   confiance: 'Ton niveau de confiance',

@@ -196,32 +196,34 @@ export function lignesRegles(reglages: Reglages): readonly LigneRegle[] {
 export const TEXTES_CONFIRMATION = {
   annuler: 'Annuler',
   deconnexion: {
-    titre: 'Te déconnecter ?',
-    message: 'Tu devras saisir ton mot de passe pour revenir.',
+    titre: 'Se déconnecter ?',
+    message: 'La session sera fermée sur cet appareil.',
     enAttente: (nombre: number) =>
-      `${nombre === 1 ? '1 réponse n’a' : `${String(nombre)} réponses n’ont`} pas encore été envoyée${nombre === 1 ? '' : 's'}. Janus ${nombre === 1 ? 'l’' : 'les '}envoie avant de te déconnecter.`,
+      nombre === 1
+        ? '1 réponse en attente sera envoyée avant la déconnexion.'
+        : `${String(nombre)} réponses en attente seront envoyées avant la déconnexion.`,
     bloquee: (nombre: number) =>
-      `${nombre === 1 ? '1 réponse n’a' : `${String(nombre)} réponses n’ont`} pas pu être envoyée${nombre === 1 ? '' : 's'}, faute de réseau. Reconnecte-toi à internet puis réessaie : tu ne perds rien.`,
+      `${nombre === 1 ? '1 réponse n’a' : `${String(nombre)} réponses n’ont`} pas pu être envoyée${nombre === 1 ? '' : 's'} : le réseau est indisponible. ${nombre === 1 ? 'Elle est conservée' : 'Elles sont conservées'}. Réessaie une fois la connexion rétablie.`,
   },
   appareil: {
     titre: 'Déconnecter cet appareil ?',
-    message: (appareil: string) =>
-      `${appareil} sera déconnecté. Il faudra s’y reconnecter avec ton mot de passe.`,
+    message: (appareil: string) => `La session de ${appareil} sera fermée.`,
   },
   export: {
-    titre: 'Exporter tes données ?',
+    titre: 'Exporter les données ?',
     message:
-      'Le fichier contient toutes tes données, lisibles par quiconque l’ouvre. Garde-le à l’abri.',
+      'Le fichier téléchargé contient toutes les données du compte, sans chiffrement. À conserver en lieu sûr.',
     confirmer: 'Exporter',
   },
   demoZero: {
     titre: 'Remettre la démo à zéro ?',
-    message: 'Les données de démo reviennent à leur état de départ. Ce que tu as fait est perdu.',
+    message:
+      'Les données de démo reviennent à leur état initial. Les modifications seront perdues.',
     confirmer: 'Remettre à zéro',
   },
   demoVide: {
     titre: 'Vider le compte de démo ?',
-    message: 'Les données de démo sont toutes effacées. Ce que tu as fait est perdu.',
+    message: 'Toutes les données de démo seront supprimées.',
     confirmer: 'Vider le compte',
   },
 } as const
