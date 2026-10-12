@@ -220,6 +220,8 @@ export function creerRouteur(historique: RouterHistory, contexte: ContexteRouteu
     routeTree: arbre,
     history: historique,
     context: contexte,
+    // Un fondu entre deux pages (navigateurs qui savent le faire ; ailleurs, la page change comme avant).
+    defaultViewTransition: true,
     defaultNotFoundComponent: PageIntrouvable,
     defaultErrorComponent: PageErreur,
   })

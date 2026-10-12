@@ -1,0 +1,23 @@
+/* Fondu entre deux pages : seul le contenu change, la navigation reste fixe. */
+main {
+  view-transition-name: contenu;
+}
+
+::view-transition-old(contenu),
+::view-transition-new(contenu) {
+  animation-duration: 180ms;
+  animation-timing-function: ease;
+}
+
+/* Le reste de la page (fond, navigation) ne se fond pas. */
+::view-transition-group(root) {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
+}

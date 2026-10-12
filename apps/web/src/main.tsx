@@ -1,5 +1,6 @@
 import '@janus/ui/tokens.css'
 import '@janus/ui/typographie.css'
+import './transitions.css'
 import { RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
