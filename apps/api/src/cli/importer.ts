@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises'
+import { SchemaImport } from '../config.ts'
 import { creerBase } from '../base/base.ts'
 import { ErreurImport, monterImportation } from '../domaines/catalogue/composition.ts'
 import { horlogeSysteme } from '../horloge.ts'
@@ -13,13 +14,13 @@ export async function lancerImport(
   ) => Promise<string>,
 ): Promise<void> {
   const fichier = process.argv[2]
-  const url = process.env['DATABASE_URL']
-  const dossier = process.env['FICHES_DIR']
-  if (fichier === undefined || url === undefined || dossier === undefined) {
+  const environnement = SchemaImport.safeParse(process.env)
+  if (fichier === undefined || !environnement.success) {
     process.stderr.write(`Usage : DATABASE_URL=… FICHES_DIR=… ${usage}\n`)
     process.exitCode = 1
     return
   }
+  const { DATABASE_URL: url, FICHES_DIR: dossier } = environnement.data
   const base = creerBase(url)
   try {
     const service = monterImportation(base, horlogeSysteme, dossier)

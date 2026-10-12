@@ -32,7 +32,7 @@ registerRoute(
 // Hors ligne, toute navigation retombe sur la coque, sauf celle d'un aperçu de PR.
 registerRoute(
   new NavigationRoute(createHandlerBoundToURL(`${BASE}index.html`), {
-    denylist: [/\/pr-preview\//],
+    denylist: [/\/pr-preview\//, /\/api\//],
   }),
 )
 

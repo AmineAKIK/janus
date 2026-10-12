@@ -44,7 +44,8 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('rappels contre PostgreSQL', () 
   let sequence = 0
   const identifiant = () => nouvelId(Date.parse('2026-10-01T10:00:00.000Z') + (sequence += 1))
   const expirees = new Set<string>()
-  const faux = creerEnvoyeurFaux(expirees)
+  const enPanne = new Set<string>()
+  const faux = creerEnvoyeurFaux(expirees, enPanne)
 
   const envoyer = (methode: 'POST' | 'DELETE', url: string, payload?: Record<string, unknown>) =>
     s.app.inject({
@@ -261,8 +262,57 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('rappels contre PostgreSQL', () 
 
       const bilan = await s.app.envoyerLesRappels()
 
-      expect(bilan).toEqual({ rappels: 1, abonnementsSupprimes: 1, echecs: 0 })
+      expect(bilan).toEqual({ rappels: 1, abonnementsSupprimes: 1, echecs: 0, causes: [] })
       expect(await abonnements()).toEqual([])
+    })
+
+    it('une panne du service de push est dite, ne consomme pas le jour, et le passage suivant réessaie', async () => {
+      s.horloge.placer('2026-10-08T17:30:00.000Z')
+      await bases.db
+        .update(t.users)
+        .set({ reglages: Reglages.parse({}) })
+        .where(eq(t.users.id, userId))
+      await bases.db.insert(t.abonnementsPush).values({
+        id: identifiant(),
+        userId,
+        endpoint: ABONNEMENT.endpoint,
+        p256dh: ABONNEMENT.cles.p256dh,
+        auth: ABONNEMENT.cles.auth,
+        creeLe: '2026-10-08T10:00:00.000Z',
+      })
+      expirees.delete(ABONNEMENT.endpoint)
+      const envoisAvant = faux.envois.length
+      enPanne.add(ABONNEMENT.endpoint)
+
+      const bilan = await s.app.envoyerLesRappels()
+
+      expect(bilan).toMatchObject({ rappels: 0, echecs: 1 })
+      expect(bilan.causes).toEqual(['Error : Le service de push ne répond pas'])
+      expect(bilan.causes.join(' ')).not.toContain(ABONNEMENT.endpoint)
+      const { rows } = await bases.pool.query(
+        "SELECT 1 FROM rappels_envoyes WHERE user_id = $1 AND jour = '2026-10-08'",
+        [userId],
+      )
+      expect(rows).toHaveLength(0)
+
+      enPanne.delete(ABONNEMENT.endpoint)
+      const reprise = await s.app.envoyerLesRappels()
+
+      expect(reprise).toMatchObject({ rappels: 1, echecs: 0 })
+      expect(faux.envois).toHaveLength(envoisAvant + 1)
+    })
+
+    it('sans appareil abonné, le jour n’est pas consommé', async () => {
+      s.horloge.placer('2026-10-09T17:30:00.000Z')
+      await bases.pool.query('DELETE FROM abonnements_push WHERE user_id = $1', [userId])
+
+      expect((await s.app.envoyerLesRappels()).rappels).toBe(0)
+
+      const { rows } = await bases.pool.query(
+        "SELECT 1 FROM rappels_envoyes WHERE user_id = $1 AND jour = '2026-10-09'",
+        [userId],
+      )
+      expect(rows).toHaveLength(0)
     })
   })
 })

@@ -74,6 +74,13 @@ export function creerDepotRappels() {
         )
     },
 
+    /** Rend le jour : le rappel n'a pu être envoyé à personne, le prochain passage le retentera. */
+    liberer: async (lecteur: Db | Tx, userId: string, jour: string): Promise<void> => {
+      await lecteur
+        .delete(t.rappelsEnvoyes)
+        .where(and(eq(t.rappelsEnvoyes.userId, userId), eq(t.rappelsEnvoyes.jour, jour)))
+    },
+
     /** Réserve le rappel du jour avant l'envoi : faux si un autre passage l'a déjà réservé. */
     reserver: async (
       lecteur: Db | Tx,

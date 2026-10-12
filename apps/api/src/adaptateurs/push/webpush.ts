@@ -29,3 +29,11 @@ export function creerWebPush({ sujet, clePublique, clePrivee }: ConfigWebPush): 
     },
   }
 }
+
+/**
+ * Refuse de démarrer avec des clés VAPID inutilisables : sinon l'API répond normalement et chaque
+ * rappel échoue en silence. Lève avec la raison de `web-push`.
+ */
+export function verifierCleVapid({ sujet, clePublique, clePrivee }: ConfigWebPush): void {
+  webpush.setVapidDetails(sujet, clePublique, clePrivee)
+}

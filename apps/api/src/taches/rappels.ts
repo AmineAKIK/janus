@@ -26,10 +26,13 @@ export async function demarrerLesTaches({
   proprietaire,
   envoyerLesRappels,
   erreur,
+  info,
 }: {
   readonly proprietaire: Base
   readonly envoyerLesRappels: () => Promise<BilanDesRappels>
   readonly erreur: (message: string, cause: unknown) => void
+  /** Le bilan d'un passage qui a envoyé quelque chose ou échoué. */
+  readonly info: (message: string, donnees: BilanDesRappels) => void
 }): Promise<TachesPlanifiees> {
   const boss = new PgBoss({
     db: {
@@ -52,7 +55,11 @@ export async function demarrerLesTaches({
     singletonSeconds: SECONDES_ENTRE_DEUX_PASSAGES,
   })
   await boss.work(FILE_RAPPELS, async () => {
-    await envoyerLesRappels()
+    const bilan = await envoyerLesRappels()
+    if (bilan.rappels > 0 || bilan.echecs > 0 || bilan.abonnementsSupprimes > 0) {
+      info('Rappels envoyés', bilan)
+    }
+    if (bilan.echecs > 0) erreur('Rappels en échec', new Error(bilan.causes.join(' ; ')))
   })
   return { boss, arreter: () => boss.stop({ graceful: true, timeout: ARRET_TACHES_MS }) }
 }

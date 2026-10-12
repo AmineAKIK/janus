@@ -8,10 +8,11 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('tâche des rappels contre Postg
   let bases: Awaited<ReturnType<typeof creerBaseDeTest>>
   let taches: TachesPlanifiees
   const envoyerLesRappels = vi.fn(() =>
-    Promise.resolve({ rappels: 0, abonnementsSupprimes: 0, echecs: 0 }),
+    Promise.resolve({ rappels: 0, abonnementsSupprimes: 0, echecs: 0, causes: [] as string[] }),
   )
 
   const erreursDeLaFile: unknown[] = []
+  const bilansJournalises: string[] = []
 
   beforeAll(async () => {
     bases = await creerBaseDeTest(URL_SERVEUR_TEST ?? '')
@@ -20,6 +21,9 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('tâche des rappels contre Postg
       envoyerLesRappels,
       erreur: (_message, cause) => {
         erreursDeLaFile.push(cause)
+      },
+      info: (message) => {
+        bilansJournalises.push(message)
       },
     })
   })
@@ -47,6 +51,28 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('tâche des rappels contre Postg
       },
       { timeout: 15_000 },
     )
+  })
+
+  it('journalise un passage qui a envoyé ou échoué, pas un passage à vide', async () => {
+    expect(bilansJournalises).toEqual([])
+    envoyerLesRappels.mockResolvedValueOnce({
+      rappels: 1,
+      abonnementsSupprimes: 0,
+      echecs: 1,
+      causes: ['Error : panne'],
+    })
+    const erreursAvant = erreursDeLaFile.length
+
+    await taches.boss.send(FILE_RAPPELS)
+
+    await vi.waitFor(
+      () => {
+        expect(bilansJournalises).toEqual(['Rappels envoyés'])
+      },
+      { timeout: 15_000 },
+    )
+    expect(erreursDeLaFile).toHaveLength(erreursAvant + 1)
+    erreursDeLaFile.length = 0
   })
 
   it('la supervision de la file (expiration, archivage) passe sans erreur', async () => {

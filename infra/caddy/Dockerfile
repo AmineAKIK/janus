@@ -1,4 +1,4 @@
-# Caddy avec le front (transport http, historique par chemins) copié dedans.
+# L'image web de l'hébergement du VPS : Caddy, sa configuration et le front (transport http, historique par chemins).
 #   docker build -f infra/caddy/Dockerfile .   (depuis la racine du dépôt)
 FROM node:24-slim AS front
 RUN corepack enable
@@ -12,4 +12,5 @@ RUN pnpm --filter @janus/web exec vite build --outDir /front
 
 FROM caddy:2
 COPY --from=front /front /srv/app
-COPY infra/caddy/Caddyfile /etc/caddy/Caddyfile
+# La configuration de Caddy vit avec l'hebergement et part dans l'image : elle suit le SHA deploye.
+COPY deploy/vps/Caddyfile /etc/caddy/Caddyfile

@@ -116,7 +116,8 @@ function politiquesDeProduction() {
     const debut = appli.indexOf(bloc)
     const politique = /Content-Security-Policy "([^"]+)"/.exec(appli.slice(debut))?.[1]
     if (debut < 0 || politique === undefined) throw new Error(`Politique introuvable : ${bloc}`)
-    return politique
+    // Caddy remplace `{$VARIABLE:}` par sa valeur, vide quand elle n'est pas posée.
+    return politique.replace(/\s*\{\$[A-Z_]+:\}/g, '')
   }
   return { executeur: pour('handle /executeur.html'), appli: pour('\n    handle {') }
 }
