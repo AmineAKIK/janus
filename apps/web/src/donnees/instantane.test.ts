@@ -30,6 +30,14 @@ describe('instantané des données', () => {
     expect(client.getQueryState(REGLAGES)?.dataUpdatedAt).toBe(5000)
   })
 
+  it('marque ce qui est repris comme périmé, pour que chaque écran le relise', () => {
+    const origine = new QueryClient()
+    origine.setQueryData(REGLAGES, Reglages.parse({}), { updatedAt: Date.now() })
+    const client = new QueryClient()
+    restaurer(client, JSON.parse(JSON.stringify(capturer(origine))) as unknown)
+    expect(client.getQueryState(REGLAGES)?.isInvalidated).toBe(true)
+  })
+
   it('jette ce qui ne passe plus le schéma de sa route, ou qui n’a pas lieu d’être gardé', () => {
     const client = new QueryClient()
     const brut = {

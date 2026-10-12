@@ -50,6 +50,8 @@ export function restaurer(client: QueryClient, brut: unknown): number {
     client.setQueryData(cle, valide.data, { updatedAt: misAJour })
     reprises += 1
   }
+  // Reprises de l'appareil, jamais présumées à jour : elles s'affichent d'abord, puis chaque écran les relit.
+  if (reprises > 0) void client.invalidateQueries({ refetchType: 'none' })
   return reprises
 }
 
