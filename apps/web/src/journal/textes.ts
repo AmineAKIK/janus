@@ -30,7 +30,6 @@ export const TEXTES_JOURNAL = {
   exportMessage:
     'Le fichier contient tout ton journal, lisible par quiconque l’ouvre. Garde-le à l’abri.',
   exporter: 'Exporter',
-  annuler: 'Annuler',
   erreurExport: 'L’export n’a pas pu être fait. Réessaie.',
   videFiltres: 'Rien dans le journal pour ces filtres.',
   videSansFiltre: 'Le journal se remplit dès ta première séance.',
