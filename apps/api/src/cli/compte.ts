@@ -1,7 +1,7 @@
 import { nouvelId, Reglages } from '@janus/contrats'
 import { instantEnMs } from '@janus/moteur'
 import type { Base } from '../base/base.ts'
-import * as t from '../base/schema/index.ts'
+import { ajouterUtilisateur } from '../domaines/auth/composition.ts'
 import type { Hacheur } from '../domaines/auth/composition.ts'
 import type { Horloge } from '../horloge.ts'
 
@@ -29,7 +29,7 @@ export async function creerCompte(
   const maintenant = horloge.maintenant()
   const id = nouvelId(instantEnMs(maintenant))
   try {
-    await base.db.insert(t.users).values({
+    await ajouterUtilisateur(base, {
       id,
       nomUtilisateur: nom,
       motDePasseHash: await hacheur.hacher(motDePasse),

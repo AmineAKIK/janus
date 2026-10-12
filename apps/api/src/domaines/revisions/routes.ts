@@ -1,18 +1,7 @@
 import { ROUTES } from '@janus/contrats'
-import type { DefinitionRoute } from '@janus/contrats'
 import type { FastifyPluginAsync } from 'fastify'
 import type { ControleurRevisions } from './controleur.ts'
-
-/** Le schéma Fastify d'une route du contrat : entrée validée, sortie filtrée. */
-function schemaDe(definition: DefinitionRoute) {
-  return {
-    ...(definition.params === undefined ? {} : { params: definition.params }),
-    ...(definition.corps === undefined ? {} : { body: definition.corps }),
-    ...(definition.reponse === null
-      ? {}
-      : { response: { [definition.succes]: definition.reponse } }),
-  }
-}
+import { schemaDe } from '../../plugins/contrat.ts'
 
 /** La séance du jour : questions de début, cartes, vérifications. Sous `/api`. */
 export function routesRevisions(controleur: ControleurRevisions): FastifyPluginAsync {

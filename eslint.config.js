@@ -206,10 +206,16 @@ export default defineConfig(
       ],
     },
   },
-  // Le SQL vit dans les dépôts : ni un service, ni un contrôleur, ni une route n'importe drizzle-orm.
+  // Le SQL vit dans les dépôts (`depot.ts` d'un domaine, `base/` pour ce qui est partagé, `banc/` pour la graine
+  // des essais) : ni un service, ni un contrôleur, ni une route, ni une commande n'importe drizzle-orm.
   {
-    files: ['apps/api/src/domaines/**/*.ts'],
-    ignores: ['apps/api/src/domaines/**/depot.ts', 'apps/api/src/**/*.test.ts'],
+    files: ['apps/api/src/**/*.ts'],
+    ignores: [
+      'apps/api/src/domaines/**/depot.ts',
+      'apps/api/src/base/**',
+      'apps/api/src/banc/**',
+      'apps/api/src/**/*.test.ts',
+    ],
     rules: {
       'no-restricted-imports': [
         'error',
