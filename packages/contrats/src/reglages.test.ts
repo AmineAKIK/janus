@@ -62,8 +62,13 @@ describe('Reglages', () => {
   })
 
   it('accepte une date de pause des rappels', () => {
-    const reglages = Reglages.parse({ rappelsEnPauseJusquAu: '2026-12-31T00:00:00Z' })
-    expect(reglages.rappelsEnPauseJusquAu).toBe('2026-12-31T00:00:00Z')
+    const reglages = Reglages.parse({ rappelsEnPauseJusquAu: '2026-12-31' })
+    expect(reglages.rappelsEnPauseJusquAu).toBe('2026-12-31')
+  })
+
+  it("refuse une pause qui n'est pas un jour : elle suspendrait les rappels pour toujours", () => {
+    expect(Reglages.safeParse({ rappelsEnPauseJusquAu: 'bientôt' }).success).toBe(false)
+    expect(Reglages.safeParse({ rappelsEnPauseJusquAu: '2026-13-40' }).success).toBe(false)
   })
 
   it('refuse un type incorrect pour les clés sans bornes', () => {

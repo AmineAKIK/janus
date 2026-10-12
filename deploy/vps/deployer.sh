@@ -83,6 +83,19 @@ fi
 phase=construction
 git -C "$depot" checkout --quiet --detach "$cible"
 cd "$depot"
+# Les scripts installes ne sont jamais mis a jour par un deploiement : on signale tout ecart avec le depot,
+# et on refuse une migration tant que la sauvegarde ou la restauration installees ne sont pas a jour.
+ecarts=()
+for paire in janus-deploy:deployer.sh janus-deploy-ssh:ssh.sh janus-backup:sauvegarder.sh janus-restore:restaurer.sh; do
+  if ! cmp -s "deploy/vps/${paire#*:}" "/usr/local/bin/${paire%%:*}"; then ecarts+=("${paire%%:*}"); fi
+done
+if ((${#ecarts[@]} > 0)); then
+  journal "Scripts installes differents du depot: ${ecarts[*]}"
+  if ((migration == 1)); then
+    journal 'Migration refusee: recopier les scripts janus-* depuis deploy/vps (voir le README)'
+    exit 1
+  fi
+fi
 # Le suivi d'erreurs du front est fixe a la construction : son adresse vient de janus.env.
 sentry=$(sed -n 's/^SENTRY_DSN=//p' /etc/janus/janus.env | tail -n 1 | tr -d "\"'")
 docker build --pull --label "org.opencontainers.image.revision=$cible" -f apps/api/Dockerfile -t "janus-api:$cible" .

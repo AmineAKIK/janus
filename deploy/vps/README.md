@@ -20,7 +20,7 @@ installes par un administrateur sous `/usr/local/bin/janus-deploy`,
 `/usr/local/bin/janus-restore`, en root:root 0755. Seules ces copies administratives sont
 executees (elles ne sont pas mises a jour par un deploiement : apres un changement de ces
 scripts dans le depot, les recopier). Le checkout ne fournit jamais le script privilegie au
-moment du deploiement.
+moment du deploiement. Le deploiement compare les copies installees avec le depot : un ecart est journalise, et une migration est refusee tant que les scripts ne sont pas recopies.
 
 Dossiers a creer une fois : `/etc/janus` (0755), `/var/lib/janus-deploy` et `/var/backups/janus`
 (0700). Copier `compose.yml` dans `/etc/janus/`, creer `janus.env` (0600) d'apres

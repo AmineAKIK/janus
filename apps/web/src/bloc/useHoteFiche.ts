@@ -50,14 +50,15 @@ export interface ReponseStatut {
 }
 
 /** Ce que la page apprend d'un message refusé : le plafond, la panne de l'IA, ou un simple refus. */
-function causeDeRefus(erreur: unknown): {
+export function causeDeRefus(erreur: unknown): {
   code: 'correction_indisponible' | 'plafond_atteint' | 'message_refuse'
   detail: string
 } {
-  if (erreur instanceof ErreurApi && erreur.status === 429) {
+  if (erreur instanceof ErreurApi && erreur.code === 'budget_atteint') {
     return { code: 'plafond_atteint', detail: 'plafond atteint' }
   }
-  if (erreur instanceof ErreurApi && erreur.status === 503) {
+  // Trop de requêtes d'un coup (429) ou IA en panne (503) : le plafond n'est pas en cause, on peut réessayer.
+  if (erreur instanceof ErreurApi && (erreur.status === 429 || erreur.status === 503)) {
     return { code: 'correction_indisponible', detail: 'correction indisponible' }
   }
   return { code: 'message_refuse', detail: 'message refusé' }
