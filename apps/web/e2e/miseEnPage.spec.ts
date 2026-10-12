@@ -166,6 +166,8 @@ for (const theme of themes) {
           await ouvrirSession(page)
           await page.goto(ecran.chemin)
           await expect(page.locator('main, [role="main"]').first()).toBeVisible()
+          // Les écrans se chargent à la demande : on mesure une fois leurs morceaux arrivés.
+          await page.waitForLoadState('networkidle')
           await page.evaluate(() => document.fonts.ready)
 
           const problemes = await mesurer(page)
