@@ -24,6 +24,8 @@ export const ENVIRONNEMENT_TEST = {
   VAPID_PRIVATE_KEY: 'privee',
   VAPID_SUJET: 'mailto:amine@example.test',
   NIVEAU_JOURNAL: 'info',
+  // Les suites enchaînent plus de demandes par minute que l'usage réel : le plafond y est desserré.
+  CORRECTIONS_PAR_MINUTE: '1000',
 }
 
 export function configDeTest(surcharge: Readonly<Record<string, string>> = {}): Config {

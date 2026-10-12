@@ -176,6 +176,21 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('écritures du journal contre Po
     expect(Number(rows[0]?.n)).toBe(1)
   })
 
+  it('refuse (422) le même identifiant avec un autre texte, pour une idée comme pour une revue', async () => {
+    const id = identifiant()
+    await envoyer('POST', '/api/journal/idees', { id, texte: 'regarder les index' })
+    const idee = await envoyer('POST', '/api/journal/idees', { id, texte: 'autre chose' })
+    const idRevue = identifiant()
+    await envoyer('POST', '/api/revues-methode', { id: idRevue, texte: 'tout va bien' })
+    const revue = await envoyer('POST', '/api/revues-methode', { id: idRevue, texte: 'non' })
+
+    expect(idee.statusCode).toBe(422)
+    expect(revue.statusCode).toBe(422)
+    // Les autres tests comptent les lignes de ce compte.
+    await bases.pool.query('DELETE FROM idees WHERE id = $1', [id])
+    await bases.pool.query('DELETE FROM revues_methode WHERE id = $1', [idRevue])
+  })
+
   it('enregistre une revue de la méthode (204), rejouée sans doublon', async () => {
     const corps = { id: identifiant(), texte: 'tout va bien' }
 

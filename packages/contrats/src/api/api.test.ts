@@ -218,6 +218,8 @@ describe('les erreurs', () => {
       modifie_le: '2026-06-01T10:00:00Z',
     }
     expect(ConflitEtatPage.safeParse(conflit).success).toBe(true)
+    expect(ConflitEtatPage.safeParse({ ...conflit, version: 0, etat: {} }).success).toBe(true)
+    expect(ConflitEtatPage.safeParse({ ...conflit, version: -1 }).success).toBe(false)
     expect(ConflitEtatPage.safeParse({ ...conflit, status: 404 }).success).toBe(false)
     expect(ConflitEtatPage.safeParse({ ...conflit, etat: null }).success).toBe(false)
   })

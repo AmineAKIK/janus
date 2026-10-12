@@ -492,6 +492,25 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('POST /corrections contre Postgr
       expect((await budget())?.reserve).toBe(0)
     })
 
+    it('limite la rafale de demandes par minute et par adresse (429 avec retry-after)', async () => {
+      const base = baseDepuisPool(bases.db, bases.pool)
+      const limite = await serveurDeTest({
+        base,
+        proprietaire: base,
+        hacheur: creerHacheur(4),
+        config: configDeTest({ NIVEAU_JOURNAL: 'silent', CORRECTIONS_PAR_MINUTE: '2' }),
+        correcteur: faux,
+      })
+      const statuts: number[] = []
+      for (let essai = 0; essai < 3; essai += 1) {
+        statuts.push((await corriger({ ...demande(), id: identifiant() }, limite)).statusCode)
+      }
+
+      expect(statuts.slice(0, 2)).not.toContain(429)
+      expect(statuts[2]).toBe(429)
+      await limite.app.close()
+    })
+
     it('limite le nombre d’appels par heure (429, trop_de_requetes)', async () => {
       await reglages({ appelsIaParHeure: 1 })
 
@@ -531,6 +550,23 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('POST /corrections contre Postgr
       )
       expect(rows.map(({ donnees }) => donnees.accord)).toEqual([true, false])
       expect(await compter('statuts_courants')).toBe(statuts)
+    })
+
+    it('ne garde pas deux fois le même avis quand il est renvoyé', async () => {
+      await poster(`${correction}/accord`, { accord: true })
+      const avant = await bases.pool.query(
+        "SELECT 1 FROM evenements WHERE type = 'correction.accord' AND donnees->>'correction' = $1",
+        [correction],
+      )
+
+      const rejeu = await poster(`${correction}/accord`, { accord: true })
+
+      expect(rejeu.statusCode).toBe(204)
+      const apres = await bases.pool.query(
+        "SELECT 1 FROM evenements WHERE type = 'correction.accord' AND donnees->>'correction' = $1",
+        [correction],
+      )
+      expect(apres.rowCount).toBe(avant.rowCount)
     })
 
     it('répond 404 pour une correction inconnue', async () => {

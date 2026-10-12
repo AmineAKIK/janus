@@ -50,7 +50,10 @@ export function monterCorrection({ base, horloge, config, correcteur, hasard }: 
   })
   return {
     routes: async (app, options) => {
-      await routesCorrection(creerControleurCorrection(service))(app, options)
+      await routesCorrection(creerControleurCorrection(service), config.CORRECTIONS_PAR_MINUTE)(
+        app,
+        options,
+      )
     },
     corrigerPartie: (userId, demande) =>
       service.corriger(userId, { ...demande, serie: 'verification', tentative: 1, relance: '' }),

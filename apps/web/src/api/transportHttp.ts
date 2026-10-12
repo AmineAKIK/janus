@@ -1,4 +1,5 @@
 import {
+  ConflitEtatPage,
   ErreurApi,
   ErreurReseau,
   ProblemeApi,
@@ -48,15 +49,19 @@ async function lireCorps(reponse: Response): Promise<unknown> {
 
 /** Transforme une réponse d'erreur (`problem+json`) en `ErreurApi`. */
 async function erreurDeReponse(reponse: Response): Promise<ErreurApi> {
-  const probleme = ProblemeApi.safeParse(await lireCorps(reponse))
+  const corps = await lireCorps(reponse)
+  // Le 409 de l'état de page ajoute l'état actuel au problème : c'est bien un conflit, pas une panne.
+  const probleme = ProblemeApi.safeParse(corps)
+  const conflit = probleme.success ? undefined : ConflitEtatPage.safeParse(corps)
   const retryAfter = delaiRetryAfter(reponse)
   const suite = retryAfter === undefined ? {} : { retryAfter }
-  if (probleme.success) {
+  const lu = probleme.success ? probleme.data : conflit?.success ? conflit.data : undefined
+  if (lu !== undefined) {
     return new ErreurApi({
       status: reponse.status,
-      code: probleme.data.code,
-      titre: probleme.data.title,
-      detail: probleme.data.detail,
+      code: lu.code,
+      titre: lu.title,
+      detail: lu.detail,
       ...suite,
     })
   }

@@ -12,6 +12,10 @@ export const PAS_ACTIVITE_MS = MINUTE_MS
 /** Les essais de connexion : 5 par minute. */
 export const ESSAIS_PAR_MINUTE = 5
 export const FENETRE_ESSAIS_MS = MINUTE_MS
+/** Par adresse, tous noms confondus : borne le travail de hachage d'un flot de faux noms. */
+export const CONNEXIONS_PAR_ADRESSE_PAR_MINUTE = 20
+/** Changer le mot de passe ou supprimer le compte : le mot de passe actuel est redemandé, 5 essais par minute. */
+export const VERIFICATIONS_PAR_MINUTE = 5
 
 export interface EtatSession {
   readonly expireLe: string
@@ -37,10 +41,11 @@ export function octets(texte: string): number {
 export const OCTETS_MAX = 72
 
 /**
- * Le limiteur d'essais de connexion : au plus 5 par minute et par clé (adresse + nom d'utilisateur).
- * Fenêtre glissante, en mémoire : l'API tourne sur un seul serveur.
+ * Le limiteur d'essais : au plus `max` par minute et par clé (adresse, adresse + nom, utilisateur).
+ * Fenêtre glissante, en mémoire : l'API tourne sur un seul serveur. Un succès efface la clé
+ * (`oublier`) : seuls les échecs comptent contre elle.
  */
-export function creerLimiteur() {
+export function creerLimiteur(max = ESSAIS_PAR_MINUTE) {
   const essais = new Map<string, number[]>()
   return {
     /** Compte un essai ; si la clé en a trop, rend dans combien de secondes réessayer. */
@@ -56,7 +61,7 @@ export function creerLimiteur() {
       }
       const recents = essais.get(cle) ?? []
       const plusAncien = recents[0]
-      if (recents.length >= ESSAIS_PAR_MINUTE && plusAncien !== undefined) {
+      if (recents.length >= max && plusAncien !== undefined) {
         return {
           autorise: false,
           reessayerDansS: Math.max(1, Math.ceil((plusAncien + FENETRE_ESSAIS_MS - ms) / 1000)),
@@ -64,6 +69,9 @@ export function creerLimiteur() {
       }
       essais.set(cle, [...recents, ms])
       return { autorise: true }
+    },
+    oublier(cle: string): void {
+      essais.delete(cle)
     },
   }
 }

@@ -3,6 +3,7 @@ import {
   boolean,
   check,
   date,
+  foreignKey,
   index,
   integer,
   jsonb,
@@ -59,6 +60,12 @@ export const evenements = pgTable(
   },
   (table) => [
     index('evenements_user_bloc_date').on(table.userId, table.blocId, table.dateServeur),
+    // La version de fiche d'un événement appartient à son bloc.
+    foreignKey({
+      name: 'evenements_version_du_bloc',
+      columns: [table.blocId, table.ficheVersionId],
+      foreignColumns: [fichesVersions.blocId, fichesVersions.id],
+    }),
     check('evenements_aide_0_a_4', sql`${table.aide} BETWEEN 0 AND 4`),
     check('evenements_empreinte_sha256', SHA256(table.empreinte)),
   ],

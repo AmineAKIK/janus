@@ -15,11 +15,21 @@ function schemaDe(definition: DefinitionRoute) {
 }
 
 /** La correction par l'IA. Sous `/api`. */
-export function routesCorrection(controleur: ControleurCorrection): FastifyPluginAsync {
+export function routesCorrection(
+  controleur: ControleurCorrection,
+  correctionsParMinute: number,
+): FastifyPluginAsync {
   return (app) => {
     app.post(
       ROUTES['POST /corrections'].chemin,
-      { config: { identifiant: true }, schema: schemaDe(ROUTES['POST /corrections']) },
+      {
+        // Le plafond horaire en base borne le coût ; celui-ci borne la rafale.
+        config: {
+          identifiant: true,
+          rateLimit: { max: correctionsParMinute, timeWindow: '1 minute' },
+        },
+        schema: schemaDe(ROUTES['POST /corrections']),
+      },
       controleur.corriger,
     )
     app.post(

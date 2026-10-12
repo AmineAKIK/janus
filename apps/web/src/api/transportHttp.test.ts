@@ -166,6 +166,33 @@ describe('erreurs', () => {
     expect(erreur).toMatchObject({ status: 401, code: 'non_authentifie', retryAfter: undefined })
   })
 
+  it('lit le 409 de l’état de page (le problème et l’état actuel) comme un conflit', async () => {
+    const { transport } = transportAvec(
+      reponseJson(
+        {
+          ...probleme,
+          status: 409,
+          code: 'conflit',
+          title: 'Conflit',
+          detail: 'L’état de la page a changé.',
+          version: 3,
+          etat: { etape: 'ET2' },
+          modifie_le: '2026-10-01T10:00:00.000Z',
+        },
+        { status: 409 },
+      ),
+    )
+
+    const erreur: unknown = await transport.appeler(ROUTES['GET /moi'], {}).catch((e: unknown) => e)
+
+    expect(erreur).toMatchObject({
+      status: 409,
+      code: 'conflit',
+      titre: 'Conflit',
+      detail: 'L’état de la page a changé.',
+    })
+  })
+
   it('ne devine pas le contenu d’une erreur qui n’est pas un problem+json', async () => {
     const { transport } = transportAvec(
       new Response('Bad Gateway', { status: 502, headers: { 'Content-Type': 'text/html' } }),

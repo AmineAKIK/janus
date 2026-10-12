@@ -1,4 +1,4 @@
-import { Manifeste, Reglages, nouvelId } from '@janus/contrats'
+import { Manifeste, Reglages, memeContenu, nouvelId } from '@janus/contrats'
 import type { Statut, StatutBloc } from '@janus/contrats'
 import { calculerBloc, instantEnMs } from '@janus/moteur'
 import type { Base } from '../../base/base.ts'
@@ -88,17 +88,18 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
       return base.enTransaction(async (tx) => {
         await verrouBloc(tx, userId, bloc.id)
         const maintenant = horloge.maintenant()
-        const existant = await depot.evenementParId(tx, message.id)
-        if (existant !== undefined) {
+        // Le doublon rend le statut que la première réception a rendu (il se recalcule à l'identique).
+        const doublon = async (existant: { userId: string; empreinte: string }) => {
           if (existant.userId !== userId || existant.empreinte !== empreinte) {
             throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
           }
-          // Le doublon rend le statut que la première réception a rendu (il se recalcule à l'identique).
           if (!enregistrement.changeLeStatut) return { doublon: true, statut: null }
           const actuel = await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant })
           return { doublon: true, statut: versStatutBloc(actuel) }
         }
-        await depot.ajouterEvenement(tx, {
+        const existant = await depot.evenementParId(tx, message.id)
+        if (existant !== undefined) return doublon(existant)
+        const ajoute = await depot.ajouterEvenement(tx, {
           id: message.id,
           userId,
           blocId: bloc.id,
@@ -109,6 +110,11 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
           aide: enregistrement.aide,
           dateServeur: maintenant,
         })
+        if (!ajoute) {
+          // Un autre bloc a pris l'identifiant entre la lecture et l'écriture.
+          const concurrent = await depot.evenementParId(tx, message.id)
+          if (concurrent !== undefined) return doublon(concurrent)
+        }
         if (message.type === 'bilan.erreurs') {
           const faits = await lireFaits(tx, userId, [bloc])
           const ouvertes = calculerBloc(faits, manifeste, reglages, maintenant).erreursOuvertes
@@ -245,6 +251,14 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
       })
       if (version !== undefined) return { version }
       const actuel = await depot.etatActuel(base.db, userId, bloc.id)
+      // Rejeu après une réponse perdue : l'écriture a eu lieu, l'état est celui qu'on envoie.
+      if (
+        actuel !== undefined &&
+        actuel.version === demande.version + 1 &&
+        memeContenu(actuel.etat, demande.etat)
+      ) {
+        return { version: actuel.version }
+      }
       if (actuel === undefined) {
         // Version lue > 0 mais aucun état : l'onglet vient d'ailleurs, il repart de zéro.
         throw new ConflitEtatPage({ version: 0, etat: {}, modifie_le: maintenant })

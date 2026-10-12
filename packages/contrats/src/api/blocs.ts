@@ -96,14 +96,17 @@ export const ROUTES_BLOCS = {
   },
 } satisfies Record<string, DefinitionRoute>
 
-/** Le conflit de version d'un état de page : la réponse 409 porte l'état actuel. */
+/**
+ * Le conflit de version d'un état de page : la réponse 409 porte l'état actuel. La version est 0
+ * quand l'onglet en annonçait une et qu'aucun état n'existe (il repart de zéro).
+ */
 export const ConflitEtatPage = z.strictObject({
   type: z.string().min(1),
   title: z.string().min(1),
   status: z.literal(409),
   detail: z.string(),
   code: z.literal('conflit'),
-  version: z.number().int().min(1),
+  version: z.number().int().min(0),
   etat: EtatPage,
   modifie_le: InstantUtc,
 })

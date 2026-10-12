@@ -277,7 +277,9 @@ export function creerServiceRevisions({
           dateServeur: maintenant,
         })
         const apresCoup = lues(await depot.evenementsDeVerification(tx, userId, id))
-        if (!ajoute || apresCoup.parties.length < tirage.length) {
+        // Les parties distinctes : deux réponses à la même partie ne comptent que pour une.
+        const reponduesDistinctes = new Set(apresCoup.parties.map(({ partie }) => partie)).size
+        if (!ajoute || reponduesDistinctes < tirage.length) {
           return rendre(apresCoup.resultat)
         }
 

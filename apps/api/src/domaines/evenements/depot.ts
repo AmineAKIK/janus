@@ -90,8 +90,18 @@ export function creerDepotEvenements() {
       return ligne
     },
 
-    ajouterEvenement: async (tx: Tx, evenement: Evenement): Promise<void> => {
-      await tx.insert(t.evenements).values(evenement)
+    /**
+     * Ajoute l'événement ; rend faux si l'identifiant existait déjà. Le verrou est par bloc : deux
+     * blocs peuvent poster le même identifiant en même temps, et la base tranche (sans erreur qui
+     * ferait avorter la transaction).
+     */
+    ajouterEvenement: async (tx: Tx, evenement: Evenement): Promise<boolean> => {
+      const inseres = await tx
+        .insert(t.evenements)
+        .values(evenement)
+        .onConflictDoNothing({ target: t.evenements.id })
+        .returning({ id: t.evenements.id })
+      return inseres.length > 0
     },
 
     ajouterDecisions: async (tx: Tx, decisions: readonly DecisionErreur[]): Promise<void> => {

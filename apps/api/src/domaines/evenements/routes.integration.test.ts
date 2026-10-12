@@ -1,7 +1,7 @@
 import { mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { nouvelId, Reglages } from '@janus/contrats'
+import { ConflitEtatPage, nouvelId, Reglages } from '@janus/contrats'
 import { VERSION_MOTEUR } from '@janus/moteur'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { baseDepuisPool } from '../../base/base.ts'
@@ -10,6 +10,7 @@ import { creerBaseDeTest, URL_SERVEUR_TEST } from '../../base/testeurBase.ts'
 import { recalculerLesPerimes } from '../../recalcul.ts'
 import { configDeTest, ORIGINE_TEST, serveurDeTest } from '../../testeur.ts'
 import { creerHacheur } from '../auth/composition.ts'
+import { creerDepotEvenements } from './depot.ts'
 import { monterImportation } from '../catalogue/composition.ts'
 
 const FICHE_DEMO = new URL('../../../../web/public/fiches/demo/fiche-demo.html', import.meta.url)
@@ -232,6 +233,33 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
         })
       })
 
+      it('ne lève pas d’erreur quand l’identifiant existe déjà ailleurs : l’ajout rend faux', async () => {
+        const message = { ...commun(), type: 'etape.vue', etape: 'ET1' }
+        expect((await envoyer(message)).statusCode).toBe(200)
+        const { rows } = await bases.pool.query(
+          'SELECT user_id, bloc_id, fiche_version_id, empreinte FROM evenements WHERE id = $1',
+          [message.id],
+        )
+        const ligne = rows[0] as Record<string, string>
+        const depot = creerDepotEvenements()
+
+        const ajoute = await baseDepuisPool(bases.db, bases.pool).enTransaction((tx) =>
+          depot.ajouterEvenement(tx, {
+            id: message.id,
+            userId: ligne['user_id'] ?? '',
+            blocId: ligne['bloc_id'] ?? '',
+            ficheVersionId: ligne['fiche_version_id'] ?? '',
+            type: 'etape_vue',
+            donnees: { etape: 'ET1' },
+            empreinte: ligne['empreinte'] ?? '',
+            aide: null,
+            dateServeur: '2026-10-01T10:00:00.000Z',
+          }),
+        )
+
+        expect(ajoute).toBe(false)
+      })
+
       it('recalcule au démarrage les lignes venues d’une autre version du moteur', async () => {
         await bases.pool.query(
           "UPDATE statuts_courants SET version_moteur = 0, statut_calcule = 'non_commence'",
@@ -305,6 +333,15 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
         expect(reponse.json<{ version: number }>().version).toBe(2)
       })
 
+      it('accepte le rejeu d’une écriture déjà faite (réponse perdue) et refuse un autre contenu', async () => {
+        const rejeu = await sauver('D01', { version: 1, etat: { etape: 'ET4' } })
+        const autre = await sauver('D01', { version: 1, etat: { etape: 'ET5' } })
+
+        expect(rejeu.statusCode).toBe(200)
+        expect(rejeu.json()).toEqual({ version: 2 })
+        expect(autre.statusCode).toBe(409)
+      })
+
       it('laisse passer 100 ko (la limite de cette route est 256 ko) et refuse 300 ko en 413', async () => {
         const moyen = await sauver('D01', { version: 2, etat: { texte: 'x'.repeat(100_000) } })
         const enorme = await sauver('D01', { version: 3, etat: { texte: 'x'.repeat(300_000) } })
@@ -317,6 +354,16 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
         expect((await sauver('D99', { version: 0, etat: {} })).statusCode).toBe(404)
         const gros = { texte: 'x'.repeat(201_000) }
         expect((await sauver('D01', { version: 3, etat: gros })).statusCode).toBe(400)
+      })
+
+      it('répond 409 de version 0 quand l’onglet annonce une version et qu’aucun état n’existe', async () => {
+        await bases.pool.query('DELETE FROM etats_page')
+
+        const reponse = await sauver('D01', { version: 7, etat: { etape: 'ET1' } })
+
+        expect(reponse.statusCode).toBe(409)
+        expect(ConflitEtatPage.safeParse(reponse.json()).success).toBe(true)
+        expect(reponse.json<{ version: number }>().version).toBe(0)
       })
 
       describe('POST /blocs/:id/forcer', () => {
