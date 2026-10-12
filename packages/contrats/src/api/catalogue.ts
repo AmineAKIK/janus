@@ -7,7 +7,13 @@ import type { DefinitionRoute } from './routes.ts'
 
 const Texte = z.string().trim().min(1)
 
-const Formation = z.strictObject({ id: Identifiant, titre: Texte, description: z.string() })
+const Formation = z.strictObject({
+  id: Identifiant,
+  titre: Texte,
+  description: z.string(),
+  /** Vrai pour la formation que l'application affiche : une seule à la fois. */
+  active: z.boolean(),
+})
 
 const Module = z.strictObject({
   id: Identifiant,

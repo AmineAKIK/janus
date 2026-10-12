@@ -45,15 +45,23 @@ export function routesCatalogueDemo({ racineFiches }: OptionsCatalogue) {
   ]
 
   return [
-    definir(ROUTES['GET /formations'], ({ magasin }) => ({
-      formations: formationsVisibles(magasin.lire().interrupteurs.deuxFormations).map(
-        ({ formation }) => ({
+    definir(ROUTES['GET /formations'], ({ magasin }) => {
+      const { interrupteurs, reglages } = magasin.lire()
+      const visibles = formationsVisibles(interrupteurs.deuxFormations)
+      // La formation choisie si elle existe, sinon la première qui a un module importé.
+      const choisie = visibles.find(({ formation }) => formation.code === reglages.formationActive)
+      const active = (
+        choisie ?? visibles.find(({ modules }) => modules.some(({ importe }) => importe))
+      )?.formation.code
+      return {
+        formations: visibles.map(({ formation }) => ({
           id: formation.code,
           titre: formation.titre,
           description: formation.description,
-        }),
-      ),
-    })),
+          active: formation.code === active,
+        })),
+      }
+    }),
 
     definir(ROUTES['GET /formations/:id/modules'], ({ magasin, params }) => {
       const trouvee = formationsVisibles(magasin.lire().interrupteurs.deuxFormations).find(

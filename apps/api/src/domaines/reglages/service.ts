@@ -1,7 +1,7 @@
 import { Reglages } from '@janus/contrats'
 import type { ModificationReglages } from '@janus/contrats'
 import type { Base } from '../../base/base.ts'
-import { Introuvable, PreconditionEchouee, Refus } from '../../erreurs.ts'
+import { ErreurProtocole, Introuvable, PreconditionEchouee, Refus } from '../../erreurs.ts'
 import type { DepotReglages } from './depot.ts'
 import { etagDe, reglagesDonnes, reglesTouchees, versionDeIfMatch } from './policy.ts'
 
@@ -39,6 +39,15 @@ export function creerServiceReglages({ base, depot }: DependancesService) {
         const ligne = await depot.lire(tx, userId)
         if (ligne === undefined) throw new Introuvable('Ce compte n’existe pas.')
         if (ligne.version !== version) throw new PreconditionEchouee('Les réglages ont changé.')
+        const formation = modification.formationActive
+        if (typeof formation === 'string' && !(await depot.formationExiste(tx, formation))) {
+          throw new ErreurProtocole(
+            400,
+            'donnees_invalides',
+            'Données invalides',
+            'Cette formation n’existe pas.',
+          )
+        }
         const reglages = Reglages.parse({
           ...Reglages.parse(ligne.reglages),
           ...reglagesDonnes(modification),

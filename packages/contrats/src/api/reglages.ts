@@ -32,6 +32,7 @@ export const ModificationReglages = z.strictObject({
   appelsIaParHeure: shape.appelsIaParHeure.unwrap().optional(),
   heureRappel: shape.heureRappel.unwrap().optional(),
   rappelsEnPauseJusquAu: shape.rappelsEnPauseJusquAu.unwrap().optional(),
+  formationActive: shape.formationActive.unwrap().optional(),
   blocsEntreRevues: shape.blocsEntreRevues.unwrap().optional(),
 })
 export type ModificationReglages = z.infer<typeof ModificationReglages>

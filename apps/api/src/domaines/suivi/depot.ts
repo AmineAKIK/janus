@@ -1,4 +1,5 @@
 import { and, asc, desc, eq, gt, inArray, isNotNull, max } from 'drizzle-orm'
+import { deLaFormation } from '../../base/formationActive.ts'
 import { instantIso } from '../../base/instant.ts'
 import * as t from '../../base/schema/index.ts'
 import type { Db, Tx } from '../../base/transaction.ts'
@@ -92,15 +93,15 @@ export function creerDepotSuivi() {
     },
 
     /** Les modules importés, dans l'ordre du plan. */
-    modulesImportes: (lecteur: Db | Tx) =>
+    modulesImportes: (lecteur: Db | Tx, formationId: string | null) =>
       lecteur
         .select({ id: t.modules.id, code: t.modules.code, titre: t.modules.titre })
         .from(t.modules)
-        .where(eq(t.modules.importe, true))
+        .where(and(eq(t.modules.importe, true), deLaFormation(formationId)))
         .orderBy(asc(t.modules.ordre)),
 
     /** Les blocs des modules importés (ordre du plan), avec leur partie et le manifeste en service. */
-    blocsImportes: async (lecteur: Db | Tx) => {
+    blocsImportes: async (lecteur: Db | Tx, formationId: string | null) => {
       const lignes = await lecteur
         .select({
           id: t.blocs.id,
@@ -114,7 +115,7 @@ export function creerDepotSuivi() {
         .innerJoin(t.modules, eq(t.modules.id, t.blocs.moduleId))
         .leftJoin(t.parties, eq(t.parties.id, t.blocs.partieId))
         .innerJoin(t.fichesVersions, eq(t.fichesVersions.blocId, t.blocs.id))
-        .where(eq(t.modules.importe, true))
+        .where(and(eq(t.modules.importe, true), deLaFormation(formationId)))
         .orderBy(
           asc(t.modules.ordre),
           asc(t.parties.ordre),
@@ -240,12 +241,12 @@ export function creerDepotSuivi() {
     },
 
     /** Les intitulés des tâches inédites réservées des modules importés. */
-    tachesReservees: async (lecteur: Db | Tx) => {
+    tachesReservees: async (lecteur: Db | Tx, formationId: string | null) => {
       const lignes = await lecteur
         .select({ intitule: t.tachesReservees.intitule })
         .from(t.tachesReservees)
         .innerJoin(t.modules, eq(t.modules.id, t.tachesReservees.moduleId))
-        .where(eq(t.modules.importe, true))
+        .where(and(eq(t.modules.importe, true), deLaFormation(formationId)))
         .orderBy(asc(t.modules.ordre), asc(t.tachesReservees.id))
       return lignes.map(({ intitule }) => intitule)
     },

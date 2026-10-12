@@ -13,6 +13,7 @@ import { accesBloc, calculerBloc, instantEnMs, preuvesDuBloc, seriesOuvertes } f
 import type { ResultatBloc } from '@janus/moteur'
 import { z } from 'zod'
 import type { Base } from '../../base/base.ts'
+import { formationActiveDe } from '../../base/formationActive.ts'
 import { lireFaits } from '../../base/faits.ts'
 import { verrouBloc } from '../../base/transaction.ts'
 import type { Db, Tx } from '../../base/transaction.ts'
@@ -223,8 +224,16 @@ export function creerServiceLecture({ base, depot, horloge, fichesUrl }: Dependa
   }
 
   return {
-    async formations() {
-      return { formations: await depot.formations(base.db) }
+    async formations(userId: string) {
+      const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
+      const active = await formationActiveDe(base.db, reglages.formationActive)
+      const formations = await depot.formations(base.db)
+      return {
+        formations: formations.map((formation) => ({
+          ...formation,
+          active: formation.id === active,
+        })),
+      }
     },
 
     async modules(formationId: string) {

@@ -15,7 +15,7 @@ function utilisateurDe(requete: FastifyRequest): string {
 
 export function creerControleurCatalogue(service: ServiceLecture) {
   return {
-    formations: () => service.formations(),
+    formations: (requete: FastifyRequest) => service.formations(utilisateurDe(requete)),
     modules: (requete: FastifyRequest<Params>) => service.modules(requete.params.id),
     blocsDuModule: (requete: FastifyRequest<Params>) =>
       service.blocsDuModule(utilisateurDe(requete), requete.params.id),
