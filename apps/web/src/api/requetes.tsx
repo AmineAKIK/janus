@@ -15,6 +15,7 @@ import {
   useQueries,
   useQuery,
 } from '@tanstack/react-query'
+import type { UseQueryResult } from '@tanstack/react-query'
 import { createContext, use } from 'react'
 import type { ReactNode } from 'react'
 
@@ -66,6 +67,8 @@ export function creerClientRequetes({ surNonAuthentifie }: ReactionsErreurs): Qu
     }),
     defaultOptions: {
       queries: {
+        // Sans réseau on tente quand même la lecture : elle échoue vite, l'écran garde ce qu'il avait.
+        networkMode: 'offlineFirst',
         staleTime: FRAICHEUR_MS,
         retry: (nombreEchecs, erreur) =>
           nombreEchecs < 1 && !(erreur instanceof ErreurDonnees) && !estErreurClient(erreur),
@@ -104,12 +107,31 @@ function useTransport(): Transport {
 type RouteLecture = DefinitionRoute & { readonly methode: 'GET' }
 
 /** Lit une route `GET` : la réponse est déjà validée par le transport. */
+/**
+ * Une relecture qui échoue (réseau coupé, serveur en panne) ne retire pas les données déjà là : l'écran
+ * garde la dernière version connue au lieu de passer en erreur. Seule une lecture qui n'a jamais rien
+ * reçu reste en erreur.
+ */
+function gardantLesDonnees<T>(resultat: UseQueryResult<T>): UseQueryResult<T> {
+  if (!resultat.isRefetchError) return resultat
+  return {
+    ...resultat,
+    status: 'success',
+    isError: false,
+    isSuccess: true,
+    isRefetchError: false,
+    error: null,
+  }
+}
+
 export function useLecture<D extends RouteLecture>(route: D, entree: EntreeRoute<D>) {
   const transport = useTransport()
-  return useQuery({
-    queryKey: [nomRoute(route), entree],
-    queryFn: ({ signal }) => transport.appeler(route, entree, { signal } satisfies OptionsAppel),
-  })
+  return gardantLesDonnees(
+    useQuery({
+      queryKey: [nomRoute(route), entree],
+      queryFn: ({ signal }) => transport.appeler(route, entree, { signal } satisfies OptionsAppel),
+    }),
+  )
 }
 
 /** Lit la même route `GET` pour plusieurs entrées à la fois (une requête par entrée, en parallèle). */
@@ -121,6 +143,7 @@ export function useLectures<D extends RouteLecture>(route: D, entrees: readonly 
       queryFn: ({ signal }: { readonly signal: AbortSignal }) =>
         transport.appeler(route, entree, { signal } satisfies OptionsAppel),
     })),
+    combine: (resultats) => resultats.map(gardantLesDonnees),
   })
 }
 

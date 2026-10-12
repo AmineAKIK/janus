@@ -98,6 +98,22 @@ describe('garde des routes', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'Janus' })).toBeInTheDocument()
   })
 
+  it('sans session, vide aussi les données gardées d’une session précédente', async () => {
+    const banc = creerContexteTest({ connecte: false })
+    banc.client.setQueryData(['GET /reglages', {}], { ancien: true })
+    const routeur = creerRouteur(
+      createMemoryHistory({ initialEntries: ['/journal'] }),
+      banc.contexte,
+    )
+    await act(async () => {
+      render(banc.application(routeur))
+      await routeur.load()
+    })
+
+    expect(routeur.state.location.pathname).toBe('/connexion')
+    expect(banc.client.getQueryData(['GET /reglages', {}])).toBeUndefined()
+  })
+
   it('la connexion elle-même reste accessible sans session', async () => {
     const routeur = await afficher('/connexion', { connecte: false })
 

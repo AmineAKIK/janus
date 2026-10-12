@@ -5,6 +5,8 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { registerSW } from 'virtual:pwa-register'
 import { creerTransport } from './api/client.ts'
+import { garderLesDonnees, reprendreLesDonnees } from './donnees/persistance.ts'
+import { ouvrirStockageDonnees } from './donnees/stockageDonnees.ts'
 import { creerClientRequetes, FournisseurApi } from './api/requetes.tsx'
 import { creerBoiteEnvoi, creerVerrouNavigateur } from './envoi/boiteEnvoi.ts'
 import { FournisseurEnvoi } from './envoi/FournisseurEnvoi.tsx'
@@ -63,15 +65,26 @@ miseAJour.demarrer()
 const installation = creerInstallation(window)
 installation.demarrer()
 
-createRoot(racine).render(
-  <StrictMode>
-    <ContexteInstallation value={installation}>
-      <FournisseurApi transport={transport} client={client}>
-        <FournisseurEnvoi boite={boite}>
-          <RouterProvider router={routeur} />
-          <MiseAJour miseAJour={miseAJour} />
-        </FournisseurEnvoi>
-      </FournisseurApi>
-    </ContexteInstallation>
-  </StrictMode>,
-)
+// Les dernières données lues reviennent avant le premier affichage : hors connexion l'appli s'ouvre sur
+// ce qu'elle montrait. Sans IndexedDB, ou sans réponse à temps, elle s'ouvre sans.
+async function demarrer(racineDom: HTMLElement) {
+  const stockageDonnees = await ouvrirStockageDonnees()
+  if (stockageDonnees !== null) {
+    await reprendreLesDonnees(client, stockageDonnees)
+    garderLesDonnees(client, stockageDonnees)
+  }
+  createRoot(racineDom).render(
+    <StrictMode>
+      <ContexteInstallation value={installation}>
+        <FournisseurApi transport={transport} client={client}>
+          <FournisseurEnvoi boite={boite}>
+            <RouterProvider router={routeur} />
+            <MiseAJour miseAJour={miseAJour} />
+          </FournisseurEnvoi>
+        </FournisseurApi>
+      </ContexteInstallation>
+    </StrictMode>,
+  )
+}
+
+void demarrer(racine)

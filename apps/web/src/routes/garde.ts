@@ -27,6 +27,8 @@ export async function exigerSession(
     client.setQueryData(CLE_MOI, await transport.appeler(ROUTES['GET /moi'], {}))
   } catch (erreur) {
     if (erreur instanceof ErreurApi && erreur.status === 401) {
+      // Les données gardées d'une session qui n'existe plus ne doivent pas être montrées à la suivante.
+      client.clear()
       // eslint-disable-next-line @typescript-eslint/only-throw-error -- c'est ainsi que TanStack Router redirige
       throw redirect({ to: '/connexion', search: { retour: pageDemandee } })
     }

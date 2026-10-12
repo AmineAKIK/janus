@@ -2,6 +2,7 @@ import { Link, Outlet, useRouterState } from '@tanstack/react-router'
 import { Navigation } from '@janus/ui'
 import type { ProprietesLienNavigation } from '@janus/ui'
 import { useEffect, useRef } from 'react'
+import { BandeauHorsConnexion } from '../pwa/BandeauHorsConnexion.tsx'
 import { TITRE_INTROUVABLE, titreDocument } from '../routes/ecrans.ts'
 import styles from './Gabarit.module.css'
 
@@ -97,6 +98,7 @@ export function Gabarit() {
         tabIndex={-1}
         className={`${styles['contenu'] ?? ''}${large ? ` ${styles['large'] ?? ''}` : ''}`}
       >
+        <BandeauHorsConnexion />
         <Outlet />
       </main>
     </div>
