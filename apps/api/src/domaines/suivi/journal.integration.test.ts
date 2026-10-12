@@ -112,7 +112,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('journal contre PostgreSQL', () 
       headers: { origin: ORIGINE_TEST },
       payload: { nom_utilisateur: 'amine', mot_de_passe: MOT_DE_PASSE },
     })
-    cookie = `janus_session=${connexion.cookies[0]?.value ?? ''}`
+    cookie = `__Host-janus_session=${connexion.cookies[0]?.value ?? ''}`
   })
   afterAll(async () => {
     await bases.supprimer()

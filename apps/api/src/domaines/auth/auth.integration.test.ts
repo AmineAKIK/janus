@@ -71,12 +71,12 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('authentification contre Postgre
     s.horloge.avancer(MINUTE) // sort de la fenêtre du limiteur
     const reponse = await connecter(s, corps)
     expect(reponse.statusCode).toBe(200)
-    const cookie = reponse.cookies.find(({ name }) => name === 'janus_session')
-    return { reponse, cookie: `janus_session=${cookie?.value ?? ''}` }
+    const cookie = reponse.cookies.find(({ name }) => name === '__Host-janus_session')
+    return { reponse, cookie: `__Host-janus_session=${cookie?.value ?? ''}` }
   }
 
   const empreinteDe = (cookie: string) =>
-    createHash('sha256').update(cookie.replace('janus_session=', '')).digest('hex')
+    createHash('sha256').update(cookie.replace('__Host-janus_session=', '')).digest('hex')
   const idDeSession = async (cookie: string) => {
     const [ligne] = await bases.db
       .select({ id: t.sessions.id })
@@ -101,7 +101,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('authentification contre Postgre
         fuseau: 'Europe/Paris',
         cle_vapid: 'publique',
       })
-      const cookie = reponse.cookies.find(({ name }) => name === 'janus_session')
+      const cookie = reponse.cookies.find(({ name }) => name === '__Host-janus_session')
       expect(cookie).toMatchObject({ httpOnly: true, secure: true, sameSite: 'Lax', path: '/' })
       expect(cookie?.domain).toBeUndefined()
       expect(cookie?.maxAge).toBeUndefined()
@@ -114,8 +114,19 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('authentification contre Postgre
 
       const reponse = await connecter(s, { rester_connecte: true })
 
-      const cookie = reponse.cookies.find(({ name }) => name === 'janus_session')
+      const cookie = reponse.cookies.find(({ name }) => name === '__Host-janus_session')
       expect(cookie?.maxAge).toBe(30 * 24 * 3600)
+    })
+
+    it('sous HTTPS le cookie porte le préfixe __Host- : Secure, sans Domain, Path=/', async () => {
+      const s = await serveur()
+
+      const reponse = await connecter(s)
+
+      const cookie = reponse.cookies.find(({ name }) => name.startsWith('__Host-'))
+      expect(cookie).toMatchObject({ name: '__Host-janus_session', secure: true, path: '/' })
+      expect(cookie?.domain).toBeUndefined()
+      expect(reponse.cookies.find(({ name }) => name === 'janus_session')).toBeUndefined()
     })
 
     it('n’est pas Secure quand COOKIE_SECURE vaut false (test)', async () => {
@@ -129,7 +140,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('authentification contre Postgre
     it('ne garde en base que le SHA-256 du jeton, avec l’appareil', async () => {
       const s = await serveur()
       const { cookie } = await ouvrir(s)
-      const jeton = cookie.replace('janus_session=', '')
+      const jeton = cookie.replace('__Host-janus_session=', '')
 
       const lignes = await bases.db.select().from(t.sessions).where(eq(t.sessions.userId, amineId))
 
@@ -313,7 +324,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('authentification contre Postgre
 
       const connecte = await lire(s, '/api/moi', cookie)
       const anonyme = await s.app.inject({ method: 'GET', url: '/api/moi' })
-      const inconnu = await lire(s, '/api/moi', 'janus_session=inconnu')
+      const inconnu = await lire(s, '/api/moi', '__Host-janus_session=inconnu')
 
       expect(connecte.statusCode).toBe(200)
       expect(connecte.json()).toMatchObject({ nom_utilisateur: 'amine' })
@@ -377,7 +388,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('authentification contre Postgre
       })
 
       expect(reponse.statusCode).toBe(204)
-      expect(reponse.cookies.find(({ name }) => name === 'janus_session')?.value).toBe('')
+      expect(reponse.cookies.find(({ name }) => name === '__Host-janus_session')?.value).toBe('')
       expect((await lire(s, '/api/moi', cookie)).statusCode).toBe(401)
     })
   })
@@ -426,7 +437,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('authentification contre Postgre
       const victime = await ouvrir(s)
       s.horloge.avancer(MINUTE)
       const intrus = await connecter(s, { nom_utilisateur: 'intrus' })
-      const cookieIntrus = `janus_session=${intrus.cookies[0]?.value ?? ''}`
+      const cookieIntrus = `__Host-janus_session=${intrus.cookies[0]?.value ?? ''}`
       const { sessions } = (await lire(s, '/api/sessions', victime.cookie)).json<{
         sessions: { id: string }[]
       }>()
@@ -507,7 +518,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('authentification contre Postgre
       const ouvrirCommeChangeur = async () => {
         s.horloge.avancer(MINUTE)
         const reponse = await connecter(s, { nom_utilisateur: 'changeur' })
-        return `janus_session=${reponse.cookies[0]?.value ?? ''}`
+        return `__Host-janus_session=${reponse.cookies[0]?.value ?? ''}`
       }
       const courante = await ouvrirCommeChangeur()
       const autre = await ouvrirCommeChangeur()
@@ -537,7 +548,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('authentification contre Postgre
       const id = await creerUtilisateur('prudent', MOT_DE_PASSE)
       const s = await serveur()
       const connexion = await connecter(s, { nom_utilisateur: 'prudent' })
-      const cookie = `janus_session=${connexion.cookies[0]?.value ?? ''}`
+      const cookie = `__Host-janus_session=${connexion.cookies[0]?.value ?? ''}`
       const supprimer = (motDePasse: string) =>
         s.app.inject({
           method: 'DELETE',
@@ -559,7 +570,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('authentification contre Postgre
       const id = await creerUtilisateur('gardé', MOT_DE_PASSE)
       const s = await serveur()
       const connexion = await connecter(s, { nom_utilisateur: 'gardé' })
-      const cookie = `janus_session=${connexion.cookies[0]?.value ?? ''}`
+      const cookie = `__Host-janus_session=${connexion.cookies[0]?.value ?? ''}`
 
       const reponse = await s.app.inject({
         method: 'DELETE',
@@ -593,7 +604,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('authentification contre Postgre
       }
       const s = await serveur()
       const connexion = await connecter(s, { nom_utilisateur: 'partant' })
-      const cookie = `janus_session=${connexion.cookies[0]?.value ?? ''}`
+      const cookie = `__Host-janus_session=${connexion.cookies[0]?.value ?? ''}`
 
       const reponse = await s.app.inject({
         method: 'DELETE',
@@ -603,7 +614,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('authentification contre Postgre
       })
 
       expect(reponse.statusCode).toBe(204)
-      expect(reponse.cookies.find(({ name }) => name === 'janus_session')?.value).toBe('')
+      expect(reponse.cookies.find(({ name }) => name === '__Host-janus_session')?.value).toBe('')
       const compter = async (
         table: 'users' | 'sessions' | 'rappels_envoyes' | 'budget_ia',
         qui: string,

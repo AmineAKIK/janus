@@ -4,13 +4,12 @@ import type { FastifyReply, FastifyRequest } from 'fastify'
 import type { z } from 'zod'
 import { NonAuthentifie } from '../../erreurs.ts'
 import type { Config } from '../../config.ts'
+import { nomDuCookie } from '../../plugins/cookie.ts'
 import type { ServiceAuth } from './service.ts'
 
 type Corps<Cle extends 'POST /session' | 'PATCH /moi/mot-de-passe' | 'DELETE /compte'> = z.infer<
   (typeof ROUTES)[Cle]['corps']
 >
-
-export const NOM_COOKIE = 'janus_session'
 
 function utilisateurDe(requete: FastifyRequest): string {
   const { utilisateur } = requete.session
@@ -19,6 +18,7 @@ function utilisateurDe(requete: FastifyRequest): string {
 }
 
 export function creerControleurAuth(service: ServiceAuth, config: Pick<Config, 'COOKIE_SECURE'>) {
+  const nomCookie = nomDuCookie(config.COOKIE_SECURE)
   const optionsCookie: CookieSerializeOptions = {
     httpOnly: true,
     secure: config.COOKIE_SECURE,
@@ -38,7 +38,7 @@ export function creerControleurAuth(service: ServiceAuth, config: Pick<Config, '
         adresse: requete.ip,
         userAgent: requete.headers['user-agent'],
       })
-      void reponse.setCookie(NOM_COOKIE, ouverte.jeton, {
+      void reponse.setCookie(nomCookie, ouverte.jeton, {
         ...optionsCookie,
         ...(ouverte.dureeCookieS === null ? {} : { maxAge: ouverte.dureeCookieS }),
       })
@@ -47,7 +47,7 @@ export function creerControleurAuth(service: ServiceAuth, config: Pick<Config, '
 
     deconnecter: async (requete: FastifyRequest, reponse: FastifyReply) => {
       await service.deconnecter(requete.session.sessionId)
-      void reponse.clearCookie(NOM_COOKIE, optionsCookie)
+      void reponse.clearCookie(nomCookie, optionsCookie)
       return reponse.code(204).send()
     },
 
@@ -90,7 +90,7 @@ export function creerControleurAuth(service: ServiceAuth, config: Pick<Config, '
       reponse: FastifyReply,
     ) => {
       await service.supprimerCompte(utilisateurDe(requete), requete.body.mot_de_passe)
-      void reponse.clearCookie(NOM_COOKIE, optionsCookie)
+      void reponse.clearCookie(nomCookie, optionsCookie)
       return reponse.code(204).send()
     },
   }

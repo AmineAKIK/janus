@@ -11,6 +11,7 @@ import { identifiantRequete } from './identifiantRequete.ts'
 import { journalFin } from './journalFin.ts'
 import { limitesParRoute, marquerLimites } from './limites.ts'
 import { origine } from './origine.ts'
+import { pasDeCache } from './pasDeCache.ts'
 import { session } from './session.ts'
 import { exigerDeclarationIdentifiant, identifiantEcriture, validation } from './validation.ts'
 
@@ -44,6 +45,7 @@ export async function declarerMiddlewares(
   // 3. En-têtes de sécurité.
   await app.register(helmet, { global: true })
   passage(app, 'helmet', dependances)
+  pasDeCache(app)
   // 4. CORS fermé : aucune autre origine n'est autorisée.
   await app.register(cors, { origin: false })
   passage(app, 'cors', dependances)
