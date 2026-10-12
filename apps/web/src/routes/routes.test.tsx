@@ -1,7 +1,7 @@
 import { createMemoryHistory } from '@tanstack/react-router'
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { MANIFESTES_GRAINE } from '../demo/graine.ts'
 import { creerRouteur } from './arbre.tsx'
 import { creerContexteTest } from './contexteTest.tsx'
@@ -218,6 +218,48 @@ describe('changement de route', () => {
       await screen.findByRole('heading', { level: 1, name: 'Aujourd’hui' }),
     ).toBeInTheDocument()
     expect(document.title).toBe('Aujourd’hui · Janus')
+  })
+})
+
+describe('fondu entre les pages', () => {
+  function simulerAnimation(reduite: boolean) {
+    const animate = vi.fn()
+    vi.stubGlobal('matchMedia', (requete: string) => ({
+      matches: reduite && requete.includes('reduce'),
+      media: requete,
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+    }))
+    Object.defineProperty(HTMLElement.prototype, 'animate', { value: animate, configurable: true })
+    return animate
+  }
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    Reflect.deleteProperty(HTMLElement.prototype, 'animate')
+  })
+
+  it('joue un fondu à l’arrivée d’une nouvelle page, pas à la première', async () => {
+    const animate = simulerAnimation(false)
+    const routeur = await afficher('/')
+    expect(animate).not.toHaveBeenCalled()
+
+    await act(async () => {
+      await routeur.navigate({ to: '/formations' })
+    })
+
+    expect(animate).toHaveBeenCalledTimes(1)
+  })
+
+  it('ne joue rien pour qui réduit les animations', async () => {
+    const animate = simulerAnimation(true)
+    const routeur = await afficher('/')
+
+    await act(async () => {
+      await routeur.navigate({ to: '/formations' })
+    })
+
+    expect(animate).not.toHaveBeenCalled()
   })
 })
 
