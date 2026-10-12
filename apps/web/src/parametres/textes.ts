@@ -123,6 +123,15 @@ export const TEXTES_IA = {
     'Plafond atteint : les corrections reprendront le 1er du mois prochain, ou relève le plafond.',
 } as const
 
+export const TEXTES_INSTALLATION = {
+  application: 'Application',
+  installee: 'Installée sur cet appareil',
+  installer: 'Installer Janus',
+  installerAide: 'Janus s’ouvre dans sa propre fenêtre, comme une application.',
+  bouton: 'Installer',
+  manuelle: 'Dans Safari : Partager, puis Sur l’écran d’accueil.',
+} as const
+
 export const TEXTES_HORS_LIGNE = {
   synchronisation: 'Synchronisation',
   synchronise: 'Tout est synchronisé',

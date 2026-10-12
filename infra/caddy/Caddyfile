@@ -34,6 +34,9 @@ app.{$DOMAINE} {
 		header @empreinte Cache-Control "public, max-age=31536000, immutable"
 		@jamais not path /assets/*
 		header @jamais Cache-Control "no-cache"
+		# Le manifeste de l'appli installable : le type que les navigateurs attendent.
+		@manifeste path /manifest.webmanifest
+		header @manifeste Content-Type "application/manifest+json"
 		# Historique par chemins : toute adresse inconnue rend l'appli.
 		try_files {path} /index.html
 		file_server

@@ -3,6 +3,8 @@ import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { creerRouteur } from '../routes/arbre.tsx'
+import type { EtatInstallation, Installation } from '../pwa/installation.ts'
+import { ContexteInstallation } from '../pwa/useInstallation.ts'
 import { creerContexteTest } from '../routes/contexteTest.tsx'
 
 async function afficher(section: string) {
@@ -169,5 +171,57 @@ describe('Hors ligne', () => {
     })
     expect(await screen.findByText('2 réponses en attente')).toBeVisible()
     expect(await screen.findByText('3,5 Mo sur cet appareil')).toBeVisible()
+  })
+
+  describe('installation', () => {
+    async function afficherAvec(
+      etat: EtatInstallation,
+      installer = vi.fn(() => Promise.resolve(true)),
+    ) {
+      const installation: Installation = {
+        demarrer: () => () => undefined,
+        etat: () => etat,
+        installer,
+        abonner: () => () => undefined,
+      }
+      const banc = creerContexteTest()
+      const routeur = creerRouteur(
+        createMemoryHistory({ initialEntries: ['/parametres/hors-ligne'] }),
+        banc.contexte,
+      )
+      await act(async () => {
+        render(
+          <ContexteInstallation value={installation}>
+            {banc.application(routeur)}
+          </ContexteInstallation>,
+        )
+        await routeur.load()
+      })
+      return installer
+    }
+
+    it('propose d’installer l’appli quand le navigateur le permet', async () => {
+      const utilisateur = userEvent.setup()
+      const installer = await afficherAvec('installable')
+      expect(await screen.findByText('Installer Janus')).toBeVisible()
+      await utilisateur.click(screen.getByRole('button', { name: 'Installer' }))
+      expect(installer).toHaveBeenCalledOnce()
+    })
+
+    it('dit que l’appli est installée, ou montre la marche à suivre sur iPhone', async () => {
+      await afficherAvec('installee')
+      expect(await screen.findByText('Installée sur cet appareil')).toBeVisible()
+    })
+
+    it('indique la marche à suivre quand l’installation est manuelle', async () => {
+      await afficherAvec('manuelle')
+      expect(await screen.findByText(/Partager, puis Sur l’écran d’accueil/)).toBeVisible()
+    })
+
+    it('ne montre rien quand le navigateur ne sait pas installer', async () => {
+      await afficherAvec('indisponible')
+      await screen.findByText('Tout est synchronisé')
+      expect(screen.queryByText('Installer Janus')).toBeNull()
+    })
   })
 })

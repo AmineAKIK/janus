@@ -1,4 +1,5 @@
 export * from './theme.ts'
+export * from './couleurBarre.ts'
 export * from './composants/Bouton/Bouton.tsx'
 export * from './composants/ChampTexte/ChampTexte.tsx'
 export * from './composants/ChampMotDePasse/ChampMotDePasse.tsx'

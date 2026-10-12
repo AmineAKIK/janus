@@ -30,7 +30,32 @@ test.describe('appli installable et hors ligne', () => {
     const icones = manifeste['icons'] as { sizes: string; purpose?: string }[]
     expect(
       icones.map(({ sizes, purpose }) => `${sizes}${purpose === undefined ? '' : ` ${purpose}`}`),
-    ).toEqual(['192x192', '512x512', '512x512 maskable'])
+    ).toEqual(['192x192', '512x512', '512x512 maskable', '512x512 monochrome'])
+
+    // Tout ce que le manifeste annonce existe : icônes, captures de la boîte d'installation, raccourcis.
+    const fichiers = [
+      ...icones.map((icone) => (icone as unknown as { src: string }).src),
+      ...(manifeste['screenshots'] as { src: string }[]).map(({ src }) => src),
+    ]
+    for (const src of fichiers) {
+      const image = await request.get(new URL(src, reponse.url()).href)
+      expect(image.ok(), src).toBe(true)
+      expect(image.headers()['content-type'], src).toContain('image/png')
+    }
+    expect(manifeste['id']).toBeTruthy()
+    const raccourcis = manifeste['shortcuts'] as { name: string }[]
+    expect(raccourcis.map(({ name }) => name)).toEqual(['Aujourd’hui', 'Révision', 'Journal'])
+  })
+
+  test('la barre du navigateur suit le thème de l’appli', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('janus.affichage.theme', 'sombre')
+    })
+    await page.goto('./')
+    const couleurs = await page
+      .locator('meta[name="theme-color"]')
+      .evaluateAll((balises) => balises.map((balise) => balise.getAttribute('content')))
+    expect(couleurs).toEqual(['#14171a', '#14171a'])
   })
 
   test('après une première visite, l’appli et une fiche ouverte se rechargent sans réseau', async ({

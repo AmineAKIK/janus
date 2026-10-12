@@ -1,3 +1,5 @@
+import { synchroniserCouleurBarre } from './couleurBarre.ts'
+
 export const THEMES = ['clair', 'sombre', 'systeme'] as const
 export const TAILLES = ['petit', 'standard', 'grand'] as const
 
@@ -46,6 +48,7 @@ export function lireTaille(): Taille {
 
 export function appliquerTheme(theme: Theme): void {
   document.documentElement.dataset['theme'] = theme
+  synchroniserCouleurBarre(theme)
   ecrire(CLE_THEME, theme)
 }
 

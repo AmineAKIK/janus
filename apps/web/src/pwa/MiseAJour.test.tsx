@@ -2,20 +2,67 @@ import { ErreurReseau, nouvelId } from '@janus/contrats'
 import type { Transport } from '@janus/contrats'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { creerClientRequetes, FournisseurApi } from '../api/requetes.tsx'
 import { creerBoiteEnvoi, creerVerrouLocal } from '../envoi/boiteEnvoi.ts'
 import { FournisseurEnvoi } from '../envoi/FournisseurEnvoi.tsx'
 import { creerStockageMemoire } from '../envoi/stockageEnvoi.ts'
 import { monterDemo } from '../demo/routes/banc.ts'
 import { MiseAJour } from './MiseAJour.tsx'
-import { creerMiseAJour, estApercu } from './miseAJour.ts'
+import {
+  creerMiseAJour,
+  estApercu,
+  PERIODE_VERIFICATION_MS,
+  verifierRegulierement,
+} from './miseAJour.ts'
 import type { EnregistrerSw } from './miseAJour.ts'
 
 describe('estApercu', () => {
   it('reconnaît l’adresse d’un aperçu de PR', () => {
     expect(estApercu('/janus/pr-preview/pr-42/')).toBe(true)
     expect(estApercu('/janus/')).toBe(false)
+  })
+})
+
+describe('verifierRegulierement', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.restoreAllMocks()
+  })
+
+  it('cherche une nouvelle version chaque heure, au retour au premier plan et du réseau', () => {
+    vi.useFakeTimers()
+    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true)
+    const update = vi.fn(() => Promise.resolve())
+    const arreter = verifierRegulierement({ update })
+
+    vi.advanceTimersByTime(PERIODE_VERIFICATION_MS)
+    expect(update).toHaveBeenCalledTimes(1)
+    document.dispatchEvent(new Event('visibilitychange'))
+    expect(update).toHaveBeenCalledTimes(2)
+    window.dispatchEvent(new Event('online'))
+    expect(update).toHaveBeenCalledTimes(3)
+
+    arreter()
+    vi.advanceTimersByTime(PERIODE_VERIFICATION_MS)
+    window.dispatchEvent(new Event('online'))
+    expect(update).toHaveBeenCalledTimes(3)
+  })
+
+  it('ne cherche rien sans réseau et ignore un échec', async () => {
+    vi.useFakeTimers()
+    const update = vi.fn(() => Promise.reject(new Error('hors ligne')))
+    const onLine = vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false)
+    const arreter = verifierRegulierement({ update })
+
+    vi.advanceTimersByTime(PERIODE_VERIFICATION_MS)
+    expect(update).not.toHaveBeenCalled()
+
+    onLine.mockReturnValue(true)
+    vi.advanceTimersByTime(PERIODE_VERIFICATION_MS)
+    await Promise.resolve()
+    expect(update).toHaveBeenCalledTimes(1)
+    arreter()
   })
 })
 
