@@ -31,9 +31,45 @@
   src: url('./polices/jetbrains-mono-latin-400.woff2') format('woff2');
 }
 
+/*
+ * Comportement d'application. Le texte ne grossit pas tout seul à la rotation, le toucher n'allume
+ * pas de halo gris, et un appui sur un bouton ou un lien n'attend pas un éventuel double appui
+ * (le zoom au pincement reste possible).
+ */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a,
+button,
+summary,
+label,
+[role='button'],
+[role='tab'],
+[role='option'] {
+  touch-action: manipulation;
+}
+
+/*
+ * Installée, l'appli n'a pas de bouton « recharger » : un tirer pour actualiser accidentel perdrait
+ * une restitution en cours. Dans un onglet de navigateur le geste reste celui du navigateur.
+ */
+@media (display-mode: standalone),
+  (display-mode: window-controls-overlay),
+  (display-mode: minimal-ui) {
+  html,
+  body {
+    overscroll-behavior-y: none;
+  }
+}
+
 /* Corps de page par défaut : Corps 16. */
 body {
   margin: 0;
+  /* Paysage sur un appareil à encoche : le contenu reste hors de l'encoche. */
+  padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
   background: var(--couleur-fond);
   color: var(--couleur-encre);
   font-family: var(--police-texte);

@@ -56,12 +56,27 @@ self.addEventListener('push', (evenement) => {
     self.registration.showNotification(notification.titre, {
       body: notification.corps,
       tag: 'rappel-du-jour',
+      lang: 'fr',
       icon: `${BASE}icones/icone-192.png`,
+      // La petite icône de la barre d'état Android : un dessin d'une seule couleur.
+      badge: `${BASE}icones/icone-monochrome.png`,
     }),
   )
 })
 
+// Toucher la notification ramène la fenêtre déjà ouverte au premier plan, sans changer d'écran :
+// une restitution en cours n'est jamais interrompue. Sans fenêtre ouverte, l'appli s'ouvre sur Aujourd'hui.
 self.addEventListener('notificationclick', (evenement) => {
   evenement.notification.close()
-  evenement.waitUntil(self.clients.openWindow(AUJOURDHUI))
+  evenement.waitUntil(
+    (async () => {
+      const fenetres = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+      const ouverte = fenetres.find(({ url }) => url.startsWith(`${self.location.origin}${BASE}`))
+      if (ouverte === undefined) {
+        await self.clients.openWindow(AUJOURDHUI)
+        return
+      }
+      await ouverte.focus()
+    })(),
+  )
 })

@@ -11,8 +11,10 @@ import { FournisseurEnvoi } from './envoi/FournisseurEnvoi.tsx'
 import { ouvrirStockageIndexedDB, creerStockageParesseux } from './envoi/stockageEnvoi.ts'
 import { instantReel } from './demo/horlogeDemo.ts'
 import { cibleFenetre, suivreLesErreurs } from './erreurs.ts'
+import { creerInstallation } from './pwa/installation.ts'
 import { creerMiseAJour } from './pwa/miseAJour.ts'
 import { MiseAJour } from './pwa/MiseAJour.tsx'
+import { ContexteInstallation } from './pwa/useInstallation.ts'
 import { creerRouteur } from './routes/arbre.tsx'
 import { allerALaConnexion } from './routes/connexion.ts'
 import { creerHistorique, modeHistorique } from './routes/historique.ts'
@@ -58,13 +60,18 @@ garderLesLiensDansLAppli(document)
 const miseAJour = creerMiseAJour(registerSW, import.meta.env.BASE_URL)
 miseAJour.demarrer()
 
+const installation = creerInstallation(window)
+installation.demarrer()
+
 createRoot(racine).render(
   <StrictMode>
-    <FournisseurApi transport={transport} client={client}>
-      <FournisseurEnvoi boite={boite}>
-        <RouterProvider router={routeur} />
-        <MiseAJour miseAJour={miseAJour} />
-      </FournisseurEnvoi>
-    </FournisseurApi>
+    <ContexteInstallation value={installation}>
+      <FournisseurApi transport={transport} client={client}>
+        <FournisseurEnvoi boite={boite}>
+          <RouterProvider router={routeur} />
+          <MiseAJour miseAJour={miseAJour} />
+        </FournisseurEnvoi>
+      </FournisseurApi>
+    </ContexteInstallation>
   </StrictMode>,
 )
