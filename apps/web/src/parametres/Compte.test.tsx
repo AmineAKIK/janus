@@ -2,9 +2,12 @@ import { createMemoryHistory } from '@tanstack/react-router'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { ErreurReseau, EXEMPLES_PAGE } from '@janus/contrats'
 import { PREMIER_LANCEMENT } from '../demo/routes/banc.ts'
 import { creerRouteur } from '../routes/arbre.tsx'
 import { creerContexteTest } from '../routes/contexteTest.tsx'
+
+const MESSAGE = '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2c'
 
 async function afficher() {
   const banc = creerContexteTest()
@@ -171,6 +174,65 @@ describe('Compte', () => {
     await waitFor(() => {
       expect(banc.magasin.lire().sessionOuverte).toBe(false)
     })
+  })
+
+  it('« Se déconnecter » envoie d’abord les réponses en attente, ou bloque faute de réseau', async () => {
+    const utilisateur = userEvent.setup()
+    const banc = await afficher()
+    const appeler = banc.transport.appeler.bind(banc.transport)
+    banc.transport.appeler = (route: never, entree: never, options: never) =>
+      Reflect.get(route, 'methode') === 'POST'
+        ? Promise.reject(new ErreurReseau())
+        : appeler(route, entree, options)
+    await act(async () => {
+      await banc.boite.ajouter({
+        id: MESSAGE,
+        route: 'POST /evenements',
+        corps: { ...EXEMPLES_PAGE['bilan.erreurs'], bloc: 'B03', id: MESSAGE },
+      })
+    })
+
+    await utilisateur.click(screen.getByRole('button', { name: 'Se déconnecter' }))
+    const dialogue = await screen.findByRole('dialog', { name: 'Te déconnecter ?' })
+    expect(await within(dialogue).findByText(/1 réponse n’a pas encore été envoyée/)).toBeVisible()
+    await utilisateur.click(within(dialogue).getByRole('button', { name: 'Se déconnecter' }))
+
+    expect(await within(dialogue).findByRole('alert')).toHaveTextContent(
+      '1 réponse n’a pas pu être envoyée',
+    )
+    expect(banc.magasin.lire().sessionOuverte).toBe(true)
+    expect(await banc.boite.entrees()).toHaveLength(1)
+  })
+
+  it('« Se déconnecter » envoie les réponses en attente puis ferme la session', async () => {
+    const utilisateur = userEvent.setup()
+    const banc = await afficher()
+    const appeler = banc.transport.appeler.bind(banc.transport)
+    let coupe = true
+    banc.transport.appeler = (route: never, entree: never, options: never) =>
+      coupe && Reflect.get(route, 'methode') === 'POST'
+        ? Promise.reject(new ErreurReseau())
+        : appeler(route, entree, options)
+    await act(async () => {
+      await banc.boite.ajouter({
+        id: MESSAGE,
+        route: 'POST /evenements',
+        corps: { ...EXEMPLES_PAGE['bilan.erreurs'], bloc: 'B03', id: MESSAGE },
+      })
+    })
+    coupe = false
+
+    await utilisateur.click(screen.getByRole('button', { name: 'Se déconnecter' }))
+    await utilisateur.click(
+      within(await screen.findByRole('dialog', { name: 'Te déconnecter ?' })).getByRole('button', {
+        name: 'Se déconnecter',
+      }),
+    )
+
+    await waitFor(() => {
+      expect(banc.magasin.lire().sessionOuverte).toBe(false)
+    })
+    expect(await banc.boite.entrees()).toHaveLength(0)
   })
 
   it('« Se déconnecter » demande confirmation et reste connecté si on annule', async () => {

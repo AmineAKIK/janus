@@ -199,7 +199,9 @@ export const TEXTES_CONFIRMATION = {
     titre: 'Te déconnecter ?',
     message: 'Tu devras saisir ton mot de passe pour revenir.',
     enAttente: (nombre: number) =>
-      `${nombre === 1 ? '1 réponse n’a' : `${String(nombre)} réponses n’ont`} pas encore été envoyée${nombre === 1 ? '' : 's'}. Elle${nombre === 1 ? ' partira' : 's partiront'} à ta prochaine connexion sur cet appareil.`,
+      `${nombre === 1 ? '1 réponse n’a' : `${String(nombre)} réponses n’ont`} pas encore été envoyée${nombre === 1 ? '' : 's'}. Janus ${nombre === 1 ? 'l’' : 'les '}envoie avant de te déconnecter.`,
+    bloquee: (nombre: number) =>
+      `${nombre === 1 ? '1 réponse n’a' : `${String(nombre)} réponses n’ont`} pas pu être envoyée${nombre === 1 ? '' : 's'}, faute de réseau. Reconnecte-toi à internet puis réessaie : tu ne perds rien.`,
   },
   appareil: {
     titre: 'Déconnecter cet appareil ?',
