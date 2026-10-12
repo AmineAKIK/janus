@@ -143,6 +143,11 @@ test.describe('exécuteur de code derrière la politique de production', () => {
     })
   })
 
+  // Les requêtes encore en route à la fin du test ne doivent pas lever d'erreur hors de tout test.
+  test.afterEach(async ({ page }) => {
+    await page.unrouteAll({ behavior: 'ignoreErrors' })
+  })
+
   test('rend la sortie du code testé, pas un délai dépassé', async ({ page }) => {
     const refus: string[] = []
     page.on('console', (message) => {
