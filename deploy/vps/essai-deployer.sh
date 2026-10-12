@@ -5,7 +5,7 @@
 # le retour arriere (sans et avec migration), le refus d'une migration quand les scripts installes
 # different, l'espace disque et l'argument.
 # A lancer en root sur une machine jetable (CI) : il refuse de tourner si l'un de ces chemins existe deja.
-# shellcheck disable=SC2329  # les fonctions sont appelees par trap ou par verifier
+# shellcheck disable=SC2317,SC2329  # les fonctions sont appelees par trap ou par verifier
 set -Eeuo pipefail
 [[ $(id -u) == 0 ]]
 racine=$(cd "$(dirname "$0")/../.." && pwd)
