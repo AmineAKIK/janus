@@ -44,6 +44,12 @@ describe('bilan.erreurs de la démo', () => {
     expect(magasin.lire().faits).toHaveLength(avant)
   })
 
+  it('refuse une erreur que le bloc ne connaît pas (400)', async () => {
+    const { transport } = monterDemo()
+
+    await expect(cocher(transport, 1, ['E999'])).rejects.toMatchObject({ status: 400 })
+  })
+
   it('répond 404 pour un bloc inconnu', async () => {
     const { transport } = monterDemo()
 

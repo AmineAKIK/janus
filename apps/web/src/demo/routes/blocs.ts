@@ -194,6 +194,15 @@ export const ROUTES_BLOCS_DEMO = [
     }
     let recalcule = false
     if (corps.type === 'bilan.erreurs') {
+      const connues = (MANIFESTES_GRAINE[corps.bloc]?.erreurs_critiques ?? []).map(({ id }) => id)
+      if (corps.ids.some((id) => !connues.includes(id))) {
+        throw new ErreurApi({
+          status: 400,
+          code: 'donnees_invalides',
+          titre: 'Erreur inconnue',
+          detail: 'Ce bloc ne connaît pas cette erreur.',
+        })
+      }
       const ouvertes = resultatDuBloc(magasin.lire(), corps.bloc, maintenant).erreursOuvertes
       const commun = { bloc: corps.bloc, date: maintenant }
       const cochees: Fait[] = corps.ids

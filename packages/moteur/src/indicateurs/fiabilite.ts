@@ -3,8 +3,6 @@ import type { Fait } from '../faits.ts'
 import { dansLaPeriode } from './periode.ts'
 import type { Periode } from './periode.ts'
 
-/** Au-delà de cette part de désaccords, le tuteur se trompe trop souvent. */
-export const SEUIL_DESACCORD = 0.15
 /** Le nombre d'échantillons relus que regarde l'alerte. */
 export const ECHANTILLONS_RECENTS = 30
 
@@ -28,7 +26,7 @@ export interface Fiabilite {
   readonly nonVerifiees: number
   /** Les corrections contestées par Amine. */
   readonly contestations: number
-  /** Vrai quand plus de 15 % des 30 derniers échantillons relus sont en désaccord. */
+  /** Vrai quand plus de `seuilDesaccord` (15 % par défaut) des 30 derniers échantillons relus sont en désaccord. */
   readonly alerte: boolean
 }
 
@@ -38,7 +36,7 @@ export function fiabilite(
   faits: readonly Fait[],
   periode: Periode,
   maintenant: string,
-  reglages: Pick<Reglages, 'fuseau' | 'heureBascule'>,
+  reglages: Pick<Reglages, 'fuseau' | 'heureBascule' | 'seuilDesaccord'>,
 ): Fiabilite {
   const relues = controles
     .filter(({ echantillon, accord }) => echantillon && accord !== null)
@@ -54,6 +52,6 @@ export function fiabilite(
     contestations: faits.filter(
       (fait) => fait.type === 'correction_contestee' && dansPeriode(fait.date),
     ).length,
-    alerte: desaccordsRecents / Math.max(recentes.length, 1) > SEUIL_DESACCORD,
+    alerte: desaccordsRecents / Math.max(recentes.length, 1) > reglages.seuilDesaccord,
   }
 }

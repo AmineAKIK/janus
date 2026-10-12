@@ -9,7 +9,7 @@ import {
   validerManifeste,
 } from '@janus/contrats'
 import type { CinqPreuves } from '@janus/contrats'
-import { accesBloc, calculerBloc, instantEnMs, preuvesDuBloc } from '@janus/moteur'
+import { accesBloc, calculerBloc, instantEnMs, preuvesDuBloc, seriesOuvertes } from '@janus/moteur'
 import type { ResultatBloc } from '@janus/moteur'
 import { z } from 'zod'
 import type { Base } from '../../base/base.ts'
@@ -22,7 +22,7 @@ import { recalculer, versStatutBloc } from '../../recalcul.ts'
 import { empreinteDuTexte, extraireManifeste, extraireSons } from './adaptateur.ts'
 import type { Stockage } from './adaptateur.ts'
 import type { CompteCartes, CompteImportCatalogue, DepotCatalogue } from './depot.ts'
-import { peutOuvrir, serieOuverte } from './policy.ts'
+import { peutOuvrir } from './policy.ts'
 
 /** Un import refusé, avec tous ses problèmes (la ligne de commande les affiche et sort en erreur). */
 export class ErreurImport extends Error {
@@ -274,10 +274,7 @@ export function creerServiceLecture({ base, depot, horloge, fichesUrl }: Dependa
         version: version.version,
         manifeste,
         problemes: [...problemesDe(version.id, version.manifeste)],
-        serie_ouverte: serieOuverte(
-          resultat.statut,
-          resultat.manque.some(({ code: manque }) => manque === 'consolidation_trop_tot'),
-        ),
+        serie_ouverte: seriesOuvertes(resultat),
         force: resultat.force,
         acces: accesBloc(await statutsDesPrerequis(base.db, userId, manifeste.prerequis)),
         preuves: preuvesDeLApi(resultat, reglages),

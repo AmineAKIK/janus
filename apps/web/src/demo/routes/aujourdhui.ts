@@ -8,6 +8,7 @@ import type {
   TypeVerification,
 } from '@janus/contrats'
 import {
+  auMoinsVu,
   blocEnCours,
   cartesDuJour,
   choisirQuestionsDebut,
@@ -22,14 +23,6 @@ import type { Magasin } from '../store.ts'
 import type { HorlogeDemo } from '../horlogeDemo.ts'
 import { definir } from './definir.ts'
 import { blocsReportes, verificationPour } from './verifications.ts'
-
-/** Les statuts à partir desquels un bloc compte comme « vu » pour les questions et les cartes. */
-const AU_MOINS_VU: ReadonlySet<Statut> = new Set([
-  'vu',
-  'acquis_provisoirement',
-  'acquis',
-  'maitrise',
-])
 
 /** Où mène une tâche : les écrans de séance des PR suivantes, ou le bloc. */
 function lienDeLaTache(
@@ -93,7 +86,7 @@ export function contexteDuJour(etat: EtatDemo, maintenant: string) {
       dernierFait,
     })),
   )
-  const vus = blocs.filter(({ etat: resultat }) => AU_MOINS_VU.has(resultat.statut))
+  const vus = blocs.filter(({ etat: resultat }) => auMoinsVu(resultat))
   const questions = choisirQuestionsDebut(
     vus.map(({ manifeste }) => ({
       manifeste,

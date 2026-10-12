@@ -1,5 +1,5 @@
 import type { Manque, Statut } from '@janus/contrats'
-import { Reglages, ROUTES } from '@janus/contrats'
+import { ROUTES } from '@janus/contrats'
 import { jourDe } from '@janus/moteur'
 import { useLecture, useLectures } from '../api/requetes.tsx'
 import { instantReel } from '../demo/horlogeDemo.ts'
@@ -7,7 +7,6 @@ import { ligneEcheance } from './echeance.ts'
 import type { LigneEcheance } from './echeance.ts'
 import type { ContexteDetail } from './PanneauDetail.tsx'
 
-const BASCULE_PAR_DEFAUT = Reglages.parse({}).heureBascule
 export const ACQUIS_AU_MOINS_PROVISOIRE: readonly Statut[] = [
   'acquis_provisoirement',
   'acquis',
@@ -40,8 +39,8 @@ export type EtatBlocs =
       readonly contexte: ContexteDetail
     }
 
-function enJour(date: string, fuseau: string): string {
-  return date.length === 10 ? date : jourDe(date, fuseau, BASCULE_PAR_DEFAUT)
+function enJour(date: string, fuseau: string, heureBascule: number): string {
+  return date.length === 10 ? date : jourDe(date, fuseau, heureBascule)
 }
 
 export function rangEtape(
@@ -58,7 +57,7 @@ export function rangEtape(
  * chaque bloc donne ce qui manque, les erreurs ouvertes et l'étape où la page s'est arrêtée.
  */
 export function useBlocs(moduleId: string): EtatBlocs {
-  const moi = useLecture(ROUTES['GET /moi'], {})
+  const reglages = useLecture(ROUTES['GET /reglages'], {})
   const formations = useLecture(ROUTES['GET /formations'], {})
   const modulesParFormation = useLectures(
     ROUTES['GET /formations/:id/modules'],
@@ -70,12 +69,12 @@ export function useBlocs(moduleId: string): EtatBlocs {
     (liste.data?.blocs ?? []).map(({ bloc }) => ({ params: { id: bloc } })),
   )
 
-  const enErreur = [moi, formations, liste, ...modulesParFormation, ...details].find(
+  const enErreur = [reglages, formations, liste, ...modulesParFormation, ...details].find(
     ({ isError }) => isError,
   )
   if (enErreur !== undefined) return { phase: 'erreur', reessayer: () => void enErreur.refetch() }
   if (
-    moi.data === undefined ||
+    reglages.data === undefined ||
     formations.data === undefined ||
     liste.data === undefined ||
     modulesParFormation.some(({ data }) => data === undefined) ||
@@ -84,8 +83,8 @@ export function useBlocs(moduleId: string): EtatBlocs {
     return { phase: 'chargement' }
   }
 
-  const fuseau = moi.data.fuseau
-  const aujourdhui = jourDe(instantReel(), fuseau, BASCULE_PAR_DEFAUT)
+  const { fuseau, heureBascule } = reglages.data
+  const aujourdhui = jourDe(instantReel(), fuseau, heureBascule)
   const statuts = new Map(liste.data.blocs.map(({ bloc, statut }) => [bloc, statut]))
 
   const formation = formations.data.formations.find((_, index) =>
@@ -97,7 +96,7 @@ export function useBlocs(moduleId: string): EtatBlocs {
 
   return {
     phase: 'pret',
-    contexte: { fuseau, heureBascule: BASCULE_PAR_DEFAUT, statuts },
+    contexte: { fuseau, heureBascule, statuts },
     module:
       formation === undefined || module === undefined
         ? null
@@ -128,7 +127,7 @@ export function useBlocs(moduleId: string): EtatBlocs {
           etape: rangEtape(detail?.etat_page?.etat, detail?.manifeste.etapes ?? []),
           prerequisManquants,
           aujourdhui,
-          enJour: (date) => enJour(date, fuseau),
+          enJour: (date) => enJour(date, fuseau, heureBascule),
         }),
       }
     }),

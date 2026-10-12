@@ -193,20 +193,45 @@ describe('la consolidation', () => {
     )
   })
 
-  it('rouvrir le cours entre la restitution et la consolidation annule la série', () => {
+  it('rouvrir le cours après la restitution relance le délai à partir de la dernière étape de cours', () => {
     for (const etape of ['ET1', 'ET2', 'ET3', 'ET4', 'ET5', 'ET6']) {
       const f = fabrique()
-      const faits = [
+      const base = [
         ...f.pratique(DEBUT),
         f.atelier(DEBUT),
         ...f.restitution(apres(DEBUT, 0, 30)),
         f.etape(apres(DEBUT, 0, 60), etape),
-        ...f.consolidation(apres(DEBUT, 0, 120)),
       ]
-      const resultat = calcul(faits, apres(DEBUT, 0, 200))
-      expect(resultat.statut).toBe('vu')
-      expect(resultat.manque.map((m) => m.code)).toContain('consolidation_cours_rouvert')
+      // 1 h après la restitution mais 30 minutes après le cours : trop tôt, le délai court depuis le cours.
+      const tropTot = calcul(
+        [...base, ...f.consolidation(apres(DEBUT, 0, 90))],
+        apres(DEBUT, 0, 200),
+      )
+      const apresDelai = calcul(
+        [...base, ...f.consolidation(apres(DEBUT, 0, 120))],
+        apres(DEBUT, 0, 200),
+      )
+
+      expect(tropTot.statut).toBe('vu')
+      expect(tropTot.manque).toContainEqual({
+        code: 'consolidation_trop_tot',
+        apres: apres(DEBUT, 0, 120),
+      })
+      expect(apresDelai.statut).toBe('acquis_provisoirement')
     }
+  })
+
+  it('le cours rouvert pendant une série d’après la restitution ne la bloque plus pour toujours', () => {
+    const f = fabrique()
+    const faits = [
+      ...f.pratique(DEBUT),
+      f.atelier(DEBUT),
+      ...f.restitution(apres(DEBUT, 0, 30)),
+      f.etape(apres(DEBUT, 0, 60), 'ET4'),
+      ...f.consolidation(apres(DEBUT, 0, 300)),
+    ]
+
+    expect(calcul(faits, apres(DEBUT, 0, 400)).statut).toBe('acquis_provisoirement')
   })
 
   it('les étapes de restitution, de consolidation et de bilan, ou inconnues, n’annulent rien', () => {
@@ -234,6 +259,44 @@ describe('la consolidation', () => {
       f.etape(apres(DEBUT, 0, 200), 'ET3'),
     ]
     expect(calcul(faits, apres(DEBUT, 0, 300)).statut).toBe('acquis_provisoirement')
+  })
+
+  it('une consolidation faite avant la fin de la restitution ne donne pas « acquis provisoirement »', () => {
+    const f = fabrique()
+    const restitution = MANIFESTE.restitution
+    const derniere = restitution.at(-1)
+    if (derniere === undefined) throw new Error('Le bloc de test n’a pas de restitution')
+    const faits = [
+      ...f.pratique(DEBUT),
+      f.atelier(DEBUT),
+      ...restitution
+        .slice(0, -1)
+        .map((q, i) => f.correction(apres(DEBUT, 0, i), 'restitution', q.id, { niveau: 'solide' })),
+      ...f.consolidation(apres(DEBUT, 0, 120)),
+      f.correction(apres(DEBUT, 0, 200), 'restitution', derniere.id, { niveau: 'solide' }),
+    ]
+    const resultat = calcul(faits, apres(DEBUT, 1))
+
+    expect(resultat.statut).toBe('vu')
+    expect(resultat.dates.acquisProvisoirement).toBeNull()
+  })
+
+  it('trois réponses solides à la même question ne forment pas une série', () => {
+    const f = fabrique()
+    const [premiere] = MANIFESTE.consolidation
+    if (premiere === undefined) throw new Error('Le bloc de test n’a pas de consolidation')
+    const faits = [
+      ...f.pratique(DEBUT),
+      f.atelier(DEBUT),
+      ...f.restitution(apres(DEBUT, 0, 30)),
+      f.correction(apres(DEBUT, 0, 120), 'consolidation', premiere.id, { niveau: 'solide' }),
+      f.correction(apres(DEBUT, 0, 121), 'consolidation', premiere.id, { niveau: 'solide' }),
+      f.correction(apres(DEBUT, 0, 122), 'consolidation', premiere.id, { niveau: 'solide' }),
+    ]
+    const resultat = calcul(faits, apres(DEBUT, 0, 200))
+
+    expect(resultat.statut).toBe('vu')
+    expect(resultat.manque.map((m) => m.code)).toContain('consolidation_a_faire')
   })
 
   it('compte 0,8 de points : 3 réponses solides, solide, partiel passent, deux partiels non', () => {

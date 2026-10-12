@@ -40,10 +40,14 @@ export function echeances(etat: ResultatBloc, reglages: Reglages): Echeance | nu
   })
 
   if (vu !== null && etat.manque.some(({ code }) => code.startsWith('consolidation_'))) {
+    // Le manque connaît l'instant exact, y compris quand rouvrir le cours a relancé le délai.
+    const tropTot = etat.manque.find(({ code }) => code === 'consolidation_trop_tot')
     return {
       type: 'consolidation',
       genre: 'instant',
-      apres: instantEnIso(instantEnMs(vu) + reglages.delaiConsolidationMinutes * MS_PAR_MINUTE),
+      apres:
+        tropTot?.apres ??
+        instantEnIso(instantEnMs(vu) + reglages.delaiConsolidationMinutes * MS_PAR_MINUTE),
     }
   }
   if (acquisProvisoirement !== null && acquis === null) {

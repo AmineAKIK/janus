@@ -77,6 +77,14 @@ describe('fiabilite', () => {
     expect(fiabilite(sur20(4), [], 'tout', MAINTENANT, REGLAGES).alerte).toBe(true)
   })
 
+  it('suit le seuil de désaccord réglé', () => {
+    const jour = (rang: number) => `2026-09-${String(10 + rang)}T10:00:00Z`
+    const quatreSur20 = Array.from({ length: 20 }, (_, rang) => controle(jour(rang), rang >= 4))
+    const tolerant = { ...REGLAGES, seuilDesaccord: 0.3 }
+
+    expect(fiabilite(quatreSur20, [], 'tout', MAINTENANT, tolerant).alerte).toBe(false)
+  })
+
   it('ne regarde que les 30 derniers échantillons, quelle que soit la période', () => {
     const anciens = Array.from({ length: 10 }, (_, rang) =>
       controle(`2026-06-${String(10 + rang)}T10:00:00Z`, false),

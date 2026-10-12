@@ -82,6 +82,24 @@ describe('echeances', () => {
     })
   })
 
+  it('le manque et l’échéance donnent la même date après un échec', () => {
+    const f = fabrique()
+    const verifRatee = [...jusquaProvisoire(f), f.verification(apres(DEBUT, 6), { tache: false })]
+    const retestRate = [
+      ...jusquaProvisoire(f),
+      f.verification(apres(DEBUT, 4)),
+      f.verification(apres(DEBUT, 40), { verification: 'retest', tache: false }),
+    ]
+    for (const faits of [verifRatee, retestRate]) {
+      const resultat = etat(faits, apres(DEBUT, 41))
+      const echeance = echeances(resultat, REGLAGES)
+      const manque = resultat.manque.find(({ code }) => /^(verification|retest)_/.test(code))
+
+      expect(manque).toBeDefined()
+      expect(manque && 'apres' in manque ? manque.apres : null).toBe(echeance?.apres)
+    }
+  })
+
   it('programme le nouvel essai d’un retest raté deux jours après lui', () => {
     const f = fabrique()
     const faits = [
