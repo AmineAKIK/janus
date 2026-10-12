@@ -17,6 +17,22 @@ describe('Catalogue', () => {
     }
   })
 
+  it('les tâches réservées d’un module sont facultatives et ne doivent pas être vides', () => {
+    const module = { code: 'M9', titre: 'Plus tard', description: '', ordre: 9, importe: false }
+    const formation = { code: 'F', titre: 'F', description: '' }
+    const lire = (taches?: string[]) =>
+      Catalogue.safeParse({
+        formation,
+        modules: [taches === undefined ? module : { ...module, taches_reservees: taches }],
+      })
+
+    expect(lire().data?.modules[0]?.taches_reservees).toEqual([])
+    expect(lire(['Maquette du portfolio']).data?.modules[0]?.taches_reservees).toEqual([
+      'Maquette du portfolio',
+    ])
+    expect(lire(['  ']).success).toBe(false)
+  })
+
   it('un module non importé n’a pas de parties', () => {
     const catalogue = Catalogue.parse(demo)
     const second = catalogue.modules[1]

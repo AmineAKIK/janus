@@ -116,11 +116,19 @@ export const cartes = pgTable(
   (table) => [unique('cartes_bloc_carte').on(table.blocId, table.carteId)],
 )
 
-/** Les tâches inédites réservées : seul l'intitulé est gardé, le contenu reste hors de l'appli. */
-export const tachesReservees = pgTable('taches_reservees', {
-  id: uuid('id').primaryKey(),
-  moduleId: uuid('module_id')
-    .notNull()
-    .references(() => modules.id),
-  intitule: text('intitule').notNull(),
-})
+/**
+ * Les tâches inédites réservées : seul l'intitulé est gardé, le contenu reste hors de l'appli.
+ * Écrites par l'import du catalogue ; une tâche retirée du fichier devient inactive, jamais effacée.
+ */
+export const tachesReservees = pgTable(
+  'taches_reservees',
+  {
+    id: uuid('id').primaryKey(),
+    moduleId: uuid('module_id')
+      .notNull()
+      .references(() => modules.id),
+    intitule: text('intitule').notNull(),
+    active: boolean('active').notNull().default(true),
+  },
+  (table) => [unique('taches_reservees_module_intitule').on(table.moduleId, table.intitule)],
+)

@@ -18,6 +18,8 @@ const ModuleBase = {
   titre: Texte,
   description: z.string().trim(),
   ordre: z.number().int(),
+  /** Les tâches inédites du module, réservées : seul l'intitulé est gardé, le contenu reste hors de l'appli. */
+  taches_reservees: z.array(Texte).default([]),
 }
 
 const Module = z.discriminatedUnion('importe', [

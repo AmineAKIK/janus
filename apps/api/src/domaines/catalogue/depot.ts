@@ -26,6 +26,7 @@ export interface NouveauModule {
   readonly description: string
   readonly ordre: number
   readonly importe: boolean
+  readonly tachesReservees: readonly string[]
   readonly parties: readonly {
     readonly code: string
     readonly titre: string
@@ -285,6 +286,19 @@ export function creerDepotCatalogue(base: Base) {
             .returning({ id: t.modules.id, cree })
           if (ecrit === undefined) throw new Error('Module non écrit.')
           if (ecrit.cree) compte.modules += 1
+          await tx
+            .update(t.tachesReservees)
+            .set({ active: false })
+            .where(eq(t.tachesReservees.moduleId, ecrit.id))
+          for (const intitule of leModule.tachesReservees) {
+            await tx
+              .insert(t.tachesReservees)
+              .values({ id: nouvelId(), moduleId: ecrit.id, intitule })
+              .onConflictDoUpdate({
+                target: [t.tachesReservees.moduleId, t.tachesReservees.intitule],
+                set: { active: true },
+              })
+          }
           let ordreBloc = 0
           for (const [rang, partie] of leModule.parties.entries()) {
             const [laPartie] = await tx

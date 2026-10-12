@@ -62,7 +62,14 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('import du catalogue et des fich
   }
 
   const compter = async (
-    table: 'formations' | 'modules' | 'parties' | 'blocs' | 'cartes' | 'fiches_versions',
+    table:
+      | 'formations'
+      | 'modules'
+      | 'parties'
+      | 'blocs'
+      | 'cartes'
+      | 'fiches_versions'
+      | 'taches_reservees',
   ) => {
     const { rows } = await bases.pool.query<{ n: string }>(`SELECT count(*) AS n FROM ${table}`)
     return Number(rows[0]?.n)
@@ -116,6 +123,38 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('import du catalogue et des fich
       ]).toEqual(avant)
       const [formation] = await bases.db.select().from(t.formations)
       expect(formation?.titre).toBe('Nouveau titre')
+    })
+
+    it('garde les tâches réservées d’un module et retire celles que le fichier n’a plus', async () => {
+      const avecTaches = (taches: string[]) => ({
+        ...CATALOGUE,
+        modules: CATALOGUE.modules.map((m) =>
+          m.code === 'M1' ? { ...m, taches_reservees: taches } : m,
+        ),
+      })
+      const actives = async () =>
+        (
+          await bases.db
+            .select({ intitule: t.tachesReservees.intitule })
+            .from(t.tachesReservees)
+            .where(eq(t.tachesReservees.active, true))
+            .orderBy(t.tachesReservees.id)
+        ).map(({ intitule }) => intitule)
+
+      await service.importerCatalogue(avecTaches(['Maquette', 'Soutenance']))
+      await service.importerCatalogue(avecTaches(['Maquette', 'Soutenance']))
+      expect(await actives()).toEqual(['Maquette', 'Soutenance'])
+      expect(await compter('taches_reservees')).toBe(2)
+
+      await service.importerCatalogue(avecTaches(['Soutenance']))
+      expect(await actives()).toEqual(['Soutenance'])
+
+      await service.importerCatalogue(avecTaches(['Maquette', 'Soutenance']))
+      expect(await actives()).toEqual(['Maquette', 'Soutenance'])
+      expect(await compter('taches_reservees')).toBe(2)
+
+      await service.importerCatalogue(CATALOGUE)
+      expect(await actives()).toEqual([])
     })
 
     it('refuse un catalogue invalide avec tous ses problèmes', async () => {

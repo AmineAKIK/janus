@@ -78,6 +78,7 @@ export function creerServiceCatalogue({ depot, stockage, horloge }: DependancesS
           description: leModule.description,
           ordre: leModule.ordre,
           importe: leModule.importe,
+          tachesReservees: leModule.taches_reservees,
           parties: leModule.importe ? leModule.parties : [],
         })),
         identifiant,
