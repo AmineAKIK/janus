@@ -30,9 +30,15 @@ const couchesAutorisees = {
 // Le moteur n'est ouvert qu'au service et à la policy : les règles métier restent dans `packages/moteur`.
 const paquetsDesCouches = { service: ['moteur'], policy: ['moteur'] }
 
+// Un fichier de l'API qui n'est ni une couche d'un domaine ni une composition.
+const apiSimple = {
+  element: { type: 'app-api' },
+  file: { isUnknown: true },
+}
+
 const autorises = {
   'app-web': ['contrats', 'moteur', 'pont', 'ui'],
-  'app-api': ['contrats', 'moteur', 'composition'],
+  'app-api': [],
   contrats: [],
   moteur: ['contrats'],
   pont: ['contrats'],
@@ -66,26 +72,24 @@ export default defineConfig(
       'import/resolver': { typescript: { project: './tsconfig.json' } },
       'boundaries/root-path': import.meta.dirname,
       'boundaries/ignore': ['**/*.test.ts'],
+      // Les dossiers : l'appli web, l'API et chaque paquet.
       'boundaries/elements': [
         { type: 'app-web', pattern: 'apps/web' },
-        // `mode: 'file'` est signalé comme déprécié, mais `partialMatch: false` le remplace mal : les fichiers
-        // ne sont plus classés et la règle cesse de s'appliquer en silence (vérifié avec un import interdit).
-        // À migrer avec une montée de version du plugin, en rejouant ce contrôle.
-        // Les couches d'abord : `app-api` (le reste de l'API : plugins, base, erreurs) vient après.
-        ...couchesApi.map((type) => ({
-          type,
-          pattern: `apps/api/src/domaines/*/${fichierDeCouche[type]}.ts`,
-          mode: 'file',
+        { type: 'app-api', pattern: 'apps/api' },
+        ...paquets.map((nom) => ({ type: nom, pattern: `packages/${nom}` })),
+      ],
+      // Les fichiers : la couche de l'API à laquelle chacun appartient, et son domaine.
+      'boundaries/files': [
+        ...couchesApi.map((categorie) => ({
+          category: categorie,
+          pattern: `apps/api/src/domaines/*/${fichierDeCouche[categorie]}.ts`,
           capture: ['domaine'],
         })),
         {
-          type: 'composition',
+          category: 'composition',
           pattern: 'apps/api/src/domaines/*/composition.ts',
-          mode: 'file',
           capture: ['domaine'],
         },
-        { type: 'app-api', pattern: 'apps/api' },
-        ...paquets.map((nom) => ({ type: nom, pattern: `packages/${nom}` })),
       ],
     },
     rules: {
@@ -93,46 +97,59 @@ export default defineConfig(
         'error',
         {
           default: 'disallow',
+          checkInternals: true,
           policies: [
-            ...Object.entries(autorises).map(([depuis, vers]) => ({
-              from: { element: { type: depuis } },
-              allow: {
-                to: { element: { types: { anyOf: [depuis, ...vers] } } },
-              },
-            })),
+            // L'appli web et les paquets : chacun reste chez lui et ne regarde que ce qui est au-dessous.
+            ...Object.entries(autorises)
+              .filter(([depuis]) => depuis !== 'app-api')
+              .map(([depuis, vers]) => ({
+                from: { element: { type: depuis } },
+                allow: { to: { element: { types: { anyOf: [depuis, ...vers] } } } },
+              })),
+            // Le reste de l'API (plugins, base, erreurs...) : lui-même, les paquets et les `composition.ts`,
+            // jamais le contenu d'un domaine.
             {
-              from: { element: { type: 'composition' } },
+              from: apiSimple,
+              allow: [
+                { to: apiSimple },
+                { to: { element: { types: { anyOf: ['contrats', 'moteur'] } } } },
+                { to: { file: { categories: 'composition' } } },
+              ],
+            },
+            // `composition.ts` branche les couches de son domaine.
+            {
+              from: { file: { categories: 'composition' } },
               allow: [
                 {
                   to: {
-                    element: {
-                      types: { anyOf: couchesApi },
-                      captured: { domaine: '{{ from.captured.domaine }}' },
+                    file: {
+                      categories: { anyOf: couchesApi },
+                      captured: { domaine: '{{ from.file.captured.domaine }}' },
                     },
                   },
                 },
-                { to: { element: { types: { anyOf: ['app-api', 'contrats'] } } } },
+                { to: apiSimple },
+                { to: { element: { type: 'contrats' } } },
               ],
             },
             ...couchesApi.map((depuis) => ({
-              from: { element: { type: depuis } },
+              from: { file: { categories: depuis } },
               allow: [
                 // Dans le même domaine : seulement la couche du dessous.
                 {
                   to: {
-                    element: {
-                      types: { anyOf: couchesAutorisees[depuis] },
-                      captured: { domaine: '{{ from.captured.domaine }}' },
+                    file: {
+                      categories: { anyOf: couchesAutorisees[depuis] },
+                      captured: { domaine: '{{ from.file.captured.domaine }}' },
                     },
                   },
                 },
                 // Hors des domaines : le reste de l'API (erreurs, base, types) et les paquets.
+                { to: apiSimple },
                 {
                   to: {
                     element: {
-                      types: {
-                        anyOf: ['app-api', 'contrats', ...(paquetsDesCouches[depuis] ?? [])],
-                      },
+                      types: { anyOf: ['contrats', ...(paquetsDesCouches[depuis] ?? [])] },
                     },
                   },
                 },
