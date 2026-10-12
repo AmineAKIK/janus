@@ -81,20 +81,6 @@ export const revuesFsrs = pgTable(
   ],
 )
 
-export const journal = pgTable(
-  'journal',
-  {
-    id: uuid('id').primaryKey(),
-    userId: proprietaire(),
-    blocId: uuid('bloc_id').references(() => blocs.id),
-    type: text('type').notNull(),
-    donnees: jsonb('donnees').notNull(),
-    versionMoteur: versionMoteur(),
-    dateServeur: instant('date_serveur').notNull(),
-  },
-  (table) => [index('journal_user_date').on(table.userId, table.dateServeur)],
-)
-
 /** Le budget IA d'un mois (`AAAA-MM`), en millionièmes d'euro. `reserve` : le coût annoncé d'appels en cours. */
 export const budgetIa = pgTable(
   'budget_ia',
@@ -136,7 +122,6 @@ export const TABLES_CALCULEES = [
   'statuts_courants',
   'echeances',
   'revues_fsrs',
-  'journal',
   'budget_ia',
   'abonnements_push',
 ] as const

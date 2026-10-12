@@ -60,6 +60,17 @@ export function creerDepotAuth(base: Base, proprietaire: Base) {
       .leftJoin(t.sessionsRevoquees, eq(t.sessionsRevoquees.sessionId, t.sessions.id))
 
   return {
+    /** Un nouveau compte (la commande `compte:creer` ; il n'y a pas d'inscription par le web). */
+    ajouterUtilisateur: async (utilisateur: {
+      id: string
+      nomUtilisateur: string
+      motDePasseHash: string
+      reglages: unknown
+      creeLe: string
+    }): Promise<void> => {
+      await base.db.insert(t.users).values(utilisateur)
+    },
+
     utilisateurParNom: async (nom: string): Promise<Utilisateur | undefined> => {
       const [ligne] = await base.db
         .select(colonnesUtilisateur)
@@ -193,7 +204,6 @@ async function effacerLesDonnees(tx: Tx, userId: string): Promise<void> {
     t.echeances,
     t.revuesFsrs,
     t.pausesFormation,
-    t.journal,
     t.budgetIa,
     t.abonnementsPush,
     t.etatsPage,

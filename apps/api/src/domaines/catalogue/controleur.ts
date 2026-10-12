@@ -1,17 +1,11 @@
 import type { ROUTES } from '@janus/contrats'
 import type { FastifyRequest } from 'fastify'
 import type { z } from 'zod'
-import { NonAuthentifie } from '../../erreurs.ts'
 import type { ServiceLecture } from './service.ts'
+import { utilisateurDe } from '../../plugins/contrat.ts'
 
 type Params = { Params: { id: string } }
 type CorpsOuvrir = z.infer<(typeof ROUTES)['POST /blocs/:id/ouvrir']['corps']>
-
-function utilisateurDe(requete: FastifyRequest): string {
-  const { utilisateur } = requete.session
-  if (utilisateur === null) throw new NonAuthentifie('Connecte-toi pour continuer.')
-  return utilisateur
-}
 
 export function creerControleurCatalogue(service: ServiceLecture) {
   return {

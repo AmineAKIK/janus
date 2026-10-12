@@ -1,13 +1,7 @@
 import type { ModificationReglages } from '@janus/contrats'
 import type { FastifyReply, FastifyRequest } from 'fastify'
-import { NonAuthentifie } from '../../erreurs.ts'
 import type { ServiceReglages } from './service.ts'
-
-function utilisateurDe(requete: FastifyRequest): string {
-  const { utilisateur } = requete.session
-  if (utilisateur === null) throw new NonAuthentifie('Connecte-toi pour continuer.')
-  return utilisateur
-}
+import { utilisateurDe } from '../../plugins/contrat.ts'
 
 export function creerControleurReglages(service: ServiceReglages) {
   return {

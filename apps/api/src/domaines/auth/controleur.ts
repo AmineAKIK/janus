@@ -2,20 +2,14 @@ import type { CookieSerializeOptions } from '@fastify/cookie'
 import { ROUTES } from '@janus/contrats'
 import type { FastifyReply, FastifyRequest } from 'fastify'
 import type { z } from 'zod'
-import { NonAuthentifie } from '../../erreurs.ts'
 import type { Config } from '../../config.ts'
 import { nomDuCookie } from '../../plugins/cookie.ts'
 import type { ServiceAuth } from './service.ts'
+import { utilisateurDe } from '../../plugins/contrat.ts'
 
 type Corps<Cle extends 'POST /session' | 'PATCH /moi/mot-de-passe' | 'DELETE /compte'> = z.infer<
   (typeof ROUTES)[Cle]['corps']
 >
-
-function utilisateurDe(requete: FastifyRequest): string {
-  const { utilisateur } = requete.session
-  if (utilisateur === null) throw new NonAuthentifie('Connecte-toi pour continuer.')
-  return utilisateur
-}
 
 export function creerControleurAuth(service: ServiceAuth, config: Pick<Config, 'COOKIE_SECURE'>) {
   const nomCookie = nomDuCookie(config.COOKIE_SECURE)

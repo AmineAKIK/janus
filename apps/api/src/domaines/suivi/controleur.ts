@@ -1,13 +1,7 @@
 import type { Periode, TypeJournal } from '@janus/contrats'
 import type { FastifyReply, FastifyRequest } from 'fastify'
-import { NonAuthentifie } from '../../erreurs.ts'
 import type { ServiceSuivi } from './service.ts'
-
-function utilisateurDe(requete: FastifyRequest): string {
-  const { utilisateur } = requete.session
-  if (utilisateur === null) throw new NonAuthentifie('Connecte-toi pour continuer.')
-  return utilisateur
-}
+import { utilisateurDe } from '../../plugins/contrat.ts'
 
 export function creerControleurSuivi(service: ServiceSuivi) {
   return {

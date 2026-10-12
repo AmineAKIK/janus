@@ -1,18 +1,7 @@
 import { ROUTES } from '@janus/contrats'
-import type { DefinitionRoute } from '@janus/contrats'
 import type { FastifyPluginAsync } from 'fastify'
 import type { ControleurEvenements } from './controleur.ts'
-
-/** Le schéma Fastify d'une route du contrat : entrée validée, sortie filtrée. */
-function schemaDe(definition: DefinitionRoute) {
-  return {
-    ...(definition.params === undefined ? {} : { params: definition.params }),
-    ...(definition.corps === undefined ? {} : { body: definition.corps }),
-    ...(definition.reponse === null
-      ? {}
-      : { response: { [definition.succes]: definition.reponse } }),
-  }
-}
+import { schemaDe } from '../../plugins/contrat.ts'
 
 /** Les événements de la page et l'état de page. Sous `/api`. */
 export function routesEvenements(controleur: ControleurEvenements): FastifyPluginAsync {

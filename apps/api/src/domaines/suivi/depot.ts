@@ -90,7 +90,6 @@ export function creerDepotSuivi() {
           .select()
           .from(t.pausesFormation)
           .where(eq(t.pausesFormation.userId, userId)),
-        journal: await lecteur.select().from(t.journal).where(eq(t.journal.userId, userId)),
         budget_ia: await lecteur.select().from(t.budgetIa).where(eq(t.budgetIa.userId, userId)),
         etats_page: await lecteur.select().from(t.etatsPage).where(eq(t.etatsPage.userId, userId)),
       }

@@ -32,7 +32,6 @@ const TABLES_A_VIDER = [
   'etats_page',
   'evenements',
   'idees',
-  'journal',
   'notes_cartes',
   'notes_journal',
   'rappels_envoyes',
