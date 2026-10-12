@@ -1,5 +1,5 @@
 import { Bouton, DialogueConfirmation, Interrupteur, LigneReglage } from '@janus/ui'
-import { InterrupteursDemo } from '@janus/contrats'
+import { InterrupteursDemo } from '@janus/contrats/demo'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import styles from '../Parametres.module.css'

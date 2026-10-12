@@ -306,10 +306,18 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('schéma : les faits et le rôle
     })
 
     it('accepte un forçage avec statut et raison, et sa levée sans rien', async () => {
-      await base.db.insert(t.statutsForces).values(forcage({}))
-      await base.db
-        .insert(t.statutsForces)
-        .values(forcage({ action: 'lever', statut: null, raison: null }))
+      const inseres = [
+        ...(await base.db.insert(t.statutsForces).values(forcage({})).returning()),
+        ...(await base.db
+          .insert(t.statutsForces)
+          .values(forcage({ action: 'lever', statut: null, raison: null }))
+          .returning()),
+      ]
+
+      expect(inseres.map(({ action, statut, raison }) => ({ action, statut, raison }))).toEqual([
+        { action: 'forcer', statut: 'acquis', raison: 'Je le maîtrise' },
+        { action: 'lever', statut: null, raison: null },
+      ])
     })
 
     it('refuse un forçage sans raison ou sans statut, une levée avec un statut, un statut inconnu', async () => {
@@ -355,13 +363,23 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('schéma : les faits et le rôle
         .insert(t.corrections)
         .values(correction({ questionId: 'D1' }))
         .returning()
-      await base.db.insert(t.decisionsErreurs).values(decision({}))
-      await base.db
-        .insert(t.decisionsErreurs)
-        .values(decision({ decision: 'decochee', source: 'ia_confirmee' }))
-      await base.db
-        .insert(t.decisionsErreurs)
-        .values(decision({ decision: 'confirmee', source: null, correctionId: vue?.id ?? '' }))
+      const inserees = [
+        ...(await base.db.insert(t.decisionsErreurs).values(decision({})).returning()),
+        ...(await base.db
+          .insert(t.decisionsErreurs)
+          .values(decision({ decision: 'decochee', source: 'ia_confirmee' }))
+          .returning()),
+        ...(await base.db
+          .insert(t.decisionsErreurs)
+          .values(decision({ decision: 'confirmee', source: null, correctionId: vue?.id ?? '' }))
+          .returning()),
+      ]
+
+      expect(inserees.map((ligne) => [ligne.decision, ligne.source, ligne.correctionId])).toEqual([
+        ['cochee', 'amine', null],
+        ['decochee', 'ia_confirmee', null],
+        ['confirmee', null, vue?.id],
+      ])
     })
 
     it('refuse une coche sans source, une confirmation sans correction, ou les deux à la fois', async () => {

@@ -10,6 +10,23 @@ Janus est une appli d'apprentissage : chaque bloc d'une formation se travaille a
 - [Maquettes Figma](https://www.figma.com/design/VhGXcHKlzhx9GYEmu2eVWg/Janus)
 - Règles pour les IA : [AGENTS.md](AGENTS.md)
 
+## Travailler sur le code
+
+Prérequis : Node 24, pnpm 10, PostgreSQL pour les tests de l'API (`DATABASE_URL`).
+
+```sh
+pnpm install
+pnpm typecheck && pnpm lint && pnpm test   # contrôles de la CI
+pnpm --filter @janus/web dev               # appli web (Vite)
+pnpm --filter @janus/web e2e               # parcours Playwright et captures
+```
+
+Le moteur (`packages/moteur`) tient 100 % de couverture. Les scripts `compte:creer`, `catalogue:importer`, `fiche:importer` et `ia:evaluer` s'exécutent depuis la racine.
+
+## Déploiement
+
+Chaque push sur `main` avec une CI verte est déployé sur le VPS par `deploy/vps` : voir [deploy/vps/README.md](deploy/vps/README.md) (installation, sauvegarde, restauration, retour arrière).
+
 ## Démo
 
 https://amineakik.github.io/janus/ (en ligne dès la PR-003)

@@ -1,13 +1,13 @@
+import { Manifeste, Reglages } from '@janus/contrats'
 import {
   ERREUR_COMPILATEUR,
   MANIFESTES_GRAINE,
   PLAN_GRAINE,
-  Manifeste,
-  Reglages,
   catalogueGraine,
-} from '@janus/contrats'
+} from '@janus/contrats/demo'
 import demo from '@janus/contrats/fixtures/manifeste-demo.json'
-import type { Catalogue, EtatDemo, Fait } from '@janus/contrats'
+import type { Catalogue, Fait } from '@janus/contrats'
+import type { EtatDemo } from '@janus/contrats/demo'
 import { ajouterJours, instantEnIso, instantEnMs, jourDe } from '@janus/moteur'
 import { etatVide } from './store.ts'
 
