@@ -125,10 +125,10 @@ printf '%s\n' "$cible" > "$etat/current-sha.tmp"
 mv "$etat/current-sha.tmp" "$etat/current-sha"
 phase=termine
 journal "Deploiement verifie sha=$cible precedent=$precedent migration=$migration"
-# Seules l'image en service et la precedente (pour le retour arriere) sont gardees.
+# Seules l'image en service et la precedente (pour le retour arriere) sont gardees. Le cache de construction
+# est partage avec les autres projets du serveur : on ne le purge jamais d'ici.
 for image in janus-api janus-web; do
   while IFS= read -r reference; do
     [[ $reference == "$image:$cible" || $reference == "$image:$precedent" ]] || docker rmi "$reference" || true
   done < <(docker image ls --format '{{.Repository}}:{{.Tag}}' "$image")
 done
-docker builder prune --force --filter until=168h >/dev/null || true
