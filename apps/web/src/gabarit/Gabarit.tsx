@@ -2,6 +2,7 @@ import { Link, Outlet, useRouterState } from '@tanstack/react-router'
 import { Navigation } from '@janus/ui'
 import type { ProprietesLienNavigation } from '@janus/ui'
 import { useEffect, useRef } from 'react'
+import { SelecteurFormation } from '../formation/SelecteurFormation.tsx'
 import { BandeauHorsConnexion } from '../pwa/BandeauHorsConnexion.tsx'
 import { TITRE_INTROUVABLE, titreDocument } from '../routes/ecrans.ts'
 import styles from './Gabarit.module.css'
@@ -99,6 +100,7 @@ export function Gabarit() {
         className={`${styles['contenu'] ?? ''}${large ? ` ${styles['large'] ?? ''}` : ''}`}
       >
         <BandeauHorsConnexion />
+        {navigation !== null && navigation !== 'parametres' && <SelecteurFormation />}
         <Outlet />
       </main>
     </div>
