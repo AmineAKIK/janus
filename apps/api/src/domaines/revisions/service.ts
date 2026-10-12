@@ -15,6 +15,7 @@ import {
 } from '@janus/moteur'
 import { z } from 'zod'
 import type { Base } from '../../base/base.ts'
+import { maintenantDeLaFormation, maintenantDuBloc } from '../../base/axeTemps.ts'
 import { formationActiveDe } from '../../base/formationActive.ts'
 import { lireFaits } from '../../base/faits.ts'
 import { verrouBloc } from '../../base/transaction.ts'
@@ -69,9 +70,9 @@ export function creerServiceRevisions({
 
   /** Les réglages, le plan, les faits et le contexte du jour : le point de départ de chaque route. */
   async function charger(userId: string) {
-    const maintenant = horloge.maintenant()
     const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
     const formationId = await formationActiveDe(base.db, reglages.formationActive)
+    const maintenant = await maintenantDeLaFormation(base.db, horloge, userId, formationId)
     const plan = await depot.blocsDuPlan(base.db, formationId)
     const faits = await lireFaits(
       base.db,
@@ -283,7 +284,7 @@ export function creerServiceRevisions({
 
       return base.enTransaction(async (tx) => {
         await verrouBloc(tx, userId, bloc.id)
-        const maintenant = horloge.maintenant()
+        const maintenant = await maintenantDuBloc(tx, horloge, userId, bloc.id)
         const donnees = {
           verification: id,
           partie: corps.partie,
@@ -496,7 +497,7 @@ export function creerServiceRevisions({
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
       return base.enTransaction(async (tx) => {
         await verrouBloc(tx, userId, trouvee.blocId)
-        const maintenant = horloge.maintenant()
+        const maintenant = await maintenantDuBloc(tx, horloge, userId, trouvee.blocId)
         const brut = await depot.revueDe(tx, userId, trouvee.id)
         const avant = brut === undefined ? null : EtatGarde.parse(brut)
         if (avant !== null && (await depot.noteParId(tx, userId, noteId)) !== undefined) {

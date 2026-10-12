@@ -6,7 +6,7 @@ import { routesReglages } from './routes.ts'
 import { creerServiceReglages } from './service.ts'
 
 /** Branche les réglages : dépôt → service → contrôleur → routes. */
-export function monterReglages({ base }: Dependances): FastifyPluginAsync {
-  const service = creerServiceReglages({ base, depot: creerDepotReglages() })
+export function monterReglages({ base, horloge }: Dependances): FastifyPluginAsync {
+  const service = creerServiceReglages({ base, depot: creerDepotReglages(), horloge })
   return routesReglages(creerControleurReglages(service))
 }
