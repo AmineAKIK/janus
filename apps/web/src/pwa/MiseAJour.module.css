@@ -1,6 +1,16 @@
 .bandeau {
   position: fixed;
   inset-inline: var(--espacement-16);
-  inset-block-end: var(--espacement-16);
+  /* Au-dessus de la barre de navigation basse, jamais devant ses boutons. */
+  inset-block-end: calc(
+    var(--hauteur-barre-navigation) + env(safe-area-inset-bottom, 0px) + var(--espacement-16)
+  );
   z-index: 10;
+}
+
+/* Dès 1024 px la navigation passe sur le côté : le bandeau retrouve le bas de l'écran. */
+@media (min-width: 64rem) {
+  .bandeau {
+    inset-block-end: var(--espacement-16);
+  }
 }

@@ -73,6 +73,35 @@ describe('lectures', () => {
     expect(options).toMatchObject({ signal: expect.any(AbortSignal) as unknown })
   })
 
+  it('gardent la dernière version connue quand une relecture échoue', async () => {
+    const appeler = vi.fn().mockResolvedValueOnce(MOI).mockRejectedValue(new Error('panne'))
+    const { client } = afficher(transportQui(appeler), <Moi />)
+    expect(await screen.findByText('Bonjour amine')).toBeInTheDocument()
+
+    await act(async () => {
+      await client.refetchQueries({
+        queryKey: [ROUTES['GET /moi'].methode + ' ' + ROUTES['GET /moi'].chemin],
+      })
+    })
+
+    expect(appeler.mock.calls.length).toBeGreaterThan(1)
+    // La requête est bien en erreur, mais l'écran garde la dernière version connue.
+    await waitFor(() => {
+      expect(client.getQueryCache().findAll().at(0)?.state.status).toBe('error')
+    })
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 50))
+    })
+    expect(screen.getByText('Bonjour amine')).toBeInTheDocument()
+    expect(screen.queryByText(/Échec/)).toBeNull()
+  })
+
+  it('tentent la lecture même sans réseau : elle échoue vite au lieu d’attendre', () => {
+    const { queries } = creerClientRequetes({ surNonAuthentifie: vi.fn() }).getDefaultOptions()
+
+    expect(queries?.networkMode).toBe('offlineFirst')
+  })
+
   it('gardent les données fraîches 30 secondes', () => {
     const { queries } = creerClientRequetes({ surNonAuthentifie: vi.fn() }).getDefaultOptions()
 

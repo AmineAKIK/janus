@@ -3,6 +3,7 @@ import { Bouton, ChampMotDePasse, Dialogue } from '@janus/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useEcriture } from '../../api/requetes.tsx'
+import { supprimerStockageDonnees } from '../../donnees/stockageDonnees.ts'
 import { supprimerStockageIndexedDB } from '../../envoi/stockageEnvoi.ts'
 import styles from '../Parametres.module.css'
 import { TEXTES_COMPTE, TEXTES_ZONE as T } from '../textes.ts'
@@ -30,9 +31,11 @@ export function SupprimerCompte({ surFermeture }: { readonly surFermeture: () =>
             {
               onSuccess: () => {
                 client.clear()
-                void supprimerStockageIndexedDB().then(() => {
-                  aller('/connexion')
-                })
+                void Promise.all([supprimerStockageIndexedDB(), supprimerStockageDonnees()]).then(
+                  () => {
+                    aller('/connexion')
+                  },
+                )
               },
             },
           )
