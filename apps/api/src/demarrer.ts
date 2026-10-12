@@ -5,6 +5,7 @@ import { creerBase } from './base/base.ts'
 import { migrer } from './base/migrer.ts'
 import { poserMotDePasseApplication } from './base/roleApplication.ts'
 import { ErreurConfig, lireConfig } from './config.ts'
+import { importerLesCatalogues } from './contenu.ts'
 import { horlogeSysteme } from './horloge.ts'
 import { libererLesReservations } from './domaines/correction/composition.ts'
 import { recalculerLesPerimes } from './recalcul.ts'
@@ -27,6 +28,9 @@ try {
   await poserMotDePasseApplication(config.DATABASE_URL_PROPRIETAIRE, config.DATABASE_URL)
   const base = creerBase(config.DATABASE_URL)
   const proprietaire = creerBase(config.DATABASE_URL_PROPRIETAIRE)
+  // Les formations du dépôt (`contenu/`) sont publiées par le déploiement : plus d'import à la main.
+  for (const bilan of await importerLesCatalogues(base, horlogeSysteme, config.FICHES_DIR))
+    process.stdout.write(`${bilan}\n`)
   // Si les règles du moteur ont changé depuis le dernier calcul, les statuts et échéances gardés sont refaits.
   const recalcules = await recalculerLesPerimes(base, horlogeSysteme)
   if (recalcules > 0)

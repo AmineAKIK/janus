@@ -40,6 +40,9 @@ echo '== /api/sante et la page'
 curl -fsS "${hote[@]}" http://127.0.0.1:3300/api/sante >/dev/null
 curl -fsS "${hote[@]}" http://127.0.0.1:3300/ >/dev/null
 
+echo '== Les formations du depot sont publiees par le demarrage'
+[[ $("${composition[@]}" exec -T postgres psql -U janus -d janus -tAc "SELECT count(*) FROM formations WHERE code = 'DWWM'") == 1 ]]
+
 echo '== En-tetes de securite de l appli et de l executeur de code'
 executeur=$(curl -fsSI "${hote[@]}" http://127.0.0.1:3300/executeur.html | tr -d '\r')
 appli=$(curl -fsSI "${hote[@]}" http://127.0.0.1:3300/ | tr -d '\r')
