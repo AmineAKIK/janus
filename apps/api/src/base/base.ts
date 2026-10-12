@@ -9,8 +9,14 @@ export interface Base {
   /** Le seul point d'ouverture d'une transaction : `READ COMMITTED`, avec rejeu. */
   readonly enTransaction: ReturnType<typeof creerTransaction>
   readonly requete: (texte: string) => Promise<unknown>
-  /** Une requête SQL paramétrée sur le même pool : la file de tâches (pg-boss) s'en sert. */
-  readonly executer: (texte: string, valeurs?: unknown[]) => Promise<{ rows: unknown[] }>
+  /**
+   * Une requête SQL paramétrée sur le même pool : la file de tâches (pg-boss) s'en sert. Le résultat
+   * est rendu tel que `pg` le donne : un tableau de résultats pour une requête à plusieurs instructions.
+   */
+  readonly executer: (
+    texte: string,
+    valeurs?: unknown[],
+  ) => Promise<pg.QueryResult | pg.QueryResult[]>
   readonly fermer: () => Promise<void>
 }
 

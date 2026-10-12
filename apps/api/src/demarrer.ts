@@ -5,11 +5,15 @@ import { migrer } from './base/migrer.ts'
 import { poserMotDePasseApplication } from './base/roleApplication.ts'
 import { ErreurConfig, lireConfig } from './config.ts'
 import { horlogeSysteme } from './horloge.ts'
+import { libererLesReservations } from './domaines/correction/composition.ts'
+import { recalculerLesPerimes } from './recalcul.ts'
 import { creerSuiviErreurs } from './plugins/suiviErreurs.ts'
 import { creerServeur } from './serveur.ts'
 import { demarrerLesTaches } from './taches/rappels.ts'
 
 const PORT_PAR_DEFAUT = 3000
+/** Au-delà, l'arrêt est forcé : mieux vaut un redémarrage qu'un processus qui ne finit pas. */
+const DELAI_ARRET_MS = 9000
 
 try {
   const config = lireConfig(process.env)
@@ -18,6 +22,11 @@ try {
   await poserMotDePasseApplication(config.DATABASE_URL_PROPRIETAIRE, config.DATABASE_URL)
   const base = creerBase(config.DATABASE_URL)
   const proprietaire = creerBase(config.DATABASE_URL_PROPRIETAIRE)
+  // Si les règles du moteur ont changé depuis le dernier calcul, les statuts et échéances gardés sont refaits.
+  const recalcules = await recalculerLesPerimes(base, horlogeSysteme)
+  if (recalcules > 0)
+    process.stdout.write(`${String(recalcules)} bloc(s) recalculé(s) au démarrage.\n`)
+  await libererLesReservations(base)
   const signalerErreur = creerSuiviErreurs({
     dsn: config.SENTRY_DSN,
     horloge: horlogeSysteme,
@@ -42,11 +51,24 @@ try {
       app.log.error({ err: cause }, message)
     },
   })
-  const arreter = () => {
-    void taches.arreter().then(() => app.close())
+  // Arrêt dans l'ordre : plus de requêtes, les tâches en cours finissent, puis les connexions se ferment.
+  let enArret = false
+  const arreter = async (code: number) => {
+    if (enArret) return
+    enArret = true
+    setTimeout(() => process.exit(1), DELAI_ARRET_MS).unref()
+    try {
+      await app.close()
+      await taches.arreter()
+    } catch (cause) {
+      app.log.error({ err: cause }, 'Arrêt en erreur')
+      code = 1
+    }
+    await Promise.allSettled([base.fermer(), proprietaire.fermer()])
+    process.exit(code)
   }
-  process.once('SIGTERM', arreter)
-  process.once('SIGINT', arreter)
+  process.on('SIGTERM', () => void arreter(0))
+  process.on('SIGINT', () => void arreter(0))
 } catch (erreur) {
   if (erreur instanceof ErreurConfig) {
     process.stderr.write(`${erreur.message}\n`)

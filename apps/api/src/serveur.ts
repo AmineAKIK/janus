@@ -12,6 +12,7 @@ import { monterRevisions } from './domaines/revisions/composition.ts'
 import { monterSante } from './domaines/sante/composition.ts'
 import { genererIdentifiant } from './plugins/identifiantRequete.ts'
 import { declarerMiddlewares } from './plugins/ordre.ts'
+import { serialiserErreur } from './plugins/serialiseurErreur.ts'
 import type { Dependances } from './types.ts'
 
 export interface OptionsServeur extends OptionsAuth {
@@ -27,8 +28,11 @@ export async function creerServeur(
   const app = Fastify({
     logger: {
       level: dependances.config.NIVEAU_JOURNAL,
+      serializers: { err: serialiserErreur },
       ...(options.fluxJournal === undefined ? {} : { stream: options.fluxJournal }),
     },
+    // Une seule ligne par requête, celle de `journalFin` (sans adresse ni paramètres d'adresse).
+    disableRequestLogging: true,
     genReqId: genererIdentifiant,
     // Le proxy de l'hébergeur est le seul devant l'API : son `x-forwarded-for` fait foi.
     trustProxy: true,

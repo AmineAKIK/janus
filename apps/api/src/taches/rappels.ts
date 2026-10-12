@@ -9,6 +9,9 @@ const CLE_RAPPELS = 'rappels'
 /** Un passage de moins de 4 minutes après le précédent est ignoré, même lancé par une autre instance. */
 const SECONDES_ENTRE_DEUX_PASSAGES = 240
 
+/** Le temps laissé à une tâche en cours pour finir avant l'arrêt. */
+const ARRET_TACHES_MS = 5000
+
 export interface TachesPlanifiees {
   /** Le moteur de tâches, pour les tests : lancer un passage, lire le planning. */
   readonly boss: PgBoss
@@ -30,9 +33,12 @@ export async function demarrerLesTaches({
 }): Promise<TachesPlanifiees> {
   const boss = new PgBoss({
     db: {
-      executeSql: async (texte, valeurs) => ({
-        rows: (await proprietaire.executer(texte, valeurs)).rows,
-      }),
+      // Le résultat de `pg` tel quel : pg-boss sait lire le tableau d'une requête à plusieurs instructions.
+      executeSql: async (texte, valeurs) => {
+        const resultat = await proprietaire.executer(texte, valeurs)
+        // pg-boss déballe lui-même le tableau d'une requête à plusieurs instructions.
+        return resultat as { rows: unknown[] }
+      },
     },
   })
   boss.on('error', (cause) => {
@@ -48,5 +54,5 @@ export async function demarrerLesTaches({
   await boss.work(FILE_RAPPELS, async () => {
     await envoyerLesRappels()
   })
-  return { boss, arreter: () => boss.stop() }
+  return { boss, arreter: () => boss.stop({ graceful: true, timeout: ARRET_TACHES_MS }) }
 }

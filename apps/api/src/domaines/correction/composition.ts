@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify'
+import type { Base } from '../../base/base.ts'
 import { creerDeepseek } from '../../adaptateurs/correcteur/deepseek.ts'
 import type { CorrigerPartie, Dependances } from '../../types.ts'
 import { creerControleurCorrection } from './controleur.ts'
@@ -7,6 +8,11 @@ import { routesCorrection } from './routes.ts'
 import { creerServiceCorrection } from './service.ts'
 
 export { validerSortie } from './policy.ts'
+
+/** Au démarrage aucun appel n'est en vol : les réservations restantes viennent d'un arrêt brutal. */
+export async function libererLesReservations(base: Base): Promise<void> {
+  await creerDepotCorrection().libererLesReservations(base.db)
+}
 
 /** Assez pour un message de 1500 caractères et le JSON autour. */
 const JETONS_SORTIE_MAX = 1000
@@ -43,7 +49,9 @@ export function monterCorrection({ base, horloge, config, correcteur, hasard }: 
     hasard: hasard ?? Math.random,
   })
   return {
-    routes: routesCorrection(creerControleurCorrection(service)),
+    routes: async (app, options) => {
+      await routesCorrection(creerControleurCorrection(service))(app, options)
+    },
     corrigerPartie: (userId, demande) =>
       service.corriger(userId, { ...demande, serie: 'verification', tentative: 1, relance: '' }),
   }

@@ -270,12 +270,27 @@ export function creerDepotCorrection() {
         .where(and(eq(t.budgetIa.userId, o.userId), eq(t.budgetIa.mois, o.mois)))
     },
 
+    /**
+     * Rend toutes les réservations de budget : au démarrage aucun appel n'est en vol, celles qui
+     * restent viennent d'un processus arrêté entre la réservation et l'enregistrement.
+     */
+    libererLesReservations: async (lecteur: Db | Tx): Promise<void> => {
+      await lecteur
+        .update(t.budgetIa)
+        .set({ reserveMillioniemes: 0 })
+        .where(sql`${t.budgetIa.reserveMillioniemes} <> 0`)
+    },
+
     ajouterCorrection: async (tx: Tx, ligne: LigneCorrection): Promise<void> => {
       await tx.insert(t.corrections).values(ligne)
     },
 
     ajouterEchec: async (tx: Tx, echec: EchecCorrection): Promise<void> => {
-      await tx.insert(t.correctionsEchecs).values({ ...echec, bruts: [...echec.bruts] })
+      // Un envoi rejoué après une panne laisse la première trace : pas de seconde ligne, pas d'erreur.
+      await tx
+        .insert(t.correctionsEchecs)
+        .values({ ...echec, bruts: [...echec.bruts] })
+        .onConflictDoNothing()
     },
 
     ajouterFait: async (tx: Tx, fait: FaitDeCorrection): Promise<void> => {
