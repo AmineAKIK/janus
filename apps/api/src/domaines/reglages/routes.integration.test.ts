@@ -127,4 +127,28 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('réglages contre PostgreSQL', (
     expect((await modifier({ inconnu: 1 }, version)).statusCode).toBe(400)
     expect((await lire()).headers['etag']).toBe(version)
   })
+
+  it('garde la formation active choisie et refuse une formation inconnue (400)', async () => {
+    const [formation] = await bases.db
+      .insert(t.formations)
+      .values({
+        id: nouvelId(Date.parse('2026-09-01T10:00:00.000Z')),
+        code: 'TECH',
+        titre: 'Technicien',
+      })
+      .returning({ id: t.formations.id })
+    const id = formation?.id ?? ''
+    const version = (await lire()).headers['etag'] as string
+
+    const inconnue = await modifier(
+      { formationActive: nouvelId(Date.parse('2026-09-02T10:00:00.000Z')) },
+      version,
+    )
+    expect(inconnue.statusCode).toBe(400)
+    expect((await lire()).headers['etag']).toBe(version)
+
+    const choisie = await modifier({ formationActive: id }, version)
+    expect(choisie.statusCode).toBe(200)
+    expect(choisie.json<{ formationActive: string }>().formationActive).toBe(id)
+  })
 })

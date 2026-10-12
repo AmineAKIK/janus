@@ -15,6 +15,7 @@ import {
 } from '@janus/moteur'
 import { z } from 'zod'
 import type { Base } from '../../base/base.ts'
+import { formationActiveDe } from '../../base/formationActive.ts'
 import { lireFaits } from '../../base/faits.ts'
 import { verrouBloc } from '../../base/transaction.ts'
 import { Conflit, ContenuDifferent, ErreurProtocole, Introuvable } from '../../erreurs.ts'
@@ -70,7 +71,8 @@ export function creerServiceRevisions({
   async function charger(userId: string) {
     const maintenant = horloge.maintenant()
     const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
-    const plan = await depot.blocsDuPlan(base.db)
+    const formationId = await formationActiveDe(base.db, reglages.formationActive)
+    const plan = await depot.blocsDuPlan(base.db, formationId)
     const faits = await lireFaits(
       base.db,
       userId,
@@ -79,6 +81,7 @@ export function creerServiceRevisions({
     return {
       maintenant,
       reglages,
+      formationId,
       plan,
       faits,
       contexte: contexteDuJour(plan, faits, reglages, maintenant),
@@ -98,8 +101,11 @@ export function creerServiceRevisions({
     return { ...charge, ligne, bloc, manifeste: Manifeste.parse(bloc.manifeste), evenements }
   }
 
-  async function cartesDe(userId: string, { maintenant, reglages, contexte }: Chargement) {
-    const catalogue = await depot.cartesActives(base.db)
+  async function cartesDe(
+    userId: string,
+    { maintenant, reglages, contexte, formationId }: Chargement,
+  ) {
+    const catalogue = await depot.cartesActives(base.db, formationId)
     const revues = await depot.revuesDe(base.db, userId)
     const etats = new Map(
       revues.flatMap(({ carteId, etat }) => {

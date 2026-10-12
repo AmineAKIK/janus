@@ -5,6 +5,7 @@ import type { Periode } from '@janus/moteur'
 import { instantEnIso, instantEnMs } from '@janus/moteur'
 import { nouvelId } from '@janus/contrats'
 import type { Base } from '../../base/base.ts'
+import { formationActiveDe } from '../../base/formationActive.ts'
 import { verrouBloc } from '../../base/transaction.ts'
 import { Conflit, ContenuDifferent, Introuvable } from '../../erreurs.ts'
 import { lireFaits } from '../../base/faits.ts'
@@ -34,13 +35,15 @@ export interface DependancesService {
 
 export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: DependancesService) {
   /** Les blocs importés avec leur module, leur partie et leur manifeste, comme le suivi les lit. */
-  async function plan() {
+  async function plan(reglages: Reglages) {
+    const formationId = await formationActiveDe(base.db, reglages.formationActive)
     const [modules, blocs] = await Promise.all([
-      depot.modulesImportes(base.db),
-      depot.blocsImportes(base.db),
+      depot.modulesImportes(base.db, formationId),
+      depot.blocsImportes(base.db, formationId),
     ])
     const codeDuModule = new Map(modules.map(({ id, code }) => [id, code]))
     return {
+      formationId,
       modules: modules.map(({ code, titre }) => ({ id: code, titre })),
       lignes: blocs,
       blocs: blocs.map(({ code, moduleId, partieCode, partieTitre, manifeste }) => ({
@@ -74,7 +77,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
       if (deja.length > 0) return noteLue(note.id, deja)
       const maintenant = horloge.maintenant()
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
-      const { lignes, blocs } = await plan()
+      const { lignes, blocs } = await plan(reglages)
       const faits = await lireFaits(
         base.db,
         userId,
@@ -166,7 +169,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
     ) {
       const maintenant = horloge.maintenant()
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
-      const { modules, lignes, blocs } = await plan()
+      const { modules, lignes, blocs } = await plan(reglages)
       const faits = await lireFaits(
         base.db,
         userId,
@@ -187,7 +190,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
     /** Le journal au format de la méthode, en texte brut. */
     async exportTexte(userId: string) {
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
-      const { lignes, blocs } = await plan()
+      const { lignes, blocs, formationId } = await plan(reglages)
       const faits = await lireFaits(
         base.db,
         userId,
@@ -197,7 +200,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
         blocs,
         faits,
         reglages,
-        tachesReservees: await depot.tachesReservees(base.db),
+        tachesReservees: await depot.tachesReservees(base.db, formationId),
         idees: await depot.idees(base.db, userId),
         derniereRevue: await depot.dernierTexteDeRevue(base.db, userId),
       })
@@ -216,9 +219,10 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
     ) {
       const maintenant = horloge.maintenant()
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
+      const formationId = await formationActiveDe(base.db, reglages.formationActive)
       const [modules, blocs] = await Promise.all([
-        depot.modulesImportes(base.db),
-        depot.blocsImportes(base.db),
+        depot.modulesImportes(base.db, formationId),
+        depot.blocsImportes(base.db, formationId),
       ])
       const faits = await lireFaits(
         base.db,
