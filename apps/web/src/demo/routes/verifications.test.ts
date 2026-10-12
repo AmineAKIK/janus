@@ -1,4 +1,4 @@
-import { nouvelId, ROUTES } from '@janus/contrats'
+import { nouvelId, ROUTES, TypeVerification } from '@janus/contrats'
 import type { SortieRoute } from '@janus/contrats'
 import { describe, expect, it } from 'vitest'
 import { MANIFESTES_GRAINE } from '../graine.ts'
@@ -14,8 +14,11 @@ const SANS_SUPPORT = { colle: false, retour_cours: false }
 async function ouvrirVerification(banc: ReturnType<typeof monterDemo>) {
   const { taches } = await banc.transport.appeler(ROUTES['GET /aujourdhui'], {})
   const lien = taches.find(({ tache }) => tache.type === 'verification')?.lien
-  const id = lien?.replace('/verifications/', '')
-  if (id === undefined) throw new Error('Aucune vérification dans la file')
+  const [, bloc, type] = /^\/verifications\/ouvrir\/([^/]+)\/([^/]+)$/u.exec(lien ?? '') ?? []
+  if (bloc === undefined || type === undefined) throw new Error('Aucune vérification dans la file')
+  const { id } = await banc.transport.appeler(ROUTES['POST /verifications'], {
+    corps: { bloc, type: TypeVerification.parse(type) },
+  })
   const vue = await banc.transport.appeler(ROUTES['GET /verifications/:id'], { params: { id } })
   return { id, vue }
 }

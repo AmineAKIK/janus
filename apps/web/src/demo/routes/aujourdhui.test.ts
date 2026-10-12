@@ -37,13 +37,23 @@ describe('GET /aujourdhui de la démo', () => {
     expect(taches.map(({ lien }) => lien)).toEqual([
       expect.stringMatching(/^\/blocs\/B04/),
       '/questions',
-      expect.stringMatching(/^\/verifications\/[0-9a-f-]{36}$/),
+      '/verifications/ouvrir/B02/verification',
       expect.stringMatching(/^\/blocs\/B04\?etape=/),
       expect.stringMatching(/^\/blocs\/B05\?etape=/),
       '/revision',
       '/blocs/B03',
     ])
     expect(taches.every(({ faite }) => !faite)).toBe(true)
+  })
+
+  it('est une lecture : ni vérification tirée ni série gardée', async () => {
+    const { transport, magasin } = monterDemo()
+    const avant = JSON.stringify(magasin.lire())
+
+    await transport.appeler(ROUTES['GET /aujourdhui'], {})
+    await transport.appeler(ROUTES['GET /aujourdhui'], {})
+
+    expect(JSON.stringify(magasin.lire())).toBe(avant)
   })
 
   it('rend le module en cours avec le statut de chaque bloc', async () => {

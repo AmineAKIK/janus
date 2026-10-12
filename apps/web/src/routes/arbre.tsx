@@ -46,6 +46,10 @@ const PageVerification = lazyRouteComponent(
   () => import('../verification/PageVerification.tsx'),
   'PageVerification',
 )
+const OuvrirVerification = lazyRouteComponent(
+  () => import('../verification/OuvrirVerification.tsx'),
+  'OuvrirVerification',
+)
 const PageSuivi = lazyRouteComponent(() => import('../suivi/PageSuivi.tsx'), 'PageSuivi')
 
 /** Charge l'écran avant l'affichage de la route : pas de flash de chargement, et les tests restent synchrones. */
@@ -137,6 +141,31 @@ const revision = createRoute({
   component: PageRevision,
 })
 
+/** Là où mène la file du jour : ouvre la vérification d'un bloc puis la remplace par elle. */
+const ouvrirVerification = createRoute({
+  getParentRoute: () => racine,
+  path: '/verifications/ouvrir/$bloc/$type',
+  staticData: { titre: 'Vérification', navigation: null },
+  loader: prechargerPage(OuvrirVerification),
+  component: function RouteOuvrirVerification() {
+    const { bloc, type } = ouvrirVerification.useParams()
+    const naviguer = ouvrirVerification.useNavigate()
+    return (
+      <OuvrirVerification
+        bloc={bloc}
+        type={type}
+        surOuverte={(id) => {
+          void naviguer({
+            to: '/verifications/$verificationId',
+            params: { verificationId: id },
+            replace: true,
+          })
+        }}
+      />
+    )
+  },
+})
+
 const verification = createRoute({
   getParentRoute: () => racine,
   path: '/verifications/$verificationId',
@@ -208,6 +237,7 @@ const arbre = racine.addChildren([
   module,
   bloc,
   revision,
+  ouvrirVerification,
   verification,
   tableauDeBord,
   journal,

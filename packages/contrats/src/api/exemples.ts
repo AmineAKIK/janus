@@ -388,14 +388,26 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
           },
         },
       ],
+      gardee: true,
     },
     invalides: [
       {
         partie: 'reponse',
-        valeur: { questions: [{ id: 'RA1', question: 'Q', deja: null, bloc: 'D01' }] },
+        valeur: {
+          questions: [{ id: 'RA1', question: 'Q', deja: null, bloc: 'D01' }],
+          gardee: true,
+        },
       },
-      { partie: 'reponse', valeur: { questions: [{ id: 'RA1', question: 'Q' }] } },
+      { partie: 'reponse', valeur: { questions: [{ id: 'RA1', question: 'Q' }], gardee: true } },
+      { partie: 'reponse', valeur: { questions: [] } },
     ],
+  },
+  'POST /questions-debut': {
+    reponse: {
+      questions: [{ id: 'RA1', question: 'Qu’est-ce qu’une fiche ?', deja: null }],
+      gardee: true,
+    },
+    invalides: [{ partie: 'reponse', valeur: { questions: [], gardee: 'oui' } }],
   },
   'GET /cartes/dues': {
     reponse: {
@@ -471,6 +483,15 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
           resultat: null,
         },
       },
+    ],
+  },
+  'POST /verifications': {
+    corps: { bloc: 'D01', type: 'verification' },
+    reponse: { id: ID },
+    invalides: [
+      { partie: 'corps', valeur: { bloc: 'D01', type: 'examen' } },
+      { partie: 'corps', valeur: { type: 'verification' } },
+      { partie: 'reponse', valeur: { id: 'abc' } },
     ],
   },
   'POST /verifications/:id/reponses': {

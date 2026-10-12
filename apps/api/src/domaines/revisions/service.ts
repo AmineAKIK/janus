@@ -139,8 +139,8 @@ export function creerServiceRevisions({
 
   return {
     /**
-     * L'identifiant de la vérification ouverte d'un bloc, tirée à la première demande : l'écran
-     * Aujourd'hui en a besoin pour son lien. Une vérification terminée n'est jamais rouverte.
+     * L'identifiant de la vérification ouverte d'un bloc, tirée à la première demande
+     * (`POST /verifications`). Une vérification terminée n'est jamais rouverte.
      */
     async verificationPour(userId: string, codeBloc: string, type: TypeVerification) {
       const { maintenant, reglages, plan, faits } = await charger(userId)
@@ -405,8 +405,8 @@ export function creerServiceRevisions({
     },
 
     /**
-     * L'écran Aujourd'hui en une requête : la file du moteur, où mène chaque tâche (les vérifications
-     * sont tirées au passage), le module en cours. Rien n'est trié ailleurs.
+     * L'écran Aujourd'hui en une requête : la file du moteur, où mène chaque tâche, le module en cours.
+     * Une lecture : rien n'est tiré ni écrit (une vérification s'ouvre par `POST /verifications`).
      */
     async aujourdhui(userId: string) {
       const charge = await charger(userId)
@@ -437,14 +437,6 @@ export function creerServiceRevisions({
       const aFaire = file.taches.filter(
         (tache) => !(estVerification(tache) && reportes.has(tache.bloc)),
       )
-      const verifications = new Map<string, string>()
-      for (const tache of aFaire) {
-        if (!estVerification(tache)) continue
-        verifications.set(
-          `${tache.bloc}:${tache.type}`,
-          await this.verificationPour(userId, tache.bloc, tache.type),
-        )
-      }
       // Ce qui s'est fait dans la journée : les réponses à la série, les cartes notées.
       const serieGardee = gardee.success ? gardee.data : []
       const rappelsDuJourFaits = await rappelsDuJour(userId, serieGardee, charge)
@@ -475,7 +467,6 @@ export function creerServiceRevisions({
           lienDeLaTache(
             tache,
             (bloc) => contexte.blocs.find(({ manifeste }) => manifeste.bloc === bloc)?.manifeste,
-            (bloc, type) => verifications.get(`${bloc}:${type}`) ?? bloc,
           ),
         ),
         module: moduleEnCours(plan, contexte),
@@ -522,15 +513,26 @@ export function creerServiceRevisions({
       })
     },
 
-    /**
-     * La série de début de séance du jour, tirée une seule fois puis gardée : deux appels simultanés
-     * rendent la même. Le bloc n'est donné qu'une fois la question corrigée.
-     */
+    /** La série de début de séance du jour si elle est déjà gardée : une lecture, rien n'est tiré. */
     async questionsDebut(userId: string) {
+      return this.serieDuJour(userId, false)
+    },
+
+    /**
+     * Tire la série de début de séance du jour et la garde : une seule fois par jour, deux appels
+     * simultanés rendent la même.
+     */
+    async garderQuestionsDebut(userId: string) {
+      return this.serieDuJour(userId, true)
+    },
+
+    /** Le bloc n'est donné qu'une fois la question corrigée. */
+    async serieDuJour(userId: string, garder: boolean) {
       const { maintenant, reglages, plan, faits, contexte } = await charger(userId)
 
       let gardee: unknown = await depot.serieDuJour(base.db, userId, contexte.jour)
       if (gardee === undefined) {
+        if (!garder) return { questions: [], gardee: false }
         const tirees = tirerQuestionsDuJour(contexte, faits, reglages).map(
           ({ bloc, question }) => ({ bloc, question }),
         )
@@ -591,6 +593,7 @@ export function creerServiceRevisions({
             },
           ]
         }),
+        gardee: true,
       }
     },
   }

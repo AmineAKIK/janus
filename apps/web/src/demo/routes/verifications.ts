@@ -344,6 +344,14 @@ export function routesVerificationsDemo({
       }
     }),
 
+    definir(ROUTES['POST /verifications'], ({ magasin, horloge, corps }) => {
+      const id = verificationPour(magasin, corps.bloc, corps.type, horloge.maintenant())
+      if (id === null) {
+        throw probleme(404, 'introuvable', 'Introuvable', 'Ce bloc n’existe pas.')
+      }
+      return { id }
+    }),
+
     definir(ROUTES['POST /verifications/:id/reporter'], ({ magasin, horloge, params, corps }) => {
       const { verification } = lire(magasin, params.id, horloge.maintenant())
       const etat = magasin.lire()

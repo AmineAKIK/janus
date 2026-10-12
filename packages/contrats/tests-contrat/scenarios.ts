@@ -275,7 +275,7 @@ export function scenariosContrat(creer: CreerBanc): void {
       await connecter(banc)
       await ouvrir(banc)
       await repondre(banc, 'restitution')
-      const { questions } = await banc.transport.appeler(ROUTES['GET /questions-debut'], {})
+      const { questions } = await banc.transport.appeler(ROUTES['POST /questions-debut'], {})
       const taches = async () =>
         (await banc.transport.appeler(ROUTES['GET /aujourdhui'], {})).taches
       const debut = async () =>

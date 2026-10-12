@@ -16,11 +16,13 @@ export function estVerification(tache: Tache): tache is Tache & { type: TypeVeri
   return tache.type === 'verification' || tache.type === 'retest' || tache.type === 'entretien'
 }
 
-/** Où mène une tâche ; `verification` est l'identifiant de la vérification tirée pour son bloc. */
+/**
+ * Où mène une tâche. Une vérification mène à la page qui l'ouvre (`POST /verifications`) puis la
+ * remplace par la vérification : la file du jour reste une lecture.
+ */
 export function lienDeLaTache(
   tache: Tache,
   manifeste: (bloc: string) => Manifeste | undefined,
-  verification: (bloc: string, type: TypeVerification) => string,
 ): string {
   switch (tache.type) {
     case 'reprendre_erreur':
@@ -32,7 +34,7 @@ export function lienDeLaTache(
     case 'verification':
     case 'retest':
     case 'entretien':
-      return `/verifications/${verification(tache.bloc, tache.type)}`
+      return `/verifications/ouvrir/${tache.bloc}/${tache.type}`
     case 'consolidation': {
       const etape = manifeste(tache.bloc)?.etapes.find(({ type }) => type === 'consolidation')
       return etape === undefined ? `/blocs/${tache.bloc}` : `/blocs/${tache.bloc}?etape=${etape.id}`

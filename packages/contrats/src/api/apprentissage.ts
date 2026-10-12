@@ -66,6 +66,12 @@ const QuestionDebut = z.strictObject({
     .nullable(),
 })
 
+/**
+ * La série de début de séance. `gardee` est faux tant que le jour n'a pas de série : la lecture ne
+ * tire rien, c'est `POST /questions-debut` qui la tire et la garde.
+ */
+const SerieDuJour = z.strictObject({ questions: z.array(QuestionDebut), gardee: z.boolean() })
+
 /** Dans combien de millisecondes la carte revient pour chaque note : ce que `ts-fsrs` appliquera. */
 const ApercuCarte = z.strictObject({
   a_revoir: z.number().int().min(0),
@@ -169,7 +175,14 @@ export const ROUTES_APPRENTISSAGE = {
   'GET /questions-debut': {
     methode: 'GET',
     chemin: '/questions-debut',
-    reponse: z.strictObject({ questions: z.array(QuestionDebut) }),
+    reponse: SerieDuJour,
+    succes: 200,
+  },
+  /** Tire la série du jour et la garde (idempotent : la série déjà gardée est rendue telle quelle). */
+  'POST /questions-debut': {
+    methode: 'POST',
+    chemin: '/questions-debut',
+    reponse: SerieDuJour,
     succes: 200,
   },
   'GET /cartes/dues': {
@@ -208,6 +221,14 @@ export const ROUTES_APPRENTISSAGE = {
       /** Le résultat, une fois toutes les parties envoyées. */
       resultat: ResultatVerification.nullable(),
     }),
+    succes: 200,
+  },
+  /** Ouvre la vérification d'un bloc : la tirée en cours, sinon une nouvelle (idempotent). */
+  'POST /verifications': {
+    methode: 'POST',
+    chemin: '/verifications',
+    corps: z.strictObject({ bloc: Identifiant, type: TypeVerification }),
+    reponse: z.strictObject({ id: IdUuid }),
     succes: 200,
   },
   'POST /verifications/:id/reponses': {

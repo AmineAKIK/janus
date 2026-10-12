@@ -258,16 +258,47 @@ describe.skipIf(URL_SERVEUR_TEST === undefined || CAS_VERIFICATION_DUE === undef
       await bases.supprimer()
     })
 
-    it('donne à la vérification due le lien de la vérification tirée, la même à chaque lecture', async () => {
+    it('mène la vérification due à la page qui l’ouvre, sans rien tirer ni écrire', async () => {
       const due = (await lire()).taches.find(({ tache }) => tache.type === 'verification')
 
-      expect(due?.lien).toMatch(/^\/verifications\/[0-9a-f-]{36}$/u)
-      lien = due?.lien ?? ''
+      expect(due?.lien).toBe('/verifications/ouvrir/D01/verification')
       expect((await lire()).taches.find(({ tache }) => tache.type === 'verification')?.lien).toBe(
-        lien,
+        due?.lien,
       )
+      const { rows } = await bases.pool.query<{ n: string }>(
+        'SELECT count(*) AS n FROM verifications_tirees',
+      )
+      expect(Number(rows[0]?.n)).toBe(0)
+    })
+
+    it('POST /verifications ouvre la vérification, la même à chaque appel', async () => {
+      const ouvrir = () =>
+        s.app.inject({
+          method: 'POST',
+          url: '/api/verifications',
+          headers: { cookie, origin: ORIGINE_TEST },
+          payload: { bloc: 'D01', type: 'verification' },
+        })
+      const premiere = await ouvrir()
+      const { id } = premiere.json<{ id: string }>()
+
+      expect(premiere.statusCode).toBe(200)
+      expect(id).toMatch(/^[0-9a-f-]{36}$/u)
+      expect((await ouvrir()).json()).toEqual({ id })
+      lien = `/verifications/${id}`
       const ouverte = await s.app.inject({ method: 'GET', url: `/api${lien}`, headers: { cookie } })
       expect(ouverte.statusCode).toBe(200)
+    })
+
+    it('refuse d’ouvrir la vérification d’un bloc inconnu', async () => {
+      const reponse = await s.app.inject({
+        method: 'POST',
+        url: '/api/verifications',
+        headers: { cookie, origin: ORIGINE_TEST },
+        payload: { bloc: 'Z99', type: 'verification' },
+      })
+
+      expect(reponse.statusCode).toBe(404)
     })
 
     it('la retire de la file une fois reportée', async () => {

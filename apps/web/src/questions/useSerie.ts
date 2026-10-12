@@ -2,8 +2,8 @@ import { CorrectionRecue, nomRoute, nouvelId, ROUTES } from '@janus/contrats'
 import { ErreurApi } from '@janus/contrats'
 import type { Confiance, SortieRoute } from '@janus/contrats'
 import { useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
-import { useLecture } from '../api/requetes.tsx'
+import { useCallback, useEffect, useState } from 'react'
+import { useEcriture, useLecture } from '../api/requetes.tsx'
 import { instantReel } from '../horloge.ts'
 import { useBoiteEnvoi } from '../envoi/FournisseurEnvoi.tsx'
 
@@ -41,6 +41,23 @@ export function useSerie() {
   const boite = useBoiteEnvoi()
   const client = useQueryClient()
   const lecture = useLecture(ROUTE_QUESTIONS, {})
+  const garder = useEcriture(ROUTES['POST /questions-debut'])
+  const { mutate } = garder
+  const garderLaSerie = useCallback(() => {
+    mutate(
+      {},
+      {
+        onSuccess: (serie) => {
+          client.setQueryData([nomRoute(ROUTE_QUESTIONS), {}], serie)
+        },
+      },
+    )
+  }, [mutate, client])
+  // La lecture ne tire rien : tant que le jour n'a pas de série, c'est cet écran qui la fait garder.
+  const aGarder = lecture.data?.gardee === false
+  useEffect(() => {
+    if (aGarder) garderLaSerie()
+  }, [aGarder, garderLaSerie])
   const [locales, setLocales] = useState<Readonly<Record<string, Locale>>>({})
   const [choisi, setChoisi] = useState<number | null>(null)
   const [enRelance, setEnRelance] = useState<ReadonlySet<string>>(new Set())
@@ -182,12 +199,16 @@ export function useSerie() {
     donnerAccord,
     enRelance,
     relancesRefusees,
-    phase: lecture.isError
-      ? ('erreur' as const)
-      : lecture.isPending
-        ? ('chargement' as const)
-        : ('prete' as const),
-    recharger: () => void lecture.refetch(),
+    phase:
+      lecture.isError || garder.isError
+        ? ('erreur' as const)
+        : lecture.isPending || aGarder
+          ? ('chargement' as const)
+          : ('prete' as const),
+    recharger: () => {
+      if (garder.isError) garderLaSerie()
+      else void lecture.refetch()
+    },
     questions,
     etats,
     index,

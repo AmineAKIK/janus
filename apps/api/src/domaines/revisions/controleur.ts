@@ -1,4 +1,4 @@
-import type { NoteCarte } from '@janus/contrats'
+import type { NoteCarte, TypeVerification } from '@janus/contrats'
 import type { FastifyRequest } from 'fastify'
 import { NonAuthentifie } from '../../erreurs.ts'
 import type { ServiceRevisions } from './service.ts'
@@ -12,6 +12,14 @@ function utilisateurDe(requete: FastifyRequest): string {
 export function creerControleurRevisions(service: ServiceRevisions) {
   return {
     questionsDebut: (requete: FastifyRequest) => service.questionsDebut(utilisateurDe(requete)),
+    garderQuestionsDebut: (requete: FastifyRequest) =>
+      service.garderQuestionsDebut(utilisateurDe(requete)),
+    ouvrirVerification: (
+      requete: FastifyRequest<{ Body: { bloc: string; type: TypeVerification } }>,
+    ) =>
+      service
+        .verificationPour(utilisateurDe(requete), requete.body.bloc, requete.body.type)
+        .then((id) => ({ id })),
     aujourdhui: (requete: FastifyRequest) => service.aujourdhui(utilisateurDe(requete)),
     cartesDues: (requete: FastifyRequest) => service.cartesDues(utilisateurDe(requete)),
     verification: (requete: FastifyRequest<{ Params: { id: string } }>) =>

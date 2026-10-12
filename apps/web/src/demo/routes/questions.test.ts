@@ -8,18 +8,29 @@ describe('questions de début de séance de la démo', () => {
   it('rend la série du jour sans nommer le bloc, la même à chaque lecture', async () => {
     const { transport } = monterDemo()
 
-    const premiere = await transport.appeler(ROUTES['GET /questions-debut'], {})
-    const seconde = await transport.appeler(ROUTES['GET /questions-debut'], {})
+    const premiere = await transport.appeler(ROUTES['POST /questions-debut'], {})
+    const seconde = await transport.appeler(ROUTES['POST /questions-debut'], {})
+    const lecture = await transport.appeler(ROUTES['GET /questions-debut'], {})
 
     expect(premiere.questions.length).toBeGreaterThan(0)
     expect(premiere.questions.every(({ deja }) => deja === null)).toBe(true)
     expect(JSON.stringify(premiere)).not.toMatch(/"bloc"/)
     expect(seconde).toEqual(premiere)
+    expect(lecture).toEqual(premiere)
+  })
+
+  it('la lecture ne tire rien tant que la série n’est pas gardée', async () => {
+    const { transport, magasin } = monterDemo()
+
+    const lecture = await transport.appeler(ROUTES['GET /questions-debut'], {})
+
+    expect(lecture).toEqual({ questions: [], gardee: false })
+    expect(magasin.lire().serieDuJour).toBeNull()
   })
 
   it('corrige une question de début de séance et retient la réponse pour reprendre', async () => {
     const { transport } = monterDemo()
-    const { questions } = await transport.appeler(ROUTES['GET /questions-debut'], {})
+    const { questions } = await transport.appeler(ROUTES['POST /questions-debut'], {})
     const question = questions[0]
     if (question === undefined) throw new Error('Aucune question')
 
