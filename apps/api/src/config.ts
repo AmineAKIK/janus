@@ -12,6 +12,8 @@ export const SchemaConfig = z.object({
   ORIGINE_APPLI: z.url(),
   /** L'adresse (sans barre finale ou avec) d'où les fiches sont servies : `<FICHES_URL>/<code>/<empreinte>.html`. */
   FICHES_URL: z.url(),
+  /** Où les fiches importées sont rangées (le volume partagé avec le front). */
+  FICHES_DIR: z.string().min(1).default('/fiches'),
   COOKIE_SECURE: Booleen,
   /** Le port d'écoute de l'API. */
   PORT: z.coerce.number().int().min(1).max(65_535).default(3000),
