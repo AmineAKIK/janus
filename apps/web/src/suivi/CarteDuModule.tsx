@@ -138,10 +138,12 @@ export function CarteDuModule({ blocs }: { readonly blocs: DonneesSuivi['blocs']
           })}
         </div>
       </div>
-      <LegendeStatuts titre={T.legende} />
-      <p className={`${styles['complement'] ?? ''} texte-legende-12`}>
-        {T.legendePrerequis} · {T.legendeRedescendu}
-      </p>
+      <div className={styles['piedCarte']}>
+        <LegendeStatuts titre={T.legende} />
+        <p className={`${styles['complement'] ?? ''} ${styles['note'] ?? ''} texte-legende-12`}>
+          {T.legendePrerequis} · {T.legendeRedescendu}
+        </p>
+      </div>
     </div>
   )
 }

@@ -30,8 +30,13 @@ export function PageParametres({ section }: { readonly section?: string }) {
   const choisie = estSection(section) ? section : undefined
 
   useEffect(() => {
-    if (bureau && choisie !== undefined) {
+    if (!bureau || choisie === undefined) return
+    // Au prochain affichage : le gabarit et le routeur remettent la page en haut à chaque changement de route.
+    const image = requestAnimationFrame(() => {
       document.getElementById(idSection(choisie))?.scrollIntoView()
+    })
+    return () => {
+      cancelAnimationFrame(image)
     }
   }, [bureau, choisie, reglages === undefined])
 

@@ -37,7 +37,7 @@ describe('Aujourd’hui', () => {
 
     const grille = screen.getByRole('list', { name: 'Blocs du module' })
     expect(within(grille).getAllByRole('link')).toHaveLength(20)
-    expect(screen.getByRole('list', { name: 'Légende des statuts' })).toBeVisible()
+    expect(screen.getByRole('group', { name: 'Légende des statuts' })).toBeVisible()
     expect(screen.getByRole('link', { name: 'Voir le tableau de bord' })).toBeVisible()
   })
 

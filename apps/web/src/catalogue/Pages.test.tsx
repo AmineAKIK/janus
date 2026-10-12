@@ -40,7 +40,7 @@ describe('Formations', () => {
     expect(screen.getByText('4 modules · 20 blocs dans le module en cours')).toBeVisible()
     // La graine : B01 et B06 sont acquis, B02 et B07 seulement provisoirement.
     expect(screen.getByText('2 blocs acquis sur 20')).toBeVisible()
-    const legende = screen.getByRole('list', { name: 'Légende des statuts' })
+    const legende = screen.getByRole('group', { name: 'Légende des statuts' })
     expect(within(legende).getAllByRole('listitem')).toHaveLength(7)
   })
 
