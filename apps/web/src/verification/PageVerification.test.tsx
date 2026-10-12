@@ -209,6 +209,9 @@ describe('Vérification', () => {
       screen.getByText('Tu as ouvert ce bloc aujourd’hui. Cette vérification ne compterait pas.'),
     ).toBeVisible()
     await utilisateur.click(screen.getByRole('button', { name: 'La reporter à demain' }))
+    const dialogue = await screen.findByRole('dialog', { name: 'Reporter la vérification ?' })
+    expect(Object.values(banc.magasin.lire().verifications)[0]?.reporteeJusqua ?? null).toBeNull()
+    await utilisateur.click(within(dialogue).getByRole('button', { name: 'La reporter à demain' }))
 
     await waitFor(() => {
       expect(Object.values(banc.magasin.lire().verifications)[0]?.reporteeJusqua).not.toBeNull()

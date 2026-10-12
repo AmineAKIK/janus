@@ -1,11 +1,12 @@
 import { nomRoute, ROUTES } from '@janus/contrats'
-import { Bouton } from '@janus/ui'
+import { Bouton, DialogueConfirmation } from '@janus/ui'
 import { useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useEcriture, useLecture } from '../../api/requetes.tsx'
 import { instantReel } from '../../demo/horlogeDemo.ts'
 import { texteIntervalle } from '../../revision/textes.ts'
 import styles from '../Parametres.module.css'
-import { TEXTES_COMPTE as T, texteActivite } from '../textes.ts'
+import { TEXTES_COMPTE as T, TEXTES_CONFIRMATION as C, texteActivite } from '../textes.ts'
 
 const SESSIONS = [nomRoute(ROUTES['GET /sessions']), {}]
 
@@ -14,6 +15,7 @@ export function Sessions() {
   const lecture = useLecture(ROUTES['GET /sessions'], {})
   const retirer = useEcriture(ROUTES['DELETE /sessions/:id'])
   const maintenant = Date.parse(instantReel())
+  const [cible, setCible] = useState<{ id: string; appareil: string } | null>(null)
 
   return (
     <section aria-label={T.sessions} className={styles['lignes']}>
@@ -34,14 +36,7 @@ export function Sessions() {
                 variante="secondaire"
                 aria-label={`${T.deconnecter} ${session.appareil}`}
                 onClick={() => {
-                  retirer.mutate(
-                    { params: { id: session.id } },
-                    {
-                      onSuccess: () => {
-                        void client.invalidateQueries({ queryKey: SESSIONS })
-                      },
-                    },
-                  )
+                  setCible({ id: session.id, appareil: session.appareil })
                 }}
               >
                 {T.deconnecter}
@@ -50,6 +45,33 @@ export function Sessions() {
           </li>
         ))}
       </ul>
+      {cible !== null && (
+        <DialogueConfirmation
+          titre={C.appareil.titre}
+          libelleConfirmer={T.deconnecter}
+          libelleAnnuler={C.annuler}
+          danger
+          enCours={retirer.isPending}
+          surAnnuler={() => {
+            setCible(null)
+          }}
+          surConfirmer={() => {
+            retirer.mutate(
+              { params: { id: cible.id } },
+              {
+                onSuccess: () => {
+                  void client.invalidateQueries({ queryKey: SESSIONS })
+                },
+                onSettled: () => {
+                  setCible(null)
+                },
+              },
+            )
+          }}
+        >
+          <p>{C.appareil.message(cible.appareil)}</p>
+        </DialogueConfirmation>
+      )}
     </section>
   )
 }

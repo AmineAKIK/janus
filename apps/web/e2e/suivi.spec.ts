@@ -38,6 +38,10 @@ test.describe('Suivi', () => {
 
     await expect(page.getByText(/Raison : Je connais déjà/)).toBeVisible()
     await page.getByRole('button', { name: /Revenir au statut calculé/ }).click()
+    await page
+      .getByRole('dialog', { name: 'Revenir au statut calculé ?' })
+      .getByRole('button', { name: 'Revenir au statut calculé' })
+      .click()
     await expect(page.getByRole('button', { name: /Revenir au statut calculé/ })).toHaveCount(0)
   })
 })

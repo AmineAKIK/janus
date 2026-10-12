@@ -47,6 +47,9 @@ describe('Données', () => {
 
     expect(await screen.findByText('Fiches, réponses, réglages et historique · JSON')).toBeVisible()
     await utilisateur.click(screen.getByRole('button', { name: 'Exporter' }))
+    const dialogue = await screen.findByRole('dialog', { name: 'Exporter tes données ?' })
+    expect(clic).not.toHaveBeenCalled()
+    await utilisateur.click(within(dialogue).getByRole('button', { name: 'Exporter' }))
 
     await waitFor(() => {
       expect(clic).toHaveBeenCalledOnce()
@@ -131,6 +134,9 @@ describe('Démo', () => {
     await utilisateur.click(await screen.findByRole('switch', { name: 'Réseau lent' }))
     expect(banc.magasin.lire().interrupteurs.reseauLent).toBe(true)
     await utilisateur.click(screen.getByRole('button', { name: 'Compte vide' }))
+    const dialogue = await screen.findByRole('dialog', { name: 'Vider le compte de démo ?' })
+    expect(banc.magasin.lire().faits).not.toEqual([])
+    await utilisateur.click(within(dialogue).getByRole('button', { name: 'Vider le compte' }))
 
     await waitFor(() => {
       expect(banc.magasin.lire().faits).toEqual([])

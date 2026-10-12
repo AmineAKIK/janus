@@ -6,6 +6,7 @@ import {
   CarteZone,
   ChampTexte,
   Dialogue,
+  DialogueConfirmation,
   EnTeteJour,
   EtatVideZone,
   LIBELLES_STATUT,
@@ -219,6 +220,7 @@ function Corps({
   const [idee, setIdee] = useState('')
   const [echecIdee, setEchecIdee] = useState(false)
   const [echecExport, setEchecExport] = useState(false)
+  const [exportDemande, setExportDemande] = useState<'texte' | 'json' | null>(null)
   const type = TypeJournal.safeParse(recherche.type).data
   const journal = useJournal({
     ...(recherche.module === undefined ? {} : { module: recherche.module }),
@@ -293,7 +295,7 @@ function Corps({
     </ul>
   )
 
-  const exporterTexte = () => {
+  const exporterTexte = (apres: () => void) => {
     setEchecExport(false)
     journal.exportTexte.mutate(
       {},
@@ -304,6 +306,7 @@ function Corps({
         onError: () => {
           setEchecExport(true)
         },
+        onSettled: apres,
       },
     )
   }
@@ -450,7 +453,9 @@ function Corps({
             type="button"
             variante="secondaire"
             chargement={journal.exportTexte.isPending}
-            onClick={exporterTexte}
+            onClick={() => {
+              setExportDemande('texte')
+            }}
           >
             {T.exporterTexte}
           </Bouton>
@@ -458,16 +463,39 @@ function Corps({
             type="button"
             variante="secondaire"
             onClick={() => {
-              telecharger(
-                T.nomFichierJson,
-                JSON.stringify(journal.entrees, null, 2),
-                'application/json',
-              )
+              setExportDemande('json')
             }}
           >
             {T.exporterJson}
           </Bouton>
         </div>
+        {exportDemande !== null && (
+          <DialogueConfirmation
+            titre={T.exportTitre}
+            libelleConfirmer={T.exporter}
+            libelleAnnuler={T.annuler}
+            enCours={journal.exportTexte.isPending}
+            surAnnuler={() => {
+              setExportDemande(null)
+            }}
+            surConfirmer={() => {
+              if (exportDemande === 'texte') {
+                exporterTexte(() => {
+                  setExportDemande(null)
+                })
+                return
+              }
+              telecharger(
+                T.nomFichierJson,
+                JSON.stringify(journal.entrees, null, 2),
+                'application/json',
+              )
+              setExportDemande(null)
+            }}
+          >
+            <p>{T.exportMessage}</p>
+          </DialogueConfirmation>
+        )}
         {echecExport && <BandeauAlerte type="erreur">{T.erreurExport}</BandeauAlerte>}
 
         {journal.entrees.length === 0 ? (

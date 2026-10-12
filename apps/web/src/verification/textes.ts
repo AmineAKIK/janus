@@ -21,6 +21,9 @@ export const TEXTES_VERIFICATION = {
   revuExplication:
     'Attendre un jour permet de mesurer une mémoire durable, sans confondre reconnaissance récente et maîtrise.',
   reporter: 'La reporter à demain',
+  reporterTitre: 'Reporter la vérification ?',
+  reporterMessage: 'Elle reviendra demain. Tu ne la fais pas maintenant.',
+  annuler: 'Annuler',
   faireQuandMeme: 'La faire quand même',
   confiance: 'Ton niveau de confiance',
   reponseLibre: 'Réponse libre',
