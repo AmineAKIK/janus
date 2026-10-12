@@ -221,7 +221,11 @@ export function creerRouteur(historique: RouterHistory, contexte: ContexteRouteu
     history: historique,
     context: contexte,
     // Un fondu entre deux pages (navigateurs qui savent le faire ; ailleurs, la page change comme avant).
-    defaultViewTransition: true,
+    // Seulement quand la page change : un filtre ou une période qui change l'adresse ne déclenche rien.
+    defaultViewTransition: {
+      types: ({ fromLocation, pathChanged }) =>
+        fromLocation !== undefined && pathChanged ? ['page'] : false,
+    },
     defaultNotFoundComponent: PageIntrouvable,
     defaultErrorComponent: PageErreur,
   })
