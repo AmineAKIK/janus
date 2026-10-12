@@ -168,7 +168,6 @@ export function creerServiceCatalogue({ depot, stockage, horloge }: DependancesS
     },
   }
 }
-type ServiceCatalogue = ReturnType<typeof creerServiceCatalogue>
 
 const SANS_STATUT: Statut = 'non_commence'
 
