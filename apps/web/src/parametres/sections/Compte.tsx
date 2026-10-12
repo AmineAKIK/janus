@@ -112,7 +112,7 @@ export function SectionCompte({ reglages, enregistrer }: Proprietes) {
       {sortir && (
         <DialogueConfirmation
           titre={C.deconnexion.titre}
-          libelleConfirmer={T.seDeconnecter}
+          libelleConfirmer={bloquee > 0 ? C.deconnexion.quitterQuandMeme : T.seDeconnecter}
           libelleAnnuler={C.annuler}
           enCours={envoi || deconnexion.isPending}
           surAnnuler={() => {
@@ -120,7 +120,11 @@ export function SectionCompte({ reglages, enregistrer }: Proprietes) {
             setBloquee(0)
           }}
           surConfirmer={() => {
-            setBloquee(0)
+            // Les réponses restantes restent gardées sur l'appareil : quitter ne les perd pas.
+            if (bloquee > 0) {
+              sortirVraiment()
+              return
+            }
             setEnvoi(true)
             void boite
               .vider()

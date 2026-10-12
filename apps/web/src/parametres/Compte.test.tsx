@@ -202,6 +202,13 @@ describe('Compte', () => {
     )
     expect(banc.magasin.lire().sessionOuverte).toBe(true)
     expect(await banc.boite.entrees()).toHaveLength(1)
+
+    await utilisateur.click(within(dialogue).getByRole('button', { name: 'Quitter quand même' }))
+
+    await waitFor(() => {
+      expect(banc.magasin.lire().sessionOuverte).toBe(false)
+    })
+    expect(await banc.boite.entrees()).toHaveLength(1)
   })
 
   it('« Se déconnecter » envoie les réponses en attente puis ferme la session', async () => {

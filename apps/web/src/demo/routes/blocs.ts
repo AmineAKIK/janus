@@ -128,18 +128,23 @@ export const ROUTES_BLOCS_DEMO = [
   definir(ROUTES['POST /blocs/:id/erreurs'], ({ magasin, horloge, params, corps }) => {
     verifierBloc(params.id)
     const maintenant = horloge.maintenant()
-    const proposition = faitsDuBloc(magasin.lire(), params.id).find(
-      (fait) =>
-        fait.type === 'correction' &&
-        fait.id === corps.correction &&
-        fait.erreursIa.includes(corps.erreur),
+    const correction = faitsDuBloc(magasin.lire(), params.id).find(
+      (fait) => fait.type === 'correction' && fait.id === corps.correction,
     )
-    if (proposition === undefined) {
+    if (correction === undefined) {
       throw new ErreurApi({
         status: 404,
         code: 'introuvable',
         titre: 'Introuvable',
-        detail: 'Cette erreur proposée par l’IA n’existe pas.',
+        detail: 'Cette correction n’existe pas.',
+      })
+    }
+    if (correction.type !== 'correction' || !correction.erreursIa.includes(corps.erreur)) {
+      throw new ErreurApi({
+        status: 400,
+        code: 'donnees_invalides',
+        titre: 'Erreur inconnue',
+        detail: 'Cette correction n’a pas repéré cette erreur.',
       })
     }
     if (!dejaRecu(magasin.lire(), corps.id)) {

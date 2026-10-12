@@ -1,7 +1,7 @@
 import { EXEMPLES_PAGE, ErreurApi, ErreurReseau, MessagePage } from '@janus/contrats'
 import type { Transport } from '@janus/contrats'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { creerBoiteEnvoi, creerVerrouLocal, DELAIS_REESSAI_S } from './boiteEnvoi.ts'
+import { creerBoiteEnvoi, creerVerrouLocal, DELAIS_REESSAI_S, ESSAIS_MAX } from './boiteEnvoi.ts'
 import { envoiDeMessage } from './messages.ts'
 import { creerStockageMemoire } from './stockageEnvoi.ts'
 
@@ -173,6 +173,57 @@ describe('boîte d’envoi', () => {
       expect(surRefus).toHaveBeenCalledWith(expect.objectContaining({ status }))
     },
   )
+
+  it.each([403, 404, 413])(
+    'un %i est définitif : l’entrée est rendue, la file continue',
+    async (status) => {
+      const { boite, stockage, appels } = monter([
+        () => {
+          throw erreur(status)
+        },
+      ])
+      vi.spyOn(console, 'error').mockImplementation(() => undefined)
+      const surRefus = vi.fn()
+
+      await boite.ajouter(evenement(ID1), { surRefus })
+      await boite.ajouter(evenement(ID2))
+
+      expect(surRefus).toHaveBeenCalledWith(expect.objectContaining({ status }))
+      expect(appels).toHaveLength(2)
+      expect(await stockage.lister()).toHaveLength(0)
+    },
+  )
+
+  it('un 429 ou un 408 sur un événement est réessayé', async () => {
+    const { boite, stockage } = monter([
+      () => {
+        throw erreur(429)
+      },
+    ])
+
+    await boite.ajouter(evenement(ID1))
+
+    expect(await stockage.lister()).toHaveLength(1)
+  })
+
+  it('une panne du serveur qui dure est rendue à la page au dixième essai', async () => {
+    const { boite, stockage } = monter(
+      Array.from({ length: ESSAIS_MAX }, () => () => {
+        throw erreur(500)
+      }),
+    )
+    vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    const surRefus = vi.fn()
+    await boite.ajouter(evenement(ID1), { surRefus })
+
+    for (let essai = 1; essai < ESSAIS_MAX; essai += 1) {
+      expect(await stockage.lister()).toHaveLength(1)
+      await boite.vider()
+    }
+
+    expect(await stockage.lister()).toHaveLength(0)
+    expect(surRefus).toHaveBeenCalledOnce()
+  })
 
   it('un 503 sur un événement est réessayé, il ne vient pas de l’IA', async () => {
     const { boite, stockage } = monter([

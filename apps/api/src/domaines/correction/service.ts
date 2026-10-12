@@ -117,6 +117,27 @@ interface Essais {
   readonly cout: number
 }
 
+/** La tentative et le tour d'une demande, d'après les corrections déjà gardées de la question. */
+function numeroter(
+  deLaQuestion: readonly { readonly tentative: number; readonly tour: number }[],
+  sansRelance: boolean,
+) {
+  const derniere = Math.max(0, ...deLaQuestion.map(({ tentative }) => tentative))
+  const tentative = sansRelance ? derniere + 1 : Math.max(1, derniere)
+  const deLaTentative = deLaQuestion.filter((autre) => autre.tentative === tentative)
+  const tour = sansRelance ? 1 : Math.max(2, ...deLaTentative.map(({ tour: t }) => t + 1))
+  return { tentative, tour }
+}
+
+function trop(relancesMax: number) {
+  return new ErreurProtocole(
+    422,
+    'donnees_invalides',
+    'Trop de relances',
+    `Une question accepte ${String(relancesMax)} relances au plus.`,
+  )
+}
+
 export function creerServiceCorrection({
   base,
   depot,
@@ -246,27 +267,12 @@ export function creerServiceCorrection({
         question: question.id,
         serie,
       })
-      // Une question de vérification peut revenir : chaque passage est une tentative neuve, sans relance.
-      const tentative = serie === 'verification' ? deLaQuestion.length + 1 : demande.tentative
-      const deLaTentative = deLaQuestion.filter((autre) => autre.tentative === tentative)
+      // Le serveur numérote seul les tentatives : une réponse sans relance ouvre la suivante
+      // (la question peut revenir), une relance prolonge la dernière. Le client n'a rien à retenir.
       const sansRelance = serie === 'verification' || demande.relance.trim() === ''
-      if (sansRelance && deLaTentative.length > 0) {
-        throw new ErreurProtocole(
-          409,
-          'conflit',
-          'Tentative déjà corrigée',
-          'Cette tentative a déjà un premier tour : envoie une relance.',
-        )
-      }
-      const tour = sansRelance ? 1 : Math.max(2, ...deLaTentative.map(({ tour: t }) => t + 1))
-      if (tour > 1 + reglages.relancesMax) {
-        throw new ErreurProtocole(
-          422,
-          'donnees_invalides',
-          'Trop de relances',
-          `Une question accepte ${String(reglages.relancesMax)} relances au plus.`,
-        )
-      }
+      const { tentative, tour } = numeroter(deLaQuestion, sansRelance)
+      const deLaTentative = deLaQuestion.filter((autre) => autre.tentative === tentative)
+      if (tour > 1 + reglages.relancesMax) throw trop(reglages.relancesMax)
       const contestee = demande.conteste === true ? deLaQuestion.at(-1) : undefined
       if (demande.conteste === true && contestee === undefined) {
         throw new ErreurProtocole(
@@ -354,6 +360,17 @@ export function creerServiceCorrection({
         await depot.solder(tx, { userId, mois, estime, cout: essais.cout })
         const apresCoup = await depot.correctionParId(tx, demande.id)
         if (apresCoup !== undefined) return { gardee: apresCoup }
+        // Deux demandes sur la même question ont pu partir ensemble : le numéro se refait sous le verrou.
+        const numero = numeroter(
+          await depot.correctionsDeLaQuestion(tx, {
+            userId,
+            blocId: bloc.id,
+            question: question.id,
+            serie,
+          }),
+          sansRelance,
+        )
+        if (numero.tour > 1 + reglages.relancesMax) return { tropDeRelances: true as const }
         if (essais.sortie === undefined) {
           await depot.ajouterEchec(tx, {
             id: demande.id,
@@ -361,8 +378,8 @@ export function creerServiceCorrection({
             blocId: bloc.id,
             questionId: question.id,
             serie,
-            tentative,
-            tour,
+            tentative: numero.tentative,
+            tour: numero.tour,
             motif: essais.motif,
             bruts: essais.bruts,
             modele: essais.dernier?.modele ?? 'inconnu',
@@ -373,7 +390,7 @@ export function creerServiceCorrection({
         }
         const { sortie, dernier } = essais
         const verdict = compte({
-          tour,
+          tour: numero.tour,
           colle: demande.support.colle,
           retourCours: demande.support.retour_cours,
           recopiee,
@@ -385,8 +402,8 @@ export function creerServiceCorrection({
           blocId: bloc.id,
           questionId: question.id,
           serie,
-          tentative,
-          tour,
+          tentative: numero.tentative,
+          tour: numero.tour,
           confiance: demande.confiance,
           reponse: demande.reponse,
           supportColle: demande.support.colle,
@@ -408,7 +425,7 @@ export function creerServiceCorrection({
           coutMillioniemes: essais.cout,
           consigneEmpreinte: EMPREINTE_CONSIGNE,
           brut: essais.bruts.at(-1) ?? '',
-          echantillon: tireeAuSort(tour, reglages.echantillonControle, hasard()),
+          echantillon: tireeAuSort(numero.tour, reglages.echantillonControle, hasard()),
           dateServeur: maintenant,
         }
         if (contestee !== undefined) {
@@ -429,6 +446,7 @@ export function creerServiceCorrection({
         return { gardee: ligne }
       })
 
+      if ('tropDeRelances' in resultat) throw trop(reglages.relancesMax)
       // L'échec est signalé après le commit, pour que la réponse brute reste gardée.
       if ('echec' in resultat) {
         throw new CorrectionIndisponible(

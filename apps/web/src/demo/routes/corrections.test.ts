@@ -54,6 +54,22 @@ describe('POST /corrections de la démo', () => {
     expect(support).toMatchObject({ compte: false, raison_non_compte: 'avec_support' })
   })
 
+  it('refuse une cinquième relance comme le serveur (422)', async () => {
+    const { transport } = monterDemo({ delaiCorrectionMs: 0 })
+    await transport.appeler(ROUTES['POST /corrections'], { corps: demande(1) })
+    for (let rang = 2; rang <= 5; rang += 1) {
+      await transport.appeler(ROUTES['POST /corrections'], {
+        corps: demande(rang, { relance: `Relance ${String(rang)}` }),
+      })
+    }
+
+    await expect(
+      transport.appeler(ROUTES['POST /corrections'], {
+        corps: demande(6, { relance: 'Une de trop' }),
+      }),
+    ).rejects.toMatchObject({ status: 422 })
+  })
+
   it('persiste une contestation sur la correction immédiatement précédente', async () => {
     const { transport, magasin } = monterDemo({ delaiCorrectionMs: 0 })
     const premiere = await transport.appeler(ROUTES['POST /corrections'], { corps: demande(1) })

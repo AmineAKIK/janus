@@ -212,7 +212,8 @@ export const TEXTES_CONFIRMATION = {
         ? '1 réponse en attente sera envoyée avant la déconnexion.'
         : `${String(nombre)} réponses en attente seront envoyées avant la déconnexion.`,
     bloquee: (nombre: number) =>
-      `${nombre === 1 ? '1 réponse n’a' : `${String(nombre)} réponses n’ont`} pas pu être envoyée${nombre === 1 ? '' : 's'} : le réseau est indisponible. ${nombre === 1 ? 'Elle est conservée' : 'Elles sont conservées'}. Réessaie une fois la connexion rétablie.`,
+      `${nombre === 1 ? '1 réponse n’a' : `${String(nombre)} réponses n’ont`} pas pu être envoyée${nombre === 1 ? '' : 's'} pour le moment. ${nombre === 1 ? 'Elle est conservée' : 'Elles sont conservées'} sur cet appareil. Réessaie plus tard, ou quitte quand même.`,
+    quitterQuandMeme: 'Quitter quand même',
   },
   appareil: {
     titre: 'Déconnecter cet appareil ?',

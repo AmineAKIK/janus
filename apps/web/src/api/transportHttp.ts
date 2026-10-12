@@ -72,6 +72,9 @@ async function erreurDeReponse(reponse: Response): Promise<ErreurApi> {
 
 /** Appelle l'API en HTTP : cookies de session, entrée validée avant l'envoi, sortie à la réception. */
 export function creerTransportHttp({ base, fetchImpl = fetch }: OptionsTransportHttp): Transport {
+  // La dernière version lue de chaque ressource : une écriture la renvoie dans `If-Match`, pour que
+  // le serveur refuse (412) d'écraser ce qu'une autre fenêtre a changé entre-temps.
+  const versions = new Map<string, string>()
   return {
     async appeler(route, entree, options) {
       const validee = validerEntree(route, entree)
@@ -79,9 +82,15 @@ export function creerTransportHttp({ base, fetchImpl = fetch }: OptionsTransport
       const corps = route.corps === undefined ? undefined : JSON.stringify(validee.corps)
       if (corps !== undefined) enTetes.set('Content-Type', 'application/json')
 
+      const url = adresse(base, route, validee)
+      const ressource = url.split('?')[0] ?? url
+      const ecriture = route.methode !== 'GET'
+      const version = versions.get(ressource)
+      if (ecriture && version !== undefined) enTetes.set('If-Match', version)
+
       let reponse: Response
       try {
-        reponse = await fetchImpl(adresse(base, route, validee), {
+        reponse = await fetchImpl(url, {
           method: route.methode,
           headers: enTetes,
           credentials: 'include',
@@ -94,6 +103,8 @@ export function creerTransportHttp({ base, fetchImpl = fetch }: OptionsTransport
         throw new ErreurReseau({ cause: erreur })
       }
 
+      const etag = reponse.headers.get('ETag')
+      if (reponse.ok && etag !== null) versions.set(ressource, etag)
       if (!reponse.ok) throw await erreurDeReponse(reponse)
       return validerSortie(route, route.reponse === null ? undefined : await lireCorps(reponse))
     },

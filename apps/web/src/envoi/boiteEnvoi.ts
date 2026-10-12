@@ -5,6 +5,10 @@ import { appelerEntree } from './routes.ts'
 import type { EntreeEnvoi, StockageEnvoi } from './stockageEnvoi.ts'
 
 /** Les attentes avant un nouvel essai, en secondes ; la dernière se répète. */
+/** Au-delà de ce nombre d'échecs du serveur (5xx), l'entrée est rendue à la page : elle ne bloque plus la file. */
+export const ESSAIS_MAX = 10
+/** Les refus qui peuvent changer en réessayant : session expirée, délai dépassé, trop de requêtes. */
+const STATUTS_A_REESSAYER = new Set([401, 408, 429])
 export const DELAIS_REESSAI_S = [2, 4, 8, 16, 32, 60] as const
 /** Le délai de l'envoi périodique tant qu'il reste des messages. */
 export const PERIODE_ENVOI_MS = 30_000
@@ -155,8 +159,13 @@ export function creerBoiteEnvoi(options: OptionsBoiteEnvoi, ecouteurs: Ecouteurs
       const refuse =
         correctionImpossible ||
         erreur instanceof ErreurDonnees ||
+        // Tout refus du client (400, 403, 404, 409, 413, 422...) est définitif : le renvoyer ne change rien.
         (erreur instanceof ErreurApi &&
-          (erreur.status === 400 || erreur.status === 422 || erreur.status === 409))
+          erreur.status >= 400 &&
+          erreur.status < 500 &&
+          !STATUTS_A_REESSAYER.has(erreur.status)) ||
+        // Une panne du serveur qui ne passe pas après plusieurs essais ne doit pas bloquer la file.
+        (erreur instanceof ErreurApi && erreur.status >= 500 && entree.essais + 1 >= ESSAIS_MAX)
       if (refuse) {
         // Une correction impossible est un état attendu (plafond, panne), pas une anomalie à journaliser.
         if (!correctionImpossible) {
