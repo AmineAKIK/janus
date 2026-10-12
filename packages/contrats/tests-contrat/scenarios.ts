@@ -179,6 +179,55 @@ export function scenariosContrat(creer: CreerBanc): void {
       expect(final.statut).toBe('acquis_provisoirement')
     })
 
+    it('réglages : une modification se fait après lecture, et se relit', async () => {
+      const banc = await creer()
+      await connecter(banc)
+      const avant = await banc.transport.appeler(ROUTES['GET /reglages'], {})
+      const nouveau = avant.questionsDebut === 6 ? 7 : 6
+
+      const modifies = await banc.transport.appeler(ROUTES['PATCH /reglages'], {
+        corps: { questionsDebut: nouveau },
+      })
+      const relus = await banc.transport.appeler(ROUTES['GET /reglages'], {})
+
+      expect(modifies.questionsDebut).toBe(nouveau)
+      expect(relus).toEqual(modifies)
+    })
+
+    it('relances : le serveur numérote les tentatives, la cinquième relance est refusée', async () => {
+      const banc = await creer()
+      await connecter(banc)
+      await ouvrir(banc)
+      const { manifeste, version } = await statutDuBloc(banc)
+      const question = manifeste.restitution[0]
+      if (question === undefined) throw new Error('Le bloc n’a pas de question de restitution')
+      const envoyer = (relance: string) =>
+        banc.transport.appeler(ROUTES['POST /corrections'], {
+          corps: {
+            id: nouvelId(),
+            serie: 'restitution',
+            // Numéro sans importance : le serveur compte lui-même.
+            tentative: 1,
+            question: question.id,
+            reponse: relance === '' ? question.attendu : `${question.attendu} ${relance}`,
+            confiance: 'sur',
+            relance,
+            support: { colle: false, retour_cours: false },
+            bloc: BLOC,
+            version,
+          },
+        })
+
+      expect((await envoyer('')).tour).toBe(1)
+      // Une réponse neuve sur la même question ouvre une tentative : pas de blocage.
+      expect((await envoyer('')).tour).toBe(1)
+      for (let rang = 2; rang <= 5; rang += 1) {
+        expect((await envoyer(`Je reprends, version ${String(rang)}.`)).tour).toBe(rang)
+      }
+
+      await expect(envoyer('Une de trop.')).rejects.toMatchObject({ status: 422 })
+    })
+
     it('doublon : un identifiant déjà reçu est ignoré, sans erreur ni second fait', async () => {
       const banc = await creer()
       await connecter(banc)

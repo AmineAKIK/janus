@@ -235,10 +235,39 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('POST /corrections contre Postgr
     expect(derniere?.historique[0]?.reponse).toBe(REPONSE_LONGUE)
   })
 
-  it('refuse un premier tour de plus sur la même tentative (409) et une cinquième relance (422)', async () => {
+  it('numérote seul les tentatives : un nouveau premier tour ouvre la suivante, sans 409', async () => {
     const premier = demande()
     await corriger(premier)
-    expect((await corriger({ ...premier, id: identifiant() })).statusCode).toBe(409)
+    // Le client renvoie le même numéro : le serveur n'en tient pas compte.
+    const repasse = await corriger({ ...premier, id: identifiant() })
+
+    expect(repasse.statusCode).toBe(200)
+    expect(repasse.json()).toMatchObject({ tour: 1 })
+    const relance = await corriger({ ...premier, id: identifiant(), relance: 'Je reprends.' })
+    expect(relance.json()).toMatchObject({ tour: 2 })
+    const ids = [premier.id, repasse.json<{ id: string }>().id, relance.json<{ id: string }>().id]
+    const { rows } = await bases.pool.query<{ tentative: number; tour: number }>(
+      'SELECT tentative, tour FROM corrections WHERE id = ANY($1) ORDER BY tentative, tour',
+      [ids],
+    )
+    // Deux tentatives de plus que la précédente : la seconde porte la relance.
+    const [debut = 0] = rows.map(({ tentative }) => tentative)
+    expect(rows.map(({ tentative, tour }) => [tentative - debut, tour])).toEqual([
+      [0, 1],
+      [1, 1],
+      [1, 2],
+    ])
+  })
+
+  it('deux premiers tours simultanés sur la même question prennent deux tentatives, sans erreur', async () => {
+    const [a, b] = await Promise.all([corriger(demande()), corriger(demande())])
+
+    expect([a.statusCode, b.statusCode]).toEqual([200, 200])
+  })
+
+  it('refuse une cinquième relance (422)', async () => {
+    const premier = demande()
+    await corriger(premier)
 
     for (let rang = 1; rang <= 4; rang += 1) {
       const relance = await corriger({

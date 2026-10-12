@@ -1,7 +1,5 @@
-import { ROUTES } from '@janus/contrats'
 import { BadgeNeComptePas, Bouton, LIBELLES_NIVEAU } from '@janus/ui'
 import { useState } from 'react'
-import { useLecture } from '../api/requetes.tsx'
 import { useBoiteEnvoi } from '../envoi/FournisseurEnvoi.tsx'
 import { nouvelId } from '@janus/contrats'
 import { instantReel } from '../demo/horlogeDemo.ts'
@@ -67,18 +65,16 @@ function ErreurAConfirmer({
   readonly erreur: NonNullable<ResultatVerification['erreur_a_confirmer']>
 }) {
   const boite = useBoiteEnvoi()
-  const detail = useLecture(ROUTES['GET /blocs/:id'], { params: { id: resultat.bloc.code } })
   const [fait, setFait] = useState<'confirmee' | 'revue' | null>(null)
 
   function confirmer() {
-    const ouvertes = detail.data?.erreurs_ouvertes ?? []
     const id = nouvelId(Date.parse(instantReel()))
     setFait('confirmee')
     void boite.ajouter({
       id,
       route: 'POST /blocs/:id/erreurs',
       params: { id: resultat.bloc.code },
-      corps: { id, ids: [...new Set([...ouvertes, erreur.erreur])] },
+      corps: { id, erreur: erreur.erreur, correction: erreur.correction, decision: 'confirmee' },
     })
   }
 

@@ -46,7 +46,7 @@ const DemandeCorrection = z
     /** Identifiant de la demande, tiré une fois par le client : un doublon est ignoré. */
     id: IdUuid,
     serie: Serie,
-    /** Numéro de la tentative de la série (une relance garde la même tentative). */
+    /** Indicatif : le serveur numérote lui-même les tentatives (une relance garde la dernière). */
     tentative: z.number().int().min(1),
     question: Identifiant,
     reponse: Reponse.min(1),

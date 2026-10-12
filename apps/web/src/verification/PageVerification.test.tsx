@@ -136,6 +136,28 @@ describe('Vérification', () => {
     expect(screen.getByRole('button', { name: 'Retour à Aujourd’hui' })).toBeVisible()
   })
 
+  it('à examiner : « Confirmer l’erreur » envoie l’erreur, sa correction et la décision', async () => {
+    const utilisateur = userEvent.setup()
+    const { banc } = await afficher({
+      avant: ({ magasin }) => {
+        magasin.ecrire((etat) => ({
+          ...etat,
+          interrupteurs: { ...etat.interrupteurs, erreurIa: true },
+        }))
+      },
+    })
+    await utilisateur.click(await screen.findByRole('button', { name: 'Commencer' }))
+    for (let partie = 0; partie < 3; partie += 1) await repondre(utilisateur)
+
+    await utilisateur.click(await screen.findByRole('button', { name: 'Confirmer l’erreur' }))
+
+    await waitFor(() => {
+      expect(
+        banc.magasin.lire().faits.find((fait) => fait.type === 'erreur_ia_tranchee'),
+      ).toMatchObject({ decision: 'confirmee' })
+    })
+  })
+
   it('ratée : dit « statut inchangé » et la date du nouvel essai', async () => {
     executions.reussite = false
     const utilisateur = userEvent.setup()

@@ -130,6 +130,14 @@ export function routesCorrectionsDemo({
       )
       const tour =
         corps.relance.trim() === '' ? 1 : Math.max(2, precedentes.length - dernierPremierTour + 1)
+      if (tour > 1 + reglages.relancesMax) {
+        throw probleme(
+          422,
+          'donnees_invalides',
+          'Trop de relances',
+          `Une question accepte ${String(reglages.relancesMax)} relances au plus.`,
+        )
+      }
       const certitude: CorrectionRecue['certitude'] = interrupteurs.correctionNonVerifiee
         ? 'non_verifie'
         : 'sur'

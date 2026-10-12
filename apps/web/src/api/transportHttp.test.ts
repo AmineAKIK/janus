@@ -70,6 +70,22 @@ describe('requête', () => {
 })
 
 describe('réponse', () => {
+  it('renvoie en If-Match la dernière version lue de la ressource avant une écriture', async () => {
+    const reglages = ROUTES['GET /reglages'].reponse.parse({})
+    const fetchImpl = vi.fn<typeof fetch>(() =>
+      Promise.resolve(reponseJson(reglages, { headers: { ETag: 'W/"3"' } })),
+    )
+    const transport = creerTransportHttp({ base: '/api', fetchImpl })
+
+    await transport.appeler(ROUTES['GET /reglages'], {})
+    await transport.appeler(ROUTES['PATCH /reglages'], { corps: { questionsDebut: 6 } })
+
+    const lecture = fetchImpl.mock.calls[0]?.[1]
+    const ecriture = fetchImpl.mock.calls[1]?.[1]
+    expect(new Headers(lecture?.headers).has('If-Match')).toBe(false)
+    expect(new Headers(ecriture?.headers).get('If-Match')).toBe('W/"3"')
+  })
+
   it('rend la réponse validée', async () => {
     const { transport } = transportAvec(reponseJson(MOI))
 
