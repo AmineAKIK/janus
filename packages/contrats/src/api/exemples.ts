@@ -116,7 +116,11 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
     invalides: [{ partie: 'corps', valeur: {} }],
   },
   'GET /formations': {
-    reponse: { formations: [{ id: 'dwwm', titre: 'DWWM', description: 'Titre professionnel.' }] },
+    reponse: {
+      formations: [
+        { id: 'dwwm', titre: 'DWWM', description: 'Titre professionnel.', active: true },
+      ],
+    },
     invalides: [{ partie: 'reponse', valeur: { formations: [{ id: 'dwwm' }] } }],
   },
   'GET /formations/:id/modules': {

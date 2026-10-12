@@ -25,6 +25,7 @@ const DEFAUTS = {
   heureRappel: '19:00',
   rappelsEnPauseJusquAu: null,
   blocsEntreRevues: 3,
+  formationActive: null,
 }
 
 // [clé, plus petite valeur permise, plus grande valeur permise]
