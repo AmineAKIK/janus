@@ -1,11 +1,8 @@
 import { ErreurApi, ROUTES } from '@janus/contrats'
 import { instantEnIso, instantEnMs } from '@janus/moteur'
+import { IDENTIFIANT_DEMO } from '../identifiants.ts'
 import { SESSION_COURANTE } from '../store.ts'
 import { definir } from './definir.ts'
-
-/** L'identifiant et le mot de passe de la démo, affichés dans le bandeau « Démo » de la connexion. */
-export const IDENTIFIANT_DEMO = 'amine'
-export const MOT_DE_PASSE_DEMO = 'demo-janus'
 
 /** Cinq échecs en une minute bloquent la connexion pendant une minute. */
 const ECHECS_AVANT_BLOCAGE = 5

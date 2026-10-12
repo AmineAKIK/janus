@@ -1,10 +1,4 @@
 import type { Transport } from '@janus/contrats'
-import { creerHorlogeDemo, instantReel } from '../demo/horlogeDemo.ts'
-import { creerOutilsDemo } from '../demo/outils.ts'
-import { etatGraine } from '../demo/graine.ts'
-import { creerMagasin } from '../demo/store.ts'
-import { creerTransportDemo } from '../demo/transportDemo.ts'
-import { creerRoutesDemo } from '../demo/routes/index.ts'
 import { creerTransportHttp } from './transportHttp.ts'
 
 export type ModeTransport = 'demo' | 'http'
@@ -24,46 +18,25 @@ export interface OptionsTransport {
   readonly apresChangementDemo?: () => void
 }
 
-/** `localStorage`, ou `null` quand le navigateur le refuse (navigation privée, iframe sandbox). */
-function stockageDisponible(): Storage | null {
-  try {
-    return window.localStorage
-  } catch {
-    return null
-  }
-}
-
-/** L'adresse absolue du dossier des fiches, qui suit `base` de Vite (GitHub Pages sert sous /janus/). */
-function racineFiches(): string {
-  return new URL(`${import.meta.env.BASE_URL}fiches/`, window.location.href).href
-}
+/**
+ * Le backend de démo, chargé à la demande. Pour un build `http`, Vite remplace `VITE_TRANSPORT`
+ * par sa valeur : la branche disparaît et la démo (graine, routes simulées, mot de passe) n'est
+ * pas dans le paquet de production.
+ */
+const chargerLaDemo =
+  import.meta.env.VITE_TRANSPORT === 'http' ? undefined : () => import('../demo/montage.ts')
 
 /** Le transport choisi par `VITE_TRANSPORT` : tout le reste de l'appli ne connaît que `Transport`. */
-export function creerTransport(env: EnvironnementApi, options: OptionsTransport = {}): Transport {
+export async function creerTransport(
+  env: EnvironnementApi,
+  options: OptionsTransport = {},
+): Promise<Transport> {
   if (modeTransport(env.VITE_TRANSPORT) === 'http') {
     return creerTransportHttp({ base: env.VITE_API ?? '/api' })
   }
-  const magasin = creerMagasin({
-    stockage: stockageDisponible(),
-    creerEtat: () => etatGraine(instantReel()),
-  })
-  const horloge = creerHorlogeDemo({
-    decalage: {
-      lire: () => magasin.lire().decalageMs,
-      ecrire: (ms) => {
-        magasin.ecrire((etat) => ({ ...etat, decalageMs: ms }))
-      },
-    },
-  })
-  window.__janusDemo = creerOutilsDemo({
-    magasin,
-    horloge,
-    graine: etatGraine,
-    apres: options.apresChangementDemo,
-  })
-  return creerTransportDemo({
-    magasin,
-    horloge,
-    routes: creerRoutesDemo({ racineFiches: racineFiches() }),
-  })
+  if (chargerLaDemo === undefined) {
+    throw new Error('Ce build ne contient pas la démo : VITE_TRANSPORT vaut « http ».')
+  }
+  const { monterLaDemo } = await chargerLaDemo()
+  return monterLaDemo(options)
 }

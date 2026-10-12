@@ -11,7 +11,7 @@ import { creerClientRequetes, FournisseurApi } from './api/requetes.tsx'
 import { creerBoiteEnvoi, creerVerrouNavigateur } from './envoi/boiteEnvoi.ts'
 import { FournisseurEnvoi } from './envoi/FournisseurEnvoi.tsx'
 import { ouvrirStockageIndexedDB, creerStockageParesseux } from './envoi/stockageEnvoi.ts'
-import { instantReel } from './demo/horlogeDemo.ts'
+import { instantReel } from './horloge.ts'
 import { cibleFenetre, suivreLesErreurs } from './erreurs.ts'
 import { creerInstallation } from './pwa/installation.ts'
 import { creerMiseAJour } from './pwa/miseAJour.ts'
@@ -40,7 +40,7 @@ const client = creerClientRequetes({
     allerALaConnexion(routeur)
   },
 })
-const transport = creerTransport(import.meta.env, {
+const transport = await creerTransport(import.meta.env, {
   apresChangementDemo: () => {
     void client.invalidateQueries()
   },

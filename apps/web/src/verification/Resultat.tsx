@@ -2,7 +2,7 @@ import { BadgeNeComptePas, Bouton, LIBELLES_NIVEAU } from '@janus/ui'
 import { useState } from 'react'
 import { useBoiteEnvoi } from '../envoi/FournisseurEnvoi.tsx'
 import { nouvelId } from '@janus/contrats'
-import { instantReel } from '../demo/horlogeDemo.ts'
+import { instantReel } from '../horloge.ts'
 import {
   LIBELLES_PARTIE,
   TEXTES_VERIFICATION as T,

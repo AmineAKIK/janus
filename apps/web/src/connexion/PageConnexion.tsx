@@ -7,8 +7,8 @@ import {
   MarqueJanus,
 } from '@janus/ui'
 import { getRouteApi } from '@tanstack/react-router'
+import { lazy, Suspense } from 'react'
 import { modeTransport } from '../api/client.ts'
-import { IDENTIFIANT_DEMO, MOT_DE_PASSE_DEMO } from '../demo/routes/compte.ts'
 import styles from './PageConnexion.module.css'
 import { TEXTES, texteReessayer, texteTropDEssais } from './textes.ts'
 import { useConnexion } from './useConnexion.ts'
@@ -19,6 +19,10 @@ const routeConnexion = getRouteApi('/connexion')
 function ramenerDansLaVue(evenement: { currentTarget: Element }) {
   evenement.currentTarget.scrollIntoView({ block: 'center' })
 }
+
+/** Absent du build de production (`http`) : la démo et son mot de passe n'y entrent pas. */
+const BandeauDemo =
+  import.meta.env.VITE_TRANSPORT === 'http' ? null : lazy(() => import('../demo/BandeauDemo.tsx'))
 
 export function PageConnexion() {
   const { retour } = routeConnexion.useSearch()
@@ -99,10 +103,10 @@ export function PageConnexion() {
         </form>
       </section>
 
-      {enDemo && (
-        <BandeauAlerte type="info" className={styles['demo']}>
-          Démo : identifiant « {IDENTIFIANT_DEMO} », mot de passe « {MOT_DE_PASSE_DEMO} ».
-        </BandeauAlerte>
+      {enDemo && BandeauDemo !== null && (
+        <Suspense fallback={null}>
+          <BandeauDemo className={styles['demo']} />
+        </Suspense>
       )}
     </div>
   )

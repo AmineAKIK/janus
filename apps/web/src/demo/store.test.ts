@@ -31,6 +31,18 @@ describe('étatVide', () => {
 })
 
 describe('magasin', () => {
+  it('reprend un état gardé sans mot de passe, avec celui de la graine', () => {
+    const { motDePasse, ...ancien } = etatVide(T0)
+    const { stockage } = stockageEnMemoire({
+      [CLE_STOCKAGE]: JSON.stringify({ ...ancien, decalageMs: 5000 }),
+    })
+
+    const magasin = creerMagasin({ stockage, creerEtat: () => etatVide(T0) })
+
+    expect(magasin.lire().decalageMs).toBe(5000)
+    expect(magasin.lire().motDePasse).toBe(motDePasse)
+  })
+
   it('crée l’état au premier lancement et le recopie dans le stockage', () => {
     const { stockage, valeurs } = stockageEnMemoire()
 

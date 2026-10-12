@@ -78,6 +78,13 @@ jobs:
           VITE_TRANSPORT: http
           VITE_HISTORIQUE: chemins
           VITE_API: /api
+      # Le paquet de production ne porte ni la démo, ni son mot de passe.
+      - name: Le build du VPS ne contient pas la démo
+        run: |
+          if grep -rlE "demo-janus|graine-B01" apps/web/dist-vps; then
+            echo "Le code de démo est dans le build de production." >&2
+            exit 1
+          fi
 
   # Tout l'hébergement démarre sur une machine vide avec un `.env` de test (PR-090).
   hebergement:
