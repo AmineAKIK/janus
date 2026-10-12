@@ -4,7 +4,12 @@ import type { ProprietesLienNavigation } from '@janus/ui'
 import { useEffect, useRef } from 'react'
 import { SelecteurFormation } from '../formation/SelecteurFormation.tsx'
 import { BandeauHorsConnexion } from '../pwa/BandeauHorsConnexion.tsx'
-import { TITRE_INTROUVABLE, titreDocument } from '../routes/ecrans.ts'
+import {
+  ROBOTS_INDEXABLE,
+  ROBOTS_PRIVE,
+  TITRE_INTROUVABLE,
+  titreDocument,
+} from '../routes/ecrans.ts'
 import styles from './Gabarit.module.css'
 
 const ID_CONTENU = 'contenu'
@@ -50,7 +55,7 @@ function LienNavigation({
  * sur le `h1` et la page revient en haut.
  */
 export function Gabarit() {
-  const { chemin, titre, navigation, large, introuvable } = useRouterState({
+  const { chemin, titre, navigation, large, introuvable, indexable } = useRouterState({
     select: (etat) => {
       const ecran = etat.matches.findLast((route) => route.staticData.titre !== '')
       return {
@@ -60,6 +65,7 @@ export function Gabarit() {
         navigation: ecran?.staticData.navigation ?? null,
         large: ecran?.staticData.large ?? false,
         introuvable: ecran === undefined,
+        indexable: ecran?.staticData.indexable ?? false,
       }
     },
   })
@@ -69,6 +75,14 @@ export function Gabarit() {
   useEffect(() => {
     document.title = titreDocument(titre)
   }, [titre])
+
+  // Le serveur répond 200 à toute adresse et la page d'accueil de la vitrine est la connexion : seule elle
+  // se laisse indexer, l'appli derrière le compte et la page introuvable disent aux moteurs de l'ignorer.
+  useEffect(() => {
+    document
+      .querySelector('meta[name="robots"]')
+      ?.setAttribute('content', indexable ? ROBOTS_INDEXABLE : ROBOTS_PRIVE)
+  }, [indexable])
 
   useEffect(() => {
     // Tant que la première page n'est pas prête (la session se vérifie), puis à son affichage, le focus reste

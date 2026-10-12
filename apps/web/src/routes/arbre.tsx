@@ -69,7 +69,7 @@ const connexion = createRoute({
   getParentRoute: () => racine,
   path: '/connexion',
   validateSearch: validerRechercheConnexion,
-  staticData: { titre: 'Connexion', navigation: null },
+  staticData: { titre: 'Connexion', navigation: null, indexable: true },
   component: PageConnexion,
 })
 

@@ -15,7 +15,7 @@ Ils font foi dans cet ordre en cas de désaccord :
 Décisions prises depuis le cadrage, qui s'y ajoutent :
 
 - Les règles de méthode (délais de vérification, seuil de 80 %) sont affichées en lecture seule dans les réglages : aucun écran ne les modifie. Les changer passe par une PR sur le moteur.
-- Le référencement et la vitrine publique ne sont pas des objectifs de la v1 : l'appli est privée, derrière un compte.
+- Le référencement compte, même en v1 : la vitrine publique est l’accueil (`/`) et la connexion, indexables, avec leurs balises de partage, leurs données structurées, `robots.txt` et `sitemap.xml` (gardés par `apps/web/src/seo.test.ts`). Tout le reste est derrière un compte et se déclare non indexable (balise `robots` posée par le gabarit, en-tête `X-Robots-Tag` du Caddyfile).
 
 ## Règles permanentes pour l'IA qui code
 

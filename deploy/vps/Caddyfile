@@ -42,6 +42,10 @@ http://janus.akiksystems.fr:8080 {
         @manifeste path /manifest.webmanifest
         header @manifeste Content-Type "application/manifest+json"
         # Un fichier d'/assets/ absent est un 404 franc, jamais la page d'accueil servie avec un cache d'un an.
+        # Seules la vitrine (l'accueil, la connexion) et ses fichiers se laissent indexer : toute autre adresse,
+        # derrière le compte ou inconnue (servie en 200 par l'appli), le dit aussi dans l'en-tête.
+        @hors_vitrine not path / /connexion /robots.txt /sitemap.xml /og-image.png /favicon.ico /favicon.svg /apple-touch-icon.png
+        header @hors_vitrine X-Robots-Tag "noindex, nofollow"
         @spa not path /assets/*
         route @spa {
             try_files {path} /index.html
