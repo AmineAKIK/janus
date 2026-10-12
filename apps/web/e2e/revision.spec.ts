@@ -59,6 +59,8 @@ test.describe('révision des cartes', () => {
   test('Échap ouvre la boîte « Quitter la séance ? »', async ({ page }) => {
     await ouvrirSession(page)
     await page.goto('./#/revision')
+    await page.waitForLoadState('networkidle')
+    await expect(page.getByRole('button', { name: 'Voir la réponse' })).toBeVisible()
 
     await page.keyboard.press('Escape')
 

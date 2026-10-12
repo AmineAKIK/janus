@@ -26,7 +26,11 @@ for (const ecran of ecrans) {
         await page.emulateMedia({ colorScheme: theme.colorScheme })
         if (ecran.session !== false && ecran.chemin.startsWith('./#/')) await ouvrirSession(page)
         await page.goto(ecran.chemin)
-        if (ecran.interrupteurs !== undefined) await activerInterrupteurs(page, ecran.interrupteurs)
+        if (ecran.interrupteurs !== undefined) {
+          // L'écran se charge à la demande : on attend qu'il ait fini avant de toucher à l'état de la démo.
+          await page.waitForLoadState('networkidle')
+          await activerInterrupteurs(page, ecran.interrupteurs)
+        }
         await expect(page.getByRole('heading', { level: 1, name: ecran.etat })).toBeVisible()
         await ecran.scenario?.(page)
         for (const nom of ecran.clics ?? []) {
