@@ -56,20 +56,9 @@
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
       }
     </script>
-    <!-- Applique le thème et la taille du texte enregistrés avant le premier affichage (pas de flash). -->
-    <script>
-      document.documentElement.dataset.theme = 'systeme'
-      document.documentElement.dataset.taille = 'standard'
-      try {
-        var theme = localStorage.getItem('janus.affichage.theme')
-        var taille = localStorage.getItem('janus.affichage.taille')
-        if (theme === 'clair' || theme === 'sombre') document.documentElement.dataset.theme = theme
-        if (taille === 'petit' || taille === 'grand')
-          document.documentElement.dataset.taille = taille
-      } catch (erreur) {
-        // Stockage indisponible : les valeurs par défaut restent.
-      }
-    </script>
+    <!-- Applique le thème et la taille du texte enregistrés avant le premier affichage (pas de flash).
+         Un fichier à part : la politique de sécurité du contenu interdit les scripts dans la page. -->
+    <script src="%BASE_URL%amorcage.js"></script>
     <link
       rel="preload"
       href="../../packages/ui/src/polices/inter-latin-400.woff2"

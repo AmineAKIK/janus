@@ -37,9 +37,33 @@ export const ModificationReglages = z.strictObject({
 })
 export type ModificationReglages = z.infer<typeof ModificationReglages>
 
+/**
+ * L'adresse d'un service de notifications (celui du navigateur, chez Google, Mozilla ou Apple) :
+ * en https, sur un nom public. Le serveur y envoie les rappels, donc ni adresse IP, ni `localhost`,
+ * ni nom du réseau interne.
+ */
+export function estAdressePush(adresse: string): boolean {
+  let url: URL
+  try {
+    url = new URL(adresse)
+  } catch {
+    return false
+  }
+  const nom = url.hostname
+  const adresseIp = /^[\d.]+$/.test(nom) || nom.includes(':')
+  return (
+    url.protocol === 'https:' &&
+    url.username === '' &&
+    url.password === '' &&
+    nom.includes('.') &&
+    !adresseIp &&
+    !/(^|\.)(localhost|local|internal|lan|home|corp)\.?$/.test(nom)
+  )
+}
+
 const Abonnement = z.strictObject({
   id: IdUuid,
-  endpoint: z.url(),
+  endpoint: z.url().refine(estAdressePush, { error: 'Adresse de notifications refusée.' }),
   cles: z.strictObject({ p256dh: z.string().min(1), auth: z.string().min(1) }),
 })
 
