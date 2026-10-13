@@ -146,10 +146,16 @@ describe('page d’un bloc', () => {
     await envoyer(prete)
 
     await envoyer(message('page.haut'))
-    vi.spyOn(iframe, 'getBoundingClientRect').mockReturnValue(DOMRect.fromRect({ y: -300 }))
-    await envoyer(message('page.haut', { id: '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2d' }))
+    await new Promise((fin) => setTimeout(fin, 100))
+    expect(defiler).not.toHaveBeenCalled()
 
-    expect(defiler).toHaveBeenCalledExactlyOnceWith({ block: 'start' })
+    // La fiche passe au-dessus de l'écran juste après le message (la page se met à jour) : on remonte.
+    await envoyer(message('page.haut', { id: '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2d' }))
+    vi.spyOn(iframe, 'getBoundingClientRect').mockReturnValue(DOMRect.fromRect({ y: -300 }))
+
+    await vi.waitFor(() => {
+      expect(defiler).toHaveBeenCalledExactlyOnceWith({ block: 'start' })
+    })
   })
 
   it('lien.ouvrir avec une adresse http : rien ne s’ouvre', async () => {

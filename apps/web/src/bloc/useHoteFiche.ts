@@ -190,11 +190,17 @@ export function useHoteFiche(
           setHauteur(message.hauteur)
           return
         case 'page.haut': {
-          // Nouvel écran de la fiche : son haut revient à l'écran s'il était passé au-dessus.
-          const cadre = iframe.current
-          if (cadre !== null && cadre.getBoundingClientRect().top < 0) {
-            cadre.scrollIntoView({ block: 'start' })
-          }
+          // Nouvel écran de la fiche : son haut revient à l'écran s'il était passé au-dessus. On
+          // regarde deux images plus tard : la page a d'abord affiché l'étape (un encart en moins
+          // au-dessus de la fiche la déplace).
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              const cadre = iframe.current
+              if (cadre !== null && cadre.getBoundingClientRect().top < 0) {
+                cadre.scrollIntoView({ block: 'start' })
+              }
+            })
+          })
           return
         }
         default: {
