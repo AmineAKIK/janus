@@ -1,0 +1,1 @@
+import{d as e,s as t}from"./src--G_CxhlP.js";var n=new Set([`GET /aujourdhui`,`GET /tableau-de-bord`,`GET /blocs/:id`,`GET /modules/:id/blocs`,`GET /cartes/dues`,`GET /questions-debut`,`GET /verifications/:id`,`GET /journal`].map(n=>t(e[n])));function r(e){return e.invalidateQueries({predicate:({queryKey:e})=>typeof e[0]==`string`&&n.has(e[0])})}export{r as t};
