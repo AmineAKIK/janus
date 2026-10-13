@@ -58,7 +58,24 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
       const { rows } = await base.pool.query<{ n: string }>(
         'SELECT count(*) AS n FROM drizzle.__drizzle_migrations',
       )
-      expect(Number(rows[0]?.n)).toBe(16)
+      expect(Number(rows[0]?.n)).toBe(17)
+    })
+
+    it('indexe les lectures par bloc, par date et par type, sans le temps actif', async () => {
+      const { rows } = await base.pool.query<{ indexname: string; indexdef: string }>(
+        `SELECT indexname, indexdef FROM pg_indexes
+         WHERE indexname IN ('corrections_user_bloc_date', 'corrections_user_date', 'evenements_user_type_date')
+         ORDER BY 1`,
+      )
+      expect(rows.map(({ indexname }) => indexname)).toEqual([
+        'corrections_user_bloc_date',
+        'corrections_user_date',
+        'evenements_user_type_date',
+      ])
+      expect(rows[0]?.indexdef).toContain('(user_id, bloc_id, date_serveur)')
+      expect(rows[1]?.indexdef).toContain('(user_id, date_serveur)')
+      expect(rows[2]?.indexdef).toContain('(user_id, type, date_serveur)')
+      expect(rows[2]?.indexdef).toContain("WHERE (type <> 'temps.actif'::text)")
     })
 
     it('crée les tables du catalogue, des utilisateurs et des faits', async () => {
