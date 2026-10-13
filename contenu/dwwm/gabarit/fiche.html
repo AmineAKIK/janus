@@ -11,27 +11,42 @@
         color-scheme: light dark;
         --couleur-fond: light-dark(#ffffff, #14171a);
         --couleur-surface: light-dark(#f7f8f9, #1a1e22);
+        --couleur-surface-elevee: light-dark(#ffffff, #21262b);
         --couleur-surface-douce: light-dark(#eff1f3, #272d33);
         --couleur-ligne: light-dark(#e5e7ea, #2a3036);
         --couleur-encre: light-dark(#1b1f24, #e8eaed);
         --couleur-texte-secondaire: light-dark(#5b626b, #a3a9b0);
+        --couleur-texte-discret: light-dark(#666d76, #8b929a);
         --couleur-accent: light-dark(#2c5d92, #8fb6e4);
+        --couleur-accent-douce: light-dark(#e8eff8, #1f2b3a);
         --couleur-accent-sur-fond: light-dark(#ffffff, #0f1a28);
         --couleur-succes: light-dark(#276f50, #5dc196);
         --couleur-alerte: light-dark(#95620a, #e0ac4a);
         --couleur-erreur: light-dark(#ae3846, #ee8591);
         --couleur-focus: light-dark(#2b6cb0, #8bb9f5);
         --focus-anneau: 0 0 0 2px var(--couleur-fond), 0 0 0 4px var(--couleur-focus);
-        --rayon-champ: 0.5rem;
-        --rayon-carte: 0.75rem;
+        --effet-ombre-carte: light-dark(#1b1f24, #000000);
+        --ombre-carte:
+          0 1px 2px light-dark(rgb(27 31 36 / 5%), rgb(255 255 255 / 3.5%)),
+          0 10px 28px light-dark(rgb(27 31 36 / 8%), rgb(0 0 0 / 38%));
+        --rayon-champ: 0.625rem;
+        --rayon-carte: 0.875rem;
+        --hauteur-bouton: 48px;
         font-family: 'Inter', system-ui, sans-serif;
+      }
+      /* Le thème choisi dans l'appli (message etat.init) l'emporte sur le réglage du téléphone. */
+      :root[data-theme='clair'] {
+        color-scheme: light;
+      }
+      :root[data-theme='sombre'] {
+        color-scheme: dark;
       }
       * {
         box-sizing: border-box;
       }
       body {
         margin: 0;
-        background: var(--couleur-fond);
+        background: var(--couleur-surface);
         color: var(--couleur-encre);
         line-height: 1.5;
       }
@@ -64,8 +79,20 @@
         font-size: 0.875rem;
       }
       /* Dans l'appli, le fil d'étapes est celui de la page : la fiche n'en montre pas un second. */
-      html[data-integree] nav {
+      html[data-integree] nav,
+      html[data-integree] header {
         display: none;
+      }
+      html[data-integree] main {
+        padding-top: 1rem;
+      }
+      html[data-integree] section > h2 {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
       }
       /* Le défilement reste, la barre n'est pas dessinée : elle prend de la place et enlaidit. */
       html[data-integree] {
@@ -86,7 +113,8 @@
         gap: 0.5rem;
       }
       .stepper select {
-        flex: 1 1 12rem;
+        order: -1;
+        flex: 1 1 100%;
         min-width: 0;
         min-height: 44px;
         padding: 0 0.75rem;
@@ -98,8 +126,17 @@
         font-size: 0.9375rem;
       }
       .stepper .bouton {
-        min-width: 44px;
+        flex: 1 1 0;
         padding: 0 0.75rem;
+      }
+      @media (min-width: 640px) {
+        .stepper select {
+          order: 0;
+          flex: 1 1 auto;
+        }
+        .stepper .bouton {
+          flex: none;
+        }
       }
       .avance {
         flex: 1 0 100%;
@@ -117,14 +154,15 @@
         padding: 1.25rem;
         border: 1px solid var(--couleur-ligne);
         border-radius: var(--rayon-carte);
-        background: var(--couleur-surface);
+        background: var(--couleur-surface-elevee);
+        box-shadow: var(--ombre-carte);
       }
       button,
       textarea {
         font: inherit;
       }
       .bouton {
-        min-height: 44px;
+        min-height: var(--hauteur-bouton);
         padding: 0 1rem;
         border: 1px solid var(--couleur-accent);
         border-radius: var(--rayon-champ);
@@ -259,7 +297,7 @@
         padding: 0.5rem 0.875rem;
         border: 1px solid var(--couleur-ligne);
         border-radius: var(--rayon-champ);
-        background: var(--couleur-fond);
+        background: var(--couleur-surface);
       }
       summary {
         min-height: 44px;
@@ -307,6 +345,32 @@
         margin-left: auto;
         font-size: 0.875rem;
         color: var(--couleur-texte-secondaire);
+      }
+      .points {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+        margin: 0.5rem 0 0.75rem;
+      }
+      .point {
+        min-width: 44px;
+        min-height: 44px;
+        border: 1px solid var(--couleur-ligne);
+        border-radius: var(--rayon-champ);
+        background: var(--couleur-surface);
+        color: inherit;
+        font: inherit;
+        font-size: 0.9375rem;
+        cursor: pointer;
+      }
+      .point[data-etat='fait'] {
+        border-color: var(--couleur-succes);
+        color: var(--couleur-succes);
+      }
+      .point[data-courant='oui'] {
+        border-color: var(--couleur-accent);
+        background: var(--couleur-accent-douce);
+        font-weight: 600;
       }
       .aide {
         margin: 0.5rem 0;
@@ -760,9 +824,9 @@
           creer(
             'li',
             { className: 'stepper' },
-            bouton('←', 'Étape précédente', etapes[courant - 1]),
+            bouton('Précédent', 'Étape précédente', etapes[courant - 1]),
             choix,
-            bouton('→', 'Étape suivante', etapes[courant + 1]),
+            bouton('Suivant', 'Étape suivante', etapes[courant + 1]),
             barre,
           ),
         )
@@ -823,7 +887,7 @@
         const precedent = creer('button', {
           type: 'button',
           className: 'bouton secondaire',
-          textContent: '← Retour',
+          textContent: 'Retour',
         })
         const avancer = creer('button', { type: 'button', className: 'bouton' })
         let courant = Math.min(etat.ecrans?.[etape.id] ?? 0, ecrans.length - 1)
@@ -842,7 +906,7 @@
             .join(' ')
         const arreter = () => {
           window.speechSynthesis?.cancel()
-          ecouter.textContent = '🔊 Écouter'
+          ecouter.textContent = 'Écouter'
           ecouter.dataset.actif = 'non'
         }
         ecouter.addEventListener('click', () => {
@@ -855,7 +919,7 @@
           parole.onend = arreter
           window.speechSynthesis.speak(parole)
           ecouter.dataset.actif = 'oui'
-          ecouter.textContent = '⏹ Arrêter'
+          ecouter.textContent = 'Arrêter'
         })
         const montrer = (k) => {
           arreter()
@@ -869,7 +933,7 @@
           compte.textContent = k + 1 + ' / ' + ecrans.length
           precedent.disabled = k === 0
           avancer.textContent =
-            k < ecrans.length - 1 ? 'Suivant →' : suivante ? 'Étape suivante →' : 'Terminé'
+            k < ecrans.length - 1 ? 'Suivant' : suivante ? 'Étape suivante' : 'Terminé'
           avancer.disabled = k === ecrans.length - 1 && !suivante
         }
         precedent.addEventListener('click', () => {
@@ -912,117 +976,157 @@
       }
 
       function afficherPratique() {
-        const items = manifeste.pratique.flatMap((exercice) => exercice.items)
-        const reussis = items.filter((item) => etat.pratique[item.id]?.reussi).length
-        const section = creer(
+        const liste = manifeste.pratique.flatMap((exercice) =>
+          exercice.items.map((item, rang) => ({ exercice, item, rang })),
+        )
+        const reussi = (entree) => Boolean(etat.pratique[entree.item.id]?.reussi)
+        const premierRestant = liste.findIndex((entree) => !reussi(entree))
+        const index = Math.min(
+          Math.max(etat.itemCourant ?? (premierRestant < 0 ? 0 : premierRestant), 0),
+          liste.length - 1,
+        )
+        const { exercice, item, rang } = liste[index]
+        const nbReussis = liste.filter(reussi).length
+        const fait = etat.pratique[item.id]
+        let aide = 0
+        const aller_a = (k) => {
+          etat.itemCourant = Math.min(Math.max(k, 0), liste.length - 1)
+          enregistrer()
+          afficher()
+        }
+        const points = creer(
+          'div',
+          { className: 'points', role: 'group' },
+          ...liste.map((entree, k) => {
+            const p = creer('button', {
+              type: 'button',
+              className: 'point',
+              textContent: String(k + 1),
+              dataset: {
+                etat: reussi(entree) ? 'fait' : 'a-faire',
+                courant: k === index ? 'oui' : 'non',
+              },
+            })
+            p.setAttribute(
+              'aria-label',
+              'Item ' + (k + 1) + ' sur ' + liste.length + (reussi(entree) ? ', réussi' : ''),
+            )
+            if (k === index) p.setAttribute('aria-current', 'step')
+            p.addEventListener('click', () => aller_a(k))
+            return p
+          }),
+        )
+        const resultat = creer('p', {
+          className: 'discret',
+          textContent: fait
+            ? 'Envoyé : ' + (fait.reussi ? 'réussi' : 'non réussi') + ', aide ' + fait.aide
+            : '',
+        })
+        const envoyer = (ok) => {
+          const essais = (fait?.essais ?? 0) + 1
+          pont.envoyer('pratique.resultat', {
+            exercice: exercice.id,
+            item: item.id,
+            reussi: ok,
+            aide,
+            essais,
+          })
+          etat.pratique[item.id] = { reussi: ok, aide, essais }
+          const suivant = liste.findIndex((entree, k) => k > index && !reussi(entree))
+          if (ok && suivant >= 0) etat.itemCourant = suivant
+          enregistrer()
+          afficher()
+        }
+        const aides = [1, 2, 3, 4].map((cran) => {
+          const b = creer('button', {
+            type: 'button',
+            className: 'bouton secondaire',
+            textContent: 'Aide ' + cran,
+          })
+          b.setAttribute('aria-pressed', 'false')
+          b.addEventListener('click', () => {
+            aide = aide === cran ? 0 : cran
+            aides.forEach((autre, k) => autre.setAttribute('aria-pressed', String(aide === k + 1)))
+          })
+          return b
+        })
+        // L'énoncé de l'item : <template data-item="PR1-1"> dans la page.
+        const enonce = document.querySelector('template[data-item="' + item.id + '"]')
+        const consigne = creer('div', {})
+        if (enonce) consigne.append(enonce.content.cloneNode(true))
+        activerLiens(consigne)
+        return creer(
           'section',
           {},
           creer('h2', { textContent: 'Pratique guidée' }),
           creer('p', {
             className: 'discret',
             textContent:
-              reussis +
-              ' réussi' +
-              (reussis > 1 ? 's' : '') +
-              ' sur ' +
-              items.length +
-              '. Fais-les dans l’ordre que tu veux.',
+              nbReussis + ' réussi' + (nbReussis > 1 ? 's' : '') + ' sur ' + liste.length + '.',
           }),
-        )
-        for (const exercice of manifeste.pratique) {
-          section.append(creer('h3', { className: 'exo-titre', textContent: exercice.titre }))
-          exercice.items.forEach((item, rang) => {
-            const fait = etat.pratique[item.id]
-            let aide = 0
-            const resultat = creer('p', {
-              className: 'discret',
-              textContent: fait
-                ? 'Envoyé : ' + (fait.reussi ? 'réussi' : 'non réussi') + ', aide ' + fait.aide
-                : '',
-            })
-            const envoyer = (reussi) => {
-              const essais = (fait?.essais ?? 0) + 1
-              pont.envoyer('pratique.resultat', {
-                exercice: exercice.id,
-                item: item.id,
-                reussi,
-                aide,
-                essais,
-              })
-              etat.pratique[item.id] = { reussi, aide, essais }
-              enregistrer()
-              afficher()
-            }
-            const aides = [1, 2, 3, 4].map((cran) => {
-              const b = creer('button', {
+          points,
+          creer(
+            'div',
+            { className: 'item', dataset: { fait: fait?.reussi ? 'oui' : 'non' } },
+            creer(
+              'div',
+              { className: 'item-tete' },
+              creer('span', { className: 'item-num', textContent: String(index + 1) }),
+              creer('strong', { textContent: exercice.titre }),
+              creer('span', {
+                className: 'item-etat',
+                textContent: fait ? (fait.reussi ? 'Réussi' : 'À refaire') : '',
+              }),
+            ),
+            consigne,
+            creer(
+              'details',
+              { className: 'aide' },
+              creer('summary', { textContent: 'J’ai eu besoin d’aide' }),
+              creer('p', {
+                className: 'discret',
+                textContent:
+                  'Niveau d’aide utilisé : 1 = une question qui t’oriente, 2 = un indice, 3 = l’étape détaillée, 4 = la solution complète.',
+              }),
+              creer('div', { className: 'actions' }, ...aides),
+            ),
+            creer(
+              'div',
+              { className: 'actions' },
+              creer('button', {
+                type: 'button',
+                className: 'bouton',
+                textContent: 'J’ai réussi',
+                onclick: () => envoyer(true),
+              }),
+              creer('button', {
                 type: 'button',
                 className: 'bouton secondaire',
-                textContent: 'Aide ' + cran,
-              })
-              b.setAttribute('aria-pressed', 'false')
-              b.addEventListener('click', () => {
-                aide = aide === cran ? 0 : cran
-                aides.forEach((autre, k) =>
-                  autre.setAttribute('aria-pressed', String(aide === k + 1)),
-                )
-              })
-              return b
-            })
-            // L'énoncé de l'item : <template data-item="PR1-1"> dans la page.
-            const enonce = document.querySelector('template[data-item="' + item.id + '"]')
-            const consigne = creer('div', {})
-            if (enonce) consigne.append(enonce.content.cloneNode(true))
-            activerLiens(consigne)
-            section.append(
-              creer(
-                'div',
-                { className: 'item', dataset: { fait: fait?.reussi ? 'oui' : 'non' } },
-                creer(
-                  'div',
-                  { className: 'item-tete' },
-                  creer('span', { className: 'item-num', textContent: String(rang + 1) }),
-                  creer('strong', {
-                    textContent: 'Item ' + (rang + 1) + ' sur ' + exercice.items.length,
-                  }),
-                  creer('span', {
-                    className: 'item-etat',
-                    textContent: fait ? (fait.reussi ? '✓ Réussi' : 'À refaire') : '',
-                  }),
-                ),
-                consigne,
-                creer(
-                  'details',
-                  { className: 'aide' },
-                  creer('summary', { textContent: 'J’ai eu besoin d’aide' }),
-                  creer('p', {
-                    className: 'discret',
-                    textContent:
-                      'Niveau d’aide utilisé : 1 = une question qui t’oriente, 2 = un indice, 3 = l’étape détaillée, 4 = la solution complète.',
-                  }),
-                  creer('div', { className: 'actions' }, ...aides),
-                ),
-                creer(
-                  'div',
-                  { className: 'actions' },
-                  creer('button', {
-                    type: 'button',
-                    className: 'bouton',
-                    textContent: 'J’ai réussi',
-                    onclick: () => envoyer(true),
-                  }),
-                  creer('button', {
-                    type: 'button',
-                    className: 'bouton secondaire',
-                    textContent: 'Pas réussi',
-                    onclick: () => envoyer(false),
-                  }),
-                ),
-                resultat,
-              ),
-            )
-          })
-        }
-        return section
+                textContent: 'Pas réussi',
+                onclick: () => envoyer(false),
+              }),
+            ),
+            resultat,
+          ),
+          creer(
+            'div',
+            { className: 'ecran-nav' },
+            creer('button', {
+              type: 'button',
+              className: 'bouton secondaire',
+              textContent: 'Item précédent',
+              disabled: index === 0,
+              onclick: () => aller_a(index - 1),
+            }),
+            creer('button', {
+              type: 'button',
+              className: 'bouton secondaire',
+              textContent: 'Item suivant',
+              disabled: index === liste.length - 1,
+              onclick: () => aller_a(index + 1),
+            }),
+          ),
+        )
       }
 
       function afficherAtelier() {
@@ -1311,6 +1415,7 @@
           autonome,
         })
         mode = depart.mode
+        if (depart.init?.theme) document.documentElement.dataset.theme = depart.init.theme
         // Hors de l'appli (aperçu dans une page), le fil d'étapes de la fiche est le seul : on le rend.
         if (mode !== 'appli') delete document.documentElement.dataset.integree
         $('mode').textContent = mode === 'appli' ? 'Dans l’appli' : 'Mode autonome'
