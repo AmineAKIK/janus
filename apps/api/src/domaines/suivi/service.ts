@@ -282,11 +282,15 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui, etats }: D
      * et vérifiées avant le premier octet : une ligne illisible donne une erreur, pas un flux tronqué.
      */
     async exportJson(userId: string) {
-      const donnees = z.record(z.string(), z.json()).parse(await depot.donneesDe(base.db, userId))
-      const lignes = Object.fromEntries(
-        Object.entries(donnees).map(([nom, valeur]) => [nom, Array.isArray(valeur) ? valeur : []]),
-      )
-      return Readable.from(morceauxDeLExport(horloge.maintenant(), lignes), { objectMode: false })
+      const donnees = await depot.donneesDe(base.db, userId)
+      // Chaque ligne doit être du JSON : vérifié par morceaux, sans bloquer la boucle d'événements.
+      for (const lignes of Object.values(donnees)) {
+        for (let debut = 0; debut < lignes.length; debut += LIGNES_PAR_MORCEAU) {
+          z.array(z.json()).parse(lignes.slice(debut, debut + LIGNES_PAR_MORCEAU))
+          await rendreLaMain()
+        }
+      }
+      return Readable.from(morceauxDeLExport(horloge.maintenant(), donnees), { objectMode: false })
     },
 
     /** Le tableau de bord, calculé à la lecture : rien n'est gardé. */

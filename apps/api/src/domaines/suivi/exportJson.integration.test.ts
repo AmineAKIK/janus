@@ -76,4 +76,16 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('export.json en flux contre Post
       .parse(JSON.parse(morceaux.join('')))
     expect(lu.donnees.evenements).toHaveLength(LIGNES)
   })
+
+  it('refuse avant le premier octet une ligne qui n’est pas du JSON', async () => {
+    const abime = creerServiceSuivi({
+      base: baseDepuisPool(bases.db, bases.pool),
+      depot: { ...depot, donneesDe: () => Promise.resolve({ idees: [{ date: new Date() }, 1n] }) },
+      horloge: horlogeFausse(MAINTENANT),
+      aujourdhui: () => Promise.reject(new Error('inutilisé')),
+      etats: creerCacheDesEtats(),
+    })
+
+    await expect(abime.exportJson(plan.userId)).rejects.toThrow()
+  })
 })
