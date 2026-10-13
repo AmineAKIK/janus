@@ -869,6 +869,41 @@ describe('la vérification, le retest et les échecs', () => {
     expect(avec(reponses.filter((r) => r.type !== 'transfert'))).toBe('acquis_provisoirement')
   })
 
+  it('le type de contenu décide des types exigés : conventions = une explication suffit', () => {
+    const f = fabrique()
+    const base = jusquaProvisoire(f)
+    const explication = {
+      type: 'explication',
+      question: 'DE1',
+      tour: 1,
+      niveau: 'solide',
+      compte: true,
+    } as const
+    const tache = { type: 'tache', question: 'DT1', tour: 1, reussi: true, compte: true } as const
+    const avec = (
+      type: 'conventions' | 'procedures' | undefined,
+      reponses: ReponseVerification[],
+    ) =>
+      calculerBloc(
+        [
+          ...base,
+          f.fait(apres(DEBUT, 3), {
+            type: 'verification_terminee',
+            verification: 'verification',
+            valable: true,
+            reponses,
+          }),
+        ],
+        type === undefined ? MANIFESTE : { ...MANIFESTE, type },
+        REGLAGES,
+        apres(DEBUT, 4),
+      ).statut
+    expect(avec('conventions', [explication])).toBe('acquis')
+    expect(avec('conventions', [])).toBe('acquis_provisoirement')
+    expect(avec('procedures', [tache])).toBe('acquis_provisoirement')
+    expect(avec(undefined, [explication])).toBe('acquis_provisoirement')
+  })
+
   it('une explication au 2e tour, non comptée ou partielle, ou une tâche ratée, fait échouer', () => {
     const f = fabrique()
     const base = jusquaProvisoire(f)

@@ -1,11 +1,19 @@
-import { Bouton, ChampTexte, ChoixConfiance, EditeurCode, ZoneDeTexte } from '@janus/ui'
+import {
+  Bouton,
+  CaseACocher,
+  ChampTexte,
+  ChoixConfiance,
+  EditeurCode,
+  Selecteur,
+  ZoneDeTexte,
+} from '@janus/ui'
 import type { Confiance } from '@janus/contrats'
 import { useState } from 'react'
 import seance from '../seance/Seance.module.css'
 import { useSaisieReponse } from '../seance/useSaisieReponse.ts'
 import { executerCode } from './executeur.ts'
 import type { ResultatExecution } from './executeur.ts'
-import { TEXTES_VERIFICATION as T, texteEssai } from './textes.ts'
+import { LIBELLES_AIDE, TEXTES_VERIFICATION as T, texteEssai } from './textes.ts'
 import styles from './Verification.module.css'
 import type { Partie, Saisie } from './useVerification.ts'
 
@@ -89,6 +97,67 @@ function Cas({ resultat }: { readonly resultat: ResultatExecution }) {
         </li>
       ))}
     </ul>
+  )
+}
+
+/** Une tâche par constat : les critères fixés d'avance, que l'apprenant coche, et son niveau d'aide. */
+export function PartieConstat({ partie, enAttente, indisponible, envoyer }: Proprietes) {
+  const criteres = partie.tache?.mode === 'constat' ? partie.tache.criteres : []
+  const [coches, setCoches] = useState<readonly number[]>([])
+  const [aide, setAide] = useState('0')
+
+  return (
+    <form
+      className={seance['colonne']}
+      noValidate
+      onSubmit={(evenement) => {
+        evenement.preventDefault()
+        if (enAttente) return
+        const niveau = Number(aide)
+        envoyer({
+          reponse: `Constat : ${String(coches.length)} critère(s) sur ${String(criteres.length)}, aide ${aide}.`,
+          confiance: CONFIANCE_TACHE,
+          colle: false,
+          constat: {
+            coches,
+            aide: niveau === 1 || niveau === 2 || niveau === 3 || niveau === 4 ? niveau : 0,
+          },
+        })
+      }}
+    >
+      <p className={`${styles['consigne'] ?? ''} texte-sous-titre-18`}>{partie.consigne}</p>
+      <fieldset className={styles['criteres']}>
+        <legend className="texte-petit-14">{T.criteres}</legend>
+        {criteres.map((critere, rang) => (
+          <CaseACocher
+            key={rang}
+            libelle={critere}
+            checked={coches.includes(rang)}
+            disabled={enAttente}
+            onChange={(evenement) => {
+              const cochee = evenement.currentTarget.checked
+              setCoches((avant) =>
+                cochee ? [...avant, rang] : avant.filter((autre) => autre !== rang),
+              )
+            }}
+          />
+        ))}
+      </fieldset>
+      <p className="texte-petit-14">{T.criteresAide}</p>
+      <Selecteur
+        libelle={T.niveauAide}
+        options={LIBELLES_AIDE.map((libelle, rang) => ({ valeur: String(rang), libelle }))}
+        valeur={aide}
+        onChange={setAide}
+        disabled={enAttente}
+      />
+      <Indisponible actif={indisponible} />
+      <div className={styles['actions']}>
+        <Bouton type="submit" variante="principal" chargement={enAttente}>
+          {indisponible ? T.reessayer : T.envoyerTache}
+        </Bouton>
+      </div>
+    </form>
   )
 }
 

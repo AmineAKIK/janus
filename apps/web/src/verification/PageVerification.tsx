@@ -11,7 +11,7 @@ import { EnteteSeance } from '../seance/EnteteSeance.tsx'
 import { etapeSuivante } from '../seance/etapeSuivante.ts'
 import type { Aujourdhui } from '../seance/etapeSuivante.ts'
 import seance from '../seance/Seance.module.css'
-import { PartieTache, PartieTexte } from './Parties.tsx'
+import { PartieConstat, PartieTache, PartieTexte } from './Parties.tsx'
 import { Resultat } from './Resultat.tsx'
 import { LIBELLES_PARTIE, TEXTES_VERIFICATION as T, texteEnTete, texteRevuLe } from './textes.ts'
 import styles from './Verification.module.css'
@@ -164,7 +164,9 @@ export function PageVerification({ id }: { readonly id: string }) {
             {T.reponseEnregistree}
           </p>
         )}
-        {courante.type === 'tache' ? (
+        {courante.type === 'tache' && courante.tache?.mode === 'constat' ? (
+          <PartieConstat key={courante.id} {...proprietes} />
+        ) : courante.type === 'tache' ? (
           <PartieTache key={courante.id} {...proprietes} />
         ) : (
           <PartieTexte key={courante.id} {...proprietes} />

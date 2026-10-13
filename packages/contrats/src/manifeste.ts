@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { CodeBloc, Identifiant, Texte } from './primitives.ts'
+import { TypeDeContenu } from './composition.ts'
 import { FormeTransfert, TypeDifferee } from './enums.ts'
 
 const Entier = z.number().int()
@@ -33,10 +34,20 @@ export const VerificationParCode = z.strictObject({
   cas: z.array(z.strictObject({ entree: z.array(z.unknown()), sortie: z.unknown() })).min(1),
 })
 
-/** Comment l'appli vérifie une tâche : comparaison de texte, ou exécution de cas de test. */
+/**
+ * Une tâche dont le résultat s'observe sans que l'appli puisse le contrôler (une maquette, une
+ * installation) : des critères fixés avant, que l'apprenant coche, avec son niveau d'aide.
+ */
+export const VerificationParConstat = z.strictObject({
+  mode: z.literal('constat'),
+  criteres: z.array(Texte).min(1),
+})
+
+/** Comment l'appli vérifie une tâche : comparaison de texte, exécution de cas de test, ou constat déclaré. */
 export const Verification = z.discriminatedUnion('mode', [
   z.strictObject({ mode: z.literal('exacte'), reponses: z.array(Texte).min(1) }),
   VerificationParCode,
+  VerificationParConstat,
 ])
 export type Verification = z.infer<typeof Verification>
 
@@ -62,6 +73,8 @@ const Pratique = z.strictObject({
 export const Manifeste = z.strictObject({
   schema: z.literal(2),
   bloc: CodeBloc,
+  /** Type de contenu : décide des réserves exigées et des types tirés à la vérification. Absent : composition complète. */
+  type: TypeDeContenu.optional(),
   version: Entier.min(1),
   titre: Texte,
   titre_court: Texte,

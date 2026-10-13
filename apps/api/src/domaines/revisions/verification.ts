@@ -1,4 +1,4 @@
-import { Niveau, ResultatVerification, TypeDifferee } from '@janus/contrats'
+import { Niveau, ResultatVerification, reservesDuType, TypeDifferee } from '@janus/contrats'
 import type {
   Differee,
   Fait,
@@ -23,7 +23,6 @@ import { z } from 'zod'
 export const Tirage = z.array(z.strictObject({ id: z.string(), type: TypeDifferee }))
 export type Tirage = z.infer<typeof Tirage>
 
-const TYPES_DE_PARTIES = TypeDifferee.options
 const HEURE_MS = 3_600_000
 
 /** Tire une question de chaque type, jamais la même deux fois de suite (réserve épuisée : la plus ancienne). */
@@ -38,7 +37,7 @@ export function tirerParties(
       ? fait.reponses.map(({ question }) => ({ question, date: fait.date }))
       : [],
   )
-  return TYPES_DE_PARTIES.flatMap((type) => {
+  return reservesDuType(manifeste.type).parties.flatMap((type) => {
     const differee = tirerDifferee(manifeste, type, dejaPosees, maintenant, reglages)
     return differee === null ? [] : [{ id: differee.id, type }]
   })
@@ -55,7 +54,9 @@ export function partieVisible(differee: Differee, envoyee: boolean) {
       ? {}
       : mode?.mode === 'code'
         ? { tache: { mode: 'code' as const, langage: mode.langage, cas: mode.cas } }
-        : { tache: { mode: 'exacte' as const } }),
+        : mode?.mode === 'constat'
+          ? { tache: { mode: 'constat' as const, criteres: mode.criteres } }
+          : { tache: { mode: 'exacte' as const } }),
     envoyee,
   }
 }
@@ -107,6 +108,7 @@ export const EvenementPartie = z.looseObject({
   compte: z.boolean(),
   niveau: Niveau.optional(),
   reussi: z.boolean().optional(),
+  declaree: z.boolean().optional(),
   cas: z.strictObject({ reussis: z.number(), total: z.number() }).optional(),
   correction: z.string(),
   indice: z.string().optional(),
@@ -118,7 +120,10 @@ export type EvenementPartie = z.infer<typeof EvenementPartie>
 export type ResultatVerification = z.infer<typeof ResultatVerification>
 
 /** Une partie corrigée sans IA (une tâche) : exacte ou testée dans le navigateur. */
-export type PartieCorrigee = Pick<EvenementPartie, 'reussi' | 'cas' | 'compte' | 'correction'>
+export type PartieCorrigee = Pick<
+  EvenementPartie,
+  'reussi' | 'declaree' | 'cas' | 'compte' | 'correction'
+>
 
 /** Corrige une tâche ; `undefined` quand une tâche de code arrive sans le résultat de ses cas. */
 export function corrigerTache(
@@ -127,6 +132,7 @@ export function corrigerTache(
     reponse: string
     support: { colle: boolean; retour_cours: boolean }
     code?: { reussis: number; total: number } | undefined
+    constat?: { coches: readonly number[]; aide: number } | undefined
   },
 ): PartieCorrigee | undefined {
   const { verification } = differee
@@ -145,6 +151,19 @@ export function corrigerTache(
       cas: { reussis, total },
       compte: comptee,
       correction: `${String(reussis)} cas sur ${String(total)}.`,
+    }
+  }
+  if (verification?.mode === 'constat') {
+    if (corps.constat === undefined) return undefined
+    const { coches, aide } = corps.constat
+    // Un critère inconnu ou coché deux fois ne compte pas : tous les critères doivent l'être, à l'aide 0.
+    const remplis = new Set(coches.filter((rang) => rang < verification.criteres.length))
+    const tous = remplis.size === verification.criteres.length
+    return {
+      reussi: tous && aide === 0,
+      declaree: true,
+      compte: comptee,
+      correction: `Constat déclaré : ${String(remplis.size)} critère${remplis.size > 1 ? 's' : ''} sur ${String(verification.criteres.length)}, aide ${String(aide)}.`,
     }
   }
   const reussi = (verification?.reponses ?? [differee.attendu]).some(
@@ -198,7 +217,9 @@ export function construireResultat(o: {
   maintenant: string
 }): ResultatVerification {
   const { bloc, manifeste, type, parties, validite, statutAvant, apres, reglages, maintenant } = o
-  const reussie = validite.valable && compositionReussie(parties.map(reponseDeFait))
+  const reussie =
+    validite.valable &&
+    compositionReussie(parties.map(reponseDeFait), reservesDuType(manifeste.type).parties)
   const reprogrammee = validite.valable
     ? null
     : ajouterJours(jourDe(maintenant, reglages.fuseau, reglages.heureBascule), 1)
@@ -234,6 +255,7 @@ export function construireResultat(o: {
         manifeste.differees.find(({ id }) => id === partie.partie)?.consigne ?? partie.partie,
       ...(partie.niveau === undefined ? {} : { niveau: partie.niveau }),
       ...(partie.reussi === undefined ? {} : { reussi: partie.reussi }),
+      ...(partie.declaree === undefined ? {} : { declaree: partie.declaree }),
       ...(partie.cas === undefined ? {} : { cas: partie.cas }),
       compte: partie.compte,
       correction: partie.correction,

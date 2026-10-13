@@ -242,6 +242,7 @@ export function creerServiceRevisions({
         confiance: 'sur' | 'hesitant' | 'hasard'
         support: { colle: boolean; retour_cours: boolean }
         code?: { reussis: number; total: number } | undefined
+        constat?: { coches: readonly number[]; aide: number } | undefined
       },
     ) {
       const charge = await chargerVerification(userId, id)
@@ -279,11 +280,14 @@ export function creerServiceRevisions({
       if (differee.type === 'tache') {
         const tache = corrigerTache(differee, corps)
         if (tache === undefined) {
+          const constat = differee.verification?.mode === 'constat'
           throw new ErreurProtocole(
             400,
             'donnees_invalides',
-            'Code non testé',
-            "Teste ton code avant de l'envoyer.",
+            constat ? 'Constat manquant' : 'Code non testé',
+            constat
+              ? 'Coche les critères atteints et indique ton niveau d’aide.'
+              : "Teste ton code avant de l'envoyer.",
           )
         }
         corrigee = { ...tache, erreurs: [] }
