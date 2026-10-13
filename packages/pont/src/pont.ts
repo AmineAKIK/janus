@@ -240,6 +240,26 @@ export function creerPont(options: OptionsPont = {}): Pont {
     fenetre.addEventListener('pagehide', emettre)
   }
 
+  // --- Hauteur ----------------------------------------------------------------------------------
+
+  /**
+   * Dans l'appli, l'iframe prend la hauteur du contenu : la page n'a qu'un défilement, celui de
+   * l'appli. On mesure l'élément racine (il ne s'étire pas à la fenêtre) à chaque changement de
+   * taille ; une hauteur nulle veut dire que rien n'est encore mis en page.
+   */
+  function suivreLaHauteur() {
+    const racine = fenetre.document.documentElement
+    let derniere = 0
+    const mesurer = () => {
+      const hauteur = Math.ceil(racine.getBoundingClientRect().height)
+      if (hauteur === 0 || hauteur === derniere) return
+      derniere = hauteur
+      envoyer('page.taille', { hauteur })
+    }
+    if (typeof ResizeObserver === 'function') new ResizeObserver(mesurer).observe(racine)
+    mesurer()
+  }
+
   // --- Démarrage ---------------------------------------------------------------------------------
 
   async function demarrer(options: OptionsDemarrage): Promise<Demarrage> {
@@ -264,6 +284,7 @@ export function creerPont(options: OptionsPont = {}): Pont {
     }
     mode = 'appli'
     contexte = { bloc: recu.bloc, version: recu.version }
+    suivreLaHauteur()
     return { mode, etat: recu.etat, init: recu }
   }
 

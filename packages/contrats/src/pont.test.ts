@@ -19,6 +19,8 @@ const TYPES_PAGE = [
   'bilan.erreurs',
   'etat.sauver',
   'lien.ouvrir',
+  'page.taille',
+  'page.haut',
   'correction.accord',
 ] as const
 const TYPES_APPLI = [

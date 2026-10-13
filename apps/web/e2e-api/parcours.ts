@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { expect } from '@playwright/test'
 import type { APIRequestContext, Page } from '@playwright/test'
-import { attendreFiche } from '../e2e/session.ts'
+import { attendreFiche, cliquerHorsFiche } from '../e2e/session.ts'
 import { avancer } from './banc.ts'
 
 export interface Question {
@@ -32,7 +32,7 @@ export async function ouvrirEtape(page: Page, etape: string) {
   const onglet = page
     .getByRole('navigation', { name: 'Étapes de la fiche' })
     .getByRole('button', { name: new RegExp(`${etape}$`) })
-  await onglet.click()
+  await cliquerHorsFiche(onglet)
   await expect(onglet).toHaveAttribute('aria-current', 'step')
   return fiche
 }

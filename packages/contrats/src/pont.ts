@@ -80,6 +80,9 @@ export const champsReponse = {
 
 const SeriePage = z.enum(['restitution', 'consolidation'])
 
+/** Hauteur maximale du contenu d'une page, en pixels CSS. */
+export const HAUTEUR_MAX_PAGE = 200_000
+
 /** Taille maximale d'une adresse que la fiche demande d'ouvrir. */
 export const TAILLE_MAX_LIEN = 2000
 
@@ -136,6 +139,14 @@ export const MessagePage = z.discriminatedUnion('type', [
   z.strictObject({ ...communPage, type: z.literal('etat.sauver'), etat: EtatPage }),
   /** Ouvre un site dans un nouvel onglet : la fiche (sandbox) ne peut pas le faire seule. Reste dans l'appli. */
   z.strictObject({ ...communPage, type: z.literal('lien.ouvrir'), url: LienExterne }),
+  /** La hauteur du contenu de la page : l'appli la donne à l'iframe, qui ne défile plus seule. Reste dans l'appli. */
+  z.strictObject({
+    ...communPage,
+    type: z.literal('page.taille'),
+    hauteur: z.number().int().min(1).max(HAUTEUR_MAX_PAGE),
+  }),
+  /** La page change d'écran ou d'étape : l'appli ramène son haut à l'écran. Reste dans l'appli. */
+  z.strictObject({ ...communPage, type: z.literal('page.haut') }),
   z.strictObject({
     ...communPage,
     type: z.literal('correction.accord'),

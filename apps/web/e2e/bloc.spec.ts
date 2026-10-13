@@ -1,5 +1,12 @@
 import { expect, test } from '@playwright/test'
-import { allerEtape, attendreFiche, etape, ouvrirSession, serieEnregistree } from './session.ts'
+import {
+  allerEtape,
+  attendreFiche,
+  cliquerHorsFiche,
+  etape,
+  ouvrirSession,
+  serieEnregistree,
+} from './session.ts'
 
 test.describe('page d’un bloc', () => {
   test.beforeEach(async ({ page }) => {
@@ -55,10 +62,11 @@ test.describe('page d’un bloc', () => {
     await page.goto('./#/blocs/B03')
     await attendreFiche(page, 'B03')
 
-    await page
-      .getByRole('navigation', { name: 'Étapes de la fiche' })
-      .getByRole('button', { name: 'Pratique guidée' })
-      .click()
+    await cliquerHorsFiche(
+      page
+        .getByRole('navigation', { name: 'Étapes de la fiche' })
+        .getByRole('button', { name: 'Pratique guidée' }),
+    )
 
     await expect(etape(page, 'Pratique guidée')).toHaveAttribute('aria-current', 'step')
     await expect(
@@ -74,14 +82,14 @@ test.describe('page d’un bloc', () => {
     const fil = page.getByRole('navigation', { name: 'Étapes de la fiche' })
 
     await allerEtape(page, 'Restitution')
-    await fil.getByRole('button', { name: 'Explication' }).click()
+    await cliquerHorsFiche(fil.getByRole('button', { name: 'Explication' }))
 
     const dialogue = page.getByRole('dialog', { name: 'Revoir le cours maintenant ?' })
     await expect(dialogue.getByRole('button', { name: 'Rester' })).toBeFocused()
     await dialogue.getByRole('button', { name: 'Rester' }).click()
     await expect(dialogue).toHaveCount(0)
 
-    await fil.getByRole('button', { name: 'Explication' }).click()
+    await cliquerHorsFiche(fil.getByRole('button', { name: 'Explication' }))
     await page.getByRole('button', { name: 'Revoir le cours' }).click()
     await expect(etape(page, 'Explication')).toHaveAttribute('aria-current', 'step')
   })
@@ -131,7 +139,7 @@ test.describe('page d’un bloc', () => {
     // La fiche se redessine quand l'appli lui renvoie le statut : on ne tape qu'après.
     await expect(fiche.getByText('Statut : Vu')).toBeVisible()
     await repondre('Acquis provisoirement')
-    await fil.getByRole('button', { name: 'Bilan' }).click()
+    await cliquerHorsFiche(fil.getByRole('button', { name: 'Bilan' }))
     await expect(page.getByText('Statut calculé')).toBeVisible()
     await expect(page.getByText(/Statut calculé/)).toContainText('Acquis provisoirement')
     await expect(

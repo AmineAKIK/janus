@@ -2,8 +2,18 @@
   --largeur-fiche: 760px;
   display: flex;
   flex-direction: column;
-  min-block-size: 100dvh;
-  background: var(--couleur-fond);
+  gap: var(--espacement-16);
+}
+
+/* La barre et le fil d'étapes forment une carte, comme les cartes de la fiche en dessous. */
+.entete {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: var(--largeur-fiche);
+  margin-inline: auto;
+  background: var(--couleur-surface);
+  border: 1px solid var(--couleur-ligne);
+  border-radius: var(--rayon-carte);
 }
 
 .barre {
@@ -13,8 +23,7 @@
   align-items: center;
   gap: var(--espacement-8) var(--espacement-12);
   min-block-size: 56px;
-  padding: var(--espacement-8) var(--espacement-16);
-  background: var(--couleur-surface);
+  padding: var(--espacement-8) var(--espacement-12);
   border-block-end: 1px solid var(--couleur-ligne);
 }
 
@@ -62,20 +71,30 @@
 .zone {
   position: relative;
   display: flex;
-  flex: 1 1 0;
   flex-direction: column;
   align-items: center;
-  padding: var(--espacement-8) var(--espacement-8) 0;
+  gap: var(--espacement-16);
 }
 
+/* La fiche se pose sur le fond de la page : ses cartes s'alignent sur celle du haut. */
 .iframe {
   box-sizing: border-box;
-  flex: 1 1 0;
+  display: block;
   inline-size: 100%;
   max-inline-size: var(--largeur-fiche);
-  min-block-size: 480px;
-  background: var(--couleur-surface);
+  background: transparent;
   border: 0;
+  scroll-margin-block-start: var(--espacement-16);
+}
+
+/* Avant que la fiche ait donné sa hauteur (ou une fiche d'avant le message) : elle défile seule. */
+.iframeSansHauteur {
+  block-size: 70dvh;
+}
+
+/* La fiche se charge sous le texte « Chargement de la fiche… » : on ne la montre qu'une fois présentée. */
+.iframeCachee {
+  visibility: hidden;
 }
 
 .squelette {
@@ -99,14 +118,6 @@
   .page {
     --largeur-fiche: 960px;
   }
-  .zone {
-    padding-block-start: var(--espacement-16);
-  }
-}
-
-.fil {
-  background: var(--couleur-surface);
-  border-block-end: 1px solid var(--couleur-ligne);
 }
 
 .bascule {
@@ -251,9 +262,8 @@
   flex-direction: column;
   gap: var(--espacement-8);
   box-sizing: border-box;
-  /* Aligné sur le texte de la fiche, qui a ses propres 16 px de marge. */
-  inline-size: calc(100% - 2 * var(--espacement-16));
-  max-inline-size: calc(var(--largeur-fiche) - 2 * var(--espacement-16));
+  inline-size: 100%;
+  max-inline-size: var(--largeur-fiche);
   padding: var(--espacement-12) var(--espacement-16);
   background: var(--couleur-surface-elevee);
   border: 1px solid var(--couleur-ligne);

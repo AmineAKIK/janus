@@ -208,7 +208,9 @@ export const ecrans: readonly Ecran[] = [
       for (const titre of ['Explication', 'Pratique guidée', 'Restitution']) {
         await allerEtape(page, titre)
       }
-      await expect(page.getByText('En attente de réseau · 3 réponses gardées')).toBeVisible()
+      // Trois vues d'étape, plus le temps actif si une seconde est tombée pendant les clics : le compte
+      // exact est vérifié dans PageBloc.test.tsx, ici on capture l'indicateur.
+      await expect(page.getByText(/^En attente de réseau · [34] réponses gardées$/)).toBeVisible()
     },
   },
   {

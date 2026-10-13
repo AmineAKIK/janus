@@ -140,6 +140,83 @@ describe('poignée de main', () => {
   })
 })
 
+describe('hauteur de la page', () => {
+  /** Une racine de la hauteur voulue, et l'observateur de taille que le pont pose dessus. */
+  function mesurerA(hauteur: { valeur: number }) {
+    vi.spyOn(document.documentElement, 'getBoundingClientRect').mockImplementation(() =>
+      DOMRect.fromRect({ width: 390, height: hauteur.valeur }),
+    )
+    const observes: Element[] = []
+    let rappel = () => {}
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(mesurer: () => void) {
+          rappel = mesurer
+        }
+        observe(element: Element) {
+          observes.push(element)
+        }
+      },
+    )
+    return {
+      observes,
+      changer: () => {
+        rappel()
+      },
+    }
+  }
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('dans l’appli, envoie la hauteur du contenu, arrondie au pixel supérieur', async () => {
+    const hauteur = { valeur: 1234.2 }
+    const { observes } = mesurerA(hauteur)
+    const { pont, depuisParent, recus } = monter()
+    const demarrage = pont.demarrer({ manifeste: MANIFESTE })
+    depuisParent(INIT)
+    await demarrage
+
+    expect(observes).toEqual([document.documentElement])
+    expect(recus.at(-1)).toMatchObject({ type: 'page.taille', hauteur: 1235, bloc: 'B05' })
+  })
+
+  it('renvoie la hauteur quand elle change, et seulement alors', async () => {
+    const hauteur = { valeur: 800 }
+    const { changer } = mesurerA(hauteur)
+    const { pont, depuisParent, typesEnvoyes, recus } = monter()
+    const demarrage = pont.demarrer({ manifeste: MANIFESTE })
+    depuisParent(INIT)
+    await demarrage
+
+    changer()
+    hauteur.valeur = 1500
+    changer()
+
+    expect(typesEnvoyes().filter((type) => type === 'page.taille')).toHaveLength(2)
+    expect(recus.at(-1)).toMatchObject({ type: 'page.taille', hauteur: 1500 })
+  })
+
+  it('n’envoie rien tant que la page n’est pas mise en page, ni en mode autonome', async () => {
+    const hauteur = { valeur: 0 }
+    mesurerA(hauteur)
+    const enAppli = monter()
+    const demarrage = enAppli.pont.demarrer({ manifeste: MANIFESTE })
+    enAppli.depuisParent(INIT)
+    await demarrage
+    hauteur.valeur = 900
+    const seule = monter()
+    const autonome = seule.pont.demarrer({ manifeste: MANIFESTE })
+    await vi.advanceTimersByTimeAsync(2000)
+    await autonome
+
+    expect(enAppli.typesEnvoyes()).not.toContain('page.taille')
+    expect(seule.typesEnvoyes()).not.toContain('page.taille')
+  })
+})
+
 describe('fiche ouverte seule', () => {
   it('ne s’envoie rien à elle-même et passe en mode autonome', async () => {
     const erreur = vi.spyOn(console, 'error').mockImplementation(() => undefined)

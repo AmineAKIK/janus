@@ -63,13 +63,19 @@ describe('page d’un bloc', () => {
     expect(iframe.getAttribute('src')).toContain('fiche-demo.html')
   })
 
-  it('fait la poignée de main : page.prete reçoit etat.init avec le bloc, la version et le statut', async () => {
+  it('fait la poignée de main : page.prete reçoit etat.init avec le bloc, la version et le statut, puis ce qui manque', async () => {
     const { envoyer, recu } = await afficher()
 
     await envoyer(prete)
 
-    expect(recu).toHaveBeenCalledOnce()
-    expect(recu).toHaveBeenCalledWith(
+    expect(recu).toHaveBeenCalledTimes(2)
+    expect(recu).toHaveBeenNthCalledWith(
+      2,
+      { type: 'statut.maj', statut: 'en_cours', manque: expect.any(Array) as unknown },
+      '*',
+    )
+    expect(recu).toHaveBeenNthCalledWith(
+      1,
       expect.objectContaining({
         type: 'etat.init',
         bloc: 'B03',
@@ -109,6 +115,47 @@ describe('page d’un bloc', () => {
       'noopener,noreferrer',
     )
     expect(recu).not.toHaveBeenCalled()
+  })
+
+  it('la fiche reste cachée sous « Chargement de la fiche… » jusqu’à ce qu’elle se présente', async () => {
+    const { envoyer, iframe } = await afficher()
+    expect(iframe.className).toContain('iframeCachee')
+
+    await envoyer(prete)
+
+    expect(iframe.className).not.toContain('iframeCachee')
+  })
+
+  it('page.taille : l’iframe prend la hauteur du contenu, sans rien envoyer au serveur', async () => {
+    const { envoyer, recu, iframe, magasin } = await afficher()
+    await envoyer(prete)
+    recu.mockClear()
+
+    expect(iframe.style.blockSize).toBe('')
+    await envoyer(message('page.taille', { hauteur: 2400 }))
+
+    expect(iframe.style.blockSize).toBe('2400px')
+    expect(recu).not.toHaveBeenCalled()
+    expect(magasin.lire().idsRecus).not.toContain(EXEMPLES_PAGE['page.taille'].id)
+  })
+
+  it('page.haut : ramène le haut de la fiche à l’écran seulement s’il est passé au-dessus', async () => {
+    const { envoyer, iframe } = await afficher()
+    const defiler = vi.fn()
+    iframe.scrollIntoView = defiler
+    await envoyer(prete)
+
+    await envoyer(message('page.haut'))
+    await new Promise((fin) => setTimeout(fin, 100))
+    expect(defiler).not.toHaveBeenCalled()
+
+    // La fiche passe au-dessus de l'écran juste après le message (la page se met à jour) : on remonte.
+    await envoyer(message('page.haut', { id: '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2d' }))
+    vi.spyOn(iframe, 'getBoundingClientRect').mockReturnValue(DOMRect.fromRect({ y: -300 }))
+
+    await vi.waitFor(() => {
+      expect(defiler).toHaveBeenCalledExactlyOnceWith({ block: 'start' })
+    })
   })
 
   it('lien.ouvrir avec une adresse http : rien ne s’ouvre', async () => {
