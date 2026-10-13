@@ -1,4 +1,5 @@
 import { nouvelId } from '@janus/contrats'
+import { drizzle } from 'drizzle-orm/node-postgres'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { lireFaits } from './faits.ts'
 import * as t from './schema/index.ts'
@@ -218,5 +219,71 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('lecture des faits', () => {
     await evenement('etape_vue', { etape: 12 }, { blocId: autreBlocId })
 
     await expect(lireFaits(base.db, userId, [{ id: autreBlocId, code: 'B02' }])).rejects.toThrow()
+  })
+
+  describe('lecture réduite', () => {
+    /** Une lecture qui note chaque requête SQL envoyée à PostgreSQL. */
+    function lecteurQuiNote() {
+      const requetes: string[] = []
+      const db = drizzle(base.pool, {
+        schema: t,
+        logger: { logQuery: (requete) => requetes.push(requete) },
+      })
+      return { db, requetes }
+    }
+    const trie = <T extends { id: string }>(faits: readonly T[]) =>
+      [...faits].sort((a, b) => a.id.localeCompare(b.id))
+
+    it('ne demande pas à PostgreSQL les événements que le moteur ignore (temps actif, réponses du pré-test…)', async () => {
+      await evenement('temps.actif', { secondes: 60 })
+      await evenement('pretest.reponse', { question: 'P1' })
+      const { db, requetes } = lecteurQuiNote()
+
+      const faits = await lireFaits(db, userId, [cible])
+
+      const evenements = requetes.filter((texte) => texte.includes('from "evenements"'))
+      expect(evenements).toHaveLength(1)
+      expect(evenements[0]).toContain('"evenements"."type" in (')
+      expect(faits.map(({ type }) => type)).not.toContain('temps.actif')
+    })
+
+    it('rend, parmi les faits de toujours, ceux des types demandés et seulement ceux-là', async () => {
+      const tous = await lireFaits(base.db, userId, [cible])
+      const types = new Set(tous.map(({ type }) => type))
+      expect(types.size).toBeGreaterThanOrEqual(7)
+      for (const type of types) {
+        const seul = await lireFaits(base.db, userId, [cible], [type])
+        expect(trie(seul)).toEqual(trie(tous.filter((fait) => fait.type === type)))
+      }
+      const melange = ['etape_vue', 'correction', 'erreur_cochee', 'force_levee'] as const
+      expect(trie(await lireFaits(base.db, userId, [cible], melange))).toEqual(
+        trie(tous.filter(({ type }) => (melange as readonly string[]).includes(type))),
+      )
+      expect(await lireFaits(base.db, userId, [cible], [])).toEqual([])
+    })
+
+    it('ne lit que les tables qui portent les types demandés', async () => {
+      const cas: [
+        readonly ('etape_vue' | 'correction' | 'statut_force' | 'erreur_cochee')[],
+        string[],
+      ][] = [
+        [['etape_vue'], ['evenements']],
+        [['correction'], ['corrections']],
+        [['statut_force'], ['statuts_forces']],
+        [['erreur_cochee'], ['decisions_erreurs']],
+        [
+          ['etape_vue', 'correction'],
+          ['evenements', 'corrections'],
+        ],
+      ]
+      for (const [types, tables] of cas) {
+        const { db, requetes } = lecteurQuiNote()
+        await lireFaits(db, userId, [cible], types)
+        const lues = ['evenements', 'corrections', 'statuts_forces', 'decisions_erreurs'].filter(
+          (table) => requetes.some((texte) => texte.includes(`from "${table}"`)),
+        )
+        expect(lues).toEqual(tables)
+      }
+    })
   })
 })
