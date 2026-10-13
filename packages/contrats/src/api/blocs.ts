@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { Texte } from '../primitives.ts'
 import { Statut } from '../enums.ts'
 import { MessagePage, EtatPage } from '../pont.ts'
 import { InstantUtc } from '../faits.ts'
@@ -7,7 +8,6 @@ import { TypeEtape } from '../manifeste.ts'
 import { CodeBloc, IdUuid, Identifiant, StatutBloc } from './commun.ts'
 import type { DefinitionRoute } from './routes.ts'
 
-const Texte = z.string().trim().min(1)
 const ParamBloc = z.strictObject({ id: CodeBloc })
 
 /** Le temps passé dans l'appli : émis par l'appli elle-même, jamais par la page. */

@@ -1,8 +1,7 @@
 import { z } from 'zod'
+import { Texte } from '../primitives.ts'
 import { IdUuid, InstantUtc } from './commun.ts'
 import type { DefinitionRoute } from './routes.ts'
-
-const Texte = z.string().trim().min(1)
 
 export const Moi = z.strictObject({
   id: IdUuid,

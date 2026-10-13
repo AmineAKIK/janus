@@ -12,6 +12,7 @@ import {
   Statut,
 } from '@janus/contrats'
 import { describe, expect, it } from 'vitest'
+import { toJSONSchema } from 'zod'
 import { CorrectionRecue, MessageAppli, MessagePage } from './schemas.ts'
 
 const ID = '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2b'
@@ -147,6 +148,18 @@ describe('parité avec packages/contrats', () => {
       CorrectionContrats.safeParse(CORRECTION).success,
     )
     expect(CorrectionRecue.safeParse({ ...CORRECTION, tour: 0 }).success).toBe(false)
+  })
+
+  it('le JSON Schema de chaque message est celui des contrats, dans les deux sens', () => {
+    // Les exemples ne prouvent que « accepté des deux côtés » : le JSON Schema compare aussi ce que
+    // chaque côté refuse (valeurs d'énumération, champs, bornes, motifs). Les contrôles que le JSON
+    // Schema ne représente pas (la taille de l'état, la coupe des espaces) sont ceux des tests ci-dessus.
+    const options = { io: 'input', unrepresentable: 'any' } as const
+    expect(toJSONSchema(MessagePage, options)).toEqual(toJSONSchema(MessagePageContrats, options))
+    expect(toJSONSchema(MessageAppli, options)).toEqual(toJSONSchema(MessageAppliContrats, options))
+    expect(toJSONSchema(CorrectionRecue, options)).toEqual(
+      toJSONSchema(CorrectionContrats, options),
+    )
   })
 
   it('les énumérations sont celles des contrats', () => {

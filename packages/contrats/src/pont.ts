@@ -1,16 +1,17 @@
 import { z } from 'zod'
+import { CodeBloc, Identifiant } from './primitives.ts'
 import { Aide, Certitude, Confiance, Niveau, RaisonNonCompte, Source, Statut } from './enums.ts'
 
 // Les messages entre une fiche (iframe sandbox) et l'appli, section « Pont » du cadrage.
 // Les noms des champs sont ceux du cadrage (`duree_s`, `serie_ouverte`...), comme dans le manifeste.
+
+export { CodeBloc, Identifiant }
 
 /** Taille maximale d'une réponse libre, en caractères. */
 export const TAILLE_MAX_REPONSE = 2000
 /** Taille maximale de l'état d'une page une fois écrit en JSON (200 ko), en octets. */
 export const TAILLE_MAX_ETAT_OCTETS = 200_000
 
-export const Identifiant = z.string().trim().min(1)
-export const CodeBloc = z.string().regex(/^[A-Z]{1,3}\d{2,3}$/)
 export const Reponse = z.string().max(TAILLE_MAX_REPONSE)
 /** Un identifiant tiré par le client, UUID v7. */
 export const IdUuid = z.uuid({ version: 'v7' })
@@ -63,6 +64,20 @@ const communPage = {
   t: z.iso.datetime({ offset: true }),
 }
 
+/**
+ * Ce que l'apprenant envoie pour être corrigé : la question, sa réponse, sa confiance, la relance
+ * (vide au premier tour) et le support dont il s'est servi. Le message `restitution.demande` et
+ * `POST /corrections` le portent à l'identique.
+ */
+export const champsReponse = {
+  question: Identifiant,
+  reponse: Reponse.min(1),
+  confiance: Confiance,
+  /** Le texte de la relance, vide au premier tour. */
+  relance: Reponse,
+  support: z.strictObject({ colle: z.boolean(), retour_cours: z.boolean() }),
+}
+
 const SeriePage = z.enum(['restitution', 'consolidation'])
 
 /** Un message de la page vers l'appli (`window.parent.postMessage`). Le serveur date tout avec sa propre heure. */
@@ -101,12 +116,7 @@ export const MessagePage = z.discriminatedUnion('type', [
     ...communPage,
     type: z.literal('restitution.demande'),
     serie: SeriePage,
-    question: Identifiant,
-    reponse: Reponse.min(1),
-    confiance: Confiance,
-    /** Le texte de la relance, vide au premier tour. */
-    relance: Reponse,
-    support: z.strictObject({ colle: z.boolean(), retour_cours: z.boolean() }),
+    ...champsReponse,
   }),
   z.strictObject({ ...communPage, type: z.literal('bilan.erreurs'), ids: z.array(Identifiant) }),
   z.strictObject({ ...communPage, type: z.literal('etat.sauver'), etat: EtatPage }),

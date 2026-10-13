@@ -1,5 +1,5 @@
 import demo from '../../fixtures/manifeste-demo.json' with { type: 'json' }
-import { EXEMPLES_PAGE } from '../pont.exemples.ts'
+import { EXEMPLES_PAGE, EXEMPLE_CORRECTION } from '../pont.exemples.ts'
 import { Reglages } from '../reglages.ts'
 import type { CleRoute } from './index.ts'
 
@@ -15,19 +15,7 @@ const statutBloc = {
   erreurs_ouvertes: [],
 }
 
-const correction = {
-  id: ID,
-  echantillon: false,
-  question: 'R1',
-  tour: 1,
-  message: 'Presque : il manque la limite d’un seul bloc.',
-  niveau: 'partiel',
-  erreurs_critiques: ['E1'],
-  source: 'support',
-  ref: 'ET2',
-  certitude: 'sur',
-  compte: true,
-}
+const correction = { ...EXEMPLE_CORRECTION, id: ID }
 
 const noteJournal = {
   id: ID,
