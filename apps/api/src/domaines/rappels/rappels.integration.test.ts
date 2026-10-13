@@ -12,6 +12,8 @@ import { creerBaseDeTest, URL_SERVEUR_TEST } from '../../base/testeurBase.ts'
 import { configDeTest, ORIGINE_TEST, serveurDeTest } from '../../testeur.ts'
 import { creerHacheur } from '../auth/composition.ts'
 import { monterImportation } from '../catalogue/composition.ts'
+import { creerDepotRappels } from './depot.ts'
+import { creerServiceRappels } from './service.ts'
 
 const FICHE_DEMO = new URL('../../../../web/public/fiches/demo/fiche-demo.html', import.meta.url)
 const MOT_DE_PASSE = 'un mot de passe solide'
@@ -313,6 +315,45 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('rappels contre PostgreSQL', () 
         [userId],
       )
       expect(rows).toHaveLength(0)
+    })
+
+    it('ne recalcule « aujourd’hui » qu’une fois par jour : le rappel déjà réservé est sauté', async () => {
+      s.horloge.placer('2026-10-10T17:30:00.000Z')
+      await bases.db.insert(t.abonnementsPush).values({
+        id: identifiant(),
+        userId,
+        endpoint: ABONNEMENT.endpoint,
+        p256dh: ABONNEMENT.cles.p256dh,
+        auth: ABONNEMENT.cles.auth,
+        creeLe: '2026-10-10T10:00:00.000Z',
+      })
+      let calculs = 0
+      const service = creerServiceRappels({
+        base: baseDepuisPool(bases.db, bases.pool),
+        depot: creerDepotRappels(),
+        horloge: s.horloge,
+        envoyeur: faux.envoyeur,
+        aujourdhui: () => {
+          calculs += 1
+          return Promise.resolve({
+            jour: '2026-10-10',
+            en_retard: false,
+            premiere_connexion: false,
+            taches: [
+              { tache: { type: 'cartes', dues: 2, nouvelles: 0 }, lien: '/revision', faite: false },
+            ],
+            module: null,
+          })
+        },
+      })
+      const envoisAvant = faux.envois.length
+
+      expect((await service.envoyerLesRappels()).rappels).toBe(1)
+      expect((await service.envoyerLesRappels()).rappels).toBe(0)
+      expect((await service.envoyerLesRappels()).rappels).toBe(0)
+
+      expect(calculs).toBe(1)
+      expect(faux.envois).toHaveLength(envoisAvant + 1)
     })
   })
 })

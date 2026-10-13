@@ -80,6 +80,8 @@ export function creerServiceRappels({
         const abonnements = await depot.abonnementsDe(base.db, userId)
         // Sans appareil abonné, le jour n'est pas consommé : un abonnement tardif reçoit encore le rappel.
         if (abonnements.length === 0) continue
+        // Déjà réservé aujourd'hui : inutile de recalculer « aujourd'hui » (coûteux) à chaque passage.
+        if (await depot.dejaReserve(base.db, userId, jour)) continue
         const corps = texteDuRappel(ceQuiEstDu(await aujourdhui(userId)))
         if (corps === null) continue
         const reserve = await depot.reserver(base.db, {
