@@ -46,20 +46,33 @@
         --couleur-allume-encre: #2b1d00;
         --lueur-allume: 0 0 0.75rem color-mix(in srgb, var(--couleur-allume) 55%, transparent);
       }
+      /* Un outil est une pile : chaque ligne (interrupteurs, sortie, consigne, boutons) garde son intervalle. */
+      [data-widget],
+      .outil-zone {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--espacement-12);
+        min-width: 0;
+      }
+      [data-widget] > .octet-rangee,
+      [data-widget] > .actions {
+        width: 100%;
+      }
       .octet-rangee,
       .hero-bits {
         display: flex;
         gap: var(--espacement-4);
-        max-width: 28rem;
       }
+      /* Cases de 48 px au plus, serrées à gauche : 4 ou 8 interrupteurs gardent le même pas. */
       .octet-case,
       .lampe-case {
-        flex: 1 1 0;
+        flex: 0 1 3rem;
         min-width: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: var(--espacement-4);
+        gap: 0.375rem;
       }
       .octet-poids,
       .lampe-poids {
@@ -203,6 +216,12 @@
         color: var(--couleur-accent);
         font-size: 0.875rem;
         font-weight: 600;
+      }
+      /* La convention choisie reste marquée, comme une option sélectionnée de l'appli. */
+      .bouton.secondaire[aria-pressed='true'] {
+        border-color: var(--couleur-accent);
+        background: var(--couleur-accent-douce);
+        color: var(--couleur-accent);
       }
     </style>
     <style>
@@ -446,7 +465,8 @@
       section :is(h2, h3, h4, p, ul, ol, dl, figure, blockquote, pre, fieldset) {
         margin: 0;
       }
-      .ecran {
+      .ecran,
+      .enonce {
         display: flex;
         flex-direction: column;
         gap: var(--espacement-12);
@@ -487,8 +507,9 @@
       ol {
         padding-inline-start: var(--espacement-20);
       }
-      li + li {
-        margin-top: var(--espacement-4);
+      /* Seulement les listes du contenu : le fil d'étapes et les autres listes d'interface ont leur propre gap. */
+      section :is(ul, ol) > li + li {
+        margin-top: var(--espacement-8);
       }
       ul.plain {
         padding-inline-start: var(--espacement-20);
@@ -3961,8 +3982,10 @@
                 type: 'button',
                 className: 'bouton secondaire',
                 textContent: libelle,
-                onclick: () => {
+                onclick: (e) => {
                   sortie.textContent = lectures[cle]
+                  for (const b of choix.children)
+                    b.setAttribute('aria-pressed', String(b === e.currentTarget))
                 },
               }),
             ),
@@ -4023,7 +4046,7 @@
         function aisance(n) {
           const duree = Number(n.dataset.duree ?? 30)
           const serie = Number(n.dataset.serie ?? 3)
-          const zone = el('div', {})
+          const zone = el('div', { className: 'outil-zone' })
           n.append(zone)
           function accueil(message) {
             zone.replaceChildren(
@@ -4528,7 +4551,7 @@
         })
         // L'énoncé de l'item : <template data-item="PR1-1"> dans la page.
         const enonce = document.querySelector('template[data-item="' + item.id + '"]')
-        const consigne = creer('div', {})
+        const consigne = creer('div', { className: 'enonce' })
         if (enonce) consigne.append(enonce.content.cloneNode(true))
         activerLiens(consigne)
         return creer(

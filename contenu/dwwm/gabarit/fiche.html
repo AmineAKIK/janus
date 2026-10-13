@@ -281,7 +281,8 @@
       section :is(h2, h3, h4, p, ul, ol, dl, figure, blockquote, pre, fieldset) {
         margin: 0;
       }
-      .ecran {
+      .ecran,
+      .enonce {
         display: flex;
         flex-direction: column;
         gap: var(--espacement-12);
@@ -322,8 +323,9 @@
       ol {
         padding-inline-start: var(--espacement-20);
       }
-      li + li {
-        margin-top: var(--espacement-4);
+      /* Seulement les listes du contenu : le fil d'étapes et les autres listes d'interface ont leur propre gap. */
+      section :is(ul, ol) > li + li {
+        margin-top: var(--espacement-8);
       }
       ul.plain {
         padding-inline-start: var(--espacement-20);
@@ -1490,7 +1492,7 @@
         })
         // L'énoncé de l'item : <template data-item="PR1-1"> dans la page.
         const enonce = document.querySelector('template[data-item="' + item.id + '"]')
-        const consigne = creer('div', {})
+        const consigne = creer('div', { className: 'enonce' })
         if (enonce) consigne.append(enonce.content.cloneNode(true))
         activerLiens(consigne)
         return creer(
