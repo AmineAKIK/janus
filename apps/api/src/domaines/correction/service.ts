@@ -1,24 +1,25 @@
-import { createHash } from 'node:crypto'
 import { Manifeste, Reglages, nouvelId } from '@janus/contrats'
 import { CorrectionRecue } from '@janus/contrats'
 import type { CorrectionRecue as CorrectionRecueApi } from '@janus/contrats'
 import { compte, estRecopiee, instantEnIso, instantEnMs, jourDe, statutDuBloc } from '@janus/moteur'
-import { z } from 'zod'
-import { maintenantActif, maintenantDuBloc } from '../../base/axeTemps.ts'
+import { maintenantActif, maintenantDuBloc, sousVerrouDuBloc } from '../../base/axeTemps.ts'
 import type { Base } from '../../base/base.ts'
+import { empreinteJson } from '../../base/empreinte.ts'
+import { SerieGardee } from '../../base/serieGardee.ts'
 import { verrouBloc } from '../../base/transaction.ts'
 import {
   BudgetAtteint,
   ContenuDifferent,
   ErreurMetier,
   ErreurProtocole,
-  Introuvable,
+  introuvable,
   TropDeTentatives,
 } from '../../erreurs.ts'
 import type { Horloge } from '../../horloge.ts'
 import { recalculer } from '../../recalcul.ts'
 import { coutMillioniemes } from '../../adaptateurs/correcteur/cout.ts'
 import type { Tarifs } from '../../adaptateurs/correcteur/cout.ts'
+import { requeteDe } from '../../adaptateurs/correcteur/correcteur.ts'
 import type {
   Correcteur,
   RequeteCorrection,
@@ -35,8 +36,6 @@ class CorrectionIndisponible extends ErreurMetier {
   readonly code = 'erreur_interne'
   readonly titre = 'Correction indisponible'
 }
-
-const SerieGardee = z.array(z.strictObject({ bloc: z.string(), question: z.string() }))
 
 const HEURE_MS = 3_600_000
 /** Un appel, plus son nouvel essai : la réservation couvre les deux. */
@@ -80,10 +79,6 @@ export interface DependancesService {
   readonly hasard: () => number
 }
 
-function empreinte(contenu: unknown): string {
-  return createHash('sha256').update(JSON.stringify(contenu)).digest('hex')
-}
-
 /** La correction telle que la page la reçoit, relue de ce qui est gardé. */
 function correctionRecue(ligne: LigneCorrection): CorrectionRecueApi {
   return CorrectionRecue.parse({
@@ -100,10 +95,6 @@ function correctionRecue(ligne: LigneCorrection): CorrectionRecueApi {
     compte: ligne.compte,
     ...(ligne.raisonNonCompte === null ? {} : { raison_non_compte: ligne.raisonNonCompte }),
   })
-}
-
-function introuvable(quoi: string): Introuvable {
-  return new Introuvable(`${quoi} n'existe pas.`)
 }
 
 /** Ce que les essais auprès du correcteur ont donné. */
@@ -224,7 +215,7 @@ export function creerServiceCorrection({
     const gardee = await depot.correctionParId(base.db, demande.id)
     if (gardee !== undefined) {
       if (gardee.userId !== userId) {
-        throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
+        throw new ContenuDifferent()
       }
       return correctionRecue(gardee)
     }
@@ -297,23 +288,13 @@ export function creerServiceCorrection({
       [manifeste.contexte_ia, question.attendu],
       reglages.seuilRecopie,
     )
-    const requete: RequeteCorrection = {
-      titre: manifeste.titre,
-      contexteIa: manifeste.contexte_ia,
-      sources: manifeste.sources.map(({ id, titre }) => ({ id, ref: titre })),
-      erreursCritiques: manifeste.erreurs_critiques.map(({ id, libelle }) => ({
-        id,
-        texte: libelle,
-      })),
-      question: question.question,
-      attendu: question.attendu,
+    const requete = requeteDe(manifeste, question, {
       confiance: demande.confiance,
       reponse: demande.reponse,
       historique: deLaTentative
         .filter(({ tour: t }) => t < tour)
         .map(({ reponse, message }) => ({ reponse, message })),
-      strict: false,
-    }
+    })
 
     // 1. Réservation, dans une transaction courte.
     const debut = horloge.maintenant()
@@ -362,8 +343,7 @@ export function creerServiceCorrection({
     // 3. L'enregistrement et le recalcul, sous le verrou du bloc.
     const enregistrer = () =>
       base.enTransaction(async (tx) => {
-        await verrouBloc(tx, userId, bloc.id)
-        const maintenant = await maintenantDuBloc(tx, horloge, userId, bloc.id)
+        const maintenant = await sousVerrouDuBloc(tx, horloge, userId, bloc.id)
         await depot.solder(tx, { userId, mois, estime, cout: essais.cout })
         const apresCoup = await depot.correctionParId(tx, demande.id)
         if (apresCoup !== undefined) return { gardee: apresCoup }
@@ -444,7 +424,7 @@ export function creerServiceCorrection({
             ficheVersionId: trouve.versionId,
             type: 'correction_contestee',
             donnees,
-            empreinte: empreinte(donnees),
+            empreinte: empreinteJson(donnees),
             dateServeur: maintenant,
           })
         }
@@ -506,7 +486,7 @@ export function creerServiceCorrection({
           ficheVersionId: trouvee.version.id,
           type: 'correction.accord',
           donnees,
-          empreinte: empreinte(donnees),
+          empreinte: empreinteJson(donnees),
           dateServeur: await maintenantDuBloc(tx, horloge, userId, trouvee.blocId),
         })
       })
@@ -528,10 +508,9 @@ export function creerServiceCorrection({
         ...(decision.niveau === undefined ? {} : { niveau: decision.niveau }),
         ...(decision.raison === undefined ? {} : { raison: decision.raison }),
       }
-      const signature = empreinte(donnees)
+      const signature = empreinteJson(donnees)
       return base.enTransaction(async (tx) => {
-        await verrouBloc(tx, userId, bloc.id)
-        const maintenant = await maintenantDuBloc(tx, horloge, userId, bloc.id)
+        const maintenant = await sousVerrouDuBloc(tx, horloge, userId, bloc.id)
         const existant = await depot.evenementParId(tx, decision.id)
         if (existant === undefined) {
           await depot.ajouterFait(tx, {
@@ -545,7 +524,7 @@ export function creerServiceCorrection({
             dateServeur: maintenant,
           })
         } else if (existant.userId !== userId || existant.empreinte !== signature) {
-          throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
+          throw new ContenuDifferent()
         }
         return statutDuBloc(await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant }))
       })

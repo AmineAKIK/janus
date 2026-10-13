@@ -6,6 +6,7 @@ import { formationActiveDe } from './formationActive.ts'
 import { instantIso } from './instant.ts'
 import { reglagesDe } from './requetes.ts'
 import * as t from './schema/index.ts'
+import { verrouBloc } from './transaction.ts'
 import type { Db, Tx } from './transaction.ts'
 
 const JOUR_MS = 86_400_000
@@ -96,6 +97,20 @@ export async function maintenantDuBloc(
     .innerJoin(t.modules, eq(t.modules.id, t.blocs.moduleId))
     .where(eq(t.blocs.id, blocId))
   return maintenantDeLaFormation(lecteur, horloge, userId, ligne?.formationId ?? null)
+}
+
+/**
+ * Prend le verrou du bloc puis lit le temps de sa formation : le préambule de toute écriture d'un
+ * fait sur un bloc. Le verrou d'abord, pour que l'instant daté soit celui de l'écriture qui passe.
+ */
+export async function sousVerrouDuBloc(
+  tx: Tx,
+  horloge: Horloge,
+  userId: string,
+  blocId: string,
+): Promise<string> {
+  await verrouBloc(tx, userId, blocId)
+  return maintenantDuBloc(tx, horloge, userId, blocId)
 }
 
 /**

@@ -1,4 +1,4 @@
-import type { Confiance } from '@janus/contrats'
+import type { Confiance, Manifeste } from '@janus/contrats'
 
 /** Un échange précédent d'une relance : ce que l'apprenant a écrit et ce que le tuteur a répondu. */
 interface TourPrecedent {
@@ -24,6 +24,34 @@ export interface RequeteCorrection {
   readonly historique: readonly TourPrecedent[]
   /** Vrai au second essai : la demande ajoute « Réponds uniquement avec le JSON demandé ». */
   readonly strict: boolean
+}
+
+/**
+ * La requête du premier essai : tout ce que le manifeste donne au correcteur, plus la question posée
+ * et ce que l'apprenant a écrit. Le second essai (`strict`) est fait par l'appelant.
+ */
+export function requeteDe(
+  manifeste: Manifeste,
+  question: { readonly question: string; readonly attendu: string },
+  saisie: {
+    readonly confiance: Confiance
+    readonly reponse: string
+    readonly historique: readonly TourPrecedent[]
+  },
+): RequeteCorrection {
+  return {
+    titre: manifeste.titre,
+    contexteIa: manifeste.contexte_ia,
+    sources: manifeste.sources.map(({ id, titre }) => ({ id, ref: titre })),
+    erreursCritiques: manifeste.erreurs_critiques.map(({ id, libelle }) => ({
+      id,
+      texte: libelle,
+    })),
+    question: question.question,
+    attendu: question.attendu,
+    ...saisie,
+    strict: false,
+  }
 }
 
 /** Ce que le fournisseur a rendu, avant toute validation. */
