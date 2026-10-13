@@ -50,7 +50,11 @@ http://janus.akiksystems.fr:8080 {
         route @spa {
             try_files {path} /index.html
         }
-        file_server
+        # Les fichiers de l'appli existent aussi en brotli (`infra/caddy/precompresser.js`, dans l'image) : environ
+        # 12 % de moins que gzip, sans coût de compression. Sans brotli côté navigateur, `encode` ci-dessus compresse en gzip.
+        file_server {
+            precompressed br
+        }
     }
 }
 

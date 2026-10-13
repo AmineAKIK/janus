@@ -8,6 +8,7 @@ import {
   validerSortie,
 } from '@janus/contrats'
 import type { DefinitionRoute, Transport } from '@janus/contrats'
+import type { Prechargements } from './prechargement.ts'
 
 // Le seul fichier de l'appli qui appelle `fetch` : une règle de lint l'interdit partout ailleurs.
 
@@ -15,6 +16,8 @@ export interface OptionsTransportHttp {
   /** Préfixe de toutes les adresses, par exemple `/api`. */
   readonly base: string
   readonly fetchImpl?: typeof fetch
+  /** Les lectures que la page a lancées avant le JavaScript : la première lecture de même adresse les reprend. */
+  readonly precharges?: Prechargements
 }
 
 function adresse(base: string, route: DefinitionRoute, entree: ReturnType<typeof validerEntree>) {
@@ -76,7 +79,11 @@ async function erreurDeReponse(reponse: Response): Promise<ErreurApi> {
 }
 
 /** Appelle l'API en HTTP : cookies de session, entrée validée avant l'envoi, sortie à la réception. */
-export function creerTransportHttp({ base, fetchImpl = fetch }: OptionsTransportHttp): Transport {
+export function creerTransportHttp({
+  base,
+  fetchImpl = fetch,
+  precharges,
+}: OptionsTransportHttp): Transport {
   // La dernière version lue de chaque ressource : une écriture la renvoie dans `If-Match`, pour que
   // le serveur refuse (412) d'écraser ce qu'une autre fenêtre a changé entre-temps.
   const versions = new Map<string, string>()
@@ -93,15 +100,22 @@ export function creerTransportHttp({ base, fetchImpl = fetch }: OptionsTransport
       const version = versions.get(ressource)
       if (ecriture && version !== undefined) enTetes.set('If-Match', version)
 
+      // Une écriture (connexion, sortie) change ce que les lectures lancées avant elle auraient dû voir.
+      if (ecriture) precharges?.vider()
+
       let reponse: Response
       try {
-        reponse = await fetchImpl(url, {
-          method: route.methode,
-          headers: enTetes,
-          credentials: 'include',
-          ...(corps === undefined ? {} : { body: corps }),
-          ...(options?.signal === undefined ? {} : { signal: options.signal }),
-        })
+        const lancee = ecriture ? undefined : await precharges?.prendre(url)
+        if (lancee !== undefined) options?.signal?.throwIfAborted()
+        reponse =
+          lancee ??
+          (await fetchImpl(url, {
+            method: route.methode,
+            headers: enTetes,
+            credentials: 'include',
+            ...(corps === undefined ? {} : { body: corps }),
+            ...(options?.signal === undefined ? {} : { signal: options.signal }),
+          }))
       } catch (erreur) {
         // Une requête abandonnée n'est pas une panne : l'appelant la reconnaît à son nom.
         if (erreur instanceof DOMException && erreur.name === 'AbortError') throw erreur

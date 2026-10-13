@@ -1,7 +1,9 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import type { Plugin } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import { NOM_APPLI } from '../../packages/ui/src/nomAppli.ts'
+import { avecPrechargement } from './src/api/prechargement.ts'
 
 // Fond de la tuile des icônes : le fond du thème sombre de `packages/ui/src/tokens.css`.
 const FOND_MARQUE = '#14171a'
@@ -10,11 +12,27 @@ const FOND_MARQUE = '#14171a'
 const ANCRES = process.env['VITE_HISTORIQUE'] !== 'chemins'
 const raccourci = (chemin: string) => (ANCRES ? `./#/${chemin}` : `./${chemin}`)
 
+// Un build qui parle à l'API (le VPS) lance les premières lectures avec la page, avant le JavaScript.
+function prechargementApi(): Plugin {
+  const base = process.env['VITE_BASE'] ?? '/janus/'
+  return {
+    name: 'janus-prechargement-api',
+    transformIndexHtml: {
+      order: 'post',
+      handler: (html) =>
+        process.env['VITE_TRANSPORT'] === 'http'
+          ? avecPrechargement(html, process.env['VITE_API'] ?? '/api', base)
+          : html,
+    },
+  }
+}
+
 // `VITE_BASE` vaut `/janus/` en production et `/janus/pr-preview/pr-<numéro>/` pour un aperçu de PR.
 export default defineConfig({
   base: process.env['VITE_BASE'] ?? '/janus/',
   plugins: [
     react(),
+    prechargementApi(),
     VitePWA({
       strategies: 'injectManifest',
       srcDir: 'src',
