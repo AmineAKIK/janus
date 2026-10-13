@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { Reglages } from './reglages.ts'
 
 const DEFAUTS = {
@@ -80,6 +80,35 @@ describe('Reglages', () => {
   it('refuse un fuseau inconnu et accepte un fuseau réel', () => {
     expect(Reglages.safeParse({ fuseau: 'Foo/Bar' }).success).toBe(false)
     expect(Reglages.safeParse({ fuseau: 'America/Montreal' }).success).toBe(true)
+  })
+
+  it('ne construit un formateur Intl qu’une fois par fuseau lu, quel que soit le nombre de lectures', () => {
+    const espion = vi.spyOn(Intl, 'DateTimeFormat')
+    try {
+      for (let i = 0; i < 20; i += 1) {
+        expect(Reglages.parse({ fuseau: 'Asia/Karachi' }).fuseau).toBe('Asia/Karachi')
+      }
+      expect(espion.mock.calls.length).toBeLessThanOrEqual(1)
+    } finally {
+      espion.mockRestore()
+    }
+  })
+
+  it('continue d’accepter les fuseaux valides au-delà de la taille de sa mémoire', () => {
+    // Plus de mille écritures différentes du même fuseau (Intl ne tient pas compte de la casse).
+    const lettres = 'america/new_york'.split('')
+    for (let masque = 0; masque < 1100; masque += 1) {
+      const nom = lettres
+        .map((lettre, rang) => (masque & (1 << rang) ? lettre.toUpperCase() : lettre))
+        .join('')
+      expect(Reglages.safeParse({ fuseau: nom }).success).toBe(true)
+    }
+  })
+
+  it('refuse toujours un fuseau inconnu, même relu plusieurs fois', () => {
+    for (let i = 0; i < 3; i += 1) {
+      expect(Reglages.safeParse({ fuseau: 'Mars/Olympus' }).success).toBe(false)
+    }
   })
 
   it.each([[[]], [[-1, 3]], [[3, 3]], [[12, 3]], [[2.5]], [[0, 6]]])(

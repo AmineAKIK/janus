@@ -30,13 +30,24 @@ function reelBorne(libelle: string, min: number, max: number, defaut: number) {
   return nombreBorne({ libelle, min, max, entier: false }, defaut)
 }
 
+/**
+ * Les fuseaux déjà reconnus : construire un `Intl.DateTimeFormat` coûte une centaine de microsecondes,
+ * et chaque lecture de réglages (plusieurs par requête) repasse par ici. Seuls les fuseaux valides
+ * y entrent ; la table repart de zéro à `MAX_FUSEAUX_CONNUS` entrées.
+ */
+const FUSEAUX_CONNUS = new Set<string>()
+const MAX_FUSEAUX_CONNUS = 1000
+
 function fuseauConnu(nom: string): boolean {
+  if (FUSEAUX_CONNUS.has(nom)) return true
   try {
     new Intl.DateTimeFormat('fr-FR', { timeZone: nom })
-    return true
   } catch {
     return false
   }
+  if (FUSEAUX_CONNUS.size >= MAX_FUSEAUX_CONNUS) FUSEAUX_CONNUS.clear()
+  FUSEAUX_CONNUS.add(nom)
+  return true
 }
 
 const HEURE_RAPPEL = /^([01]\d|2[0-3]):[0-5]\d$/
