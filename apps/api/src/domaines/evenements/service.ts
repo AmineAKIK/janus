@@ -1,13 +1,13 @@
 import { Manifeste, Reglages, memeContenu, nouvelId } from '@janus/contrats'
 import type { Statut, StatutBloc } from '@janus/contrats'
-import { calculerBloc, instantEnMs } from '@janus/moteur'
+import { calculerBloc, instantEnMs, statutDuBloc } from '@janus/moteur'
 import { maintenantDuBloc } from '../../base/axeTemps.ts'
 import type { Base } from '../../base/base.ts'
 import { lireFaits } from '../../base/faits.ts'
 import { verrouBloc } from '../../base/transaction.ts'
 import { ConflitEtatPage, ContenuDifferent, ErreurProtocole, Introuvable } from '../../erreurs.ts'
 import type { Horloge } from '../../horloge.ts'
-import { recalculer, versStatutBloc } from '../../recalcul.ts'
+import { recalculer } from '../../recalcul.ts'
 import type { DepotEvenements, StatutForce } from './depot.ts'
 import {
   MESSAGES_AILLEURS,
@@ -96,7 +96,7 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
           }
           if (!enregistrement.changeLeStatut) return { doublon: true, statut: null }
           const actuel = await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant })
-          return { doublon: true, statut: versStatutBloc(actuel) }
+          return { doublon: true, statut: statutDuBloc(actuel) }
         }
         const existant = await depot.evenementParId(tx, message.id)
         if (existant !== undefined) return doublon(existant)
@@ -139,7 +139,7 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
         }
         if (!enregistrement.changeLeStatut) return { doublon: false, statut: null }
         const resultat = await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant })
-        return { doublon: false, statut: versStatutBloc(resultat) }
+        return { doublon: false, statut: statutDuBloc(resultat) }
       })
     },
 
@@ -180,7 +180,7 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
         }
         const resultat = await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant })
         return {
-          ...versStatutBloc(resultat),
+          ...statutDuBloc(resultat),
           force: resultat.force,
           statut_calcule: resultat.statutCalcule,
         }
@@ -232,9 +232,7 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
         ) {
           throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
         }
-        return versStatutBloc(
-          await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant }),
-        )
+        return statutDuBloc(await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant }))
       })
     },
 

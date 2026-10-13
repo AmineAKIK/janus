@@ -8,9 +8,14 @@ import {
   nouvelId,
   validerManifeste,
 } from '@janus/contrats'
-import type { CinqPreuves } from '@janus/contrats'
-import { accesBloc, calculerBloc, instantEnMs, preuvesDuBloc, seriesOuvertes } from '@janus/moteur'
-import type { ResultatBloc } from '@janus/moteur'
+import {
+  accesBloc,
+  calculerBloc,
+  cinqPreuvesDuBloc,
+  instantEnMs,
+  seriesOuvertes,
+  statutDuBloc,
+} from '@janus/moteur'
 import { z } from 'zod'
 import { maintenantDuBloc } from '../../base/axeTemps.ts'
 import type { Base } from '../../base/base.ts'
@@ -20,7 +25,7 @@ import { verrouBloc } from '../../base/transaction.ts'
 import type { Db, Tx } from '../../base/transaction.ts'
 import { ContenuDifferent, ErreurProtocole, Introuvable } from '../../erreurs.ts'
 import type { Horloge } from '../../horloge.ts'
-import { recalculer, versStatutBloc } from '../../recalcul.ts'
+import { recalculer } from '../../recalcul.ts'
 import { empreinteDuTexte, extraireManifeste, extraireSons } from './adaptateur.ts'
 import type { Stockage } from './adaptateur.ts'
 import type { CompteCartes, CompteImportCatalogue, DepotCatalogue } from './depot.ts'
@@ -278,7 +283,7 @@ export function creerServiceLecture({ base, depot, horloge, fichesUrl }: Dependa
       const resultat = calculerBloc(faits, manifeste, reglages, maintenant)
       const page = await depot.etatPage(base.db, userId, leBloc.id)
       return {
-        ...versStatutBloc(resultat),
+        ...statutDuBloc(resultat),
         bloc: leBloc.code,
         module: leBloc.moduleId,
         version: version.version,
@@ -287,7 +292,7 @@ export function creerServiceLecture({ base, depot, horloge, fichesUrl }: Dependa
         serie_ouverte: seriesOuvertes(resultat),
         force: resultat.force,
         acces: accesBloc(await statutsDesPrerequis(base.db, userId, manifeste.prerequis)),
-        preuves: preuvesDeLApi(resultat, reglages),
+        preuves: cinqPreuvesDuBloc(resultat, reglages),
         fiche_url: `${racine}/${version.chemin}`,
         etat_page:
           page === undefined ? null : { version: page.version, etat: EtatPage.parse(page.etat) },
@@ -350,30 +355,9 @@ export function creerServiceLecture({ base, depot, horloge, fichesUrl }: Dependa
           reglages,
           maintenant,
         })
-        return { acces, ...versStatutBloc(resultat) }
+        return { acces, ...statutDuBloc(resultat) }
       })
     },
   }
 }
 export type ServiceLecture = ReturnType<typeof creerServiceLecture>
-
-/** Le panneau « Cinq preuves » tel que l'API le rend. */
-function preuvesDeLApi(resultat: ResultatBloc, reglages: Reglages): CinqPreuves {
-  const preuves = preuvesDuBloc(resultat, reglages)
-  return {
-    comprendre: preuves.comprendre,
-    faire_seul: preuves.faireSeul,
-    transferer: preuves.transferer,
-    retenir:
-      preuves.retenir === null
-        ? null
-        : {
-            date: preuves.retenir.date,
-            prochaine:
-              preuves.retenir.prochaine === null
-                ? null
-                : { type: preuves.retenir.prochaine.type, apres: preuves.retenir.prochaine.apres },
-          },
-    aisance: preuves.aisance,
-  }
-}

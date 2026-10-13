@@ -1,14 +1,8 @@
 import { ErreurApi, memeContenu, ROUTES } from '@janus/contrats'
 import type { Fait, MessagePage } from '@janus/contrats'
+import { statutDuBloc } from '@janus/moteur'
 import { MANIFESTES_GRAINE } from '../graine.ts'
-import {
-  accesDuBloc,
-  dejaRecu,
-  enregistrer,
-  faitsDuBloc,
-  resultatDuBloc,
-  statutBloc,
-} from './calculs.ts'
+import { accesDuBloc, dejaRecu, enregistrer, faitsDuBloc, resultatDuBloc } from './calculs.ts'
 import { definir } from './definir.ts'
 
 function blocInconnu(bloc: string): ErreurApi {
@@ -83,7 +77,7 @@ export const ROUTES_BLOCS_DEMO = [
     const etat = magasin.lire()
     return {
       acces: accesDuBloc(etat, params.id, maintenant),
-      ...statutBloc(resultatDuBloc(etat, params.id, maintenant)),
+      ...statutDuBloc(resultatDuBloc(etat, params.id, maintenant)),
     }
   }),
 
@@ -100,7 +94,7 @@ export const ROUTES_BLOCS_DEMO = [
     }
     const resultat = resultatDuBloc(magasin.lire(), params.id, maintenant)
     return {
-      ...statutBloc(resultat),
+      ...statutDuBloc(resultat),
       force: resultat.force,
       statut_calcule: resultat.statutCalcule,
     }
@@ -165,7 +159,7 @@ export const ROUTES_BLOCS_DEMO = [
         },
       ])
     }
-    return statutBloc(resultatDuBloc(magasin.lire(), params.id, maintenant))
+    return statutDuBloc(resultatDuBloc(magasin.lire(), params.id, maintenant))
   }),
 
   definir(ROUTES['POST /evenements'], ({ magasin, horloge, corps }) => {
@@ -194,7 +188,7 @@ export const ROUTES_BLOCS_DEMO = [
     if (dejaRecu(magasin.lire(), corps.id)) {
       return {
         doublon: true,
-        statut: statutBloc(resultatDuBloc(magasin.lire(), corps.bloc, maintenant)),
+        statut: statutDuBloc(resultatDuBloc(magasin.lire(), corps.bloc, maintenant)),
       }
     }
     let recalcule = false
@@ -237,7 +231,9 @@ export const ROUTES_BLOCS_DEMO = [
     }
     return {
       doublon: false,
-      statut: recalcule ? statutBloc(resultatDuBloc(magasin.lire(), corps.bloc, maintenant)) : null,
+      statut: recalcule
+        ? statutDuBloc(resultatDuBloc(magasin.lire(), corps.bloc, maintenant))
+        : null,
     }
   }),
 ]

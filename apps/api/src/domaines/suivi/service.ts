@@ -1,8 +1,15 @@
 import { z } from 'zod'
-import { NoteCarte, Reglages } from '@janus/contrats'
+import { Manifeste, NoteCarte, Reglages } from '@janus/contrats'
 import type { TypeJournal } from '@janus/contrats'
-import type { Periode } from '@janus/moteur'
-import { instantEnIso, instantEnMs } from '@janus/moteur'
+import type { BlocImporte, Periode } from '@janus/moteur'
+import {
+  composerExport,
+  composerJournal,
+  composerTableau,
+  instantEnIso,
+  instantEnMs,
+  ligneDuJournal,
+} from '@janus/moteur'
 import { nouvelId } from '@janus/contrats'
 import { maintenantActif, maintenantDeLaFormation } from '../../base/axeTemps.ts'
 import type { Base } from '../../base/base.ts'
@@ -13,19 +20,31 @@ import { lireFaits } from '../../base/faits.ts'
 import type { Horloge } from '../../horloge.ts'
 import type { LireAujourdhui } from '../../types.ts'
 import type { DepotSuivi } from './depot.ts'
-import {
-  composerExport,
-  composerJournal,
-  composerTableau,
-  controlesDe,
-  ligneDuJournal,
-  mesuresDeTemps,
-  notesCourantes,
-} from './policy.ts'
+import { controlesDe, mesuresDeTemps, notesCourantes } from './policy.ts'
 
 const JOUR_MS = 86_400_000
 /** Le mois en cours tient dans les 45 derniers jours, quelle que soit la bascule. */
 const HISTORIQUE_DES_COUTS_JOURS = 45
+
+/** Les blocs importés tels que le moteur les compose : module, partie et manifeste lu. */
+function blocsImportes(
+  modules: readonly { readonly id: string; readonly code: string }[],
+  blocs: readonly {
+    readonly code: string
+    readonly moduleId: string
+    readonly partieCode: string | null
+    readonly partieTitre: string | null
+    readonly manifeste: unknown
+  }[],
+): BlocImporte[] {
+  const codeDuModule = new Map(modules.map(({ id, code }) => [id, code]))
+  return blocs.map(({ code, moduleId, partieCode, partieTitre, manifeste }) => ({
+    code,
+    moduleCode: codeDuModule.get(moduleId) ?? moduleId,
+    partie: partieCode === null ? '' : `${partieCode} ${partieTitre ?? ''}`.trim(),
+    manifeste: Manifeste.parse(manifeste),
+  }))
+}
 
 export interface DependancesService {
   readonly base: Base
@@ -42,17 +61,11 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
       depot.modulesImportes(base.db, formationId),
       depot.blocsImportes(base.db, formationId),
     ])
-    const codeDuModule = new Map(modules.map(({ id, code }) => [id, code]))
     return {
       formationId,
       modules: modules.map(({ code, titre }) => ({ id: code, titre })),
       lignes: blocs,
-      blocs: blocs.map(({ code, moduleId, partieCode, partieTitre, manifeste }) => ({
-        code,
-        moduleCode: codeDuModule.get(moduleId) ?? moduleId,
-        partie: partieCode === null ? '' : `${partieCode} ${partieTitre ?? ''}`.trim(),
-        manifeste,
-      })),
+      blocs: blocsImportes(modules, blocs),
     }
   }
 
@@ -233,7 +246,6 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
         blocs.map(({ id, code }) => ({ id, code })),
       )
       const codes = new Map(blocs.map(({ id, code }) => [id, code]))
-      const codeDuModule = new Map(modules.map(({ id, code }) => [id, code]))
       const [corrections, avis, revuesCartes, temps, derniereRevue, couts, jour] =
         await Promise.all([
           depot.correctionsRendues(base.db, userId),
@@ -256,12 +268,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
         modules: modules.map(({ code, titre }) => ({ id: code, titre })),
         module: requete.module,
         periode: requete.periode,
-        blocs: blocs.map(({ code, moduleId, partieCode, partieTitre, manifeste }) => ({
-          code,
-          moduleCode: codeDuModule.get(moduleId) ?? moduleId,
-          partie: partieCode === null ? '' : `${partieCode} ${partieTitre ?? ''}`.trim(),
-          manifeste,
-        })),
+        blocs: blocsImportes(modules, blocs),
         faits,
         reglages,
         maintenant,
