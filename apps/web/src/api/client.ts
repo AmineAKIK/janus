@@ -1,4 +1,5 @@
 import type { Transport } from '@janus/contrats'
+import { prechargementsDeLaPage } from './prechargement.ts'
 import { creerTransportHttp } from './transportHttp.ts'
 
 export type ModeTransport = 'demo' | 'http'
@@ -32,7 +33,10 @@ export async function creerTransport(
   options: OptionsTransport = {},
 ): Promise<Transport> {
   if (modeTransport(env.VITE_TRANSPORT) === 'http') {
-    return creerTransportHttp({ base: env.VITE_API ?? '/api' })
+    return creerTransportHttp({
+      base: env.VITE_API ?? '/api',
+      precharges: prechargementsDeLaPage(window),
+    })
   }
   if (chargerLaDemo === undefined) {
     throw new Error('Ce build ne contient pas la démo : VITE_TRANSPORT vaut « http ».')
