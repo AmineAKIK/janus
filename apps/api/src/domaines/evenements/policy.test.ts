@@ -75,6 +75,7 @@ describe('enregistrementDe', () => {
     expect(Object.keys(MESSAGES_AILLEURS).sort()).toEqual([
       'correction.accord',
       'etat.sauver',
+      'lien.ouvrir',
       'restitution.demande',
     ])
   })

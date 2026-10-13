@@ -18,6 +18,7 @@ const TYPES_PAGE = [
   'restitution.demande',
   'bilan.erreurs',
   'etat.sauver',
+  'lien.ouvrir',
   'correction.accord',
 ] as const
 const TYPES_APPLI = [
@@ -284,5 +285,24 @@ describe('CodeManque', () => {
     expect(CodeManque.options).toContain('restitution_incomplete')
     expect(CodeManque.options).toContain('aisance_non_atteinte')
     expect(CodeManque.options).toHaveLength(13)
+  })
+})
+
+describe('lien.ouvrir', () => {
+  const lien = (url: string) => MessagePage.safeParse({ ...EXEMPLES_PAGE['lien.ouvrir'], url })
+
+  it('accepte une adresse https', () => {
+    expect(lien('https://developer.mozilla.org/fr/').success).toBe(true)
+  })
+
+  it.each([
+    ['http', 'http://exemple.fr/'],
+    ['javascript', 'javascript:alert(1)'],
+    ['data', 'data:text/html,<p>x</p>'],
+    ['identifiants', 'https://nom:mdp@exemple.fr/'],
+    ['sans adresse', 'pas une adresse'],
+    ['trop longue', `https://exemple.fr/${'a'.repeat(2000)}`],
+  ])('refuse %s', (_cas, url) => {
+    expect(lien(url).success).toBe(false)
   })
 })

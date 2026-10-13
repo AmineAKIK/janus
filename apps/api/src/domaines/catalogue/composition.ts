@@ -8,6 +8,7 @@ import { creerDepotCatalogue } from './depot.ts'
 import { routesCatalogue } from './routes.ts'
 import { creerServiceCatalogue, creerServiceLecture } from './service.ts'
 
+export { extraireManifeste } from './adaptateur.ts'
 export { ErreurImport } from './service.ts'
 export type { FicheImportee } from './service.ts'
 

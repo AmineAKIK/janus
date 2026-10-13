@@ -1,4 +1,4 @@
-import { Niveau, ResultatVerification, TypeDifferee } from '@janus/contrats'
+import { Niveau, ResultatVerification, reservesDuType, TypeDifferee } from '@janus/contrats'
 import type {
   Differee,
   Fait,
@@ -23,7 +23,6 @@ import { z } from 'zod'
 export const Tirage = z.array(z.strictObject({ id: z.string(), type: TypeDifferee }))
 export type Tirage = z.infer<typeof Tirage>
 
-const TYPES_DE_PARTIES = TypeDifferee.options
 const HEURE_MS = 3_600_000
 
 /** Tire une question de chaque type, jamais la même deux fois de suite (réserve épuisée : la plus ancienne). */
@@ -38,7 +37,7 @@ export function tirerParties(
       ? fait.reponses.map(({ question }) => ({ question, date: fait.date }))
       : [],
   )
-  return TYPES_DE_PARTIES.flatMap((type) => {
+  return reservesDuType(manifeste.type).parties.flatMap((type) => {
     const differee = tirerDifferee(manifeste, type, dejaPosees, maintenant, reglages)
     return differee === null ? [] : [{ id: differee.id, type }]
   })
@@ -198,7 +197,9 @@ export function construireResultat(o: {
   maintenant: string
 }): ResultatVerification {
   const { bloc, manifeste, type, parties, validite, statutAvant, apres, reglages, maintenant } = o
-  const reussie = validite.valable && compositionReussie(parties.map(reponseDeFait))
+  const reussie =
+    validite.valable &&
+    compositionReussie(parties.map(reponseDeFait), reservesDuType(manifeste.type).parties)
   const reprogrammee = validite.valable
     ? null
     : ajouterJours(jourDe(maintenant, reglages.fuseau, reglages.heureBascule), 1)

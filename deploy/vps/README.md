@@ -59,8 +59,9 @@ sudo /usr/local/bin/janus-deploy <SHA_COMPLET_VALIDE_SUR_MAIN>
 
 Verifier les services, `/api/sante`, les assets, les cookies HTTPS, les origines
 des fiches, les connexions et les parcours dans un navigateur. Creer le premier
-compte via la CLI interactive existante ; le catalogue et les fiches peuvent
-etre importes progressivement. Une application sans compte ni catalogue n'est
+compte via la CLI interactive existante ; le catalogue (`contenu/<formation>/catalogue.json`)
+et les fiches (`contenu/<formation>/fiches/<bloc>.html`) sont importes au demarrage de l'API,
+donc par chaque deploiement. Une application sans compte ni catalogue n'est
 pas une recette fonctionnelle complete.
 
 ## GitHub Actions
