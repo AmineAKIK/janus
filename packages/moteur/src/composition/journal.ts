@@ -1,4 +1,5 @@
 import type { Fait, Reglages, TypeJournal } from '@janus/contrats'
+import { faitsParBloc } from '../parBloc.ts'
 import { calculerBloc } from '../statut.ts'
 import { exportTexte, lignesDuJournal, pageDuJournal } from '../journal/index.ts'
 import type { BlocImporte } from './bloc.ts'
@@ -48,6 +49,7 @@ export function composerJournal(entree: EntreeJournal) {
     ...(requete.avant === undefined ? {} : { avant: requete.avant }),
   })
   const affiche = module ?? entree.modules[0]
+  const duBloc = faitsParBloc(faits)
   return {
     modules: entree.modules.map(({ id, titre }) => ({ id, titre })),
     entrees: page.lignes.map((ligne) => ({
@@ -68,12 +70,7 @@ export function composerJournal(entree: EntreeJournal) {
       .map(({ code, manifeste }) => ({
         bloc: code,
         titre_court: manifeste.titre_court,
-        statut: calculerBloc(
-          faits.filter((fait) => fait.bloc === code),
-          manifeste,
-          reglages,
-          maintenant,
-        ).statut,
+        statut: calculerBloc(duBloc.get(code) ?? [], manifeste, reglages, maintenant).statut,
       })),
     idees: [...entree.idees].reverse(),
   }

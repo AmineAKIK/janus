@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { ajouterJours, ajouterMois, debutDuJour, ecartEnJours, jourDe } from './temps.ts'
 
 const PARIS = 'Europe/Paris'
@@ -142,5 +142,19 @@ describe('debutDuJour', () => {
 
   it('marche pour un fuseau à l’ouest', () => {
     expect(debutDuJour('2026-07-15', 'America/New_York', 4)).toBe('2026-07-15T08:00:00.000Z')
+  })
+})
+
+describe('jourDe : coût', () => {
+  it('ne construit qu’un formateur Intl par fuseau, quel que soit le nombre d’appels', () => {
+    const espion = vi.spyOn(Intl, 'DateTimeFormat')
+    try {
+      for (let minute = 0; minute < 50; minute += 1) {
+        jourDe(`2026-07-15T02:${String(minute).padStart(2, '0')}:00Z`, 'Asia/Tokyo', 4)
+      }
+      expect(espion.mock.calls.length).toBeLessThanOrEqual(1)
+    } finally {
+      espion.mockRestore()
+    }
   })
 })

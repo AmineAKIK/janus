@@ -1,5 +1,6 @@
 import type { Manifeste, Reglages, Statut } from '@janus/contrats'
 import type { Fait } from '../faits.ts'
+import { faitsParBloc } from '../parBloc.ts'
 import { calculerBloc } from '../statut.ts'
 import { instantEnMs, jourDe } from '../temps.ts'
 import { LIBELLES_STATUT } from './libelles.ts'
@@ -210,16 +211,38 @@ function typeDeGroupe(fait: Fait): Groupe['type'] | null {
   return null
 }
 
+/** De quoi répondre en une recherche, pour une contestation, à « quelle correction ? » et « tranchée depuis ? ». */
+interface IndexDuBloc {
+  /** La première correction de chaque identifiant. */
+  readonly corrections: ReadonlyMap<string, FaitDe<'correction'>>
+  /** La place du dernier tranchage de chaque correction. */
+  readonly derniersTranchages: ReadonlyMap<string, number>
+}
+
+function indexerLeBloc(faitsDuBloc: readonly Fait[]): IndexDuBloc {
+  const derniersTranchages = new Map<string, number>()
+  for (const [rang, fait] of faitsDuBloc.entries()) {
+    if (fait.type === 'correction_tranchee') derniersTranchages.set(fait.correction, rang)
+  }
+  // Si un identifiant se répète, la première correction l'emporte.
+  const corrections = new Map(
+    faitsDuBloc
+      .filter((fait): fait is FaitDe<'correction'> => fait.type === 'correction')
+      .toReversed()
+      .map((correction): [string, FaitDe<'correction'>] => [correction.id, correction]),
+  )
+  return { corrections, derniersTranchages }
+}
+
 /**
  * Toutes les lignes du journal depuis les faits, les plus récentes d'abord. Le type « Cartes »
  * n'a pas encore de fait qui le porte : il existe comme filtre, sans ligne.
  */
 export function lignesDuJournal(faits: readonly Fait[], contexte: ContexteJournal): LigneJournal[] {
   const lignes: LigneJournal[] = []
-  const blocs = [...new Set(faits.map(({ bloc }) => bloc))]
 
-  for (const bloc of blocs) {
-    const faitsDuBloc = faits.filter((fait) => fait.bloc === bloc).sort(parDate)
+  for (const [bloc, faitsRecus] of faitsParBloc(faits)) {
+    const faitsDuBloc = faitsRecus.sort(parDate)
     const manifeste = contexte.manifestes[bloc]
     const libelleErreur = (id: string) =>
       manifeste?.erreurs_critiques.find((erreur) => erreur.id === id)?.libelle ?? id
@@ -276,7 +299,9 @@ export function lignesDuJournal(faits: readonly Fait[], contexte: ContexteJourna
       lignes.push({ id, date, bloc, type, ...corps })
     }
 
-    for (const fait of faitsDuBloc) {
+    // Ce que les contestations cherchent dans les faits du bloc, rangé à la première demande.
+    let index: IndexDuBloc | undefined
+    for (const [position, fait] of faitsDuBloc.entries()) {
       const commun = { id: fait.id, date: fait.date, bloc }
       switch (fait.type) {
         case 'verification_terminee':
@@ -294,17 +319,9 @@ export function lignesDuJournal(faits: readonly Fait[], contexte: ContexteJourna
           break
         }
         case 'correction_contestee': {
-          const correction = faitsDuBloc.find(
-            (candidat): candidat is FaitDe<'correction'> =>
-              candidat.type === 'correction' && candidat.id === fait.correction,
-          )
-          const position = faitsDuBloc.indexOf(fait)
-          const trancheeApres = faitsDuBloc
-            .slice(position + 1)
-            .some(
-              (candidat) =>
-                candidat.type === 'correction_tranchee' && candidat.correction === fait.correction,
-            )
+          index ??= indexerLeBloc(faitsDuBloc)
+          const correction = index.corrections.get(fait.correction)
+          const trancheeApres = (index.derniersTranchages.get(fait.correction) ?? -1) > position
           lignes.push({
             ...commun,
             type: 'contestation',

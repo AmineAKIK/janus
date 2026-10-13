@@ -1,6 +1,7 @@
 import type { Manifeste, Reglages } from '@janus/contrats'
 import { echeances } from '../echeances.ts'
 import type { Fait } from '../faits.ts'
+import { faitsParBloc } from '../parBloc.ts'
 import { calculerBloc } from '../statut.ts'
 import { instantEnMs, jourDe } from '../temps.ts'
 import { LIBELLES_STATUT } from './libelles.ts'
@@ -79,10 +80,11 @@ export function exportTexte(contexte: ContexteExport): string {
 
   const jour = (instant: string) => jourDe(instant, reglages.fuseau, reglages.heureBascule)
   const lignes: { jour: string; rang: number; texte: string }[] = []
+  const parBloc = faitsParBloc(faits)
   manifestes.forEach((manifeste, rang) => {
-    const faitsDuBloc = faits
-      .filter((fait) => fait.bloc === manifeste.bloc)
-      .sort((a, b) => instantEnMs(a.date) - instantEnMs(b.date))
+    const faitsDuBloc = [...(parBloc.get(manifeste.bloc) ?? [])].sort(
+      (a, b) => instantEnMs(a.date) - instantEnMs(b.date),
+    )
     const jours = [...new Set(faitsDuBloc.map((fait) => jour(fait.date)))]
     for (const unJour of jours) {
       const duJour = faitsDuBloc.filter((fait) => jour(fait.date) === unJour)
