@@ -172,6 +172,10 @@ export function useHoteFiche(
             etapeAMontrer.current = undefined
           }
           return
+        case 'lien.ouvrir':
+          // L'appli seule ouvre l'adresse (nouvel onglet, sans lien avec Janus) ; rien ne part au serveur.
+          window.open(message.url, '_blank', 'noopener,noreferrer')
+          return
         default: {
           if (message.type === 'etat.sauver') dernieres.current.etat = message.etat
           if (message.type === 'etape.vue') {

@@ -80,6 +80,20 @@ export const champsReponse = {
 
 const SeriePage = z.enum(['restitution', 'consolidation'])
 
+/** Taille maximale d'une adresse que la fiche demande d'ouvrir. */
+export const TAILLE_MAX_LIEN = 2000
+
+/** Une adresse que la fiche demande d'ouvrir : https seulement, sans identifiants dans l'adresse. */
+export const LienExterne = z
+  .url({ protocol: /^https$/ })
+  .max(TAILLE_MAX_LIEN)
+  .refine((adresse) => {
+    // Une adresse illisible est déjà refusée par `z.url` : la vérification ne doit pas lever.
+    if (!URL.canParse(adresse)) return true
+    const { username, password } = new URL(adresse)
+    return username === '' && password === ''
+  }, 'Une adresse ne porte ni nom ni mot de passe.')
+
 /** Un message de la page vers l'appli (`window.parent.postMessage`). Le serveur date tout avec sa propre heure. */
 export const MessagePage = z.discriminatedUnion('type', [
   z.strictObject({ ...communPage, type: z.literal('page.prete'), schema: z.literal(2) }),
@@ -120,6 +134,8 @@ export const MessagePage = z.discriminatedUnion('type', [
   }),
   z.strictObject({ ...communPage, type: z.literal('bilan.erreurs'), ids: z.array(Identifiant) }),
   z.strictObject({ ...communPage, type: z.literal('etat.sauver'), etat: EtatPage }),
+  /** Ouvre un site dans un nouvel onglet : la fiche (sandbox) ne peut pas le faire seule. Reste dans l'appli. */
+  z.strictObject({ ...communPage, type: z.literal('lien.ouvrir'), url: LienExterne }),
   z.strictObject({
     ...communPage,
     type: z.literal('correction.accord'),

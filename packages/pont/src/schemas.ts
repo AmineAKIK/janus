@@ -72,6 +72,20 @@ const communPage = {
 
 const seriePage = z.enum(['restitution', 'consolidation'])
 
+const TAILLE_MAX_LIEN = 2000
+
+const lienExterne = z.url({ protocol: /^https$/ }).check(
+  z.maxLength(TAILLE_MAX_LIEN),
+  z.refine(
+    (adresse) => {
+      if (!URL.canParse(adresse)) return true
+      const { username, password } = new URL(adresse)
+      return username === '' && password === ''
+    },
+    { error: 'Une adresse ne porte ni nom ni mot de passe.' },
+  ),
+)
+
 /** Un message de la page vers l'appli. */
 export const MessagePage = z.discriminatedUnion('type', [
   z.strictObject({ ...communPage, type: z.literal('page.prete'), schema: z.literal(2) }),
@@ -116,6 +130,7 @@ export const MessagePage = z.discriminatedUnion('type', [
   }),
   z.strictObject({ ...communPage, type: z.literal('bilan.erreurs'), ids: z.array(identifiant()) }),
   z.strictObject({ ...communPage, type: z.literal('etat.sauver'), etat: etatPage }),
+  z.strictObject({ ...communPage, type: z.literal('lien.ouvrir'), url: lienExterne }),
   z.strictObject({
     ...communPage,
     type: z.literal('correction.accord'),

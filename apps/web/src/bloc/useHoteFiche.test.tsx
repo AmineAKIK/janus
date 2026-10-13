@@ -94,6 +94,32 @@ describe('page d’un bloc', () => {
     expect(inits[1]?.[0]).toMatchObject({ etat: { etape: 'ET2' } })
   })
 
+  it('lien.ouvrir : l’appli ouvre l’adresse dans un nouvel onglet isolé, sans répondre à la page', async () => {
+    const { envoyer, recu } = await afficher()
+    const ouvrir = vi.spyOn(window, 'open').mockImplementation(() => null)
+    await envoyer(prete)
+    recu.mockClear()
+
+    await envoyer(message('lien.ouvrir', { url: 'https://www.figma.com/design/' }))
+
+    expect(ouvrir).toHaveBeenCalledExactlyOnceWith(
+      'https://www.figma.com/design/',
+      '_blank',
+      'noopener,noreferrer',
+    )
+    expect(recu).not.toHaveBeenCalled()
+  })
+
+  it('lien.ouvrir avec une adresse http : rien ne s’ouvre', async () => {
+    const { envoyer } = await afficher()
+    const ouvrir = vi.spyOn(window, 'open').mockImplementation(() => null)
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    await envoyer(message('lien.ouvrir', { url: 'http://exemple.fr/' }))
+
+    expect(ouvrir).not.toHaveBeenCalled()
+  })
+
   it('ignore un message d’une autre fenêtre, sans lui répondre', async () => {
     const { envoyer, recu } = await afficher()
     const avertir = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
