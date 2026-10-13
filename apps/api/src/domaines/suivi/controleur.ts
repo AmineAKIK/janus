@@ -14,7 +14,10 @@ export function creerControleurSuivi(service: ServiceSuivi) {
       const texte = await service.exportTexte(utilisateurDe(requete))
       return reponse.type('text/plain; charset=utf-8').send(texte)
     },
-    exportJson: (requete: FastifyRequest) => service.exportJson(utilisateurDe(requete)),
+    exportJson: async (requete: FastifyRequest, reponse: FastifyReply) => {
+      const flux = await service.exportJson(utilisateurDe(requete))
+      return reponse.type('application/json; charset=utf-8').send(flux)
+    },
     ajouterNote: async (
       requete: FastifyRequest<{ Body: { id: string; entree: string; texte: string } }>,
       reponse: FastifyReply,

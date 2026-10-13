@@ -1,3 +1,4 @@
+import { Readable } from 'node:stream'
 import { z } from 'zod'
 import { Manifeste, NoteCarte, Reglages } from '@janus/contrats'
 import type { TypeJournal } from '@janus/contrats'
@@ -21,6 +22,42 @@ import type { Horloge } from '../../horloge.ts'
 import type { LireAujourdhui } from '../../types.ts'
 import type { DepotSuivi } from './depot.ts'
 import { controlesDe, mesuresDeTemps, notesCourantes } from './policy.ts'
+
+/** Les lignes d'une table que l'export écrit d'un seul tenant avant de rendre la main. */
+const LIGNES_PAR_MORCEAU = 1_000
+
+function rendreLaMain(): Promise<void> {
+  return new Promise((resolve) => {
+    setImmediate(resolve)
+  })
+}
+
+/**
+ * Le JSON de l'export, par morceaux : octet pour octet celui qu'écrirait `JSON.stringify` sur
+ * l'objet entier, mais sans jamais construire la chaîne entière (320 Mo à 500 000 faits) ni bloquer la
+ * boucle d'événements pendant qu'on la sérialise.
+ */
+async function* morceauxDeLExport(
+  genereLe: string,
+  donnees: Readonly<Record<string, readonly unknown[]>>,
+): AsyncGenerator<string> {
+  yield `{"version":1,"genere_le":${JSON.stringify(genereLe)},"donnees":{`
+  let premiere = true
+  for (const [nom, lignes] of Object.entries(donnees)) {
+    yield `${premiere ? '' : ','}${JSON.stringify(nom)}:[`
+    premiere = false
+    for (let debut = 0; debut < lignes.length; debut += LIGNES_PAR_MORCEAU) {
+      const morceau = lignes
+        .slice(debut, debut + LIGNES_PAR_MORCEAU)
+        .map((ligne) => JSON.stringify(ligne))
+        .join(',')
+      yield debut === 0 ? morceau : `,${morceau}`
+      await rendreLaMain()
+    }
+    yield ']'
+  }
+  yield '}}'
+}
 
 const JOUR_MS = 86_400_000
 /** Le mois en cours tient dans les 45 derniers jours, quelle que soit la bascule. */
@@ -213,10 +250,16 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
       })
     },
 
-    /** Toutes les données de l'utilisateur, au format versionné de l'export. */
+    /**
+     * Toutes les données de l'utilisateur, au format versionné de l'export, en flux. Les données sont lues
+     * et vérifiées avant le premier octet : une ligne illisible donne une erreur, pas un flux tronqué.
+     */
     async exportJson(userId: string) {
       const donnees = z.record(z.string(), z.json()).parse(await depot.donneesDe(base.db, userId))
-      return { version: 1 as const, genere_le: horloge.maintenant(), donnees }
+      const lignes = Object.fromEntries(
+        Object.entries(donnees).map(([nom, valeur]) => [nom, Array.isArray(valeur) ? valeur : []]),
+      )
+      return Readable.from(morceauxDeLExport(horloge.maintenant(), lignes), { objectMode: false })
     },
 
     /** Le tableau de bord, calculé à la lecture : rien n'est gardé. */
