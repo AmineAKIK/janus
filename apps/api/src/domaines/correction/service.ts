@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 import { Manifeste, Reglages, nouvelId } from '@janus/contrats'
 import { CorrectionRecue } from '@janus/contrats'
 import type { CorrectionRecue as CorrectionRecueApi } from '@janus/contrats'
-import { compte, estRecopiee, instantEnIso, instantEnMs, jourDe } from '@janus/moteur'
+import { compte, estRecopiee, instantEnIso, instantEnMs, jourDe, statutDuBloc } from '@janus/moteur'
 import { z } from 'zod'
 import { maintenantActif, maintenantDuBloc } from '../../base/axeTemps.ts'
 import type { Base } from '../../base/base.ts'
@@ -16,7 +16,7 @@ import {
   TropDeTentatives,
 } from '../../erreurs.ts'
 import type { Horloge } from '../../horloge.ts'
-import { recalculer, versStatutBloc } from '../../recalcul.ts'
+import { recalculer } from '../../recalcul.ts'
 import { coutMillioniemes } from '../../adaptateurs/correcteur/cout.ts'
 import type { Tarifs } from '../../adaptateurs/correcteur/cout.ts'
 import type {
@@ -547,9 +547,7 @@ export function creerServiceCorrection({
         } else if (existant.userId !== userId || existant.empreinte !== signature) {
           throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
         }
-        return versStatutBloc(
-          await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant }),
-        )
+        return statutDuBloc(await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant }))
       })
     },
   }

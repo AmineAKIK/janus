@@ -1,88 +1,39 @@
 import { ErreurApi, ROUTES } from '@janus/contrats'
-import type { LigneJournal } from '@janus/contrats'
 import type { EtatDemo } from '@janus/contrats/demo'
-import { exportTexte, lignesDuJournal, pageDuJournal } from '@janus/moteur'
-import { catalogueGraine, MANIFESTES_GRAINE } from '../graine.ts'
-import { resultatDuBloc } from './calculs.ts'
+import { composerExport, composerJournal, ligneDuJournal } from '@janus/moteur'
+import { blocsImportesDeLaDemo, modulesImportesDeLaDemo } from './calculs.ts'
 import { definir } from './definir.ts'
 
 const introuvable = (detail: string) =>
   new ErreurApi({ status: 404, code: 'introuvable', titre: 'Introuvable', detail })
 
-/** Toutes les lignes du journal, depuis les faits gardés. */
-const lignesDeLEtat = (etat: EtatDemo) =>
-  lignesDuJournal(etat.faits, { manifestes: MANIFESTES_GRAINE, reglages: etat.reglages })
+/** Ce que la démo fournit au moteur : les blocs importés, les faits et les réglages gardés. */
+const contexteDeLEtat = (etat: EtatDemo) => ({
+  blocs: blocsImportesDeLaDemo(),
+  faits: etat.faits,
+  reglages: etat.reglages,
+})
 
 /** Le journal au format de la méthode. Les tâches inédites réservées et la dernière revue n'ont pas encore de données en démo. */
-function exportDuJournal(etat: EtatDemo): string {
-  const manifestes = catalogueGraine().modules.flatMap((module) =>
-    module.importe
-      ? module.parties.flatMap(({ blocs }) =>
-          blocs.flatMap((code) => {
-            const manifeste = MANIFESTES_GRAINE[code]
-            return manifeste === undefined ? [] : [manifeste]
-          }),
-        )
-      : [],
-  )
-  return exportTexte({
-    manifestes,
-    faits: etat.faits,
-    reglages: etat.reglages,
+const exportDuJournal = (etat: EtatDemo): string =>
+  composerExport({
+    ...contexteDeLEtat(etat),
     tachesReservees: [],
-    idees: etat.idees.map(({ texte }) => texte),
+    idees: etat.idees,
     derniereRevue: etat.revuesMethode.findLast(({ texte }) => texte !== undefined)?.texte ?? null,
   })
-}
 
 export const ROUTES_JOURNAL_DEMO = [
   definir(ROUTES['GET /journal'], ({ magasin, horloge, requete }) => {
     const etat = magasin.lire()
-    const importes = catalogueGraine().modules.flatMap((candidat) =>
-      candidat.importe ? [candidat] : [],
-    )
-    const module = importes.find(({ code }) => code === requete.module)
-    const blocsDuModule =
-      module === undefined ? null : new Set(module.parties.flatMap(({ blocs }) => blocs))
-    const lignes = lignesDeLEtat(etat).filter(
-      ({ bloc }) => blocsDuModule === null || blocsDuModule.has(bloc),
-    )
-    const page = pageDuJournal(lignes, {
-      ...(requete.bloc === undefined ? {} : { bloc: requete.bloc }),
-      ...(requete.type === undefined ? {} : { type: requete.type }),
-      ...(requete.avant === undefined ? {} : { avant: requete.avant }),
+    return composerJournal({
+      ...contexteDeLEtat(etat),
+      modules: modulesImportesDeLaDemo().map(({ code, titre }) => ({ id: code, titre })),
+      maintenant: horloge.maintenant(),
+      requete,
+      notes: Object.values(etat.notesJournal),
+      idees: etat.idees,
     })
-    const maintenant = horloge.maintenant()
-    const codes = (module ?? importes[0])?.parties.flatMap(({ blocs }) => blocs) ?? []
-    return {
-      modules: importes.map(({ code, titre }) => ({ id: code, titre })),
-      entrees: page.lignes.map((ligne): LigneJournal => ({
-        id: ligne.id,
-        date: ligne.date,
-        bloc: ligne.bloc,
-        type: ligne.type,
-        resume: ligne.resume,
-        detail: [...ligne.detail],
-        ...(ligne.contestationEnAttente === undefined
-          ? {}
-          : { contestation_en_attente: ligne.contestationEnAttente }),
-        note: Object.values(etat.notesJournal).find(({ entree }) => entree === ligne.id) ?? null,
-      })),
-      suivant: page.suivant,
-      blocs: codes.flatMap((code) => {
-        const manifeste = MANIFESTES_GRAINE[code]
-        return manifeste === undefined
-          ? []
-          : [
-              {
-                bloc: code,
-                titre_court: manifeste.titre_court,
-                statut: resultatDuBloc(etat, code, maintenant).statut,
-              },
-            ]
-      }),
-      idees: [...etat.idees].reverse(),
-    }
   }),
 
   definir(ROUTES['GET /journal/export.txt'], ({ magasin }) => exportDuJournal(magasin.lire())),
@@ -91,7 +42,7 @@ export const ROUTES_JOURNAL_DEMO = [
     const etat = magasin.lire()
     const deja = etat.notesJournal[corps.id]
     if (deja !== undefined) return deja
-    if (!lignesDeLEtat(etat).some(({ id }) => id === corps.entree)) {
+    if (ligneDuJournal(corps.entree, contexteDeLEtat(etat)) === undefined) {
       throw introuvable(`La ligne « ${corps.entree} » n’existe pas dans le journal.`)
     }
     if (Object.values(etat.notesJournal).some(({ entree }) => entree === corps.entree)) {

@@ -1,43 +1,36 @@
-import type {
-  CinqPreuves,
-  Fait,
-  Manque as ManqueContrat,
-  Reglages,
-  Statut,
-  StatutBloc,
-} from '@janus/contrats'
+import type { Fait, Statut } from '@janus/contrats'
 import type { EtatDemo } from '@janus/contrats/demo'
-import { accesBloc, calculerBloc, preuvesDuBloc } from '@janus/moteur'
-import type { ResultatBloc } from '@janus/moteur'
-import { MANIFESTES_GRAINE } from '../graine.ts'
+import { accesBloc, calculerBloc } from '@janus/moteur'
+import type { BlocImporte, ResultatBloc } from '@janus/moteur'
+import { catalogueGraine, MANIFESTES_GRAINE } from '../graine.ts'
 import type { Magasin } from '../store.ts'
 
 /** Les faits d'un bloc, tels que le store les a gardés. */
 export const faitsDuBloc = (etat: EtatDemo, bloc: string) =>
   etat.faits.filter((fait) => fait.bloc === bloc)
 
+/** Les modules importés de la graine, comme l'API les liste. */
+export const modulesImportesDeLaDemo = () =>
+  catalogueGraine().modules.flatMap((module) => (module.importe ? [module] : []))
+
+/** Les blocs des modules importés, avec leur partie et leur manifeste, comme l'API les compose. */
+export const blocsImportesDeLaDemo = (): BlocImporte[] =>
+  modulesImportesDeLaDemo().flatMap((module) =>
+    module.parties.flatMap((partie) =>
+      partie.blocs.flatMap((code) => {
+        const manifeste = MANIFESTES_GRAINE[code]
+        return manifeste === undefined
+          ? []
+          : [{ code, moduleCode: module.code, partie: `${partie.code} ${partie.titre}`, manifeste }]
+      }),
+    ),
+  )
+
 /** Le statut d'un bloc, toujours recalculé par le moteur depuis ses faits, jamais écrit à la main. */
 export function resultatDuBloc(etat: EtatDemo, bloc: string, maintenant: string): ResultatBloc {
   const manifeste = MANIFESTES_GRAINE[bloc]
   if (manifeste === undefined) throw new Error(`Bloc inconnu : ${bloc}`)
   return calculerBloc(faitsDuBloc(etat, bloc), manifeste, etat.reglages, maintenant)
-}
-
-/** Le statut que l'API rend après un fait : le statut, ce qui manque, les erreurs ouvertes. */
-export function statutBloc(resultat: ResultatBloc): StatutBloc {
-  return {
-    statut: resultat.statut,
-    manque: resultat.manque.map((manque): ManqueContrat => ({
-      code: manque.code,
-      ...(manque.questions === undefined ? {} : { questions: [...manque.questions] }),
-      ...(manque.exercices === undefined ? {} : { exercices: [...manque.exercices] }),
-      ...(manque.erreurs === undefined ? {} : { erreurs: [...manque.erreurs] }),
-      ...(manque.apres === undefined ? {} : { apres: manque.apres }),
-      ...(manque.points === undefined ? {} : { points: manque.points }),
-      ...(manque.requis === undefined ? {} : { requis: manque.requis }),
-    })),
-    erreurs_ouvertes: [...resultat.erreursOuvertes],
-  }
 }
 
 /** Libre si tous les prérequis du bloc sont au moins « acquis provisoirement », sinon une raison est exigée. */
@@ -57,25 +50,4 @@ export function enregistrer(magasin: Magasin, id: string, faits: readonly Fait[]
     idsRecus: [...etat.idsRecus, id],
     faits: [...etat.faits, ...faits],
   }))
-}
-
-/** Le panneau « Cinq preuves » tel que l'API le rend. */
-export function preuvesDuBlocApi(resultat: ResultatBloc, reglages: Reglages): CinqPreuves {
-  const preuves = preuvesDuBloc(resultat, reglages)
-  return {
-    comprendre: preuves.comprendre,
-    faire_seul: preuves.faireSeul,
-    transferer: preuves.transferer,
-    retenir:
-      preuves.retenir === null
-        ? null
-        : {
-            date: preuves.retenir.date,
-            prochaine:
-              preuves.retenir.prochaine === null
-                ? null
-                : { type: preuves.retenir.prochaine.type, apres: preuves.retenir.prochaine.apres },
-          },
-    aisance: preuves.aisance,
-  }
 }

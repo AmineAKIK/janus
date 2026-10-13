@@ -1,6 +1,5 @@
-import { Manifeste, Reglages, StatutBloc } from '@janus/contrats'
-import type { StatutBloc as StatutBlocApi } from '@janus/contrats'
-import { calculerBloc, debutDuJour, echeances, VERSION_MOTEUR } from '@janus/moteur'
+import { Manifeste, Reglages } from '@janus/contrats'
+import { calculerBloc, debutDuJour, echeances, statutDuBloc, VERSION_MOTEUR } from '@janus/moteur'
 import type { Echeance } from '@janus/moteur'
 import type { ResultatBloc } from '@janus/moteur'
 import { maintenantDuBloc } from './base/axeTemps.ts'
@@ -31,23 +30,6 @@ export interface OptionsRecalcul {
   readonly maintenant: string
 }
 
-/** Ce que l'API rend d'un bloc après un fait : son statut, ce qui manque, les erreurs ouvertes. */
-export function versStatutBloc(resultat: ResultatBloc): StatutBlocApi {
-  return StatutBloc.parse({
-    statut: resultat.statut,
-    manque: resultat.manque.map((manque) => ({
-      code: manque.code,
-      ...(manque.questions === undefined ? {} : { questions: [...manque.questions] }),
-      ...(manque.exercices === undefined ? {} : { exercices: [...manque.exercices] }),
-      ...(manque.erreurs === undefined ? {} : { erreurs: [...manque.erreurs] }),
-      ...(manque.apres === undefined ? {} : { apres: manque.apres }),
-      ...(manque.points === undefined ? {} : { points: manque.points }),
-      ...(manque.requis === undefined ? {} : { requis: manque.requis }),
-    })),
-    erreurs_ouvertes: [...resultat.erreursOuvertes],
-  })
-}
-
 /**
  * Recalcule un bloc depuis tous ses faits, dans la transaction de l'écriture, et range le résultat
  * dans `statuts_courants`. Le verrou du bloc fait attendre un autre écrivain du même bloc.
@@ -59,7 +41,7 @@ export async function recalculer(
   await verrouBloc(tx, userId, bloc.id)
   const faits = await lireFaits(tx, userId, [bloc])
   const resultat = calculerBloc(faits, manifeste, reglages, maintenant)
-  const detail = { ...versStatutBloc(resultat), force: resultat.force }
+  const detail = { ...statutDuBloc(resultat), force: resultat.force }
   await ecrireStatutCourant(tx, {
     userId,
     blocId: bloc.id,

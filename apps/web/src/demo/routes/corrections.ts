@@ -1,8 +1,8 @@
 import { corrigerSimule, DELAI_CORRECTION_SIMULEE_MS, ErreurApi, ROUTES } from '@janus/contrats'
 import type { CorrectionRecue } from '@janus/contrats'
-import { compte, estRecopiee } from '@janus/moteur'
+import { compte, estRecopiee, statutDuBloc } from '@janus/moteur'
 import { MANIFESTES_GRAINE } from '../graine.ts'
-import { dejaRecu, enregistrer, faitsDuBloc, resultatDuBloc, statutBloc } from './calculs.ts'
+import { dejaRecu, enregistrer, faitsDuBloc, resultatDuBloc } from './calculs.ts'
 import { serieDuJour } from './aujourdhui.ts'
 import { definir } from './definir.ts'
 
@@ -58,7 +58,7 @@ export function routesCorrectionsDemo({
           },
         ])
       }
-      return statutBloc(resultatDuBloc(magasin.lire(), correction.bloc, horloge.maintenant()))
+      return statutDuBloc(resultatDuBloc(magasin.lire(), correction.bloc, horloge.maintenant()))
     }),
     definir(ROUTES['POST /corrections'], async ({ magasin, horloge, attendre, corps }) => {
       const { interrupteurs, reglages } = magasin.lire()
