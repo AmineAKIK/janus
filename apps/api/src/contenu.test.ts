@@ -3,6 +3,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { Catalogue } from '@janus/contrats'
 import { describe, expect, it } from 'vitest'
+import { verifierLesFiches } from './fiches.ts'
 
 const racine = join(dirname(fileURLToPath(import.meta.url)), '../../../contenu')
 const lire = (chemin: string): unknown => JSON.parse(readFileSync(join(racine, chemin), 'utf8'))
@@ -15,5 +16,9 @@ describe('catalogues de contenu', () => {
     expect(catalogue.modules.map((m) => [m.code, m.titre])).toEqual([
       ['M1', 'Écosystème et outils du développeur'],
     ])
+  })
+
+  it('les fiches du dépôt passent la vérification', async () => {
+    expect(await verifierLesFiches({ dossierContenu: racine })).toEqual([])
   })
 })
