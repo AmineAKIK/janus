@@ -128,15 +128,19 @@ export type Fabrique = ReturnType<typeof fabrique>
 /** Date d'« acquis provisoirement » de la chronologie type : la fin de la consolidation. */
 export const PROVISOIRE = apres(DEBUT, 0, 122)
 
+/** Pratique (aides données, 0 et 0 par défaut), atelier et restitution faits ; la consolidation reste à écrire. */
+export function avantConsolidation(f: Fabrique, aides?: readonly [Aide, Aide]): Fait[] {
+  return [
+    ...f.pratique(DEBUT, aides),
+    f.atelier(apres(DEBUT, 0, 5)),
+    ...f.restitution(apres(DEBUT, 0, 30)),
+  ]
+}
+
 /**
  * Chronologie type d'un bloc de démonstration jusqu'à « acquis provisoirement » :
  * pratique et atelier à 12 h, restitution à 12 h 30, consolidation 1 h 30 plus tard.
  */
 export function jusquaProvisoire(f: Fabrique): Fait[] {
-  return [
-    ...f.pratique(DEBUT),
-    f.atelier(apres(DEBUT, 0, 5)),
-    ...f.restitution(apres(DEBUT, 0, 30)),
-    ...f.consolidation(apres(DEBUT, 0, 120)),
-  ]
+  return [...avantConsolidation(f), ...f.consolidation(apres(DEBUT, 0, 120))]
 }

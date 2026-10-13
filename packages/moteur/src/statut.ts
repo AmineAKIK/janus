@@ -2,7 +2,14 @@ import type { CodeManque, Manifeste, Reglages, Statut, TypeEtape } from '@janus/
 import type { Fait, ReponseVerification } from './faits.ts'
 import { comparer } from './ordre.ts'
 import { points } from './points.ts'
-import { ajouterJours, ajouterMois, instantEnIso, instantEnMs, jourDe } from './temps.ts'
+import {
+  ajouterJours,
+  ajouterMois,
+  instantEnIso,
+  instantEnMs,
+  jourDe,
+  MS_PAR_MINUTE,
+} from './temps.ts'
 import type { Jour } from './temps.ts'
 
 export type { CodeManque }
@@ -74,7 +81,6 @@ const STATUTS_SUFFISANTS: ReadonlySet<Statut> = new Set([
   'acquis',
   'maitrise',
 ])
-const MS_PAR_MINUTE = 60_000
 
 /** Un bloc est ouvert librement si tous ses prérequis sont au moins « acquis provisoirement ». */
 export function accesBloc(statutsPrerequis: readonly Statut[]): 'libre' | 'raison_requise' {

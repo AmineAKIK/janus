@@ -1,6 +1,14 @@
 import type { Manifeste, Reglages, Statut } from '@janus/contrats'
 import type { Fait } from './faits.ts'
-import { apres, DEBUT, fabrique, jusquaProvisoire, MANIFESTE, REGLAGES } from './fabrique.ts'
+import {
+  apres,
+  avantConsolidation,
+  DEBUT,
+  fabrique,
+  jusquaProvisoire,
+  MANIFESTE,
+  REGLAGES,
+} from './fabrique.ts'
 import type { Fabrique } from './fabrique.ts'
 import type { CodeManque } from './statut.ts'
 
@@ -68,15 +76,6 @@ function cas(
   }
 }
 
-/** Pratique, atelier et restitution faits ; la consolidation reste à écrire. */
-function avantConsolidation(f: Fabrique): Fait[] {
-  return [
-    ...f.pratique(DEBUT),
-    f.atelier(apres(DEBUT, 0, 5)),
-    ...f.restitution(apres(DEBUT, 0, 30)),
-  ]
-}
-
 /** Deux consolidations qui comptent, puis une troisième qui ne compte pas pour la raison donnée. */
 function consolidationSansTroisieme(
   f: Fabrique,
@@ -102,6 +101,22 @@ function jusquaAcquis(f: Fabrique): Fait[] {
 /** Jusqu'à « acquis », puis la cible d'aisance atteinte (deux essais sous 30 s, deux jours différents). */
 function jusquaAcquisAvecAisance(f: Fabrique): Fait[] {
   return [...jusquaAcquis(f), f.aisance(apres(DEBUT, 10), 20), f.aisance(apres(DEBUT, 20), 25)]
+}
+
+/** Maîtrisé : le retest réussi à J+31, la cible d'aisance atteinte. */
+function jusquaMaitrise(f: Fabrique): Fait[] {
+  return [
+    ...jusquaAcquisAvecAisance(f),
+    f.verification(apres(DEBUT, 34), { verification: 'retest' }),
+  ]
+}
+
+/** Maîtrisé, puis un entretien raté (transfert fragile) à J+130. */
+function jusquaEntretienRate(f: Fabrique): Fait[] {
+  return [
+    ...jusquaMaitrise(f),
+    f.verification(apres(DEBUT, 130), { verification: 'entretien', transfert: 'fragile' }),
+  ]
 }
 
 function construireCas(): CasAcceptation[] {
@@ -151,12 +166,7 @@ function construireCas(): CasAcceptation[] {
     const f = fabrique()
     return cas(
       'Tous les exercices réussis, mais l’un seulement à l’aide 2',
-      [
-        ...f.pratique(DEBUT, [0, 2]),
-        f.atelier(apres(DEBUT, 0, 5)),
-        ...f.restitution(apres(DEBUT, 0, 30)),
-        ...f.consolidation(apres(DEBUT, 0, 120)),
-      ],
+      [...avantConsolidation(f, [0, 2]), ...f.consolidation(apres(DEBUT, 0, 120))],
       apres(DEBUT, 0, 180),
       { statut: 'vu', manque: ['pratique_aide'] },
     )
@@ -220,7 +230,7 @@ function construireCas(): CasAcceptation[] {
     const f = fabrique()
     return cas(
       'Acquis, retest réussi à J+31, cible d’aisance atteinte',
-      [...jusquaAcquisAvecAisance(f), f.verification(apres(DEBUT, 34), { verification: 'retest' })],
+      jusquaMaitrise(f),
       apres(DEBUT, 34, 60),
       { statut: 'maitrise' },
     )
@@ -230,11 +240,7 @@ function construireCas(): CasAcceptation[] {
     const f = fabrique()
     return cas(
       'Maîtrisé, un retest raté sans erreur critique',
-      [
-        ...jusquaAcquisAvecAisance(f),
-        f.verification(apres(DEBUT, 34), { verification: 'retest' }),
-        f.verification(apres(DEBUT, 130), { verification: 'entretien', transfert: 'fragile' }),
-      ],
+      jusquaEntretienRate(f),
       apres(DEBUT, 130, 60),
       { statut: 'maitrise', echecsConsecutifs: 1 },
     )
@@ -245,9 +251,7 @@ function construireCas(): CasAcceptation[] {
     return cas(
       'Maîtrisé, deux retests ratés de suite',
       [
-        ...jusquaAcquisAvecAisance(f),
-        f.verification(apres(DEBUT, 34), { verification: 'retest' }),
-        f.verification(apres(DEBUT, 130), { verification: 'entretien', transfert: 'fragile' }),
+        ...jusquaEntretienRate(f),
         f.verification(apres(DEBUT, 132), { verification: 'entretien', tache: false }),
       ],
       apres(DEBUT, 132, 60),

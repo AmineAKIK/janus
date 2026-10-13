@@ -1,9 +1,14 @@
 import type { Reglages } from '@janus/contrats'
 import type { ResultatBloc } from './statut.ts'
-import { ajouterJours, ajouterMois, instantEnIso, instantEnMs, jourDe } from './temps.ts'
+import {
+  ajouterJours,
+  ajouterMois,
+  instantEnIso,
+  instantEnMs,
+  jourDe,
+  MS_PAR_MINUTE,
+} from './temps.ts'
 import type { Jour } from './temps.ts'
-
-const MS_PAR_MINUTE = 60_000
 
 export type TypeEcheance = 'consolidation' | 'verification' | 'retest' | 'entretien'
 
