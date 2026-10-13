@@ -2,6 +2,7 @@ import { nouvelId } from '@janus/contrats'
 import { z } from 'zod'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { baseDepuisPool } from '../../base/base.ts'
+import { creerCacheDesEtats } from '../../base/etatsDesBlocs.ts'
 import * as t from '../../base/schema/index.ts'
 import { creerBaseDeTest, URL_SERVEUR_TEST } from '../../base/testeurBase.ts'
 import { semerPlan } from '../../base/testeurPlan.ts'
@@ -50,6 +51,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('export.json en flux contre Post
       depot,
       horloge: horlogeFausse(MAINTENANT),
       aujourdhui: () => Promise.reject(new Error('inutilisé')),
+      etats: creerCacheDesEtats(),
     })
   })
   afterAll(async () => {

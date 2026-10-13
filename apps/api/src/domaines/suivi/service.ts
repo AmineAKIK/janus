@@ -14,6 +14,7 @@ import {
 import { nouvelId } from '@janus/contrats'
 import { maintenantActif, maintenantDeLaFormation } from '../../base/axeTemps.ts'
 import type { Base } from '../../base/base.ts'
+import type { CacheDesEtats } from '../../base/etatsDesBlocs.ts'
 import { formationActiveDe } from '../../base/formationActive.ts'
 import { verrouBloc } from '../../base/transaction.ts'
 import { Conflit, ContenuDifferent, Introuvable } from '../../erreurs.ts'
@@ -88,9 +89,11 @@ export interface DependancesService {
   readonly depot: DepotSuivi
   readonly horloge: Horloge
   readonly aujourdhui: LireAujourdhui
+  /** Les états des blocs gardés en mémoire, d'où le journal et l'export texte tirent leurs faits. */
+  readonly etats: CacheDesEtats
 }
 
-export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: DependancesService) {
+export function creerServiceSuivi({ base, depot, horloge, aujourdhui, etats }: DependancesService) {
   /** Les blocs importés avec leur module, leur partie et leur manifeste, comme le suivi les lit. */
   async function plan(reglages: Reglages) {
     const formationId = await formationActiveDe(base.db, reglages.formationActive)
@@ -106,10 +109,34 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
     }
   }
 
-  /** Le plan, et tous les faits de l'utilisateur sur ses blocs. */
+  /** Le plan, et tous les faits de l'utilisateur sur ses blocs, dans l'ordre des tables. */
   async function planEtFaits(userId: string, reglages: Reglages) {
     const lePlan = await plan(reglages)
     return { ...lePlan, faits: await lireFaits(base.db, userId, lePlan.lignes) }
+  }
+
+  /**
+   * Le plan, et les faits de l'utilisateur tirés des états gardés (rangés par bloc, dans l'ordre du plan).
+   * Pour ce qui ne dépend pas de l'ordre d'arrivée des faits : le journal et l'export texte. Le tableau de
+   * bord en dépend (la liste des erreurs sûres de sa calibration) et garde `planEtFaits`.
+   */
+  async function planEtFaitsGardes(userId: string, reglages: Reglages) {
+    const lePlan = await plan(reglages)
+    const gardes = await etats.etats(
+      base.db,
+      userId,
+      lePlan.lignes.map(({ id, code, versionId, manifeste }) => ({
+        id,
+        code,
+        versionId,
+        manifeste,
+      })),
+      reglages,
+    )
+    return {
+      ...lePlan,
+      faits: lePlan.lignes.flatMap(({ code }) => gardes.get(code)?.faits ?? []),
+    }
   }
 
   const identifiant = () => nouvelId(instantEnMs(horloge.maintenant()))
@@ -134,7 +161,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
       if (deja.length > 0) return noteLue(note.id, deja)
       const maintenant = await maintenantActif(base.db, horloge, userId)
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
-      const { lignes, blocs, faits } = await planEtFaits(userId, reglages)
+      const { lignes, blocs, faits } = await planEtFaitsGardes(userId, reglages)
       const ligne = ligneDuJournal(note.entree, { blocs, faits, reglages })
       const bloc = lignes.find(({ code }) => code === ligne?.bloc)
       if (ligne === undefined || bloc === undefined) {
@@ -222,7 +249,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
       },
     ) {
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
-      const { modules, blocs, faits, formationId } = await planEtFaits(userId, reglages)
+      const { modules, blocs, faits, formationId } = await planEtFaitsGardes(userId, reglages)
       const maintenant = await maintenantDeLaFormation(base.db, horloge, userId, formationId)
       return composerJournal({
         modules,
@@ -239,7 +266,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
     /** Le journal au format de la méthode, en texte brut. */
     async exportTexte(userId: string) {
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
-      const { blocs, faits, formationId } = await planEtFaits(userId, reglages)
+      const { blocs, faits, formationId } = await planEtFaitsGardes(userId, reglages)
       return composerExport({
         blocs,
         faits,
