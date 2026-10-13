@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process'
 import { readdir, readFile } from 'node:fs/promises'
 import { join, relative } from 'node:path'
 import { Catalogue, validerManifeste } from '@janus/contrats'
+import { pontEstPresent } from './assemblage.ts'
 import { extraireManifeste } from './domaines/catalogue/composition.ts'
 
 /** Le dossier des fiches d'une formation, à côté de son catalogue : `contenu/<formation>/fiches/`. */
@@ -83,6 +84,9 @@ export async function verifierLesFiches({
     const vues = new Map<string, string>()
     for (const fiche of fiches) {
       const signaler = (message: string) => problemes.push(`${fiche.nom} : ${message}`)
+      if (!pontEstPresent(fiche.html)) {
+        signaler('le pont de l’appli n’est pas dans la fiche : lance `pnpm fiches:assembler`.')
+      }
       const texte = extraireManifeste(fiche.html)
       if (texte === undefined) {
         signaler('aucun manifeste (<script type="application/json" id="bloc-manifest">).')

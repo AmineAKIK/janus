@@ -1,0 +1,1053 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fiche du bloc</title>
+    <link rel="icon" href="data:," />
+    <style>
+      /* Tokens copiés de l'appli (packages/ui/src/tokens.css) : la fiche n'y a pas accès. */
+      :root {
+        color-scheme: light dark;
+        --couleur-fond: light-dark(#ffffff, #14171a);
+        --couleur-surface: light-dark(#f7f8f9, #1a1e22);
+        --couleur-surface-douce: light-dark(#eff1f3, #272d33);
+        --couleur-ligne: light-dark(#e5e7ea, #2a3036);
+        --couleur-encre: light-dark(#1b1f24, #e8eaed);
+        --couleur-texte-secondaire: light-dark(#5b626b, #a3a9b0);
+        --couleur-accent: light-dark(#2c5d92, #8fb6e4);
+        --couleur-accent-sur-fond: light-dark(#ffffff, #0f1a28);
+        --couleur-succes: light-dark(#276f50, #5dc196);
+        --couleur-alerte: light-dark(#95620a, #e0ac4a);
+        --couleur-erreur: light-dark(#ae3846, #ee8591);
+        --couleur-focus: light-dark(#2b6cb0, #8bb9f5);
+        --focus-anneau: 0 0 0 2px var(--couleur-fond), 0 0 0 4px var(--couleur-focus);
+        --rayon-champ: 0.5rem;
+        --rayon-carte: 0.75rem;
+        font-family: 'Inter', system-ui, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--couleur-fond);
+        color: var(--couleur-encre);
+        line-height: 1.5;
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 1.5rem 1rem 3rem;
+      }
+      h1 {
+        margin: 0 0 0.25rem;
+        font-size: 1.5rem;
+        line-height: 1.3;
+      }
+      h2 {
+        margin: 0 0 0.75rem;
+        font-size: 1.25rem;
+      }
+      p {
+        margin: 0 0 0.75rem;
+      }
+      .discret {
+        color: var(--couleur-texte-secondaire);
+        font-size: 0.875rem;
+      }
+      .mode {
+        display: inline-block;
+        padding: 0.125rem 0.625rem;
+        border-radius: 999px;
+        background: var(--couleur-surface-douce);
+        font-size: 0.875rem;
+      }
+      /* Dans l'appli, le fil d'étapes est celui de la page : la fiche n'en montre pas un second. */
+      html[data-integree] nav {
+        display: none;
+      }
+      /* Le défilement reste, la barre n'est pas dessinée : elle prend de la place et enlaidit. */
+      html[data-integree] {
+        scrollbar-width: none;
+      }
+      html[data-integree]::-webkit-scrollbar {
+        display: none;
+      }
+      nav ol {
+        display: flex;
+        gap: 0.25rem;
+        margin: 1rem 0;
+        padding: 0;
+        overflow-x: auto;
+        list-style: none;
+      }
+      nav button {
+        min-height: 44px;
+        padding: 0 0.75rem;
+        border: 1px solid var(--couleur-ligne);
+        border-radius: var(--rayon-champ);
+        background: var(--couleur-surface);
+        color: inherit;
+        font: inherit;
+        font-size: 0.875rem;
+        white-space: nowrap;
+      }
+      nav button[aria-current='step'] {
+        border-color: var(--couleur-accent);
+        background: var(--couleur-surface-douce);
+        color: var(--couleur-accent);
+        font-weight: 600;
+      }
+      section {
+        padding: 1.25rem;
+        border: 1px solid var(--couleur-ligne);
+        border-radius: var(--rayon-carte);
+        background: var(--couleur-surface);
+      }
+      button,
+      textarea {
+        font: inherit;
+      }
+      .bouton {
+        min-height: 44px;
+        padding: 0 1rem;
+        border: 1px solid var(--couleur-accent);
+        border-radius: var(--rayon-champ);
+        background: var(--couleur-accent);
+        color: var(--couleur-accent-sur-fond);
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .bouton.secondaire {
+        background: transparent;
+        color: var(--couleur-accent);
+      }
+      .bouton:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      button:focus-visible,
+      textarea:focus-visible,
+      input:focus-visible {
+        outline: none;
+        box-shadow: var(--focus-anneau);
+      }
+      textarea {
+        width: 100%;
+        min-height: 7rem;
+        padding: 0.75rem;
+        border: 1px solid var(--couleur-ligne);
+        border-radius: var(--rayon-champ);
+        background: var(--couleur-fond);
+        color: inherit;
+      }
+      fieldset {
+        margin: 0.75rem 0;
+        padding: 0;
+        border: 0;
+      }
+      legend {
+        margin-bottom: 0.25rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+      }
+      .choix label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-height: 44px;
+        margin-right: 1rem;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+      }
+      .correction {
+        margin-top: 1rem;
+        padding: 0.75rem 1rem;
+        border-left: 4px solid var(--couleur-accent);
+        background: var(--couleur-surface-douce);
+        border-radius: var(--rayon-champ);
+      }
+      .correction[data-niveau='solide'] {
+        border-color: var(--couleur-succes);
+      }
+      .correction[data-niveau='fragile'],
+      .correction[data-niveau='pas_encore'] {
+        border-color: var(--couleur-erreur);
+      }
+      .correction[data-niveau='partiel'] {
+        border-color: var(--couleur-alerte);
+      }
+      .erreur {
+        color: var(--couleur-erreur);
+        font-size: 0.875rem;
+      }
+      ul.plain {
+        margin: 0 0 0.75rem;
+        padding-left: 1.25rem;
+      }
+      .item {
+        margin: 0.75rem 0;
+        padding: 0.75rem;
+        border: 1px solid var(--couleur-ligne);
+        border-radius: var(--rayon-champ);
+      }
+      .item[data-fait='oui'] {
+        border-color: var(--couleur-succes);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1 id="titre"></h1>
+        <p class="discret">
+          <span id="mode" class="mode" role="status">Connexion à l’appli…</span>
+          <span id="statut"></span>
+        </p>
+      </header>
+      <nav aria-label="Étapes de la fiche"><ol id="etapes"></ol></nav>
+      <div id="contenu"></div>
+    </main>
+
+    <!--
+      CONTENU LIBRE : un <template data-etape="ETx"> par étape à lire (ici l'explication, ET2).
+      Écris le HTML que tu veux : titres, listes, tableaux, schémas SVG, images ou audio en data:.
+      Un lien externe s'écrit <a data-lien="https://…">texte</a>.
+      Interdit : tout appel réseau (la CSP le coupe), tout fichier externe.
+    -->
+    <template data-etape="ET2">
+      <p>À REMPLACER : l'explication du bloc.</p>
+      <p>
+        Exemple de lien externe :
+        <a data-lien="https://developer.mozilla.org/fr/">documentation MDN</a>
+      </p>
+    </template>
+
+    <!-- L'énoncé de chaque item de pratique : un <template data-item="PR1-1"> par item. -->
+    <template data-item="PR1-1"><p>À REMPLACER : énoncé de l'item PR1-1.</p></template>
+    <template data-item="PR1-2"><p>À REMPLACER : énoncé de l'item PR1-2.</p></template>
+    <template data-item="PR1-3"><p>À REMPLACER : énoncé de l'item PR1-3.</p></template>
+
+    <script id="bloc-manifest" type="application/json">
+      {
+        "schema": 2,
+        "bloc": "X00",
+        "version": 1,
+        "type": "systemes",
+        "titre": "À REMPLACER : titre du bloc",
+        "titre_court": "À REMPLACER",
+        "objectif": "À REMPLACER : ce que tu sauras faire à la fin, vérifiable en une phrase.",
+        "prerequis": [],
+        "pont": 1,
+        "contexte_ia": "À REMPLACER : ce que le correcteur doit savoir du bloc (1 500 mots au plus) : notions, vocabulaire, pièges.",
+        "sources": [
+          {
+            "id": "S1",
+            "titre": "À REMPLACER : support utilisé"
+          }
+        ],
+        "etapes": [
+          {
+            "id": "ET1",
+            "titre": "Carte du bloc",
+            "type": "carte"
+          },
+          {
+            "id": "ET2",
+            "titre": "Explication",
+            "type": "explication"
+          },
+          {
+            "id": "ET3",
+            "titre": "Pratique",
+            "type": "pratique"
+          },
+          {
+            "id": "ET4",
+            "titre": "Restitution",
+            "type": "restitution"
+          },
+          {
+            "id": "ET5",
+            "titre": "Consolidation",
+            "type": "consolidation"
+          },
+          {
+            "id": "ET6",
+            "titre": "Bilan",
+            "type": "bilan"
+          }
+        ],
+        "erreurs_critiques": [
+          {
+            "id": "E1",
+            "libelle": "À REMPLACER : confusion centrale 1",
+            "etape": "ET2"
+          },
+          {
+            "id": "E2",
+            "libelle": "À REMPLACER : confusion centrale 2",
+            "etape": "ET2"
+          }
+        ],
+        "restitution": [
+          {
+            "id": "R1",
+            "question": "À REMPLACER : question R1.",
+            "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question R1).",
+            "erreurs": ["E1"]
+          },
+          {
+            "id": "R2",
+            "question": "À REMPLACER : question R2.",
+            "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question R2).",
+            "erreurs": ["E2"]
+          },
+          {
+            "id": "R3",
+            "question": "À REMPLACER : question R3.",
+            "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question R3).",
+            "erreurs": ["E1"]
+          },
+          {
+            "id": "R4",
+            "question": "À REMPLACER : question R4.",
+            "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question R4).",
+            "erreurs": ["E2"]
+          },
+          {
+            "id": "R5",
+            "question": "À REMPLACER : question R5.",
+            "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question R5).",
+            "erreurs": ["E1"]
+          }
+        ],
+        "consolidation": [
+          {
+            "id": "C1",
+            "question": "À REMPLACER : question C1.",
+            "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question C1).",
+            "erreurs": ["E1"]
+          },
+          {
+            "id": "C2",
+            "question": "À REMPLACER : question C2.",
+            "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question C2).",
+            "erreurs": ["E2"]
+          },
+          {
+            "id": "C3",
+            "question": "À REMPLACER : question C3.",
+            "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question C3).",
+            "erreurs": ["E1"]
+          }
+        ],
+        "rappel": [
+          {
+            "id": "Q1",
+            "question": "À REMPLACER : question Q1.",
+            "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question Q1).",
+            "erreurs": ["E1"]
+          },
+          {
+            "id": "Q2",
+            "question": "À REMPLACER : question Q2.",
+            "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question Q2).",
+            "erreurs": ["E2"]
+          },
+          {
+            "id": "Q3",
+            "question": "À REMPLACER : question Q3.",
+            "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question Q3).",
+            "erreurs": ["E1"]
+          },
+          {
+            "id": "Q4",
+            "question": "À REMPLACER : question Q4.",
+            "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question Q4).",
+            "erreurs": ["E2"]
+          },
+          {
+            "id": "Q5",
+            "question": "À REMPLACER : question Q5.",
+            "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question Q5).",
+            "erreurs": ["E1"]
+          },
+          {
+            "id": "Q6",
+            "question": "À REMPLACER : question Q6.",
+            "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question Q6).",
+            "erreurs": ["E2"]
+          }
+        ],
+        "differees": [
+          {
+            "id": "DE1",
+            "type": "explication",
+            "consigne": "À REMPLACER : explication 1.",
+            "attendu": "À REMPLACER.",
+            "erreurs": ["E1"]
+          },
+          {
+            "id": "DE2",
+            "type": "explication",
+            "consigne": "À REMPLACER : explication 2.",
+            "attendu": "À REMPLACER.",
+            "erreurs": ["E1"]
+          },
+          {
+            "id": "DE3",
+            "type": "explication",
+            "consigne": "À REMPLACER : explication 3.",
+            "attendu": "À REMPLACER.",
+            "erreurs": ["E1"]
+          },
+          {
+            "id": "DR1",
+            "type": "transfert",
+            "forme": "choisir_methode",
+            "consigne": "À REMPLACER : transfert 1.",
+            "attendu": "À REMPLACER.",
+            "erreurs": ["E2"]
+          },
+          {
+            "id": "DR2",
+            "type": "transfert",
+            "forme": "adapter_condition",
+            "consigne": "À REMPLACER : transfert 2.",
+            "attendu": "À REMPLACER.",
+            "erreurs": ["E2"]
+          },
+          {
+            "id": "DR3",
+            "type": "transfert",
+            "forme": "hors_champ",
+            "consigne": "À REMPLACER : transfert 3.",
+            "attendu": "À REMPLACER.",
+            "erreurs": ["E2"]
+          }
+        ],
+        "pratique": [
+          {
+            "id": "PR1",
+            "titre": "À REMPLACER : exercice",
+            "items": [
+              {
+                "id": "PR1-1"
+              },
+              {
+                "id": "PR1-2"
+              },
+              {
+                "id": "PR1-3"
+              }
+            ],
+            "reussite": 2
+          }
+        ],
+        "cartes": [
+          {
+            "id": "K1",
+            "recto": "À REMPLACER : recto 1",
+            "verso": "À REMPLACER : verso 1"
+          },
+          {
+            "id": "K2",
+            "recto": "À REMPLACER : recto 2",
+            "verso": "À REMPLACER : verso 2"
+          },
+          {
+            "id": "K3",
+            "recto": "À REMPLACER : recto 3",
+            "verso": "À REMPLACER : verso 3"
+          }
+        ]
+      }
+    </script>
+
+    <!-- La bibliothèque du pont est insérée ici au build (packages/pont/scripts/injecter.ts). -->
+    <script id="pont"></script>
+
+    <script>
+      'use strict'
+      const manifeste = JSON.parse(document.getElementById('bloc-manifest').textContent)
+      const CLE_ETAT = 'janus.fiche.' + manifeste.bloc + '.etat'
+      const ETAPES_FICHE = [
+        'carte',
+        'explication',
+        'pratique',
+        'atelier',
+        'restitution',
+        'consolidation',
+        'bilan',
+      ]
+      const LIBELLES_STATUT = {
+        non_commence: 'Non commencé',
+        en_cours: 'En cours',
+        vu: 'Vu',
+        acquis_provisoirement: 'Acquis provisoirement',
+        acquis: 'Acquis',
+        maitrise: 'Maîtrisé',
+        a_reprendre: 'À reprendre',
+      }
+      const etapes = manifeste.etapes.filter((etape) => ETAPES_FICHE.includes(etape.type))
+      const $ = (id) => document.getElementById(id)
+      $('titre').textContent = manifeste.titre
+      document.title = manifeste.titre
+
+      // --- Mode autonome : correction simulée et localStorage (sur claude.ai : Claude et localStorage) ---
+      /** Un UUID v7, comme l'exige le schéma d'une correction. */
+      function uuidV7() {
+        const temps = Date.now().toString(16).padStart(12, '0')
+        const h = Array.from(crypto.getRandomValues(new Uint8Array(12)), (o) =>
+          o.toString(16).padStart(2, '0'),
+        ).join('')
+        const variante = (8 + (parseInt(h[3], 16) & 3)).toString(16)
+        return (
+          temps.slice(0, 8) +
+          '-' +
+          temps.slice(8) +
+          '-7' +
+          h.slice(0, 3) +
+          '-' +
+          variante +
+          h.slice(4, 7) +
+          '-' +
+          h.slice(7, 19)
+        )
+      }
+      const mots = (texte) => texte.toLowerCase().match(/[a-zà-ÿ]+/g) ?? []
+      function corrigerLocalement(demande) {
+        const question = [...manifeste.restitution, ...manifeste.consolidation].find(
+          (q) => q.id === demande.question,
+        )
+        const reponse = demande.reponse.trim()
+        const base = {
+          id: uuidV7(),
+          echantillon: false,
+          question: demande.question,
+          tour: demande.relance === '' ? 1 : 2,
+          erreurs_critiques: [],
+          source: 'deduit',
+          ref: 'autonome',
+          certitude: 'non_verifie',
+          compte: true,
+        }
+        const message = (texte, niveau) => ({
+          ...base,
+          niveau,
+          message: 'Correction simulée (mode autonome) : ' + texte,
+        })
+        if (reponse.toLowerCase() === 'je ne sais pas')
+          return message('pas encore. Indice : relis la carte du bloc.', 'pas_encore')
+        if (reponse.length < 40) return message('réponse trop courte, développe.', 'fragile')
+        const attendus = mots(question ? question.attendu : '').filter((mot) => mot.length > 4)
+        const presents = attendus.filter((mot) => mots(reponse).includes(mot))
+        return presents.length * 2 >= attendus.length
+          ? message('solide.', 'solide')
+          : message('partiel, il manque des éléments.', 'partiel')
+      }
+      const autonome = {
+        ask: (demande) =>
+          new Promise((resoudre) => setTimeout(() => resoudre(corrigerLocalement(demande)), 800)),
+        sauver: (etat) => {
+          try {
+            localStorage.setItem(CLE_ETAT, JSON.stringify(etat))
+          } catch {
+            /* stockage indisponible */
+          }
+        },
+        charger: () => {
+          try {
+            return JSON.parse(localStorage.getItem(CLE_ETAT) ?? 'null')
+          } catch {
+            return null
+          }
+        },
+      }
+
+      // --- État de la page ---
+      let mode = 'autonome'
+      let serieOuverte = { restitution: true, consolidation: true }
+      let etat = { etape: etapes[0].id, envoyees: {}, retourCours: false, pratique: {} }
+      const corrections = {}
+      const pont = window.JanusPont
+      if (window.parent !== window) document.documentElement.dataset.integree = ''
+
+      function enregistrer() {
+        pont.sauver(etat)
+      }
+      function aller(id) {
+        etat.etape = id
+        pont.envoyer('etape.vue', { etape: id })
+        enregistrer()
+        afficher()
+      }
+
+      const questions = (serie) =>
+        serie === 'restitution' ? manifeste.restitution : manifeste.consolidation
+      const restitutionTerminee = () => manifeste.restitution.every((q) => etat.envoyees[q.id])
+      /** Restitution sans support : dès la première réponse, le cours est masqué jusqu'à la dernière, sauf retour au cours. */
+      const coursMasque = () =>
+        serieOuverte.restitution &&
+        Object.keys(etat.envoyees).length > 0 &&
+        !restitutionTerminee() &&
+        !etat.retourCours
+
+      function creer(balise, { dataset = {}, ...proprietes } = {}, ...enfants) {
+        const element = Object.assign(document.createElement(balise), proprietes)
+        Object.assign(element.dataset, dataset)
+        element.append(...enfants)
+        return element
+      }
+
+      function afficherEtapes() {
+        $('etapes').replaceChildren(
+          ...etapes.map((etape) => {
+            const bouton = creer('button', { type: 'button', textContent: etape.titre })
+            if (etape.id === etat.etape) bouton.setAttribute('aria-current', 'step')
+            bouton.addEventListener('click', () => aller(etape.id))
+            return creer('li', {}, bouton)
+          }),
+        )
+      }
+
+      function afficherCarte() {
+        return creer(
+          'section',
+          {},
+          creer('h2', { textContent: 'Carte du bloc' }),
+          creer('p', { textContent: manifeste.objectif }),
+          creer('p', { className: 'discret', textContent: manifeste.contexte_ia }),
+          creer(
+            'ul',
+            { className: 'plain' },
+            ...etapes.map((etape) => creer('li', { textContent: etape.titre })),
+          ),
+        )
+      }
+
+      /**
+       * Le contenu libre d'une étape : le `<template data-etape="ETx">` de la page, cloné tel quel.
+       * Tout ce qui est dans le gabarit (pont, masquage du cours, confiance, aide, messages) est fixe ;
+       * ce que dit le bloc et comment il le dit ne l'est pas.
+       */
+      function afficherLibre(etape) {
+        const modele = document.querySelector('template[data-etape="' + etape.id + '"]')
+        const section = creer('section', {}, creer('h2', { textContent: etape.titre }))
+        if (modele) section.append(modele.content.cloneNode(true))
+        else
+          section.append(
+            creer('p', { className: 'discret', textContent: 'Rien à lire dans cette étape.' }),
+          )
+        activerLiens(section)
+        return section
+      }
+
+      /**
+       * Un lien externe : `<a data-lien="https://…">texte</a>`. Dans l'appli, c'est elle qui ouvre
+       * l'adresse (message du pont) ; hors de l'appli, la page l'ouvre. L'adresse reste écrite à côté,
+       * au cas où le navigateur bloquerait l'ouverture.
+       */
+      function activerLiens(racine) {
+        for (const lien of racine.querySelectorAll('a[data-lien]')) {
+          const url = lien.dataset.lien
+          lien.setAttribute('href', url)
+          lien.addEventListener('click', (evenement) => {
+            evenement.preventDefault()
+            if (mode === 'appli') pont.envoyer('lien.ouvrir', { url })
+            else window.open(url, '_blank', 'noopener,noreferrer')
+          })
+          lien.after(creer('span', { className: 'discret', textContent: ' (' + url + ')' }))
+        }
+      }
+
+      function afficherPratique() {
+        const section = creer(
+          'section',
+          {},
+          creer('h2', { textContent: 'Pratique guidée' }),
+          creer('p', {
+            className: 'discret',
+            textContent:
+              'Indique si tu as réussi chaque item, et le cran d’aide utilisé (0 = aucune aide).',
+          }),
+        )
+        for (const exercice of manifeste.pratique) {
+          for (const item of exercice.items) {
+            const fait = etat.pratique[item.id]
+            let aide = 0
+            const resultat = creer('p', {
+              className: 'discret',
+              textContent: fait
+                ? 'Envoyé : ' + (fait.reussi ? 'réussi' : 'non réussi') + ', aide ' + fait.aide
+                : '',
+            })
+            const envoyer = (reussi) => {
+              const essais = (fait?.essais ?? 0) + 1
+              pont.envoyer('pratique.resultat', {
+                exercice: exercice.id,
+                item: item.id,
+                reussi,
+                aide,
+                essais,
+              })
+              etat.pratique[item.id] = { reussi, aide, essais }
+              enregistrer()
+              afficher()
+            }
+            const aides = [1, 2, 3, 4].map((cran) =>
+              creer('button', {
+                type: 'button',
+                className: 'bouton secondaire',
+                textContent: 'Aide ' + cran,
+                onclick: (e) => {
+                  aide = cran
+                  e.target.setAttribute('aria-pressed', 'true')
+                },
+              }),
+            )
+            // L'énoncé de l'item : <template data-item="PR1-1"> dans la page.
+            const enonce = document.querySelector('template[data-item="' + item.id + '"]')
+            const consigne = creer('div', {})
+            if (enonce) consigne.append(enonce.content.cloneNode(true))
+            activerLiens(consigne)
+            section.append(
+              creer(
+                'div',
+                { className: 'item', dataset: { fait: fait?.reussi ? 'oui' : 'non' } },
+                creer('strong', { textContent: 'Item ' + item.id }),
+                consigne,
+                creer('div', { className: 'actions' }, ...aides),
+                creer(
+                  'div',
+                  { className: 'actions' },
+                  creer('button', {
+                    type: 'button',
+                    className: 'bouton',
+                    textContent: 'J’ai réussi',
+                    onclick: () => envoyer(true),
+                  }),
+                  creer('button', {
+                    type: 'button',
+                    className: 'bouton secondaire',
+                    textContent: 'Pas réussi',
+                    onclick: () => envoyer(false),
+                  }),
+                ),
+                resultat,
+              ),
+            )
+          }
+        }
+        return section
+      }
+
+      function afficherAtelier() {
+        const section = creer(
+          'section',
+          {},
+          creer('h2', { textContent: 'Atelier' }),
+          creer('p', {
+            className: 'discret',
+            textContent: 'Dis si tu as réussi l’atelier, sans aide ou avec le cran d’aide utilisé.',
+          }),
+        )
+        const resultat = creer('p', {
+          className: 'discret',
+          textContent: etat.atelier
+            ? 'Envoyé : ' +
+              (etat.atelier.reussi ? 'réussi' : 'non réussi') +
+              ', aide ' +
+              etat.atelier.aide
+            : '',
+        })
+        const envoyer = (reussi, aide) => {
+          pont.envoyer('atelier.resultat', { reussi, predictions_justes: reussi ? 3 : 0, aide })
+          etat.atelier = { reussi, aide }
+          enregistrer()
+          resultat.textContent = 'Envoyé : ' + (reussi ? 'réussi' : 'non réussi') + ', aide ' + aide
+        }
+        section.append(
+          creer(
+            'div',
+            { className: 'actions' },
+            creer('button', {
+              type: 'button',
+              className: 'bouton',
+              textContent: 'Atelier réussi sans aide',
+              onclick: () => envoyer(true, 0),
+            }),
+            creer('button', {
+              type: 'button',
+              className: 'bouton secondaire',
+              textContent: 'Atelier pas réussi',
+              onclick: () => envoyer(false, 0),
+            }),
+          ),
+          resultat,
+        )
+        return section
+      }
+
+      function afficherSerie(serie, titre) {
+        if (!serieOuverte[serie])
+          return creer(
+            'section',
+            {},
+            creer('h2', { textContent: titre }),
+            creer('p', {
+              textContent:
+                serie === 'consolidation'
+                  ? 'La consolidation n’est pas encore ouverte : reviens plus tard.'
+                  : 'Cette série n’est pas ouverte.',
+            }),
+          )
+        const section = creer('section', {}, creer('h2', { textContent: titre }))
+        for (const question of questions(serie)) section.append(afficherQuestion(serie, question))
+        return section
+      }
+
+      function afficherQuestion(serie, question) {
+        const envoyee = etat.envoyees[question.id]
+        const zone = creer('textarea', {
+          id: 'rep-' + question.id,
+          value: envoyee ? envoyee.reponse : '',
+          disabled: Boolean(envoyee),
+        })
+        let colle = false
+        zone.addEventListener('paste', () => {
+          colle = true
+        })
+        const confiance = creer(
+          'fieldset',
+          { className: 'choix' },
+          creer('legend', { textContent: 'Ta confiance' }),
+          ...[
+            ['sur', 'Sûr'],
+            ['hesitant', 'Hésitant'],
+            ['hasard', 'Au hasard'],
+          ].map(([valeur, libelle]) =>
+            creer(
+              'label',
+              {},
+              creer('input', {
+                type: 'radio',
+                name: 'conf-' + question.id,
+                value: valeur,
+                disabled: Boolean(envoyee),
+                checked: envoyee?.confiance === valeur,
+              }),
+              libelle,
+            ),
+          ),
+        )
+        const message = creer('p', { className: 'erreur', role: 'alert' })
+        const sortie = creer('div', { 'aria-live': 'polite' })
+        const bouton = creer('button', {
+          type: 'button',
+          className: 'bouton',
+          textContent: 'Envoyer',
+          disabled: Boolean(envoyee),
+        })
+        bouton.addEventListener('click', async () => {
+          const choisie = confiance.querySelector('input:checked')
+          if (zone.value.trim() === '')
+            return void (message.textContent = 'Écris une réponse avant d’envoyer.')
+          if (!choisie) return void (message.textContent = 'Choisis ta confiance avant d’envoyer.')
+          message.textContent = ''
+          bouton.disabled = true
+          const precedente = corrections[question.id]
+          try {
+            const correction = await pont.demanderCorrection({
+              serie,
+              question: question.id,
+              reponse: zone.value,
+              confiance: choisie.value,
+              relance: precedente && precedente.niveau !== 'solide' ? precedente.message : '',
+              support: { colle, retour_cours: etat.retourCours },
+            })
+            corrections[question.id] = correction
+            sortie.replaceChildren(
+              creer(
+                'div',
+                { className: 'correction', dataset: { niveau: correction.niveau } },
+                creer('strong', { textContent: 'Niveau : ' + correction.niveau }),
+                creer('p', { textContent: correction.message }),
+              ),
+            )
+            if (correction.echantillon)
+              sortie.append(
+                creer(
+                  'p',
+                  {},
+                  "D'accord avec ce niveau ? ",
+                  ...[
+                    [true, 'Oui'],
+                    [false, 'Non'],
+                  ].map(([accord, libelle]) =>
+                    creer('button', {
+                      type: 'button',
+                      className: 'bouton secondaire',
+                      textContent: libelle,
+                      onclick: () => {
+                        pont.envoyer('correction.accord', { correction: correction.id, accord })
+                        sortie.lastChild.remove()
+                      },
+                    }),
+                  ),
+                ),
+              )
+            if (correction.niveau === 'solide' || correction.tour >= 2) {
+              etat.envoyees[question.id] = { reponse: zone.value, confiance: choisie.value }
+              enregistrer()
+              if (serie === 'restitution' && restitutionTerminee())
+                setTimeout(() => {
+                  // Redessiner rouvre le cours : seulement si on est encore à la restitution.
+                  if (etapes.find((e) => e.id === etat.etape)?.type === 'restitution') afficher()
+                }, 1200)
+            } else {
+              bouton.disabled = false
+              bouton.textContent = 'Répondre à la relance'
+            }
+          } catch (erreur) {
+            message.textContent =
+              'Correction impossible : ' +
+              (erreur && erreur.detail ? erreur.detail : erreur.message)
+            bouton.disabled = false
+          }
+        })
+        return creer(
+          'div',
+          { className: 'item' },
+          creer('label', { htmlFor: zone.id }, creer('strong', { textContent: question.question })),
+          zone,
+          confiance,
+          creer('div', { className: 'actions' }, bouton),
+          message,
+          sortie,
+        )
+      }
+
+      function afficherBilan() {
+        const ids = [...new Set(Object.values(corrections).flatMap((c) => c.erreurs_critiques))]
+        const section = creer(
+          'section',
+          {},
+          creer('h2', { textContent: 'Bilan' }),
+          creer('p', {
+            textContent:
+              ids.length === 0 ? 'Aucune erreur critique relevée.' : 'Erreurs critiques à revoir :',
+          }),
+          creer(
+            'ul',
+            { className: 'plain' },
+            ...ids.map((id) =>
+              creer('li', {
+                textContent: (
+                  manifeste.erreurs_critiques.find((e) => e.id === id) ?? { libelle: id }
+                ).libelle,
+              }),
+            ),
+          ),
+          creer('button', {
+            type: 'button',
+            className: 'bouton',
+            textContent: 'Envoyer le bilan',
+            onclick: () => pont.envoyer('bilan.erreurs', { ids }),
+          }),
+        )
+        return section
+      }
+
+      function afficher() {
+        afficherEtapes()
+        const etape = etapes.find((e) => e.id === etat.etape) ?? etapes[0]
+        const cours = etape.type === 'explication' || etape.type === 'pratique'
+        let vue
+        if (cours && coursMasque()) {
+          vue = creer(
+            'section',
+            {},
+            creer('h2', { textContent: etape.titre }),
+            creer('p', {
+              textContent:
+                'Masqué : la restitution se fait sans le cours. Il s’ouvrira après ta dernière réponse.',
+            }),
+            creer('button', {
+              type: 'button',
+              className: 'bouton secondaire',
+              textContent: 'Revenir au cours',
+              onclick: () => {
+                etat.retourCours = true
+                enregistrer()
+                afficher()
+              },
+            }),
+            creer('p', {
+              className: 'discret',
+              textContent: 'Tes prochaines réponses seront alors marquées « retour au cours ».',
+            }),
+          )
+        } else
+          vue =
+            {
+              carte: afficherCarte,
+              explication: () => afficherLibre(etape),
+              pratique: afficherPratique,
+              atelier: afficherAtelier,
+              restitution: () => afficherSerie('restitution', 'Restitution'),
+              consolidation: () => afficherSerie('consolidation', 'Consolidation'),
+              bilan: afficherBilan,
+            }[etape.type]?.() ??
+            creer('p', {
+              className: 'discret',
+              textContent: 'Cette étape n’est pas dans cette fiche.',
+            })
+        $('contenu').replaceChildren(vue)
+      }
+
+      async function demarrer() {
+        if (!pont) {
+          $('mode').textContent = 'Pont indisponible'
+          return
+        }
+        pont.surStatut(({ statut }) => {
+          $('statut').textContent = 'Statut : ' + (LIBELLES_STATUT[statut] ?? statut)
+        })
+        pont.surErreur((erreur) => {
+          $('statut').textContent = 'Erreur : ' + erreur.detail
+        })
+        pont.surEtape((id) => {
+          if (etapes.some((e) => e.id === id)) aller(id)
+        })
+        const depart = await pont.demarrer({
+          manifeste: { bloc: manifeste.bloc, version: manifeste.version },
+          autonome,
+        })
+        mode = depart.mode
+        $('mode').textContent = mode === 'appli' ? 'Dans l’appli' : 'Mode autonome'
+        if (depart.init) {
+          serieOuverte = depart.init.serie_ouverte
+          $('statut').textContent =
+            'Statut : ' + (LIBELLES_STATUT[depart.init.statut] ?? depart.init.statut)
+        }
+        pont.surInit((init) => {
+          const consolidationChangee =
+            serieOuverte.consolidation !== init.serie_ouverte.consolidation
+          serieOuverte = init.serie_ouverte
+          // Redessiner efface les corrections affichées : seulement quand la consolidation s'ouvre.
+          if (consolidationChangee) afficher()
+        })
+        if (depart.etat && typeof depart.etat === 'object') etat = { ...etat, ...depart.etat }
+        afficher()
+      }
+      void demarrer()
+    </script>
+  </body>
+</html>
