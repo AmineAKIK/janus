@@ -170,6 +170,12 @@ export function useHoteFiche(
           if (courantes.etatPage !== null)
             boite.fixerVersion(courantes.bloc, courantes.etatPage.version)
           envoyerInit()
+          // etat.init ne porte pas ce qui manque : la fiche le reçoit aussitôt (erreurs ouvertes du bilan).
+          vers({
+            type: 'statut.maj',
+            statut: dernieres.current.statut.statut,
+            manque: [...dernieres.current.statut.manque],
+          })
           if (etapeAMontrer.current !== undefined) {
             vers({ type: 'etape.aller', etape: etapeAMontrer.current })
             etapeAMontrer.current = undefined

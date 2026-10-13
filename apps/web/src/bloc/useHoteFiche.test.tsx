@@ -63,13 +63,19 @@ describe('page d’un bloc', () => {
     expect(iframe.getAttribute('src')).toContain('fiche-demo.html')
   })
 
-  it('fait la poignée de main : page.prete reçoit etat.init avec le bloc, la version et le statut', async () => {
+  it('fait la poignée de main : page.prete reçoit etat.init avec le bloc, la version et le statut, puis ce qui manque', async () => {
     const { envoyer, recu } = await afficher()
 
     await envoyer(prete)
 
-    expect(recu).toHaveBeenCalledOnce()
-    expect(recu).toHaveBeenCalledWith(
+    expect(recu).toHaveBeenCalledTimes(2)
+    expect(recu).toHaveBeenNthCalledWith(
+      2,
+      { type: 'statut.maj', statut: 'en_cours', manque: expect.any(Array) as unknown },
+      '*',
+    )
+    expect(recu).toHaveBeenNthCalledWith(
+      1,
       expect.objectContaining({
         type: 'etat.init',
         bloc: 'B03',
