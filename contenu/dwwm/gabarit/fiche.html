@@ -244,12 +244,22 @@
         clip-path: inset(50%);
         white-space: nowrap;
       }
-      /* Le défilement reste, la barre n'est pas dessinée : elle prend de la place et enlaidit. */
+      /*
+       * Dans l'appli, l'iframe prend la hauteur du contenu (message page.taille) : la fiche ne défile
+       * pas seule. Elle se pose sur le fond de la page, ses cartes ont la largeur de celle du haut.
+       */
       html[data-integree] {
         scrollbar-width: none;
       }
       html[data-integree]::-webkit-scrollbar {
         display: none;
+      }
+      html[data-integree] body {
+        background: transparent;
+      }
+      html[data-integree] main {
+        max-width: none;
+        padding: 0;
       }
 
       /* Page : une colonne, des cartes séparées par le même intervalle que dans l'appli. */
@@ -260,6 +270,17 @@
         max-width: 760px;
         margin: 0 auto;
         padding: var(--espacement-16) var(--espacement-16) var(--espacement-48);
+      }
+      /* Une erreur de l'appli : la barre est cachée dans l'appli, l'avis passe au-dessus de l'étape. */
+      .avis {
+        margin: 0;
+        padding: var(--espacement-12) var(--espacement-16);
+        border: 1px solid var(--couleur-erreur);
+        border-radius: var(--rayon-champ);
+        background: var(--couleur-surface);
+        color: var(--couleur-erreur);
+        font-size: 0.875rem;
+        line-height: 1.25rem;
       }
       #contenu {
         display: flex;
@@ -288,7 +309,8 @@
         gap: var(--espacement-12);
         min-width: 0;
       }
-      .ecran[hidden] {
+      .ecran[hidden],
+      .bouton[hidden] {
         display: none;
       }
       h2 {
@@ -458,6 +480,11 @@
         min-height: 7rem;
         padding: var(--espacement-12);
         resize: vertical;
+        field-sizing: content;
+      }
+      .reponse-envoyee {
+        white-space: pre-line;
+        overflow-wrap: anywhere;
       }
       textarea:disabled,
       input:disabled {
@@ -501,6 +528,17 @@
       }
       .item[data-fait='oui'] {
         border-color: var(--couleur-succes);
+      }
+      /* Une question à reprendre : la couleur du statut « À reprendre » de l'appli. */
+      .item[data-fait='reprise'] {
+        border-color: var(--couleur-erreur);
+      }
+      .item-reprise {
+        margin: 0;
+        color: var(--couleur-erreur);
+        font-size: 0.875rem;
+        font-weight: 500;
+        line-height: 1.25rem;
       }
       .erreur {
         margin: 0;
@@ -614,6 +652,22 @@
       .correction + p {
         margin: 0;
       }
+      /* BadgeNeComptePas de l'appli : une réponse qui ne compte pas pour le statut, et pourquoi. */
+      .badge-compte {
+        display: inline-flex;
+        align-items: center;
+        align-self: flex-start;
+        min-height: 1.75rem;
+        padding: 0 var(--espacement-12);
+        border: 1px solid var(--couleur-ligne);
+        border-radius: 999px;
+        background: var(--couleur-surface-douce);
+        color: var(--couleur-texte-secondaire);
+        font-size: 0.75rem;
+        font-weight: 500;
+        line-height: 1rem;
+        white-space: nowrap;
+      }
 
       /* Détails repliables. */
       details {
@@ -715,6 +769,110 @@
       }
       .ecran-nav .bouton {
         flex: 1 1 8rem;
+      }
+      /* Le pied d'une étape : pleine largeur sur téléphone, à droite sur un écran large. */
+      .pied {
+        margin-block-start: var(--espacement-8);
+      }
+      .pied .bouton {
+        flex-basis: 12rem;
+      }
+      @media (min-width: 40rem) {
+        .pied {
+          justify-content: flex-end;
+        }
+        .pied .bouton {
+          flex: 0 1 auto;
+        }
+      }
+      .retour {
+        font-weight: 500;
+      }
+      .retour:empty {
+        display: none;
+      }
+
+      /* Bilan : ce qui est fait (coche verte) et ce qui reste (rond vide). */
+      .bilan-liste {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-8);
+        padding: 0;
+        list-style: none;
+      }
+      .bilan-liste > li {
+        display: flex;
+        gap: var(--espacement-8);
+      }
+      .bilan-liste > li + li {
+        margin-top: 0;
+      }
+      .bilan-liste > li::before {
+        flex: none;
+        width: 1.25rem;
+        color: var(--couleur-texte-secondaire);
+        text-align: center;
+        content: '○';
+      }
+      .bilan-liste > li[data-fait='oui']::before {
+        color: var(--couleur-succes);
+        font-weight: 600;
+        content: '✓';
+      }
+      /* Les erreurs critiques à cocher : CaseACocher de l'appli, une par ligne. */
+      .cases {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        gap: 0;
+        margin-block-start: var(--espacement-8);
+      }
+      .cases legend {
+        margin-block-end: var(--espacement-4);
+        color: var(--couleur-encre);
+        font-size: 1.125rem;
+        font-weight: 600;
+        line-height: 1.625rem;
+      }
+      .cases label {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.625rem;
+        min-height: var(--cible-tactile-min);
+        padding-block: 0.5rem;
+        cursor: pointer;
+      }
+      .cases input[type='checkbox'] {
+        display: grid;
+        flex: none;
+        place-items: center;
+        width: 1.375rem;
+        height: 1.375rem;
+        margin: 0.0625rem 0 0;
+        border: 2px solid var(--couleur-texte-secondaire);
+        border-radius: 0.25rem;
+        background: var(--couleur-surface);
+        appearance: none;
+        cursor: pointer;
+      }
+      .cases input[type='checkbox']:checked {
+        border-color: var(--couleur-accent);
+        background: var(--couleur-accent);
+      }
+      .cases input[type='checkbox']:checked::after {
+        width: 0.375rem;
+        height: 0.75rem;
+        border: solid var(--couleur-accent-sur-fond);
+        border-width: 0 3px 3px 0;
+        transform: translateY(-1px) rotate(45deg);
+        content: '';
+      }
+      .cases input[type='checkbox']:focus-visible {
+        outline: none;
+        box-shadow: var(--focus-anneau);
+      }
+      .cases label > span {
+        display: flex;
+        flex-direction: column;
       }
 
       /* Pratique : un item à la fois. */
@@ -836,6 +994,7 @@
       <ol id="etapes" class="etapes"></ol>
     </nav>
     <main>
+      <p id="avis" class="avis" role="alert" hidden></p>
       <div id="contenu"></div>
     </main>
 
@@ -1167,10 +1326,10 @@
         const message = (texte, niveau) => ({
           ...base,
           niveau,
-          message: 'Correction simulée (mode autonome) : ' + texte,
+          message: 'Correction simulée (mode autonome)\u00a0: ' + texte,
         })
         if (reponse.toLowerCase() === 'je ne sais pas')
-          return message('pas encore. Indice : relis la carte du bloc.', 'pas_encore')
+          return message('pas encore. Indice\u00a0: relis la carte du bloc.', 'pas_encore')
         if (reponse.length < 40) return message('réponse trop courte, développe.', 'fragile')
         const attendus = mots(question ? question.attendu : '').filter((mot) => mot.length > 4)
         const presents = attendus.filter((mot) => mots(reponse).includes(mot))
@@ -1204,6 +1363,14 @@
       const corrections = {}
       const pont = window.JanusPont
       if (window.parent !== window) document.documentElement.dataset.integree = ''
+      /** Le dernier statut reçu de l'appli : `manque` dit, entre autres, les erreurs encore ouvertes. */
+      let dernierStatut = null
+      /** Remet à jour le bouton « Étape suivante » de l'étape affichée (après une réponse envoyée). */
+      let majPied = () => {}
+      /** Remet à jour le bilan affiché quand un statut arrive. */
+      let majBilan = () => {}
+      /** Le dernier bilan envoyé depuis cette page : son identifiant, pour reconnaître un refus. */
+      let bilanEnvoye = null
 
       function enregistrer() {
         pont.sauver(etat)
@@ -1213,11 +1380,43 @@
         pont.envoyer('etape.vue', { etape: id })
         enregistrer()
         afficher()
+        remonter($('contenu'))
       }
+      /**
+       * Nouvel écran ou nouvelle étape : son haut revient à l'écran. Dans l'appli, la fiche ne défile
+       * pas seule (l'iframe a la hauteur du contenu) : c'est l'appli qui remonte, si besoin.
+       */
+      function remonter(element) {
+        if (mode === 'appli') pont.envoyer('page.haut', {})
+        else element.scrollIntoView({ block: 'start' })
+      }
+      const pluriel = (nombre, singulier, plusieurs) =>
+        nombre + ' ' + (nombre > 1 ? plusieurs : singulier)
 
       const questions = (serie) =>
         serie === 'restitution' ? manifeste.restitution : manifeste.consolidation
       const restitutionTerminee = () => manifeste.restitution.every((q) => etat.envoyees[q.id])
+      const reponsesFinies = (serie) => questions(serie).filter((q) => etat.envoyees[q.id]).length
+      /**
+       * Ce qui retient dans une étape : les questions d'une série ouverte qui n'ont pas encore leur
+       * réponse finale. On ne quitte pas une restitution ou une consolidation à moitié faite.
+       */
+      function resteAFaire(etape) {
+        if (etape.type !== 'restitution' && etape.type !== 'consolidation') return ''
+        if (!serieOuverte[etape.type]) return ''
+        const total = questions(etape.type).length
+        const finies = reponsesFinies(etape.type)
+        if (finies === total) return ''
+        return (
+          'Termine les ' +
+          total +
+          ' questions avant de passer à la suite\u00a0: ' +
+          finies +
+          ' sur\u00a0' +
+          total +
+          ' pour l’instant.'
+        )
+      }
       /** Restitution sans support : dès la première réponse, le cours est masqué jusqu'à la dernière, sauf retour au cours. */
       const coursMasque = () =>
         serieOuverte.restitution &&
@@ -1230,6 +1429,32 @@
         Object.assign(element.dataset, dataset)
         element.append(...enfants)
         return element
+      }
+
+      /**
+       * Le pied d'une étape : le bouton vers l'étape d'après. Tant qu'une série ouverte n'a pas toutes
+       * ses réponses, il reste inactif et dit ce qui manque.
+       */
+      function piedEtape(etape, libelle = 'Étape suivante') {
+        const suivante = etapes[etapes.findIndex((e) => e.id === etape.id) + 1]
+        if (!suivante) return []
+        const bouton = creer('button', {
+          type: 'button',
+          className: 'bouton',
+          textContent: libelle,
+        })
+        const raison = creer('p', { className: 'discret' })
+        bouton.addEventListener('click', () => {
+          if (resteAFaire(etape) === '') aller(suivante.id)
+        })
+        majPied = () => {
+          const reste = resteAFaire(etape)
+          bouton.disabled = reste !== ''
+          raison.textContent = reste
+          raison.hidden = reste === ''
+        }
+        majPied()
+        return [creer('div', { className: 'ecran-nav pied' }, bouton), raison]
       }
 
       /** Le fil d'étapes de l'aperçu : même forme que celui de l'appli (onglets, ou liste repliable en étroit). */
@@ -1291,7 +1516,40 @@
               ...etapes.map((etape) => creer('li', { textContent: etape.titre })),
             ),
           )
+        section.append(...piedEtape(etapes[0], 'Commencer'))
         return section
+      }
+
+      /**
+       * Les voix françaises, de la meilleure à la moins bonne : Charline (Edge) d'abord, puis les voix
+       * naturelles. À rang égal, une voix de France passe avant une voix de Belgique ou du Canada.
+       */
+      const PREFERENCES_VOIX = [
+        /charline/i,
+        /denise|vivienne|eloise/i,
+        /natural|neural|online|enhanced|premium|améliorée/i,
+        /google/i,
+      ]
+      function rangVoix(voix) {
+        const rang = PREFERENCES_VOIX.findIndex((motif) => motif.test(voix.name))
+        const france = voix.lang.toLowerCase().replace('_', '-').startsWith('fr-fr')
+        return (rang < 0 ? PREFERENCES_VOIX.length : rang) * 2 + (france ? 0 : 1)
+      }
+      function meilleureVoix(voix) {
+        return voix
+          .filter((v) => v.lang.toLowerCase().startsWith('fr'))
+          .sort((a, b) => rangVoix(a) - rangVoix(b))[0]
+      }
+      /** Les voix du navigateur : Chrome ne les donne qu'après un premier appel, d'où l'attente. */
+      function voixDuNavigateur() {
+        const synthese = window.speechSynthesis
+        const voix = synthese.getVoices()
+        if (voix.length > 0) return Promise.resolve(voix)
+        return new Promise((resoudre) => {
+          const fin = () => resoudre(synthese.getVoices())
+          synthese.addEventListener('voiceschanged', fin, { once: true })
+          setTimeout(fin, 1500)
+        })
       }
 
       /**
@@ -1313,6 +1571,7 @@
         if (ecrans.length < 2) {
           section.append(contenu)
           activerLiens(section)
+          section.append(...piedEtape(etape))
           return section
         }
         // Plusieurs écrans : un seul visible à la fois, les autres restent dans la page (outils déjà montés).
@@ -1330,14 +1589,6 @@
         })
         const avancer = creer('button', { type: 'button', className: 'bouton' })
         let courant = Math.min(etat.ecrans?.[etape.id] ?? 0, ecrans.length - 1)
-        const voix = () => {
-          const fr = (window.speechSynthesis?.getVoices() ?? []).filter((v) =>
-            v.lang.toLowerCase().startsWith('fr'),
-          )
-          return (
-            fr.find((v) => /charline|denise|eloise|vivienne|hortense|julie/i.test(v.name)) ?? fr[0]
-          )
-        }
         const texteLu = (ecran) =>
           ecran.dataset.lecture ??
           Array.from(ecran.querySelectorAll(':scope > h3, :scope > p, :scope > ul > li'))
@@ -1348,17 +1599,27 @@
           ecouter.textContent = 'Écouter'
           ecouter.dataset.actif = 'non'
         }
+        const lire = (voix) => {
+          const parole = new SpeechSynthesisUtterance(texteLu(ecrans[courant]))
+          const choisie = meilleureVoix(voix)
+          parole.lang = choisie?.lang ?? 'fr-FR'
+          if (choisie) parole.voice = choisie
+          parole.onend = arreter
+          parole.onerror = arreter
+          window.speechSynthesis.speak(parole)
+        }
         ecouter.addEventListener('click', () => {
           if (!window.speechSynthesis) return void (ecouter.textContent = 'Lecture indisponible')
           if (ecouter.dataset.actif === 'oui') return arreter()
-          const parole = new SpeechSynthesisUtterance(texteLu(ecrans[courant]))
-          parole.lang = 'fr-FR'
-          const choisie = voix()
-          if (choisie) parole.voice = choisie
-          parole.onend = arreter
-          window.speechSynthesis.speak(parole)
           ecouter.dataset.actif = 'oui'
           ecouter.textContent = 'Arrêter'
+          // Lire tout de suite si les voix sont là (Safari exige le geste) ; sinon les attendre (Chrome).
+          const voix = window.speechSynthesis.getVoices()
+          if (voix.length > 0) lire(voix)
+          else
+            void voixDuNavigateur().then((chargees) => {
+              if (ecouter.dataset.actif === 'oui') lire(chargees)
+            })
         })
         const montrer = (k) => {
           arreter()
@@ -1378,12 +1639,12 @@
         }
         precedent.addEventListener('click', () => {
           montrer(courant - 1)
-          section.scrollIntoView({ block: 'start' })
+          remonter(section)
         })
         avancer.addEventListener('click', () => {
           if (courant < ecrans.length - 1) {
             montrer(courant + 1)
-            section.scrollIntoView({ block: 'start' })
+            remonter(section)
           } else if (suivante) aller(suivante.id)
         })
         for (const e of ecrans) e.classList.add('ecran')
@@ -1430,10 +1691,12 @@
         const nbReussis = liste.filter(reussi).length
         const fait = etat.pratique[item.id]
         let aide = 0
+        const etape = etapes.find((e) => e.type === 'pratique')
         const aller_a = (k) => {
           etat.itemCourant = Math.min(Math.max(k, 0), liste.length - 1)
           enregistrer()
           afficher()
+          remonter($('contenu'))
         }
         const points = creer(
           'div',
@@ -1459,7 +1722,7 @@
         const resultat = creer('p', {
           className: 'discret',
           textContent: fait
-            ? 'Envoyé : ' + (fait.reussi ? 'réussi' : 'non réussi') + ', aide ' + fait.aide
+            ? 'Envoyé\u00a0: ' + (fait.reussi ? 'réussi' : 'non réussi') + ', aide ' + fait.aide
             : '',
         })
         const envoyer = (ok) => {
@@ -1476,6 +1739,7 @@
           if (ok && suivant >= 0) etat.itemCourant = suivant
           enregistrer()
           afficher()
+          if (ok && suivant >= 0) remonter($('contenu'))
         }
         const aides = [1, 2, 3, 4].map((cran) => {
           const b = creer('button', {
@@ -1502,7 +1766,12 @@
           creer('p', {
             className: 'discret',
             textContent:
-              nbReussis + ' réussi' + (nbReussis > 1 ? 's' : '') + ' sur ' + liste.length + '.',
+              nbReussis +
+              ' réussi' +
+              (nbReussis > 1 ? 's' : '') +
+              ' sur\u00a0' +
+              liste.length +
+              '.',
           }),
           points,
           creer(
@@ -1526,7 +1795,7 @@
               creer('p', {
                 className: 'discret',
                 textContent:
-                  'Niveau d’aide utilisé : 1 = une question qui t’oriente, 2 = un indice, 3 = l’étape détaillée, 4 = la solution complète.',
+                  'Niveau d’aide utilisé\u00a0: 1 = une question qui t’oriente, 2 = un indice, 3 = l’étape détaillée, 4 = la solution complète.',
               }),
               creer('div', { className: 'actions' }, ...aides),
             ),
@@ -1566,6 +1835,7 @@
               onclick: () => aller_a(index + 1),
             }),
           ),
+          ...piedEtape(etape),
         )
       }
 
@@ -1582,7 +1852,7 @@
         const resultat = creer('p', {
           className: 'discret',
           textContent: etat.atelier
-            ? 'Envoyé : ' +
+            ? 'Envoyé\u00a0: ' +
               (etat.atelier.reussi ? 'réussi' : 'non réussi') +
               ', aide ' +
               etat.atelier.aide
@@ -1592,7 +1862,8 @@
           pont.envoyer('atelier.resultat', { reussi, predictions_justes: reussi ? 3 : 0, aide })
           etat.atelier = { reussi, aide }
           enregistrer()
-          resultat.textContent = 'Envoyé : ' + (reussi ? 'réussi' : 'non réussi') + ', aide ' + aide
+          resultat.textContent =
+            'Envoyé\u00a0: ' + (reussi ? 'réussi' : 'non réussi') + ', aide ' + aide
         }
         section.append(
           creer(
@@ -1612,25 +1883,77 @@
             }),
           ),
           resultat,
+          ...piedEtape(etapes.find((e) => e.type === 'atelier')),
         )
         return section
       }
 
+      /** Une réponse déjà envoyée : lisible, avec sa correction si elle est encore en mémoire. */
+      function carteEnvoyee(question) {
+        return creer(
+          'div',
+          { className: 'item', dataset: { fait: 'oui' } },
+          creer('strong', { textContent: question.question }),
+          creer('p', {
+            className: 'reponse-envoyee',
+            textContent: etat.envoyees[question.id].reponse,
+          }),
+          ...(corrections[question.id] ? [bulleCorrection(corrections[question.id])] : []),
+        )
+      }
+
       function afficherSerie(serie, titre) {
-        if (!serieOuverte[serie])
+        const etape = etapes.find((e) => e.type === serie)
+        const total = questions(serie).length
+        const finie = reponsesFinies(serie) === total
+        const envoyees = questions(serie).filter((q) => etat.envoyees[q.id])
+        if (!serieOuverte[serie]) {
           return creer(
             'section',
             {},
             creer('h2', { textContent: titre }),
             creer('p', {
-              textContent:
-                serie === 'consolidation'
-                  ? 'La consolidation n’est pas encore ouverte : reviens plus tard.'
+              textContent: finie
+                ? titre + ' terminée\u00a0: tes ' + total + ' réponses sont envoyées.'
+                : serie === 'consolidation'
+                  ? 'La consolidation n’est pas encore ouverte\u00a0: reviens plus tard.'
                   : 'Cette série n’est pas ouverte.',
             }),
+            ...envoyees.map(carteEnvoyee),
+            ...piedEtape(etape),
           )
+        }
+        // Série ouverte : les réponses envoyées se lisent, les autres questions attendent leur réponse.
+        // Une question qui touche une erreur critique ouverte se repose (restitution rouverte).
+        const refaire = aRefaire(serie)
         const section = creer('section', {}, creer('h2', { textContent: titre }))
-        for (const question of questions(serie)) section.append(afficherQuestion(serie, question))
+        const aRefermer = erreursAReprendre(refaire).length
+        if (aRefermer > 0)
+          section.append(
+            creer('p', {
+              textContent:
+                (aRefermer > 1
+                  ? aRefermer +
+                    ' erreurs critiques sont cochées dans ton bilan. Pour chacune, réponds'
+                  : 'Une erreur critique est cochée dans ton bilan. Réponds') +
+                ' de nouveau à une question marquée «\u00a0À reprendre\u00a0»\u00a0: une réponse solide la referme.',
+            }),
+          )
+        else if (finie)
+          section.append(
+            creer('p', {
+              textContent: titre + ' terminée\u00a0: tes ' + total + ' réponses sont envoyées.',
+            }),
+          )
+        for (const question of questions(serie)) {
+          const reprise = refaire.includes(question)
+          section.append(
+            etat.envoyees[question.id] && !reprise
+              ? carteEnvoyee(question)
+              : afficherQuestion(serie, question, reprise),
+          )
+        }
+        section.append(...piedEtape(etape))
         return section
       }
 
@@ -1641,8 +1964,45 @@
         pas_encore: 'Pas encore',
       }
 
-      function afficherQuestion(serie, question) {
-        const envoyee = etat.envoyees[question.id]
+      const LIBELLES_RAISON = {
+        relance: 'Relance',
+        avec_support: 'Avec support',
+        recopiee: 'Recopiée',
+        non_verifiee: 'Non vérifiée',
+      }
+
+      /**
+       * La correction d'une réponse : BulleCorrection de l'appli, et son badge quand la réponse ne
+       * compte pas pour le statut (une réponse recopiée ne referme pas d'erreur, par exemple).
+       */
+      function bulleCorrection(correction) {
+        return creer(
+          'div',
+          { className: 'correction', dataset: { niveau: correction.niveau } },
+          creer('strong', {
+            textContent: LIBELLES_NIVEAU[correction.niveau] ?? correction.niveau,
+          }),
+          creer('p', { textContent: correction.message }),
+          ...(!correction.compte && correction.raison_non_compte
+            ? [
+                creer('span', {
+                  className: 'badge-compte',
+                  textContent:
+                    'Ne compte pas · ' +
+                    (LIBELLES_RAISON[correction.raison_non_compte] ?? correction.raison_non_compte),
+                }),
+              ]
+            : []),
+        )
+      }
+
+      /**
+       * Une question de la série, à répondre. `reprise` : elle a déjà sa réponse mais touche une erreur
+       * critique ouverte ; on y répond de nouveau, depuis zéro (nouvelle tentative, premier tour).
+       */
+      function afficherQuestion(serie, question, reprise = false) {
+        const envoyee = reprise ? undefined : etat.envoyees[question.id]
+        if (reprise) delete corrections[question.id]
         const zone = creer('textarea', {
           id: 'rep-' + question.id,
           value: envoyee ? envoyee.reponse : '',
@@ -1701,22 +2061,22 @@
               support: { colle, retour_cours: etat.retourCours },
             })
             corrections[question.id] = correction
-            sortie.replaceChildren(
-              creer(
-                'div',
-                { className: 'correction', dataset: { niveau: correction.niveau } },
-                creer('strong', {
-                  textContent: LIBELLES_NIVEAU[correction.niveau] ?? correction.niveau,
-                }),
-                creer('p', { textContent: correction.message }),
-              ),
-            )
+            // Les erreurs repérées par le correcteur restent connues après un rechargement (bilan).
+            if (correction.erreurs_critiques.length > 0) {
+              const deja = etat.erreurs?.[question.id] ?? []
+              etat.erreurs = {
+                ...(etat.erreurs ?? {}),
+                [question.id]: [...new Set([...deja, ...correction.erreurs_critiques])],
+              }
+              enregistrer()
+            }
+            sortie.replaceChildren(bulleCorrection(correction))
             if (correction.echantillon)
               sortie.append(
                 creer(
                   'p',
                   {},
-                  "D'accord avec ce niveau ? ",
+                  'D’accord avec ce niveau\u00a0? ',
                   ...[
                     [true, 'Oui'],
                     [false, 'Non'],
@@ -1736,25 +2096,34 @@
             if (correction.niveau === 'solide' || correction.tour >= 2) {
               etat.envoyees[question.id] = { reponse: zone.value, confiance: choisie.value }
               enregistrer()
-              if (serie === 'restitution' && restitutionTerminee())
-                setTimeout(() => {
-                  // Redessiner rouvre le cours : seulement si on est encore à la restitution.
-                  if (etapes.find((e) => e.id === etat.etape)?.type === 'restitution') afficher()
-                }, 1200)
+              // Les corrections restent à l'écran ; le cours se rouvre à la prochaine étape affichée.
+              majPied()
             } else {
               bouton.disabled = false
               bouton.textContent = 'Répondre à la relance'
             }
           } catch (erreur) {
             message.textContent =
-              'Correction impossible : ' +
+              'Correction impossible\u00a0: ' +
               (erreur && erreur.detail ? erreur.detail : erreur.message)
             bouton.disabled = false
           }
         })
+        const ouvertes = erreursOuvertes()
+        const touchees = manifeste.erreurs_critiques.filter(
+          (e) => (question.erreurs ?? []).includes(e.id) && ouvertes.includes(e.id),
+        )
         return creer(
           'div',
-          { className: 'item' },
+          { className: 'item', dataset: reprise ? { fait: 'reprise' } : {} },
+          ...(reprise
+            ? [
+                creer('p', {
+                  className: 'item-reprise',
+                  textContent: 'À reprendre\u00a0: ' + touchees.map((e) => e.libelle).join(' ; '),
+                }),
+              ]
+            : []),
           creer('label', { htmlFor: zone.id }, creer('strong', { textContent: question.question })),
           zone,
           confiance,
@@ -1764,38 +2133,238 @@
         )
       }
 
+      /** Les erreurs critiques ouvertes pour l'appli ; hors de l'appli, celles du dernier bilan. */
+      function erreursOuvertes() {
+        if (Array.isArray(dernierStatut?.manque))
+          return dernierStatut.manque.find((m) => m.code === 'erreur_ouverte')?.erreurs ?? []
+        return etat.bilan?.ids ?? []
+      }
+
+      /**
+       * Les questions de restitution déjà répondues qui touchent une erreur critique ouverte. Une erreur
+       * ouverte rouvre la restitution, et une réponse solide à une question qui la touche la referme.
+       * Seulement dans l'appli : hors de l'appli, rien ne referme une erreur.
+       */
+      function aRefaire(serie) {
+        if (mode !== 'appli' || serie !== 'restitution' || !serieOuverte.restitution) return []
+        const ouvertes = erreursOuvertes()
+        return questions(serie).filter(
+          (q) => etat.envoyees[q.id] && (q.erreurs ?? []).some((e) => ouvertes.includes(e)),
+        )
+      }
+      /** Les erreurs ouvertes qu'une de ces questions peut refermer. */
+      const erreursAReprendre = (refaire) =>
+        erreursOuvertes().filter((e) => refaire.some((q) => (q.erreurs ?? []).includes(e)))
+
+      /**
+       * Le bilan : ce qui est fait dans la fiche, puis les erreurs critiques du bloc à cocher. Une
+       * erreur cochée reste ouverte (à revoir), une erreur décochée se ferme : c'est le dernier bilan
+       * envoyé qui fait foi. On ne l'envoie qu'une fois la restitution faite.
+       */
       function afficherBilan() {
-        const ids = [...new Set(Object.values(corrections).flatMap((c) => c.erreurs_critiques))]
-        const section = creer(
+        // Le résultat d'un bilan se lit là où on l'a envoyé : à la visite suivante, il serait périmé
+        // (une réponse a pu refermer une erreur depuis). Un bilan encore en route garde sa réponse.
+        if (bilanEnvoye !== null && (bilanEnvoye.statut !== null || bilanEnvoye.refus !== null))
+          bilanEnvoye = null
+        const totalRestitution = manifeste.restitution.length
+        const restitutionFaite =
+          !serieOuverte.restitution || reponsesFinies('restitution') === totalRestitution
+        const ligne = (fait, texte) =>
+          creer('li', { textContent: texte, dataset: { fait: fait ? 'oui' : 'non' } })
+        // La ligne de la restitution change quand une erreur s'ouvre ou se ferme (statut reçu).
+        const ligneRestitution = ligne(false, '')
+        const direRestitution = () => {
+          const aRefermer = erreursAReprendre(aRefaire('restitution')).length
+          ligneRestitution.dataset.fait = restitutionFaite && aRefermer === 0 ? 'oui' : 'non'
+          ligneRestitution.textContent = !restitutionFaite
+            ? 'Restitution\u00a0: ' +
+              pluriel(reponsesFinies('restitution'), 'question terminée', 'questions terminées') +
+              ' sur\u00a0' +
+              totalRestitution +
+              '.'
+            : aRefermer === 0
+              ? 'Restitution faite.'
+              : aRefermer === 1
+                ? 'Restitution faite. Pour refermer l’erreur cochée, réponds de nouveau à une question qui la touche.'
+                : 'Restitution faite. Pour refermer les ' +
+                  aRefermer +
+                  ' erreurs cochées, réponds de nouveau à une question sur chacune.'
+          return aRefermer
+        }
+        const lignes = [ligneRestitution]
+        const totalConsolidation = manifeste.consolidation.length
+        if (totalConsolidation > 0) {
+          const finies = reponsesFinies('consolidation')
+          lignes.push(
+            serieOuverte.consolidation || finies > 0
+              ? ligne(
+                  finies === totalConsolidation,
+                  finies === totalConsolidation
+                    ? 'Consolidation faite.'
+                    : 'Consolidation\u00a0: ' + finies + ' sur\u00a0' + totalConsolidation + '.',
+                )
+              : ligne(false, 'Consolidation\u00a0: pas encore ouverte.'),
+          )
+        }
+        const items = manifeste.pratique.flatMap((exercice) => exercice.items)
+        if (items.length > 0) {
+          const reussis = items.filter((item) => etat.pratique[item.id]?.reussi)
+          const sansAide = reussis.filter((item) => etat.pratique[item.id].aide === 0).length
+          lignes.push(
+            ligne(
+              reussis.length === items.length && sansAide === items.length,
+              'Pratique\u00a0: ' +
+                pluriel(reussis.length, 'item réussi', 'items réussis') +
+                ' sur\u00a0' +
+                items.length +
+                (reussis.length > 0 ? ', dont ' + sansAide + ' sans aide.' : '.'),
+            ),
+          )
+        }
+        if (etapes.some((e) => e.type === 'atelier'))
+          lignes.push(
+            ligne(
+              Boolean(etat.atelier?.reussi),
+              etat.atelier
+                ? 'Atelier\u00a0: ' + (etat.atelier.reussi ? 'réussi.' : 'pas réussi.')
+                : 'Atelier\u00a0: pas encore fait.',
+            ),
+          )
+
+        const reperees = new Set(Object.values(etat.erreurs ?? {}).flat())
+        const cases = manifeste.erreurs_critiques.map((erreur) =>
+          creer('input', {
+            type: 'checkbox',
+            name: 'erreur',
+            value: erreur.id,
+            checked: erreursOuvertes().includes(erreur.id),
+          }),
+        )
+        const erreurs = creer(
+          'fieldset',
+          { className: 'cases' },
+          creer('legend', { textContent: 'Les erreurs critiques du bloc' }),
+          creer('p', {
+            className: 'discret',
+            textContent:
+              'Coche celles que tu as faites et que tu dois encore revoir. Décoche celles que tu as corrigées.',
+          }),
+          ...manifeste.erreurs_critiques.map((erreur, k) =>
+            creer(
+              'label',
+              {},
+              cases[k],
+              creer(
+                'span',
+                {},
+                erreur.libelle,
+                ...(reperees.has(erreur.id)
+                  ? [
+                      creer('span', {
+                        className: 'discret',
+                        textContent: ' Repérée dans tes réponses.',
+                      }),
+                    ]
+                  : []),
+              ),
+            ),
+          ),
+        )
+        const bouton = creer('button', {
+          type: 'button',
+          className: 'bouton',
+          textContent: etat.bilan && restitutionFaite ? 'Bilan envoyé' : 'Envoyer le bilan',
+          // Déjà envoyé : il se renvoie quand une case change.
+          disabled: !restitutionFaite || Boolean(etat.bilan),
+        })
+        const retour = creer('p', { className: 'retour', role: 'status' })
+        const restitution = etapes.find((e) => e.type === 'restitution')
+        const actions = creer('div', { className: 'ecran-nav pied' }, bouton)
+        if (etat.bilan && restitutionFaite)
+          retour.textContent =
+            mode === 'appli'
+              ? 'Ton dernier bilan est envoyé. Modifie les cases et renvoie-le si ça a changé.'
+              : 'Ton dernier bilan est noté dans cette page (hors de l’appli, rien n’est envoyé).'
+        if (!restitutionFaite) retour.textContent = 'Termine la restitution pour envoyer ton bilan.'
+        // Vers la restitution : pour la finir, ou pour refermer une erreur ouverte.
+        const versRestitution = creer('button', {
+          type: 'button',
+          className: 'bouton secondaire',
+          textContent: 'Aller à la restitution',
+          onclick: () => aller(restitution.id),
+        })
+        if (restitution) actions.prepend(versRestitution)
+        const majRestitution = () => {
+          const aRefermer = direRestitution()
+          versRestitution.hidden = restitutionFaite && aRefermer === 0
+        }
+        majRestitution()
+        let touche = false
+        erreurs.addEventListener('change', () => {
+          touche = true
+          if (!restitutionFaite) return
+          bouton.disabled = false
+          bouton.textContent = 'Envoyer le bilan'
+        })
+        const direStatut = () => {
+          if (bilanEnvoye === null) return
+          if (bilanEnvoye.refus) {
+            retour.textContent = 'Le bilan n’est pas parti\u00a0: ' + bilanEnvoye.refus
+            // Refusé : le bilan qui fait foi reste le précédent, et celui-ci peut repartir.
+            etat.bilan = bilanEnvoye.precedent
+            enregistrer()
+            bouton.disabled = false
+            bouton.textContent = 'Envoyer le bilan'
+            return
+          }
+          if (mode !== 'appli') {
+            retour.textContent = 'Bilan noté dans cette page (hors de l’appli, rien n’est envoyé).'
+            return
+          }
+          retour.textContent = bilanEnvoye.statut
+            ? 'Statut recalculé\u00a0: ' +
+              (LIBELLES_STATUT[bilanEnvoye.statut] ?? bilanEnvoye.statut) +
+              '.'
+            : 'Le statut se recalcule…'
+        }
+        bouton.addEventListener('click', () => {
+          if (!restitutionFaite) return
+          const ids = cases.filter((c) => c.checked).map((c) => c.value)
+          const id = pont.envoyer('bilan.erreurs', { ids })
+          if (!id) {
+            retour.textContent = 'Le bilan n’a pas pu partir. Réessaie dans un instant.'
+            return
+          }
+          bilanEnvoye = { id, statut: null, refus: null, precedent: etat.bilan }
+          etat.bilan = { ids }
+          enregistrer()
+          touche = false
+          bouton.disabled = true
+          bouton.textContent = 'Bilan envoyé'
+          direStatut()
+        })
+        majBilan = () => {
+          if (!touche) for (const c of cases) c.checked = erreursOuvertes().includes(c.value)
+          majRestitution()
+          direStatut()
+        }
+        return creer(
           'section',
           {},
           creer('h2', { textContent: 'Bilan' }),
-          creer('p', {
-            textContent:
-              ids.length === 0 ? 'Aucune erreur critique relevée.' : 'Erreurs critiques à revoir :',
-          }),
-          creer(
-            'ul',
-            { className: 'plain' },
-            ...ids.map((id) =>
-              creer('li', {
-                textContent: (
-                  manifeste.erreurs_critiques.find((e) => e.id === id) ?? { libelle: id }
-                ).libelle,
-              }),
-            ),
-          ),
-          creer('button', {
-            type: 'button',
-            className: 'bouton',
-            textContent: 'Envoyer le bilan',
-            onclick: () => pont.envoyer('bilan.erreurs', { ids }),
-          }),
+          creer('h3', { textContent: 'Ce que tu as fait' }),
+          creer('ul', { className: 'bilan-liste' }, ...lignes),
+          erreurs,
+          actions,
+          retour,
         )
-        return section
       }
 
       function afficher() {
+        // Une lecture en cours ne déborde pas sur l'étape suivante.
+        window.speechSynthesis?.cancel()
+        majPied = () => {}
+        majBilan = () => {}
         afficherEtapes()
         const etape = etapes.find((e) => e.id === etat.etape) ?? etapes[0]
         const cours = etape.type === 'explication' || etape.type === 'pratique'
@@ -1807,7 +2376,7 @@
             creer('h2', { textContent: etape.titre }),
             creer('p', {
               textContent:
-                'Masqué : la restitution se fait sans le cours. Il s’ouvrira après ta dernière réponse.',
+                'Masqué\u00a0: la restitution se fait sans le cours. Il s’ouvrira après ta dernière réponse.',
             }),
             creer('button', {
               type: 'button',
@@ -1846,15 +2415,28 @@
       }
 
       async function demarrer() {
+        // Chrome charge ses voix à la première demande : on la fait tôt, « Écouter » les trouve prêtes.
+        window.speechSynthesis?.getVoices()
         if (!pont) {
           $('mode').textContent = 'Pont indisponible'
           return
         }
-        pont.surStatut(({ statut }) => {
-          $('statut').textContent = 'Statut : ' + (LIBELLES_STATUT[statut] ?? statut)
+        pont.surStatut(({ statut, manque }) => {
+          dernierStatut = { statut, manque }
+          $('statut').textContent = 'Statut\u00a0: ' + (LIBELLES_STATUT[statut] ?? statut)
+          if (bilanEnvoye !== null && bilanEnvoye.statut === null) bilanEnvoye.statut = statut
+          majBilan()
         })
         pont.surErreur((erreur) => {
-          $('statut').textContent = 'Erreur : ' + erreur.detail
+          $('statut').textContent = 'Erreur\u00a0: ' + erreur.detail
+          if (bilanEnvoye !== null && erreur.message_id === bilanEnvoye.id) {
+            bilanEnvoye.refus = erreur.detail
+            majBilan()
+            return
+          }
+          // La barre est cachée dans l'appli : l'erreur s'affiche au-dessus de l'étape.
+          $('avis').textContent = 'Erreur\u00a0: ' + erreur.detail
+          $('avis').hidden = false
         })
         pont.surEtape((id) => {
           if (etapes.some((e) => e.id === id)) aller(id)
@@ -1870,8 +2452,9 @@
         $('mode').textContent = mode === 'appli' ? 'Dans l’appli' : 'Mode autonome'
         if (depart.init) {
           serieOuverte = depart.init.serie_ouverte
+          dernierStatut ??= { statut: depart.init.statut, manque: null }
           $('statut').textContent =
-            'Statut : ' + (LIBELLES_STATUT[depart.init.statut] ?? depart.init.statut)
+            'Statut\u00a0: ' + (LIBELLES_STATUT[depart.init.statut] ?? depart.init.statut)
         }
         pont.surInit((init) => {
           const consolidationChangee =
@@ -1879,6 +2462,10 @@
           serieOuverte = init.serie_ouverte
           // Redessiner efface les corrections affichées : seulement quand la consolidation s'ouvre.
           if (consolidationChangee) afficher()
+          else {
+            majPied()
+            majBilan()
+          }
         })
         if (depart.etat && typeof depart.etat === 'object') etat = { ...etat, ...depart.etat }
         afficher()
