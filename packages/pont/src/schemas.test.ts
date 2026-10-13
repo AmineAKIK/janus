@@ -88,6 +88,20 @@ describe('parité avec packages/contrats', () => {
     },
   )
 
+  it('refuse les mêmes adresses de lien', () => {
+    for (const url of [
+      'http://exemple.fr/',
+      'javascript:alert(1)',
+      'https://nom:mdp@exemple.fr/',
+      'pas une adresse',
+      `https://exemple.fr/${'a'.repeat(2000)}`,
+    ]) {
+      const message = { ...EXEMPLES_PAGE['lien.ouvrir'], url }
+      expect(MessagePage.safeParse(message).success, url).toBe(false)
+      expect(MessagePageContrats.safeParse(message).success, url).toBe(false)
+    }
+  })
+
   it('refuse les mêmes champs de pratique, de restitution et d’état', () => {
     const base = EXEMPLES_PAGE['pratique.resultat']
     const cas = [

@@ -51,6 +51,7 @@ export const EXEMPLES_PAGE = {
     type: 'etat.sauver',
     etat: { etape: 'ET3', reponses: { R1: 'Une fiche résume un seul bloc.' } },
   },
+  'lien.ouvrir': { ...commun, type: 'lien.ouvrir', url: 'https://www.figma.com/design/' },
   'correction.accord': {
     ...commun,
     type: 'correction.accord',
