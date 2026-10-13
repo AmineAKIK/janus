@@ -8,6 +8,7 @@ import { monterEvenements } from './domaines/evenements/composition.ts'
 import { monterRappels } from './domaines/rappels/composition.ts'
 import { monterReglages } from './domaines/reglages/composition.ts'
 import { monterSuivi } from './domaines/suivi/composition.ts'
+import { creerCacheDesEtats } from './base/etatsDesBlocs.ts'
 import { monterRevisions } from './domaines/revisions/composition.ts'
 import { monterSante } from './domaines/sante/composition.ts'
 import { genererIdentifiant } from './plugins/identifiantRequete.ts'
@@ -49,9 +50,11 @@ export async function creerServeur(
   const correction = monterCorrection(dependances)
   await app.register(correction.routes, { prefix: '/api' })
   await app.register(monterReglages(dependances), { prefix: '/api' })
-  const revisions = monterRevisions(dependances, correction.corrigerPartie)
+  // Les états des blocs sont gardés une fois pour tout le serveur : les révisions et le suivi les partagent.
+  const etats = creerCacheDesEtats()
+  const revisions = monterRevisions(dependances, correction.corrigerPartie, etats)
   await app.register(revisions.routes, { prefix: '/api' })
-  await app.register(monterSuivi(dependances, revisions.aujourdhui), { prefix: '/api' })
+  await app.register(monterSuivi(dependances, revisions.aujourdhui, etats), { prefix: '/api' })
   const rappels = monterRappels(dependances, revisions.aujourdhui)
   await app.register(rappels.routes, { prefix: '/api' })
   app.decorate('envoyerLesRappels', rappels.envoyerLesRappels)

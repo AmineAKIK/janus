@@ -14,7 +14,12 @@ import {
 import { ORIGINE_TEST, serveurDeTest } from '../testeur.ts'
 import { NOMS_MIDDLEWARES } from '../types.ts'
 import { REQUETES_PAR_MINUTE } from './ordre.ts'
-import { DELAI_DEFAUT_MS, LIMITE_CORPS_DEFAUT, limitesParRoute } from './limites.ts'
+import {
+  DELAI_DEFAUT_MS,
+  DELAI_DU_FLUX_MS,
+  LIMITE_CORPS_DEFAUT,
+  limitesParRoute,
+} from './limites.ts'
 
 const ECRITURE = { origin: ORIGINE_TEST, 'content-type': 'application/json' }
 const KO = 1024
@@ -123,6 +128,25 @@ describe('2. limite de corps et délai', () => {
     ).toEqual([
       ['/api/corrections', 75_000, 64 * KO],
       ['/api/blocs/:id/etat-page', 15_000, 256 * KO],
+    ])
+  })
+
+  it('ne donne aucun délai à GET /api/export.json, une réponse en flux que le minuteur de Fastify ferait planter', async () => {
+    const app = Fastify()
+    limitesParRoute(app)
+    const routes: RouteOptions[] = []
+    app.addHook('onRoute', (route) => {
+      routes.push(route)
+    })
+    app.get('/api/export.json', () => ({}))
+    app.get('/api/journal', () => ({}))
+    await app.ready()
+
+    expect(routes.map(({ method, url, handlerTimeout }) => [method, url, handlerTimeout])).toEqual([
+      ['GET', '/api/export.json', DELAI_DU_FLUX_MS],
+      ['HEAD', '/api/export.json', DELAI_DU_FLUX_MS],
+      ['GET', '/api/journal', DELAI_DEFAUT_MS],
+      ['HEAD', '/api/journal', DELAI_DEFAUT_MS],
     ])
   })
 

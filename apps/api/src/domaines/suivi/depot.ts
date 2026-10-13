@@ -85,6 +85,7 @@ export function creerDepotSuivi() {
           partieCode: t.parties.code,
           partieTitre: t.parties.titre,
           manifeste: t.fichesVersions.manifeste,
+          versionId: t.fichesVersions.id,
         })
         .from(t.blocs)
         .innerJoin(t.modules, eq(t.modules.id, t.blocs.moduleId))
