@@ -1,5 +1,12 @@
-import { and, asc, desc, eq, inArray, notInArray, sql } from 'drizzle-orm'
+import { and, asc, eq, inArray, notInArray, sql } from 'drizzle-orm'
 import type { Base } from '../../base/base.ts'
+import {
+  blocUnique,
+  empreinteDeLEvenement,
+  formationExiste,
+  reglagesDe,
+  versionEnService,
+} from '../../base/requetes.ts'
 import * as t from '../../base/schema/index.ts'
 import type { Db, Tx } from '../../base/transaction.ts'
 
@@ -87,13 +94,7 @@ export function creerDepotCatalogue(base: Base) {
         .from(t.formations)
         .orderBy(asc(t.formations.code)),
 
-    formationExiste: async (lecteur: Db | Tx, id: string): Promise<boolean> =>
-      (
-        await lecteur
-          .select({ id: t.formations.id })
-          .from(t.formations)
-          .where(eq(t.formations.id, id))
-      ).length > 0,
+    formationExiste,
 
     modulesDeLaFormation: (lecteur: Db | Tx, formationId: string) =>
       lecteur
@@ -164,29 +165,9 @@ export function creerDepotCatalogue(base: Base) {
 
     /** Le bloc de ce code, avec sa version en service (la plus récente). */
     blocEtVersion: async (lecteur: Db | Tx, code: string) => {
-      const blocs = await lecteur
-        .select({
-          id: t.blocs.id,
-          code: t.blocs.code,
-          moduleId: t.blocs.moduleId,
-          titre: t.blocs.titre,
-        })
-        .from(t.blocs)
-        .where(eq(t.blocs.code, code))
-      const [bloc] = blocs
-      if (bloc === undefined || blocs.length > 1) return undefined
-      const [version] = await lecteur
-        .select({
-          id: t.fichesVersions.id,
-          version: t.fichesVersions.version,
-          empreinte: t.fichesVersions.empreinte,
-          chemin: t.fichesVersions.chemin,
-          manifeste: t.fichesVersions.manifeste,
-        })
-        .from(t.fichesVersions)
-        .where(eq(t.fichesVersions.blocId, bloc.id))
-        .orderBy(desc(t.fichesVersions.version))
-        .limit(1)
+      const bloc = await blocUnique(lecteur, code)
+      if (bloc === undefined) return undefined
+      const version = await versionEnService(lecteur, bloc.id)
       return { bloc, version }
     },
 
@@ -198,13 +179,7 @@ export function creerDepotCatalogue(base: Base) {
       return ligne
     },
 
-    reglagesDe: async (lecteur: Db | Tx, userId: string): Promise<unknown> => {
-      const [ligne] = await lecteur
-        .select({ reglages: t.users.reglages })
-        .from(t.users)
-        .where(eq(t.users.id, userId))
-      return ligne?.reglages
-    },
+    reglagesDe,
 
     /** Le statut courant (forçage compris) de ces blocs, par code ; `non_commence` quand rien n'est calculé. */
     statutsCourants: async (
@@ -221,13 +196,7 @@ export function creerDepotCatalogue(base: Base) {
       return new Map(lignes.map(({ code, statut }) => [code, statut]))
     },
 
-    evenementParId: async (lecteur: Db | Tx, id: string) => {
-      const [ligne] = await lecteur
-        .select({ userId: t.evenements.userId, empreinte: t.evenements.empreinte })
-        .from(t.evenements)
-        .where(eq(t.evenements.id, id))
-      return ligne
-    },
+    evenementParId: empreinteDeLEvenement,
 
     ajouterOuverture: async (
       tx: Tx,

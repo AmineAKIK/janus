@@ -39,13 +39,17 @@ export const modules = pgTable(
   (table) => [unique('modules_formation_code').on(table.formationId, table.code)],
 )
 
+const duModule = () => ({
+  moduleId: uuid('module_id')
+    .notNull()
+    .references(() => modules.id),
+})
+
 export const parties = pgTable(
   'parties',
   {
     id: uuid('id').primaryKey(),
-    moduleId: uuid('module_id')
-      .notNull()
-      .references(() => modules.id),
+    ...duModule(),
     code: text('code').notNull(),
     titre: text('titre').notNull(),
     ordre: integer('ordre').notNull(),
@@ -57,9 +61,7 @@ export const blocs = pgTable(
   'blocs',
   {
     id: uuid('id').primaryKey(),
-    moduleId: uuid('module_id')
-      .notNull()
-      .references(() => modules.id),
+    ...duModule(),
     partieId: uuid('partie_id').references(() => parties.id),
     /** Le code du bloc, par exemple `B02`. */
     code: text('code').notNull(),
@@ -124,9 +126,7 @@ export const tachesReservees = pgTable(
   'taches_reservees',
   {
     id: uuid('id').primaryKey(),
-    moduleId: uuid('module_id')
-      .notNull()
-      .references(() => modules.id),
+    ...duModule(),
     intitule: text('intitule').notNull(),
     active: boolean('active').notNull().default(true),
   },

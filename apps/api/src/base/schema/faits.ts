@@ -32,6 +32,14 @@ const duBloc = () => ({
     .notNull()
     .references(() => blocs.id),
 })
+/** Où en est une correction : la question, sa série, l'essai et le tour de relance. */
+const laQuestion = () => ({
+  questionId: text('question_id').notNull(),
+  serie: text('serie').notNull(),
+  /** Le numéro de l'essai sur une même question d'une même série (1 au premier envoi). */
+  tentative: integer('tentative').notNull(),
+  tour: integer('tour').notNull(),
+})
 const SHA256 = (colonne: unknown) => sql`${colonne} ~ '^[0-9a-f]{64}$'`
 const parmi = (colonne: unknown, valeurs: readonly string[]) =>
   sql`${colonne} IN (${sql.join(
@@ -76,11 +84,7 @@ export const corrections = pgTable(
   {
     id: uuid('id').primaryKey(),
     ...duBloc(),
-    questionId: text('question_id').notNull(),
-    serie: text('serie').notNull(),
-    /** Le numéro de l'essai sur une même question d'une même série (1 au premier envoi). */
-    tentative: integer('tentative').notNull(),
-    tour: integer('tour').notNull(),
+    ...laQuestion(),
     confiance: text('confiance').notNull(),
     reponse: text('reponse').notNull(),
     supportColle: boolean('support_colle').notNull(),
@@ -150,10 +154,7 @@ export const corrections = pgTable(
 export const correctionsEchecs = pgTable('corrections_echecs', {
   id: uuid('id').primaryKey(),
   ...duBloc(),
-  questionId: text('question_id').notNull(),
-  serie: text('serie').notNull(),
-  tentative: integer('tentative').notNull(),
-  tour: integer('tour').notNull(),
+  ...laQuestion(),
   /** Pourquoi la réponse a été refusée. */
   motif: text('motif').notNull(),
   /** Les textes reçus, un par essai. */

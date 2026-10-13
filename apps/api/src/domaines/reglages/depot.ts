@@ -1,4 +1,5 @@
 import { and, eq, sql } from 'drizzle-orm'
+import { formationExiste } from '../../base/requetes.ts'
 import * as t from '../../base/schema/index.ts'
 import type { Db, Tx } from '../../base/transaction.ts'
 
@@ -13,13 +14,7 @@ export function creerDepotReglages() {
       return ligne
     },
 
-    async formationExiste(lecteur: Db | Tx, id: string): Promise<boolean> {
-      const lignes = await lecteur
-        .select({ id: t.formations.id })
-        .from(t.formations)
-        .where(eq(t.formations.id, id))
-      return lignes.length > 0
-    },
+    formationExiste,
 
     /** Écrit les réglages si la version est encore celle que le client a lue ; `undefined` sinon. */
     ecrire: async (tx: Tx, userId: string, version: number, reglages: unknown) => {
