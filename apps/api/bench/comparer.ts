@@ -11,6 +11,7 @@
 import { createHash } from 'node:crypto'
 import http from 'node:http'
 import { isDeepStrictEqual } from 'node:util'
+import { nouvelId } from '@janus/contrats'
 import { z } from 'zod'
 import { contexteDeMesure } from './scenarios.ts'
 import pg from 'pg'
@@ -170,32 +171,85 @@ const empreinte = (valeur: unknown) =>
 
 let ecarts = 0
 let total = 0
-for (const groupe of groupes) {
-  if (FILTRE !== '' && !FILTRE.split(',').some((f) => groupe.nom.includes(f))) continue
-  const chemins = await groupe.chemins()
-  let egaux = 0
-  for (const chemin of chemins) {
-    const [a, b] = [
-      await requete(A, 'GET', chemin, cookieA),
-      await requete(B, 'GET', chemin, cookieB),
-    ]
-    total += 1
-    const [na, nb] =
-      a.statut === 200 && b.statut === 200
-        ? [normaliser(chemin, a.corps), normaliser(chemin, b.corps)]
-        : [a.corps, b.corps]
-    if (a.statut === b.statut && isDeepStrictEqual(na, nb)) {
-      egaux += 1
-    } else {
-      ecarts += 1
-      process.stdout.write(
-        `ÉCART ${chemin} : statut ${String(a.statut)} / ${String(b.statut)}, empreintes ${empreinte(na)} / ${empreinte(nb)}\n`,
-      )
+async function comparerTout(): Promise<void> {
+  for (const groupe of groupes) {
+    if (FILTRE !== '' && !FILTRE.split(',').some((f) => groupe.nom.includes(f))) continue
+    const chemins = await groupe.chemins()
+    let egaux = 0
+    for (const chemin of chemins) {
+      const [a, b] = [
+        await requete(A, 'GET', chemin, cookieA),
+        await requete(B, 'GET', chemin, cookieB),
+      ]
+      total += 1
+      const [na, nb] =
+        a.statut === 200 && b.statut === 200
+          ? [normaliser(chemin, a.corps), normaliser(chemin, b.corps)]
+          : [a.corps, b.corps]
+      if (a.statut === b.statut && isDeepStrictEqual(na, nb)) {
+        egaux += 1
+      } else {
+        ecarts += 1
+        process.stdout.write(
+          `ÉCART ${chemin} : statut ${String(a.statut)} / ${String(b.statut)}, empreintes ${empreinte(na)} / ${empreinte(nb)}\n`,
+        )
+      }
     }
+    process.stdout.write(
+      `${groupe.nom.padEnd(18)} ${String(egaux)}/${String(chemins.length)} identiques\n`,
+    )
   }
-  process.stdout.write(
-    `${groupe.nom.padEnd(18)} ${String(egaux)}/${String(chemins.length)} identiques\n`,
-  )
+}
+
+/** Des écritures faites par la référence seule : le candidat, qui garde des états en mémoire, doit les voir. */
+let ms = Date.now()
+const nouvelleId = () => nouvelId(ms++)
+const ecritures: { nom: string; faire: () => Promise<Reponse> }[] = [
+  {
+    nom: 'forcer B010',
+    faire: () =>
+      requete(A, 'POST', '/api/blocs/B010/forcer', cookieA, {
+        action: 'forcer',
+        id: nouvelleId(),
+        statut: 'acquis',
+        raison: 'Je maîtrise déjà ce bloc.',
+      }),
+  },
+  ...['B001', 'B050', 'B120'].map((bloc) => ({
+    nom: `étape vue ${bloc}`,
+    faire: () =>
+      requete(A, 'POST', '/api/evenements', cookieA, {
+        id: nouvelleId(),
+        type: 'etape.vue',
+        bloc,
+        etape: 'ET1',
+        version: 1,
+        t: new Date().toISOString(),
+      }),
+  })),
+  {
+    nom: 'lever le forçage',
+    faire: () =>
+      requete(A, 'POST', '/api/blocs/B010/forcer', cookieA, { action: 'lever', id: nouvelleId() }),
+  },
+  {
+    nom: 'noter une carte',
+    faire: () =>
+      requete(A, 'POST', `/api/cartes/${contexte.idCarte}/note`, cookieA, {
+        id: nouvelleId(),
+        note: 'bien',
+      }),
+  },
+]
+
+await comparerTout()
+if (option('ecrire', '') !== '') {
+  for (const ecriture of ecritures) {
+    const ecrite = await ecriture.faire()
+    process.stdout.write(`écriture « ${ecriture.nom} » : ${String(ecrite.statut)}\n`)
+    if (ecrite.statut >= 300) process.exit(2)
+    await comparerTout()
+  }
 }
 agent.destroy()
 process.stdout.write(`${String(total - ecarts)}/${String(total)} réponses identiques\n`)
