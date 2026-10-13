@@ -1,7 +1,7 @@
 import type { Manifeste, Reglages, Statut } from '@janus/contrats'
 import type { Fait } from '../faits.ts'
 import { faitsParBloc } from '../parBloc.ts'
-import { calculerBloc } from '../statut.ts'
+import { SuiviBloc } from '../suiviBloc.ts'
 import { instantEnMs, jourDe } from '../temps.ts'
 import { LIBELLES_STATUT } from './libelles.ts'
 
@@ -249,16 +249,11 @@ export function lignesDuJournal(faits: readonly Fait[], contexte: ContexteJourna
     // Le statut calculé avant et après chaque fait : il sert aux séries et aux changements de statut.
     const suivi: { fait: Fait; avant: Statut; apres: Statut }[] = []
     let precedent: Statut = 'non_commence'
+    const statuts =
+      manifeste === undefined ? undefined : new SuiviBloc(manifeste, contexte.reglages)
     for (const fait of faitsDuBloc) {
-      const apres: Statut =
-        manifeste === undefined
-          ? precedent
-          : calculerBloc(
-              faitsDuBloc.slice(0, suivi.length + 1),
-              manifeste,
-              contexte.reglages,
-              fait.date,
-            ).statutCalcule
+      statuts?.ajouter(fait)
+      const apres: Statut = statuts?.statutCalcule() ?? precedent
       suivi.push({ fait, avant: precedent, apres })
       if (apres !== precedent) {
         lignes.push({

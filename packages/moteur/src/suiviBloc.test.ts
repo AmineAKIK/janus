@@ -161,13 +161,30 @@ describe('SuiviBloc : le statut après chaque fait est celui de calculerBloc sur
       const restitution = faits.filter(
         (fait) => fait.type === 'correction' && fait.serie === 'restitution',
       )
-      verifierChaquePrefixe([
-        ...faits,
-        f.cochee(apres(DEBUT, 0, 150), 'E1'),
+      // E3 est cochée avant la réponse à R4, qui la ferme ; le tranchage la rouvre, puis la referme.
+      const faitsDEntree = [f.cochee(apres(DEBUT, 0, 10), 'E3'), ...faits]
+      const avecTranchages = [
+        ...faitsDEntree,
         f.verification(apres(DEBUT, 5)),
-        tranche(f, 7 * 24 * 60, restitution[0], false),
-        tranche(f, 7 * 24 * 60 + 1, restitution[0], true),
-      ])
+        tranche(f, 7 * 24 * 60, restitution[3], false),
+        tranche(f, 7 * 24 * 60 + 1, restitution[3], true),
+      ]
+      verifierChaquePrefixe(avecTranchages)
+      const rouverte = calculerBloc(avecTranchages.slice(0, -1), MANIFESTE, REGLAGES, MAINTENANT)
+      expect(rouverte.erreursOuvertes).toEqual(['E3'])
+    })
+
+    it('une série de consolidation valable suffit : les séries suivantes n’y changent rien', () => {
+      const f = fabrique()
+      const faits = [
+        ...jusquaConsolidation(f),
+        ...f.consolidation(apres(DEBUT, 1), ['pas_encore', 'pas_encore', 'pas_encore']),
+        ...f.consolidation(apres(DEBUT, 2), ['pas_encore', 'pas_encore', 'pas_encore']),
+      ]
+      verifierChaquePrefixe(faits)
+      expect(calculerBloc(faits, MANIFESTE, REGLAGES, MAINTENANT).statutCalcule).toBe(
+        'acquis_provisoirement',
+      )
     })
 
     it('qui ne change rien à ce que les règles lisent', () => {
@@ -408,12 +425,16 @@ const reglagesAleatoires: fc.Arbitrary<Reglages> = fc
   .map((reglages) => SchemaReglages.parse(reglages))
 
 /** Une chronologie qui peut aller jusqu'à « maîtrisé », coupée au hasard : les statuts intermédiaires y passent. */
-function parcours(
-  jVerification: number,
-  jRetest: number,
-  echecVerification: boolean,
-  coupe: number,
-): Fait[] {
+function parcours(parametres: {
+  readonly jVerification: number
+  readonly jRetest: number
+  readonly echecVerification: boolean
+  readonly echecsRetest: number
+  readonly consolidationFaible: boolean
+  readonly coupe: number
+}): Fait[] {
+  const { jVerification, jRetest, echecVerification, echecsRetest, consolidationFaible, coupe } =
+    parametres
   const faits: Fait[] = []
   const ajoute = (jours: number, minutes: number, donnees: Donnees) => {
     faits.push(
@@ -429,7 +450,10 @@ function parcours(
     ajoute(0, 30 + i, correctionSolide('restitution', q.id))
   }
   for (const [i, q] of MANIFESTE.consolidation.entries()) {
-    ajoute(0, 130 + i, correctionSolide('consolidation', q.id))
+    ajoute(0, 130 + i, {
+      ...correctionSolide('consolidation', q.id),
+      ...(consolidationFaible ? { niveau: 'fragile' } : {}),
+    })
   }
   for (let i = 1; i <= 2; i += 1) {
     ajoute(0, i, {
@@ -453,6 +477,15 @@ function parcours(
     valable: true,
     reponses: reponses(true, true),
   })
+  // Des retests ratés, qui font redescendre quand ils s'enchaînent.
+  for (let i = 0; i < echecsRetest; i += 1) {
+    ajoute(jVerification + jRetest, 100 + i, {
+      type: 'verification_terminee',
+      verification: 'retest',
+      valable: true,
+      reponses: reponses(false, true),
+    })
+  }
   ajoute(jVerification + jRetest, 200, {
     type: 'verification_terminee',
     verification: 'retest',
@@ -491,7 +524,9 @@ const scenario = fc
     jVerification: fc.integer({ min: 0, max: 8 }),
     jRetest: fc.integer({ min: 10, max: 60 }),
     echecVerification: fc.boolean(),
-    coupe: fc.integer({ min: 0, max: 20 }),
+    echecsRetest: fc.integer({ min: 0, max: 3 }),
+    consolidationFaible: fc.constantFrom(false, false, true),
+    coupe: fc.integer({ min: 0, max: 22 }),
     bruit: fc.array(bruit, { maxLength: 22 }),
     ordre: fc.constantFrom(
       'chronologique',
@@ -512,10 +547,7 @@ const scenario = fc
         ...b.donnees,
       }),
     )
-    const tous = [
-      ...parcours(jeu.jVerification, jeu.jRetest, jeu.echecVerification, jeu.coupe),
-      ...dePasse,
-    ]
+    const tous = [...parcours(jeu), ...dePasse]
     // L'ordre d'arrivée : par date (comme le journal, à égalité l'ordre de création), ou plus tordu.
     const parDate = tous.toSorted((a, b) => Date.parse(a.date) - Date.parse(b.date))
     const arrivee =

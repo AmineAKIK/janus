@@ -1,7 +1,7 @@
 import type { Manifeste, Reglages, TypeEtape } from '@janus/contrats'
 import type { Fait } from '../faits.ts'
 import { faitsParBloc } from '../parBloc.ts'
-import { calculerBloc } from '../statut.ts'
+import { SuiviBloc } from '../suiviBloc.ts'
 import { instantEnMs } from '../temps.ts'
 import { GROUPE_DE_L_ETAPE } from './temps.ts'
 import type { MesureTemps } from './temps.ts'
@@ -59,10 +59,10 @@ export function revueMethode(
       (a, b) => instantEnMs(a.date) - instantEnMs(b.date),
     )
     let precedent = false
-    for (const [rang, fait] of duBloc.entries()) {
-      const vu =
-        calculerBloc(duBloc.slice(0, rang + 1), manifeste, reglages, fait.date).statutCalcule ===
-        'vu'
+    const statuts = new SuiviBloc(manifeste, reglages)
+    for (const fait of duBloc) {
+      statuts.ajouter(fait)
+      const vu = statuts.statutCalcule() === 'vu'
       if (vu && !precedent && apresRevue(fait.date)) blocsDepuis += 1
       precedent = vu
     }

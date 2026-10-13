@@ -152,9 +152,14 @@ export function jusquaProvisoire(f: Fabrique): Fait[] {
  */
 export function blocLong(
   taille: number,
-  options: { readonly pasMinutes?: number; readonly periodeTranchage?: number } = {},
+  options: {
+    readonly pasMinutes?: number
+    readonly periodeTranchage?: number
+    /** Le niveau de toutes les réponses ; par défaut solide, partiel une fois sur cinq. */
+    readonly niveau?: Niveau
+  } = {},
 ): Fait[] {
-  const { pasMinutes = 7, periodeTranchage = 10 } = options
+  const { pasMinutes = 7, periodeTranchage = 10, niveau } = options
   const f = fabrique()
   const faits: Fait[] = []
   let minute = 0
@@ -163,9 +168,10 @@ export function blocLong(
     const rang = faits.length
     const serie = rang % 3 === 0 ? 'restitution' : 'consolidation'
     const questions = serie === 'restitution' ? MANIFESTE.restitution : MANIFESTE.consolidation
-    const question = questions[rang % questions.length]?.id ?? 'R1'
+    // Chaque question revient deux fois de suite : les séries de trois questions différentes se forment.
+    const question = questions[Math.floor(rang / 3) % questions.length]?.id ?? 'R1'
     const correction = f.correction(date(), serie, question, {
-      niveau: rang % 5 === 0 ? 'partiel' : 'solide',
+      niveau: niveau ?? (rang % 5 === 0 ? 'partiel' : 'solide'),
     })
     faits.push(correction)
     if (rang % periodeTranchage === periodeTranchage - 6) {

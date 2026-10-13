@@ -2,7 +2,8 @@ import type { Manifeste, Reglages } from '@janus/contrats'
 import { echeances } from '../echeances.ts'
 import type { Fait } from '../faits.ts'
 import { faitsParBloc } from '../parBloc.ts'
-import { calculerBloc } from '../statut.ts'
+import { comparer } from '../ordre.ts'
+import { SuiviBloc } from '../suiviBloc.ts'
 import { instantEnMs, jourDe } from '../temps.ts'
 import { LIBELLES_STATUT } from './libelles.ts'
 
@@ -85,12 +86,19 @@ export function exportTexte(contexte: ContexteExport): string {
     const faitsDuBloc = [...(parBloc.get(manifeste.bloc) ?? [])].sort(
       (a, b) => instantEnMs(a.date) - instantEnMs(b.date),
     )
-    const jours = [...new Set(faitsDuBloc.map((fait) => jour(fait.date)))]
-    for (const unJour of jours) {
-      const duJour = faitsDuBloc.filter((fait) => jour(fait.date) === unJour)
-      const jusqueLa = faitsDuBloc.filter((fait) => jour(fait.date) <= unJour)
+    const parJour = new Map<string, Fait[]>()
+    for (const fait of faitsDuBloc) {
+      const unJour = jour(fait.date)
+      const duJour = parJour.get(unJour)
+      if (duJour === undefined) parJour.set(unJour, [fait])
+      else duJour.push(fait)
+    }
+    // Les jours du plus ancien au plus récent : le bloc connaît à chaque jour tous les faits jusque-là.
+    const statuts = new SuiviBloc(manifeste, reglages)
+    for (const [unJour, duJour] of [...parJour].sort(([a], [b]) => comparer(a, b))) {
+      for (const fait of duJour) statuts.ajouter(fait)
       const dernier = duJour.reduce((_, fait) => fait.date, '')
-      const resultat = calculerBloc(jusqueLa, manifeste, reglages, dernier)
+      const resultat = statuts.resultat(dernier)
       const erreurs = duJour.flatMap((fait) =>
         fait.type === 'erreur_cochee'
           ? [

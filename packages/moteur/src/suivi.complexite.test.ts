@@ -51,6 +51,18 @@ describe('le statut après chaque fait ne relance pas le calcul sur tous les fai
     expect(ratio).toBeLessThan(SEUIL)
   })
 
+  it('lignesDuJournal, quand aucune série de consolidation ne réussit : chaque série n’est jugée qu’une fois', () => {
+    const ratio = croissance(
+      (taille) => blocLong(taille, { periodeTranchage: Infinity, niveau: 'pas_encore' }),
+      (faits) =>
+        lignesDuJournal(faits, {
+          manifestes: { [MANIFESTE.bloc]: MANIFESTE },
+          reglages: REGLAGES,
+        }),
+    )
+    expect(ratio).toBeLessThan(SEUIL)
+  })
+
   it('revueMethode', () => {
     const ratio = croissance(sansTranchage, (faits) =>
       revueMethode(faits, [], [MANIFESTE], null, REGLAGES),
