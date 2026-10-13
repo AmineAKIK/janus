@@ -133,7 +133,6 @@ export function PageParametres({ section }: { readonly section?: string }) {
         )}
         <div className={styles['sections']}>{contenu}</div>
       </div>
-      <p className="texte-petit-14">{T.pied}</p>
       {commit !== undefined && commit !== '' && (
         <p className={`${styles['version'] ?? ''} texte-legende-12`}>{T.version(commit)}</p>
       )}

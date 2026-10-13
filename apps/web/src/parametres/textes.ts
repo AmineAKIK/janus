@@ -12,7 +12,6 @@ export const TEXTES_PARAMETRES = {
   conflit: 'Ces réglages ont changé sur un autre appareil.',
   erreurEnregistrement: 'Le réglage n’a pas été enregistré. Réessaie.',
   version: (commit: string) => `Version ${commit}`,
-  pied: 'Tes données t’appartiennent : Janus ne les vend à personne.',
   chargement: 'Chargement…',
   erreur: 'Les paramètres ne se sont pas chargés.',
   reessayer: 'Réessayer',
