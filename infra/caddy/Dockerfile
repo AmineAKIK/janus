@@ -9,6 +9,8 @@ ARG VITE_SENTRY_DSN=
 ARG VITE_COMMIT=
 ENV VITE_BASE=/ VITE_TRANSPORT=http VITE_HISTORIQUE=chemins VITE_API=/api
 RUN pnpm --filter @janus/web exec vite build --outDir /front
+# Chaque fichier texte est aussi gardé en brotli : Caddy le sert tel quel (`precompressed br`), sans recompresser.
+RUN node infra/caddy/precompresser.js /front
 
 FROM caddy:2
 COPY --from=front /front /srv/app
