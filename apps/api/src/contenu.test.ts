@@ -28,12 +28,7 @@ describe('catalogues de contenu', () => {
     expect(blocs).toEqual(
       Array.from({ length: 18 }, (_, i) => `B${String(i + 1).padStart(2, '0')}`),
     )
-    expect(premier.parties.map((partie) => partie.code)).toEqual([
-      'P1',
-      'P2',
-      'P3',
-      'P4',
-    ])
+    expect(premier.parties.map((partie) => partie.code)).toEqual(['P1', 'P2', 'P3', 'P4'])
     expect(premier.taches_reservees).toHaveLength(6)
   })
 
