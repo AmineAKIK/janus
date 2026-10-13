@@ -18,10 +18,6 @@ describe('catalogues de contenu', () => {
     ])
   })
 
-  it('les fiches du dépôt passent la vérification', async () => {
-    expect(await verifierLesFiches({ dossierContenu: racine })).toEqual([])
-  })
-
   it('DWWM : le module 1 est importé, avec ses 20 blocs B01 à B20 dans l’ordre, sans doublon', () => {
     const catalogue = Catalogue.parse(lire('dwwm/catalogue.json'))
     const [premier] = catalogue.modules
@@ -41,5 +37,9 @@ describe('catalogues de contenu', () => {
       'P6',
     ])
     expect(premier.taches_reservees).toHaveLength(6)
+  })
+
+  it('les fiches du dépôt passent la vérification', async () => {
+    expect(await verifierLesFiches({ dossierContenu: racine })).toEqual([])
   })
 })
