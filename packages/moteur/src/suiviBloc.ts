@@ -12,7 +12,7 @@ import {
   relireVerifications,
   statutCalculeDeLEtat,
 } from './statutEtapes.ts'
-import type { EtatBloc, ResultatBloc } from './statutEtapes.ts'
+import type { Correction, EtatBloc, ResultatBloc } from './statutEtapes.ts'
 import { instantEnMs } from './temps.ts'
 
 /**
@@ -74,7 +74,7 @@ export class SuiviBloc {
     const etat = this.#etat
     this.#faits.push(fait)
     this.#parId.set(fait.id, fait)
-    let erreursAFaire = false
+    let reponseARevoir: Correction | undefined
     if (fait.type === 'correction_tranchee') {
       const cible = etat.corrections.get(fait.correction)
       const avant = lectureTranchee(etat.tranchages, cible)
@@ -84,14 +84,15 @@ export class SuiviBloc {
         this.#recommencer()
         return
       }
-      erreursAFaire = avant.ferme !== apres.ferme
+      reponseARevoir = avant.ferme === apres.ferme ? undefined : cible
     }
     lirePreuves(etat, fait)
     const provisoire = provisoireDeLEtat(etat)
-    if (erreursAFaire || provisoire !== etat.provisoire) {
+    if (provisoire !== etat.provisoire) {
       relireVerifications(etat, this.#faits, provisoire)
     } else {
       lireVerifications(etat, fait)
+      if (reponseARevoir !== undefined) etat.erreurs.revoir(reponseARevoir)
     }
   }
 

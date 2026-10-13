@@ -161,8 +161,12 @@ describe('SuiviBloc : le statut après chaque fait est celui de calculerBloc sur
       const restitution = faits.filter(
         (fait) => fait.type === 'correction' && fait.serie === 'restitution',
       )
-      // E3 est cochée avant la réponse à R4, qui la ferme ; le tranchage la rouvre, puis la referme.
-      const faitsDEntree = [f.cochee(apres(DEBUT, 0, 10), 'E3'), ...faits]
+      // E3 est cochée (deux fois de suite) avant la réponse à R4, qui la ferme ; le tranchage la rouvre, puis la referme.
+      const faitsDEntree = [
+        f.cochee(apres(DEBUT, 0, 10), 'E3'),
+        f.cochee(apres(DEBUT, 0, 11), 'E3'),
+        ...faits,
+      ]
       const avecTranchages = [
         ...faitsDEntree,
         f.verification(apres(DEBUT, 5)),
@@ -195,22 +199,38 @@ describe('SuiviBloc : le statut après chaque fait est celui de calculerBloc sur
       )
       const rappel = f.correction(apres(DEBUT, 0, 140), 'rappel', 'RA1', { niveau: 'solide' })
       const deuxiemeTour = f.correction(apres(DEBUT, 0, 141), 'restitution', 'R1', { tour: 2 })
+      const fragile = f.correction(apres(DEBUT, 0, 142), 'restitution', 'R1', { niveau: 'fragile' })
       verifierChaquePrefixe([
         ...faits,
         rappel,
         deuxiemeTour,
+        fragile,
         tranche(f, 200, rappel, false),
         tranche(f, 201, deuxiemeTour, false),
         // Même compte et même niveau que la réponse d'origine.
         tranche(f, 202, restitution[1], true, 'solide'),
-        // Compte non solide : la réponse ne fermait déjà rien.
-        tranche(
-          f,
-          203,
-          f.correction(apres(DEBUT, 0, 142), 'restitution', 'R1', { niveau: 'fragile' }),
-          false,
-        ),
+        // Elle ne fermait déjà rien, et ne ferme toujours rien.
+        tranche(f, 203, fragile, false),
       ])
+    })
+
+    it('qui rend une erreur à son ouverture d’origine : elle reprend sa place dans l’ordre des erreurs ouvertes', () => {
+      const f = fabrique()
+      const reponse = f.correction(apres(DEBUT, 0, 50), 'restitution', 'R2', { niveau: 'solide' })
+      const avantTranchage = [
+        f.cochee(apres(DEBUT, 0, 35), 'E1'),
+        f.cochee(apres(DEBUT, 0, 40), 'E2'),
+        // Solide : elle ferme E2, qui est cochée de nouveau ensuite.
+        reponse,
+        f.cochee(apres(DEBUT, 0, 60), 'E2'),
+      ]
+      const faits = [...avantTranchage, tranche(f, 70, reponse, true, 'fragile')]
+      verifierChaquePrefixe(faits)
+      const ordre = (recus: readonly Fait[]) =>
+        calculerBloc(recus, MANIFESTE, REGLAGES, MAINTENANT).erreursOuvertes
+      // E2 a été cochée en deuxième, puis refermée et recochée ; sans cette réponse, elle ne s'est jamais fermée.
+      expect(ordre(avantTranchage)).toEqual(['E1', 'E2'])
+      expect(ordre(faits)).toEqual(['E1', 'E2'])
     })
 
     it('qui arrive avant sa correction, ou pour une correction qui n’existe pas', () => {

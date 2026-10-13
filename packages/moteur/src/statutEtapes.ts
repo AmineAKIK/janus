@@ -449,18 +449,53 @@ function reponseReussie(reponse: ReponseVerification): boolean {
   )
 }
 
+/** Une réponse de restitution ou de consolidation du premier tour : seule elle peut fermer des erreurs. */
+function peutFermerDesErreurs(fait: Fait): fait is Correction {
+  return (
+    fait.type === 'correction' &&
+    (fait.serie === 'restitution' || fait.serie === 'consolidation') &&
+    fait.tour === 1
+  )
+}
+
+/** Une réponse ferme les erreurs de sa question quand elle compte et qu'elle est solide, tranchage compris. */
+function fermeLesErreurs(tranchages: Tranchages, reponse: Correction): boolean {
+  return compteEffectif(tranchages, reponse) && niveauEffectif(tranchages, reponse) === 'solide'
+}
+
+/** Ce qui est arrivé à une erreur. */
+interface EvenementErreur {
+  /** Le rang du fait dans l'ordre des faits. */
+  readonly rang: number
+  readonly ouvre: boolean
+  /** Pour une fermeture par une réponse de restitution ou de consolidation : elle ne ferme que si cette réponse le fait. */
+  readonly reponse: Correction | undefined
+}
+
+interface EtatErreur {
+  ouverte: boolean
+  /** Le rang du fait qui l'a ouverte, tant qu'elle l'est. */
+  depuis: number
+}
+
 /**
  * Une erreur s'ouvre quand Amine la coche (l'IA seule n'ouvre rien) et se ferme quand il la décoche
  * ou qu'une réponse réussie, au premier tour et qui compte, touche la même erreur dans une série
  * de restitution ou de consolidation, ou dans une vérification retenue par `SuiviVerifications`
  * (valable, du bon genre et à l'heure : les autres sont ignorées). Le suivi des vérifications
  * avance d'un fait avant celui-ci : `verificationsRetenues` est à jour quand le fait arrive.
+ *
+ * Chaque erreur a sa propre histoire (ouverte, fermée, rouverte…), tenue à part : un tranchage qui change
+ * si une réponse déjà lue ferme des erreurs ne fait relire que l'histoire de ces erreurs, pas tous les faits.
  */
 export class SuiviErreurs {
   readonly #manifeste: Manifeste
   readonly #tranchages: Tranchages
   readonly #verificationsRetenues: ReadonlySet<string>
-  readonly #dansLOrdre: string[] = []
+  readonly #histoires = new Map<string, EvenementErreur[]>()
+  readonly #etats = new Map<string, EtatErreur>()
+  #rang = 0
+  #nombreOuvertes = 0
   #parQuestion: ReadonlyMap<string, readonly string[]> | undefined
 
   constructor(
@@ -473,9 +508,17 @@ export class SuiviErreurs {
     this.#verificationsRetenues = verificationsRetenues
   }
 
+  /** Combien d'erreurs sont ouvertes. */
+  get nombreOuvertes(): number {
+    return this.#nombreOuvertes
+  }
+
   /** Les erreurs ouvertes, dans l'ordre où elles ont été ouvertes. */
-  get ouvertes(): readonly string[] {
-    return this.#dansLOrdre
+  get ouvertes(): string[] {
+    return [...this.#etats]
+      .filter(([, etat]) => etat.ouverte)
+      .sort(([, a], [, b]) => a.depuis - b.depuis)
+      .map(([erreur]) => erreur)
   }
 
   #erreursDeLaQuestion(question: string): readonly string[] {
@@ -483,37 +526,87 @@ export class SuiviErreurs {
     return this.#parQuestion.get(question) ?? []
   }
 
-  #fermer(erreurs: readonly string[]): void {
-    for (const erreur of erreurs) {
-      const rang = this.#dansLOrdre.indexOf(erreur)
-      if (rang >= 0) this.#dansLOrdre.splice(rang, 1)
+  #histoireDe(erreur: string): EvenementErreur[] {
+    let histoire = this.#histoires.get(erreur)
+    if (histoire === undefined) {
+      histoire = []
+      this.#histoires.set(erreur, histoire)
+    }
+    return histoire
+  }
+
+  #etatDe(erreur: string): EtatErreur {
+    let etat = this.#etats.get(erreur)
+    if (etat === undefined) {
+      etat = { ouverte: false, depuis: -1 }
+      this.#etats.set(erreur, etat)
+    }
+    return etat
+  }
+
+  #ferme(reponse: Correction | undefined): boolean {
+    return reponse === undefined || fermeLesErreurs(this.#tranchages, reponse)
+  }
+
+  #ouvrir(erreur: string, rang: number): void {
+    this.#histoireDe(erreur).push({ rang, ouvre: true, reponse: undefined })
+    const etat = this.#etatDe(erreur)
+    if (!etat.ouverte) {
+      etat.ouverte = true
+      etat.depuis = rang
+      this.#nombreOuvertes += 1
+    }
+  }
+
+  #fermer(erreur: string, rang: number, reponse: Correction | undefined): void {
+    this.#histoireDe(erreur).push({ rang, ouvre: false, reponse })
+    const etat = this.#etatDe(erreur)
+    if (etat.ouverte && this.#ferme(reponse)) {
+      etat.ouverte = false
+      this.#nombreOuvertes -= 1
     }
   }
 
   avancer(fait: Fait): void {
-    const ouvertes = this.#dansLOrdre
-    if (fait.type === 'erreur_cochee' && !ouvertes.includes(fait.erreur)) ouvertes.push(fait.erreur)
-    if (fait.type === 'erreur_decochee') this.#fermer([fait.erreur])
-    if (
-      fait.type === 'erreur_ia_tranchee' &&
-      fait.decision === 'confirmee' &&
-      !ouvertes.includes(fait.erreur)
-    ) {
-      ouvertes.push(fait.erreur)
+    const rang = this.#rang
+    this.#rang += 1
+    if (fait.type === 'erreur_cochee') this.#ouvrir(fait.erreur, rang)
+    if (fait.type === 'erreur_decochee') this.#fermer(fait.erreur, rang, undefined)
+    if (fait.type === 'erreur_ia_tranchee' && fait.decision === 'confirmee') {
+      this.#ouvrir(fait.erreur, rang)
     }
-    if (
-      fait.type === 'correction' &&
-      (fait.serie === 'restitution' || fait.serie === 'consolidation') &&
-      fait.tour === 1 &&
-      compteEffectif(this.#tranchages, fait) &&
-      niveauEffectif(this.#tranchages, fait) === 'solide'
-    ) {
-      this.#fermer(this.#erreursDeLaQuestion(fait.question))
+    if (peutFermerDesErreurs(fait)) {
+      for (const erreur of this.#erreursDeLaQuestion(fait.question)) {
+        this.#fermer(erreur, rang, fait)
+      }
     }
     if (fait.type === 'verification_terminee' && this.#verificationsRetenues.has(fait.id)) {
       for (const reponse of fait.reponses.filter(reponseReussie)) {
-        this.#fermer(this.#erreursDeLaQuestion(reponse.question))
+        for (const erreur of this.#erreursDeLaQuestion(reponse.question)) {
+          this.#fermer(erreur, rang, undefined)
+        }
       }
+    }
+  }
+
+  /** Une réponse déjà lue a été tranchée : relit l'histoire des erreurs qu'elle touche. */
+  revoir(reponse: Correction): void {
+    for (const erreur of this.#erreursDeLaQuestion(reponse.question)) {
+      const etat = this.#etatDe(erreur)
+      const etaitOuverte = etat.ouverte
+      etat.ouverte = false
+      etat.depuis = -1
+      for (const evenement of this.#histoireDe(erreur)) {
+        if (evenement.ouvre) {
+          if (!etat.ouverte) {
+            etat.ouverte = true
+            etat.depuis = evenement.rang
+          }
+        } else if (this.#ferme(evenement.reponse)) {
+          etat.ouverte = false
+        }
+      }
+      this.#nombreOuvertes += Number(etat.ouverte) - Number(etaitOuverte)
     }
   }
 }
@@ -921,14 +1014,12 @@ export function lectureTranchee(
   correction: Correction | undefined,
 ): LectureTranchee {
   if (correction === undefined || correction.tour !== 1) return RIEN_A_LIRE
-  const compte = compteEffectif(tranchages, correction)
-  const niveau = niveauEffectif(tranchages, correction)
   return {
-    consolidation: correction.serie === 'consolidation' ? `${String(compte)}|${niveau}` : '',
-    ferme:
-      (correction.serie === 'restitution' || correction.serie === 'consolidation') &&
-      compte &&
-      niveau === 'solide',
+    consolidation:
+      correction.serie === 'consolidation'
+        ? `${String(compteEffectif(tranchages, correction))}|${niveauEffectif(tranchages, correction)}`
+        : '',
+    ferme: peutFermerDesErreurs(correction) && fermeLesErreurs(tranchages, correction),
   }
 }
 
@@ -941,7 +1032,7 @@ export function statutCalculeDeLEtat(etat: EtatBloc): Statut {
       verifications: etat.verifications,
       aisanceAtteinte: etat.aisance.resultat().ok,
     },
-    etat.erreurs.ouvertes.length,
+    etat.erreurs.nombreOuvertes,
   )
 }
 
