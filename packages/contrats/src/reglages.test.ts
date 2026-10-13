@@ -82,6 +82,23 @@ describe('Reglages', () => {
     expect(Reglages.safeParse({ fuseau: 'America/Montreal' }).success).toBe(true)
   })
 
+  it('juge pareil un fuseau la première fois et les suivantes (mémorisé), et ne retient pas les inconnus', () => {
+    for (let essai = 0; essai < 3; essai += 1) {
+      expect(Reglages.safeParse({ fuseau: 'Asia/Tokyo' }).success).toBe(true)
+      expect(Reglages.safeParse({ fuseau: 'Foo/Bar' }).success).toBe(false)
+    }
+  })
+
+  it('reste correct au-delà de la limite de fuseaux mémorisés', () => {
+    // Des décalages distincts (et valides) saturent la mémoire sans changer le verdict.
+    for (let minutes = 0; minutes < 600; minutes += 1) {
+      const nom = `+${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`
+      expect(Reglages.safeParse({ fuseau: nom }).success).toBe(true)
+    }
+    expect(Reglages.safeParse({ fuseau: 'Europe/Paris' }).success).toBe(true)
+    expect(Reglages.safeParse({ fuseau: 'Foo/Bar' }).success).toBe(false)
+  })
+
   it.each([[[]], [[-1, 3]], [[3, 3]], [[12, 3]], [[2.5]], [[0, 6]]])(
     'refuse les mois d’entretien %j',
     (mois) => {

@@ -30,13 +30,20 @@ function reelBorne(libelle: string, min: number, max: number, defaut: number) {
   return nombreBorne({ libelle, min, max, entier: false }, defaut)
 }
 
+/** Les fuseaux déjà reconnus : construire un `Intl.DateTimeFormat` coûte ~15 µs, et chaque lecture des réglages valide le fuseau. */
+const FUSEAUX_CONNUS = new Set<string>()
+const FUSEAUX_RETENUS_AU_PLUS = 512
+
 function fuseauConnu(nom: string): boolean {
+  if (FUSEAUX_CONNUS.has(nom)) return true
   try {
     new Intl.DateTimeFormat('fr-FR', { timeZone: nom })
-    return true
   } catch {
     return false
   }
+  // Borné : le nom vient d'une saisie, la mémoire ne doit pas croître avec elle.
+  if (FUSEAUX_CONNUS.size < FUSEAUX_RETENUS_AU_PLUS) FUSEAUX_CONNUS.add(nom)
+  return true
 }
 
 const HEURE_RAPPEL = /^([01]\d|2[0-3]):[0-5]\d$/
