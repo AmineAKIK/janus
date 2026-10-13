@@ -68,6 +68,12 @@ export const evenements = pgTable(
   },
   (table) => [
     index('evenements_user_bloc_date').on(table.userId, table.blocId, table.dateServeur),
+    // Les lectures par type (accords de correction, vérifications) sans parcourir la table. Le temps
+    // actif (de loin le plus fréquent, ~2 événements sur 3) est exclu : aucune requête ne le lit par
+    // type seul, et l'index resterait trois fois plus gros pour rien sur le chemin d'écriture.
+    index('evenements_user_type_date')
+      .on(table.userId, table.type, table.dateServeur)
+      .where(sql`${table.type} <> 'temps.actif'`),
     // La version de fiche d'un événement appartient à son bloc.
     foreignKey({
       name: 'evenements_version_du_bloc',
@@ -122,6 +128,9 @@ export const corrections = pgTable(
       table.tour,
     ),
     index('corrections_user_question').on(table.userId, table.questionId),
+    // La lecture des faits par bloc, et le plafond horaire / le coût des 45 jours d'un utilisateur.
+    index('corrections_user_bloc_date').on(table.userId, table.blocId, table.dateServeur),
+    index('corrections_user_date').on(table.userId, table.dateServeur),
     check('corrections_tentative_positive', sql`${table.tentative} >= 1`),
     check('corrections_tour_positif', sql`${table.tour} >= 1`),
     check(
