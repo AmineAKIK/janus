@@ -1,34 +1,5 @@
-.page {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacement-24);
-  max-inline-size: var(--largeur-lecture);
-  margin-inline: auto;
-}
-.entete {
-  display: grid;
+.colonnes {
   grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: var(--espacement-16);
-}
-.quitter {
-  min-block-size: 44px;
-  padding: 0 var(--espacement-8);
-  background: none;
-  border: none;
-  color: var(--couleur-texte-secondaire);
-  border-radius: var(--rayon-champ);
-  cursor: pointer;
-  transition: color var(--duree-transition);
-}
-.quitter:hover {
-  color: var(--couleur-encre);
-}
-.titre {
-  margin: 0;
-}
-.titre:focus {
-  outline: none;
 }
 .parties {
   grid-column: 1 / -1;
@@ -44,21 +15,9 @@
   color: var(--couleur-encre);
   font-weight: 600;
 }
-.section,
-.formulaire {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacement-16);
-}
 .actions {
-  display: flex;
-  flex-wrap: wrap;
+  composes: actions from '../seance/Seance.module.css';
   align-items: center;
-  gap: var(--espacement-8);
-}
-.secondaire {
-  margin: 0;
-  color: var(--couleur-texte-secondaire);
 }
 .consigne {
   margin: 0;
@@ -95,35 +54,9 @@
   border-radius: var(--rayon-carte);
   white-space: pre-wrap;
 }
-.lignes {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacement-8);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
 .ligne {
-  display: grid;
+  composes: ligne from '../seance/Seance.module.css';
   grid-template-columns: 1fr auto auto;
-  gap: var(--espacement-8);
-  align-items: center;
-  inline-size: 100%;
-  min-block-size: 44px;
-  padding: var(--espacement-8) var(--espacement-12);
-  text-align: start;
-  background: var(--couleur-surface);
-  border: 1px solid var(--couleur-ligne);
-  border-radius: var(--rayon-carte);
-  color: var(--couleur-encre);
-  cursor: pointer;
-  transition:
-    background var(--duree-transition),
-    border-color var(--duree-transition);
-}
-.ligne:hover {
-  background: var(--couleur-surface-douce);
-  border-color: var(--couleur-controle);
 }
 .detail {
   margin: var(--espacement-8) 0 0;

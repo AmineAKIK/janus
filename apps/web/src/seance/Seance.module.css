@@ -1,0 +1,83 @@
+/* Ce que partagent les écrans de séance : révision, questions de début de séance, vérification. */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-24);
+  max-inline-size: var(--largeur-lecture);
+  margin-inline: auto;
+}
+/* Les colonnes de l'en-tête sont celles de l'écran : il ajoute sa classe `grid-template-columns`. */
+.entete {
+  display: grid;
+  align-items: center;
+  gap: var(--espacement-16);
+}
+.quitter {
+  min-block-size: 44px;
+  padding: 0 var(--espacement-8);
+  background: none;
+  border: none;
+  color: var(--couleur-texte-secondaire);
+  border-radius: var(--rayon-champ);
+  cursor: pointer;
+  transition: color var(--duree-transition);
+}
+.quitter:hover {
+  color: var(--couleur-encre);
+}
+.titre {
+  margin: 0;
+}
+.titre:focus {
+  outline: none;
+}
+.centre {
+  text-align: center;
+}
+.colonne {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-16);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacement-8);
+}
+.etire > * {
+  flex: 1 1 120px;
+}
+.secondaire {
+  margin: 0;
+  color: var(--couleur-texte-secondaire);
+}
+.lignes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* Une ligne cliquable de la liste : l'écran ajoute sa classe `grid-template-columns`. */
+.ligne {
+  display: grid;
+  gap: var(--espacement-8);
+  align-items: center;
+  inline-size: 100%;
+  min-block-size: 44px;
+  padding: var(--espacement-8) var(--espacement-12);
+  text-align: start;
+  background: var(--couleur-surface);
+  border: 1px solid var(--couleur-ligne);
+  border-radius: var(--rayon-carte);
+  color: var(--couleur-encre);
+  cursor: pointer;
+  transition:
+    background var(--duree-transition),
+    border-color var(--duree-transition);
+}
+.ligne:hover {
+  background: var(--couleur-surface-douce);
+  border-color: var(--couleur-controle);
+}

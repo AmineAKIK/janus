@@ -8,7 +8,6 @@ export type ResultatVerification = NonNullable<
 
 export const TEXTES_VERIFICATION = {
   titre: 'Vérification',
-  quitter: 'Quitter',
   enTeteVerification: 'Vérification · bloc masqué',
   enTeteRetest: 'Retest · bloc masqué',
   introTitre: 'Vérifier ce qui tient dans le temps',
@@ -50,11 +49,9 @@ export const TEXTES_VERIFICATION = {
   extrait: 'Extrait de ta réponse',
   confirmer: 'Confirmer l’erreur',
   demanderRevue: 'Demander une revue',
-  etapeSuivante: 'Étape suivante',
   retour: 'Retour à Aujourd’hui',
   dialogueTitre: 'Quitter la vérification ?',
   dialogueTexte: 'Tes réponses envoyées sont gardées. Tu reprendras à la partie suivante.',
-  continuer: 'Continuer',
   chargement: 'Chargement…',
 } as const
 

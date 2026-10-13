@@ -1,22 +1,21 @@
-import { ROUTES } from '@janus/contrats'
-import type { SortieRoute } from '@janus/contrats'
-import { Bouton, Dialogue, DialogueConfirmation } from '@janus/ui'
+import { ROUTES, nouvelId } from '@janus/contrats'
+import { Bouton, DialogueConfirmation } from '@janus/ui'
 import { useState } from 'react'
 import { useLecture } from '../api/requetes.tsx'
-import { texteTache } from '../aujourdhui/textesTaches.ts'
 import { Chargement, Erreur } from '../catalogue/EtatEcran.tsx'
 import { useBoiteEnvoi } from '../envoi/FournisseurEnvoi.tsx'
-import { texteEtapeSuivante } from '../questions/textes.ts'
-import { nouvelId } from '@janus/contrats'
 import { instantReel } from '../horloge.ts'
+import { aller } from '../routes/navigation.ts'
+import { DialogueQuitterSeance } from '../seance/DialogueQuitterSeance.tsx'
+import { EnteteSeance } from '../seance/EnteteSeance.tsx'
+import { etapeSuivante } from '../seance/etapeSuivante.ts'
+import type { Aujourdhui } from '../seance/etapeSuivante.ts'
+import seance from '../seance/Seance.module.css'
 import { PartieTache, PartieTexte } from './Parties.tsx'
 import { Resultat } from './Resultat.tsx'
 import { LIBELLES_PARTIE, TEXTES_VERIFICATION as T, texteEnTete, texteRevuLe } from './textes.ts'
 import styles from './Verification.module.css'
 import { useVerification } from './useVerification.ts'
-import { aller } from '../routes/navigation.ts'
-
-type Aujourdhui = SortieRoute<(typeof ROUTES)['GET /aujourdhui']>
 
 function EtapeSuivante({
   aujourdhui,
@@ -26,20 +25,16 @@ function EtapeSuivante({
   /** Le lien de la file du jour qui mène à cette vérification : elle ne se propose pas à elle-même. */
   readonly lienCourant: string
 }) {
-  const suivante = aujourdhui?.taches.find(({ faite, lien }) => !faite && lien !== lienCourant)
-  const titreBloc = (code: string) =>
-    aujourdhui?.module?.blocs.find(({ bloc }) => bloc === code)?.titre_court ?? ''
+  const suivante = etapeSuivante(aujourdhui, ({ lien }) => lien === lienCourant)
   return (
     <Bouton
       type="button"
       variante="principal"
       onClick={() => {
-        aller(suivante?.lien ?? '/')
+        aller(suivante.lien)
       }}
     >
-      {suivante === undefined
-        ? T.etapeSuivante
-        : texteEtapeSuivante(texteTache(suivante.tache, { titreBloc, etape: () => null }).titre)}
+      {suivante.libelle}
     </Bouton>
   )
 }
@@ -87,7 +82,7 @@ export function PageVerification({ id }: { readonly id: string }) {
   ) {
     const lecture = parties.filter(({ type }) => type !== 'tache')
     contenu = (
-      <section className={styles['section']} aria-busy="true">
+      <section className={seance['colonne']} aria-busy="true">
         <h2 className="texte-sous-titre-18" role="status">
           {T.correctionEnCours}
         </h2>
@@ -104,7 +99,7 @@ export function PageVerification({ id }: { readonly id: string }) {
   } else if (!verification.commencee && !lance && !quandMeme) {
     if (vue.revu_recemment !== null) {
       contenu = (
-        <section className={styles['section']}>
+        <section className={seance['colonne']}>
           <h2 className="texte-sous-titre-18">{T.revuTitre}</h2>
           <p className="texte-corps-16">{texteRevuLe(vue.revu_recemment)}</p>
           <p className="texte-corps-16">{T.revuExplication}</p>
@@ -132,7 +127,7 @@ export function PageVerification({ id }: { readonly id: string }) {
       )
     } else {
       contenu = (
-        <section className={styles['section']}>
+        <section className={seance['colonne']}>
           <h2 className="texte-sous-titre-18">{T.introTitre}</h2>
           <p className="texte-corps-16">{T.introAnonyme}</p>
           <p className="texte-petit-14">{T.introResume}</p>
@@ -163,9 +158,9 @@ export function PageVerification({ id }: { readonly id: string }) {
     }
     const precedente = parties[parties.indexOf(courante) - 1]
     contenu = (
-      <section className={styles['section']}>
+      <section className={seance['colonne']}>
         {precedente !== undefined && verification.etat(precedente) === 'envoyee' && (
-          <p role="status" className={`${styles['secondaire'] ?? ''} texte-petit-14`}>
+          <p role="status" className={`${seance['secondaire'] ?? ''} texte-petit-14`}>
             {T.reponseEnregistree}
           </p>
         )}
@@ -179,20 +174,14 @@ export function PageVerification({ id }: { readonly id: string }) {
   }
 
   return (
-    <div className={styles['page']}>
-      <header className={styles['entete']}>
-        <button
-          type="button"
-          className={`${styles['quitter'] ?? ''} texte-petit-14`}
-          onClick={() => {
-            setQuitter(true)
-          }}
-        >
-          <span aria-hidden="true">×</span> {T.quitter}
-        </button>
-        <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-sous-titre-18`}>
-          {vue === undefined ? T.titre : texteEnTete(vue.type)}
-        </h1>
+    <div className={seance['page']}>
+      <EnteteSeance
+        titre={vue === undefined ? T.titre : texteEnTete(vue.type)}
+        colonnes={styles['colonnes']}
+        surQuitter={() => {
+          setQuitter(true)
+        }}
+      >
         {vue !== undefined && resultat === null && (
           <ol className={`${styles['parties'] ?? ''} texte-petit-14`} aria-label="Parties">
             {parties.map((partie, rang) => (
@@ -206,7 +195,7 @@ export function PageVerification({ id }: { readonly id: string }) {
             ))}
           </ol>
         )}
-      </header>
+      </EnteteSeance>
       {contenu}
       {reportDemande && (
         <DialogueConfirmation
@@ -222,35 +211,16 @@ export function PageVerification({ id }: { readonly id: string }) {
         </DialogueConfirmation>
       )}
       {quitter && (
-        <Dialogue
+        <DialogueQuitterSeance
           titre={T.dialogueTitre}
-          surFermeture={() => {
+          texte={T.dialogueTexte}
+          surSortie={() => {
+            aller('/')
+          }}
+          surContinuer={() => {
             setQuitter(false)
           }}
-        >
-          <p className="texte-corps-16">{T.dialogueTexte}</p>
-          <div className={styles['actions']}>
-            <Bouton
-              type="button"
-              variante="secondaire"
-              onClick={() => {
-                aller('/')
-              }}
-            >
-              {T.quitter}
-            </Bouton>
-            <Bouton
-              type="button"
-              variante="principal"
-              data-focus-initial
-              onClick={() => {
-                setQuitter(false)
-              }}
-            >
-              {T.continuer}
-            </Bouton>
-          </div>
-        </Dialogue>
+        />
       )}
     </div>
   )
