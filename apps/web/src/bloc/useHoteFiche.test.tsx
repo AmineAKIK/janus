@@ -77,6 +77,7 @@ describe('page d’un bloc', () => {
         etat: null,
         statut: 'en_cours',
         serie_ouverte: { restitution: true, consolidation: false },
+        theme: 'systeme',
       }),
       '*',
     )

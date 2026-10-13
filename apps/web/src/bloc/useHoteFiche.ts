@@ -1,5 +1,6 @@
 import { CorrectionRecue, ErreurApi, nouvelId } from '@janus/contrats'
 import type { Manque, MessageAppli, MessagePage, Niveau, Statut } from '@janus/contrats'
+import { lireTheme } from '@janus/ui'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
 import { instantReel } from '../horloge.ts'
@@ -132,6 +133,7 @@ export function useHoteFiche(
       etat,
       statut: courant.statut,
       serie_ouverte: courantes.serieOuverte,
+      theme: lireTheme(),
     })
   }, [vers])
 
