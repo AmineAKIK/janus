@@ -144,3 +144,42 @@ export function avantConsolidation(f: Fabrique, aides?: readonly [Aide, Aide]): 
 export function jusquaProvisoire(f: Fabrique): Fait[] {
   return [...avantConsolidation(f), ...f.consolidation(apres(DEBUT, 0, 120))]
 }
+
+/**
+ * Un bloc long : beaucoup de réponses de restitution et de consolidation, des erreurs cochées et des étapes vues,
+ * `pasMinutes` minutes entre deux faits. Une correction sur `periodeTranchage` est suivie de son tranchage ;
+ * `Infinity` n'en met aucun.
+ */
+export function blocLong(
+  taille: number,
+  options: { readonly pasMinutes?: number; readonly periodeTranchage?: number } = {},
+): Fait[] {
+  const { pasMinutes = 7, periodeTranchage = 10 } = options
+  const f = fabrique()
+  const faits: Fait[] = []
+  let minute = 0
+  const date = () => apres(DEBUT, 0, (minute += pasMinutes))
+  while (faits.length < taille) {
+    const rang = faits.length
+    const serie = rang % 3 === 0 ? 'restitution' : 'consolidation'
+    const questions = serie === 'restitution' ? MANIFESTE.restitution : MANIFESTE.consolidation
+    const question = questions[rang % questions.length]?.id ?? 'R1'
+    const correction = f.correction(date(), serie, question, {
+      niveau: rang % 5 === 0 ? 'partiel' : 'solide',
+    })
+    faits.push(correction)
+    if (rang % periodeTranchage === periodeTranchage - 6) {
+      faits.push(
+        f.fait(date(), {
+          type: 'correction_tranchee',
+          correction: correction.id,
+          compte: rang % 20 !== 4,
+          niveau: 'fragile',
+        }),
+      )
+    }
+    if (rang % 12 === 6) faits.push(f.cochee(date(), 'E1'))
+    if (rang % 12 === 9) faits.push(f.etape(date(), 'ET3'))
+  }
+  return faits
+}
