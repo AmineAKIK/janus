@@ -1,4 +1,5 @@
 import type { Fait, NoteCarte, Reglages, TacheDuJour } from '@janus/contrats'
+import { faitsParBloc } from '../parBloc.ts'
 import { calculerBloc } from '../statut.ts'
 import { ecartEnJours } from '../temps.ts'
 import { echeances } from '../echeances.ts'
@@ -47,17 +48,13 @@ export function composerTableau(entree: EntreeTableau) {
     entree.modules.find(({ id }) => id === entree.module) ??
     (entree.module === undefined ? entree.modules[0] : undefined)
 
+  const duBloc = faitsParBloc(faits)
   const blocs = entree.blocs
     .filter(({ moduleCode }) => moduleCode === module?.id)
     .map(({ code, partie, manifeste }) => ({
       manifeste,
       partie,
-      resultat: calculerBloc(
-        faits.filter((fait) => fait.bloc === code),
-        manifeste,
-        reglages,
-        maintenant,
-      ),
+      resultat: calculerBloc(duBloc.get(code) ?? [], manifeste, reglages, maintenant),
     }))
   const carte = carteDuModule(
     blocs.map(({ manifeste, partie, resultat }) => ({

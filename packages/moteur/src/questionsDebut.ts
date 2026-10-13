@@ -63,11 +63,18 @@ export function choisirQuestionsDebut(
   const corrections = historique
     .filter((fait): fait is Correction => fait.type === 'correction')
     .sort(plusAncienne)
+  // Les réponses de chaque question, par bloc, dans l'ordre des corrections (la plus ancienne d'abord).
+  const reponsesParQuestion = new Map<string, Map<string, Correction[]>>()
+  for (const correction of corrections) {
+    const duBloc = reponsesParQuestion.get(correction.bloc) ?? new Map<string, Correction[]>()
+    reponsesParQuestion.set(correction.bloc, duBloc)
+    const reponses = duBloc.get(correction.question)
+    if (reponses === undefined) duBloc.set(correction.question, [correction])
+    else reponses.push(correction)
+  }
   const candidates = blocsVus.flatMap(({ manifeste, prerequisDuBlocEnCours }) =>
     manifeste.rappel.map((question): QuestionDebut => {
-      const reponses = corrections.filter(
-        (correction) => correction.bloc === manifeste.bloc && correction.question === question.id,
-      )
+      const reponses = reponsesParQuestion.get(manifeste.bloc)?.get(question.id) ?? []
       const derniere = reponses.at(-1)
       let priorite: QuestionDebut['priorite'] = 4
       if (prerequisDuBlocEnCours) priorite = 3

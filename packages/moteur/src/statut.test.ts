@@ -248,6 +248,29 @@ describe('la consolidation', () => {
     }
   })
 
+  it('quand deux étapes portent le même identifiant, la première donne son type', () => {
+    const f = fabrique()
+    const manifeste = {
+      ...MANIFESTE,
+      etapes: [
+        { id: 'ETD', titre: 'Bilan', type: 'bilan' as const },
+        { id: 'ETD', titre: 'Explication', type: 'explication' as const },
+        ...MANIFESTE.etapes,
+      ],
+    }
+    const faits = [
+      ...f.pratique(DEBUT),
+      f.atelier(DEBUT),
+      ...f.restitution(apres(DEBUT, 0, 30)),
+      // Un bilan : le cours n'est pas rouvert, le délai court toujours depuis la restitution.
+      f.etape(apres(DEBUT, 0, 60), 'ETD'),
+      ...f.consolidation(apres(DEBUT, 0, 100)),
+    ]
+    expect(calculerBloc(faits, manifeste, REGLAGES, apres(DEBUT, 0, 200)).statut).toBe(
+      'acquis_provisoirement',
+    )
+  })
+
   it('une étape de cours vue avant la restitution ou après la consolidation n’annule rien', () => {
     const f = fabrique()
     const faits = [
@@ -660,6 +683,25 @@ describe('les erreurs critiques', () => {
     expect(calcul([...base, f.cochee(apres(DEBUT, 4), 'E1')], apres(DEBUT, 5)).statut).toBe(
       'a_reprendre',
     )
+  })
+
+  it('quand deux questions portent le même identifiant, la première donne ses erreurs', () => {
+    const f = fabrique()
+    const [premiere, ...suite] = MANIFESTE.consolidation
+    if (premiere === undefined) throw new Error('Le bloc de test n’a pas de consolidation')
+    const manifeste = {
+      ...MANIFESTE,
+      consolidation: [{ ...premiere, id: 'R1', erreurs: ['E2'] }, ...suite],
+    }
+    const faits = [
+      f.cochee(DEBUT, 'E1'),
+      f.cochee(apres(DEBUT, 0, 1), 'E2'),
+      f.correction(apres(DEBUT, 0, 2), 'restitution', 'R1', { niveau: 'solide' }),
+    ]
+    // R1 est d'abord une question de restitution, liée à E1 : c'est E1 qui se ferme.
+    expect(calculerBloc(faits, manifeste, REGLAGES, apres(DEBUT, 0, 3)).erreursOuvertes).toEqual([
+      'E2',
+    ])
   })
 
   it('décocher une erreur qui n’est pas ouverte ne fait rien', () => {

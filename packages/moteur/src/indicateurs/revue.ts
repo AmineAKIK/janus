@@ -1,5 +1,6 @@
 import type { Manifeste, Reglages, TypeEtape } from '@janus/contrats'
 import type { Fait } from '../faits.ts'
+import { faitsParBloc } from '../parBloc.ts'
 import { calculerBloc } from '../statut.ts'
 import { instantEnMs } from '../temps.ts'
 import { GROUPE_DE_L_ETAPE } from './temps.ts'
@@ -52,10 +53,11 @@ export function revueMethode(
   const apresRevue = (date: string) => instantEnMs(date) > depuis
   let blocsDepuis = 0
   const sautees = new Map<TypeEtape, number>()
+  const parBloc = faitsParBloc(faits)
   for (const manifeste of manifestes) {
-    const duBloc = faits
-      .filter((fait) => fait.bloc === manifeste.bloc)
-      .sort((a, b) => instantEnMs(a.date) - instantEnMs(b.date))
+    const duBloc = [...(parBloc.get(manifeste.bloc) ?? [])].sort(
+      (a, b) => instantEnMs(a.date) - instantEnMs(b.date),
+    )
     let precedent = false
     for (const [rang, fait] of duBloc.entries()) {
       const vu =

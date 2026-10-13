@@ -1,8 +1,12 @@
+import { CacheBorne } from './cacheBorne.ts'
+
 const FORMAT_JOUR = /^(\d{4})-(\d{2})-(\d{2})$/
-const FORMAT_INSTANT = /^(\d{4}-\d{2}-\d{2})T([01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?Z$/
+const FORMAT_INSTANT = /^(\d{4})-(\d{2})-(\d{2})T([01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?Z$/
 /** Une minute en millisecondes. */
 export const MS_PAR_MINUTE = 60_000
 const MS_PAR_JOUR = 86_400_000
+/** Combien d'instants chaque cache retient avant de repartir de zéro. */
+const CAPACITE_DU_CACHE = 250_000
 
 /** Un jour au format `AAAA-MM-JJ`. */
 export type Jour = string
@@ -24,20 +28,35 @@ function lireJour(jour: Jour): Date {
   return date
 }
 
-/** Lit un instant ISO 8601 en UTC (`AAAA-MM-JJThh:mm:ss[.sss]Z`) ; refuse tout le reste, jour impossible ou offset absent compris. */
-export function instantEnMs(instantIso: string): number {
-  const jour = FORMAT_INSTANT.exec(instantIso)?.[1]
-  if (jour === undefined || !jourExiste(jour)) throw new Error(`Instant illisible : ${instantIso}`)
-  return Date.parse(instantIso)
+/**
+ * Vrai quand `AAAA-MM-JJ` existe au calendrier. Même verdict que passer par `Date` puis relire le jour
+ * (ce que fait `lireJour`), sans construire de date : les années avant 100 sont refusées, `Date.UTC`
+ * les prenant pour des années 19xx.
+ */
+function jourExiste(annee: number, mois: number, jour: number): boolean {
+  if (annee < 100 || mois < 1 || mois > 12 || jour < 1) return false
+  // Le jour 0 du mois suivant est le dernier jour de celui-ci.
+  return jour <= new Date(Date.UTC(annee, mois, 0)).getUTCDate()
 }
 
-function jourExiste(jour: Jour): boolean {
-  try {
-    lireJour(jour)
-    return true
-  } catch {
-    return false
+/**
+ * Les instants déjà lus : les mêmes faits sont lus et comparés des dizaines de fois par requête, et
+ * lire un instant (expression régulière, puis `Date.parse`) coûte dix fois plus qu'une recherche ici.
+ * Seuls les instants valides y entrent. Borné : au-delà de `MAX_INSTANTS` entrées, on repart de zéro.
+ */
+const INSTANTS = new CacheBorne<number>(CAPACITE_DU_CACHE)
+
+/** Lit un instant ISO 8601 en UTC (`AAAA-MM-JJThh:mm:ss[.sss]Z`) ; refuse tout le reste, jour impossible ou offset absent compris. */
+export function instantEnMs(instantIso: string): number {
+  const connu = INSTANTS.lire(instantIso)
+  if (connu !== undefined) return connu
+  const trouve = FORMAT_INSTANT.exec(instantIso)
+  if (trouve === null || !jourExiste(Number(trouve[1]), Number(trouve[2]), Number(trouve[3]))) {
+    throw new Error(`Instant illisible : ${instantIso}`)
   }
+  const ms = Date.parse(instantIso)
+  INSTANTS.ecrire(instantIso, ms)
+  return ms
 }
 
 /** L'instant ISO 8601 UTC d'un nombre de millisecondes depuis 1970. */
@@ -45,25 +64,72 @@ export function instantEnIso(ms: number): string {
   return new Date(ms).toISOString()
 }
 
+/** La date et l'heure locales d'un instant dans un fuseau ; `veille` n'est calculée qu'au premier besoin. */
+interface Local {
+  readonly date: Jour
+  readonly heure: number
+  veille?: Jour
+}
+
+/**
+ * Construire un `Intl.DateTimeFormat` coûte une centaine de microsecondes, soit presque tout le prix de
+ * `jourDe` : un seul par fuseau, gardé tant que le processus vit.
+ */
+const FORMATEURS = new Map<string, Intl.DateTimeFormat>()
+/**
+ * Les instants déjà convertis, par fuseau : une lecture rejoue les mêmes faits à chaque requête, et
+ * `jourDe` en croise plusieurs fois le même.
+ */
+const LOCAUX = new Map<string, CacheBorne<Local>>()
+
+function formateurDe(fuseau: string): Intl.DateTimeFormat {
+  let formateur = FORMATEURS.get(fuseau)
+  if (formateur === undefined) {
+    formateur = new Intl.DateTimeFormat('en-CA', {
+      timeZone: fuseau,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      hourCycle: 'h23',
+    })
+    FORMATEURS.set(fuseau, formateur)
+  }
+  return formateur
+}
+
+function localDe(instantIso: string, fuseau: string): Local {
+  const connus = LOCAUX.get(fuseau) ?? new CacheBorne<Local>(CAPACITE_DU_CACHE)
+  const deja = connus.lire(instantIso)
+  if (deja !== undefined) return deja
+  const instant = instantEnMs(instantIso)
+  let annee = ''
+  let mois = ''
+  let jour = ''
+  let heure = ''
+  for (const { type, value } of formateurDe(fuseau).formatToParts(instant)) {
+    if (type === 'year') annee = value
+    else if (type === 'month') mois = value
+    else if (type === 'day') jour = value
+    else if (type === 'hour') heure = value
+  }
+  const local: Local = {
+    date: enJour(new Date(Date.UTC(Number(annee), Number(mois) - 1, Number(jour)))),
+    heure: Number(heure),
+  }
+  LOCAUX.set(fuseau, connus)
+  connus.ecrire(instantIso, local)
+  return local
+}
+
 /**
  * Le jour auquel compte un instant : la date locale du fuseau, moins un jour
  * tant qu'il est avant `heureBascule` (une séance à 1 h 30 compte pour la veille).
  */
 export function jourDe(instantIso: string, fuseau: string, heureBascule: number): Jour {
-  const instant = instantEnMs(instantIso)
-  const parties = new Intl.DateTimeFormat('en-CA', {
-    timeZone: fuseau,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    hourCycle: 'h23',
-  }).formatToParts(instant)
-  const champs = Object.fromEntries(parties.map(({ type, value }) => [type, value]))
-  const dateLocale = enJour(
-    new Date(Date.UTC(Number(champs['year']), Number(champs['month']) - 1, Number(champs['day']))),
-  )
-  return Number(champs['hour']) < heureBascule ? ajouterJours(dateLocale, -1) : dateLocale
+  const local = localDe(instantIso, fuseau)
+  if (local.heure >= heureBascule) return local.date
+  return (local.veille ??= ajouterJours(local.date, -1))
 }
 
 /**

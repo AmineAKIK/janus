@@ -118,22 +118,23 @@ function estCorrectionDe(serie: Correction['serie']): (fait: Fait) => fait is Co
     fait.type === 'correction' && fait.serie === serie && fait.tour === 1
 }
 
-function dernierTranchage(
-  ordonnes: readonly Fait[],
-  correction: Correction,
-): TranchageCorrection | undefined {
-  return ordonnes.findLast(
-    (fait): fait is TranchageCorrection =>
-      fait.type === 'correction_tranchee' && fait.correction === correction.id,
-  )
+/** Le dernier tranchage de chaque correction : le dernier dans l'ordre des faits l'emporte. */
+type Tranchages = ReadonlyMap<string, TranchageCorrection>
+
+function tranchagesDe(ordonnes: readonly Fait[]): Tranchages {
+  const derniers = new Map<string, TranchageCorrection>()
+  for (const fait of ordonnes) {
+    if (fait.type === 'correction_tranchee') derniers.set(fait.correction, fait)
+  }
+  return derniers
 }
 
-function compteEffectif(ordonnes: readonly Fait[], correction: Correction): boolean {
-  return dernierTranchage(ordonnes, correction)?.compte ?? correction.compte
+function compteEffectif(tranchages: Tranchages, correction: Correction): boolean {
+  return tranchages.get(correction.id)?.compte ?? correction.compte
 }
 
-function niveauEffectif(ordonnes: readonly Fait[], correction: Correction): Correction['niveau'] {
-  return dernierTranchage(ordonnes, correction)?.niveau ?? correction.niveau
+function niveauEffectif(tranchages: Tranchages, correction: Correction): Correction['niveau'] {
+  return tranchages.get(correction.id)?.niveau ?? correction.niveau
 }
 
 // --- Restitution -----------------------------------------------------------
@@ -143,11 +144,15 @@ type Restitution =
   | { readonly vu: true; readonly date: string }
 
 function evaluerRestitution(ordonnes: readonly Fait[], manifeste: Manifeste): Restitution {
+  // La première réponse (premier tour) de chaque question.
+  const premieres = new Map<string, Correction>()
+  const dePremierTour = estCorrectionDe('restitution')
+  for (const fait of ordonnes) {
+    if (dePremierTour(fait) && !premieres.has(fait.question)) premieres.set(fait.question, fait)
+  }
   const reponses = manifeste.restitution.map((question) => ({
     id: question.id,
-    fait: ordonnes
-      .filter(estCorrectionDe('restitution'))
-      .find((correction) => correction.question === question.id),
+    fait: premieres.get(question.id),
   }))
   const manquantes = reponses.filter(({ fait }) => fait === undefined).map(({ id }) => id)
   const date = plusTard(reponses.flatMap(({ fait }) => (fait === undefined ? [] : [fait.date])))
@@ -163,34 +168,29 @@ type Verdict =
       readonly manque: Manque
     }
 
-function ouvreLeCours(manifeste: Manifeste): (fait: Fait) => boolean {
-  return (fait) => {
-    if (fait.type !== 'etape_vue') return false
-    const type = manifeste.etapes.find((etape) => etape.id === fait.etape)?.type
-    return type !== undefined && ETAPES_DE_COURS.has(type)
-  }
+/**
+ * Une réponse de consolidation qui compte. `coursAvant` est l'instant le plus tardif, parmi les faits
+ * qui la précèdent, d'une réponse de restitution (premier tour) ou d'une étape qui rouvre le cours.
+ */
+interface Comptee {
+  readonly correction: Correction
+  readonly coursAvant: number
 }
 
 function verdictSerie(
-  ordonnes: readonly Fait[],
-  trio: readonly Correction[],
-  manifeste: Manifeste,
+  tranchages: Tranchages,
+  trio: readonly Comptee[],
   reglages: Reglages,
   restitutionFinie: string,
 ): Verdict {
-  const premierRang = Math.min(...trio.map((correction) => ordonnes.indexOf(correction)))
-  const premierMs = Math.min(...trio.map((correction) => instantEnMs(correction.date)))
-  const derniereDate = trio.map((correction) => correction.date).reduce(plusTardQue)
+  const premierMs = Math.min(...trio.map(({ correction }) => instantEnMs(correction.date)))
+  const derniereDate = trio.map(({ correction }) => correction.date).reduce(plusTardQue)
   // Une série commencée avant la fin de la restitution ne compte pas : « vu » vient d'abord.
   // Le délai court depuis la dernière réponse de restitution ou, si le cours a été rouvert depuis,
   // depuis la dernière étape de cours.
-  const coursOuRestitution = ouvreLeCours(manifeste)
-  const dernierCours = ordonnes
-    .slice(0, premierRang)
-    .filter((fait) => estCorrectionDe('restitution')(fait) || coursOuRestitution(fait))
-    .map(({ date }) => date)
-    .reduce<string>(plusTardQue, restitutionFinie)
-  const finDelai = instantEnMs(dernierCours) + reglages.delaiConsolidationMinutes * MS_PAR_MINUTE
+  const finDelai =
+    Math.max(instantEnMs(restitutionFinie), Math.min(...trio.map(({ coursAvant }) => coursAvant))) +
+    reglages.delaiConsolidationMinutes * MS_PAR_MINUTE
   if (premierMs < finDelai) {
     return {
       ok: false,
@@ -198,8 +198,10 @@ function verdictSerie(
     }
   }
   const obtenus =
-    trio.reduce((total, correction) => total + points(niveauEffectif(ordonnes, correction)), 0) /
-    trio.length
+    trio.reduce(
+      (total, { correction }) => total + points(niveauEffectif(tranchages, correction)),
+      0,
+    ) / trio.length
   if (obtenus < reglages.seuilConsolidation) {
     return {
       ok: false,
@@ -217,12 +219,14 @@ function verdictSerie(
  * Découpe en séries de 3 questions différentes : une réponse à une question déjà dans la série en
  * cours ne compte pas pour la série (répéter la même question ne remplace pas les deux autres).
  */
-function seriesDeTrois(comptees: readonly Correction[]): Correction[][] {
-  const series: Correction[][] = []
-  let courante: Correction[] = []
-  for (const correction of comptees) {
-    if (courante.some(({ question }) => question === correction.question)) continue
-    courante.push(correction)
+function seriesDeTrois(comptees: readonly Comptee[]): Comptee[][] {
+  const series: Comptee[][] = []
+  let courante: Comptee[] = []
+  for (const comptee of comptees) {
+    if (courante.some(({ correction }) => correction.question === comptee.correction.question)) {
+      continue
+    }
+    courante.push(comptee)
     if (courante.length === 3) {
       series.push(courante)
       courante = []
@@ -237,23 +241,40 @@ function seriesDeTrois(comptees: readonly Correction[]): Correction[][] {
  */
 function evaluerConsolidation(
   ordonnes: readonly Fait[],
+  tranchages: Tranchages,
   manifeste: Manifeste,
   reglages: Reglages,
   restitutionFinie: string,
   maintenant: string,
 ): Verdict {
   const reserve = new Set(manifeste.consolidation.map((question) => question.id))
-  const comptees = ordonnes
-    .filter(estCorrectionDe('consolidation'))
-    .filter(
-      (correction) => compteEffectif(ordonnes, correction) && reserve.has(correction.question),
-    )
-  const verdicts = seriesDeTrois(comptees).map((trio) =>
-    verdictSerie(ordonnes, trio, manifeste, reglages, restitutionFinie),
+  const dePremierTour = estCorrectionDe('consolidation')
+  const reponseDeRestitution = estCorrectionDe('restitution')
+  // Le type de chaque étape ; si un identifiant se répète, la première étape l'emporte.
+  const typeDeLEtape = new Map(
+    manifeste.etapes.toReversed().map((etape): [string, TypeEtape] => [etape.id, etape.type]),
   )
-  const valable = verdicts.find((verdict) => verdict.ok)
-  if (valable !== undefined) return valable
-  const dernier = verdicts.at(-1)
+  const ouvreLeCours = (fait: Fait): boolean => {
+    if (fait.type !== 'etape_vue') return false
+    const type = typeDeLEtape.get(fait.etape)
+    return type !== undefined && ETAPES_DE_COURS.has(type)
+  }
+  const comptees: Comptee[] = []
+  let coursAvant = Number.NEGATIVE_INFINITY
+  for (const fait of ordonnes) {
+    if (dePremierTour(fait) && compteEffectif(tranchages, fait) && reserve.has(fait.question)) {
+      comptees.push({ correction: fait, coursAvant })
+    }
+    if (reponseDeRestitution(fait) || ouvreLeCours(fait)) {
+      coursAvant = Math.max(coursAvant, instantEnMs(fait.date))
+    }
+  }
+  // La première série valable ; à défaut, le verdict de la dernière.
+  let dernier: Verdict | undefined
+  for (const trio of seriesDeTrois(comptees)) {
+    dernier = verdictSerie(tranchages, trio, reglages, restitutionFinie)
+    if (dernier.ok) return dernier
+  }
   if (dernier !== undefined) return dernier
   const finDelai =
     instantEnMs(restitutionFinie) + reglages.delaiConsolidationMinutes * MS_PAR_MINUTE
@@ -308,14 +329,17 @@ function evaluerAisance(ordonnes: readonly Fait[], manifeste: Manifeste, reglage
 
 // --- Erreurs critiques -----------------------------------------------------
 
-function erreursDeLaQuestion(manifeste: Manifeste, question: string): readonly string[] {
+/** Les erreurs critiques de chaque question du manifeste ; si un identifiant se répète, la première question l'emporte. */
+function erreursParQuestion(manifeste: Manifeste): ReadonlyMap<string, readonly string[]> {
   const toutes = [
     ...manifeste.restitution,
     ...manifeste.consolidation,
     ...manifeste.rappel,
     ...manifeste.differees,
   ]
-  return toutes.find((candidate) => candidate.id === question)?.erreurs ?? []
+  return new Map(
+    toutes.toReversed().map(({ id, erreurs }): [string, readonly string[]] => [id, erreurs]),
+  )
 }
 
 /** Une réponse réussie compte au premier tour : tâche réussie, ou explication et transfert au niveau solide. */
@@ -335,10 +359,16 @@ function reponseReussie(reponse: ReponseVerification): boolean {
  */
 function evaluerErreurs(
   ordonnes: readonly Fait[],
+  tranchages: Tranchages,
   manifeste: Manifeste,
   verificationsRetenues: ReadonlySet<string>,
 ): string[] {
   const ouvertes: string[] = []
+  let parQuestion: ReadonlyMap<string, readonly string[]> | undefined
+  const erreursDeLaQuestion = (question: string): readonly string[] => {
+    parQuestion ??= erreursParQuestion(manifeste)
+    return parQuestion.get(question) ?? []
+  }
   const fermer = (erreurs: readonly string[]) => {
     for (const erreur of erreurs) {
       const rang = ouvertes.indexOf(erreur)
@@ -359,14 +389,14 @@ function evaluerErreurs(
       fait.type === 'correction' &&
       (fait.serie === 'restitution' || fait.serie === 'consolidation') &&
       fait.tour === 1 &&
-      compteEffectif(ordonnes, fait) &&
-      niveauEffectif(ordonnes, fait) === 'solide'
+      compteEffectif(tranchages, fait) &&
+      niveauEffectif(tranchages, fait) === 'solide'
     ) {
-      fermer(erreursDeLaQuestion(manifeste, fait.question))
+      fermer(erreursDeLaQuestion(fait.question))
     }
     if (fait.type === 'verification_terminee' && verificationsRetenues.has(fait.id)) {
       for (const reponse of fait.reponses.filter(reponseReussie)) {
-        fermer(erreursDeLaQuestion(manifeste, reponse.question))
+        fermer(erreursDeLaQuestion(reponse.question))
       }
     }
   }
@@ -513,12 +543,13 @@ export function calculerBloc(
   maintenant: string,
 ): ResultatBloc {
   const ordonnes = ordonner(faits, manifeste.bloc)
+  const tranchages = tranchagesDe(ordonnes)
   const jour = (instant: string) => jourDe(instant, reglages.fuseau, reglages.heureBascule)
   const restitution = evaluerRestitution(ordonnes, manifeste)
   const manque: Manque[] = []
 
   const consolidation: Verdict = restitution.vu
-    ? evaluerConsolidation(ordonnes, manifeste, reglages, restitution.date, maintenant)
+    ? evaluerConsolidation(ordonnes, tranchages, manifeste, reglages, restitution.date, maintenant)
     : { ok: false, manque: { code: 'restitution_incomplete', questions: restitution.manquantes } }
   const pratique = evaluerPratique(ordonnes, manifeste)
   const atelier = evaluerAtelier(ordonnes, manifeste)
@@ -538,6 +569,7 @@ export function calculerBloc(
     provisoire === null ? null : evaluerVerifications(ordonnes, provisoire, reglages)
   const erreursOuvertes = evaluerErreurs(
     ordonnes,
+    tranchages,
     manifeste,
     verifications?.retenues ?? new Set<string>(),
   )

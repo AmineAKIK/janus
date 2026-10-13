@@ -147,7 +147,8 @@ export interface EntreeCartesDuJour {
  */
 export function cartesDuJour(entree: EntreeCartesDuJour): { dues: string[]; nouvelles: string[] } {
   const { cartes, blocsVus, nouvellesDejaIntroduites, maintenant, reglages } = entree
-  const visibles = cartes.filter(({ bloc }) => blocsVus.includes(bloc))
+  const vus = new Set(blocsVus)
+  const visibles = cartes.filter(({ bloc }) => vus.has(bloc))
   const dues = visibles
     .flatMap(({ id, etat }) => (etat !== null && carteDue(etat, maintenant) ? [{ id, etat }] : []))
     .sort(

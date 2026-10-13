@@ -41,6 +41,17 @@ describe('tirerDifferee', () => {
     expect(tirerDifferee(MANIFESTE, 'explication', deja, MAINTENANT, REGLAGES)?.id).toBe('DE2')
   })
 
+  it('prend la plus récente des dates quelle que soit la place où elle arrive dans la liste', () => {
+    const deja = [
+      { question: 'DE1', date: apres(DEBUT, 90) },
+      { question: 'DE1', date: DEBUT },
+      { question: 'DE2', date: apres(DEBUT, 5) },
+      { question: 'DE3', date: apres(DEBUT, 6) },
+      { question: 'DE4', date: apres(DEBUT, 7) },
+    ]
+    expect(tirerDifferee(MANIFESTE, 'explication', deja, MAINTENANT, REGLAGES)?.id).toBe('DE2')
+  })
+
   it('départage deux dates égales par l’ordre du manifeste', () => {
     const date = apres(DEBUT, 10)
     const deja = ['DE4', 'DE3', 'DE2', 'DE1'].map((question) => ({ question, date }))

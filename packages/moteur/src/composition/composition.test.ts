@@ -115,6 +115,11 @@ describe('le tableau de bord', () => {
     expect(inconnu.module).toBeNull()
   })
 
+  it('rend « non commencé » pour un bloc du module qui n’a aucun fait', () => {
+    const tableau = composerTableau({ ...entreeTableau, faits: [] })
+    expect(tableau.blocs.map(({ statut }) => statut)).toEqual(['non_commence'])
+  })
+
   it('ne rend aucun module quand il n’y en a pas', () => {
     expect(composerTableau({ ...entreeTableau, modules: [], blocs: [] }).module).toBeNull()
   })
@@ -278,6 +283,12 @@ describe('le journal', () => {
     })
     const journal = composerJournal({ ...entree, faits: [correction, contestation] })
     expect(journal.entrees.some((ligne) => ligne.contestation_en_attente === true)).toBe(true)
+  })
+
+  it('rend « non commencé » pour un bloc du module qui n’a aucun fait', () => {
+    expect(composerJournal({ ...entree, faits: [] }).blocs.map(({ statut }) => statut)).toEqual([
+      'non_commence',
+    ])
   })
 
   it('ne rend pas de bloc dont le manifeste manque', () => {
