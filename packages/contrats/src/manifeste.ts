@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { CodeBloc, Identifiant, Texte } from './primitives.ts'
+import { TypeDeContenu } from './composition.ts'
 import { FormeTransfert, TypeDifferee } from './enums.ts'
 
 const Entier = z.number().int()
@@ -62,6 +63,8 @@ const Pratique = z.strictObject({
 export const Manifeste = z.strictObject({
   schema: z.literal(2),
   bloc: CodeBloc,
+  /** Type de contenu : décide des réserves exigées et des types tirés à la vérification. Absent : composition complète. */
+  type: TypeDeContenu.optional(),
   version: Entier.min(1),
   titre: Texte,
   titre_court: Texte,

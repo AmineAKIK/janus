@@ -1,5 +1,5 @@
 import type { z } from 'zod'
-import { FormeTransfert, TypeDifferee } from './enums.ts'
+import { reservesDuType } from './composition.ts'
 import { Manifeste, type Question } from './manifeste.ts'
 
 export interface Probleme {
@@ -157,7 +157,8 @@ function verifierConsolidationDistincte(manifeste: Manifeste, problemes: Problem
 }
 
 function verifierDifferees(manifeste: Manifeste, problemes: Probleme[]): void {
-  for (const type of TypeDifferee.options) {
+  const reserves = reservesDuType(manifeste.type)
+  for (const type of reserves.parties) {
     const nombre = manifeste.differees.filter((d) => d.type === type).length
     if (nombre < 3) {
       ajouter(
@@ -173,12 +174,12 @@ function verifierDifferees(manifeste: Manifeste, problemes: Probleme[]): void {
       d.type === 'transfert' && d.forme !== undefined ? [d.forme] : [],
     ),
   )
-  for (const forme of FormeTransfert.options) {
+  for (const forme of reserves.formes) {
     if (!formesVues.has(forme)) {
       ajouter(
         problemes,
         'differees',
-        `Les transferts doivent couvrir les 4 formes : il manque « ${forme} ».`,
+        `Les transferts doivent couvrir les ${String(reserves.formes.length)} formes : il manque « ${forme} ».`,
       )
     }
   }

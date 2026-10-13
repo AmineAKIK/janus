@@ -1,4 +1,12 @@
-import type { CodeManque, Manifeste, Reglages, Statut, TypeEtape } from '@janus/contrats'
+import { reservesDuType } from '@janus/contrats'
+import type {
+  CodeManque,
+  Manifeste,
+  Reglages,
+  Statut,
+  TypeDifferee,
+  TypeEtape,
+} from '@janus/contrats'
 import type { Fait, ReponseVerification } from './faits.ts'
 import { points } from './points.ts'
 import {
@@ -613,11 +621,17 @@ export class SuiviErreurs {
 
 // --- Vérifications, retests ------------------------------------------------
 
-/** Une explication solide, une tâche réussie et un transfert solide, au premier tour et qui comptent. */
-export function compositionReussie(reponses: readonly ReponseVerification[]): boolean {
-  const reussit = (type: ReponseVerification['type']) =>
-    reponses.some((reponse) => reponse.type === type && reponseReussie(reponse))
-  return reussit('explication') && reussit('tache') && reussit('transfert')
+/**
+ * Chaque type de question que le type de contenu fait tirer (par défaut : explication, tâche et
+ * transfert) réussi au premier tour et qui compte : explication et transfert au niveau solide.
+ */
+export function compositionReussie(
+  reponses: readonly ReponseVerification[],
+  parties: readonly TypeDifferee[] = reservesDuType(undefined).parties,
+): boolean {
+  return parties.every((type) =>
+    reponses.some((reponse) => reponse.type === type && reponseReussie(reponse)),
+  )
 }
 
 /**
@@ -665,9 +679,12 @@ export class SuiviVerifications {
   /** La dernière réussite retenue : le point de départ de l'entretien suivant. */
   #derniere: string
 
-  constructor(provisoire: string, reglages: Reglages) {
+  readonly #parties: readonly TypeDifferee[]
+
+  constructor(provisoire: string, reglages: Reglages, parties: readonly TypeDifferee[]) {
     this.#provisoire = provisoire
     this.#reglages = reglages
+    this.#parties = parties
     this.dateAcquis = provisoire
     this.#derniere = provisoire
   }
@@ -688,7 +705,7 @@ export class SuiviVerifications {
     )
     if (echeance === null || jour(fait.date) < echeance) return
     this.retenues.add(fait.id)
-    if (compositionReussie(fait.reponses)) {
+    if (compositionReussie(fait.reponses, this.#parties)) {
       this.echecs = 0
       this.descendu = false
       this.derniereReussite = fait.date
@@ -960,7 +977,13 @@ export function relireVerifications(
 ): void {
   etat.provisoire = provisoire
   etat.verifications =
-    provisoire === null ? null : new SuiviVerifications(provisoire, etat.reglages)
+    provisoire === null
+      ? null
+      : new SuiviVerifications(
+          provisoire,
+          etat.reglages,
+          reservesDuType(etat.manifeste.type).parties,
+        )
   etat.erreurs = new SuiviErreurs(
     etat.manifeste,
     etat.tranchages,
