@@ -418,3 +418,62 @@ describe('validerManifeste, tous les problèmes d’un coup', () => {
     ).toEqual(['titre', 'version'])
   })
 })
+
+describe('validerManifeste, type de contenu', () => {
+  /** Retire les différées dont le type est dans `retirees`. */
+  function sansDifferees(brouillon: Brouillon, retirees: string[]): Brouillon {
+    brouillon['differees'] = liste(brouillon, 'differees').filter(
+      (d) => typeof d['type'] === 'string' && !retirees.includes(d['type']),
+    )
+    return brouillon
+  }
+
+  it('refuse un type inconnu', () => {
+    const m = copie()
+    m['type'] = 'poesie'
+    expect(problemesDe(m).map((p) => p.chemin)).toContain('type')
+  })
+
+  it('conventions : valide sans tâche ni transfert', () => {
+    const m = sansDifferees(copie(), ['tache', 'transfert'])
+    m['type'] = 'conventions'
+    expect(validerManifeste(m).ok).toBe(true)
+  })
+
+  it('conventions : exige quand même 3 explications', () => {
+    const m = sansDifferees(copie(), ['tache', 'transfert'])
+    m['type'] = 'conventions'
+    m['differees'] = liste(m, 'differees').slice(0, 2)
+    expect(problemesDe(m).map((p) => p.message)).toContain(
+      'Il faut au moins 3 questions différées de type « explication » (il y en a 2).',
+    )
+  })
+
+  it('procédures : valide sans explication différée ni forme « choisir » ou « hors champ »', () => {
+    const m = sansDifferees(copie(), ['explication'])
+    m['type'] = 'procedures'
+    const formes = ['adapter_condition', 'trouver_erreur', 'adapter_condition', 'trouver_erreur']
+    liste(m, 'differees')
+      .filter((d) => d['type'] === 'transfert')
+      .forEach((d, i) => {
+        d['forme'] = formes[i]
+      })
+    expect(validerManifeste(m).ok).toBe(true)
+  })
+
+  it('procédures : exige 3 tâches', () => {
+    const m = sansDifferees(copie(), ['explication'])
+    m['type'] = 'procedures'
+    m['differees'] = liste(m, 'differees').filter((d) => d['id'] !== 'DT3' && d['id'] !== 'DT4')
+    expect(problemesDe(m).map((p) => p.message)).toContain(
+      'Il faut au moins 3 questions différées de type « tache » (il y en a 2).',
+    )
+  })
+
+  it('sans type : la composition complète reste exigée', () => {
+    const m = sansDifferees(copie(), ['tache'])
+    expect(problemesDe(m).map((p) => p.message)).toContain(
+      'Il faut au moins 3 questions différées de type « tache » (il y en a 0).',
+    )
+  })
+})

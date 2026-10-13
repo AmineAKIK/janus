@@ -4,6 +4,7 @@ import {
   ErreurApi,
   nouvelId,
   PREFIXE_CORRECTION_SIMULEE,
+  reservesDuType,
   ROUTES,
 } from '@janus/contrats'
 import type {
@@ -35,7 +36,6 @@ import { definir } from './definir.ts'
 type Resultat = NonNullable<VerificationDemo['resultat']>
 type PartieDuResultat = Resultat['parties'][number]
 
-const TYPES_DE_PARTIES: readonly TypeDifferee[] = ['explication', 'tache', 'transfert']
 const ORDRE_DES_STATUTS: readonly Statut[] = [
   'a_reprendre',
   'non_commence',
@@ -66,7 +66,7 @@ function tirerParties(etat: EtatDemo, manifeste: Manifeste, maintenant: string) 
       ? fait.reponses.map(({ question }) => ({ question, date: fait.date }))
       : [],
   )
-  return TYPES_DE_PARTIES.flatMap((type) => {
+  return reservesDuType(manifeste.type).parties.flatMap((type) => {
     const differee = tirerDifferee(manifeste, type, dejaPosees, maintenant, etat.reglages)
     return differee === null ? [] : [{ id: differee.id, type }]
   })
@@ -484,7 +484,9 @@ export function routesVerificationsDemo({
 
         const apres = magasin.lire()
         const resultatBloc = resultatDuBloc(apres, verification.bloc, maintenant)
-        const reussie = validite.valable && compositionReussie(reponsesDeFait)
+        const reussie =
+          validite.valable &&
+          compositionReussie(reponsesDeFait, reservesDuType(manifeste.type).parties)
         const reprogrammee = validite.valable
           ? null
           : ajouterJours(jourDuReglage(apres, maintenant), 1)
