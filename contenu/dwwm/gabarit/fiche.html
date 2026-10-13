@@ -1046,6 +1046,8 @@
           autonome,
         })
         mode = depart.mode
+        // Hors de l'appli (aperçu dans une page), le fil d'étapes de la fiche est le seul : on le rend.
+        if (mode !== 'appli') delete document.documentElement.dataset.integree
         $('mode').textContent = mode === 'appli' ? 'Dans l’appli' : 'Mode autonome'
         if (depart.init) {
           serieOuverte = depart.init.serie_ouverte
