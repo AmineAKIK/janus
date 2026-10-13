@@ -482,6 +482,7 @@
         'explication',
         'pratique',
         'atelier',
+        'aisance',
         'restitution',
         'consolidation',
         'bilan',
@@ -617,19 +618,30 @@
         )
       }
 
+      /**
+       * La carte : l'objectif, puis le `<template data-etape="ET1">` de la page s'il existe (sinon la
+       * liste des étapes). `contexte_ia` est destiné au correcteur : il n'est jamais affiché.
+       */
       function afficherCarte() {
-        return creer(
+        const section = creer(
           'section',
           {},
           creer('h2', { textContent: 'Carte du bloc' }),
           creer('p', { textContent: manifeste.objectif }),
-          creer('p', { className: 'discret', textContent: manifeste.contexte_ia }),
-          creer(
-            'ul',
-            { className: 'plain' },
-            ...etapes.map((etape) => creer('li', { textContent: etape.titre })),
-          ),
         )
+        const modele = document.querySelector('template[data-etape="' + etapes[0].id + '"]')
+        if (modele) {
+          section.append(modele.content.cloneNode(true))
+          activerLiens(section)
+        } else
+          section.append(
+            creer(
+              'ul',
+              { className: 'plain' },
+              ...etapes.map((etape) => creer('li', { textContent: etape.titre })),
+            ),
+          )
+        return section
       }
 
       /**
@@ -1001,6 +1013,7 @@
               explication: () => afficherLibre(etape),
               pratique: afficherPratique,
               atelier: afficherAtelier,
+              aisance: () => afficherLibre(etape),
               restitution: () => afficherSerie('restitution', 'Restitution'),
               consolidation: () => afficherSerie('consolidation', 'Consolidation'),
               bilan: afficherBilan,
@@ -1010,6 +1023,8 @@
               textContent: 'Cette étape n’est pas dans cette fiche.',
             })
         $('contenu').replaceChildren(vue)
+        // Point d'accroche des fiches : le HTML libre de l'étape est en place, son script peut l'animer.
+        document.dispatchEvent(new CustomEvent('fiche:rendu', { detail: { etape } }))
       }
 
       async function demarrer() {

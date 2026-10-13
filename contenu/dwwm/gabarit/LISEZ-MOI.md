@@ -8,6 +8,12 @@
 - Le fil d'étapes, le masquage du cours pendant la restitution, la note de confiance, les boutons d'aide de la pratique, les messages de résultat.
 - Le lien externe : `<a data-lien="https://…">`, ouvert par l'appli dans un nouvel onglet, avec l'adresse écrite à côté.
 
+## Étapes d'aisance, carte et outils interactifs
+
+- Une étape `aisance` est dessinée comme une étape libre : son `<template data-etape="ETx">` porte l'exercice chronométré, qui envoie lui-même `aisance.resultat` au pont. Le manifeste déclare le seuil dans `aisance`.
+- La carte affiche l'objectif, puis le `<template data-etape="ET1">` s'il existe. `contexte_ia` (pour le correcteur) n'est jamais affiché.
+- Un `<script>` de la fiche peut animer le HTML libre : le gabarit émet l'événement `fiche:rendu` sur `document` après chaque étape dessinée. Les scripts dans un `<template>` ne s'exécutent pas, d'où cet événement.
+
 ## Ce qui est libre
 
 - Le HTML de chaque étape, dans un `<template data-etape="ET2">` par étape à lire.
