@@ -166,6 +166,7 @@ export const MessageAppli = z.discriminatedUnion('type', [
     etat: z.nullable(etatPage),
     statut,
     serie_ouverte: z.strictObject({ restitution: z.boolean(), consolidation: z.boolean() }),
+    theme: z.optional(z.enum(['clair', 'sombre', 'systeme'])),
   }),
   z.strictObject({ type: z.literal('restitution.correction'), ...champsCorrection }),
   z.strictObject({ type: z.literal('statut.maj'), statut, manque: z.array(manque) }),
