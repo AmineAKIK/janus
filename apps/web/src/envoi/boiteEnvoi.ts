@@ -1,5 +1,6 @@
 import { ErreurApi, ErreurDonnees, ErreurReseau } from '@janus/contrats'
 import type { Transport } from '@janus/contrats'
+import { creerAbonnes } from '../abonnes.ts'
 import type { EnvoiDeMessage } from './messages.ts'
 import { appelerEntree } from './routes.ts'
 import type { EntreeEnvoi, StockageEnvoi } from './stockageEnvoi.ts'
@@ -83,12 +84,10 @@ export function creerBoiteEnvoi(options: OptionsBoiteEnvoi, ecouteurs: Ecouteurs
   let suspendue = false
   let annulerReessai: (() => void) | null = null
   let reseauManque = false
-  const abonnes = new Set<() => void>()
+  const { abonner, signaler: prevenirAbonnes } = creerAbonnes()
   const signaler = () => {
     ecouteurs.surChangement?.()
-    abonnes.forEach((abonne) => {
-      abonne()
-    })
+    prevenirAbonnes()
   }
 
   async function ordreSuivant(): Promise<number> {
@@ -230,12 +229,7 @@ export function creerBoiteEnvoi(options: OptionsBoiteEnvoi, ecouteurs: Ecouteurs
     reseauManque: () => reseauManque,
     stockageIndisponible: () => options.indisponible?.() ?? false,
     /** Appelé à chaque changement de la boîte ; rend la fonction qui arrête d'écouter. */
-    abonner(abonne: () => void): () => void {
-      abonnes.add(abonne)
-      return () => {
-        abonnes.delete(abonne)
-      }
-    },
+    abonner,
     /** Le réseau est revenu ou parti d'après le navigateur : l'indicateur suit. */
     signalerReseau(manque: boolean): void {
       reseauManque = manque

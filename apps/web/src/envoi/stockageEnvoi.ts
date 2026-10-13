@@ -1,3 +1,5 @@
+import { ouvrirBase, promesse, supprimerBase, terminee } from '../indexedDb.ts'
+
 /** Un message gardé en attendant d'être envoyé. Le corps a la forme que la route attend. */
 export interface EntreeEnvoi {
   /** L'identifiant du message : il sert de clé et d'identifiant d'idempotence. */
@@ -50,48 +52,11 @@ export function creerStockageMemoire(): StockageEnvoi {
 const BASE = 'janus'
 const MAGASIN = 'boite_envoi'
 
-function promesse<T>(requete: IDBRequest<T>): Promise<T> {
-  return new Promise((resolve, reject) => {
-    requete.onsuccess = () => {
-      resolve(requete.result)
-    }
-    requete.onerror = () => {
-      reject(requete.error ?? new Error('IndexedDB a échoué'))
-    }
-  })
-}
-
-function terminee(transaction: IDBTransaction): Promise<void> {
-  return new Promise((resolve, reject) => {
-    transaction.oncomplete = () => {
-      resolve()
-    }
-    transaction.onerror = () => {
-      reject(transaction.error ?? new Error('IndexedDB a échoué'))
-    }
-    transaction.onabort = () => {
-      reject(transaction.error ?? new Error('IndexedDB a annulé la transaction'))
-    }
-  })
-}
-
 /** Supprime la base de la boîte d'envoi. Une connexion encore ouverte retarde la suppression, sans la bloquer. */
 export function supprimerStockageIndexedDB(
   fabrique: IDBFactory | undefined = globalThis.indexedDB,
 ): Promise<void> {
-  if (typeof fabrique === 'undefined') return Promise.resolve()
-  return new Promise((resolve) => {
-    const demande = fabrique.deleteDatabase(BASE)
-    demande.onsuccess = () => {
-      resolve()
-    }
-    demande.onerror = () => {
-      resolve()
-    }
-    demande.onblocked = () => {
-      resolve()
-    }
-  })
+  return supprimerBase(fabrique, BASE)
 }
 
 /**
@@ -101,18 +66,10 @@ export function supprimerStockageIndexedDB(
 export async function ouvrirStockageIndexedDB(
   fabrique: IDBFactory | undefined = globalThis.indexedDB,
 ): Promise<StockageEnvoi | null> {
-  // `indexedDB` peut manquer, ou refuser de s'ouvrir.
-  if (typeof fabrique === 'undefined') return null
-  let base: IDBDatabase
-  try {
-    const ouverture = fabrique.open(BASE, 1)
-    ouverture.onupgradeneeded = () => {
-      ouverture.result.createObjectStore(MAGASIN, { keyPath: 'id' })
-    }
-    base = await promesse(ouverture)
-  } catch {
-    return null
-  }
+  const base = await ouvrirBase(fabrique, BASE, (nouvelle) => {
+    nouvelle.createObjectStore(MAGASIN, { keyPath: 'id' })
+  })
+  if (base === null) return null
 
   const magasin = (mode: IDBTransactionMode) => {
     const transaction = base.transaction(MAGASIN, mode)

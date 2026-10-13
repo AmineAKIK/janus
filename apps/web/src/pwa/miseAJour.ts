@@ -1,3 +1,5 @@
+import { creerAbonnes } from '../abonnes.ts'
+
 /** Un aperçu de PR ne doit jamais enregistrer de service worker : il prendrait le contrôle du site principal. */
 export const estApercu = (base: string) => base.includes('/pr-preview/')
 
@@ -70,12 +72,7 @@ export function creerMiseAJour(
 ) {
   let prete = false
   let appliquer: Appliquer | null = null
-  const abonnes = new Set<() => void>()
-  const signaler = () => {
-    abonnes.forEach((abonne) => {
-      abonne()
-    })
-  }
+  const { abonner, signaler } = creerAbonnes()
   return {
     /** À appeler une fois au démarrage. */
     demarrer(): void {
@@ -95,12 +92,7 @@ export function creerMiseAJour(
     appliquer: async (): Promise<void> => {
       await appliquer?.(true)
     },
-    abonner: (abonne: () => void): (() => void) => {
-      abonnes.add(abonne)
-      return () => {
-        abonnes.delete(abonne)
-      }
-    },
+    abonner,
   }
 }
 
