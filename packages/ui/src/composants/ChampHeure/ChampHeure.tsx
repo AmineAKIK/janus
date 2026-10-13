@@ -1,7 +1,7 @@
 import { Clock } from 'lucide-react'
 import type { KeyboardEvent } from 'react'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { ChampAvecLibelle, DeclencheurDialogue, SurfaceDialogue } from '../../utilitaires/champ.tsx'
 import { classes } from '../../utilitaires/classes.ts'
 import { useSurface } from '../../utilitaires/surface.tsx'
 import styles from './ChampHeure.module.css'
@@ -191,59 +191,39 @@ export function ChampHeure({
   )
 
   return (
-    <div className={classes(styles['champ'], disabled && styles['desactive'], className)}>
-      <span
-        id={idLibelle}
-        className={classes(styles['libelle'], libelleMasque && styles['masque'], 'texte-petit-14')}
-      >
-        {libelle}
-      </span>
-      <button
+    <ChampAvecLibelle
+      libelle={libelle}
+      libelleMasque={libelleMasque}
+      idLibelle={idLibelle}
+      disabled={disabled}
+      className={className}
+    >
+      <DeclencheurDialogue
         ref={bouton}
         id={idBouton}
-        type="button"
-        aria-haspopup="dialog"
-        aria-expanded={ouvert}
-        aria-labelledby={`${idLibelle} ${idBouton}-valeur`}
+        idLibelle={idLibelle}
+        ouvert={ouvert}
         disabled={disabled}
-        className={classes(styles['bouton'], 'texte-corps-16')}
         onClick={() => {
           if (ouvert) clore(true)
           else ouvrir()
         }}
-      >
-        <span id={`${idBouton}-valeur`} className={styles['valeur']}>
-          {valeur}
-        </span>
-        <Clock aria-hidden="true" className={styles['icone']} />
-      </button>
-      {ouvert &&
-        style !== null &&
-        createPortal(
-          <div
-            ref={surface}
-            role="dialog"
-            aria-label={libelle}
-            className={styles['surface']}
-            style={style}
-            onBlur={(evenement) => {
-              const vers = evenement.relatedTarget
-              if (vers === null) return
-              if (
-                vers instanceof Node &&
-                (surface.current?.contains(vers) === true ||
-                  bouton.current?.contains(vers) === true)
-              ) {
-                return
-              }
-              clore(true)
-            }}
-          >
-            {colonne('heure', HEURES, textes.heures)}
-            {colonne('minute', MINUTES, textes.minutes)}
-          </div>,
-          document.body,
-        )}
-    </div>
+        icone={Clock}
+        texte={valeur}
+      />
+      {ouvert && style !== null && (
+        <SurfaceDialogue
+          surface={surface}
+          ancre={bouton}
+          libelle={libelle}
+          className={styles['surface']}
+          style={style}
+          fermer={fermerEnValidant}
+        >
+          {colonne('heure', HEURES, textes.heures)}
+          {colonne('minute', MINUTES, textes.minutes)}
+        </SurfaceDialogue>
+      )}
+    </ChampAvecLibelle>
   )
 }

@@ -2,6 +2,8 @@ import { Check, ChevronDown } from 'lucide-react'
 import type { KeyboardEvent } from 'react'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { ChampAvecLibelle } from '../../utilitaires/champ.tsx'
+import stylesChamp from '../../utilitaires/champ.module.css'
 import { classes } from '../../utilitaires/classes.ts'
 import { useSurface } from '../../utilitaires/surface.tsx'
 import styles from './Selecteur.module.css'
@@ -162,13 +164,13 @@ export function Selecteur({
   }
 
   return (
-    <div className={classes(styles['champ'], disabled && styles['desactive'], className)}>
-      <span
-        id={idLibelle}
-        className={classes(styles['libelle'], libelleMasque && styles['masque'], 'texte-petit-14')}
-      >
-        {libelle}
-      </span>
+    <ChampAvecLibelle
+      libelle={libelle}
+      libelleMasque={libelleMasque}
+      idLibelle={idLibelle}
+      disabled={disabled}
+      className={className}
+    >
       <button
         {...reste}
         ref={bouton}
@@ -181,7 +183,7 @@ export function Selecteur({
         aria-labelledby={idLibelle}
         aria-activedescendant={ouvert ? `${idBouton}-option-${String(actif)}` : undefined}
         disabled={disabled}
-        className={classes(styles['bouton'], 'texte-corps-16')}
+        className={classes(stylesChamp['bouton'], 'texte-corps-16')}
         onClick={() => {
           if (ouvert) setOuvert(false)
           else ouvrir()
@@ -191,10 +193,10 @@ export function Selecteur({
           setOuvert(false)
         }}
       >
-        <span className={styles['valeur']}>{choisie?.libelle ?? ''}</span>
+        <span className={stylesChamp['valeur']}>{choisie?.libelle ?? ''}</span>
         <ChevronDown
           aria-hidden="true"
-          className={classes(styles['fleche'], ouvert && styles['ouvert'])}
+          className={classes(stylesChamp['icone'], styles['fleche'], ouvert && styles['ouvert'])}
         />
       </button>
       {ouvert &&
@@ -236,6 +238,6 @@ export function Selecteur({
           </ul>,
           document.body,
         )}
-    </div>
+    </ChampAvecLibelle>
   )
 }

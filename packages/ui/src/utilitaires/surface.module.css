@@ -1,0 +1,32 @@
+/* Surface flottante posée par `useSurface` : liste, calendrier, colonnes d'heure. */
+.surface {
+  z-index: 300;
+  box-sizing: border-box;
+  background: var(--couleur-surface-elevee);
+  border: 1px solid var(--couleur-ligne);
+  border-radius: var(--rayon-carte);
+  box-shadow: var(--ombre-carte);
+  color: var(--couleur-encre);
+  animation: ouverture var(--duree-transition) ease;
+}
+
+/* Zone qui défile dans une surface. */
+.defilement {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--couleur-controle) transparent;
+}
+
+@keyframes ouverture {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .surface {
+    animation: none;
+  }
+}

@@ -1,4 +1,5 @@
 import type { Statut } from '@janus/contrats'
+import { CLASSE_STATUT } from '../../utilitaires/classeStatut.ts'
 import { classes } from '../../utilitaires/classes.ts'
 import type { RendreLien } from '../../utilitaires/lien.ts'
 import { BadgeStatut } from '../BadgeStatut/BadgeStatut.tsx'
@@ -13,20 +14,10 @@ export interface ProprietesNoeudBloc {
   readonly className?: string
 }
 
-const COULEURS_STATUT: Record<Statut, string> = {
-  non_commence: 'nonCommence',
-  en_cours: 'enCours',
-  vu: 'vu',
-  acquis_provisoirement: 'acquisProvisoirement',
-  acquis: 'acquis',
-  maitrise: 'maitrise',
-  a_reprendre: 'aReprendre',
-}
-
 /** Un carré de la grille d'un module : l'indicateur de statut et le code, coloré par statut. */
 export function NoeudBloc({ code, libelle, statut, lien, className }: ProprietesNoeudBloc) {
   return lien({
-    className: classes(styles['noeud'], styles[COULEURS_STATUT[statut]], className),
+    className: classes(styles['noeud'], styles[CLASSE_STATUT[statut]], className),
     children: (
       <>
         <BadgeStatut statut={statut} taille="compacte" className={classes(styles['badge'])} />

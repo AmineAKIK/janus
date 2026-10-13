@@ -1,101 +1,13 @@
-.champ {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacement-libelle);
-  width: 100%;
-}
-
-.libelle {
-  font-weight: 500;
-  color: var(--couleur-encre);
-}
-
-.bouton {
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--espacement-8);
-  width: 100%;
-  min-height: var(--hauteur-champ);
-  padding: 0 var(--espacement-12);
-  border: 1px solid var(--couleur-controle);
-  border-radius: var(--rayon-champ);
-  background: var(--couleur-fond);
-  color: var(--couleur-encre);
-  text-align: start;
-  cursor: pointer;
-  transition: border-color var(--duree-transition) ease;
-}
-
-.bouton:focus-visible,
-.bouton[aria-expanded='true'] {
-  border-color: var(--couleur-accent);
-  outline: none;
-}
-
-.bouton:focus-visible {
-  box-shadow: var(--focus-anneau);
-}
-
-.valeur {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.desactive {
-  opacity: 0.65;
-}
-
-.desactive .bouton {
-  background: var(--couleur-surface-douce);
-  cursor: not-allowed;
-}
-
-/* Réservé aux lecteurs d'écran. */
-.champ .masque {
-  position: absolute;
-  inline-size: 1px;
-  block-size: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  clip-path: inset(50%);
-}
-
-.icone {
-  flex: none;
-  width: 1.125rem;
-  height: 1.125rem;
-  color: var(--couleur-texte-secondaire);
-}
-
-.icone {
-  flex: none;
-  width: 1.125rem;
-  height: 1.125rem;
-  color: var(--couleur-texte-secondaire);
-}
-
 .surface {
-  z-index: 300;
+  composes: surface from '../../utilitaires/surface.module.css';
   block-size: 276px;
-  box-sizing: border-box;
   display: flex;
   gap: var(--espacement-4);
   padding: var(--espacement-4);
-  background: var(--couleur-surface-elevee);
-  border: 1px solid var(--couleur-ligne);
-  border-radius: var(--rayon-carte);
-  box-shadow: var(--ombre-carte);
-  color: var(--couleur-encre);
-  animation: ouverture var(--duree-transition) ease;
 }
 
 .colonne {
+  composes: defilement from '../../utilitaires/surface.module.css';
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -103,10 +15,6 @@
   min-width: 0;
   min-block-size: 0;
   padding-inline: var(--espacement-4);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: var(--couleur-controle) transparent;
 }
 
 .colonne + .colonne {
@@ -138,17 +46,4 @@
 .nombre:focus-visible {
   outline: none;
   box-shadow: var(--focus-anneau);
-}
-
-@keyframes ouverture {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .surface {
-    animation: none;
-  }
 }

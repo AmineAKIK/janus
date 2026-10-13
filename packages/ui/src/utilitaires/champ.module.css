@@ -1,0 +1,82 @@
+/* Base commune des champs de formulaire : colonne libellé + contrôle. */
+.champ {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacement-libelle);
+  width: 100%;
+}
+
+.champ .libelle {
+  font-weight: 500;
+  color: var(--couleur-encre);
+}
+
+.masque {
+  composes: lecteurSeul from './lecteurSeul.module.css';
+}
+
+.desactive {
+  opacity: 0.65;
+}
+
+/* Cadre d'un contrôle de saisie : bouton qui ouvre une surface, ou cadre d'un champ texte. */
+.controle {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--espacement-8);
+  min-height: var(--hauteur-champ);
+  padding: 0 var(--espacement-12);
+  border: 1px solid var(--couleur-controle);
+  border-radius: var(--rayon-champ);
+  background: var(--couleur-fond);
+  transition: border-color var(--duree-transition) ease;
+}
+
+/* Contrôle qui ouvre une surface flottante (liste, calendrier, heure). */
+.bouton {
+  composes: controle;
+  justify-content: space-between;
+  width: 100%;
+  color: var(--couleur-encre);
+  text-align: start;
+  cursor: pointer;
+}
+.bouton:focus-visible,
+.bouton[aria-expanded='true'] {
+  border-color: var(--couleur-accent);
+  outline: none;
+}
+
+.bouton:focus-visible {
+  box-shadow: var(--focus-anneau);
+}
+
+.desactive .bouton {
+  background: var(--couleur-surface-douce);
+  cursor: not-allowed;
+}
+
+.valeur {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vide {
+  color: var(--couleur-texte-secondaire);
+}
+
+.icone {
+  flex: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--couleur-texte-secondaire);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .controle {
+    transition: none;
+  }
+}
