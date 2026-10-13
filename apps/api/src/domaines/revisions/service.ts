@@ -89,9 +89,12 @@ export function creerServiceRevisions({
     }
   }
 
-  /** Une vérification de l'utilisateur, son bloc et tout ce qui lui est arrivé. */
+  /**
+   * Une vérification de l'utilisateur, son bloc et tout ce qui lui est arrivé. Aucun fait n'est lu :
+   * les routes qui en ont besoin lisent ceux dont elles se servent.
+   */
   async function chargerVerification(userId: string, id: string) {
-    const charge = await charger(userId)
+    const charge = await chargerLeger(userId)
     const ligne = await depot.verificationParId(base.db, userId, id)
     const bloc =
       ligne === undefined ? undefined : charge.plan.find(({ id: b }) => b === ligne.blocId)
@@ -147,9 +150,11 @@ export function creerServiceRevisions({
      * (`POST /verifications`). Une vérification terminée n'est jamais rouverte.
      */
     async verificationPour(userId: string, codeBloc: string, type: TypeVerification) {
-      const { maintenant, reglages, plan, faits } = await charger(userId)
+      const { maintenant, reglages, plan } = await chargerLeger(userId)
       const bloc = plan.find(({ code }) => code === codeBloc)
       if (bloc === undefined) throw new Introuvable(`Le bloc « ${codeBloc} » n'existe pas.`)
+      // Le tirage ne regarde que les vérifications déjà terminées, sur tous les blocs.
+      const faits = await lireFaits(base.db, userId, plan, ['verification_terminee'])
       return base.enTransaction(async (tx) => {
         await verrouBloc(tx, userId, bloc.id)
         const ouverte = await depot.verificationOuverte(tx, userId, bloc.id, type)
@@ -169,8 +174,10 @@ export function creerServiceRevisions({
 
     /** La vérification telle que la page la lit : sans code ni titre du bloc avant le résultat. */
     async verification(userId: string, id: string) {
-      const { maintenant, reglages, faits, contexte, ligne, bloc, manifeste, evenements } =
+      const { maintenant, reglages, ligne, bloc, manifeste, evenements } =
         await chargerVerification(userId, id)
+      // Un seul bloc compte ici : ses faits, et rien d'autre.
+      const faits = await lireFaits(base.db, userId, [bloc])
       const envoyees = new Set(
         evenements.flatMap(({ type, donnees }) =>
           type === 'verification_partie' ? [EvenementPartie.parse(donnees).partie] : [],
@@ -184,8 +191,7 @@ export function creerServiceRevisions({
         .filter(({ type }) => type === 'verification_reportee')
         .map(({ donnees }) => EvenementReport.parse(donnees).jusqua)
         .at(-1)
-      const etat = contexte.blocs.find(({ manifeste: m }) => m.bloc === bloc.code)?.etat
-      if (etat === undefined) throw new Introuvable("Ce bloc n'existe pas.")
+      const etat = calculerBloc(faits, manifeste, reglages, maintenant)
       const commencee = evenements.some(({ type }) => type === 'verification_partie')
       return {
         id: ligne.id,
@@ -193,13 +199,7 @@ export function creerServiceRevisions({
         due_le: dateDue(etat, reglages, maintenant, report ?? null),
         terminee: resultat !== undefined,
         revu_recemment:
-          resultat !== undefined || commencee
-            ? null
-            : revuRecemment(
-                faits.filter((fait) => fait.bloc === bloc.code),
-                reglages,
-                maintenant,
-              ),
+          resultat !== undefined || commencee ? null : revuRecemment(faits, reglages, maintenant),
         parties: Tirage.parse(ligne.tirage).flatMap(({ id: partie }) => {
           const differee = manifeste.differees.find((autre) => autre.id === partie)
           return differee === undefined ? [] : [partieVisible(differee, envoyees.has(partie))]

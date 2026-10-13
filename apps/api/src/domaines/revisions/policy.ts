@@ -40,9 +40,16 @@ export function contexteDuJour(
   reglages: Reglages,
   maintenant: string,
 ): ContexteDuJour {
+  // Les faits rangés par bloc en un seul passage (et non filtrés une fois par bloc du plan).
+  const parBloc = new Map<string, Fait[]>()
+  for (const fait of faits) {
+    const duBloc = parBloc.get(fait.bloc)
+    if (duBloc === undefined) parBloc.set(fait.bloc, [fait])
+    else duBloc.push(fait)
+  }
   const blocs = plan.map(({ code, moduleId, manifeste }) => {
     const lu = Manifeste.parse(manifeste)
-    const duBloc = faits.filter((fait) => fait.bloc === code)
+    const duBloc = parBloc.get(code) ?? []
     return {
       manifeste: lu,
       moduleId,
