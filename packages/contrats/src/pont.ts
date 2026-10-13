@@ -88,6 +88,8 @@ export const LienExterne = z
   .url({ protocol: /^https$/ })
   .max(TAILLE_MAX_LIEN)
   .refine((adresse) => {
+    // Une adresse illisible est déjà refusée par `z.url` : la vérification ne doit pas lever.
+    if (!URL.canParse(adresse)) return true
     const { username, password } = new URL(adresse)
     return username === '' && password === ''
   }, 'Une adresse ne porte ni nom ni mot de passe.')

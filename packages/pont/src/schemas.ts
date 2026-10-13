@@ -78,6 +78,7 @@ const lienExterne = z.url({ protocol: /^https$/ }).check(
   z.maxLength(TAILLE_MAX_LIEN),
   z.refine(
     (adresse) => {
+      if (!URL.canParse(adresse)) return true
       const { username, password } = new URL(adresse)
       return username === '' && password === ''
     },
