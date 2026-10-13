@@ -42,6 +42,7 @@ export const VerificationDemo = z.strictObject({
       compte: z.boolean(),
       niveau: Niveau.optional(),
       reussi: z.boolean().optional(),
+      declaree: z.boolean().optional(),
       cas: z
         .strictObject({ reussis: z.number().int().min(0), total: z.number().int().min(1) })
         .optional(),

@@ -212,6 +212,7 @@ function dateDue(etat: EtatDemo, v: VerificationDemo, maintenant: string): strin
 interface PartieCorrigee {
   readonly niveau?: PartieDuResultat['niveau']
   readonly reussi?: boolean
+  readonly declaree?: boolean
   readonly cas?: PartieDuResultat['cas']
   readonly compte: boolean
   readonly correction: string
@@ -225,6 +226,7 @@ function corrigerPartie(
     reponse: string
     support: { colle: boolean; retour_cours: boolean }
     code?: { reussis: number; total: number } | undefined
+    constat?: { coches: readonly number[]; aide: number } | undefined
   },
 ): PartieCorrigee {
   const certitude = etat.interrupteurs.correctionNonVerifiee ? 'non_verifie' : 'sur'
@@ -255,6 +257,25 @@ function corrigerPartie(
         cas: { reussis, total },
         compte: resultat.compte,
         correction: `${String(reussis)} cas sur ${String(total)}.`,
+      }
+    }
+    if (verification?.mode === 'constat') {
+      if (corps.constat === undefined) {
+        throw probleme(
+          400,
+          'donnees_invalides',
+          'Constat manquant',
+          'Coche les critères atteints et indique ton niveau d’aide.',
+        )
+      }
+      const remplis = new Set(
+        corps.constat.coches.filter((rang) => rang < verification.criteres.length),
+      )
+      return {
+        reussi: remplis.size === verification.criteres.length && corps.constat.aide === 0,
+        declaree: true,
+        compte: comptee(false).compte,
+        correction: `Constat déclaré : ${String(remplis.size)} sur ${String(verification.criteres.length)}, aide ${String(corps.constat.aide)}.`,
       }
     }
     const reussi = (verification?.reponses ?? [differee.attendu]).some(
@@ -293,6 +314,7 @@ function reponseDeFait(
       type: 'tache',
       ...commun,
       ...(corrigee.reussi === undefined ? {} : { reussi: corrigee.reussi }),
+      ...(corrigee.declaree === undefined ? {} : { declaree: corrigee.declaree }),
     }
   }
   return {
@@ -334,9 +356,11 @@ export function routesVerificationsDemo({
             consigne: differee.consigne,
             ...(type === 'tache' && mode?.mode === 'code'
               ? { tache: { mode: 'code' as const, langage: mode.langage, cas: mode.cas } }
-              : type === 'tache'
-                ? { tache: { mode: 'exacte' as const } }
-                : {}),
+              : type === 'tache' && mode?.mode === 'constat'
+                ? { tache: { mode: 'constat' as const, criteres: mode.criteres } }
+                : type === 'tache'
+                  ? { tache: { mode: 'exacte' as const } }
+                  : {}),
             envoyee: verification.reponses[id] !== undefined,
           }
         }),
@@ -516,6 +540,7 @@ export function routesVerificationsDemo({
                 consigne: partieDeManifeste(manifeste, id).consigne,
                 ...(faite.niveau === undefined ? {} : { niveau: faite.niveau }),
                 ...(faite.reussi === undefined ? {} : { reussi: faite.reussi }),
+                ...(faite.declaree === undefined ? {} : { declaree: faite.declaree }),
                 ...(faite.cas === undefined ? {} : { cas: faite.cas }),
                 compte: faite.compte,
                 correction: faite.correction,

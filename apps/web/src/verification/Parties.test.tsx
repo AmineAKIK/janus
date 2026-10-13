@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import { PartieTache } from './Parties.tsx'
+import { PartieConstat, PartieTache } from './Parties.tsx'
 import type { Partie } from './useVerification.ts'
 
 const executions = vi.hoisted(() => ({ lancees: 0 }))
@@ -105,5 +105,43 @@ describe('PartieTache', () => {
     expect(screen.getByRole('textbox', { name: 'Ta réponse' })).toBeVisible()
     expect(screen.queryByRole('button', { name: 'Tester les cas' })).toBeNull()
     expect(screen.queryByText(/Essai/)).toBeNull()
+  })
+})
+
+describe('PartieConstat', () => {
+  const constat: Partie = {
+    id: 'DT5',
+    type: 'tache',
+    consigne: 'Crée la maquette.',
+    tache: { mode: 'constat', criteres: ['3 écrans', 'Grille de 8 px'] },
+    envoyee: false,
+  }
+
+  it('envoie les critères cochés et l’aide 0 par défaut', async () => {
+    const utilisateur = userEvent.setup()
+    const envoyer = vi.fn()
+    render(
+      <PartieConstat partie={constat} enAttente={false} indisponible={false} envoyer={envoyer} />,
+    )
+
+    await utilisateur.click(screen.getByRole('checkbox', { name: '3 écrans' }))
+    await utilisateur.click(screen.getByRole('button', { name: 'Envoyer la tâche' }))
+
+    expect(envoyer).toHaveBeenCalledOnce()
+    expect(envoyer).toHaveBeenCalledWith(
+      expect.objectContaining({ constat: { coches: [0], aide: 0 } }),
+    )
+  })
+
+  it('dit que la réussite repose sur la parole de l’apprenant', () => {
+    render(
+      <PartieConstat
+        partie={constat}
+        enAttente={false}
+        indisponible={false}
+        envoyer={() => undefined}
+      />,
+    )
+    expect(screen.getByText(/repose sur ta parole/)).toBeVisible()
   })
 })

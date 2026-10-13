@@ -1,8 +1,16 @@
 import { z } from 'zod'
 import { Texte } from '../primitives.ts'
-import { Confiance, Niveau, NoteCarte, Statut, TypeDifferee, TypeVerification } from '../enums.ts'
+import {
+  Aide,
+  Confiance,
+  Niveau,
+  NoteCarte,
+  Statut,
+  TypeDifferee,
+  TypeVerification,
+} from '../enums.ts'
 import { InstantUtc } from '../faits.ts'
-import { VerificationParCode } from '../manifeste.ts'
+import { VerificationParCode, VerificationParConstat } from '../manifeste.ts'
 import { CodeBloc, CorrectionRecue, IdUuid, Identifiant, Reponse } from './commun.ts'
 import type { DefinitionRoute } from './routes.ts'
 
@@ -101,6 +109,7 @@ export const PartieVerification = z.strictObject({
     .discriminatedUnion('mode', [
       z.strictObject({ mode: z.literal('exacte') }),
       VerificationParCode,
+      VerificationParConstat,
     ])
     .optional(),
   /** Vrai quand la réponse à cette partie est déjà envoyée : on reprend à la suivante. */
@@ -118,6 +127,8 @@ export const PartieCorrigee = z.strictObject({
   cas: z
     .strictObject({ reussis: z.number().int().min(0), total: z.number().int().min(1) })
     .optional(),
+  /** Vrai quand la réussite repose sur la parole de l'apprenant (constat) : le bilan le dit. */
+  declaree: z.boolean().optional(),
   compte: z.boolean(),
   correction: Texte,
   indice: Texte.optional(),
@@ -242,6 +253,8 @@ export const ROUTES_APPRENTISSAGE = {
       code: z
         .strictObject({ reussis: z.number().int().min(0), total: z.number().int().min(1) })
         .optional(),
+      /** Une tâche par constat : les critères cochés (leur rang dans la liste) et le niveau d'aide déclaré. */
+      constat: z.strictObject({ coches: z.array(z.number().int().min(0)), aide: Aide }).optional(),
     }),
     reponse: z.strictObject({
       partie: Identifiant,

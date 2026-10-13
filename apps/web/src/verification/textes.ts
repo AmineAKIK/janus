@@ -34,6 +34,11 @@ export const TEXTES_VERIFICATION = {
   tesCas: 'Tester les cas',
   ton: 'Ton code',
   taReponse: 'Ta réponse',
+  criteres: 'Critères atteints',
+  criteresAide:
+    'Coche seulement ce que tu as réellement obtenu. Cette réussite repose sur ta parole.',
+  niveauAide: 'Ton niveau d’aide',
+  declaree: 'Déclarée par toi',
   collage: 'Tu as collé du texte. Cette réponse ne comptera pas comme preuve.',
   obligatoire: 'Ce champ est obligatoire.',
   correctionEnCours: 'Le tuteur corrige tes 2 réponses…',
@@ -70,6 +75,14 @@ export const texteRevuLe = (quand: 'hier' | 'aujourdhui') =>
   `Tu as ouvert ce bloc ${quand === 'hier' ? 'hier' : 'aujourd’hui'}. Cette vérification ne compterait pas.`
 
 export const texteEssai = (essai: number) => `Essai ${String(essai)} sur 2`
+
+export const LIBELLES_AIDE = [
+  '0 : aucune aide',
+  '1 : un indice',
+  '2 : une piste détaillée',
+  '3 : une partie de la solution',
+  '4 : la solution',
+] as const
 
 export const texteCasReussis = (reussis: number, total: number) =>
   `${String(reussis)} cas sur ${String(total)}`
