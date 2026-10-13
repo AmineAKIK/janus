@@ -62,12 +62,18 @@ export function creerServiceRevisions({
 }: DependancesService) {
   type Chargement = Awaited<ReturnType<typeof charger>>
 
-  /** Les réglages, le plan, les faits et le contexte du jour : le point de départ de chaque route. */
-  async function charger(userId: string) {
+  /** Les réglages, le plan et l'instant : ce qu'il faut avant de lire le moindre fait. */
+  async function chargerLeger(userId: string) {
     const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
     const formationId = await formationActiveDe(base.db, reglages.formationActive)
     const maintenant = await maintenantDeLaFormation(base.db, horloge, userId, formationId)
     const plan = await depot.blocsDuPlan(base.db, formationId)
+    return { maintenant, reglages, formationId, plan }
+  }
+
+  /** Les réglages, le plan, les faits et le contexte du jour : le point de départ de chaque route. */
+  async function charger(userId: string, leger?: Awaited<ReturnType<typeof chargerLeger>>) {
+    const { maintenant, reglages, formationId, plan } = leger ?? (await chargerLeger(userId))
     const faits = await lireFaits(
       base.db,
       userId,
@@ -117,7 +123,11 @@ export function creerServiceRevisions({
   async function rappelsDuJour(
     userId: string,
     serie: readonly { bloc: string; question: string }[],
-    donnees: Pick<Awaited<ReturnType<typeof charger>>, 'plan' | 'reglages' | 'contexte'>,
+    donnees: {
+      plan: Chargement['plan']
+      reglages: Chargement['reglages']
+      contexte: Pick<Chargement['contexte'], 'jour'>
+    },
   ) {
     const { plan, reglages, contexte } = donnees
     const blocsDeLaSerie = plan.filter(({ code }) => serie.some(({ bloc }) => bloc === code))
@@ -518,13 +528,20 @@ export function creerServiceRevisions({
       return this.serieDuJour(userId, true)
     },
 
-    /** Le bloc n'est donné qu'une fois la question corrigée. */
+    /**
+     * Le bloc n'est donné qu'une fois la question corrigée. Les faits ne sont lus (et le contexte
+     * calculé) que pour tirer une série ; lire ou rendre une série déjà gardée n'en a pas besoin :
+     * il suffit du plan, des réglages, du jour et des corrections du jour.
+     */
     async serieDuJour(userId: string, garder: boolean) {
-      const { maintenant, reglages, plan, faits, contexte } = await charger(userId)
+      const leger = await chargerLeger(userId)
+      const { maintenant, reglages, plan } = leger
+      const jour = jourDe(maintenant, reglages.fuseau, reglages.heureBascule)
 
-      let gardee: unknown = await depot.serieDuJour(base.db, userId, contexte.jour)
+      let gardee: unknown = await depot.serieDuJour(base.db, userId, jour)
       if (gardee === undefined) {
         if (!garder) return { questions: [], gardee: false }
+        const { faits, contexte } = await charger(userId, leger)
         const tirees = tirerQuestionsDuJour(contexte, faits, reglages).map(
           ({ bloc, question }) => ({ bloc, question }),
         )
@@ -538,16 +555,19 @@ export function creerServiceRevisions({
           }),
         )
         // Si une autre requête a gardé sa série avant, c'est la sienne qui fait foi pour tous.
-        gardee = await depot.serieDuJour(base.db, userId, contexte.jour)
+        gardee = await depot.serieDuJour(base.db, userId, jour)
       }
       const serie = SerieGardee.parse(gardee)
 
-      const duJour = await rappelsDuJour(userId, serie, { plan, reglages, contexte })
+      const duJour = await rappelsDuJour(userId, serie, { plan, reglages, contexte: { jour } })
       return {
         questions: serie.flatMap(({ bloc, question }) => {
-          const leBloc = contexte.blocs.find(({ manifeste }) => manifeste.bloc === bloc)
-          const texte = leBloc?.manifeste.rappel.find(({ id }) => id === question)
-          const idDuBloc = plan.find(({ code }) => code === bloc)?.id
+          const duPlan = plan.find(({ code }) => code === bloc)
+          const texte =
+            duPlan === undefined
+              ? undefined
+              : Manifeste.parse(duPlan.manifeste).rappel.find(({ id }) => id === question)
+          const idDuBloc = duPlan?.id
           if (texte === undefined) return []
           const reponses = duJour.filter(
             (ligne) => ligne.blocId === idDuBloc && ligne.questionId === question,

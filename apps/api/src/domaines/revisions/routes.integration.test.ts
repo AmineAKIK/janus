@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { nouvelId, Reglages } from '@janus/contrats'
 import { eq } from 'drizzle-orm'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { creerFaux } from '../../adaptateurs/correcteur/faux.ts'
 import { baseDepuisPool } from '../../base/base.ts'
 import * as t from '../../base/schema/index.ts'
@@ -160,6 +160,25 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('GET /questions-debut contre Pos
 
       expect(seconde).toEqual(premiere)
       expect(lue).toEqual(premiere)
+    })
+
+    it('lire ou rendre une série déjà gardée ne relit pas l’historique des faits', async () => {
+      const attendue: unknown = (await garder()).json()
+      const espion = vi.spyOn(bases.pool, 'query')
+      try {
+        const lue: unknown = (await lire()).json()
+        const rendue: unknown = (await garder()).json()
+
+        expect(lue).toEqual(attendue)
+        expect(rendue).toEqual(attendue)
+        const requetes = espion.mock.calls.map(([premier]) =>
+          typeof premier === 'string' ? premier : JSON.stringify(premier),
+        )
+        expect(requetes.length).toBeGreaterThan(0)
+        expect(requetes.filter((texte) => /\bevenements\b/.test(texte))).toEqual([])
+      } finally {
+        espion.mockRestore()
+      }
     })
 
     it('corrige un rappel de la série sans bloc ni version, puis le rend en « deja »', async () => {
