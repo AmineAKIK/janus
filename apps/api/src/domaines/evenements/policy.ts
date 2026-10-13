@@ -10,6 +10,8 @@ export const MESSAGES_AILLEURS: Readonly<Record<string, string>> = {
   'restitution.demande': 'POST /corrections',
   'correction.accord': 'POST /corrections/:id/accord',
   'lien.ouvrir': 'l’appli seule : il ne part jamais au serveur',
+  'page.taille': 'l’appli seule : il ne part jamais au serveur',
+  'page.haut': 'l’appli seule : il ne part jamais au serveur',
 }
 
 /** L'empreinte du contenu d'un message : le même message renvoyé donne la même, quel que soit l'ordre des champs. */

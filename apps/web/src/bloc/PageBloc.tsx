@@ -126,22 +126,24 @@ function FicheOuverte({
   ]
   return (
     <div className={styles['page']}>
-      <BarreBloc
-        code={donnees.bloc}
-        titre={titre}
-        moduleId={moduleId}
-        statut={hote.statut.statut}
-        etatEnvoi={envoi.etat}
-        gardees={envoi.gardees}
-      />
-      <FilEtapes
-        etapes={etapes}
-        courante={courante}
-        vues={hote.etapesVues}
-        surChoix={hote.allerEtape}
-        verrouillees={verrouillees}
-        surVerrou={setRevoir}
-      />
+      <header className={styles['entete']}>
+        <BarreBloc
+          code={donnees.bloc}
+          titre={titre}
+          moduleId={moduleId}
+          statut={hote.statut.statut}
+          etatEnvoi={envoi.etat}
+          gardees={envoi.gardees}
+        />
+        <FilEtapes
+          etapes={etapes}
+          courante={courante}
+          vues={hote.etapesVues}
+          surChoix={hote.allerEtape}
+          verrouillees={verrouillees}
+          surVerrou={setRevoir}
+        />
+      </header>
       {revoir !== null && (
         <DialogueRevoirCours
           surRester={() => {
@@ -276,6 +278,8 @@ function FicheOuverte({
             code={donnees.bloc}
             titre={titre}
             src={src}
+            hauteur={hote.hauteur}
+            cachee={hote.phase === 'attente'}
           />
         )}
       </div>

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { ecrans } from './ecrans.ts'
-import { activerInterrupteurs, ouvrirSession } from './session.ts'
+import { activerInterrupteurs, ficheALaHauteur, ouvrirSession } from './session.ts'
 
 const tailles = [
   { nom: 'mobile', width: 390, height: 844 },
@@ -37,6 +37,14 @@ for (const ecran of ecrans) {
           await page.getByRole('button', { name: nom, exact: true }).click()
         }
         if (ecran.clics !== undefined) await expect(page.getByRole('dialog').last()).toBeVisible()
+        // Une fiche prête prend la hauteur de son contenu un peu après s'être affichée : on l'attend.
+        const fichePrete = page
+          .locator('iframe[title^="Fiche du bloc "]')
+          .first()
+          .contentFrame()
+          .getByRole('status')
+          .filter({ hasText: 'Dans l’appli' })
+        if (await fichePrete.isVisible()) await ficheALaHauteur(page)
         await page.screenshot({
           path: `captures/${ecran.nom}-${String(taille.width)}-${theme.nom}.png`,
           fullPage: true,

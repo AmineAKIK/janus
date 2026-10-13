@@ -115,6 +115,9 @@ describe('parité avec packages/contrats', () => {
       { ...EXEMPLES_PAGE['etat.sauver'], etat: { gros: 'x'.repeat(200_001) } },
       { ...EXEMPLES_PAGE['etat.sauver'], etat: [1] },
       { ...EXEMPLES_PAGE['etape.vue'], etape: '   ' },
+      { ...EXEMPLES_PAGE['page.taille'], hauteur: 0 },
+      { ...EXEMPLES_PAGE['page.taille'], hauteur: 12.5 },
+      { ...EXEMPLES_PAGE['page.taille'], hauteur: 200_001 },
     ]
     for (const message of cas) {
       expect(MessagePage.safeParse(message).success).toBe(

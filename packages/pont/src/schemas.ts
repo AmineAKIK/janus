@@ -6,6 +6,7 @@ import * as z from 'zod/mini'
 
 const TAILLE_MAX_REPONSE = 2000
 const TAILLE_MAX_ETAT_OCTETS = 200_000
+const HAUTEUR_MAX_PAGE = 200_000
 
 const identifiant = () => z.string().check(z.trim(), z.minLength(1))
 const codeBloc = () => z.string().check(z.regex(/^[A-Z]{1,3}\d{2,3}$/))
@@ -131,6 +132,12 @@ export const MessagePage = z.discriminatedUnion('type', [
   z.strictObject({ ...communPage, type: z.literal('bilan.erreurs'), ids: z.array(identifiant()) }),
   z.strictObject({ ...communPage, type: z.literal('etat.sauver'), etat: etatPage }),
   z.strictObject({ ...communPage, type: z.literal('lien.ouvrir'), url: lienExterne }),
+  z.strictObject({
+    ...communPage,
+    type: z.literal('page.taille'),
+    hauteur: z.int().check(z.gte(1), z.lte(HAUTEUR_MAX_PAGE)),
+  }),
+  z.strictObject({ ...communPage, type: z.literal('page.haut') }),
   z.strictObject({
     ...communPage,
     type: z.literal('correction.accord'),

@@ -52,6 +52,8 @@ export const EXEMPLES_PAGE = {
     etat: { etape: 'ET3', reponses: { R1: 'Une fiche résume un seul bloc.' } },
   },
   'lien.ouvrir': { ...commun, type: 'lien.ouvrir', url: 'https://www.figma.com/design/' },
+  'page.taille': { ...commun, type: 'page.taille', hauteur: 1840 },
+  'page.haut': { ...commun, type: 'page.haut' },
   'correction.accord': {
     ...commun,
     type: 'correction.accord',

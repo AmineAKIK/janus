@@ -76,6 +76,8 @@ describe('enregistrementDe', () => {
       'correction.accord',
       'etat.sauver',
       'lien.ouvrir',
+      'page.haut',
+      'page.taille',
       'restitution.demande',
     ])
   })

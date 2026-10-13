@@ -111,6 +111,41 @@ describe('page d’un bloc', () => {
     expect(recu).not.toHaveBeenCalled()
   })
 
+  it('la fiche reste cachée sous « Chargement de la fiche… » jusqu’à ce qu’elle se présente', async () => {
+    const { envoyer, iframe } = await afficher()
+    expect(iframe.className).toContain('iframeCachee')
+
+    await envoyer(prete)
+
+    expect(iframe.className).not.toContain('iframeCachee')
+  })
+
+  it('page.taille : l’iframe prend la hauteur du contenu, sans rien envoyer au serveur', async () => {
+    const { envoyer, recu, iframe, magasin } = await afficher()
+    await envoyer(prete)
+    recu.mockClear()
+
+    expect(iframe.style.blockSize).toBe('')
+    await envoyer(message('page.taille', { hauteur: 2400 }))
+
+    expect(iframe.style.blockSize).toBe('2400px')
+    expect(recu).not.toHaveBeenCalled()
+    expect(magasin.lire().idsRecus).not.toContain(EXEMPLES_PAGE['page.taille'].id)
+  })
+
+  it('page.haut : ramène le haut de la fiche à l’écran seulement s’il est passé au-dessus', async () => {
+    const { envoyer, iframe } = await afficher()
+    const defiler = vi.fn()
+    iframe.scrollIntoView = defiler
+    await envoyer(prete)
+
+    await envoyer(message('page.haut'))
+    vi.spyOn(iframe, 'getBoundingClientRect').mockReturnValue(DOMRect.fromRect({ y: -300 }))
+    await envoyer(message('page.haut', { id: '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2d' }))
+
+    expect(defiler).toHaveBeenCalledExactlyOnceWith({ block: 'start' })
+  })
+
   it('lien.ouvrir avec une adresse http : rien ne s’ouvre', async () => {
     const { envoyer } = await afficher()
     const ouvrir = vi.spyOn(window, 'open').mockImplementation(() => null)

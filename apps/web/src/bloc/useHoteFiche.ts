@@ -93,6 +93,7 @@ export function useHoteFiche(
   const rappelCorrection = useRef(surCorrection)
   rappelCorrection.current = surCorrection
   const [refus, setRefus] = useState<CauseRefus | null>(null)
+  const [hauteur, setHauteur] = useState<number | null>(null)
   const [etapeVue, setEtapeVue] = useState<string | null>(null)
   const [etapesVues, setEtapesVues] = useState<readonly string[]>([])
   const [propositions, setPropositions] = useState<readonly PropositionErreur[]>([])
@@ -178,6 +179,18 @@ export function useHoteFiche(
           // L'appli seule ouvre l'adresse (nouvel onglet, sans lien avec Janus) ; rien ne part au serveur.
           window.open(message.url, '_blank', 'noopener,noreferrer')
           return
+        case 'page.taille':
+          // L'iframe prend la hauteur de son contenu : un seul défilement, celui de la page.
+          setHauteur(message.hauteur)
+          return
+        case 'page.haut': {
+          // Nouvel écran de la fiche : son haut revient à l'écran s'il était passé au-dessus.
+          const cadre = iframe.current
+          if (cadre !== null && cadre.getBoundingClientRect().top < 0) {
+            cadre.scrollIntoView({ block: 'start' })
+          }
+          return
+        }
         default: {
           if (message.type === 'etat.sauver') dernieres.current.etat = message.etat
           if (message.type === 'etape.vue') {
@@ -255,7 +268,8 @@ export function useHoteFiche(
         version,
       })
       if (resultat.accepte) {
-        rappelActivite.current?.()
+        // La taille de la page change aussi sans geste d'Amine (chargement, rotation) : ce n'est pas de l'activité.
+        if (resultat.message.type !== 'page.taille') rappelActivite.current?.()
         traiter(resultat.message)
         return
       }
@@ -283,6 +297,7 @@ export function useHoteFiche(
   // Une fiche qui ne répond pas dans le délai est signalée ; un rechargement repart de zéro.
   useEffect(() => {
     setPhase('attente')
+    setHauteur(null)
     const minuteur = setTimeout(() => {
       setPhase((actuelle) => (actuelle === 'attente' ? 'muette' : actuelle))
     }, DELAI_FICHE_MS)
@@ -371,6 +386,8 @@ export function useHoteFiche(
       vers({ type: 'etape.aller', etape })
     },
     statut,
+    /** La hauteur du contenu de la fiche, `null` tant qu'elle ne l'a pas donnée. */
+    hauteur,
     etapeVue,
     etapesVues,
     envoyees,

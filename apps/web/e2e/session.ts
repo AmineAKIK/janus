@@ -15,11 +15,33 @@ export function ficheDuBloc(page: Page, bloc: string): FrameLocator {
   return page.frameLocator(`iframe[title^="Fiche du bloc ${bloc}"]`)
 }
 
-/** Attend que la fiche du bloc ait pris le mode appli (« Dans l’appli ») et la rend. */
+/**
+ * Attend que la fiche du bloc ait pris le mode appli (« Dans l’appli ») et la hauteur de son contenu,
+ * puis la rend.
+ */
 export async function attendreFiche(page: Page, bloc: string): Promise<FrameLocator> {
   const fiche = ficheDuBloc(page, bloc)
   await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
+  await ficheALaHauteur(page, bloc)
   return fiche
+}
+
+/**
+ * L'iframe de la fiche a la hauteur du contenu de la fiche : rien n'est coupé, rien ne défile dans
+ * la fiche. Sans bloc, la première fiche de la page.
+ */
+export async function ficheALaHauteur(page: Page, bloc = ''): Promise<void> {
+  const cadre = page.locator(`iframe[title^="Fiche du bloc ${bloc}"]`).first()
+  const contenu = cadre.contentFrame().locator('html')
+  await expect
+    .poll(async () => {
+      const [hauteurCadre, hauteurContenu] = await Promise.all([
+        cadre.evaluate((iframe) => iframe.getBoundingClientRect().height),
+        contenu.evaluate((racine) => Math.ceil(racine.getBoundingClientRect().height)),
+      ])
+      return hauteurCadre - hauteurContenu
+    })
+    .toBe(0)
 }
 
 /** Active des interrupteurs de démo (états Figma qui dépendent du serveur) puis recharge l'appli. */
@@ -51,17 +73,37 @@ export async function serieEnregistree(page: Page, statut: string): Promise<void
   await expect(page.frameLocator('iframe').getByText(`Statut : ${statut}`)).toBeVisible()
 }
 
+/**
+ * Clique un élément de la page, hors de la fiche. La fiche prend toute sa hauteur : juste après un
+ * défilement, Chromium peut encore router le clic vers l'iframe (un autre processus). On amène
+ * l'élément à l'écran et on laisse le navigateur peindre la nouvelle position avant de cliquer.
+ */
+export async function cliquerHorsFiche(cible: Locator): Promise<void> {
+  await cible.scrollIntoViewIfNeeded()
+  await cible.evaluate(
+    () =>
+      new Promise<void>((fin) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            fin()
+          })
+        })
+      }),
+  )
+  await cible.click()
+}
+
 /** Ouvre une étape et attend que la fiche l'ait affichée : ce qu'on lit ensuite est celui de l'étape. */
 export async function allerEtape(page: Page, nom: string): Promise<void> {
   await ouvrirFil(page)
-  await etape(page, nom).click()
+  await cliquerHorsFiche(etape(page, nom))
   // Étroit, le fil se replie après le choix : on le rouvre pour lire l'étape courante, puis on le referme.
   await ouvrirFil(page)
   await expect(etape(page, nom)).toHaveAttribute('aria-current', 'step')
   const bascule = page
     .getByRole('navigation', { name: 'Étapes de la fiche' })
     .getByRole('button', { expanded: true })
-  if (await bascule.isVisible()) await bascule.click()
+  if (await bascule.isVisible()) await cliquerHorsFiche(bascule)
 }
 
 /** Étroit, le fil des étapes est replié derrière un bouton ; large, il n'y a rien à ouvrir. */
@@ -70,14 +112,15 @@ export async function ouvrirFil(page: Page): Promise<void> {
     .getByRole('navigation', { name: 'Étapes de la fiche' })
     .getByRole('button', { expanded: false })
     .first()
-  if (await bascule.isVisible()) await bascule.click()
+  if (await bascule.isVisible()) await cliquerHorsFiche(bascule)
 }
 
 /** Clique une étape du fil, replié ou non, sans attendre que la fiche l'affiche. */
 export async function cliquerEtape(page: Page, nom: string): Promise<void> {
   await ouvrirFil(page)
-  await page
-    .getByRole('navigation', { name: 'Étapes de la fiche' })
-    .getByRole('button', { name: nom, exact: true })
-    .click()
+  await cliquerHorsFiche(
+    page
+      .getByRole('navigation', { name: 'Étapes de la fiche' })
+      .getByRole('button', { name: nom, exact: true }),
+  )
 }
