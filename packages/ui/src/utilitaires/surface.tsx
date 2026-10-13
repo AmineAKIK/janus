@@ -1,4 +1,4 @@
-import type { CSSProperties, RefObject } from 'react'
+import type { CSSProperties, FocusEvent, RefObject } from 'react'
 import { useEffect, useLayoutEffect, useState } from 'react'
 
 const MARGE = 8
@@ -88,4 +88,19 @@ export function useSurface({
   }, [ouverte, ancre, surface, fermer])
 
   return style
+}
+
+/**
+ * Ferme la surface quand le focus part ailleurs que dans la surface ou son ancre. Un focus qui
+ * ne va nulle part (`null`) ne ferme pas : le clic ailleurs est déjà géré par `useSurface`.
+ */
+export function fermerSiFocusSort(
+  evenement: FocusEvent<HTMLElement>,
+  zones: readonly RefObject<HTMLElement | null>[],
+  fermer: () => void,
+): void {
+  const vers = evenement.relatedTarget
+  if (vers === null) return
+  if (vers instanceof Node && zones.some((zone) => zone.current?.contains(vers) === true)) return
+  fermer()
 }

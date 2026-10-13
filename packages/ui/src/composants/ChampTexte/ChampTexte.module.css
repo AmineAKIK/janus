@@ -1,32 +1,17 @@
 .champ {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacement-libelle);
-  width: 100%;
+  composes: champ from '../../utilitaires/champ.module.css';
 }
 
-.champ .libelle {
-  font-weight: 500;
-  color: var(--couleur-encre);
+.libelle {
+  composes: libelle from '../../utilitaires/champ.module.css';
+}
+
+.masque {
+  composes: masque from '../../utilitaires/champ.module.css';
 }
 
 .cadre {
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  gap: var(--espacement-8);
-  min-height: var(--hauteur-champ);
-  padding: 0 var(--espacement-12);
-  border: 1px solid var(--couleur-controle);
-  border-radius: var(--rayon-champ);
-  background: var(--couleur-fond);
-  transition: border-color var(--duree-transition) ease;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cadre {
-    transition: none;
-  }
+  composes: controle from '../../utilitaires/champ.module.css';
 }
 
 .cadre.erreur {
@@ -84,7 +69,7 @@
 }
 
 .desactive {
-  opacity: 0.65;
+  composes: desactive from '../../utilitaires/champ.module.css';
 }
 
 .desactive .cadre {
@@ -96,16 +81,4 @@
 .desactive .saisie:-webkit-autofill:hover,
 .desactive .saisie:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0 1000px var(--couleur-surface-douce) inset;
-}
-
-/* Réservé aux lecteurs d'écran. */
-.champ .masque {
-  position: absolute;
-  inline-size: 1px;
-  block-size: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  clip-path: inset(50%);
 }

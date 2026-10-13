@@ -1,5 +1,6 @@
 import type { Statut } from '@janus/contrats'
 import { useId, useState } from 'react'
+import { CLASSE_STATUT } from '../../utilitaires/classeStatut.ts'
 import { classes } from '../../utilitaires/classes.ts'
 import styles from './BadgeStatut.module.css'
 import { IndicateurStatut } from './IndicateurStatut.tsx'
@@ -25,16 +26,6 @@ export const DEFINITIONS_STATUT: Record<Statut, string> = {
     'Une vérification valable, faite quelques jours plus tard, est réussie : explication, tâche et transfert.',
   maitrise: 'Un retest valable, bien plus tard, est réussi.',
   a_reprendre: 'Une erreur critique est ouverte. Ce statut prime sur tous les autres.',
-}
-
-const COULEURS_STATUT: Record<Statut, string> = {
-  non_commence: 'nonCommence',
-  en_cours: 'enCours',
-  vu: 'vu',
-  acquis_provisoirement: 'acquisProvisoirement',
-  acquis: 'acquis',
-  maitrise: 'maitrise',
-  a_reprendre: 'aReprendre',
 }
 
 export interface ProprietesBadgeStatut {
@@ -64,7 +55,7 @@ export function BadgeStatut({
       className={classes(
         styles['badge'],
         compacte ? styles['compacte'] : styles['normale'],
-        styles[COULEURS_STATUT[statut]],
+        styles[CLASSE_STATUT[statut]],
         className,
       )}
       {...(infobulle
