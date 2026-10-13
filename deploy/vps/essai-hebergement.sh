@@ -57,6 +57,19 @@ code=$(curl -s -o /dev/null -w '%{http_code}' "${hote[@]}" http://127.0.0.1:3300
 code=$(curl -s -o /dev/null -w '%{http_code}' "${hote[@]}" http://127.0.0.1:3300/une/route/de/lappli)
 [[ $code == 200 ]] || { echo "attendu 200 pour une route de l appli, recu $code"; exit 1; }
 
+echo '== Les fichiers de l appli sont servis en brotli quand le navigateur le sait, en gzip sinon'
+asset=$(curl -fsS "${hote[@]}" http://127.0.0.1:3300/ | grep -o '/assets/index-[^"]*\.js' | head -1)
+[[ -n $asset ]]
+entetes_br=$(curl -fsSI "${hote[@]}" -H 'Accept-Encoding: br, gzip' "http://127.0.0.1:3300$asset" | tr -d '\r')
+echo "$entetes_br" | grep -qi '^content-encoding: br$'
+echo "$entetes_br" | grep -i '^vary:' | grep -qi 'accept-encoding'
+echo "$entetes_br" | grep -qi '^cache-control: public, max-age=31536000, immutable$'
+entetes_gz=$(curl -fsSI "${hote[@]}" -H 'Accept-Encoding: gzip' "http://127.0.0.1:3300$asset" | tr -d '\r')
+echo "$entetes_gz" | grep -qi '^content-encoding: gzip$'
+taille_br=$(curl -fsS -o /dev/null -w '%{size_download}' "${hote[@]}" -H 'Accept-Encoding: br' "http://127.0.0.1:3300$asset")
+taille_gz=$(curl -fsS -o /dev/null -w '%{size_download}' "${hote[@]}" -H 'Accept-Encoding: gzip' "http://127.0.0.1:3300$asset")
+(( taille_br < taille_gz )) || { echo "brotli ($taille_br) devrait peser moins que gzip ($taille_gz)"; exit 1; }
+
 echo '== Sauvegarde'
 "${composition[@]}" exec -T postgres psql -U janus -d janus -qc 'CREATE TABLE essai_marqueur (v text); INSERT INTO essai_marqueur VALUES (1)' >/dev/null
 "${composition[@]}" run --rm --no-deps -T --user root --entrypoint sh api -c 'echo avant > /fiches/essai.txt'
