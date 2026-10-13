@@ -25,18 +25,26 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('import des catalogues au démar
     return rows
   }
 
-  it('publie la formation DWWM du dépôt, et le relancer ne change rien', async () => {
+  it('publie la formation DWWM du dépôt et ses fiches, et le relancer ne change rien', async () => {
     const base = baseDepuisPool(bases.db, bases.pool)
+    const servies = await mkdtemp(join(tmpdir(), 'janus-depot-'))
+    try {
+      const premier = await importerLesCatalogues(base, horlogeFausse(), servies)
+      const attendu = [
+        { formation: 'DWWM', titre: 'Écosystème et outils du développeur', importe: true },
+      ]
+      expect(premier[0]).toMatch(/^Catalogue dwwm : /)
+      for (const ligne of premier.slice(1))
+        expect(ligne).toMatch(/^Fiche dwwm\/fiches\/.+ importée\.$/)
+      expect(await modules()).toEqual(attendu)
 
-    const premier = await importerLesCatalogues(base, horlogeFausse(), '/inutilise')
-    const attendu = [
-      { formation: 'DWWM', titre: 'Écosystème et outils du développeur', importe: true },
-    ]
-    expect(premier).toHaveLength(1)
-    expect(await modules()).toEqual(attendu)
-
-    await importerLesCatalogues(base, horlogeFausse(), '/inutilise')
-    expect(await modules()).toEqual(attendu)
+      const second = await importerLesCatalogues(base, horlogeFausse(), servies)
+      expect(second).toHaveLength(premier.length)
+      for (const ligne of second.slice(1)) expect(ligne).toMatch(/ déjà importée\.$/)
+      expect(await modules()).toEqual(attendu)
+    } finally {
+      await rm(servies, { recursive: true, force: true })
+    }
   })
 
   describe('fiches du dépôt', () => {
@@ -73,7 +81,9 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('import des catalogues au démar
 
     const versions = async () => {
       const { rows } = await bases.pool.query<{ code: string; version: number }>(
-        `SELECT b.code, v.version FROM fiches_versions v JOIN blocs b ON b.id = v.bloc_id ORDER BY b.code, v.version`,
+        // La base est partagée avec l'essai du dépôt, qui publie ses propres fiches : on ne lit que D01.
+        `SELECT b.code, v.version FROM fiches_versions v JOIN blocs b ON b.id = v.bloc_id
+          WHERE b.code = 'D01' ORDER BY v.version`,
       )
       return rows
     }

@@ -73,6 +73,9 @@ taille_gz=$(curl -fsS -o /dev/null -w '%{size_download}' "${hote[@]}" -H 'Accept
 echo '== Sauvegarde'
 "${composition[@]}" exec -T postgres psql -U janus -d janus -qc 'CREATE TABLE essai_marqueur (v text); INSERT INTO essai_marqueur VALUES (1)' >/dev/null
 "${composition[@]}" run --rm --no-deps -T --user root --entrypoint sh api -c 'echo avant > /fiches/essai.txt'
+# Les fiches du depot sont deja publiees dans /fiches : la restauration doit rendre ce dossier tel quel.
+fiches_sauvees=$("${composition[@]}" run --rm --no-deps -T --entrypoint sh web -c 'cat /fiches/essai.txt; find /fiches | sort')
+[[ $fiches_sauvees == $'avant\n'*/fiches/essai.txt* ]]
 bash deploy/vps/sauvegarder.sh
 sauvegarde=$(cat /var/lib/janus-deploy/derniere-sauvegarde)
 [[ -f $sauvegarde/janus.dump && -f $sauvegarde/fiches.tar.gz && ! -e $sauvegarde/PARTIELLE ]]
@@ -102,7 +105,7 @@ echo '== Restauration dans une base abimee'
 bash deploy/vps/restaurer.sh "$sauvegarde" --confirmer
 [[ $("${composition[@]}" exec -T postgres psql -U janus -d janus -tAc 'SELECT v FROM essai_marqueur') == 1 ]]
 [[ $("${composition[@]}" exec -T postgres psql -U janus -d janus -tAc "SELECT to_regclass('intrus')") == '' ]]
-[[ $("${composition[@]}" run --rm --no-deps -T --entrypoint sh web -c 'cat /fiches/essai.txt; ls /fiches') == $'avant\nessai.txt' ]]
+[[ $("${composition[@]}" run --rm --no-deps -T --entrypoint sh web -c 'cat /fiches/essai.txt; find /fiches | sort') == "$fiches_sauvees" ]]
 "${composition[@]}" up -d --no-build --wait --wait-timeout 120 api
 curl -fsS "${hote[@]}" http://127.0.0.1:3300/api/sante >/dev/null
 echo '== Hebergement OK'
