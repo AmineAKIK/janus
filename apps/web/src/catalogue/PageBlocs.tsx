@@ -18,6 +18,7 @@ import { RepartitionStatuts } from './RepartitionStatuts.tsx'
 import { TEXTES_BLOCS, texteBlocs, titreModule } from './textes.ts'
 import { useBlocs } from './useBlocs.ts'
 import type { BlocDeLaListe } from './useBlocs.ts'
+import { TitrePage } from '../gabarit/TitrePage.tsx'
 
 function LigneBloc({
   bloc,
@@ -90,11 +91,7 @@ export function PageBlocs({
 
   let contenu
   let compteur = null
-  let entete = (
-    <h1 tabIndex={-1} className={`${catalogue['titre'] ?? ''} texte-titre-28`}>
-      {TEXTES_BLOCS.titreParDefaut}
-    </h1>
-  )
+  let entete = <TitrePage>{TEXTES_BLOCS.titreParDefaut}</TitrePage>
   let filAriane = null
   if (etat.phase === 'erreur') {
     contenu = <Erreur reessayer={etat.reessayer} introuvable={etat.introuvable} />
@@ -108,9 +105,7 @@ export function PageBlocs({
     if (module !== null) {
       entete = (
         <>
-          <h1 tabIndex={-1} className={`${catalogue['titre'] ?? ''} texte-titre-28`}>
-            {titreModule(module.module.ordre)}
-          </h1>
+          <TitrePage>{titreModule(module.module.ordre)}</TitrePage>
           {module.module.description !== '' && (
             <p className={`${catalogue['intro'] ?? ''} texte-corps-16`}>
               {module.module.description}

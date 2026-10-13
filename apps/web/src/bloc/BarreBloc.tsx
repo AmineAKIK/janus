@@ -5,6 +5,7 @@ import styles from './Bloc.module.css'
 import { IndicateurEnregistrement } from './IndicateurEnregistrement.tsx'
 import type { EtatIndicateur } from '../envoi/indicateur.ts'
 import { TEXTES_BLOC } from './textes.ts'
+import { TitrePage } from '../gabarit/TitrePage.tsx'
 
 /** La barre du haut : retour aux blocs, code, titre, statut calculé et état d'enregistrement. */
 export function BarreBloc({
@@ -34,9 +35,9 @@ export function BarreBloc({
         <ArrowLeft aria-hidden="true" className={styles['fleche']} />
       </Link>
       <span className={`${styles['code'] ?? ''} texte-code-14`}>{code}</span>
-      <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-corps-16`}>
+      <TitrePage taille="texte-corps-16" className={styles['titre']}>
         {titre}
-      </h1>
+      </TitrePage>
       <BadgeStatut statut={statut} className={styles['statut'] ?? ''} />
       <IndicateurEnregistrement etat={etatEnvoi} gardees={gardees} />
     </div>

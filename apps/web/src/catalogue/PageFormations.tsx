@@ -8,6 +8,7 @@ import { Chargement, Erreur } from './EtatEcran.tsx'
 import { LegendeStatuts, RepartitionStatuts } from './RepartitionStatuts.tsx'
 import { TEXTES, texteAcquis, texteResume } from './textes.ts'
 import { useFormation } from './useFormation.ts'
+import { TitrePage } from '../gabarit/TitrePage.tsx'
 
 function CarteFormation({
   id,
@@ -92,9 +93,7 @@ export function PageFormations() {
   return (
     <div className={styles['page']}>
       <header className={styles['entete']}>
-        <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-titre-28`}>
-          {TEXTES.titreFormations}
-        </h1>
+        <TitrePage>{TEXTES.titreFormations}</TitrePage>
         <p className={`${styles['intro'] ?? ''} texte-corps-16`}>{TEXTES.introFormations}</p>
       </header>
       {contenu}

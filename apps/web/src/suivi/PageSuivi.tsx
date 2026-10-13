@@ -21,6 +21,7 @@ import {
 import { ZoneAFaire, ZoneCout, ZoneDecisions, ZoneErreurs } from './Zones.tsx'
 import { CarteZone } from '@janus/ui'
 import { aller } from '../routes/navigation.ts'
+import { TitrePage } from '../gabarit/TitrePage.tsx'
 
 function allerA(recherche: string) {
   aller(`/tableau-de-bord${recherche}`)
@@ -163,9 +164,7 @@ export function PageSuivi({
 
   return (
     <div className={styles['page']}>
-      <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-titre-28`}>
-        {T.titreEcran}
-      </h1>
+      <TitrePage>{T.titreEcran}</TitrePage>
       <div className={styles['entete']}>
         {donnees !== undefined && donnees.modules.length > 0 && (
           <Selecteur

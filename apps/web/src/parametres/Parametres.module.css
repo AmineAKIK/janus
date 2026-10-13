@@ -1,7 +1,5 @@
 .page {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacement-24);
+  composes: page from '../gabarit/Motifs.module.css';
 }
 .version {
   margin: 0;
@@ -11,12 +9,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--espacement-12);
-}
-.titre {
-  margin: 0;
-}
-.titre:focus {
-  outline: none;
 }
 .retour {
   display: inline-flex;
@@ -60,12 +52,7 @@
   align-self: start;
 }
 .liste {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacement-8);
+  composes: liste from '../gabarit/Motifs.module.css';
 }
 .lien {
   display: flex;
@@ -143,25 +130,14 @@
 
 /* Liste des sections sur mobile : une ligne de navigation avec chevron par section. */
 .ligneNavigation {
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
+  composes: ligneLien from '../gabarit/Motifs.module.css';
   justify-content: space-between;
   gap: var(--espacement-8);
-  min-block-size: 52px;
   padding: var(--espacement-8) var(--espacement-16);
-  background: var(--couleur-surface);
-  border: 1px solid var(--couleur-ligne);
-  border-radius: var(--rayon-champ-bouton);
-  color: var(--couleur-encre);
-  text-decoration: none;
 }
 
 .chevron {
-  flex: none;
-  inline-size: 18px;
-  block-size: 18px;
-  color: var(--couleur-texte-secondaire);
+  composes: chevron from '../gabarit/Motifs.module.css';
 }
 
 /* Boutons « Avancer de… » : deux colonnes sur mobile, une rangée au bureau, même hauteur. */

@@ -2,8 +2,8 @@ import { Bouton } from '@janus/ui'
 import styles from './Bloc.module.css'
 import { TEXTES_ERREUR_IA } from './textes.ts'
 
-/** Une erreur critique repérée par l'IA, que seul Amine peut confirmer. */
-export function EncartErreurIa({
+/** Ce que l'encart dit d'une erreur critique repérée par l'IA, et les deux décisions possibles. */
+export function ErreurIaProposee({
   code,
   libelle,
   reponse,
@@ -19,7 +19,7 @@ export function EncartErreurIa({
   readonly surRejeter: () => void
 }) {
   return (
-    <section className={styles['encart']} aria-label={TEXTES_ERREUR_IA.titre}>
+    <>
       <p className={`${styles['encartTitre'] ?? ''} texte-corps-16`}>{TEXTES_ERREUR_IA.titre}</p>
       <p className={`${styles['encartTexte'] ?? ''} texte-petit-14`}>
         {TEXTES_ERREUR_IA.erreur(libelle)}
@@ -38,6 +38,15 @@ export function EncartErreurIa({
           {TEXTES_ERREUR_IA.rejeter}
         </Bouton>
       </div>
+    </>
+  )
+}
+
+/** Une erreur critique repérée par l'IA, que seul Amine peut confirmer. */
+export function EncartErreurIa(proprietes: Parameters<typeof ErreurIaProposee>[0]) {
+  return (
+    <section className={styles['encart']} aria-label={TEXTES_ERREUR_IA.titre}>
+      <ErreurIaProposee {...proprietes} />
     </section>
   )
 }

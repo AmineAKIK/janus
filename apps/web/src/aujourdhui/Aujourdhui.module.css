@@ -1,16 +1,11 @@
 .page {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacement-24);
+  composes: page from '../gabarit/Motifs.module.css';
 }
 .colonnes {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--espacement-24);
+  composes: colonnes from '../gabarit/Motifs.module.css';
 }
 @media (min-width: 64rem) {
   .colonnes {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
     align-items: start;
   }
   /* Le module suit la lecture de la liste : plus de vide à droite quand on descend. */
@@ -20,40 +15,17 @@
   }
 }
 .colonne {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacement-16);
-  min-inline-size: 0;
-}
-.titre {
-  margin: 0;
-}
-.titre:focus {
-  outline: none;
+  composes: colonne from '../gabarit/Motifs.module.css';
 }
 .complement {
   margin: 0;
   color: var(--couleur-texte-secondaire);
 }
 .carte {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacement-16);
-  padding: var(--espacement-16);
-  background: var(--couleur-surface);
-  border: 1px solid var(--couleur-ligne);
-  border-radius: var(--rayon-carte);
-  box-shadow: var(--ombre-carte);
-  color: var(--couleur-encre);
+  composes: carte from '../gabarit/Motifs.module.css';
 }
 .liste {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacement-8);
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  composes: liste from '../gabarit/Motifs.module.css';
 }
 .faite {
   opacity: 0.6;

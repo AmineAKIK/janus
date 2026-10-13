@@ -1,0 +1,79 @@
+/*
+ * Les motifs de mise en page que plusieurs écrans reprennent tels quels. Un écran les prend avec
+ * `composes: motif from '../gabarit/Motifs.module.css'` et n'ajoute que ce qui lui est propre.
+ *
+ * Ils sont dans la couche `motifs` : une règle de l'écran, hors couche, l'emporte toujours, quel que
+ * soit l'ordre dans lequel le navigateur charge les feuilles.
+ */
+
+@layer motifs {
+  /* Une page : ses blocs s'empilent au même rythme. */
+  .page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espacement-24);
+  }
+
+  /* Deux colonnes au bureau (la principale et son complément), une seule sur mobile. */
+  .colonnes {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--espacement-24);
+  }
+  @media (min-width: 64rem) {
+    .colonnes {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    }
+  }
+  .colonne {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espacement-16);
+    min-inline-size: 0;
+  }
+
+  /* Une carte : le rembourrage change par `--carte-rembourrage`. */
+  .carte {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--espacement-16);
+    padding: var(--carte-rembourrage, var(--espacement-16));
+    background: var(--couleur-surface);
+    border: 1px solid var(--couleur-ligne);
+    border-radius: var(--rayon-carte);
+    box-shadow: var(--ombre-carte);
+    color: var(--couleur-encre);
+  }
+
+  /* Une liste de lignes, sans puces. */
+  .liste {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espacement-8);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Une ligne de navigation : un lien en rectangle bordé, d'au moins 52 px. */
+  .ligneLien {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    min-block-size: 52px;
+    background: var(--couleur-surface);
+    border: 1px solid var(--couleur-ligne);
+    border-radius: var(--rayon-champ-bouton);
+    color: var(--couleur-encre);
+    text-decoration: none;
+  }
+
+  /* Le chevron qui ferme une ligne de navigation. */
+  .chevron {
+    flex: none;
+    inline-size: 18px;
+    block-size: 18px;
+    color: var(--couleur-texte-secondaire);
+  }
+}
