@@ -14,8 +14,10 @@ export function creerControleurRevisions(service: ServiceRevisions) {
       service
         .verificationPour(utilisateurDe(requete), requete.body.bloc, requete.body.type)
         .then((id) => ({ id })),
-    aujourdhui: (requete: FastifyRequest) => service.aujourdhui(utilisateurDe(requete)),
-    cartesDues: (requete: FastifyRequest) => service.cartesDues(utilisateurDe(requete)),
+    aujourdhui: (requete: FastifyRequest) =>
+      service.aujourdhui(utilisateurDe(requete), requete.signal),
+    cartesDues: (requete: FastifyRequest) =>
+      service.cartesDues(utilisateurDe(requete), requete.signal),
     verification: (requete: FastifyRequest<{ Params: { id: string } }>) =>
       service.verification(utilisateurDe(requete), requete.params.id),
     repondre: (

@@ -51,6 +51,8 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
     let tentative = 0
     let compteur = 0
     const requetes: { texte: string; parametres: unknown[] }[] = []
+    /** Appelé à chaque requête : un test s'en sert pour agir au moment où une lecture part. */
+    let surRequete: (texte: string) => void = () => undefined
 
     const lecturesDeFaits = () =>
       requetes.filter(
@@ -164,6 +166,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
         logger: {
           logQuery: (texte, parametres) => {
             requetes.push({ texte, parametres })
+            surRequete(texte)
           },
         },
       })
@@ -175,6 +178,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
     beforeEach(() => {
       cache = creerCacheDesEtats()
       requetes.length = 0
+      surRequete = () => undefined
     })
 
     it('rend, pour chaque bloc et à tout instant, ce que rend calculerBloc sur les faits lus', async () => {
@@ -320,6 +324,33 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
           await reference(bloc, reglages, MAINTENANTS[0] ?? ''),
         )
       }
+    })
+
+    it('un signal déjà interrompu ne lit rien', async () => {
+      const arret = new AbortController()
+      arret.abort(new Error('délai écoulé'))
+      await expect(
+        cache.etats(base.db, plan.userId, blocs, reglages, arret.signal),
+      ).rejects.toThrow('délai écoulé')
+      expect(requetes).toEqual([])
+    })
+
+    it('un signal interrompu pendant la relecture arrête les lots suivants', async () => {
+      const petit = creerCacheDesEtats({ faitsParLot: 1 })
+      const arret = new AbortController()
+      surRequete = (texte) => {
+        if (texte.startsWith('select') && !texte.includes('group by')) {
+          arret.abort(new Error('délai écoulé'))
+        }
+      }
+      await expect(
+        petit.etats(base.db, plan.userId, blocs, reglages, arret.signal),
+      ).rejects.toThrow('délai écoulé')
+      // Un seul lot a été lu (au plus une lecture par table), pas les quatre blocs garnis.
+      expect(lecturesDeFaits().length).toBeLessThanOrEqual(TABLES_DES_FAITS.length)
+      // Et le cache n'en est pas abîmé.
+      surRequete = () => undefined
+      await verifier()
     })
 
     it('vider oublie tout', async () => {
