@@ -26,7 +26,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('import des catalogues au démar
 
     const premier = await importerLesCatalogues(base, horlogeFausse(), '/inutilise')
     const attendu = [
-      { formation: 'DWWM', titre: 'Écosystème et outils du développeur', importe: false },
+      { formation: 'DWWM', titre: 'Écosystème et outils du développeur', importe: true },
     ]
     expect(premier).toHaveLength(1)
     expect(await modules()).toEqual(attendu)
