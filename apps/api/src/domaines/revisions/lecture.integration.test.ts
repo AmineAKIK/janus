@@ -1,4 +1,4 @@
-import { nouvelId } from '@janus/contrats'
+import { nouvelId, Reglages } from '@janus/contrats'
 import { CAS_ACCEPTATION } from '@janus/moteur/cas-acceptation'
 import type { CasStatut } from '@janus/moteur/cas-acceptation'
 import { drizzle } from 'drizzle-orm/node-postgres'
@@ -6,6 +6,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { creerFaux } from '../../adaptateurs/correcteur/faux.ts'
 import { baseDepuisPool } from '../../base/base.ts'
 import { ecrireFait } from '../../base/ecrireFait.ts'
+import { creerCacheDesEtats } from '../../base/etatsDesBlocs.ts'
+import { lireFaits } from '../../base/faits.ts'
 import * as t from '../../base/schema/index.ts'
 import { creerBaseDeTest, URL_SERVEUR_TEST } from '../../base/testeurBase.ts'
 import { semerPlan } from '../../base/testeurPlan.ts'
@@ -13,6 +15,7 @@ import type { PlanSeme } from '../../base/testeurPlan.ts'
 import { configDeTest, ORIGINE_TEST, serveurDeTest } from '../../testeur.ts'
 import { creerHacheur } from '../auth/composition.ts'
 import { creerDepotRevisions } from './depot.ts'
+import { contexteDepuisEtats, contexteDuJour } from './policy.ts'
 import { creerServiceRevisions } from './service.ts'
 
 const MOT_DE_PASSE = 'un mot de passe solide'
@@ -42,7 +45,12 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('lectures de la séance contre P
           (table) => texte.startsWith('select') && texte.includes(`from "${table}"`),
         ),
       )
-      .filter(({ texte }) => !texte.includes('"verification"') && !texte.includes('->>'))
+      .filter(
+        ({ texte }) =>
+          !texte.includes('"verification"') &&
+          !texte.includes('->>') &&
+          !texte.includes('group by'),
+      )
       .map(({ texte, parametres }) => ({
         table: TABLES_DES_FAITS.find((table) => texte.includes(`from "${table}"`)),
         blocs: parametres.filter((p): p is string => typeof p === 'string' && idsDuPlan.has(p)),
@@ -160,5 +168,65 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('lectures de la séance contre P
     })
 
     expect(lectures).toEqual([])
+  })
+
+  it('Aujourd’hui ne relit que les blocs qui ont changé depuis la lecture précédente', async () => {
+    await service.aujourdhui(plan.userId)
+    const inchange = await lecturesDeFaits(() => service.aujourdhui(plan.userId))
+    expect(inchange).toEqual([])
+
+    const bloc = plan.blocs.find(({ code }) => code === 'B04')
+    if (bloc === undefined) throw new Error('B04 absent')
+    await ecrireFait(
+      {
+        db: bases.db,
+        userId: plan.userId,
+        blocId: bloc.id,
+        ficheVersionId: bloc.versionId,
+        identifiant: plan.identifiant,
+      },
+      {
+        id: 'ouverture-neuve',
+        bloc: 'B04',
+        date: '2026-10-01T09:00:00.000Z',
+        type: 'bloc_ouvert',
+        horsPrerequis: false,
+      },
+      new Map(),
+      1_000,
+    )
+    const change = await lecturesDeFaits(() => service.aujourdhui(plan.userId))
+    expect(change.length).toBeGreaterThan(0)
+    for (const lecture of change) expect(lecture.blocs).toEqual([bloc.id])
+  })
+
+  it('le contexte du jour tiré des états gardés est celui que donne la lecture de tous les faits', async () => {
+    const reglages = Reglages.parse({})
+    const blocs = plan.blocs.map(({ id, code, versionId, manifeste }) => ({
+      id,
+      code,
+      versionId,
+      manifeste,
+    }))
+    const cache = creerCacheDesEtats()
+    const duPlan = plan.blocs.map(({ id, code, manifeste }) => ({
+      id,
+      code,
+      moduleId: 'M',
+      moduleCode: 'M1',
+      moduleTitre: 'Module',
+      manifeste,
+    }))
+    const faits = await lireFaits(
+      bases.db,
+      plan.userId,
+      plan.blocs.map(({ id, code }) => ({ id, code })),
+    )
+    for (const maintenant of ['2026-10-01T10:00:00.000Z', '2026-12-15T10:00:00.000Z']) {
+      const etats = await cache.etats(bases.db, plan.userId, blocs, reglages)
+      expect(contexteDepuisEtats(duPlan, etats, reglages, maintenant)).toEqual(
+        contexteDuJour(duPlan, faits, reglages, maintenant),
+      )
+    }
   })
 })

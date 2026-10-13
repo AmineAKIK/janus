@@ -8,7 +8,7 @@ import type { Db, Tx } from './transaction.ts'
 type TypeDeFait = Fait['type']
 
 /** Les types de fait que `evenements` garde : le reste vit dans sa table (corrections, forçages, décisions). */
-const TYPES_DES_EVENEMENTS: readonly TypeDeFait[] = [
+export const TYPES_DES_EVENEMENTS: readonly TypeDeFait[] = [
   'bloc_ouvert',
   'etape_vue',
   'pratique_resultat',

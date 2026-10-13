@@ -13,6 +13,7 @@ import {
 } from '@janus/moteur'
 import type { ApercuCarte, BlocDeLaFile, EtatCarte, QuestionDebut } from '@janus/moteur'
 import { z } from 'zod'
+import type { EtatDuBloc } from '../../base/etatsDesBlocs.ts'
 
 /** Un bloc importé du plan, avec son manifeste en service. */
 export interface BlocDuPlan {
@@ -47,19 +48,55 @@ export function contexteDuJour(
     if (duBloc === undefined) parBloc.set(fait.bloc, [fait])
     else duBloc.push(fait)
   }
-  const blocs = plan.map(({ code, moduleId, manifeste }) => {
-    const lu = Manifeste.parse(manifeste)
-    const duBloc = parBloc.get(code) ?? []
-    return {
-      manifeste: lu,
-      moduleId,
-      etat: calculerBloc(duBloc, lu, reglages, maintenant),
-      dernierFait: duBloc.reduce<string | null>(
-        (dernier, fait) => (dernier === null || fait.date > dernier ? fait.date : dernier),
-        null,
-      ),
-    }
-  })
+  return assemblerLeContexte(
+    plan.map(({ code, moduleId, manifeste }) => {
+      const lu = Manifeste.parse(manifeste)
+      const duBloc = parBloc.get(code) ?? []
+      return {
+        manifeste: lu,
+        moduleId,
+        etat: calculerBloc(duBloc, lu, reglages, maintenant),
+        dernierFait: duBloc.reduce<string | null>(
+          (dernier, fait) => (dernier === null || fait.date > dernier ? fait.date : dernier),
+          null,
+        ),
+      }
+    }),
+    reglages,
+    maintenant,
+  )
+}
+
+/** Le contexte du jour depuis les états gardés des blocs : le même que `contexteDuJour` sur les mêmes faits. */
+export function contexteDepuisEtats(
+  plan: readonly BlocDuPlan[],
+  etats: ReadonlyMap<string, EtatDuBloc>,
+  reglages: Reglages,
+  maintenant: string,
+): ContexteDuJour {
+  return assemblerLeContexte(
+    plan.map(({ code, moduleId }) => {
+      const etat = etats.get(code)
+      if (etat === undefined) throw new Error(`État manquant pour le bloc ${code}`)
+      return {
+        manifeste: etat.manifeste,
+        moduleId,
+        etat: etat.resultat(maintenant),
+        dernierFait: etat.dernierFait,
+      }
+    }),
+    reglages,
+    maintenant,
+  )
+}
+
+type BlocCalcule = ContexteDuJour['blocs'][number] & { readonly dernierFait: string | null }
+
+function assemblerLeContexte(
+  blocs: readonly BlocCalcule[],
+  reglages: Reglages,
+  maintenant: string,
+): ContexteDuJour {
   const derniereActivite = blocs.reduce<string | null>(
     (dernier, { dernierFait }) =>
       dernierFait !== null && (dernier === null || dernierFait > dernier) ? dernierFait : dernier,

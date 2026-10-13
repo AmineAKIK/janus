@@ -1,5 +1,5 @@
 import { CorrectionRecue, Manifeste, Reglages, TypeVerification, nouvelId } from '@janus/contrats'
-import type { NoteCarte } from '@janus/contrats'
+import type { Fait, NoteCarte } from '@janus/contrats'
 import {
   ajouterJours,
   calculerBloc,
@@ -17,6 +17,8 @@ import { empreinteJson } from '../../base/empreinte.ts'
 import { SerieGardee } from '../../base/serieGardee.ts'
 import { maintenantDeLaFormation, sousVerrouDuBloc } from '../../base/axeTemps.ts'
 import { formationActiveDe } from '../../base/formationActive.ts'
+import { creerCacheDesEtats } from '../../base/etatsDesBlocs.ts'
+import type { CacheDesEtats } from '../../base/etatsDesBlocs.ts'
 import { lireFaits } from '../../base/faits.ts'
 import { verrouBloc } from '../../base/transaction.ts'
 import { Conflit, ContenuDifferent, ErreurProtocole, Introuvable } from '../../erreurs.ts'
@@ -28,7 +30,7 @@ import type { DepotRevisions } from './depot.ts'
 import {
   apresNote,
   cartesAFaire,
-  contexteDuJour,
+  contexteDepuisEtats,
   EtatGarde,
   moduleEnCours,
   tirerQuestionsDuJour,
@@ -52,6 +54,8 @@ export interface DependancesService {
   readonly base: Base
   readonly depot: DepotRevisions
   readonly horloge: Horloge
+  /** Les états des blocs gardés en mémoire ; un cache neuf par défaut. */
+  readonly etats?: CacheDesEtats
 }
 
 export function creerServiceRevisions({
@@ -59,6 +63,7 @@ export function creerServiceRevisions({
   depot,
   horloge,
   corrigerPartie,
+  etats = creerCacheDesEtats(),
 }: DependancesService) {
   type Chargement = Awaited<ReturnType<typeof charger>>
 
@@ -71,22 +76,31 @@ export function creerServiceRevisions({
     return { maintenant, reglages, formationId, plan }
   }
 
-  /** Les réglages, le plan, les faits et le contexte du jour : le point de départ de chaque route. */
+  /**
+   * Les réglages, le plan, l'état de chaque bloc et le contexte du jour : le point de départ de chaque
+   * route. Les blocs inchangés depuis la dernière lecture viennent de la mémoire (voir `etatsDesBlocs`).
+   */
   async function charger(userId: string, leger?: Awaited<ReturnType<typeof chargerLeger>>) {
     const { maintenant, reglages, formationId, plan } = leger ?? (await chargerLeger(userId))
-    const faits = await lireFaits(
+    const etatsDesBlocs = await etats.etats(
       base.db,
       userId,
-      plan.map(({ id, code }) => ({ id, code })),
+      plan.map(({ id, code, versionId, manifeste }) => ({ id, code, versionId, manifeste })),
+      reglages,
     )
     return {
       maintenant,
       reglages,
       formationId,
       plan,
-      faits,
-      contexte: contexteDuJour(plan, faits, reglages, maintenant),
+      etatsDesBlocs,
+      contexte: contexteDepuisEtats(plan, etatsDesBlocs, reglages, maintenant),
     }
+  }
+
+  /** Les faits de tous les blocs du plan (ceux qu'ont lus les états), pour ce qui les parcourt tous. */
+  function tousLesFaits({ etatsDesBlocs }: Pick<Chargement, 'etatsDesBlocs'>): Fait[] {
+    return [...etatsDesBlocs.values()].flatMap(({ faits }) => faits)
   }
 
   /**
@@ -413,12 +427,12 @@ export function creerServiceRevisions({
      */
     async aujourdhui(userId: string) {
       const charge = await charger(userId)
-      const { maintenant, reglages, plan, faits, contexte } = charge
+      const { maintenant, reglages, plan, contexte } = charge
       const cartes = await cartesDe(userId, charge)
       const gardee = SerieGardee.safeParse(await depot.serieDuJour(base.db, userId, contexte.jour))
       const questions = gardee.success
         ? gardee.data.length
-        : tirerQuestionsDuJour(contexte, faits, reglages).length
+        : tirerQuestionsDuJour(contexte, tousLesFaits(charge), reglages).length
       const file = fileDuJour({
         blocs: contexte.blocs,
         questionsDebut: questions,
@@ -465,7 +479,9 @@ export function creerServiceRevisions({
         jour: contexte.jour,
         en_retard: file.enRetard,
         ...(pause >= JOURS_AVANT_RETARD ? { retour: { jours: pause } } : {}),
-        premiere_connexion: faits.length === 0,
+        premiere_connexion: [...charge.etatsDesBlocs.values()].every(
+          ({ faits }) => faits.length === 0,
+        ),
         taches: tachesDuJour(aFaire, { questionsRepondues, cartesRevues }, (tache) =>
           lienDeLaTache(
             tache,
@@ -541,8 +557,9 @@ export function creerServiceRevisions({
       let gardee: unknown = await depot.serieDuJour(base.db, userId, jour)
       if (gardee === undefined) {
         if (!garder) return { questions: [], gardee: false }
-        const { faits, contexte } = await charger(userId, leger)
-        const tirees = tirerQuestionsDuJour(contexte, faits, reglages).map(
+        const charge = await charger(userId, leger)
+        const { contexte } = charge
+        const tirees = tirerQuestionsDuJour(contexte, tousLesFaits(charge), reglages).map(
           ({ bloc, question }) => ({ bloc, question }),
         )
         await base.enTransaction((tx) =>
