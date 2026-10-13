@@ -1,12 +1,11 @@
 import type { Reglages, Statut } from '@janus/contrats'
 import type { Fait, ReponseVerification } from './faits.ts'
 import { comparer } from './ordre.ts'
-import { instantEnMs, jourDe } from './temps.ts'
+import { instantEnMs, jourDe, MS_PAR_MINUTE } from './temps.ts'
 import type { Jour } from './temps.ts'
 
 // Définitions communes du cadrage : bloc en cours, séance, validité d'une vérification.
 
-const MS_PAR_MINUTE = 60_000
 const MS_PAR_HEURE = 60 * MS_PAR_MINUTE
 /** Deux faits séparés de moins de 30 minutes sont dans la même séance. */
 const ECART_DE_SEANCE_MINUTES = 30

@@ -1,18 +1,9 @@
-import type { Manifeste, Reglages, Statut } from '@janus/contrats'
+import type { Manifeste, Reglages } from '@janus/contrats'
 import { echeances } from '../echeances.ts'
 import type { Fait } from '../faits.ts'
 import { calculerBloc } from '../statut.ts'
 import { instantEnMs, jourDe } from '../temps.ts'
-
-const LIBELLES_STATUT: Readonly<Record<Statut, string>> = {
-  non_commence: 'Non commencé',
-  en_cours: 'En cours',
-  vu: 'Vu',
-  acquis_provisoirement: 'Acquis provisoirement',
-  acquis: 'Acquis',
-  maitrise: 'Maîtrisé',
-  a_reprendre: 'À reprendre',
-}
+import { LIBELLES_STATUT } from './libelles.ts'
 
 const LIBELLES_ECHEANCE = {
   consolidation: 'consolidation',

@@ -1,5 +1,7 @@
 const FORMAT_JOUR = /^(\d{4})-(\d{2})-(\d{2})$/
 const FORMAT_INSTANT = /^(\d{4}-\d{2}-\d{2})T([01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?Z$/
+/** Une minute en millisecondes. */
+export const MS_PAR_MINUTE = 60_000
 const MS_PAR_JOUR = 86_400_000
 
 /** Un jour au format `AAAA-MM-JJ`. */

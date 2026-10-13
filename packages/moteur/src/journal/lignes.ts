@@ -2,6 +2,7 @@ import type { Manifeste, Reglages, Statut } from '@janus/contrats'
 import type { Fait } from '../faits.ts'
 import { calculerBloc } from '../statut.ts'
 import { instantEnMs, jourDe } from '../temps.ts'
+import { LIBELLES_STATUT } from './libelles.ts'
 
 /** Les types de ligne du journal, dans l'ordre des filtres de Figma. */
 export const TYPES_JOURNAL = [
@@ -39,16 +40,6 @@ export const LIBELLES_TYPE_JOURNAL: Readonly<Record<TypeJournal, string>> = {
   erreur_critique: 'Erreur critique',
   contestation: 'Contestation',
   statut_force: 'Statut forcé',
-}
-
-const LIBELLES_STATUT: Readonly<Record<Statut, string>> = {
-  non_commence: 'Non commencé',
-  en_cours: 'En cours',
-  vu: 'Vu',
-  acquis_provisoirement: 'Acquis provisoirement',
-  acquis: 'Acquis',
-  maitrise: 'Maîtrisé',
-  a_reprendre: 'À reprendre',
 }
 
 const LIBELLES_NON_COMPTE = {

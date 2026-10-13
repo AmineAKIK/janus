@@ -116,19 +116,7 @@ export function noterCarte(
   maintenant: string,
   reglages: Reglages,
 ): EtatCarte {
-  const carte: CardInput = {
-    due: etat.echeance,
-    stability: etat.stabilite,
-    difficulty: etat.difficulte,
-    elapsed_days: 0,
-    scheduled_days: etat.joursProgrammes,
-    learning_steps: etat.etapeApprentissage,
-    reps: etat.repetitions,
-    lapses: etat.oublis,
-    state: ETATS[etat.phase],
-    last_review: etat.derniereRevision,
-  }
-  return depuis(planificateur(reglages).next(carte, maintenant, NOTES[note]).card)
+  return depuis(planificateur(reglages).next(entreeFsrs(etat), maintenant, NOTES[note]).card)
 }
 
 /** Vrai quand la carte est due à `maintenant`. */
