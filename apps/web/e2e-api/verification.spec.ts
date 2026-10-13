@@ -2,7 +2,8 @@ import { readFileSync } from 'node:fs'
 import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
 import { avancer, remettreAZero } from './banc.ts'
-import { acquerirB01, connecter, ORIGINE } from './parcours.ts'
+import { ouvrirSession } from '../e2e/session.ts'
+import { acquerirB01, ORIGINE } from './parcours.ts'
 
 interface Differee {
   readonly type: string
@@ -49,11 +50,11 @@ test.describe('vérification sur l’API réelle', () => {
     page,
     request,
   }) => {
-    await connecter(page)
+    await ouvrirSession(page)
     await acquerirB01(page, request)
     await avancer(request, 3 * JOUR_MS)
     // La session de la veille a expiré : on se reconnecte, puis Aujourd'hui annonce la vérification.
-    await connecter(page)
+    await ouvrirSession(page)
     const aujourdhui = await page.request.get('/api/aujourdhui', { headers: { Origin: ORIGINE } })
     const { taches } = (await aujourdhui.json()) as {
       taches: { tache: { type: string }; lien: string }[]

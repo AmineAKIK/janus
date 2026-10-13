@@ -1,8 +1,6 @@
 import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
-import { allerEtape, ouvrirSession } from './session.ts'
-
-const FICHE = 'iframe[title^="Fiche du bloc B03"]'
+import { allerEtape, attendreFiche, ouvrirSession } from './session.ts'
 
 /** Les messages gardés dans IndexedDB, lus comme le ferait un autre onglet. */
 async function gardes(page: Page): Promise<number> {
@@ -31,9 +29,7 @@ async function gardes(page: Page): Promise<number> {
 
 async function ouvrirBloc(page: Page) {
   await page.goto('./#/blocs/B03')
-  const fiche = page.frameLocator(FICHE)
-  await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
-  return fiche
+  return attendreFiche(page, 'B03')
 }
 
 async function parcourirEtapes(page: Page, titres: readonly string[]) {

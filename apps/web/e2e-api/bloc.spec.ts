@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { remettreAZero } from './banc.ts'
-import { acquerirB01, connecter } from './parcours.ts'
+import { ouvrirSession } from '../e2e/session.ts'
+import { acquerirB01 } from './parcours.ts'
 
 test.describe('bloc complet sur l’API réelle', () => {
   test.beforeEach(async ({ request }) => {
@@ -11,7 +12,7 @@ test.describe('bloc complet sur l’API réelle', () => {
     page,
     request,
   }) => {
-    await connecter(page)
+    await ouvrirSession(page)
 
     await acquerirB01(page, request)
 

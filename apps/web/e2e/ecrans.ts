@@ -1,6 +1,13 @@
 import { expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
-import { allerEtape, cliquerEtape, ouvrirSession, serieEnregistree } from './session.ts'
+import {
+  allerEtape,
+  attendreFiche,
+  cliquerEtape,
+  ficheDuBloc,
+  ouvrirSession,
+  serieEnregistree,
+} from './session.ts'
 
 /** La vérification de B02 de la démo : son identifiant se lit à l'envers (bloc, type, numéro). */
 const VERIFICATION_B02 = '0190a000-0000-7000-8000-000423032000'
@@ -25,7 +32,7 @@ export interface Ecran {
 
 /** Répond à toutes les questions de la série affichée par la fiche, avec des mots à soi. */
 async function repondreALaSerie(page: Page) {
-  const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
+  const fiche = ficheDuBloc(page, 'B03')
   const items = fiche.locator('.item')
   const nombre = await items.count()
   for (let rang = 0; rang < nombre; rang++) {
@@ -44,8 +51,7 @@ async function repondreALaSerie(page: Page) {
 
 /** Ouvre le bloc B03 et envoie toute la restitution. */
 async function apresRestitution(page: Page) {
-  const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
-  await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
+  await attendreFiche(page, 'B03')
   await allerEtape(page, 'Restitution')
   await repondreALaSerie(page)
   await serieEnregistree(page, 'Vu')
@@ -197,8 +203,7 @@ export const ecrans: readonly Ecran[] = [
     etat: 'Ordinateur et composants',
     titre: 'Page de bloc',
     scenario: async (page) => {
-      const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
-      await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
+      await attendreFiche(page, 'B03')
       await page.evaluate(() => window.__janusDemo?.interrupteur('horsConnexion', true))
       for (const titre of ['Explication', 'Pratique guidée', 'Restitution']) {
         await allerEtape(page, titre)
@@ -212,8 +217,7 @@ export const ecrans: readonly Ecran[] = [
     etat: 'Ordinateur et composants',
     titre: 'Page de bloc',
     scenario: async (page) => {
-      const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
-      await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
+      await attendreFiche(page, 'B03')
       await allerEtape(page, 'Restitution')
       await cliquerEtape(page, 'Explication')
       await expect(page.getByRole('dialog', { name: 'Revoir le cours maintenant ?' })).toBeVisible()
