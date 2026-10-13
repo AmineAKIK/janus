@@ -63,6 +63,39 @@ describe('le statut après chaque fait ne relance pas le calcul sur tous les fai
     expect(ratio).toBeLessThan(SEUIL)
   })
 
+  it('lignesDuJournal, quand des tranchages reviennent sur les premières réponses de restitution', () => {
+    // Un tranchage tous les 10 faits, qui fait alterner une réponse du début entre « compte » et « ne compte pas » :
+    // à chaque fois, les erreurs qu'elle ferme sont à rouvrir ou à refermer.
+    const avecTranchages = (taille: number) => {
+      const faits = sansTranchage(taille)
+      const cibles = faits.filter(
+        (fait) => fait.type === 'correction' && fait.serie === 'restitution',
+      )
+      return faits.flatMap((fait, rang): Fait[] => {
+        const cible = cibles[Math.floor(rang / 10) % 3]
+        if (rang % 10 !== 9 || cible === undefined) return [fait]
+        return [
+          fait,
+          {
+            id: `t${String(rang)}`,
+            bloc: fait.bloc,
+            date: apres(fait.date, 0, 3),
+            type: 'correction_tranchee',
+            correction: cible.id,
+            compte: Math.floor(rang / 10) % 2 === 0,
+          },
+        ]
+      })
+    }
+    const ratio = croissance(avecTranchages, (faits) =>
+      lignesDuJournal(faits, {
+        manifestes: { [MANIFESTE.bloc]: MANIFESTE },
+        reglages: REGLAGES,
+      }),
+    )
+    expect(ratio).toBeLessThan(SEUIL)
+  })
+
   it('revueMethode', () => {
     const ratio = croissance(sansTranchage, (faits) =>
       revueMethode(faits, [], [MANIFESTE], null, REGLAGES),
