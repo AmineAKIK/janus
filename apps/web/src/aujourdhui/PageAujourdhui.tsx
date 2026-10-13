@@ -25,6 +25,7 @@ import {
 } from './textes.ts'
 import { texteTache } from './textesTaches.ts'
 import { adresse, aller } from '../routes/navigation.ts'
+import { TitrePage } from '../gabarit/TitrePage.tsx'
 
 type Donnees = SortieRoute<(typeof ROUTES)['GET /aujourdhui']>
 
@@ -213,9 +214,7 @@ export function PageAujourdhui() {
   else contenu = <Corps donnees={lecture.data} />
   return (
     <div className={styles['page']}>
-      <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-titre-28`}>
-        {T.titreEcran}
-      </h1>
+      <TitrePage>{T.titreEcran}</TitrePage>
       {contenu}
     </div>
   )

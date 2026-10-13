@@ -9,6 +9,7 @@ import { RepartitionStatuts } from './RepartitionStatuts.tsx'
 import { TEXTES, texteCompteursModule, texteModule } from './textes.ts'
 import { useFormation } from './useFormation.ts'
 import type { ModuleChiffre } from './useFormation.ts'
+import { TitrePage } from '../gabarit/TitrePage.tsx'
 
 function LigneModule({ module }: { readonly module: ModuleChiffre }) {
   const titre = texteModule(module.ordre, module.titre)
@@ -87,9 +88,9 @@ export function PageModules({ formationId }: { readonly formationId: string }) {
         {TEXTES.retourFormations}
       </Link>
       <header className={styles['entete']}>
-        <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-titre-28`}>
+        <TitrePage>
           {connue === undefined ? formationId : `${connue.code} · ${connue.titre}`}
-        </h1>
+        </TitrePage>
         {connue !== undefined && connue.description !== '' && (
           <p className={`${styles['intro'] ?? ''} texte-corps-16`}>{connue.description}</p>
         )}

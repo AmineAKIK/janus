@@ -1,7 +1,7 @@
 import { BulleCorrection, Bouton } from '@janus/ui'
 import type { CorrectionSuivie, PropositionErreur } from './useHoteFiche.ts'
 import styles from './Bloc.module.css'
-import { TEXTES_ERREUR_IA } from './textes.ts'
+import { ErreurIaProposee } from './EncartErreurIa.tsx'
 
 export function EncartDecisionsIa({
   code,
@@ -34,38 +34,17 @@ export function EncartDecisionsIa({
           key={`erreur:${proposition.correction}:${proposition.erreur}`}
           className={styles['decisionIa']}
         >
-          <p className={`${styles['encartTitre'] ?? ''} texte-corps-16`}>
-            {TEXTES_ERREUR_IA.titre}
-          </p>
-          <p className={`${styles['encartTexte'] ?? ''} texte-petit-14`}>
-            {TEXTES_ERREUR_IA.erreur(libelleErreur(proposition.erreur))}
-          </p>
-          {proposition.reponse !== '' && (
-            <p className={`${styles['encartTexte'] ?? ''} texte-petit-14`}>
-              « {proposition.reponse} »
-            </p>
-          )}
-          <p className={`${styles['encartTexte'] ?? ''} texte-petit-14`}>
-            {TEXTES_ERREUR_IA.consequence(code)}
-          </p>
-          <div className={styles['actionsDialogue']}>
-            <Bouton
-              variante="secondaire"
-              onClick={() => {
-                surConfirmer(proposition)
-              }}
-            >
-              {TEXTES_ERREUR_IA.confirmer}
-            </Bouton>
-            <Bouton
-              variante="secondaire"
-              onClick={() => {
-                surRejeter(proposition)
-              }}
-            >
-              {TEXTES_ERREUR_IA.rejeter}
-            </Bouton>
-          </div>
+          <ErreurIaProposee
+            code={code}
+            libelle={libelleErreur(proposition.erreur)}
+            reponse={proposition.reponse}
+            surConfirmer={() => {
+              surConfirmer(proposition)
+            }}
+            surRejeter={() => {
+              surRejeter(proposition)
+            }}
+          />
         </div>
       ))}
       {corrections.map((suivie) => (

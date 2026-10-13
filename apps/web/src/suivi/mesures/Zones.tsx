@@ -1,4 +1,5 @@
 import { BandeauAlerte, BarreProgression, Bouton, CarteZone, EtatVideZone } from '@janus/ui'
+import type { ReactNode } from 'react'
 import styles from '../Suivi.module.css'
 import type { DonneesSuivi } from '../useSuivi.ts'
 import {
@@ -26,6 +27,30 @@ import {
 import { adresse } from '../../routes/navigation.ts'
 
 type Mesures = DonneesSuivi['mesures']
+
+/** Le lien vers un bloc : « B01 · Titre court », ou le texte donné. */
+function LienBloc({
+  bloc,
+  titre,
+  children,
+}: {
+  readonly bloc: string
+  readonly titre?: string
+  readonly children?: ReactNode
+}) {
+  return (
+    <a href={adresse(`/blocs/${bloc}`)}>
+      {children ??
+        (titre === undefined ? (
+          bloc
+        ) : (
+          <>
+            {bloc} · {titre}
+          </>
+        ))}
+    </a>
+  )
+}
 
 export function ZoneAutonomie({ donnees }: { readonly donnees: Mesures['autonomie'] }) {
   const { semaines, aide_moyenne: aide } = donnees
@@ -131,8 +156,7 @@ export function ZoneCalibration({ donnees }: { readonly donnees: Mesures['calibr
         <ul className={styles['liste']}>
           {erreurs.map(({ bloc, question, date }) => (
             <li key={`${bloc}-${question}-${date}`}>
-              <a href={adresse(`/blocs/${bloc}`)}>{bloc}</a>{' '}
-              <span className={styles['complement']}>{question}</span>
+              <LienBloc bloc={bloc} /> <span className={styles['complement']}>{question}</span>
             </li>
           ))}
         </ul>
@@ -160,9 +184,7 @@ export function ZoneAisance({ donnees }: { readonly donnees: Mesures['aisance'] 
         <ul className={styles['liste']}>
           {mesures.map(({ bloc, titre_court: titre, cible }) => (
             <li key={bloc}>
-              <a href={adresse(`/blocs/${bloc}`)}>
-                {bloc} · {titre}
-              </a>{' '}
+              <LienBloc bloc={bloc} titre={titre} />{' '}
               {objectifCommun === undefined && <span>{cible.libelle}</span>}
               <br />
               <span className={styles['complement']}>
@@ -179,9 +201,7 @@ export function ZoneAisance({ donnees }: { readonly donnees: Mesures['aisance'] 
           <ul className={styles['liste']}>
             {sansMesure.map(({ bloc, titre_court: titre, cible }) => (
               <li key={bloc}>
-                <a href={adresse(`/blocs/${bloc}`)}>
-                  {bloc} · {titre}
-                </a>{' '}
+                <LienBloc bloc={bloc} titre={titre} />{' '}
                 <span className={styles['complement']}>
                   {cible === null ? T.nonRequis : texteMeilleur(cible.meilleur_s, cible.objectif_s)}
                 </span>
@@ -219,10 +239,7 @@ export function ZoneTemps({ donnees }: { readonly donnees: Mesures['temps'] }) {
           <ul className={styles['liste']}>
             {donnees.blocs.map(({ bloc, titre_court: titre, secondes }) => (
               <li key={bloc}>
-                <a href={adresse(`/blocs/${bloc}`)}>
-                  {bloc} · {titre}
-                </a>{' '}
-                · {texteDuree(secondes)}
+                <LienBloc bloc={bloc} titre={titre} /> · {texteDuree(secondes)}
               </li>
             ))}
           </ul>
@@ -278,7 +295,7 @@ export function ZoneRevue({
               <ul className={styles['liste']}>
                 {donnees.a_reprendre.map(({ bloc, question, fois }) => (
                   <li key={`${bloc}-${question}`}>
-                    <a href={adresse(`/blocs/${bloc}`)}>{texteNotion(bloc, question, fois)}</a>
+                    <LienBloc bloc={bloc}>{texteNotion(bloc, question, fois)}</LienBloc>
                   </li>
                 ))}
               </ul>

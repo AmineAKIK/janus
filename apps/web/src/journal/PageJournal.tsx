@@ -34,6 +34,7 @@ import {
 import { useJournal } from './useJournal.ts'
 import type { Ligne } from './useJournal.ts'
 import { adresse } from '../routes/navigation.ts'
+import { TitrePage } from '../gabarit/TitrePage.tsx'
 
 function NoteDeLigne({
   ligne,
@@ -153,17 +154,14 @@ function DetailDeLigne({
   )
 }
 
-function SelecteurFiltre({
-  libelle,
-  valeur,
-  options,
-  onChange,
-}: {
+interface ProprietesFiltre {
   readonly libelle: string
   readonly valeur: string
   readonly options: readonly { readonly valeur: string; readonly libelle: string }[]
   readonly onChange: (valeur: string) => void
-}) {
+}
+
+function SelecteurFiltre({ libelle, valeur, options, onChange }: ProprietesFiltre) {
   return (
     <Selecteur
       libelle={libelle}
@@ -175,17 +173,7 @@ function SelecteurFiltre({
   )
 }
 
-function ChoixFiltres({
-  libelle,
-  valeur,
-  options,
-  onChange,
-}: {
-  readonly libelle: string
-  readonly valeur: string
-  readonly options: readonly { readonly valeur: string; readonly libelle: string }[]
-  readonly onChange: (valeur: string) => void
-}) {
+function ChoixFiltres({ libelle, valeur, options, onChange }: ProprietesFiltre) {
   return (
     <div role="group" aria-label={libelle} className={styles['groupeFiltres']}>
       {options.map((option) => {
@@ -606,9 +594,7 @@ export function PageJournal({
 }) {
   return (
     <div className={styles['page']}>
-      <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-titre-28`}>
-        {T.titreEcran}
-      </h1>
+      <TitrePage>{T.titreEcran}</TitrePage>
       {/* Les pages déjà lues se vident quand un filtre change : le contenu est remonté avec sa clé. */}
       <Corps
         key={`${recherche.module ?? ''}|${recherche.bloc ?? ''}|${recherche.type ?? ''}`}

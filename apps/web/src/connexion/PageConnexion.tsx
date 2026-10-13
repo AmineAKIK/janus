@@ -12,6 +12,7 @@ import { modeTransport } from '../api/client.ts'
 import styles from './PageConnexion.module.css'
 import { TEXTES, texteReessayer, texteTropDEssais } from './textes.ts'
 import { useConnexion } from './useConnexion.ts'
+import { TitrePage } from '../gabarit/TitrePage.tsx'
 
 const routeConnexion = getRouteApi('/connexion')
 
@@ -37,9 +38,7 @@ export function PageConnexion() {
       <section className={styles['carte']}>
         <header className={styles['identite']}>
           <MarqueJanus taille={64} className={styles['marque']} />
-          <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-titre-28`}>
-            {TEXTES.titre}
-          </h1>
+          <TitrePage>{TEXTES.titre}</TitrePage>
           <p className={`${styles['sousTitre'] ?? ''} texte-corps-16`}>{TEXTES.sousTitre}</p>
         </header>
 

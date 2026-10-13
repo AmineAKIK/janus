@@ -19,6 +19,7 @@ import { TEXTES_PARAMETRES as T } from './textes.ts'
 import { useBureau } from './useBureau.ts'
 import { useReglages } from './useReglages.ts'
 import { adresse } from '../routes/navigation.ts'
+import { TitrePage } from '../gabarit/TitrePage.tsx'
 
 const idSection = (cle: CleSection) => `section-${cle}`
 
@@ -108,12 +109,9 @@ export function PageParametres({ section }: { readonly section?: string }) {
             {T.retour}
           </a>
         )}
-        <h1
-          tabIndex={-1}
-          className={`${styles[enSectionMobile ? 'titreCache' : 'titre'] ?? ''} texte-titre-28`}
-        >
+        <TitrePage className={enSectionMobile ? styles['titreCache'] : undefined}>
           {T.titre}
-        </h1>
+        </TitrePage>
         {(bureau || choisie === undefined) && <p className="texte-corps-16">{T.introduction}</p>}
       </header>
       {etat === 'conflit' && <BandeauAlerte type="avertissement">{T.conflit}</BandeauAlerte>}
