@@ -31,7 +31,11 @@ describe('vérification des fiches du dépôt', () => {
   let demo: string
   beforeEach(async () => {
     contenu = await mkdtemp(join(tmpdir(), 'janus-fiches-'))
-    demo = await readFile(FICHE_DEMO, 'utf8')
+    // Comme une fiche assemblée : la bibliothèque du pont est écrite dans la page.
+    demo = (await readFile(FICHE_DEMO, 'utf8')).replace(
+      '<script id="pont"></script>',
+      '<script id="pont">window.JanusPont = {}</script>',
+    )
     await mkdir(join(contenu, 'test', 'fiches'), { recursive: true })
     await writeFile(join(contenu, 'test', 'catalogue.json'), JSON.stringify(catalogue(['D01'])))
   })
@@ -47,6 +51,20 @@ describe('vérification des fiches du dépôt', () => {
     expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
   })
 
+  it('refuse une fiche dont le pont n’est pas écrit dans la page', async () => {
+    await poser(
+      'D01.html',
+      demo.replace(
+        '<script id="pont">window.JanusPont = {}</script>',
+        '<script id="pont"></script>',
+      ),
+    )
+
+    expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+      expect.stringContaining('test/fiches/D01.html : le pont de l’appli n’est pas dans la fiche'),
+    ])
+  })
+
   it('ne dit rien d’une formation sans fiche', async () => {
     expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
     expect(await lireLesFiches(contenu, 'test')).toEqual([])
@@ -54,7 +72,7 @@ describe('vérification des fiches du dépôt', () => {
   })
 
   it('refuse une fiche sans manifeste', async () => {
-    await poser('D01.html', '<html><body>vide</body></html>')
+    await poser('D01.html', '<html><body><script id="pont">x</script></body></html>')
 
     expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
       expect.stringContaining('test/fiches/D01.html : aucun manifeste'),
