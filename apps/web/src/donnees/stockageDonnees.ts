@@ -1,3 +1,5 @@
+import { ouvrirBase, promesse, supprimerBase } from '../indexedDb.ts'
+
 const BASE = 'janus-donnees'
 const MAGASIN = 'instantane'
 const CLE = 'courant'
@@ -24,51 +26,21 @@ export function creerStockageDonneesMemoire(): StockageDonnees {
   }
 }
 
-function promesse<T>(requete: IDBRequest<T>): Promise<T> {
-  return new Promise((resolve, reject) => {
-    requete.onsuccess = () => {
-      resolve(requete.result)
-    }
-    requete.onerror = () => {
-      reject(requete.error ?? new Error('IndexedDB a échoué'))
-    }
-  })
-}
-
 /** Supprime toute la base : à la suppression du compte. */
 export function supprimerStockageDonnees(
   fabrique: IDBFactory | undefined = globalThis.indexedDB,
 ): Promise<void> {
-  if (typeof fabrique === 'undefined') return Promise.resolve()
-  return new Promise((resolve) => {
-    const demande = fabrique.deleteDatabase(BASE)
-    demande.onsuccess = () => {
-      resolve()
-    }
-    demande.onerror = () => {
-      resolve()
-    }
-    demande.onblocked = () => {
-      resolve()
-    }
-  })
+  return supprimerBase(fabrique, BASE)
 }
 
 /** Le stockage dans IndexedDB ; `null` quand IndexedDB manque ou refuse de s'ouvrir. */
 export async function ouvrirStockageDonnees(
   fabrique: IDBFactory | undefined = globalThis.indexedDB,
 ): Promise<StockageDonnees | null> {
-  if (typeof fabrique === 'undefined') return null
-  let base: IDBDatabase
-  try {
-    const ouverture = fabrique.open(BASE, 1)
-    ouverture.onupgradeneeded = () => {
-      ouverture.result.createObjectStore(MAGASIN)
-    }
-    base = await promesse(ouverture)
-  } catch {
-    return null
-  }
+  const base = await ouvrirBase(fabrique, BASE, (nouvelle) => {
+    nouvelle.createObjectStore(MAGASIN)
+  })
+  if (base === null) return null
   const magasin = (mode: IDBTransactionMode) => base.transaction(MAGASIN, mode).objectStore(MAGASIN)
   return {
     lire: () => promesse<unknown>(magasin('readonly').get(CLE)),

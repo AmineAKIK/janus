@@ -1,3 +1,5 @@
+import { creerAbonnes } from '../abonnes.ts'
+
 /** Ce que l'appli sait de son installation : déjà installée, installable d'un geste, à installer à la main (iOS) ou rien à proposer. */
 export type EtatInstallation = 'installee' | 'installable' | 'manuelle' | 'indisponible'
 
@@ -33,12 +35,7 @@ function estInstallee(fenetre: Window): boolean {
 export function creerInstallation(fenetre: Window) {
   let invitation: InvitationInstallation | null = null
   let installee = estInstallee(fenetre)
-  const abonnes = new Set<() => void>()
-  const signaler = () => {
-    abonnes.forEach((abonne) => {
-      abonne()
-    })
-  }
+  const { abonner, signaler } = creerAbonnes()
   const etat = (): EtatInstallation => {
     if (installee) return 'installee'
     if (invitation !== null) return 'installable'
@@ -78,12 +75,7 @@ export function creerInstallation(fenetre: Window) {
       const { outcome } = await courante.userChoice
       return outcome === 'accepted'
     },
-    abonner: (abonne: () => void): (() => void) => {
-      abonnes.add(abonne)
-      return () => {
-        abonnes.delete(abonne)
-      }
-    },
+    abonner,
   }
 }
 
