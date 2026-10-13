@@ -177,6 +177,8 @@ export const MessageAppli = z.discriminatedUnion('type', [
     etat: EtatPage.nullable(),
     statut: Statut,
     serie_ouverte: z.strictObject({ restitution: z.boolean(), consolidation: z.boolean() }),
+    /** Le thème choisi dans l'appli : la fiche s'y aligne (une fiche sans ce champ suit le réglage du téléphone). */
+    theme: z.enum(['clair', 'sombre', 'systeme']).optional(),
   }),
   z.strictObject({ type: z.literal('restitution.correction'), ...champsCorrection }),
   z.strictObject({

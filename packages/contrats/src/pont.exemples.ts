@@ -83,6 +83,7 @@ export const EXEMPLES_APPLI = {
     etat: { etape: 'ET3' },
     statut: 'en_cours',
     serie_ouverte: { restitution: true, consolidation: false },
+    theme: 'sombre',
   },
   'restitution.correction': { type: 'restitution.correction', ...EXEMPLE_CORRECTION },
   'statut.maj': {
