@@ -82,6 +82,16 @@ export function creerDepotRappels() {
         .where(and(eq(t.rappelsEnvoyes.userId, userId), eq(t.rappelsEnvoyes.jour, jour)))
     },
 
+    /** Le rappel de ce jour est-il déjà réservé ou parti ? Une lecture par l'index d'unicité. */
+    dejaReserve: async (lecteur: Db | Tx, userId: string, jour: string): Promise<boolean> => {
+      const lignes = await lecteur
+        .select({ id: t.rappelsEnvoyes.id })
+        .from(t.rappelsEnvoyes)
+        .where(and(eq(t.rappelsEnvoyes.userId, userId), eq(t.rappelsEnvoyes.jour, jour)))
+        .limit(1)
+      return lignes.length > 0
+    },
+
     /** Réserve le rappel du jour avant l'envoi : faux si un autre passage l'a déjà réservé. */
     reserver: (
       lecteur: Db | Tx,
