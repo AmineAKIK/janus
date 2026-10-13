@@ -75,14 +75,19 @@
         display: none;
       }
       nav ol {
-        display: flex;
-        gap: 0.25rem;
         margin: 1rem 0;
         padding: 0;
-        overflow-x: auto;
         list-style: none;
       }
-      nav button {
+      .stepper {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .stepper select {
+        flex: 1 1 12rem;
+        min-width: 0;
         min-height: 44px;
         padding: 0 0.75rem;
         border: 1px solid var(--couleur-ligne);
@@ -90,14 +95,23 @@
         background: var(--couleur-surface);
         color: inherit;
         font: inherit;
-        font-size: 0.875rem;
-        white-space: nowrap;
+        font-size: 0.9375rem;
       }
-      nav button[aria-current='step'] {
-        border-color: var(--couleur-accent);
+      .stepper .bouton {
+        min-width: 44px;
+        padding: 0 0.75rem;
+      }
+      .avance {
+        flex: 1 0 100%;
+        height: 4px;
+        border-radius: 999px;
         background: var(--couleur-surface-douce);
-        color: var(--couleur-accent);
-        font-weight: 600;
+        overflow: hidden;
+      }
+      .avance > span {
+        display: block;
+        height: 100%;
+        background: var(--couleur-accent);
       }
       section {
         padding: 1.25rem;
@@ -198,6 +212,112 @@
       }
       .item[data-fait='oui'] {
         border-color: var(--couleur-succes);
+      }
+      /* Écrans : une idée à la fois */
+      .ecran-barre {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin: 0 0 1rem;
+      }
+      .ecran-titre {
+        margin: 0;
+        font-weight: 600;
+        color: var(--couleur-accent);
+      }
+      .ecran-compte {
+        color: var(--couleur-texte-secondaire);
+        font-size: 0.875rem;
+        white-space: nowrap;
+      }
+      .ecran-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: space-between;
+        margin-top: 1.25rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--couleur-ligne);
+      }
+      .ecran-nav .bouton {
+        flex: 1 1 8rem;
+      }
+      .ecran h3 {
+        margin: 0 0 0.5rem;
+        font-size: 1.125rem;
+      }
+      .ecran p {
+        max-width: 62ch;
+      }
+      .ecran .accroche {
+        font-size: 1.1875rem;
+        line-height: 1.45;
+      }
+      details {
+        margin: 0.75rem 0;
+        padding: 0.5rem 0.875rem;
+        border: 1px solid var(--couleur-ligne);
+        border-radius: var(--rayon-champ);
+        background: var(--couleur-fond);
+      }
+      summary {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      details[open] > summary {
+        margin-bottom: 0.5rem;
+      }
+      .ecouter {
+        min-height: 44px;
+        padding: 0 0.75rem;
+        font-size: 0.875rem;
+        white-space: nowrap;
+        flex: none;
+      }
+      /* Pratique en cartes */
+      .exo-titre {
+        margin: 1.25rem 0 0.25rem;
+        font-size: 1.0625rem;
+      }
+      .item-tete {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        margin-bottom: 0.5rem;
+      }
+      .item-num {
+        display: inline-grid;
+        place-items: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 999px;
+        background: var(--couleur-surface-douce);
+        font-weight: 600;
+        font-size: 0.875rem;
+      }
+      .item[data-fait='oui'] .item-num {
+        background: var(--couleur-succes);
+        color: var(--couleur-accent-sur-fond);
+      }
+      .item-etat {
+        margin-left: auto;
+        font-size: 0.875rem;
+        color: var(--couleur-texte-secondaire);
+      }
+      .aide {
+        margin: 0.5rem 0;
+        padding: 0.25rem 0.75rem;
+      }
+      .aide .actions {
+        margin: 0 0 0.5rem;
+      }
+      .aide button[aria-pressed='true'] {
+        background: var(--couleur-accent);
+        color: var(--couleur-accent-sur-fond);
       }
     </style>
   </head>
@@ -608,13 +728,43 @@
       }
 
       function afficherEtapes() {
+        const trouvee = etapes.findIndex((etape) => etape.id === etat.etape)
+        const courant = trouvee < 0 ? 0 : trouvee
+        const choix = creer(
+          'select',
+          {},
+          ...etapes.map((etape, k) =>
+            creer('option', {
+              value: etape.id,
+              textContent: k + 1 + '. ' + etape.titre,
+              selected: k === courant,
+            }),
+          ),
+        )
+        choix.setAttribute('aria-label', 'Étape de la fiche')
+        choix.addEventListener('change', () => aller(choix.value))
+        const bouton = (texte, nom, cible) => {
+          const b = creer('button', {
+            type: 'button',
+            className: 'bouton secondaire',
+            textContent: texte,
+            disabled: cible === undefined,
+          })
+          b.setAttribute('aria-label', nom)
+          if (cible !== undefined) b.addEventListener('click', () => aller(cible.id))
+          return b
+        }
+        const barre = creer('span', { className: 'avance' }, creer('span'))
+        barre.firstChild.style.width = Math.round(((courant + 1) / etapes.length) * 100) + '%'
         $('etapes').replaceChildren(
-          ...etapes.map((etape) => {
-            const bouton = creer('button', { type: 'button', textContent: etape.titre })
-            if (etape.id === etat.etape) bouton.setAttribute('aria-current', 'step')
-            bouton.addEventListener('click', () => aller(etape.id))
-            return creer('li', {}, bouton)
-          }),
+          creer(
+            'li',
+            { className: 'stepper' },
+            bouton('←', 'Étape précédente', etapes[courant - 1]),
+            choix,
+            bouton('→', 'Étape suivante', etapes[courant + 1]),
+            barre,
+          ),
         )
       }
 
@@ -652,12 +802,94 @@
       function afficherLibre(etape) {
         const modele = document.querySelector('template[data-etape="' + etape.id + '"]')
         const section = creer('section', {}, creer('h2', { textContent: etape.titre }))
-        if (modele) section.append(modele.content.cloneNode(true))
-        else
+        if (!modele) {
           section.append(
             creer('p', { className: 'discret', textContent: 'Rien à lire dans cette étape.' }),
           )
+          return section
+        }
+        const contenu = modele.content.cloneNode(true)
+        const ecrans = Array.from(contenu.children).filter((n) => n.hasAttribute('data-ecran'))
+        if (ecrans.length < 2) {
+          section.append(contenu)
+          activerLiens(section)
+          return section
+        }
+        // Plusieurs écrans : un seul visible à la fois, les autres restent dans la page (outils déjà montés).
+        const suivante = etapes[etapes.findIndex((e) => e.id === etape.id) + 1]
+        const titre = creer('p', { className: 'ecran-titre' })
+        const compte = creer('span', { className: 'ecran-compte' })
+        const ecouter = creer('button', { type: 'button', className: 'bouton secondaire ecouter' })
+        const precedent = creer('button', {
+          type: 'button',
+          className: 'bouton secondaire',
+          textContent: '← Retour',
+        })
+        const avancer = creer('button', { type: 'button', className: 'bouton' })
+        let courant = Math.min(etat.ecrans?.[etape.id] ?? 0, ecrans.length - 1)
+        const voix = () => {
+          const fr = (window.speechSynthesis?.getVoices() ?? []).filter((v) =>
+            v.lang.toLowerCase().startsWith('fr'),
+          )
+          return (
+            fr.find((v) => /charline|denise|eloise|vivienne|hortense|julie/i.test(v.name)) ?? fr[0]
+          )
+        }
+        const texteLu = (ecran) =>
+          ecran.dataset.lecture ??
+          Array.from(ecran.querySelectorAll(':scope > h3, :scope > p, :scope > ul > li'))
+            .map((n) => n.textContent.replace(/\s+/g, ' ').trim())
+            .join(' ')
+        const arreter = () => {
+          window.speechSynthesis?.cancel()
+          ecouter.textContent = '🔊 Écouter'
+          ecouter.dataset.actif = 'non'
+        }
+        ecouter.addEventListener('click', () => {
+          if (!window.speechSynthesis) return void (ecouter.textContent = 'Lecture indisponible')
+          if (ecouter.dataset.actif === 'oui') return arreter()
+          const parole = new SpeechSynthesisUtterance(texteLu(ecrans[courant]))
+          parole.lang = 'fr-FR'
+          const choisie = voix()
+          if (choisie) parole.voice = choisie
+          parole.onend = arreter
+          window.speechSynthesis.speak(parole)
+          ecouter.dataset.actif = 'oui'
+          ecouter.textContent = '⏹ Arrêter'
+        })
+        const montrer = (k) => {
+          arreter()
+          courant = k
+          etat.ecrans = { ...(etat.ecrans ?? {}), [etape.id]: k }
+          enregistrer()
+          ecrans.forEach((e, j) => {
+            e.hidden = j !== k
+          })
+          titre.textContent = ecrans[k].dataset.ecran
+          compte.textContent = k + 1 + ' / ' + ecrans.length
+          precedent.disabled = k === 0
+          avancer.textContent =
+            k < ecrans.length - 1 ? 'Suivant →' : suivante ? 'Étape suivante →' : 'Terminé'
+          avancer.disabled = k === ecrans.length - 1 && !suivante
+        }
+        precedent.addEventListener('click', () => {
+          montrer(courant - 1)
+          section.scrollIntoView({ block: 'start' })
+        })
+        avancer.addEventListener('click', () => {
+          if (courant < ecrans.length - 1) {
+            montrer(courant + 1)
+            section.scrollIntoView({ block: 'start' })
+          } else if (suivante) aller(suivante.id)
+        })
+        for (const e of ecrans) e.classList.add('ecran')
+        section.append(
+          creer('div', { className: 'ecran-barre' }, titre, ecouter, compte),
+          ...ecrans,
+          creer('div', { className: 'ecran-nav' }, precedent, avancer),
+        )
         activerLiens(section)
+        montrer(courant)
         return section
       }
 
@@ -680,6 +912,8 @@
       }
 
       function afficherPratique() {
+        const items = manifeste.pratique.flatMap((exercice) => exercice.items)
+        const reussis = items.filter((item) => etat.pratique[item.id]?.reussi).length
         const section = creer(
           'section',
           {},
@@ -687,11 +921,17 @@
           creer('p', {
             className: 'discret',
             textContent:
-              'Indique si tu as réussi chaque item, et le cran d’aide utilisé (0 = aucune aide).',
+              reussis +
+              ' réussi' +
+              (reussis > 1 ? 's' : '') +
+              ' sur ' +
+              items.length +
+              '. Fais-les dans l’ordre que tu veux.',
           }),
         )
         for (const exercice of manifeste.pratique) {
-          for (const item of exercice.items) {
+          section.append(creer('h3', { className: 'exo-titre', textContent: exercice.titre }))
+          exercice.items.forEach((item, rang) => {
             const fait = etat.pratique[item.id]
             let aide = 0
             const resultat = creer('p', {
@@ -713,17 +953,21 @@
               enregistrer()
               afficher()
             }
-            const aides = [1, 2, 3, 4].map((cran) =>
-              creer('button', {
+            const aides = [1, 2, 3, 4].map((cran) => {
+              const b = creer('button', {
                 type: 'button',
                 className: 'bouton secondaire',
                 textContent: 'Aide ' + cran,
-                onclick: (e) => {
-                  aide = cran
-                  e.target.setAttribute('aria-pressed', 'true')
-                },
-              }),
-            )
+              })
+              b.setAttribute('aria-pressed', 'false')
+              b.addEventListener('click', () => {
+                aide = aide === cran ? 0 : cran
+                aides.forEach((autre, k) =>
+                  autre.setAttribute('aria-pressed', String(aide === k + 1)),
+                )
+              })
+              return b
+            })
             // L'énoncé de l'item : <template data-item="PR1-1"> dans la page.
             const enonce = document.querySelector('template[data-item="' + item.id + '"]')
             const consigne = creer('div', {})
@@ -733,9 +977,30 @@
               creer(
                 'div',
                 { className: 'item', dataset: { fait: fait?.reussi ? 'oui' : 'non' } },
-                creer('strong', { textContent: 'Item ' + item.id }),
+                creer(
+                  'div',
+                  { className: 'item-tete' },
+                  creer('span', { className: 'item-num', textContent: String(rang + 1) }),
+                  creer('strong', {
+                    textContent: 'Item ' + (rang + 1) + ' sur ' + exercice.items.length,
+                  }),
+                  creer('span', {
+                    className: 'item-etat',
+                    textContent: fait ? (fait.reussi ? '✓ Réussi' : 'À refaire') : '',
+                  }),
+                ),
                 consigne,
-                creer('div', { className: 'actions' }, ...aides),
+                creer(
+                  'details',
+                  { className: 'aide' },
+                  creer('summary', { textContent: 'J’ai eu besoin d’aide' }),
+                  creer('p', {
+                    className: 'discret',
+                    textContent:
+                      'Niveau d’aide utilisé : 1 = une question qui t’oriente, 2 = un indice, 3 = l’étape détaillée, 4 = la solution complète.',
+                  }),
+                  creer('div', { className: 'actions' }, ...aides),
+                ),
                 creer(
                   'div',
                   { className: 'actions' },
@@ -755,7 +1020,7 @@
                 resultat,
               ),
             )
-          }
+          })
         }
         return section
       }

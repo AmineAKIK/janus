@@ -75,14 +75,19 @@
         display: none;
       }
       nav ol {
-        display: flex;
-        gap: 0.25rem;
         margin: 1rem 0;
         padding: 0;
-        overflow-x: auto;
         list-style: none;
       }
-      nav button {
+      .stepper {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .stepper select {
+        flex: 1 1 12rem;
+        min-width: 0;
         min-height: 44px;
         padding: 0 0.75rem;
         border: 1px solid var(--couleur-ligne);
@@ -90,14 +95,23 @@
         background: var(--couleur-surface);
         color: inherit;
         font: inherit;
-        font-size: 0.875rem;
-        white-space: nowrap;
+        font-size: 0.9375rem;
       }
-      nav button[aria-current='step'] {
-        border-color: var(--couleur-accent);
+      .stepper .bouton {
+        min-width: 44px;
+        padding: 0 0.75rem;
+      }
+      .avance {
+        flex: 1 0 100%;
+        height: 4px;
+        border-radius: 999px;
         background: var(--couleur-surface-douce);
-        color: var(--couleur-accent);
-        font-weight: 600;
+        overflow: hidden;
+      }
+      .avance > span {
+        display: block;
+        height: 100%;
+        background: var(--couleur-accent);
       }
       section {
         padding: 1.25rem;
@@ -199,7 +213,117 @@
       .item[data-fait='oui'] {
         border-color: var(--couleur-succes);
       }
+      /* Écrans : une idée à la fois */
+      .ecran-barre {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin: 0 0 1rem;
+      }
+      .ecran-titre {
+        margin: 0;
+        font-weight: 600;
+        color: var(--couleur-accent);
+      }
+      .ecran-compte {
+        color: var(--couleur-texte-secondaire);
+        font-size: 0.875rem;
+        white-space: nowrap;
+      }
+      .ecran-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: space-between;
+        margin-top: 1.25rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--couleur-ligne);
+      }
+      .ecran-nav .bouton {
+        flex: 1 1 8rem;
+      }
+      .ecran h3 {
+        margin: 0 0 0.5rem;
+        font-size: 1.125rem;
+      }
+      .ecran p {
+        max-width: 62ch;
+      }
+      .ecran .accroche {
+        font-size: 1.1875rem;
+        line-height: 1.45;
+      }
+      details {
+        margin: 0.75rem 0;
+        padding: 0.5rem 0.875rem;
+        border: 1px solid var(--couleur-ligne);
+        border-radius: var(--rayon-champ);
+        background: var(--couleur-fond);
+      }
+      summary {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      details[open] > summary {
+        margin-bottom: 0.5rem;
+      }
+      .ecouter {
+        min-height: 44px;
+        padding: 0 0.75rem;
+        font-size: 0.875rem;
+        white-space: nowrap;
+        flex: none;
+      }
+      /* Pratique en cartes */
+      .exo-titre {
+        margin: 1.25rem 0 0.25rem;
+        font-size: 1.0625rem;
+      }
+      .item-tete {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        margin-bottom: 0.5rem;
+      }
+      .item-num {
+        display: inline-grid;
+        place-items: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 999px;
+        background: var(--couleur-surface-douce);
+        font-weight: 600;
+        font-size: 0.875rem;
+      }
+      .item[data-fait='oui'] .item-num {
+        background: var(--couleur-succes);
+        color: var(--couleur-accent-sur-fond);
+      }
+      .item-etat {
+        margin-left: auto;
+        font-size: 0.875rem;
+        color: var(--couleur-texte-secondaire);
+      }
+      .aide {
+        margin: 0.5rem 0;
+        padding: 0.25rem 0.75rem;
+      }
+      .aide .actions {
+        margin: 0 0 0.5rem;
+      }
+      .aide button[aria-pressed='true'] {
+        background: var(--couleur-accent);
+        color: var(--couleur-accent-sur-fond);
+      }
       /* Outils de la fiche B01 */
+      :root {
+        --couleur-allume: light-dark(#f0a500, #f5b83d);
+        --couleur-allume-encre: #2b1d00;
+      }
       .octet-rangee {
         display: flex;
         gap: 0.25rem;
@@ -229,10 +353,12 @@
         font-weight: 600;
         cursor: pointer;
       }
+      /* Les bits sont des lampes : ambre allumée = 1, éteinte = 0. */
       .interrupteur[aria-pressed='true'] {
-        border-color: var(--couleur-accent);
-        background: var(--couleur-accent);
-        color: var(--couleur-accent-sur-fond);
+        border-color: var(--couleur-allume);
+        background: var(--couleur-allume);
+        color: var(--couleur-allume-encre);
+        box-shadow: 0 0 0.75rem color-mix(in srgb, var(--couleur-allume) 60%, transparent);
       }
       .octet-sortie[data-juste='oui'],
       .retour[data-juste='oui'] {
@@ -301,9 +427,9 @@
     </main>
 
     <template data-etape="ET1">
-      <p>
-        Ce bloc part d’une idée simple : une machine n’a que des interrupteurs, allumés ou éteints.
-        Tout le reste (nombres, lettres, couleurs) est une façon de lire des suites d’interrupteurs.
+      <p class="accroche">
+        Une machine n’a que des interrupteurs, allumés ou éteints. Tout le reste (nombres, lettres,
+        couleurs) est une façon de lire des suites d’interrupteurs.
       </p>
       <ul class="plain">
         <li>
@@ -324,217 +450,248 @@
     </template>
 
     <template data-etape="ET2">
-      <p>
-        Une machine n’a que deux états par interrupteur : éteint (0) ou allumé (1). Avant que je
-        t’explique quoi que ce soit, joue avec quatre interrupteurs et réponds. Te tromper ici est
-        utile : ça fait partie de la découverte.
-      </p>
-      <div data-widget="octet" data-bits="4"></div>
-      <div
-        data-widget="nombre"
-        data-reponse="2"
-        data-succes="Un interrupteur, deux états : 0 ou 1."
-      >
-        Avec <strong>1</strong> interrupteur, combien de valeurs différentes peut-on écrire ?
+      <div data-ecran="Les interrupteurs">
+        <p class="accroche">
+          Un interrupteur n’a que deux états : éteint (0) ou allumé (1). Joue avec ces quatre-là.
+        </p>
+        <div data-widget="octet" data-bits="4"></div>
+        <p class="discret">
+          Avant que je t’explique quoi que ce soit, tu vas prédire. Te tromper ici est utile : ça
+          fait partie de la découverte.
+        </p>
       </div>
-      <div data-widget="nombre" data-reponse="4" data-succes="00, 01, 10, 11.">
-        Avec <strong>2</strong> interrupteurs, combien de valeurs différentes ?
+      <div data-ecran="Tes prédictions">
+        <div
+          data-widget="nombre"
+          data-reponse="2"
+          data-succes="Un interrupteur, deux états : 0 ou 1."
+        >
+          Avec <strong>1</strong> interrupteur, combien de valeurs différentes peut-on écrire ?
+        </div>
+        <div data-widget="nombre" data-reponse="4" data-succes="00, 01, 10, 11.">
+          Avec <strong>2</strong> interrupteurs, combien de valeurs différentes ?
+        </div>
+        <div
+          data-widget="nombre"
+          data-reponse="8"
+          data-succes="Chaque interrupteur ajouté double le nombre de valeurs."
+        >
+          Avec <strong>3</strong> interrupteurs, combien de valeurs différentes ?
+        </div>
+        <div data-widget="nombre" data-reponse="16" data-succes="8 × 2 = 16.">
+          Avec <strong>4</strong> interrupteurs, combien de valeurs différentes ?
+        </div>
+        <div
+          data-widget="nombre"
+          data-reponse="7"
+          data-succes="Avec 6 interrupteurs on a 64 valeurs, avec 7 on en a 128 : de 0 à 127, ça couvre 100."
+        >
+          Combien d’interrupteurs faut-il, au minimum, pour pouvoir compter jusqu’à
+          <strong>100</strong> ?
+        </div>
       </div>
-      <div
-        data-widget="nombre"
-        data-reponse="8"
-        data-succes="Chaque interrupteur ajouté double le nombre de valeurs."
-      >
-        Avec <strong>3</strong> interrupteurs, combien de valeurs différentes ?
+      <div data-ecran="Ce que tu as trouvé">
+        <p class="accroche">
+          <strong>Chaque interrupteur ajouté double le nombre de valeurs.</strong>
+        </p>
+        <p>
+          Avec n interrupteurs, on obtient 2 × 2 × … × 2 (n fois) valeurs. Avec 8 interrupteurs, un
+          octet, ça fait 256 valeurs. La suite explique comment s’en servir pour écrire des nombres.
+        </p>
       </div>
-      <div data-widget="nombre" data-reponse="16" data-succes="8 × 2 = 16.">
-        Avec <strong>4</strong> interrupteurs, combien de valeurs différentes ?
-      </div>
-      <div
-        data-widget="nombre"
-        data-reponse="7"
-        data-succes="Avec 6 interrupteurs on a 64 valeurs, avec 7 on en a 128 : de 0 à 127, ça couvre 100."
-      >
-        Combien d’interrupteurs faut-il, au minimum, pour pouvoir compter jusqu’à
-        <strong>100</strong> ?
-      </div>
-      <p>
-        Ce que tu viens de trouver :
-        <strong>chaque interrupteur ajouté double le nombre de valeurs</strong>. Avec n
-        interrupteurs, on obtient 2 × 2 × … × 2 (n fois) valeurs. Avec 8 interrupteurs, un octet, ça
-        fait 256 valeurs. La suite explique comment s’en servir pour écrire des nombres.
-      </p>
     </template>
 
     <template data-etape="ET3">
-      <h3>Les poids</h3>
-      <p>
-        Dans 345, chaque position a un poids : 100, 10, 1. Le chiffre de gauche pèse le plus. En
-        binaire, c’est pareil, mais les poids doublent à chaque pas vers la gauche : 1, 2, 4, 8, 16,
-        32, 64, 128. La valeur d’une suite de bits est
-        <strong>la somme des poids des interrupteurs allumés</strong>.
-      </p>
-      <div data-widget="octet"></div>
-      <p>
-        Essaie : allume 128 et 8 et 1. Tu obtiens 137. Éteins tout sauf le dernier interrupteur : 1.
-        <strong>Le poids le plus grand est à gauche</strong>, comme les centaines dans 345. Lire une
-        suite de droite à gauche donne une autre valeur.
-      </p>
-
-      <h3>256 valeurs, mais un maximum de 255</h3>
-      <p>
-        Avec 8 interrupteurs, tout allumé donne 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 =
-        <strong>255</strong>. Tout éteint donne 0. De 0 à 255, il y a <strong>256 valeurs</strong>,
-        parce que le 0 compte comme une valeur. Le nombre de valeurs (256) et le maximum (255) sont
-        deux choses différentes.
-      </p>
-
-      <h3>Décimal vers binaire : on retire les poids</h3>
-      <p>
-        Exemple avec 77. On parcourt les poids de gauche à droite : si le poids tient dans ce qui
-        reste, on l’allume et on le retire.
-      </p>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">Poids</th>
-            <th scope="col">Reste avant</th>
-            <th scope="col">Ça tient ?</th>
-            <th scope="col">Bit</th>
-            <th scope="col">Reste après</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>128</td>
-            <td>77</td>
-            <td>non</td>
-            <td>0</td>
-            <td>77</td>
-          </tr>
-          <tr>
-            <td>64</td>
-            <td>77</td>
-            <td>oui</td>
-            <td>1</td>
-            <td>13</td>
-          </tr>
-          <tr>
-            <td>32</td>
-            <td>13</td>
-            <td>non</td>
-            <td>0</td>
-            <td>13</td>
-          </tr>
-          <tr>
-            <td>16</td>
-            <td>13</td>
-            <td>non</td>
-            <td>0</td>
-            <td>13</td>
-          </tr>
-          <tr>
-            <td>8</td>
-            <td>13</td>
-            <td>oui</td>
-            <td>1</td>
-            <td>5</td>
-          </tr>
-          <tr>
-            <td>4</td>
-            <td>5</td>
-            <td>oui</td>
-            <td>1</td>
-            <td>1</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>1</td>
-            <td>non</td>
-            <td>0</td>
-            <td>1</td>
-          </tr>
-          <tr>
-            <td>1</td>
-            <td>1</td>
-            <td>oui</td>
-            <td>1</td>
-            <td>0</td>
-          </tr>
-        </tbody>
-      </table>
-      <p>77 s’écrit donc <strong>01001101</strong>. Vérification : 64 + 8 + 4 + 1 = 77.</p>
-
-      <h3>Binaire vers décimal : on additionne les poids allumés</h3>
-      <p>Exemple avec 10110010 : 128 + 32 + 16 + 2 = <strong>178</strong>.</p>
-
-      <h3>À toi de compléter</h3>
-      <p>
-        Même méthode avec 150. Règle les interrupteurs jusqu’à ce que la machine dise « C’est
-        exactement 150 ».
-      </p>
-      <div data-widget="octet" data-cible="150"></div>
-      <p class="discret">
-        Si tu bloques : 150 − 128 = 22, puis 22 − 16 = 6, puis 6 − 4 = 2, puis 2 − 2 = 0.
-      </p>
-
-      <p class="note">
-        <strong>Ce que Studi écrit et qui est incomplet.</strong> Le cours donne le principe («
-        chaque position est une puissance de 2 ») mais ne montre jamais une conversion. Ici, tu la
-        fais.
-      </p>
+      <div data-ecran="Les poids">
+        <p class="accroche">
+          Dans 345, chaque position a un poids : 100, 10, 1. En binaire, les poids doublent à chaque
+          pas vers la gauche : 1, 2, 4, 8, 16, 32, 64, 128.
+        </p>
+        <div data-widget="octet"></div>
+        <p>
+          La valeur d’une suite de bits est
+          <strong>la somme des poids des interrupteurs allumés</strong>. Essaie : allume 128, 8 et
+          1, tu obtiens 137.
+        </p>
+        <p>
+          <strong>Le poids le plus grand est à gauche</strong>, comme les centaines dans 345. Lire
+          une suite de droite à gauche donne une autre valeur.
+        </p>
+      </div>
+      <div data-ecran="256 valeurs, maximum 255">
+        <p class="accroche">
+          Tout allumé : 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 = <strong>255</strong>. Tout éteint : 0.
+        </p>
+        <p>
+          De 0 à 255, il y a <strong>256 valeurs</strong>, parce que le 0 compte comme une valeur.
+          Le nombre de valeurs (256) et le maximum (255) sont deux choses différentes.
+        </p>
+      </div>
+      <div data-ecran="Décimal vers binaire">
+        <p class="accroche">
+          On retire les poids : de gauche à droite, si le poids tient dans ce qui reste, on
+          l’allume.
+        </p>
+        <details open>
+          <summary>Exemple avec 77, étape par étape</summary>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Poids</th>
+                <th scope="col">Reste avant</th>
+                <th scope="col">Ça tient ?</th>
+                <th scope="col">Bit</th>
+                <th scope="col">Reste après</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>128</td>
+                <td>77</td>
+                <td>non</td>
+                <td>0</td>
+                <td>77</td>
+              </tr>
+              <tr>
+                <td>64</td>
+                <td>77</td>
+                <td>oui</td>
+                <td>1</td>
+                <td>13</td>
+              </tr>
+              <tr>
+                <td>32</td>
+                <td>13</td>
+                <td>non</td>
+                <td>0</td>
+                <td>13</td>
+              </tr>
+              <tr>
+                <td>16</td>
+                <td>13</td>
+                <td>non</td>
+                <td>0</td>
+                <td>13</td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td>13</td>
+                <td>oui</td>
+                <td>1</td>
+                <td>5</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>5</td>
+                <td>oui</td>
+                <td>1</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>1</td>
+                <td>non</td>
+                <td>0</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>oui</td>
+                <td>1</td>
+                <td>0</td>
+              </tr>
+            </tbody>
+          </table>
+        </details>
+        <p>77 s’écrit donc <strong>01001101</strong>. Vérification : 64 + 8 + 4 + 1 = 77.</p>
+      </div>
+      <div data-ecran="Binaire vers décimal">
+        <p class="accroche">On additionne les poids des bits allumés.</p>
+        <p>Exemple avec 10110010 : 128 + 32 + 16 + 2 = <strong>178</strong>.</p>
+      </div>
+      <div data-ecran="À toi de compléter">
+        <p class="accroche">
+          Même méthode avec 150. Règle les interrupteurs jusqu’à ce que la machine dise « C’est
+          exactement 150 ».
+        </p>
+        <div data-widget="octet" data-cible="150"></div>
+        <details>
+          <summary>Un coup de pouce</summary>
+          <p>150 − 128 = 22, puis 22 − 16 = 6, puis 6 − 4 = 2, puis 2 − 2 = 0.</p>
+        </details>
+        <details>
+          <summary>Ce que Studi écrit et qui est incomplet</summary>
+          <p>
+            Le cours donne le principe (« chaque position est une puissance de 2 ») mais ne montre
+            jamais une conversion. Ici, tu la fais.
+          </p>
+        </details>
+      </div>
     </template>
 
     <template data-etape="ET4">
-      <h3>Une suite de bits ne veut rien dire toute seule</h3>
-      <p>
-        Prends la suite 01000001. Selon la convention de lecture, c’est un nombre, une lettre ou une
-        quantité de rouge. Essaie les trois lectures.
-      </p>
-      <div data-widget="lectures"></div>
-      <p>
-        Pour les lettres, la convention s’appelle la <strong>table ASCII</strong> : elle associe un
-        nombre à chaque caractère (A vaut 65). Sans connaître la convention, impossible de savoir ce
-        que veulent dire les bits. C’est le point le plus important du bloc.
-      </p>
-      <p class="note">
-        <strong>Ce que Studi écrit et qui est trompeur.</strong> Le cours dit que « chaque
-        combinaison de ces interrupteurs donne une instruction différente ». Faux en général : la
-        plupart des suites de bits sont des données (nombres, lettres, couleurs). Certaines suites
-        sont des instructions pour le processeur, on y revient en P1.4.
-      </p>
-      <p>
-        <strong>Le binaire n’est pas un langage de programmation.</strong> C’est une façon d’écrire
-        les nombres avec deux chiffres. PHP ou JavaScript sont des langages qu’on écrit avec des
-        lettres, et qu’il faut ensuite traduire.
-      </p>
-
-      <h3>Lire une couleur : #FF8800</h3>
-      <p>
-        Une couleur d’écran est faite de trois octets : la quantité de rouge, de vert et de bleu,
-        chacune de 0 à 255. Les développeurs les écrivent en hexadécimal, avec
-        <strong>deux chiffres par octet</strong>. Un chiffre hexadécimal représente
-        <strong>4 bits</strong> : de 0 à 9 puis A (10), B, C, D, E, F (15). F vaut donc 1111 et 8
-        vaut 1000. Pas besoin d’en savoir plus ici.
-      </p>
-      <div data-widget="couleur" data-code="FF8800"></div>
-      <p>
-        #FF8800 est donc un rouge au maximum (255), un vert à peu près à moitié (136), pas de bleu
-        (0) : de l’orange.
-      </p>
-
-      <h3>Et une photo ?</h3>
-      <p>
-        Une photo est une grille de points, chaque point est une couleur, donc quelques octets. Rien
-        de nouveau, juste beaucoup de points. On s’arrête là pour ce bloc.
-      </p>
+      <div data-ecran="Rien sans convention">
+        <p class="accroche">
+          La suite 01000001 peut être un nombre, une lettre ou une quantité de rouge. Essaie les
+          trois lectures.
+        </p>
+        <div data-widget="lectures"></div>
+        <p>
+          Pour les lettres, la convention s’appelle la <strong>table ASCII</strong> : elle associe
+          un nombre à chaque caractère (A vaut 65). Sans connaître la convention, impossible de
+          savoir ce que veulent dire les bits. C’est le point le plus important du bloc.
+        </p>
+      </div>
+      <div data-ecran="Le binaire n’est pas un langage">
+        <p class="accroche">
+          <strong>Le binaire n’est pas un langage de programmation.</strong>
+        </p>
+        <p>
+          C’est une façon d’écrire les nombres avec deux chiffres. PHP ou JavaScript sont des
+          langages qu’on écrit avec des lettres, et qu’il faut ensuite traduire.
+        </p>
+        <details>
+          <summary>Ce que Studi écrit et qui est trompeur</summary>
+          <p>
+            Le cours dit que « chaque combinaison de ces interrupteurs donne une instruction
+            différente ». Faux en général : la plupart des suites de bits sont des données (nombres,
+            lettres, couleurs). Certaines suites sont des instructions pour le processeur, on y
+            revient en P1.4.
+          </p>
+        </details>
+      </div>
+      <div data-ecran="Lire une couleur">
+        <p class="accroche">
+          Une couleur d’écran, ce sont trois octets : rouge, vert, bleu, chacun de 0 à 255.
+        </p>
+        <p>
+          Les développeurs les écrivent en hexadécimal, avec
+          <strong>deux chiffres par octet</strong>. Un chiffre hexadécimal représente
+          <strong>4 bits</strong> : de 0 à 9 puis A (10), B, C, D, E, F (15). F vaut donc 1111 et 8
+          vaut 1000. Pas besoin d’en savoir plus ici.
+        </p>
+        <div data-widget="couleur" data-code="FF8800"></div>
+        <p>
+          #FF8800 est donc un rouge au maximum (255), un vert à peu près à moitié (136), pas de bleu
+          (0) : de l’orange.
+        </p>
+      </div>
+      <div data-ecran="Et une photo ?">
+        <p class="accroche">
+          Une photo est une grille de points, chaque point est une couleur, donc quelques octets.
+        </p>
+        <p>Rien de nouveau, juste beaucoup de points. On s’arrête là pour ce bloc.</p>
+      </div>
     </template>
 
     <template data-etape="ET6">
+      <p class="accroche">
+        Des séries de <strong>3 conversions</strong> tirées au hasard,
+        <strong>30 secondes</strong> chacune, sans aide.
+      </p>
       <p>
-        L’aisance se construit dans le temps. Tu fais des séries de
-        <strong>3 conversions</strong> tirées au hasard (décimal vers binaire ou binaire vers
-        décimal), <strong>30 secondes</strong> chacune, sans aide. Le bloc passe à « maîtrisé » avec
+        L’aisance se construit dans le temps. Le bloc passe à « maîtrisé » avec
         <strong>9 conversions justes réparties sur 3 jours différents</strong> : reviens un jour,
         puis un autre, puis un autre.
       </p>
@@ -3494,13 +3651,43 @@
       }
 
       function afficherEtapes() {
+        const trouvee = etapes.findIndex((etape) => etape.id === etat.etape)
+        const courant = trouvee < 0 ? 0 : trouvee
+        const choix = creer(
+          'select',
+          {},
+          ...etapes.map((etape, k) =>
+            creer('option', {
+              value: etape.id,
+              textContent: k + 1 + '. ' + etape.titre,
+              selected: k === courant,
+            }),
+          ),
+        )
+        choix.setAttribute('aria-label', 'Étape de la fiche')
+        choix.addEventListener('change', () => aller(choix.value))
+        const bouton = (texte, nom, cible) => {
+          const b = creer('button', {
+            type: 'button',
+            className: 'bouton secondaire',
+            textContent: texte,
+            disabled: cible === undefined,
+          })
+          b.setAttribute('aria-label', nom)
+          if (cible !== undefined) b.addEventListener('click', () => aller(cible.id))
+          return b
+        }
+        const barre = creer('span', { className: 'avance' }, creer('span'))
+        barre.firstChild.style.width = Math.round(((courant + 1) / etapes.length) * 100) + '%'
         $('etapes').replaceChildren(
-          ...etapes.map((etape) => {
-            const bouton = creer('button', { type: 'button', textContent: etape.titre })
-            if (etape.id === etat.etape) bouton.setAttribute('aria-current', 'step')
-            bouton.addEventListener('click', () => aller(etape.id))
-            return creer('li', {}, bouton)
-          }),
+          creer(
+            'li',
+            { className: 'stepper' },
+            bouton('←', 'Étape précédente', etapes[courant - 1]),
+            choix,
+            bouton('→', 'Étape suivante', etapes[courant + 1]),
+            barre,
+          ),
         )
       }
 
@@ -3538,12 +3725,94 @@
       function afficherLibre(etape) {
         const modele = document.querySelector('template[data-etape="' + etape.id + '"]')
         const section = creer('section', {}, creer('h2', { textContent: etape.titre }))
-        if (modele) section.append(modele.content.cloneNode(true))
-        else
+        if (!modele) {
           section.append(
             creer('p', { className: 'discret', textContent: 'Rien à lire dans cette étape.' }),
           )
+          return section
+        }
+        const contenu = modele.content.cloneNode(true)
+        const ecrans = Array.from(contenu.children).filter((n) => n.hasAttribute('data-ecran'))
+        if (ecrans.length < 2) {
+          section.append(contenu)
+          activerLiens(section)
+          return section
+        }
+        // Plusieurs écrans : un seul visible à la fois, les autres restent dans la page (outils déjà montés).
+        const suivante = etapes[etapes.findIndex((e) => e.id === etape.id) + 1]
+        const titre = creer('p', { className: 'ecran-titre' })
+        const compte = creer('span', { className: 'ecran-compte' })
+        const ecouter = creer('button', { type: 'button', className: 'bouton secondaire ecouter' })
+        const precedent = creer('button', {
+          type: 'button',
+          className: 'bouton secondaire',
+          textContent: '← Retour',
+        })
+        const avancer = creer('button', { type: 'button', className: 'bouton' })
+        let courant = Math.min(etat.ecrans?.[etape.id] ?? 0, ecrans.length - 1)
+        const voix = () => {
+          const fr = (window.speechSynthesis?.getVoices() ?? []).filter((v) =>
+            v.lang.toLowerCase().startsWith('fr'),
+          )
+          return (
+            fr.find((v) => /charline|denise|eloise|vivienne|hortense|julie/i.test(v.name)) ?? fr[0]
+          )
+        }
+        const texteLu = (ecran) =>
+          ecran.dataset.lecture ??
+          Array.from(ecran.querySelectorAll(':scope > h3, :scope > p, :scope > ul > li'))
+            .map((n) => n.textContent.replace(/\s+/g, ' ').trim())
+            .join(' ')
+        const arreter = () => {
+          window.speechSynthesis?.cancel()
+          ecouter.textContent = '🔊 Écouter'
+          ecouter.dataset.actif = 'non'
+        }
+        ecouter.addEventListener('click', () => {
+          if (!window.speechSynthesis) return void (ecouter.textContent = 'Lecture indisponible')
+          if (ecouter.dataset.actif === 'oui') return arreter()
+          const parole = new SpeechSynthesisUtterance(texteLu(ecrans[courant]))
+          parole.lang = 'fr-FR'
+          const choisie = voix()
+          if (choisie) parole.voice = choisie
+          parole.onend = arreter
+          window.speechSynthesis.speak(parole)
+          ecouter.dataset.actif = 'oui'
+          ecouter.textContent = '⏹ Arrêter'
+        })
+        const montrer = (k) => {
+          arreter()
+          courant = k
+          etat.ecrans = { ...(etat.ecrans ?? {}), [etape.id]: k }
+          enregistrer()
+          ecrans.forEach((e, j) => {
+            e.hidden = j !== k
+          })
+          titre.textContent = ecrans[k].dataset.ecran
+          compte.textContent = k + 1 + ' / ' + ecrans.length
+          precedent.disabled = k === 0
+          avancer.textContent =
+            k < ecrans.length - 1 ? 'Suivant →' : suivante ? 'Étape suivante →' : 'Terminé'
+          avancer.disabled = k === ecrans.length - 1 && !suivante
+        }
+        precedent.addEventListener('click', () => {
+          montrer(courant - 1)
+          section.scrollIntoView({ block: 'start' })
+        })
+        avancer.addEventListener('click', () => {
+          if (courant < ecrans.length - 1) {
+            montrer(courant + 1)
+            section.scrollIntoView({ block: 'start' })
+          } else if (suivante) aller(suivante.id)
+        })
+        for (const e of ecrans) e.classList.add('ecran')
+        section.append(
+          creer('div', { className: 'ecran-barre' }, titre, ecouter, compte),
+          ...ecrans,
+          creer('div', { className: 'ecran-nav' }, precedent, avancer),
+        )
         activerLiens(section)
+        montrer(courant)
         return section
       }
 
@@ -3566,6 +3835,8 @@
       }
 
       function afficherPratique() {
+        const items = manifeste.pratique.flatMap((exercice) => exercice.items)
+        const reussis = items.filter((item) => etat.pratique[item.id]?.reussi).length
         const section = creer(
           'section',
           {},
@@ -3573,11 +3844,17 @@
           creer('p', {
             className: 'discret',
             textContent:
-              'Indique si tu as réussi chaque item, et le cran d’aide utilisé (0 = aucune aide).',
+              reussis +
+              ' réussi' +
+              (reussis > 1 ? 's' : '') +
+              ' sur ' +
+              items.length +
+              '. Fais-les dans l’ordre que tu veux.',
           }),
         )
         for (const exercice of manifeste.pratique) {
-          for (const item of exercice.items) {
+          section.append(creer('h3', { className: 'exo-titre', textContent: exercice.titre }))
+          exercice.items.forEach((item, rang) => {
             const fait = etat.pratique[item.id]
             let aide = 0
             const resultat = creer('p', {
@@ -3599,17 +3876,21 @@
               enregistrer()
               afficher()
             }
-            const aides = [1, 2, 3, 4].map((cran) =>
-              creer('button', {
+            const aides = [1, 2, 3, 4].map((cran) => {
+              const b = creer('button', {
                 type: 'button',
                 className: 'bouton secondaire',
                 textContent: 'Aide ' + cran,
-                onclick: (e) => {
-                  aide = cran
-                  e.target.setAttribute('aria-pressed', 'true')
-                },
-              }),
-            )
+              })
+              b.setAttribute('aria-pressed', 'false')
+              b.addEventListener('click', () => {
+                aide = aide === cran ? 0 : cran
+                aides.forEach((autre, k) =>
+                  autre.setAttribute('aria-pressed', String(aide === k + 1)),
+                )
+              })
+              return b
+            })
             // L'énoncé de l'item : <template data-item="PR1-1"> dans la page.
             const enonce = document.querySelector('template[data-item="' + item.id + '"]')
             const consigne = creer('div', {})
@@ -3619,9 +3900,30 @@
               creer(
                 'div',
                 { className: 'item', dataset: { fait: fait?.reussi ? 'oui' : 'non' } },
-                creer('strong', { textContent: 'Item ' + item.id }),
+                creer(
+                  'div',
+                  { className: 'item-tete' },
+                  creer('span', { className: 'item-num', textContent: String(rang + 1) }),
+                  creer('strong', {
+                    textContent: 'Item ' + (rang + 1) + ' sur ' + exercice.items.length,
+                  }),
+                  creer('span', {
+                    className: 'item-etat',
+                    textContent: fait ? (fait.reussi ? '✓ Réussi' : 'À refaire') : '',
+                  }),
+                ),
                 consigne,
-                creer('div', { className: 'actions' }, ...aides),
+                creer(
+                  'details',
+                  { className: 'aide' },
+                  creer('summary', { textContent: 'J’ai eu besoin d’aide' }),
+                  creer('p', {
+                    className: 'discret',
+                    textContent:
+                      'Niveau d’aide utilisé : 1 = une question qui t’oriente, 2 = un indice, 3 = l’étape détaillée, 4 = la solution complète.',
+                  }),
+                  creer('div', { className: 'actions' }, ...aides),
+                ),
                 creer(
                   'div',
                   { className: 'actions' },
@@ -3641,7 +3943,7 @@
                 resultat,
               ),
             )
-          }
+          })
         }
         return section
       }
