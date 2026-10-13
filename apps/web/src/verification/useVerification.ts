@@ -18,6 +18,7 @@ export interface Saisie {
   readonly confiance: Confiance
   readonly colle: boolean
   readonly code?: { readonly reussis: number; readonly total: number }
+  readonly constat?: { readonly coches: readonly number[]; readonly aide: 0 | 1 | 2 | 3 | 4 }
 }
 
 /** Où en est l'envoi d'une partie : en route, envoyée, ou refusée parce que la correction est impossible. */
@@ -55,6 +56,7 @@ export function useVerification(id: string) {
           confiance: saisie.confiance,
           support: { colle: saisie.colle, retour_cours: false },
           ...(saisie.code === undefined ? {} : { code: saisie.code }),
+          ...(saisie.constat === undefined ? {} : { constat: saisie.constat }),
         },
       },
       {

@@ -27,6 +27,37 @@ const code: Differee = {
   },
 }
 
+const constat: Differee = {
+  id: 'DT5',
+  type: 'tache',
+  consigne: 'Crée la maquette.',
+  attendu: 'Trois écrans, grille de 8 px.',
+  erreurs: [],
+  verification: { mode: 'constat', criteres: ['3 écrans', 'grille de 8 px', 'composants nommés'] },
+}
+
+describe('corrigerTache, constat', () => {
+  const declarer = (coches: number[], aide: number) =>
+    corrigerTache(constat, { reponse: 'x', support: SUPPORT, constat: { coches, aide } })
+
+  it('sans constat envoyé : undefined', () => {
+    expect(corrigerTache(constat, { reponse: 'x', support: SUPPORT })).toBeUndefined()
+  })
+
+  it('tous les critères cochés à l’aide 0 : réussie, et marquée comme déclarée', () => {
+    expect(declarer([0, 1, 2], 0)).toMatchObject({ reussi: true, declaree: true, compte: true })
+  })
+
+  it('un critère manquant, ou une aide : ratée, toujours déclarée', () => {
+    expect(declarer([0, 1], 0)).toMatchObject({ reussi: false, declaree: true })
+    expect(declarer([0, 1, 2], 1)).toMatchObject({ reussi: false, declaree: true })
+  })
+
+  it('un critère inconnu ou répété ne compte pas', () => {
+    expect(declarer([0, 0, 1, 7], 0)).toMatchObject({ reussi: false })
+  })
+})
+
 describe('corrigerTache', () => {
   it('accepte une des réponses exactes, et dit l’attendu sinon', () => {
     expect(corrigerTache(exacte, { reponse: ' Fiche ', support: SUPPORT })).toMatchObject({

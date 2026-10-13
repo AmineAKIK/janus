@@ -477,3 +477,17 @@ describe('validerManifeste, type de contenu', () => {
     )
   })
 })
+
+describe('validerManifeste, tâche vérifiée par constat', () => {
+  it('accepte des critères', () => {
+    const m = copie()
+    parType(m, 'tache').element['verification'] = { mode: 'constat', criteres: ['Un écran'] }
+    expect(validerManifeste(m).ok).toBe(true)
+  })
+
+  it('refuse un constat sans critère', () => {
+    const m = copie()
+    parType(m, 'tache').element['verification'] = { mode: 'constat', criteres: [] }
+    expect(validerManifeste(m).ok).toBe(false)
+  })
+})

@@ -23,7 +23,8 @@ type PartieCorrigee = ResultatVerification['parties'][number]
 function resume(partie: PartieCorrigee): string {
   if (partie.cas !== undefined) return texteCasReussis(partie.cas.reussis, partie.cas.total)
   if (partie.niveau !== undefined) return LIBELLES_NIVEAU[partie.niveau]
-  return partie.reussi === true ? 'Réussie' : 'Ratée'
+  const issue = partie.reussi === true ? 'Réussie' : 'Ratée'
+  return partie.declaree === true ? `${issue} (${T.declaree.toLowerCase()})` : issue
 }
 
 function Ligne({ partie }: { readonly partie: PartieCorrigee }) {
