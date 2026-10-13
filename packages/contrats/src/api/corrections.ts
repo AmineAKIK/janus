@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { Confiance, Niveau, Serie } from '../enums.ts'
-import { CodeBloc, CorrectionRecue, IdUuid, Identifiant, Reponse, StatutBloc } from './commun.ts'
+import { Niveau, Serie } from '../enums.ts'
+import { CodeBloc, CorrectionRecue, IdUuid, StatutBloc, champsReponse } from './commun.ts'
 import type { DefinitionRoute } from './routes.ts'
 
 const RaisonTranchage = z.string().trim().min(10)
@@ -48,12 +48,7 @@ const DemandeCorrection = z
     serie: Serie,
     /** Indicatif : le serveur numérote lui-même les tentatives (une relance garde la dernière). */
     tentative: z.number().int().min(1),
-    question: Identifiant,
-    reponse: Reponse.min(1),
-    confiance: Confiance,
-    /** Le texte de la relance, vide au premier tour. */
-    relance: Reponse,
-    support: z.strictObject({ colle: z.boolean(), retour_cours: z.boolean() }),
+    ...champsReponse,
     /** Vrai quand Amine conteste la correction précédente. */
     conteste: z.boolean().optional(),
     bloc: CodeBloc.optional(),

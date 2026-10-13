@@ -1,11 +1,10 @@
 import { z } from 'zod'
+import { Texte } from '../primitives.ts'
 import { Statut } from '../enums.ts'
 import { Manifeste } from '../manifeste.ts'
 import { EtatPage } from '../pont.ts'
 import { CodeBloc, Identifiant, InstantUtc, ParamId, StatutBloc } from './commun.ts'
 import type { DefinitionRoute } from './routes.ts'
-
-const Texte = z.string().trim().min(1)
 
 const Formation = z.strictObject({
   id: Identifiant,

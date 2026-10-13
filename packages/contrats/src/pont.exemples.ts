@@ -59,6 +59,21 @@ export const EXEMPLES_PAGE = {
   },
 } satisfies Record<MessagePage['type'], Record<string, unknown>>
 
+/** Une correction rendue (premier tour, comptée), telle que la page et `POST /corrections` la reçoivent. */
+export const EXEMPLE_CORRECTION = {
+  id: '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2c',
+  echantillon: false,
+  question: 'R1',
+  tour: 1,
+  message: 'Presque : il manque la limite d’un seul bloc.',
+  niveau: 'partiel',
+  erreurs_critiques: ['E1'],
+  source: 'support',
+  ref: 'ET2',
+  certitude: 'sur',
+  compte: true,
+} as const
+
 export const EXEMPLES_APPLI = {
   'etat.init': {
     type: 'etat.init',
@@ -68,20 +83,7 @@ export const EXEMPLES_APPLI = {
     statut: 'en_cours',
     serie_ouverte: { restitution: true, consolidation: false },
   },
-  'restitution.correction': {
-    type: 'restitution.correction',
-    id: '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2c',
-    echantillon: false,
-    question: 'R1',
-    tour: 1,
-    message: 'Presque : il manque la limite d’un seul bloc.',
-    niveau: 'partiel',
-    erreurs_critiques: ['E1'],
-    source: 'support',
-    ref: 'ET2',
-    certitude: 'sur',
-    compte: true,
-  },
+  'restitution.correction': { type: 'restitution.correction', ...EXEMPLE_CORRECTION },
   'statut.maj': {
     type: 'statut.maj',
     statut: 'vu',

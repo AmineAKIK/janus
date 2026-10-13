@@ -1,12 +1,11 @@
 import { z } from 'zod'
+import { Texte } from '../primitives.ts'
 import { Confiance, Statut } from '../enums.ts'
 import { InstantUtc } from '../faits.ts'
 import { TypeEtape } from '../manifeste.ts'
 import { TacheDuJour } from './apprentissage.ts'
 import { CodeBloc, IdUuid, Identifiant, TexteLibre } from './commun.ts'
 import type { DefinitionRoute } from './routes.ts'
-
-const Texte = z.string().trim().min(1)
 
 export const Periode = z.enum(['7j', '30j', 'tout'])
 export type Periode = z.infer<typeof Periode>
@@ -24,6 +23,12 @@ export const TypeJournal = z.enum([
   'statut_force',
 ])
 export type TypeJournal = z.infer<typeof TypeJournal>
+
+/** Des réussites sur un total : `reussis` ne dépasse pas `total`, jamais de pourcentage seul. */
+const ReussisSurTotal = z.strictObject({
+  reussis: z.number().int().min(0),
+  total: z.number().int().min(0),
+})
 
 /** Une note d'Amine sur une ligne du journal : 1000 caractères au plus. */
 const TexteNote = z.string().trim().min(1).max(1000)
@@ -135,20 +140,11 @@ export const ROUTES_SUIVI = {
             /** Le lundi, `AAAA-MM-JJ`. */
             debut: z.string(),
             /** Cartes revues, dont `reussis` notées autrement que « À revoir ». */
-            cartes: z.strictObject({
-              reussis: z.number().int().min(0),
-              total: z.number().int().min(0),
-            }),
+            cartes: ReussisSurTotal,
             /** Questions de début de séance, dont `reussis` au niveau solide. */
-            questions: z.strictObject({
-              reussis: z.number().int().min(0),
-              total: z.number().int().min(0),
-            }),
+            questions: ReussisSurTotal,
             /** Vérifications valables, dont `reussis` sans erreur au premier tour. */
-            verifications: z.strictObject({
-              reussis: z.number().int().min(0),
-              total: z.number().int().min(0),
-            }),
+            verifications: ReussisSurTotal,
           }),
         ),
         calibration: z.strictObject({

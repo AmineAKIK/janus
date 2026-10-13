@@ -3,7 +3,7 @@ import { Statut } from '../enums.ts'
 import { InstantUtc } from '../faits.ts'
 import { Identifiant, Manque } from '../pont.ts'
 
-export { Identifiant, IdUuid, CodeBloc, Reponse, CorrectionRecue } from '../pont.ts'
+export { Identifiant, IdUuid, CodeBloc, Reponse, CorrectionRecue, champsReponse } from '../pont.ts'
 export { InstantUtc }
 
 /** Les codes stables des erreurs de l'API, repris dans `code` du `problem+json`. */

@@ -1,10 +1,10 @@
 import { z } from 'zod'
+import { Texte } from '../primitives.ts'
 import { Confiance, Niveau, NoteCarte, Statut, TypeDifferee, TypeVerification } from '../enums.ts'
 import { InstantUtc } from '../faits.ts'
+import { VerificationParCode } from '../manifeste.ts'
 import { CodeBloc, CorrectionRecue, IdUuid, Identifiant, Reponse } from './commun.ts'
 import type { DefinitionRoute } from './routes.ts'
-
-const Texte = z.string().trim().min(1)
 
 /** Une tâche de l'écran Aujourd'hui, dans l'ordre où le moteur les range. */
 export const Tache = z.discriminatedUnion('type', [
@@ -100,11 +100,7 @@ export const PartieVerification = z.strictObject({
   tache: z
     .discriminatedUnion('mode', [
       z.strictObject({ mode: z.literal('exacte') }),
-      z.strictObject({
-        mode: z.literal('code'),
-        langage: z.literal('js'),
-        cas: z.array(z.strictObject({ entree: z.array(z.unknown()), sortie: z.unknown() })).min(1),
-      }),
+      VerificationParCode,
     ])
     .optional(),
   /** Vrai quand la réponse à cette partie est déjà envoyée : on reprend à la suivante. */

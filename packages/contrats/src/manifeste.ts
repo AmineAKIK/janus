@@ -1,9 +1,7 @@
 import { z } from 'zod'
+import { CodeBloc, Identifiant, Texte } from './primitives.ts'
 import { FormeTransfert, TypeDifferee } from './enums.ts'
 
-const Texte = z.string().trim().min(1)
-const Identifiant = z.string().trim().min(1)
-const CodeBloc = z.string().regex(/^[A-Z]{1,3}\d{2,3}$/)
 const Entier = z.number().int()
 
 export const TypeEtape = z.enum([
@@ -28,14 +26,17 @@ const Question = z.strictObject({
 })
 export type Question = z.infer<typeof Question>
 
+/** Une tâche vérifiée par code : le langage et les cas de test que l'exécuteur rejoue. */
+export const VerificationParCode = z.strictObject({
+  mode: z.literal('code'),
+  langage: z.literal('js'),
+  cas: z.array(z.strictObject({ entree: z.array(z.unknown()), sortie: z.unknown() })).min(1),
+})
+
 /** Comment l'appli vérifie une tâche : comparaison de texte, ou exécution de cas de test. */
 export const Verification = z.discriminatedUnion('mode', [
   z.strictObject({ mode: z.literal('exacte'), reponses: z.array(Texte).min(1) }),
-  z.strictObject({
-    mode: z.literal('code'),
-    langage: z.literal('js'),
-    cas: z.array(z.strictObject({ entree: z.array(z.unknown()), sortie: z.unknown() })).min(1),
-  }),
+  VerificationParCode,
 ])
 export type Verification = z.infer<typeof Verification>
 
