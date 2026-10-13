@@ -46,12 +46,15 @@ export interface CacheDesEtats {
   /**
    * L'état de chaque bloc donné, par code de bloc. Les blocs inchangés viennent de la mémoire, les autres
    * sont relus (par petits groupes, en laissant la boucle d'événements respirer entre deux) et recalculés.
+   * Si `signal` est interrompu (le délai de la requête est écoulé, le client est parti), la relecture
+   * s'arrête au lot suivant au lieu de continuer pour rien.
    */
   readonly etats: (
     lecteur: Db | Tx,
     userId: string,
     blocs: readonly BlocPourEtat[],
     reglages: Reglages,
+    signal?: AbortSignal,
   ) => Promise<ReadonlyMap<string, EtatDuBloc>>
   /** Oublie tout : pour les tests et pour une base remise à zéro. */
   readonly vider: () => void
@@ -250,9 +253,10 @@ export function creerCacheDesEtats({
       faitsGardes = 0
     },
 
-    async etats(lecteur, userId, blocs, reglages) {
+    async etats(lecteur, userId, blocs, reglages, signal) {
       const resultat = new Map<string, EtatDuBloc>()
       if (blocs.length === 0) return resultat
+      signal?.throwIfAborted()
       const empreinteReglages = JSON.stringify(reglages)
       const vues = await signatures(
         lecteur,
@@ -288,6 +292,7 @@ export function creerCacheDesEtats({
       // Les blocs à relire, par lots de quelques milliers de faits, la boucle d'événements respirant entre deux.
       let debut = 0
       while (debut < aRelire.length) {
+        signal?.throwIfAborted()
         let fin = debut
         let faits = 0
         while (fin < aRelire.length && (fin === debut || faits < faitsParLot)) {

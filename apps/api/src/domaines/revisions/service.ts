@@ -80,13 +80,18 @@ export function creerServiceRevisions({
    * Les réglages, le plan, l'état de chaque bloc et le contexte du jour : le point de départ de chaque
    * route. Les blocs inchangés depuis la dernière lecture viennent de la mémoire (voir `etatsDesBlocs`).
    */
-  async function charger(userId: string, leger?: Awaited<ReturnType<typeof chargerLeger>>) {
+  async function charger(
+    userId: string,
+    leger?: Awaited<ReturnType<typeof chargerLeger>>,
+    signal?: AbortSignal,
+  ) {
     const { maintenant, reglages, formationId, plan } = leger ?? (await chargerLeger(userId))
     const etatsDesBlocs = await etats.etats(
       base.db,
       userId,
       plan.map(({ id, code, versionId, manifeste }) => ({ id, code, versionId, manifeste })),
       reglages,
+      signal,
     )
     return {
       maintenant,
@@ -417,16 +422,16 @@ export function creerServiceRevisions({
     },
 
     /** Les cartes dues et les nouvelles des blocs vus. */
-    async cartesDues(userId: string) {
-      return cartesDe(userId, await charger(userId))
+    async cartesDues(userId: string, signal?: AbortSignal) {
+      return cartesDe(userId, await charger(userId, undefined, signal))
     },
 
     /**
      * L'écran Aujourd'hui en une requête : la file du moteur, où mène chaque tâche, le module en cours.
      * Une lecture : rien n'est tiré ni écrit (une vérification s'ouvre par `POST /verifications`).
      */
-    async aujourdhui(userId: string) {
-      const charge = await charger(userId)
+    async aujourdhui(userId: string, signal?: AbortSignal) {
+      const charge = await charger(userId, undefined, signal)
       const { maintenant, reglages, plan, contexte } = charge
       const cartes = await cartesDe(userId, charge)
       const gardee = SerieGardee.safeParse(await depot.serieDuJour(base.db, userId, contexte.jour))
