@@ -2,7 +2,8 @@ import { Manifeste, Niveau } from '@janus/contrats'
 import { z } from 'zod'
 import { coutMillioniemes } from '../adaptateurs/correcteur/cout.ts'
 import type { Tarifs } from '../adaptateurs/correcteur/cout.ts'
-import type { Correcteur, RequeteCorrection } from '../adaptateurs/correcteur/correcteur.ts'
+import { requeteDe } from '../adaptateurs/correcteur/correcteur.ts'
+import type { Correcteur } from '../adaptateurs/correcteur/correcteur.ts'
 import { validerSortie } from '../domaines/correction/composition.ts'
 
 // Le jeu de test de la correction : des réponses avec le niveau qu'Amine leur donne. `ia:evaluer`
@@ -78,21 +79,11 @@ export async function evaluer({
     const question = manifeste[jeu.serie].find(({ id }) => id === cas.question)
     if (question === undefined)
       throw new Error(`Cas ${cas.id} : question « ${cas.question} » inconnue.`)
-    const requete: RequeteCorrection = {
-      titre: manifeste.titre,
-      contexteIa: manifeste.contexte_ia,
-      sources: manifeste.sources.map(({ id, titre }) => ({ id, ref: titre })),
-      erreursCritiques: manifeste.erreurs_critiques.map(({ id, libelle }) => ({
-        id,
-        texte: libelle,
-      })),
-      question: question.question,
-      attendu: question.attendu,
+    const requete = requeteDe(manifeste, question, {
       confiance: cas.confiance,
       reponse: cas.reponse,
       historique: [],
-      strict: false,
-    }
+    })
     let niveauIa: Niveau | undefined
     let message = ''
     let motifRefus: string | undefined

@@ -1,5 +1,5 @@
-import { createHash } from 'node:crypto'
 import { canonique } from '@janus/contrats'
+import { empreinteJson } from '../../base/empreinte.ts'
 import type { Manifeste, MessagePage, TempsActif } from '@janus/contrats'
 
 export type Message = MessagePage | TempsActif
@@ -13,9 +13,7 @@ export const MESSAGES_AILLEURS: Readonly<Record<string, string>> = {
 
 /** L'empreinte du contenu d'un message : le même message renvoyé donne la même, quel que soit l'ordre des champs. */
 export function empreinteDuMessage(message: Message): string {
-  return createHash('sha256')
-    .update(JSON.stringify(canonique(message)))
-    .digest('hex')
+  return empreinteJson(canonique(message))
 }
 
 /** Ce que l'événement garde : le type stocké, les données utiles, le niveau d'aide. */

@@ -1,11 +1,10 @@
 import { Manifeste, Reglages, memeContenu, nouvelId } from '@janus/contrats'
 import type { Statut, StatutBloc } from '@janus/contrats'
 import { calculerBloc, instantEnMs, statutDuBloc } from '@janus/moteur'
-import { maintenantDuBloc } from '../../base/axeTemps.ts'
+import { maintenantDuBloc, sousVerrouDuBloc } from '../../base/axeTemps.ts'
 import type { Base } from '../../base/base.ts'
 import { lireFaits } from '../../base/faits.ts'
-import { verrouBloc } from '../../base/transaction.ts'
-import { ConflitEtatPage, ContenuDifferent, ErreurProtocole, Introuvable } from '../../erreurs.ts'
+import { ConflitEtatPage, ContenuDifferent, ErreurProtocole, introuvable } from '../../erreurs.ts'
 import type { Horloge } from '../../horloge.ts'
 import { recalculer } from '../../recalcul.ts'
 import type { DepotEvenements, StatutForce } from './depot.ts'
@@ -41,12 +40,17 @@ export interface ResultatEvenement {
   readonly statut: StatutBloc | null
 }
 
-function introuvable(quoi: string): Introuvable {
-  return new Introuvable(`${quoi} n'existe pas.`)
-}
-
 export function creerServiceEvenements({ base, depot, horloge }: DependancesService) {
   const identifiant = () => nouvelId(instantEnMs(horloge.maintenant()))
+
+  /** Le bloc de ce code (dans sa version en service), son manifeste et les réglages de l'utilisateur. */
+  async function contexteDuBloc(userId: string, code: string) {
+    const trouve = await depot.blocEtVersions(base.db, code, undefined)
+    if (trouve === undefined) throw introuvable(`Le bloc « ${code} »`)
+    const manifeste = Manifeste.parse(trouve.manifeste)
+    const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
+    return { bloc: trouve.bloc, manifeste, reglages }
+  }
 
   return {
     /**
@@ -87,12 +91,11 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
       const enregistrement = enregistrementDe(message)
 
       return base.enTransaction(async (tx) => {
-        await verrouBloc(tx, userId, bloc.id)
-        const maintenant = await maintenantDuBloc(tx, horloge, userId, bloc.id)
+        const maintenant = await sousVerrouDuBloc(tx, horloge, userId, bloc.id)
         // Le doublon rend le statut que la première réception a rendu (il se recalcule à l'identique).
         const doublon = async (existant: { userId: string; empreinte: string }) => {
           if (existant.userId !== userId || existant.empreinte !== empreinte) {
-            throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
+            throw new ContenuDifferent()
           }
           if (!enregistrement.changeLeStatut) return { doublon: true, statut: null }
           const actuel = await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant })
@@ -148,18 +151,13 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
      * même identifiant avec le même contenu est un doublon, avec un autre contenu c'est 422.
      */
     async forcer(userId: string, code: string, demande: DemandeForce) {
-      const trouve = await depot.blocEtVersions(base.db, code, undefined)
-      if (trouve === undefined) throw introuvable(`Le bloc « ${code} »`)
-      const { bloc } = trouve
-      const manifeste = Manifeste.parse(trouve.manifeste)
-      const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
+      const { bloc, manifeste, reglages } = await contexteDuBloc(userId, code)
       const voulu: Pick<StatutForce, 'action' | 'statut' | 'raison'> =
         demande.action === 'forcer'
           ? { action: 'forcer', statut: demande.statut, raison: demande.raison }
           : { action: 'lever', statut: null, raison: null }
       return base.enTransaction(async (tx) => {
-        await verrouBloc(tx, userId, bloc.id)
-        const maintenant = await maintenantDuBloc(tx, horloge, userId, bloc.id)
+        const maintenant = await sousVerrouDuBloc(tx, horloge, userId, bloc.id)
         const existant = await depot.forceParId(tx, demande.id)
         if (existant === undefined) {
           await depot.ajouterForce(tx, {
@@ -176,7 +174,7 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
           existant.statut !== voulu.statut ||
           existant.raison !== voulu.raison
         ) {
-          throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
+          throw new ContenuDifferent()
         }
         const resultat = await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant })
         return {
@@ -189,14 +187,9 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
 
     /** Amine tranche une erreur critique que l'IA a repérée : confirmée (elle s'ouvre) ou rejetée. */
     async trancherErreur(userId: string, code: string, demande: DemandeErreur) {
-      const trouve = await depot.blocEtVersions(base.db, code, undefined)
-      if (trouve === undefined) throw introuvable(`Le bloc « ${code} »`)
-      const { bloc } = trouve
-      const manifeste = Manifeste.parse(trouve.manifeste)
-      const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
+      const { bloc, manifeste, reglages } = await contexteDuBloc(userId, code)
       return base.enTransaction(async (tx) => {
-        await verrouBloc(tx, userId, bloc.id)
-        const maintenant = await maintenantDuBloc(tx, horloge, userId, bloc.id)
+        const maintenant = await sousVerrouDuBloc(tx, horloge, userId, bloc.id)
         const existant = await depot.decisionParId(tx, demande.id)
         if (existant === undefined) {
           const correction = await depot.correctionParId(tx, userId, demande.correction)
@@ -230,7 +223,7 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
           existant.decision !== demande.decision ||
           existant.correctionId !== demande.correction
         ) {
-          throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
+          throw new ContenuDifferent()
         }
         return statutDuBloc(await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant }))
       })

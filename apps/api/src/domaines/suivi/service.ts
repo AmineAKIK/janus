@@ -69,6 +69,12 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
     }
   }
 
+  /** Le plan, et tous les faits de l'utilisateur sur ses blocs. */
+  async function planEtFaits(userId: string, reglages: Reglages) {
+    const lePlan = await plan(reglages)
+    return { ...lePlan, faits: await lireFaits(base.db, userId, lePlan.lignes) }
+  }
+
   const identifiant = () => nouvelId(instantEnMs(horloge.maintenant()))
 
   /** Une note, telle que l'écran la lit, depuis ses versions. */
@@ -91,12 +97,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
       if (deja.length > 0) return noteLue(note.id, deja)
       const maintenant = await maintenantActif(base.db, horloge, userId)
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
-      const { lignes, blocs } = await plan(reglages)
-      const faits = await lireFaits(
-        base.db,
-        userId,
-        lignes.map(({ id, code }) => ({ id, code })),
-      )
+      const { lignes, blocs, faits } = await planEtFaits(userId, reglages)
       const ligne = ligneDuJournal(note.entree, { blocs, faits, reglages })
       const bloc = lignes.find(({ code }) => code === ligne?.bloc)
       if (ligne === undefined || bloc === undefined) {
@@ -149,7 +150,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
       )
       const gardee = await depot.ideeParId(base.db, userId, idee.id)
       if (gardee?.texte !== idee.texte) {
-        throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
+        throw new ContenuDifferent()
       }
       return gardee
     },
@@ -168,7 +169,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
         if (ajoutee) return
         const gardee = await depot.revueParId(tx, revue.id)
         if (gardee?.userId !== userId || gardee.texte !== texte) {
-          throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
+          throw new ContenuDifferent()
         }
       })
     },
@@ -184,13 +185,8 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
       },
     ) {
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
-      const { modules, lignes, blocs, formationId } = await plan(reglages)
+      const { modules, blocs, faits, formationId } = await planEtFaits(userId, reglages)
       const maintenant = await maintenantDeLaFormation(base.db, horloge, userId, formationId)
-      const faits = await lireFaits(
-        base.db,
-        userId,
-        lignes.map(({ id, code }) => ({ id, code })),
-      )
       return composerJournal({
         modules,
         blocs,
@@ -206,12 +202,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
     /** Le journal au format de la méthode, en texte brut. */
     async exportTexte(userId: string) {
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
-      const { lignes, blocs, formationId } = await plan(reglages)
-      const faits = await lireFaits(
-        base.db,
-        userId,
-        lignes.map(({ id, code }) => ({ id, code })),
-      )
+      const { blocs, faits, formationId } = await planEtFaits(userId, reglages)
       return composerExport({
         blocs,
         faits,
@@ -234,18 +225,9 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
       requete: { module?: string | undefined; periode?: Periode | undefined },
     ) {
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
-      const formationId = await formationActiveDe(base.db, reglages.formationActive)
+      const { formationId, modules, lignes, blocs, faits } = await planEtFaits(userId, reglages)
       const maintenant = await maintenantDeLaFormation(base.db, horloge, userId, formationId)
-      const [modules, blocs] = await Promise.all([
-        depot.modulesImportes(base.db, formationId),
-        depot.blocsImportes(base.db, formationId),
-      ])
-      const faits = await lireFaits(
-        base.db,
-        userId,
-        blocs.map(({ id, code }) => ({ id, code })),
-      )
-      const codes = new Map(blocs.map(({ id, code }) => [id, code]))
+      const codes = new Map(lignes.map(({ id, code }) => [id, code]))
       const [corrections, avis, revuesCartes, temps, derniereRevue, couts, jour] =
         await Promise.all([
           depot.correctionsRendues(base.db, userId),
@@ -254,7 +236,7 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
           depot.tempsActif(
             base.db,
             userId,
-            blocs.map(({ id }) => id),
+            lignes.map(({ id }) => id),
           ),
           depot.derniereRevueDeLaMethode(base.db, userId),
           depot.coutsDepuis(
@@ -265,10 +247,10 @@ export function creerServiceSuivi({ base, depot, horloge, aujourdhui }: Dependan
           aujourdhui(userId),
         ])
       return composerTableau({
-        modules: modules.map(({ code, titre }) => ({ id: code, titre })),
+        modules,
         module: requete.module,
         periode: requete.periode,
-        blocs: blocsImportes(modules, blocs),
+        blocs,
         faits,
         reglages,
         maintenant,

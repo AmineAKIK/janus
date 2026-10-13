@@ -1,4 +1,5 @@
-import { createHash, randomBytes } from 'node:crypto'
+import { randomBytes } from 'node:crypto'
+import { sha256Hex } from '../../base/empreinte.ts'
 import bcrypt from 'bcrypt'
 
 /** Le coût de bcrypt (décision de l'architecture). */
@@ -27,7 +28,7 @@ export function nouveauJeton(): string {
 
 /** Ce qu'on garde du jeton en base : son SHA-256. */
 export function empreinteDuJeton(jeton: string): string {
-  return createHash('sha256').update(jeton).digest('hex')
+  return sha256Hex(jeton)
 }
 
 const SYSTEMES: readonly (readonly [RegExp, string])[] = [

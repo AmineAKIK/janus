@@ -1,6 +1,6 @@
-import { createHash } from 'node:crypto'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { sha256Hex } from '../../base/empreinte.ts'
 
 /** Au-delà de ce poids de médias `data:` dans une fiche, les sons sortent dans des fichiers à côté. */
 export const SEUIL_MEDIAS_OCTETS = 2 * 1024 * 1024
@@ -9,7 +9,7 @@ export const SEUIL_MEDIAS_OCTETS = 2 * 1024 * 1024
 const IDENTIFIANTS_MANIFESTE = new Set(['bloc-manifest', 'manifeste'])
 
 export function empreinteDuTexte(contenu: string | Uint8Array): string {
-  return createHash('sha256').update(contenu).digest('hex')
+  return sha256Hex(contenu)
 }
 
 /** Le texte JSON du manifeste d'une fiche : `<script type="application/json" id="bloc-manifest">`. */

@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto'
 import { CorrectionRecue, Manifeste, Reglages, TypeVerification, nouvelId } from '@janus/contrats'
 import type { NoteCarte } from '@janus/contrats'
 import {
@@ -13,9 +12,10 @@ import {
   jourDe,
   validiteVerification,
 } from '@janus/moteur'
-import { z } from 'zod'
 import type { Base } from '../../base/base.ts'
-import { maintenantDeLaFormation, maintenantDuBloc } from '../../base/axeTemps.ts'
+import { empreinteJson } from '../../base/empreinte.ts'
+import { SerieGardee } from '../../base/serieGardee.ts'
+import { maintenantDeLaFormation, sousVerrouDuBloc } from '../../base/axeTemps.ts'
 import { formationActiveDe } from '../../base/formationActive.ts'
 import { lireFaits } from '../../base/faits.ts'
 import { verrouBloc } from '../../base/transaction.ts'
@@ -47,17 +47,11 @@ import {
   tirerParties,
 } from './verification.ts'
 
-const SerieGardee = z.array(z.strictObject({ bloc: z.string(), question: z.string() }))
-
 export interface DependancesService {
   readonly corrigerPartie: CorrigerPartie
   readonly base: Base
   readonly depot: DepotRevisions
   readonly horloge: Horloge
-}
-
-function empreinte(contenu: unknown): string {
-  return createHash('sha256').update(JSON.stringify(contenu)).digest('hex')
 }
 
 export function creerServiceRevisions({
@@ -283,8 +277,7 @@ export function creerServiceRevisions({
       }
 
       return base.enTransaction(async (tx) => {
-        await verrouBloc(tx, userId, bloc.id)
-        const maintenant = await maintenantDuBloc(tx, horloge, userId, bloc.id)
+        const maintenant = await sousVerrouDuBloc(tx, horloge, userId, bloc.id)
         const donnees = {
           verification: id,
           partie: corps.partie,
@@ -300,7 +293,7 @@ export function creerServiceRevisions({
           ficheVersionId: bloc.versionId,
           type: 'verification_partie',
           donnees,
-          empreinte: empreinte(donnees),
+          empreinte: empreinteJson(donnees),
           dateServeur: maintenant,
         })
         const apresCoup = lues(await depot.evenementsDeVerification(tx, userId, id))
@@ -332,7 +325,7 @@ export function creerServiceRevisions({
           ficheVersionId: bloc.versionId,
           type: 'verification_terminee',
           donnees: fait,
-          empreinte: empreinte(fait),
+          empreinte: empreinteJson(fait),
           dateServeur: maintenant,
         })
         const apres = await recalculer(tx, {
@@ -361,7 +354,7 @@ export function creerServiceRevisions({
           ficheVersionId: bloc.versionId,
           type: 'verification_resultat',
           donnees: gardee,
-          empreinte: empreinte(gardee),
+          empreinte: empreinteJson(gardee),
           dateServeur: maintenant,
         })
         return rendre(resultat)
@@ -386,14 +379,14 @@ export function creerServiceRevisions({
           ficheVersionId: bloc.versionId,
           type: 'verification_reportee',
           donnees,
-          empreinte: empreinte(donnees),
+          empreinte: empreinteJson(donnees),
           dateServeur: maintenant,
         })
         if (ajoute) return { due_le: demain }
         const gardee = await depot.evenementParId(tx, userId, evenementId)
         const jusqua = EvenementReport.safeParse(gardee?.donnees)
         if (!jusqua.success) {
-          throw new ContenuDifferent('Cet identifiant a déjà servi pour un autre contenu.')
+          throw new ContenuDifferent()
         }
         return { due_le: jusqua.data.jusqua }
       })
@@ -487,8 +480,7 @@ export function creerServiceRevisions({
       if (trouvee === undefined) throw new Introuvable(`La carte « ${idCarte} » n'existe pas.`)
       const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
       return base.enTransaction(async (tx) => {
-        await verrouBloc(tx, userId, trouvee.blocId)
-        const maintenant = await maintenantDuBloc(tx, horloge, userId, trouvee.blocId)
+        const maintenant = await sousVerrouDuBloc(tx, horloge, userId, trouvee.blocId)
         const brut = await depot.revueDe(tx, userId, trouvee.id)
         const avant = brut === undefined ? null : EtatGarde.parse(brut)
         if (avant !== null && (await depot.noteParId(tx, userId, noteId)) !== undefined) {

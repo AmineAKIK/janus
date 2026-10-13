@@ -1,8 +1,10 @@
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
+import { Manifeste } from '@janus/contrats'
+import demo from '@janus/contrats/fixtures/manifeste-demo.json'
 import { describe, expect, it } from 'vitest'
 import { coutMillioniemes } from './cout.ts'
-import { ErreurCorrecteur } from './correcteur.ts'
+import { ErreurCorrecteur, requeteDe } from './correcteur.ts'
 import type { RequeteCorrection } from './correcteur.ts'
 import { creerDeepseek } from './deepseek.ts'
 import type { ReglagesDeepseek } from './deepseek.ts'
@@ -237,5 +239,36 @@ describe('creerFaux', () => {
     await expect(faux.corriger(REQUETE)).rejects.toBeInstanceOf(ErreurCorrecteur)
     expect((await faux.corriger(REQUETE)).modele).toBe('faux')
     expect(faux.requetes).toHaveLength(3)
+  })
+})
+
+describe('requeteDe', () => {
+  it('met en forme le manifeste, la question et la saisie, au premier essai', () => {
+    const manifeste = Manifeste.parse(demo)
+    const [question] = manifeste.restitution
+    if (question === undefined) throw new Error('Le manifeste de démo n’a pas de restitution.')
+    const historique = [{ reponse: 'Premier jet', message: 'Reprends le cours.' }]
+
+    const requete = requeteDe(manifeste, question, {
+      confiance: 'hesitant',
+      reponse: 'Ma réponse',
+      historique,
+    })
+
+    expect(requete).toEqual({
+      titre: manifeste.titre,
+      contexteIa: manifeste.contexte_ia,
+      sources: manifeste.sources.map(({ id, titre }) => ({ id, ref: titre })),
+      erreursCritiques: manifeste.erreurs_critiques.map(({ id, libelle }) => ({
+        id,
+        texte: libelle,
+      })),
+      question: question.question,
+      attendu: question.attendu,
+      confiance: 'hesitant',
+      reponse: 'Ma réponse',
+      historique,
+      strict: false,
+    })
   })
 })

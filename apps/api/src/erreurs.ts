@@ -19,6 +19,10 @@ export class Introuvable extends ErreurMetier {
   readonly code = 'introuvable'
   readonly titre = 'Introuvable'
 }
+/** « Le bloc « B02 » n'existe pas. » : la formule de presque tous les 404 d'une ressource. */
+export function introuvable(quoi: string): Introuvable {
+  return new Introuvable(`${quoi} n'existe pas.`)
+}
 export class Conflit extends ErreurMetier {
   readonly status = 409
   readonly code = 'conflit'
@@ -28,6 +32,9 @@ export class ContenuDifferent extends ErreurMetier {
   readonly status = 422
   readonly code = 'contenu_different'
   readonly titre = 'Contenu différent'
+  constructor(message = 'Cet identifiant a déjà servi pour un autre contenu.') {
+    super(message)
+  }
 }
 export class BudgetAtteint extends ErreurMetier {
   readonly status = 429
