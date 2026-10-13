@@ -1,5 +1,12 @@
-import { and, desc, eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { instantIso } from '../../base/instant.ts'
+import {
+  ajouterSiAbsent,
+  blocUnique,
+  empreinteDeLEvenement,
+  reglagesDe,
+  versionEnService,
+} from '../../base/requetes.ts'
 import * as t from '../../base/schema/index.ts'
 import type { Db, Tx } from '../../base/transaction.ts'
 
@@ -43,18 +50,9 @@ export function creerDepotEvenements() {
   return {
     /** Le bloc de ce code, la version de fiche demandée (la dernière si aucune) et le manifeste en service. */
     blocEtVersions: async (lecteur: Db | Tx, code: string, version: number | undefined) => {
-      const blocs = await lecteur
-        .select({ id: t.blocs.id, code: t.blocs.code })
-        .from(t.blocs)
-        .where(eq(t.blocs.code, code))
-      const [bloc] = blocs
-      if (bloc === undefined || blocs.length > 1) return undefined
-      const [enService] = await lecteur
-        .select({ id: t.fichesVersions.id, manifeste: t.fichesVersions.manifeste })
-        .from(t.fichesVersions)
-        .where(eq(t.fichesVersions.blocId, bloc.id))
-        .orderBy(desc(t.fichesVersions.version))
-        .limit(1)
+      const bloc = await blocUnique(lecteur, code)
+      if (bloc === undefined) return undefined
+      const enService = await versionEnService(lecteur, bloc.id)
       if (enService === undefined) return undefined
       if (version === undefined)
         return { bloc, versionDemandee: enService.id, manifeste: enService.manifeste }
@@ -65,44 +63,19 @@ export function creerDepotEvenements() {
       return { bloc, versionDemandee: demandee?.id, manifeste: enService.manifeste }
     },
 
-    blocParCode: async (lecteur: Db | Tx, code: string) => {
-      const blocs = await lecteur
-        .select({ id: t.blocs.id, code: t.blocs.code })
-        .from(t.blocs)
-        .where(eq(t.blocs.code, code))
-      const [bloc] = blocs
-      return blocs.length === 1 ? bloc : undefined
-    },
+    blocParCode: blocUnique,
 
-    reglagesDe: async (lecteur: Db | Tx, userId: string): Promise<unknown> => {
-      const [ligne] = await lecteur
-        .select({ reglages: t.users.reglages })
-        .from(t.users)
-        .where(eq(t.users.id, userId))
-      return ligne?.reglages
-    },
+    reglagesDe,
 
-    evenementParId: async (lecteur: Db | Tx, id: string) => {
-      const [ligne] = await lecteur
-        .select({ userId: t.evenements.userId, empreinte: t.evenements.empreinte })
-        .from(t.evenements)
-        .where(eq(t.evenements.id, id))
-      return ligne
-    },
+    evenementParId: empreinteDeLEvenement,
 
     /**
      * Ajoute l'événement ; rend faux si l'identifiant existait déjà. Le verrou est par bloc : deux
      * blocs peuvent poster le même identifiant en même temps, et la base tranche (sans erreur qui
      * ferait avorter la transaction).
      */
-    ajouterEvenement: async (tx: Tx, evenement: Evenement): Promise<boolean> => {
-      const inseres = await tx
-        .insert(t.evenements)
-        .values(evenement)
-        .onConflictDoNothing({ target: t.evenements.id })
-        .returning({ id: t.evenements.id })
-      return inseres.length > 0
-    },
+    ajouterEvenement: (tx: Tx, evenement: Evenement): Promise<boolean> =>
+      ajouterSiAbsent(tx, t.evenements, evenement, t.evenements.id),
 
     ajouterDecisions: async (tx: Tx, decisions: readonly DecisionErreur[]): Promise<void> => {
       if (decisions.length > 0) await tx.insert(t.decisionsErreurs).values([...decisions])

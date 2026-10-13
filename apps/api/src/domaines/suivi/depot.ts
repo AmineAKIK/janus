@@ -1,19 +1,49 @@
-import { and, asc, desc, eq, gt, inArray, isNotNull, max } from 'drizzle-orm'
-import { deLaFormation } from '../../base/formationActive.ts'
+import { and, asc, desc, eq, inArray, isNotNull, max } from 'drizzle-orm'
+import type { AnyPgColumn, PgTable } from 'drizzle-orm/pg-core'
 import { instantIso } from '../../base/instant.ts'
+import {
+  ajouterSiAbsent,
+  appelsDuCorrecteurDepuis,
+  avisDAmine,
+  moduleImporte,
+  reglagesDe,
+  uneParBloc,
+} from '../../base/requetes.ts'
 import * as t from '../../base/schema/index.ts'
 import type { Db, Tx } from '../../base/transaction.ts'
+
+const colonnesIdee = {
+  id: t.idees.id,
+  date: instantIso(t.idees.dateServeur),
+  texte: t.idees.texte,
+}
+
+/** Les tables dont chaque ligne appartient à l'utilisateur, sous le nom qu'elles prennent dans l'export. */
+const TABLES_DE_L_EXPORT: Readonly<Record<string, PgTable & { readonly userId: AnyPgColumn }>> = {
+  evenements: t.evenements,
+  corrections: t.corrections,
+  corrections_echecs: t.correctionsEchecs,
+  statuts_forces: t.statutsForces,
+  decisions_erreurs: t.decisionsErreurs,
+  notes_journal: t.notesJournal,
+  idees: t.idees,
+  revues_methode: t.revuesMethode,
+  notes_cartes: t.notesCartes,
+  verifications_tirees: t.verificationsTirees,
+  series_questions_debut: t.seriesQuestionsDebut,
+  rappels_envoyes: t.rappelsEnvoyes,
+  statuts_courants: t.statutsCourants,
+  echeances: t.echeances,
+  revues_fsrs: t.revuesFsrs,
+  pauses_formation: t.pausesFormation,
+  budget_ia: t.budgetIa,
+  etats_page: t.etatsPage,
+}
 
 /** Les ordres SQL du suivi : le plan importé, et les mesures que le tableau de bord rassemble. */
 export function creerDepotSuivi() {
   return {
-    reglagesDe: async (lecteur: Db | Tx, userId: string): Promise<unknown> => {
-      const [ligne] = await lecteur
-        .select({ reglages: t.users.reglages })
-        .from(t.users)
-        .where(eq(t.users.id, userId))
-      return ligne?.reglages
-    },
+    reglagesDe,
 
     /**
      * Tout ce qui appartient à l'utilisateur, table par table. Ni le hash du mot de passe, ni les
@@ -30,69 +60,11 @@ export function creerDepotSuivi() {
         })
         .from(t.users)
         .where(eq(t.users.id, userId))
-      return {
-        users: compte === undefined ? [] : [compte],
-        evenements: await lecteur
-          .select()
-          .from(t.evenements)
-          .where(eq(t.evenements.userId, userId)),
-        corrections: await lecteur
-          .select()
-          .from(t.corrections)
-          .where(eq(t.corrections.userId, userId)),
-        corrections_echecs: await lecteur
-          .select()
-          .from(t.correctionsEchecs)
-          .where(eq(t.correctionsEchecs.userId, userId)),
-        statuts_forces: await lecteur
-          .select()
-          .from(t.statutsForces)
-          .where(eq(t.statutsForces.userId, userId)),
-        decisions_erreurs: await lecteur
-          .select()
-          .from(t.decisionsErreurs)
-          .where(eq(t.decisionsErreurs.userId, userId)),
-        notes_journal: await lecteur
-          .select()
-          .from(t.notesJournal)
-          .where(eq(t.notesJournal.userId, userId)),
-        idees: await lecteur.select().from(t.idees).where(eq(t.idees.userId, userId)),
-        revues_methode: await lecteur
-          .select()
-          .from(t.revuesMethode)
-          .where(eq(t.revuesMethode.userId, userId)),
-        notes_cartes: await lecteur
-          .select()
-          .from(t.notesCartes)
-          .where(eq(t.notesCartes.userId, userId)),
-        verifications_tirees: await lecteur
-          .select()
-          .from(t.verificationsTirees)
-          .where(eq(t.verificationsTirees.userId, userId)),
-        series_questions_debut: await lecteur
-          .select()
-          .from(t.seriesQuestionsDebut)
-          .where(eq(t.seriesQuestionsDebut.userId, userId)),
-        rappels_envoyes: await lecteur
-          .select()
-          .from(t.rappelsEnvoyes)
-          .where(eq(t.rappelsEnvoyes.userId, userId)),
-        statuts_courants: await lecteur
-          .select()
-          .from(t.statutsCourants)
-          .where(eq(t.statutsCourants.userId, userId)),
-        echeances: await lecteur.select().from(t.echeances).where(eq(t.echeances.userId, userId)),
-        revues_fsrs: await lecteur
-          .select()
-          .from(t.revuesFsrs)
-          .where(eq(t.revuesFsrs.userId, userId)),
-        pauses_formation: await lecteur
-          .select()
-          .from(t.pausesFormation)
-          .where(eq(t.pausesFormation.userId, userId)),
-        budget_ia: await lecteur.select().from(t.budgetIa).where(eq(t.budgetIa.userId, userId)),
-        etats_page: await lecteur.select().from(t.etatsPage).where(eq(t.etatsPage.userId, userId)),
+      const donnees: Record<string, unknown[]> = { users: compte === undefined ? [] : [compte] }
+      for (const [nom, table] of Object.entries(TABLES_DE_L_EXPORT)) {
+        donnees[nom] = await lecteur.select().from(table).where(eq(table.userId, userId))
       }
+      return donnees
     },
 
     /** Les modules importés, dans l'ordre du plan. */
@@ -100,7 +72,7 @@ export function creerDepotSuivi() {
       lecteur
         .select({ id: t.modules.id, code: t.modules.code, titre: t.modules.titre })
         .from(t.modules)
-        .where(and(eq(t.modules.importe, true), deLaFormation(formationId)))
+        .where(moduleImporte(formationId))
         .orderBy(asc(t.modules.ordre)),
 
     /** Les blocs des modules importés (ordre du plan), avec leur partie et le manifeste en service. */
@@ -118,25 +90,20 @@ export function creerDepotSuivi() {
         .innerJoin(t.modules, eq(t.modules.id, t.blocs.moduleId))
         .leftJoin(t.parties, eq(t.parties.id, t.blocs.partieId))
         .innerJoin(t.fichesVersions, eq(t.fichesVersions.blocId, t.blocs.id))
-        .where(and(eq(t.modules.importe, true), deLaFormation(formationId)))
+        .where(moduleImporte(formationId))
         .orderBy(
           asc(t.modules.ordre),
           asc(t.parties.ordre),
           asc(t.blocs.ordre),
           desc(t.fichesVersions.version),
         )
-      const vus = new Set<string>()
-      return lignes.filter(({ id }) => (vus.has(id) ? false : (vus.add(id), true)))
+      return uneParBloc(lignes)
     },
 
     /** Les idées de « À explorer plus tard », dans l'ordre où elles sont arrivées. */
     idees: (lecteur: Db | Tx, userId: string) =>
       lecteur
-        .select({
-          id: t.idees.id,
-          date: instantIso(t.idees.dateServeur),
-          texte: t.idees.texte,
-        })
+        .select(colonnesIdee)
         .from(t.idees)
         .where(eq(t.idees.userId, userId))
         .orderBy(asc(t.idees.dateServeur), asc(t.idees.id)),
@@ -191,38 +158,24 @@ export function creerDepotSuivi() {
     },
 
     /** Ajoute une idée ; `false` si cet identifiant était déjà là. */
-    ajouterIdee: async (
+    ajouterIdee: (
       tx: Tx,
       o: { id: string; userId: string; texte: string; dateServeur: string },
-    ): Promise<boolean> => {
-      const ajoutees = await tx
-        .insert(t.idees)
-        .values(o)
-        .onConflictDoNothing()
-        .returning({ id: t.idees.id })
-      return ajoutees.length > 0
-    },
+    ): Promise<boolean> => ajouterSiAbsent(tx, t.idees, o),
 
     ideeParId: async (lecteur: Db | Tx, userId: string, id: string) => {
       const [ligne] = await lecteur
-        .select({ id: t.idees.id, date: instantIso(t.idees.dateServeur), texte: t.idees.texte })
+        .select(colonnesIdee)
         .from(t.idees)
         .where(and(eq(t.idees.id, id), eq(t.idees.userId, userId)))
       return ligne
     },
 
     /** Rend faux si l'identifiant existait déjà. */
-    ajouterRevueDeLaMethode: async (
+    ajouterRevueDeLaMethode: (
       tx: Tx,
       o: { id: string; userId: string; texte: string | null; dateServeur: string },
-    ): Promise<boolean> => {
-      const ajoutees = await tx
-        .insert(t.revuesMethode)
-        .values(o)
-        .onConflictDoNothing()
-        .returning({ id: t.revuesMethode.id })
-      return ajoutees.length > 0
-    },
+    ): Promise<boolean> => ajouterSiAbsent(tx, t.revuesMethode, o),
 
     revueParId: async (lecteur: Db | Tx, id: string) => {
       const [ligne] = await lecteur
@@ -249,13 +202,7 @@ export function creerDepotSuivi() {
         .select({ intitule: t.tachesReservees.intitule })
         .from(t.tachesReservees)
         .innerJoin(t.modules, eq(t.modules.id, t.tachesReservees.moduleId))
-        .where(
-          and(
-            eq(t.modules.importe, true),
-            eq(t.tachesReservees.active, true),
-            deLaFormation(formationId),
-          ),
-        )
+        .where(and(moduleImporte(formationId), eq(t.tachesReservees.active, true)))
         .orderBy(asc(t.modules.ordre), asc(t.tachesReservees.id))
       return lignes.map(({ intitule }) => intitule)
     },
@@ -277,7 +224,7 @@ export function creerDepotSuivi() {
       lecteur
         .select({ donnees: t.evenements.donnees })
         .from(t.evenements)
-        .where(and(eq(t.evenements.userId, userId), eq(t.evenements.type, 'correction.accord')))
+        .where(avisDAmine(userId))
         .orderBy(asc(t.evenements.dateServeur), asc(t.evenements.id)),
 
     notesDeCartes: (lecteur: Db | Tx, userId: string) =>
@@ -322,16 +269,14 @@ export function creerDepotSuivi() {
           millioniemes: t.corrections.coutMillioniemes,
         })
         .from(t.corrections)
-        .where(and(eq(t.corrections.userId, userId), gt(t.corrections.dateServeur, depuis)))
+        .where(appelsDuCorrecteurDepuis(t.corrections, userId, depuis))
       const echecs = await lecteur
         .select({
           date: instantIso(t.correctionsEchecs.dateServeur),
           millioniemes: t.correctionsEchecs.coutMillioniemes,
         })
         .from(t.correctionsEchecs)
-        .where(
-          and(eq(t.correctionsEchecs.userId, userId), gt(t.correctionsEchecs.dateServeur, depuis)),
-        )
+        .where(appelsDuCorrecteurDepuis(t.correctionsEchecs, userId, depuis))
       return [...gardees, ...echecs]
     },
   }

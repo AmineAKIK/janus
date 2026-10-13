@@ -1,6 +1,13 @@
 import { and, asc, desc, eq, gte, inArray, sql } from 'drizzle-orm'
-import { deLaFormation } from '../../base/formationActive.ts'
 import { instantIso } from '../../base/instant.ts'
+import {
+  ajouterSiAbsent,
+  deLUtilisateurSurLesBlocs,
+  moduleImporte,
+  reglagesDe,
+  serieDuJour,
+  uneParBloc,
+} from '../../base/requetes.ts'
 import * as t from '../../base/schema/index.ts'
 import type { Db, Tx } from '../../base/transaction.ts'
 import { VERSION_MOTEUR } from '../../recalcul.ts'
@@ -13,13 +20,7 @@ export interface QuestionTiree {
 /** Les ordres SQL de la séance du jour. */
 export function creerDepotRevisions() {
   return {
-    reglagesDe: async (lecteur: Db | Tx, userId: string): Promise<unknown> => {
-      const [ligne] = await lecteur
-        .select({ reglages: t.users.reglages })
-        .from(t.users)
-        .where(eq(t.users.id, userId))
-      return ligne?.reglages
-    },
+    reglagesDe,
 
     /** Les blocs des modules importés, dans l'ordre du plan, avec le manifeste en service. */
     blocsDuPlan: async (lecteur: Db | Tx, formationId: string | null) => {
@@ -37,11 +38,10 @@ export function creerDepotRevisions() {
         .from(t.blocs)
         .innerJoin(t.modules, eq(t.modules.id, t.blocs.moduleId))
         .innerJoin(t.fichesVersions, eq(t.fichesVersions.blocId, t.blocs.id))
-        .where(and(eq(t.modules.importe, true), deLaFormation(formationId)))
+        .where(moduleImporte(formationId))
         .orderBy(asc(t.modules.ordre), asc(t.blocs.ordre), desc(t.fichesVersions.version))
       // Une ligne par version : la plus récente vient en premier pour chaque bloc.
-      const vus = new Set<string>()
-      return lignes.filter(({ id }) => (vus.has(id) ? false : (vus.add(id), true)))
+      return uneParBloc(lignes)
     },
 
     /** Les reports en vigueur : ceux des vérifications qui n'ont pas encore de résultat. */
@@ -137,7 +137,7 @@ export function creerDepotRevisions() {
         .orderBy(asc(t.evenements.dateServeur), asc(t.evenements.id)),
 
     /** Ajoute un événement ; `false` si cet identifiant était déjà là. */
-    ajouterEvenement: async (
+    ajouterEvenement: (
       tx: Tx,
       o: {
         id: string
@@ -149,14 +149,7 @@ export function creerDepotRevisions() {
         empreinte: string
         dateServeur: string
       },
-    ): Promise<boolean> => {
-      const ajoutes = await tx
-        .insert(t.evenements)
-        .values({ ...o, aide: null })
-        .onConflictDoNothing()
-        .returning({ id: t.evenements.id })
-      return ajoutes.length > 0
-    },
+    ): Promise<boolean> => ajouterSiAbsent(tx, t.evenements, { ...o, aide: null }),
 
     evenementParId: async (lecteur: Db | Tx, userId: string, id: string) => {
       const [ligne] = await lecteur
@@ -180,9 +173,7 @@ export function creerDepotRevisions() {
         .from(t.cartes)
         .innerJoin(t.blocs, eq(t.blocs.id, t.cartes.blocId))
         .innerJoin(t.modules, eq(t.modules.id, t.blocs.moduleId))
-        .where(
-          and(eq(t.cartes.active, true), eq(t.modules.importe, true), deLaFormation(formationId)),
-        )
+        .where(and(eq(t.cartes.active, true), moduleImporte(formationId)))
         .orderBy(asc(t.modules.ordre), asc(t.blocs.ordre), asc(t.cartes.carteId)),
 
     /** Les états gardés des cartes de cet utilisateur. */
@@ -249,16 +240,7 @@ export function creerDepotRevisions() {
       await tx.insert(t.notesCartes).values(o)
     },
 
-    /** La série tirée pour ce jour, si elle l'a déjà été. */
-    serieDuJour: async (lecteur: Db | Tx, userId: string, jour: string): Promise<unknown> => {
-      const [ligne] = await lecteur
-        .select({ questions: t.seriesQuestionsDebut.questions })
-        .from(t.seriesQuestionsDebut)
-        .where(
-          and(eq(t.seriesQuestionsDebut.userId, userId), eq(t.seriesQuestionsDebut.jour, jour)),
-        )
-      return ligne?.questions
-    },
+    serieDuJour,
 
     /** Garde la série du jour : si une autre requête l'a gardée avant, la sienne est conservée. */
     garderSerie: async (
@@ -303,9 +285,8 @@ export function creerDepotRevisions() {
             .from(t.corrections)
             .where(
               and(
-                eq(t.corrections.userId, userId),
+                deLUtilisateurSurLesBlocs(t.corrections, userId, blocIds),
                 eq(t.corrections.serie, 'rappel'),
-                inArray(t.corrections.blocId, [...blocIds]),
               ),
             )
             .orderBy(asc(t.corrections.dateServeur), asc(t.corrections.tour)),

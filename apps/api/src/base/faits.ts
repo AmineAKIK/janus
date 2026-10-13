@@ -1,7 +1,7 @@
 import { Fait } from '@janus/contrats'
-import { and, eq, inArray } from 'drizzle-orm'
 import * as t from './schema/index.ts'
 import { instantIso } from './instant.ts'
+import { deLUtilisateurSurLesBlocs } from './requetes.ts'
 import type { Db, Tx } from './transaction.ts'
 
 /** Les types de fait que `evenements` garde : le reste vit dans sa table (corrections, forçages, décisions). */
@@ -45,7 +45,7 @@ export async function lireFaits(
         date: instantIso(t.evenements.dateServeur),
       })
       .from(t.evenements)
-      .where(and(eq(t.evenements.userId, userId), inArray(t.evenements.blocId, ids))),
+      .where(deLUtilisateurSurLesBlocs(t.evenements, userId, ids)),
     lecteur
       .select({
         id: t.corrections.id,
@@ -61,7 +61,7 @@ export async function lireFaits(
         date: instantIso(t.corrections.dateServeur),
       })
       .from(t.corrections)
-      .where(and(eq(t.corrections.userId, userId), inArray(t.corrections.blocId, ids))),
+      .where(deLUtilisateurSurLesBlocs(t.corrections, userId, ids)),
     lecteur
       .select({
         id: t.statutsForces.id,
@@ -72,7 +72,7 @@ export async function lireFaits(
         date: instantIso(t.statutsForces.dateServeur),
       })
       .from(t.statutsForces)
-      .where(and(eq(t.statutsForces.userId, userId), inArray(t.statutsForces.blocId, ids))),
+      .where(deLUtilisateurSurLesBlocs(t.statutsForces, userId, ids)),
     lecteur
       .select({
         id: t.decisionsErreurs.id,
@@ -84,7 +84,7 @@ export async function lireFaits(
         date: instantIso(t.decisionsErreurs.dateServeur),
       })
       .from(t.decisionsErreurs)
-      .where(and(eq(t.decisionsErreurs.userId, userId), inArray(t.decisionsErreurs.blocId, ids))),
+      .where(deLUtilisateurSurLesBlocs(t.decisionsErreurs, userId, ids)),
   ])
 
   const faits: unknown[] = []

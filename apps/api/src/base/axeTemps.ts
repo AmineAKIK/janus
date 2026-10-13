@@ -4,6 +4,7 @@ import { and, eq, isNull, sql } from 'drizzle-orm'
 import type { Horloge } from '../horloge.ts'
 import { formationActiveDe } from './formationActive.ts'
 import { instantIso } from './instant.ts'
+import { reglagesDe } from './requetes.ts'
 import * as t from './schema/index.ts'
 import type { Db, Tx } from './transaction.ts'
 
@@ -72,11 +73,8 @@ export async function maintenantActif(
   horloge: Horloge,
   userId: string,
 ): Promise<string> {
-  const [ligne] = await lecteur
-    .select({ reglages: t.users.reglages })
-    .from(t.users)
-    .where(eq(t.users.id, userId))
-  const choisie = ligne === undefined ? null : Reglages.parse(ligne.reglages).formationActive
+  const brut = await reglagesDe(lecteur, userId)
+  const choisie = brut === undefined ? null : Reglages.parse(brut).formationActive
   return maintenantDeLaFormation(
     lecteur,
     horloge,

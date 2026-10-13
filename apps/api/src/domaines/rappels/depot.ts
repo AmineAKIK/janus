@@ -1,4 +1,5 @@
 import { and, eq, exists } from 'drizzle-orm'
+import { ajouterSiAbsent } from '../../base/requetes.ts'
 import * as t from '../../base/schema/index.ts'
 import type { Db, Tx } from '../../base/transaction.ts'
 
@@ -82,17 +83,10 @@ export function creerDepotRappels() {
     },
 
     /** Réserve le rappel du jour avant l'envoi : faux si un autre passage l'a déjà réservé. */
-    reserver: async (
+    reserver: (
       lecteur: Db | Tx,
       rappel: { id: string; userId: string; jour: string; envoyeLe: string },
-    ): Promise<boolean> => {
-      const lignes = await lecteur
-        .insert(t.rappelsEnvoyes)
-        .values(rappel)
-        .onConflictDoNothing()
-        .returning({ id: t.rappelsEnvoyes.id })
-      return lignes.length > 0
-    },
+    ): Promise<boolean> => ajouterSiAbsent(lecteur, t.rappelsEnvoyes, rappel),
   }
 }
 export type DepotRappels = ReturnType<typeof creerDepotRappels>

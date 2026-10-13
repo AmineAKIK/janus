@@ -1,5 +1,13 @@
-import { and, asc, count, desc, eq, gt, sql } from 'drizzle-orm'
+import { and, asc, count, desc, eq, sql } from 'drizzle-orm'
 import { instantIso } from '../../base/instant.ts'
+import {
+  appelsDuCorrecteurDepuis,
+  avisDAmine,
+  empreinteDeLEvenement,
+  reglagesDe,
+  serieDuJour,
+  versionEnService,
+} from '../../base/requetes.ts'
 import * as t from '../../base/schema/index.ts'
 import type { Db, Tx } from '../../base/transaction.ts'
 
@@ -96,18 +104,21 @@ const colonnesCorrection = {
   dateServeur: instantIso(t.corrections.dateServeur),
 }
 
+/** Le bloc, la version de fiche et son manifeste : ce que le correcteur lit pour corriger. */
+const colonnesBlocEtVersion = {
+  blocId: t.blocs.id,
+  code: t.blocs.code,
+  versionId: t.fichesVersions.id,
+  manifeste: t.fichesVersions.manifeste,
+}
+
 /** Les ordres SQL des corrections et du budget IA. */
 export function creerDepotCorrection() {
   return {
     /** Le bloc de ce code, la version de fiche demandée (si elle existe) et son manifeste. */
     blocEtVersion: async (lecteur: Db | Tx, code: string, version: number) => {
       const [ligne] = await lecteur
-        .select({
-          blocId: t.blocs.id,
-          code: t.blocs.code,
-          versionId: t.fichesVersions.id,
-          manifeste: t.fichesVersions.manifeste,
-        })
+        .select(colonnesBlocEtVersion)
         .from(t.blocs)
         .innerJoin(t.fichesVersions, eq(t.fichesVersions.blocId, t.blocs.id))
         .where(and(eq(t.blocs.code, code), eq(t.fichesVersions.version, version)))
@@ -117,12 +128,7 @@ export function creerDepotCorrection() {
     /** Le bloc d'une vérification tirée pour cet utilisateur, avec sa dernière version de fiche. */
     blocDeLaVerification: async (lecteur: Db | Tx, userId: string, verificationId: string) => {
       const [ligne] = await lecteur
-        .select({
-          blocId: t.blocs.id,
-          code: t.blocs.code,
-          versionId: t.fichesVersions.id,
-          manifeste: t.fichesVersions.manifeste,
-        })
+        .select(colonnesBlocEtVersion)
         .from(t.verificationsTirees)
         .innerJoin(t.blocs, eq(t.blocs.id, t.verificationsTirees.blocId))
         .innerJoin(t.fichesVersions, eq(t.fichesVersions.blocId, t.blocs.id))
@@ -140,12 +146,7 @@ export function creerDepotCorrection() {
     /** La dernière version de fiche d'un bloc : celle d'un rappel, dont la page n'est pas ouverte. */
     derniereVersion: async (lecteur: Db | Tx, code: string) => {
       const [ligne] = await lecteur
-        .select({
-          blocId: t.blocs.id,
-          code: t.blocs.code,
-          versionId: t.fichesVersions.id,
-          manifeste: t.fichesVersions.manifeste,
-        })
+        .select(colonnesBlocEtVersion)
         .from(t.blocs)
         .innerJoin(t.fichesVersions, eq(t.fichesVersions.blocId, t.blocs.id))
         .where(eq(t.blocs.code, code))
@@ -154,24 +155,9 @@ export function creerDepotCorrection() {
       return ligne
     },
 
-    /** La série de questions de début de séance gardée pour ce jour, telle que stockée. */
-    serieDuJour: async (lecteur: Db | Tx, userId: string, jour: string): Promise<unknown> => {
-      const [ligne] = await lecteur
-        .select({ questions: t.seriesQuestionsDebut.questions })
-        .from(t.seriesQuestionsDebut)
-        .where(
-          and(eq(t.seriesQuestionsDebut.userId, userId), eq(t.seriesQuestionsDebut.jour, jour)),
-        )
-      return ligne?.questions
-    },
+    serieDuJour,
 
-    reglagesDe: async (lecteur: Db | Tx, userId: string): Promise<unknown> => {
-      const [ligne] = await lecteur
-        .select({ reglages: t.users.reglages })
-        .from(t.users)
-        .where(eq(t.users.id, userId))
-      return ligne?.reglages
-    },
+    reglagesDe,
 
     correctionParId: async (lecteur: Db | Tx, id: string): Promise<LigneCorrection | undefined> => {
       const [ligne] = await lecteur
@@ -210,13 +196,11 @@ export function creerDepotCorrection() {
       const [gardees] = await tx
         .select({ n: count() })
         .from(t.corrections)
-        .where(and(eq(t.corrections.userId, userId), gt(t.corrections.dateServeur, depuis)))
+        .where(appelsDuCorrecteurDepuis(t.corrections, userId, depuis))
       const [echecs] = await tx
         .select({ n: count() })
         .from(t.correctionsEchecs)
-        .where(
-          and(eq(t.correctionsEchecs.userId, userId), gt(t.correctionsEchecs.dateServeur, depuis)),
-        )
+        .where(appelsDuCorrecteurDepuis(t.correctionsEchecs, userId, depuis))
       return (gardees?.n ?? 0) + (echecs?.n ?? 0)
     },
 
@@ -303,11 +287,7 @@ export function creerDepotCorrection() {
         .select({ donnees: t.evenements.donnees })
         .from(t.evenements)
         .where(
-          and(
-            eq(t.evenements.userId, userId),
-            eq(t.evenements.type, 'correction.accord'),
-            sql`${t.evenements.donnees}->>'correction' = ${correctionId}`,
-          ),
+          and(avisDAmine(userId), sql`${t.evenements.donnees}->>'correction' = ${correctionId}`),
         )
         .orderBy(desc(t.evenements.dateServeur), desc(t.evenements.id))
         .limit(1)
@@ -315,13 +295,7 @@ export function creerDepotCorrection() {
       return typeof accord === 'boolean' ? accord : undefined
     },
 
-    evenementParId: async (lecteur: Db | Tx, id: string) => {
-      const [ligne] = await lecteur
-        .select({ userId: t.evenements.userId, empreinte: t.evenements.empreinte })
-        .from(t.evenements)
-        .where(eq(t.evenements.id, id))
-      return ligne
-    },
+    evenementParId: empreinteDeLEvenement,
 
     /** Une correction de cet utilisateur, avec son bloc et le manifeste en service. */
     correctionEtBloc: async (lecteur: Db | Tx, userId: string, id: string) => {
@@ -331,12 +305,7 @@ export function creerDepotCorrection() {
         .innerJoin(t.blocs, eq(t.blocs.id, t.corrections.blocId))
         .where(and(eq(t.corrections.id, id), eq(t.corrections.userId, userId)))
       if (ligne === undefined) return undefined
-      const [version] = await lecteur
-        .select({ id: t.fichesVersions.id, manifeste: t.fichesVersions.manifeste })
-        .from(t.fichesVersions)
-        .where(eq(t.fichesVersions.blocId, ligne.blocId))
-        .orderBy(desc(t.fichesVersions.version))
-        .limit(1)
+      const version = await versionEnService(lecteur, ligne.blocId)
       return version === undefined ? undefined : { ...ligne, version }
     },
   }
