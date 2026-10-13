@@ -1,20 +1,23 @@
-import { ROUTES } from '@janus/contrats'
-import { Bouton, ChoixConfiance, ZoneDeTexte } from '@janus/ui'
+import { ROUTES, TAILLE_MAX_REPONSE } from '@janus/contrats'
 import type { Confiance } from '@janus/contrats'
+import { Bouton, ChoixConfiance, ZoneDeTexte } from '@janus/ui'
 import { useId, useState } from 'react'
 import { useLecture } from '../api/requetes.tsx'
 import { Chargement, Erreur } from '../catalogue/EtatEcran.tsx'
+import { aller } from '../routes/navigation.ts'
+import { DialogueQuitterSeance } from '../seance/DialogueQuitterSeance.tsx'
+import { EnteteSeance } from '../seance/EnteteSeance.tsx'
+import { titreCourtDuBloc } from '../seance/etapeSuivante.ts'
+import seance from '../seance/Seance.module.css'
+import { useSaisieReponse } from '../seance/useSaisieReponse.ts'
 import { CorrectionAffichee } from './CorrectionAffichee.tsx'
-import { DialogueQuitter } from './DialogueQuitter.tsx'
 import { FinDeSerie } from './FinDeSerie.tsx'
 import styles from './Questions.module.css'
-import { TEXTES_QUESTIONS as T, texteRang } from './textes.ts'
+import { JE_NE_SAIS_PAS, TEXTES_QUESTIONS as T, texteRang, texteReprise } from './textes.ts'
 import { useSerie } from './useSerie.ts'
 import type { EtatQuestion } from './useSerie.ts'
 
-const MAX_REPONSE = 2000
 const SEUIL_COMPTEUR = 1800
-const JE_NE_SAIS_PAS = 'Je ne sais pas'
 
 function Saisie({
   etat,
@@ -26,19 +29,17 @@ function Saisie({
   readonly envoyer: (saisie: { confiance: Confiance; reponse: string; colle: boolean }) => void
 }) {
   const depart = etat.phase === 'saisie' || etat.phase === 'corrigee' ? null : etat
-  const [confiance, setConfiance] = useState<Confiance | null>(depart?.confiance ?? null)
-  const [reponse, setReponse] = useState(depart?.reponse ?? '')
-  const [colle, setColle] = useState(depart?.colle ?? false)
-  const peutCorriger = confiance !== null && reponse.trim() !== '' && !enAttente
+  const { confiance, setConfiance, reponse, colle, vide, champ } = useSaisieReponse(depart)
+  const peutCorriger = confiance !== null && !vide && !enAttente
   const idRaison = useId()
   // Ce qui manque quand le bouton est grisé ; rien tant que la correction est en cours.
   let raison: string | null = null
   if (!enAttente && confiance === null) raison = T.manqueConfiance
-  else if (!enAttente && reponse.trim() === '') raison = T.manqueReponse
+  else if (!enAttente && vide) raison = T.manqueReponse
 
   return (
     <form
-      className={styles['formulaire']}
+      className={seance['colonne']}
       onSubmit={(evenement) => {
         evenement.preventDefault()
         if (confiance !== null && peutCorriger) envoyer({ confiance, reponse, colle })
@@ -48,28 +49,21 @@ function Saisie({
       <ZoneDeTexte
         libelle={T.reponse}
         message={T.aide}
-        value={reponse}
-        maxLength={MAX_REPONSE}
-        {...(reponse.length > SEUIL_COMPTEUR ? { maxCaracteres: MAX_REPONSE } : {})}
+        {...champ}
+        {...(reponse.length > SEUIL_COMPTEUR ? { maxCaracteres: TAILLE_MAX_REPONSE } : {})}
         readOnly={enAttente}
-        onChange={(evenement) => {
-          setReponse(evenement.currentTarget.value)
-        }}
-        onPaste={() => {
-          setColle(true)
-        }}
       />
       {enAttente && (
-        <p role="status" className={`${styles['attente'] ?? ''} texte-petit-14`}>
+        <p role="status" className={`${seance['secondaire'] ?? ''} texte-petit-14`}>
           {T.attente}
         </p>
       )}
       {raison !== null && (
-        <p id={idRaison} className={`${styles['raison'] ?? ''} texte-petit-14`}>
+        <p id={idRaison} className={`${seance['secondaire'] ?? ''} texte-petit-14`}>
           {raison}
         </p>
       )}
-      <div className={styles['actions']}>
+      <div className={seance['actions']}>
         <Bouton
           type="submit"
           variante="principal"
@@ -119,10 +113,7 @@ export function PageQuestions() {
         etat.phase === 'corrigee' ? (
           <CorrectionAffichee
             etat={etat}
-            titreBloc={
-              aujourdhui.data?.module?.blocs.find(({ bloc }) => bloc === etat.bloc)?.titre_court ??
-              ''
-            }
+            titreBloc={titreCourtDuBloc(aujourdhui.data?.module?.blocs, etat.bloc ?? '')}
             dernier={serie.index === total - 1}
             surSuivante={serie.suivante}
             echange={{
@@ -173,34 +164,31 @@ export function PageQuestions() {
   }
 
   return (
-    <div className={styles['page']}>
-      <header className={styles['entete']}>
-        <button
-          type="button"
-          className={`${styles['quitter'] ?? ''} texte-petit-14`}
-          onClick={() => {
-            setQuitter(true)
-          }}
-        >
-          <span aria-hidden="true">×</span> {T.quitter}
-        </button>
-        <h1
-          tabIndex={-1}
-          aria-label={`${T.titre}${T.suiteDuTitre}`}
-          className={`${styles['titre'] ?? ''} texte-sous-titre-18`}
-        >
-          {T.titre}
-        </h1>
+    <div className={seance['page']}>
+      <EnteteSeance
+        titre={T.titre}
+        libelleTitre={`${T.titre}${T.suiteDuTitre}`}
+        centre
+        colonnes={styles['colonnes']}
+        surQuitter={() => {
+          setQuitter(true)
+        }}
+      >
         {total > 0 && (
-          <p className={`${styles['rang'] ?? ''} texte-petit-14`}>
+          <p className={`${seance['secondaire'] ?? ''} texte-petit-14`}>
             {texteRang(Math.min(serie.index + 1, total), total)}
           </p>
         )}
-      </header>
+      </EnteteSeance>
       {contenu}
       {quitter && (
-        <DialogueQuitter
-          rang={Math.min(serie.index + 1, Math.max(total, 1))}
+        <DialogueQuitterSeance
+          titre={T.dialogueTitre}
+          texte={texteReprise(Math.min(serie.index + 1, Math.max(total, 1)))}
+          libelleSortie={T.reprendrePlusTard}
+          surSortie={() => {
+            aller('/')
+          }}
           surContinuer={() => {
             setQuitter(false)
           }}

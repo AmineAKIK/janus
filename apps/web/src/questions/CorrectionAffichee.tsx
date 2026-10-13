@@ -1,7 +1,8 @@
 import { BadgeNeComptePas, Bouton, BulleCorrection, LIBELLES_NIVEAU, ZoneDeTexte } from '@janus/ui'
 import { useState } from 'react'
-import styles from './Questions.module.css'
+import seance from '../seance/Seance.module.css'
 import {
+  JE_NE_SAIS_PAS,
   TEXTES_QUESTIONS as T,
   texteNiveauEtConfiance,
   texteSource,
@@ -19,7 +20,7 @@ export function erreurEnEtantSur({ confiance, correction }: Corrigee): boolean {
 }
 
 function estJeNeSaisPas({ confiance, reponse }: Corrigee): boolean {
-  return confiance === 'hasard' && reponse === 'Je ne sais pas'
+  return confiance === 'hasard' && reponse === JE_NE_SAIS_PAS
 }
 
 export function niveauAffiche(etat: Corrigee): string {
@@ -54,9 +55,9 @@ function Relances({
   const restantes = MAX_RELANCES - (correction.tour - 1)
 
   return (
-    <div className={styles['relances']}>
+    <div>
       {correction.echantillon && !accordDonne && (
-        <div role="group" aria-label={T.accordQuestion} className={styles['accord']}>
+        <div role="group" aria-label={T.accordQuestion}>
           <p className="texte-petit-14">{T.accordQuestion}</p>
           {[true, false].map((accord) => (
             <Bouton
@@ -75,7 +76,7 @@ function Relances({
       )}
       {restantes > 0 ? (
         <>
-          <div className={styles['actions']}>
+          <div className={seance['actions']}>
             <Bouton
               type="button"
               variante="texte"
@@ -108,7 +109,7 @@ function Relances({
           )}
           {ouvert && (
             <form
-              className={styles['formulaire']}
+              className={seance['colonne']}
               onSubmit={(evenement) => {
                 evenement.preventDefault()
                 if (texte.trim() === '' || echange.enAttente) return
@@ -162,8 +163,8 @@ export function CorrectionAffichee({
   const { correction } = etat
   const nonVerifiee = correction.certitude === 'non_verifie'
   return (
-    <section className={styles['correction']}>
-      <p className={`${styles['niveau'] ?? ''} texte-petit-14`}>
+    <section className={seance['colonne']}>
+      <p className={`${seance['secondaire'] ?? ''} texte-petit-14`}>
         {texteNiveauEtConfiance(niveauAffiche(etat), etat.confiance)}
       </p>
       {estJeNeSaisPas(etat) && <p className="texte-corps-16">{T.tuAsChoisi}</p>}
@@ -180,12 +181,12 @@ export function CorrectionAffichee({
         <BadgeNeComptePas raison={correction.raison_non_compte} />
       )}
       {correction.ref !== '' && etat.bloc !== null && (
-        <p className={`${styles['meta'] ?? ''} texte-legende-12`}>
+        <p className={`${seance['secondaire'] ?? ''} texte-legende-12`}>
           {texteSource(etat.bloc, correction.ref)}
         </p>
       )}
       {etat.bloc !== null && (
-        <p className={`${styles['meta'] ?? ''} texte-legende-12`}>
+        <p className={`${seance['secondaire'] ?? ''} texte-legende-12`}>
           {texteVenaitDe(etat.bloc, titreBloc)}
         </p>
       )}

@@ -1,13 +1,14 @@
 import { Bouton, ChampTexte, ChoixConfiance, EditeurCode, ZoneDeTexte } from '@janus/ui'
 import type { Confiance } from '@janus/contrats'
 import { useState } from 'react'
+import seance from '../seance/Seance.module.css'
+import { useSaisieReponse } from '../seance/useSaisieReponse.ts'
 import { executerCode } from './executeur.ts'
 import type { ResultatExecution } from './executeur.ts'
 import { TEXTES_VERIFICATION as T, texteEssai } from './textes.ts'
 import styles from './Verification.module.css'
 import type { Partie, Saisie } from './useVerification.ts'
 
-const MAX_REPONSE = 2000
 const ESSAIS_MAX = 2
 /** La partie « tâche » n'a pas de choix de confiance à l'écran : le contrat en exige une. */
 const CONFIANCE_TACHE: Confiance = 'hesitant'
@@ -29,16 +30,13 @@ function Indisponible({ actif }: { readonly actif: boolean }) {
 
 /** Explication ou transfert : une confiance et une réponse libre ; aucune correction n'est montrée. */
 export function PartieTexte({ partie, enAttente, indisponible, envoyer }: Proprietes) {
-  const [confiance, setConfiance] = useState<Confiance | null>(null)
-  const [reponse, setReponse] = useState('')
-  const [colle, setColle] = useState(false)
+  const { confiance, setConfiance, reponse, colle, vide, champ } = useSaisieReponse()
   const [essaye, setEssaye] = useState(false)
-  const vide = reponse.trim() === ''
   const explication = partie.type === 'explication'
 
   return (
     <form
-      className={styles['formulaire']}
+      className={seance['colonne']}
       noValidate
       onSubmit={(evenement) => {
         evenement.preventDefault()
@@ -62,18 +60,11 @@ export function PartieTexte({ partie, enAttente, indisponible, envoyer }: Propri
         libelle={explication ? T.reponseLibre : T.ecrisIci}
         {...(explication && !(essaye && vide) ? { message: T.aideExplication } : {})}
         {...(essaye && vide ? { message: T.obligatoire, erreur: true } : {})}
-        value={reponse}
-        maxLength={MAX_REPONSE}
+        {...champ}
         readOnly={enAttente}
-        onChange={(evenement) => {
-          setReponse(evenement.currentTarget.value)
-        }}
-        onPaste={() => {
-          setColle(true)
-        }}
       />
       {colle && (
-        <p role="status" className={`${styles['secondaire'] ?? ''} texte-petit-14`}>
+        <p role="status" className={`${seance['secondaire'] ?? ''} texte-petit-14`}>
           {T.collage}
         </p>
       )}
@@ -141,7 +132,7 @@ export function PartieTache({ partie, enAttente, indisponible, envoyer }: Propri
   const erreur = essaye && texte.trim() === ''
   return (
     <form
-      className={styles['formulaire']}
+      className={seance['colonne']}
       noValidate
       onSubmit={(evenement) => {
         evenement.preventDefault()

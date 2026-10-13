@@ -4,7 +4,6 @@ import { accorder } from '../catalogue/calculs.ts'
 export const TEXTES_REVISION = {
   titre: 'Révision',
   progression: 'Progression',
-  quitter: 'Quitter',
   voirReponse: 'Voir la réponse',
   nouvelle: 'Nouvelle',
   annuler: 'Annuler',
@@ -16,10 +15,8 @@ export const TEXTES_REVISION = {
   revoirMaintenant: 'Les revoir maintenant',
   plusTard: 'Plus tard',
   reviennentBientot: 'Les cartes à revoir reviennent dans quelques minutes.',
-  etapeSuivante: 'Étape suivante',
   dialogueTitre: 'Quitter la séance ?',
   dialogueTexte: 'Tes notes sont gardées.',
-  continuer: 'Continuer',
   recto: 'Question',
   verso: 'Réponse',
 } as const

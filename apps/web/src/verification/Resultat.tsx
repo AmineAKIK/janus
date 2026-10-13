@@ -14,8 +14,9 @@ import {
   texteSiConfirmee,
 } from './textes.ts'
 import type { ResultatVerification } from './textes.ts'
-import styles from './Verification.module.css'
 import { aller } from '../routes/navigation.ts'
+import seance from '../seance/Seance.module.css'
+import styles from './Verification.module.css'
 
 type PartieCorrigee = ResultatVerification['parties'][number]
 
@@ -124,8 +125,8 @@ export function Resultat({
   const { bloc, issue, statut, descend, prochaine } = resultat
   const titre = issue === 'reussie' ? T.reussie : issue === 'ratee' ? T.nonValidee : T.aExaminer
   return (
-    <section className={styles['section']}>
-      <p className={`${styles['secondaire'] ?? ''} texte-petit-14`}>
+    <section className={seance['colonne']}>
+      <p className={`${seance['secondaire'] ?? ''} texte-petit-14`}>
         {texteCetait(bloc.code, bloc.titre)}
       </p>
       <h2 className="texte-sous-titre-18">{titre}</h2>
@@ -140,7 +141,7 @@ export function Resultat({
           {descend ? texteDescendA(bloc.code, statut) : T.statutInchange}
         </p>
       )}
-      <ul className={styles['lignes']}>
+      <ul className={seance['lignes']}>
         {resultat.parties.map((partie) => (
           <Ligne key={partie.id} partie={partie} />
         ))}

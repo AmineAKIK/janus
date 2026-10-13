@@ -1,10 +1,12 @@
 import type { Confiance } from '@janus/contrats'
 import { accorder } from '../catalogue/calculs.ts'
 
+/** La réponse enregistrée quand l'élève passe : l'écran de correction la reconnaît à ce texte. */
+export const JE_NE_SAIS_PAS = 'Je ne sais pas'
+
 export const TEXTES_QUESTIONS = {
   titre: 'Questions',
   suiteDuTitre: ' de début de séance',
-  quitter: 'Quitter',
   confiance: 'Ta confiance avant de répondre',
   reponse: 'Ta réponse',
   aide: 'Écris ta réponse sans consulter le cours.',
@@ -30,10 +32,8 @@ export const TEXTES_QUESTIONS = {
   erreur: 'Impossible de charger cet écran.',
   aucune: 'Aucune question aujourd’hui.',
   legendeSure: '⚠ Erreur en étant sûr',
-  etapeSuivante: 'Étape suivante',
   dialogueTitre: 'Quitter la séance ?',
   reprendrePlusTard: 'Reprendre plus tard',
-  continuer: 'Continuer',
   accordQuestion: 'D’accord avec ce niveau ?',
   oui: 'Oui',
   non: 'Non',
@@ -65,8 +65,6 @@ export const texteQuestionsFaites = (nombre: number) =>
 
 export const texteReprise = (rang: number) =>
   `Tes réponses sont gardées. Tu pourras reprendre à la question ${String(rang)}.`
-
-export const texteEtapeSuivante = (tache: string) => `Étape suivante : ${tache}`
 
 /** L'énoncé tronqué à 48 caractères, avec « … » quand il est plus long. */
 export function tronquer(texte: string, max = 48): string {

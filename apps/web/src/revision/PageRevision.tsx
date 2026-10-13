@@ -1,11 +1,14 @@
 import { ROUTES } from '@janus/contrats'
 import { ecartEnJours, jourDe } from '@janus/moteur'
-import { BarreProgression, Bouton, Dialogue, TexteCarte } from '@janus/ui'
+import { BarreProgression, Bouton, TexteCarte } from '@janus/ui'
 import { useEffect, useState } from 'react'
 import { useLecture } from '../api/requetes.tsx'
-import { texteTache } from '../aujourdhui/textesTaches.ts'
 import { Chargement, Erreur } from '../catalogue/EtatEcran.tsx'
-import { texteEtapeSuivante } from '../questions/textes.ts'
+import { aller } from '../routes/navigation.ts'
+import { DialogueQuitterSeance } from '../seance/DialogueQuitterSeance.tsx'
+import { EnteteSeance } from '../seance/EnteteSeance.tsx'
+import { etapeSuivante } from '../seance/etapeSuivante.ts'
+import seance from '../seance/Seance.module.css'
 import styles from './Revision.module.css'
 import {
   NOTES,
@@ -20,7 +23,6 @@ import {
   texteReviennentDans,
 } from './textes.ts'
 import { useRevision } from './useRevision.ts'
-import { aller } from '../routes/navigation.ts'
 
 const ESPACE = ' '
 
@@ -63,20 +65,14 @@ export function PageRevision() {
     }
   }, [quitter, carte, verso, phase, noter, montrerReponse])
 
-  const suivante = aujourdhui.data?.taches.find(
-    ({ tache, faite }) => !faite && tache.type !== 'cartes',
-  )
-  const titreBloc = (code: string) =>
-    aujourdhui.data?.module?.blocs.find(({ bloc }) => bloc === code)?.titre_court ?? ''
+  const suivante = etapeSuivante(aujourdhui.data, ({ tache }) => tache.type === 'cartes')
   const allerALEtapeSuivante = () => {
     revision.vider()
-    aller(suivante?.lien ?? '/')
+    aller(suivante.lien)
   }
-  const etapeSuivante = (
+  const boutonEtapeSuivante = (
     <Bouton type="button" variante="principal" onClick={allerALEtapeSuivante}>
-      {suivante === undefined
-        ? T.etapeSuivante
-        : texteEtapeSuivante(texteTache(suivante.tache, { titreBloc, etape: () => null }).titre)}
+      {suivante.libelle}
     </Bouton>
   )
 
@@ -91,14 +87,14 @@ export function PageRevision() {
         ? null
         : jourDe(revision.prochaine, reglages.data.fuseau, reglages.data.heureBascule)
     contenu = (
-      <section className={styles['fin']}>
+      <section className={seance['colonne']}>
         <p className="texte-sous-titre-18">{T.aucune}</p>
         {prochaine !== null && jour !== undefined && (
           <p className="texte-corps-16">
             {texteProchaine(prochaine, ecartEnJours(jour, prochaine))}
           </p>
         )}
-        {etapeSuivante}
+        {boutonEtapeSuivante}
       </section>
     )
   } else if (carte === undefined) {
@@ -106,7 +102,7 @@ export function PageRevision() {
     if (bientot.length > 0) {
       const delai = Math.min(...bientot.map(({ carte: revue }) => revue.apercu.a_revoir))
       contenu = (
-        <section className={styles['fin']}>
+        <section className={seance['colonne']}>
           <h2 className="texte-sous-titre-18">{T.cartesARevoir}</h2>
           <p className="texte-corps-16">
             {texteReviennentDans(bientot.length, texteIntervalle(delai))}
@@ -125,22 +121,22 @@ export function PageRevision() {
       )
     } else {
       contenu = (
-        <section className={styles['fin']}>
+        <section className={seance['colonne']}>
           <h2 className="texte-sous-titre-18">{texteCartesRevues(revues.length)}</h2>
           <p className="texte-corps-16">{texteRepartition(revues)}</p>
           {aRevoir.length > 0 && <p className="texte-corps-16">{T.reviennentBientot}</p>}
-          {etapeSuivante}
+          {boutonEtapeSuivante}
         </section>
       )
     }
   } else {
     contenu = (
-      <section className={styles['carte']}>
+      <section className={seance['colonne']}>
         <div className={styles['defilement']}>
           {carte.nouvelle && (
             <span className={`${styles['badge'] ?? ''} texte-legende-12`}>{T.nouvelle}</span>
           )}
-          <p className={`${styles['code'] ?? ''} texte-legende-12`}>{carte.bloc}</p>
+          <p className={`${seance['secondaire'] ?? ''} texte-legende-12`}>{carte.bloc}</p>
           <TexteCarte texte={carte.recto} />
           {verso && (
             <>
@@ -184,20 +180,15 @@ export function PageRevision() {
 
   const { annulable } = revision
   return (
-    <div className={styles['page']}>
-      <header className={styles['entete']}>
-        <button
-          type="button"
-          className={`${styles['quitter'] ?? ''} texte-petit-14`}
-          onClick={() => {
-            setQuitter(true)
-          }}
-        >
-          <span aria-hidden="true">×</span> {T.quitter}
-        </button>
-        <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-sous-titre-18`}>
-          {T.titre}
-        </h1>
+    <div className={seance['page']}>
+      <EnteteSeance
+        titre={T.titre}
+        centre
+        colonnes={styles['colonnes']}
+        surQuitter={() => {
+          setQuitter(true)
+        }}
+      >
         {total > 0 && carte !== undefined && (
           <div className={styles['rang']}>
             <BarreProgression
@@ -209,7 +200,7 @@ export function PageRevision() {
             <p className="texte-petit-14">{texteDontNouvelles(revision.nouvelles)}</p>
           </div>
         )}
-      </header>
+      </EnteteSeance>
       {contenu}
       {annulable !== null && (
         <div role="status" className={styles['bandeau']}>
@@ -222,36 +213,18 @@ export function PageRevision() {
         </div>
       )}
       {quitter && (
-        <Dialogue
+        <DialogueQuitterSeance
           titre={T.dialogueTitre}
-          surFermeture={() => {
+          texte={T.dialogueTexte}
+          boutonsEtires
+          surSortie={() => {
+            revision.vider()
+            aller('/')
+          }}
+          surContinuer={() => {
             setQuitter(false)
           }}
-        >
-          <p className="texte-corps-16">{T.dialogueTexte}</p>
-          <div className={styles['actions']}>
-            <Bouton
-              type="button"
-              variante="secondaire"
-              onClick={() => {
-                revision.vider()
-                aller('/')
-              }}
-            >
-              {T.quitter}
-            </Bouton>
-            <Bouton
-              type="button"
-              variante="principal"
-              data-focus-initial
-              onClick={() => {
-                setQuitter(false)
-              }}
-            >
-              {T.continuer}
-            </Bouton>
-          </div>
-        </Dialogue>
+        />
       )}
     </div>
   )

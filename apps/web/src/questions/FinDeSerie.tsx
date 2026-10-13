@@ -1,19 +1,14 @@
-import type { ROUTES, SortieRoute } from '@janus/contrats'
 import { Bouton } from '@janus/ui'
 import { useState } from 'react'
-import { texteTache } from '../aujourdhui/textesTaches.ts'
+import { aller } from '../routes/navigation.ts'
+import { etapeSuivante, titreCourtDuBloc } from '../seance/etapeSuivante.ts'
+import type { Aujourdhui } from '../seance/etapeSuivante.ts'
+import seance from '../seance/Seance.module.css'
 import { CorrectionAffichee, erreurEnEtantSur, niveauAffiche } from './CorrectionAffichee.tsx'
 import styles from './Questions.module.css'
-import {
-  TEXTES_QUESTIONS as T,
-  texteEtapeSuivante,
-  texteQuestionsFaites,
-  tronquer,
-} from './textes.ts'
+import { TEXTES_QUESTIONS as T, texteQuestionsFaites, tronquer } from './textes.ts'
 import type { EtatQuestion } from './useSerie.ts'
-import { aller } from '../routes/navigation.ts'
 
-type Aujourdhui = SortieRoute<(typeof ROUTES)['GET /aujourdhui']>
 type Corrigee = Extract<EtatQuestion, { phase: 'corrigee' }>
 
 export function FinDeSerie({
@@ -26,24 +21,17 @@ export function FinDeSerie({
   readonly aujourdhui?: Aujourdhui
 }) {
   const [ouverte, setOuverte] = useState<string | null>(null)
-  const titreBloc = (code: string) =>
-    aujourdhui?.module?.blocs.find(({ bloc }) => bloc === code)?.titre_court ?? ''
+  const titreBloc = (code: string) => titreCourtDuBloc(aujourdhui?.module?.blocs, code)
   const lignes = questions.flatMap((question, index) => {
     const etat = etats[index]
     return etat?.phase === 'corrigee' ? [{ question, etat }] : []
   })
-  const suivante = aujourdhui?.taches.find(
-    ({ tache, faite }) => !faite && tache.type !== 'questions_debut',
-  )
-  const texteSuivante =
-    suivante === undefined
-      ? T.etapeSuivante
-      : texteEtapeSuivante(texteTache(suivante.tache, { titreBloc, etape: () => null }).titre)
+  const suivante = etapeSuivante(aujourdhui, ({ tache }) => tache.type === 'questions_debut')
 
   return (
-    <section className={styles['fin']}>
+    <section className={seance['colonne']}>
       <h2 className="texte-sous-titre-18">{texteQuestionsFaites(lignes.length)}</h2>
-      <ul className={styles['lignes']}>
+      <ul className={seance['lignes']}>
         {lignes.map(
           ({ question, etat }: { question: { id: string; question: string }; etat: Corrigee }) => (
             <li key={question.id}>
@@ -56,7 +44,7 @@ export function FinDeSerie({
                 }}
               >
                 <span className="texte-petit-14">{tronquer(question.question)}</span>
-                <span className={`${styles['meta'] ?? ''} texte-legende-12`}>
+                <span className={`${seance['secondaire'] ?? ''} texte-legende-12`}>
                   {etat.bloc === null ? '' : `${etat.bloc} ${titreBloc(etat.bloc)}`}
                 </span>
                 <span className="texte-legende-12">{niveauAffiche(etat)}</span>
@@ -77,15 +65,15 @@ export function FinDeSerie({
           ),
         )}
       </ul>
-      <p className={`${styles['meta'] ?? ''} texte-legende-12`}>{T.legendeSure}</p>
+      <p className={`${seance['secondaire'] ?? ''} texte-legende-12`}>{T.legendeSure}</p>
       <Bouton
         type="button"
         variante="principal"
         onClick={() => {
-          aller(suivante?.lien ?? '/')
+          aller(suivante.lien)
         }}
       >
-        {texteSuivante}
+        {suivante.libelle}
       </Bouton>
     </section>
   )
