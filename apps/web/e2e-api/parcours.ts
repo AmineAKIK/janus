@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { expect } from '@playwright/test'
 import type { APIRequestContext, Page } from '@playwright/test'
+import { attendreFiche } from '../e2e/session.ts'
 import { avancer } from './banc.ts'
 
 export interface Question {
@@ -22,21 +23,12 @@ export const MANIFESTE = JSON.parse(
 export const ORIGINE = 'http://localhost:4173'
 export const HEURE_MS = 3_600_000
 
-export async function connecter(page: Page) {
-  await page.goto('./#/connexion')
-  await page.getByLabel('Nom d’utilisateur').fill('amine')
-  await page.getByLabel('Mot de passe', { exact: true }).fill('demo-janus')
-  await page.getByRole('button', { name: 'Se connecter' }).click()
-  await expect(page.getByRole('heading', { level: 1, name: 'Aujourd’hui' })).toBeVisible()
-}
-
 /** Ouvre B01 dans la fiche, sur l'étape demandée. */
 export async function ouvrirEtape(page: Page, etape: string) {
   await page.goto('./#/blocs/B01')
   // Un changement d'adresse à ancre ne recharge pas la page : on relit l'état du bloc au serveur.
   await page.reload()
-  const fiche = page.frameLocator('iframe[title^="Fiche du bloc B01"]')
-  await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
+  const fiche = await attendreFiche(page, 'B01')
   const onglet = page
     .getByRole('navigation', { name: 'Étapes de la fiche' })
     .getByRole('button', { name: new RegExp(`${etape}$`) })

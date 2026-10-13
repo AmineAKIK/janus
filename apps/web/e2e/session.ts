@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test'
-import type { Locator, Page } from '@playwright/test'
+import type { FrameLocator, Locator, Page } from '@playwright/test'
 
 /** Ouvre une session de démonstration par l'écran de connexion, comme le ferait Amine. */
 export async function ouvrirSession(page: Page): Promise<void> {
@@ -8,6 +8,18 @@ export async function ouvrirSession(page: Page): Promise<void> {
   await page.getByLabel('Mot de passe', { exact: true }).fill('demo-janus')
   await page.getByRole('button', { name: 'Se connecter' }).click()
   await expect(page.getByRole('heading', { level: 1, name: 'Aujourd’hui' })).toBeVisible()
+}
+
+/** La fiche d'un bloc, dans l'iframe de sa page. */
+export function ficheDuBloc(page: Page, bloc: string): FrameLocator {
+  return page.frameLocator(`iframe[title^="Fiche du bloc ${bloc}"]`)
+}
+
+/** Attend que la fiche du bloc ait pris le mode appli (« Dans l’appli ») et la rend. */
+export async function attendreFiche(page: Page, bloc: string): Promise<FrameLocator> {
+  const fiche = ficheDuBloc(page, bloc)
+  await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
+  return fiche
 }
 
 /** Active des interrupteurs de démo (états Figma qui dépendent du serveur) puis recharge l'appli. */

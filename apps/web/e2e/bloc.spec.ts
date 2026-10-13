@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { allerEtape, etape, ouvrirSession, serieEnregistree } from './session.ts'
+import { allerEtape, attendreFiche, etape, ouvrirSession, serieEnregistree } from './session.ts'
 
 test.describe('page d’un bloc', () => {
   test.beforeEach(async ({ page }) => {
@@ -9,8 +9,7 @@ test.describe('page d’un bloc', () => {
   test('la fiche de démo passe en mode appli', async ({ page }) => {
     await page.goto('./#/blocs/B03')
 
-    const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
-    await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
+    await attendreFiche(page, 'B03')
     await expect(page.getByText('Chargement de la fiche…')).toHaveCount(0)
   })
 
@@ -33,8 +32,7 @@ test.describe('page d’un bloc', () => {
 
   test('recharger la page remet la fiche dans l’état sauvegardé', async ({ page }) => {
     await page.goto('./#/blocs/B03')
-    const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
-    await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
+    await attendreFiche(page, 'B03')
 
     await allerEtape(page, 'Pratique guidée')
     await expect(etape(page, 'Pratique guidée')).toHaveAttribute('aria-current', 'step')
@@ -55,8 +53,7 @@ test.describe('page d’un bloc', () => {
 
   test('cliquer un onglet du fil affiche l’étape dans la fiche', async ({ page }) => {
     await page.goto('./#/blocs/B03')
-    const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
-    await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
+    await attendreFiche(page, 'B03')
 
     await page
       .getByRole('navigation', { name: 'Étapes de la fiche' })
@@ -73,8 +70,7 @@ test.describe('page d’un bloc', () => {
 
   test('pendant la restitution, revoir le cours demande confirmation', async ({ page }) => {
     await page.goto('./#/blocs/B03')
-    const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
-    await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
+    await attendreFiche(page, 'B03')
     const fil = page.getByRole('navigation', { name: 'Étapes de la fiche' })
 
     await allerEtape(page, 'Restitution')
@@ -92,8 +88,7 @@ test.describe('page d’un bloc', () => {
 
   test('B03 de bout en bout : restitution, consolidation, bilan', async ({ page }) => {
     await page.goto('./#/blocs/B03')
-    const fiche = page.frameLocator('iframe[title^="Fiche du bloc B03"]')
-    await expect(fiche.getByRole('status').filter({ hasText: 'Dans l’appli' })).toBeVisible()
+    const fiche = await attendreFiche(page, 'B03')
     const fil = page.getByRole('navigation', { name: 'Étapes de la fiche' })
 
     const repondre = async (statutApres: string) => {
