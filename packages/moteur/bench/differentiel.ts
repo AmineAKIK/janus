@@ -333,6 +333,33 @@ for (let jeu = 0; jeu < nJeux; jeu += 1) {
     { id: 'M0', titre: 'Zéro' },
     { id: 'M1', titre: 'Un' },
   ]
+  // Le suivi fait après fait du moteur courant dit, après chaque fait reçu, ce que dit `calculerBloc` du
+  // moteur de référence sur les faits reçus jusque-là : dans l'ordre d'arrivée tordu, et trié par date.
+  for (const { code, manifeste } of blocs) {
+    const duBloc = faits.filter((fait) => fait.bloc === code)
+    const parDate = duBloc.toSorted((a, b) => Date.parse(a.date) - Date.parse(b.date))
+    for (const arrivee of [duBloc, parDate]) {
+      const suivi = new nouveau.SuiviBloc(manifeste, reglages)
+      for (const [rang, fait] of arrivee.entries()) {
+        suivi.ajouter(fait)
+        const recus = arrivee.slice(0, rang + 1)
+        for (const maintenant of [fait.date, maintenants[3] ?? fait.date]) {
+          comparaisons += 1
+          const attendu = ancien.calculerBloc(recus, manifeste, reglages, maintenant)
+          try {
+            deepStrictEqual(suivi.resultat(maintenant), attendu)
+            deepStrictEqual(suivi.statutCalcule(), attendu.statutCalcule)
+          } catch (erreur) {
+            console.error(
+              `ÉCART sur le suivi du bloc ${code} après ${String(rang + 1)} faits (jeu ${String(jeu)})`,
+            )
+            console.error(erreur instanceof Error ? erreur.message.slice(0, 3000) : erreur)
+            process.exit(1)
+          }
+        }
+      }
+    }
+  }
   for (const maintenant of maintenants) {
     for (const { code, manifeste } of blocs) {
       const duBloc = faits.filter((fait) => fait.bloc === code)

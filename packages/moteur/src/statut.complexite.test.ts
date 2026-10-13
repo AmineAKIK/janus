@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { apres, DEBUT, fabrique, MANIFESTE, REGLAGES } from './fabrique.ts'
+import { apres, blocLong, DEBUT, MANIFESTE, REGLAGES } from './fabrique.ts'
 import type { Fait } from './faits.ts'
 import { calculerBloc } from './statut.ts'
 
@@ -19,39 +19,6 @@ function compteurs(faits: readonly Fait[]) {
       }),
   )
   return { lectures, observes }
-}
-
-/** Un bloc long : beaucoup de réponses de restitution et de consolidation, de tranchages et d'erreurs. */
-function blocLong(taille: number): Fait[] {
-  const f = fabrique()
-  const faits: Fait[] = []
-  let minute = 0
-  const date = () => apres(DEBUT, 0, (minute += 7))
-  const corrections: Fait[] = []
-  while (faits.length < taille) {
-    const rang = faits.length
-    const serie = rang % 3 === 0 ? 'restitution' : 'consolidation'
-    const questions = serie === 'restitution' ? MANIFESTE.restitution : MANIFESTE.consolidation
-    const question = questions[rang % questions.length]?.id ?? 'R1'
-    const correction = f.correction(date(), serie, question, {
-      niveau: rang % 5 === 0 ? 'partiel' : 'solide',
-    })
-    corrections.push(correction)
-    faits.push(correction)
-    if (rang % 10 === 4) {
-      faits.push(
-        f.fait(date(), {
-          type: 'correction_tranchee',
-          correction: correction.id,
-          compte: rang % 20 !== 4,
-          niveau: 'fragile',
-        }),
-      )
-    }
-    if (rang % 12 === 6) faits.push(f.cochee(date(), 'E1'))
-    if (rang % 12 === 9) faits.push(f.etape(date(), 'ET3'))
-  }
-  return faits
 }
 
 function lectures(taille: number): number {
