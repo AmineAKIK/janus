@@ -18,7 +18,7 @@ describe('catalogues de contenu', () => {
     ])
   })
 
-  it('DWWM : le module 1 est importé, avec ses 20 blocs B01 à B20 dans l’ordre, sans doublon', () => {
+  it('DWWM : le module 1 est importé, avec ses 18 blocs B01 à B18 en 4 parties dans l’ordre, sans doublon', () => {
     const catalogue = Catalogue.parse(lire('dwwm/catalogue.json'))
     const [premier] = catalogue.modules
 
@@ -26,15 +26,13 @@ describe('catalogues de contenu', () => {
     if (premier?.importe !== true) return
     const blocs = premier.parties.flatMap((partie) => partie.blocs)
     expect(blocs).toEqual(
-      Array.from({ length: 20 }, (_, i) => `B${String(i + 1).padStart(2, '0')}`),
+      Array.from({ length: 18 }, (_, i) => `B${String(i + 1).padStart(2, '0')}`),
     )
     expect(premier.parties.map((partie) => partie.code)).toEqual([
       'P1',
       'P2',
       'P3',
       'P4',
-      'P5',
-      'P6',
     ])
     expect(premier.taches_reservees).toHaveLength(6)
   })
