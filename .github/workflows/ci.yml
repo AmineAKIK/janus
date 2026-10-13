@@ -16,7 +16,25 @@ permissions:
   contents: read
 
 jobs:
-  verifier:
+  # Les trois contrôles de l'ancien job unique tournent en parallèle : ils ne dépendent pas les uns
+  # des autres et ne partagent aucun état. Le job `verifier` plus bas les rassemble sous l'ancien nom.
+  statique:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm format:check
+
+  tests:
     runs-on: ubuntu-latest
     # L'API se prouve contre un vrai PostgreSQL, comme en production.
     services:
@@ -43,12 +61,37 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm typecheck
-      - run: pnpm lint
-      - run: pnpm format:check
       - run: pnpm test
         env:
           DATABASE_URL: postgres://janus:janus@localhost:5432/janus_test
+
+  parcours:
+    runs-on: ubuntu-latest
+    # L'API se prouve contre un vrai PostgreSQL, comme en production.
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: janus
+          POSTGRES_PASSWORD: janus
+          POSTGRES_DB: janus_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U janus -d janus_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
       # L'API réelle, sur PostgreSQL et avec le faux correcteur, rejoue la suite de contrat écrite pour
       # la démo, puis les trois parcours critiques dans un navigateur (PR-089).
       - name: Contre l'API réelle (suite de contrat et parcours)
@@ -85,6 +128,22 @@ jobs:
             echo "Le code de démo est dans le build de production." >&2
             exit 1
           fi
+
+  # Le point de passage unique : son nom, `verifier`, est celui qu'une protection de branche attend.
+  # Il échoue si l'un des trois jobs échoue, est annulé ou ne s'est pas exécuté.
+  verifier:
+    runs-on: ubuntu-latest
+    needs: [statique, tests, parcours]
+    if: ${{ always() }}
+    steps:
+      - name: Les trois contrôles sont passés
+        env:
+          RESULTATS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Résultats : $RESULTATS"
+          for resultat in $RESULTATS; do
+            [ "$resultat" = success ] || exit 1
+          done
 
   # L'hébergement du VPS, tel qu'il tourne : les mêmes fichiers et scripts, sur une machine vide
   # (démarrage, en-têtes, sauvegarde, rétention, restauration).
