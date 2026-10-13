@@ -1,4 +1,4 @@
-import { BandeauAlerte, ChevronRight, EnTeteSection } from '@janus/ui'
+import { ArrowLeft, BandeauAlerte, ChevronRight, EnTeteSection } from '@janus/ui'
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
 import { Chargement, Erreur } from '../catalogue/EtatEcran.tsx'
@@ -28,6 +28,7 @@ export function PageParametres({ section }: { readonly section?: string }) {
   const bureau = useBureau()
   const { reglages, erreur, recharger, etat, enregistrer } = useReglages()
   const choisie = estSection(section) ? section : undefined
+  const enSectionMobile = !bureau && choisie !== undefined
 
   useEffect(() => {
     if (!bureau || choisie === undefined) return
@@ -101,12 +102,16 @@ export function PageParametres({ section }: { readonly section?: string }) {
   return (
     <div className={styles['page']}>
       <header>
-        {!bureau && choisie !== undefined && (
+        {enSectionMobile && (
           <a href={adresse('/parametres')} className={`${styles['retour'] ?? ''} texte-petit-14`}>
+            <ArrowLeft aria-hidden="true" className={styles['fleche']} />
             {T.retour}
           </a>
         )}
-        <h1 tabIndex={-1} className={`${styles['titre'] ?? ''} texte-titre-28`}>
+        <h1
+          tabIndex={-1}
+          className={`${styles[enSectionMobile ? 'titreCache' : 'titre'] ?? ''} texte-titre-28`}
+        >
           {T.titre}
         </h1>
         {(bureau || choisie === undefined) && <p className="texte-corps-16">{T.introduction}</p>}

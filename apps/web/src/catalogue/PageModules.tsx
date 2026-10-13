@@ -82,10 +82,7 @@ export function PageModules({ formationId }: { readonly formationId: string }) {
           {connue?.code ?? formationId}
         </span>
       </nav>
-      <Link
-        to="/formations"
-        className={`${styles['retour'] ?? ''} ${styles['lienDiscret'] ?? ''} texte-petit-14`}
-      >
+      <Link to="/formations" className={`${styles['retour'] ?? ''} texte-petit-14`}>
         <ArrowLeft aria-hidden="true" className={styles['chevron']} />
         {TEXTES.retourFormations}
       </Link>
