@@ -23,7 +23,7 @@ console.log('VAPID_PUBLIC_KEY=' + b(e.getPublicKey())); console.log('VAPID_PRIVA
 {
   echo POSTGRES_PASSWORD=essai0postgres
   echo JANUS_APP_MOT_DE_PASSE=essai0application
-  echo DEEPSEEK_API_KEY=essai
+  echo ANTHROPIC_API_KEY=essai
   echo VAPID_SUJET=mailto:essai@exemple.fr
   echo "$cles"
 } > /etc/janus/janus.env

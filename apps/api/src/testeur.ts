@@ -3,6 +3,7 @@ import { creerBase } from './base/base.ts'
 import type { Base } from './base/base.ts'
 import { lireConfig } from './config.ts'
 import type { Envoyeur } from './adaptateurs/push/envoyeur.ts'
+import { creerFaux } from './adaptateurs/correcteur/faux.ts'
 import type { Correcteur } from './adaptateurs/correcteur/correcteur.ts'
 import type { Hacheur } from './domaines/auth/composition.ts'
 import type { Config } from './config.ts'
@@ -101,7 +102,8 @@ export async function serveurDeTest(
       horloge,
       base,
       proprietaire: options.proprietaire ?? base,
-      ...(options.correcteur === undefined ? {} : { correcteur: options.correcteur }),
+      // Sans correcteur l'API refuse de démarrer : le faux, comme le banc de la CI.
+      correcteur: options.correcteur ?? creerFaux(),
       ...(options.envoyeur === undefined ? {} : { envoyeur: options.envoyeur }),
       ...(options.hasard === undefined ? {} : { hasard: options.hasard }),
       ...(options.signalerErreur === undefined ? {} : { signalerErreur: options.signalerErreur }),

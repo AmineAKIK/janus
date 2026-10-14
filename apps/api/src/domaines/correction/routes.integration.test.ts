@@ -346,6 +346,25 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('POST /corrections contre Postgr
     expect(reponse.json<{ erreurs_critiques: string[] }>().erreurs_critiques).toEqual(['E1'])
   })
 
+  it('plafonne le niveau quand le correcteur signale une erreur critique du bloc (règle 10 de la consigne)', async () => {
+    scenario = () =>
+      JSON.stringify({
+        message: 'Voici un retour détaillé sur ta réponse, qui reprend tes mots justes. '.repeat(3),
+        niveau: 'partiel',
+        erreurs_critiques: ['E1'],
+        source: 'deduit',
+        ref: '',
+        certitude: 'sur',
+      })
+
+    const sur = await corriger(demande({ confiance: 'sur' }))
+    const hesitant = await corriger(demande({ confiance: 'hesitant' }))
+    scenario = undefined
+
+    expect(sur.json<{ niveau: string }>().niveau).toBe('pas_encore')
+    expect(hesitant.json<{ niveau: string }>().niveau).toBe('fragile')
+  })
+
   describe('quand le JSON est invalide', () => {
     it('refait un seul essai, avec le rappel du JSON, et garde le second résultat', async () => {
       const avant = faux.requetes.length
@@ -407,19 +426,6 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('POST /corrections contre Postgr
 
       expect(reponse.statusCode).toBe(503)
     })
-  })
-
-  it('sans correcteur branché (pas de clé), la correction est indisponible (503)', async () => {
-    const base = baseDepuisPool(bases.db, bases.pool)
-    const sansCorrecteur = await serveurDeTest({
-      base,
-      proprietaire: base,
-      config: configDeTest({ NIVEAU_JOURNAL: 'silent' }),
-    })
-
-    const reponse = await corriger(demande(), sansCorrecteur)
-
-    expect(reponse.statusCode).toBe(503)
   })
 
   describe('le budget', () => {

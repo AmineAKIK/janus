@@ -41,8 +41,10 @@ export interface ResultatCas {
   readonly id: string
   readonly genre: CasDeTest['genre']
   readonly niveauAmine: Niveau
-  /** `undefined` : le correcteur n'a rien rendu de valide. */
+  /** `undefined` : le correcteur n'a rien rendu de valide. Le niveau retenu, après la règle « erreur critique → niveau ». */
   readonly niveauIa: Niveau | undefined
+  /** Le niveau tel que le correcteur l'a rendu, avant la règle ; égal à `niveauIa` quand elle n'a rien changé. */
+  readonly niveauRendu: Niveau | undefined
   /** Rendus avec le niveau : le message pour l'apprenant, les erreurs critiques repérées, la certitude. */
   readonly message: string | undefined
   readonly erreursIa: readonly string[] | undefined
@@ -90,6 +92,7 @@ export async function evaluer({
       historique: [],
     })
     let niveauIa: Niveau | undefined
+    let niveauRendu: Niveau | undefined
     let message: string | undefined
     let erreursIa: readonly string[] | undefined
     let certitude: Certitude | undefined
@@ -98,9 +101,10 @@ export async function evaluer({
     try {
       const brut = await correcteur.corriger(requete)
       cout = coutMillioniemes(brut, tarifs)
-      const validation = validerSortie(brut.texte, manifeste)
+      const validation = validerSortie(brut.texte, manifeste, cas.confiance)
       if (validation.valide) {
         niveauIa = validation.sortie.niveau
+        niveauRendu = validation.sortie.niveauRendu
         message = validation.sortie.message
         erreursIa = validation.sortie.erreurs
         certitude = validation.sortie.certitude
@@ -115,6 +119,7 @@ export async function evaluer({
       genre: cas.genre,
       niveauAmine: cas.niveauAmine,
       niveauIa,
+      niveauRendu,
       message,
       erreursIa,
       certitude,
@@ -152,6 +157,14 @@ const liste = (ids: readonly string[]) => (ids.length === 0 ? 'aucun' : ids.join
 const erreurs = ({ erreursIa }: ResultatCas) =>
   erreursIa === undefined ? '-' : erreursIa.length === 0 ? 'aucune' : erreursIa.join(', ')
 
+/** Le niveau de l'IA, et celui qu'elle avait rendu quand la règle « erreur critique → niveau » l'a plafonné. */
+const niveauIa = (r: ResultatCas) =>
+  r.niveauIa === undefined
+    ? `refusé (${r.motifRefus ?? ''})`
+    : r.niveauRendu === undefined || r.niveauRendu === r.niveauIa
+      ? r.niveauIa
+      : `${r.niveauIa} (rendu ${r.niveauRendu})`
+
 /**
  * Le message rendu pour un cas, sous un titre qui dit l'écart : le workflow `ia-evaluer.yml` ne remonte
  * en annotation que les cas en désaccord, reconnus à ce titre.
@@ -160,7 +173,7 @@ const messageDuCas = (r: ResultatCas): string[] => {
   const titre =
     r.niveauIa === undefined
       ? `### ${r.id} : Amine ${r.niveauAmine}, IA refusé (${r.motifRefus ?? ''})`
-      : `### ${r.id} : Amine ${r.niveauAmine}, IA ${r.niveauIa}, écart ${String(r.ecart ?? 0)}`
+      : `### ${r.id} : Amine ${r.niveauAmine}, IA ${niveauIa(r)}, écart ${String(r.ecart ?? 0)}`
   if (r.message === undefined) return [titre, '']
   return [
     titre,
@@ -200,7 +213,7 @@ export function rapport(
     '| --- | --- | --- | --- | --- | --- | --- |',
     ...evaluation.resultats.map(
       (r) =>
-        `| ${r.id} | ${r.genre} | ${r.niveauAmine} | ${r.niveauIa ?? `refusé (${r.motifRefus ?? ''})`} | ${erreurs(r)} | ${r.certitude ?? '-'} | ${r.ecart === undefined ? '-' : String(r.ecart)} |`,
+        `| ${r.id} | ${r.genre} | ${r.niveauAmine} | ${niveauIa(r)} | ${erreurs(r)} | ${r.certitude ?? '-'} | ${r.ecart === undefined ? '-' : String(r.ecart)} |`,
     ),
     '',
     '## Messages',

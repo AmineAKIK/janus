@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { creerFaux } from '../../adaptateurs/correcteur/faux.ts'
 import { creerBase } from '../../base/base.ts'
 import { creerServeur } from '../../serveur.ts'
 import { configDeTest } from '../../testeur.ts'
@@ -15,6 +16,8 @@ describe.skipIf(url === undefined)('GET /api/sante contre PostgreSQL', () => {
       horloge: horlogeSysteme,
       base,
       proprietaire: base,
+      // Sans correcteur l'API refuse de démarrer : le faux suffit, la santé ne corrige rien.
+      correcteur: creerFaux(),
     })
 
     const vivante = await app.inject({ method: 'GET', url: '/api/sante' })
