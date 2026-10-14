@@ -2,6 +2,7 @@ import { BulleCorrection, Bouton } from '@janus/ui'
 import type { CorrectionSuivie, PropositionErreur } from './useHoteFiche.ts'
 import styles from './Bloc.module.css'
 import { ErreurIaProposee } from './EncartErreurIa.tsx'
+import { texteTuteurDeSecours } from '../questions/textes.ts'
 
 export function EncartDecisionsIa({
   code,
@@ -57,6 +58,11 @@ export function EncartDecisionsIa({
             {question(suivie.correction.question)}
           </p>
           <p className={`${styles['encartTexte'] ?? ''} texte-petit-14`}>« {suivie.reponse} »</p>
+          {suivie.correction.secours && (
+            <p role="status" className={`${styles['encartTexte'] ?? ''} texte-petit-14`}>
+              {texteTuteurDeSecours(suivie.correction.modele)}
+            </p>
+          )}
           <BulleCorrection
             niveau={suivie.correction.niveau}
             message={suivie.correction.message}

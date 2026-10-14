@@ -58,6 +58,10 @@ export const texteNiveauEtConfiance = (niveau: string, confiance: Confiance) =>
 
 export const texteSource = (bloc: string, ref: string) => `Source · Fiche ${bloc} · ${ref}`
 
+/** Une correction rendue par le tuteur de secours : Amine doit le voir, pas croire que c'est Haiku. */
+export const texteTuteurDeSecours = (modele: string) =>
+  `Corrigé par le tuteur de secours (${modele}), pas par le tuteur habituel.`
+
 export const texteVenaitDe = (bloc: string, titre: string) => `Venait de ${bloc} ${titre}`
 
 export const texteQuestionsFaites = (nombre: number) =>

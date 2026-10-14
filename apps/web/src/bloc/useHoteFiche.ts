@@ -1,4 +1,4 @@
-import { CorrectionRecue, ErreurApi, nouvelId } from '@janus/contrats'
+import { CorrectionRendue, ErreurApi, nouvelId, pourLaPage } from '@janus/contrats'
 import type { Avancement, Manque, MessageAppli, MessagePage, Niveau, Statut } from '@janus/contrats'
 import { lireTheme } from '@janus/ui'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -46,7 +46,7 @@ export interface PropositionErreur {
 
 /** Une correction reçue de la fiche, avec la réponse qui l'a déclenchée. */
 export interface CorrectionSuivie {
-  readonly correction: CorrectionRecue
+  readonly correction: CorrectionRendue
   readonly reponse: string
   /** Vrai uniquement si cette réponse a été donnée après « Revoir le cours ». */
   readonly retourCours: boolean
@@ -239,8 +239,9 @@ export function useHoteFiche(
             {
               surReponse: (reponse) => {
                 if (envoi.route === 'POST /corrections') {
-                  const recue = CorrectionRecue.parse(reponse)
-                  vers({ type: 'restitution.correction', ...recue })
+                  const recue = CorrectionRendue.parse(reponse)
+                  // La fiche ne reçoit que les champs du pont : son pont embarqué refuse le reste.
+                  vers({ type: 'restitution.correction', ...pourLaPage(recue) })
                   if (demande !== null) {
                     setCorrections((avant) =>
                       avant.some(({ correction }) => correction.id === recue.id)

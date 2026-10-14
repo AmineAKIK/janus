@@ -93,6 +93,7 @@ export const LIBELLES_INTERRUPTEURS = {
   reseauLent: 'Réseau lent',
   toutFait: 'Tout est fait aujourd’hui',
   erreurIa: 'Le tuteur propose une erreur critique',
+  correctionSecours: 'Correction par le tuteur de secours',
 } as const
 
 export const TEXTES_RAPPELS = {

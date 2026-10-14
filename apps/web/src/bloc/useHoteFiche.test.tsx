@@ -215,6 +215,12 @@ describe('page d’un bloc', () => {
         '*',
       )
     })
+    // Le pont embarqué dans les fiches refuse tout champ en plus : le modèle et le secours restent dans l'appli.
+    const correction = recu.mock.calls
+      .map(([donnees]) => donnees as { type?: string })
+      .find((donnees) => donnees.type === 'restitution.correction')
+    expect(correction).not.toHaveProperty('modele')
+    expect(correction).not.toHaveProperty('secours')
   })
 
   it.each([

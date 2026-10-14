@@ -1,6 +1,6 @@
 import { Manifeste, Reglages, nouvelId } from '@janus/contrats'
-import { CorrectionRecue } from '@janus/contrats'
-import type { CorrectionRecue as CorrectionRecueApi } from '@janus/contrats'
+import { CorrectionRendue } from '@janus/contrats'
+import type { CorrectionRendue as CorrectionRendueApi } from '@janus/contrats'
 import { compte, estRecopiee, instantEnIso, instantEnMs, jourDe, statutDuBloc } from '@janus/moteur'
 import { maintenantActif, maintenantDuBloc, sousVerrouDuBloc } from '../../base/axeTemps.ts'
 import type { Base } from '../../base/base.ts'
@@ -18,6 +18,7 @@ import {
 import type { Horloge } from '../../horloge.ts'
 import { recalculer } from '../../recalcul.ts'
 import { coutMillioniemes } from '../../adaptateurs/correcteur/cout.ts'
+import { estDeSecours } from '../../adaptateurs/correcteur/choix.ts'
 import type { Tarifs } from '../../adaptateurs/correcteur/cout.ts'
 import { requeteDe } from '../../adaptateurs/correcteur/correcteur.ts'
 import type {
@@ -70,7 +71,7 @@ export interface DependancesService {
   readonly base: Base
   readonly depot: DepotCorrection
   readonly horloge: Horloge
-  /** Absent : la correction est indisponible (pas de clé DeepSeek). */
+  /** Absent : la correction est indisponible (pas de clé pour le fournisseur choisi). */
   readonly correcteur: Correcteur | undefined
   readonly tarifs: Tarifs
   /** Le plafond de jetons de sortie demandé au fournisseur. */
@@ -79,9 +80,9 @@ export interface DependancesService {
   readonly hasard: () => number
 }
 
-/** La correction telle que la page la reçoit, relue de ce qui est gardé. */
-function correctionRecue(ligne: LigneCorrection): CorrectionRecueApi {
-  return CorrectionRecue.parse({
+/** La correction telle que l'appli la reçoit, relue de ce qui est gardé. */
+function correctionRecue(ligne: LigneCorrection): CorrectionRendueApi {
+  return CorrectionRendue.parse({
     id: ligne.id,
     echantillon: ligne.echantillon,
     question: ligne.questionId,
@@ -94,6 +95,8 @@ function correctionRecue(ligne: LigneCorrection): CorrectionRecueApi {
     certitude: ligne.certitude,
     compte: ligne.compte,
     ...(ligne.raisonNonCompte === null ? {} : { raison_non_compte: ligne.raisonNonCompte }),
+    modele: ligne.modele,
+    secours: estDeSecours(ligne.modele),
   })
 }
 
@@ -184,12 +187,12 @@ export function creerServiceCorrection({
   }
 
   /** Les envois en cours, par utilisateur et identifiant. */
-  const enCours = new Map<string, Promise<CorrectionRecueApi>>()
+  const enCours = new Map<string, Promise<CorrectionRendueApi>>()
 
   async function corrigerUneFois(
     userId: string,
     demande: DemandeCorrection,
-  ): Promise<CorrectionRecueApi> {
+  ): Promise<CorrectionRendueApi> {
     if (demande.serie === 'verification' && demande.verification === undefined) {
       throw new ErreurProtocole(
         400,
@@ -456,7 +459,7 @@ export function creerServiceCorrection({
      * Corrige une réponse : doublon, relances, réservation du budget, appel hors transaction,
      * validation, enregistrement, recalcul du bloc.
      */
-    corriger(userId: string, demande: DemandeCorrection): Promise<CorrectionRecueApi> {
+    corriger(userId: string, demande: DemandeCorrection): Promise<CorrectionRendueApi> {
       // Le même envoi en double (double tap, file qui rejoue) attend le premier : un seul appel, un seul coût.
       const cle = `${userId}:${demande.id}`
       const enVol = enCours.get(cle)

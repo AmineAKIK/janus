@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { Niveau, Serie } from '../enums.ts'
-import { CodeBloc, CorrectionRecue, IdUuid, StatutBloc, champsReponse } from './commun.ts'
+import { CodeBloc, CorrectionRendue, IdUuid, StatutBloc, champsReponse } from './commun.ts'
 import type { DefinitionRoute } from './routes.ts'
 
 const RaisonTranchage = z.string().trim().min(10)
@@ -79,7 +79,7 @@ export const ROUTES_CORRECTIONS = {
     methode: 'POST',
     chemin: '/corrections',
     corps: DemandeCorrection,
-    reponse: CorrectionRecue,
+    reponse: CorrectionRendue,
     succes: 200,
   },
   'POST /corrections/:id/accord': {

@@ -1,4 +1,4 @@
-import { CorrectionRecue, nomRoute, nouvelId, ROUTES } from '@janus/contrats'
+import { CorrectionRendue, nomRoute, nouvelId, ROUTES } from '@janus/contrats'
 import { ErreurApi } from '@janus/contrats'
 import type { Confiance, SortieRoute } from '@janus/contrats'
 import { useQueryClient } from '@tanstack/react-query'
@@ -22,7 +22,7 @@ export type EtatQuestion =
   | ({ readonly phase: 'indisponible'; readonly plafond: boolean } & Saisie)
   | ({
       readonly phase: 'corrigee'
-      readonly correction: CorrectionRecue
+      readonly correction: CorrectionRendue
       /** Le bloc d'où vient la question : donné par le serveur seulement après la correction. */
       readonly bloc: string | null
     } & Pick<Saisie, 'confiance' | 'reponse'>)
@@ -118,7 +118,7 @@ export function useSerie() {
             phase: 'corrigee',
             confiance: saisie.confiance,
             reponse: saisie.reponse,
-            correction: CorrectionRecue.parse(reponse),
+            correction: CorrectionRendue.parse(reponse),
             bloc: null,
           })
           void client.invalidateQueries({ queryKey: [nomRoute(ROUTE_QUESTIONS), {}] })
@@ -167,7 +167,7 @@ export function useSerie() {
             phase: 'corrigee',
             confiance: etat.confiance,
             reponse: etat.reponse,
-            correction: CorrectionRecue.parse(reponse),
+            correction: CorrectionRendue.parse(reponse),
             bloc: etat.bloc,
           })
           fin()

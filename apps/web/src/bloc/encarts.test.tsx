@@ -168,6 +168,32 @@ describe('corrections à vérifier au bilan', () => {
     return { ...banc, encart }
   }
 
+  it('dit quand la correction à vérifier vient du tuteur de secours', async () => {
+    if (QUESTION === undefined) throw new Error('Question de restitution absente')
+    const banc = await afficher()
+    banc.magasin.ecrire((etat) => ({
+      ...etat,
+      interrupteurs: {
+        ...etat.interrupteurs,
+        correctionNonVerifiee: true,
+        correctionSecours: true,
+      },
+    }))
+    await banc.envoyer(
+      banc.message('restitution.demande', {
+        question: QUESTION.id,
+        reponse: REPONSE,
+        support: { colle: false, retour_cours: false },
+      }),
+    )
+    await banc.envoyer(banc.message('etape.vue', { etape: etape('bilan') }))
+
+    const encart = await screen.findByRole('region', { name: 'À vérifier' })
+    expect(within(encart).getByRole('status')).toHaveTextContent(
+      'Corrigé par le tuteur de secours (deepseek-flash), pas par le tuteur habituel.',
+    )
+  })
+
   it('montre la question, la réponse, le niveau proposé et les trois décisions', async () => {
     if (QUESTION === undefined) throw new Error('Question de restitution absente')
     const { encart } = await avecCorrectionNonVerifiee()

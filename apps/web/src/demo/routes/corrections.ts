@@ -1,5 +1,5 @@
 import { corrigerSimule, DELAI_CORRECTION_SIMULEE_MS, ErreurApi, ROUTES } from '@janus/contrats'
-import type { CorrectionRecue } from '@janus/contrats'
+import type { CorrectionRendue } from '@janus/contrats'
 import { compte, estRecopiee, statutDuBloc } from '@janus/moteur'
 import { MANIFESTES_GRAINE } from '../graine.ts'
 import { dejaRecu, enregistrer, faitsDuBloc, resultatDuBloc } from './calculs.ts'
@@ -138,7 +138,7 @@ export function routesCorrectionsDemo({
           `Une question accepte ${String(reglages.relancesMax)} relances au plus.`,
         )
       }
-      const certitude: CorrectionRecue['certitude'] = interrupteurs.correctionNonVerifiee
+      const certitude: CorrectionRendue['certitude'] = interrupteurs.correctionNonVerifiee
         ? 'non_verifie'
         : 'sur'
       const resultat = compte({
@@ -209,7 +209,7 @@ export function routesCorrectionsDemo({
           ],
         }))
       }
-      const recue: CorrectionRecue = {
+      const recue: CorrectionRendue = {
         id: corps.id,
         echantillon,
         question: question.id,
@@ -222,6 +222,8 @@ export function routesCorrectionsDemo({
         certitude,
         compte: resultat.compte,
         ...(resultat.compte ? {} : { raison_non_compte: resultat.raison }),
+        modele: interrupteurs.correctionSecours ? 'deepseek-flash' : 'simule',
+        secours: interrupteurs.correctionSecours,
       }
       if (serie === 'rappel') {
         const { jour } = serieDuJour(magasin, horloge.maintenant())

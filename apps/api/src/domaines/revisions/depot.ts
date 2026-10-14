@@ -280,6 +280,7 @@ export function creerDepotRevisions() {
               compte: t.corrections.compte,
               raisonNonCompte: t.corrections.raisonNonCompte,
               echantillon: t.corrections.echantillon,
+              modele: t.corrections.modele,
               date: instantIso(t.corrections.dateServeur),
             })
             .from(t.corrections)

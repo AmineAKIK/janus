@@ -1,4 +1,5 @@
-import { CorrectionRecue, Manifeste, Reglages, TypeVerification, nouvelId } from '@janus/contrats'
+import { CorrectionRendue, Manifeste, Reglages, TypeVerification, nouvelId } from '@janus/contrats'
+import { estDeSecours } from '../../adaptateurs/correcteur/choix.ts'
 import type { Fait, NoteCarte } from '@janus/contrats'
 import {
   ajouterJours,
@@ -611,7 +612,7 @@ export function creerServiceRevisions({
                       bloc,
                       confiance: premiere.confiance,
                       reponse: premiere.reponse,
-                      correction: CorrectionRecue.parse({
+                      correction: CorrectionRendue.parse({
                         id: derniere.id,
                         echantillon: derniere.echantillon,
                         question,
@@ -626,6 +627,8 @@ export function creerServiceRevisions({
                         ...(derniere.raisonNonCompte === null
                           ? {}
                           : { raison_non_compte: derniere.raisonNonCompte }),
+                        modele: derniere.modele,
+                        secours: estDeSecours(derniere.modele),
                       }),
                     },
             },
