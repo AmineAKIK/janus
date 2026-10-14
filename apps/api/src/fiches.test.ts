@@ -28,8 +28,13 @@ function catalogue(blocs: string[]) {
   }
 }
 
+const EMPREINTE = 'a'.repeat(64)
+/** Le pont construit, tel que `fiches:assembler` l'écrit : son en-tête puis le code. */
+const PONT = `/*! janus-pont v1 ${EMPREINTE} */\nwindow.JanusPont = {}`
+
 type Manifeste = {
   version: number
+  pont: number
   restitution: { id: string; question: string; attendu: string }[]
   rappel: { id: string; question: string; attendu: string; erreurs: string[] }[]
   differees: { id: string; consigne: string; attendu: string }[]
@@ -58,7 +63,7 @@ describe('vérification des fiches du dépôt', () => {
     // Comme une fiche assemblée : la bibliothèque du pont est écrite dans la page.
     fiche = (await readFile(GABARIT, 'utf8')).replace(
       '<script id="pont"></script>',
-      '<script id="pont">window.JanusPont = {}</script>',
+      `<script id="pont">${PONT}</script>`,
     )
     await mkdir(join(contenu, 'test', 'fiches'), { recursive: true })
     await writeFile(join(contenu, 'test', 'catalogue.json'), JSON.stringify(catalogue(['X00'])))
@@ -78,10 +83,7 @@ describe('vérification des fiches du dépôt', () => {
   it('refuse une fiche dont le pont n’est pas écrit dans la page', async () => {
     await poser(
       'X00.html',
-      fiche.replace(
-        '<script id="pont">window.JanusPont = {}</script>',
-        '<script id="pont"></script>',
-      ),
+      fiche.replace(`<script id="pont">${PONT}</script>`, '<script id="pont"></script>'),
     )
 
     expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
@@ -201,6 +203,109 @@ describe('vérification des fiches du dépôt', () => {
           'window.JanusPont = { exemple: "https://exemple.test" }; x.src = "https://exemple.test/x.js"',
         ),
       )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+  })
+
+  describe('le pont embarqué, comparé au pont construit', () => {
+    it('accepte une fiche dont le pont est celui du dépôt, même indenté par un reformatage', async () => {
+      await poser(
+        'X00.html',
+        fiche.replace(PONT, `\n      ${PONT.replace('\n', '\n      ')}\n    `),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu, pont: PONT })).toEqual([])
+    })
+
+    it('refuse un pont embarqué sans en-tête', async () => {
+      await poser('X00.html', fiche.replace(PONT, 'window.JanusPont = {}'))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu, pont: PONT })).toEqual([
+        expect.stringContaining('le pont embarqué n’a pas d’en-tête'),
+      ])
+    })
+
+    it('refuse un pont embarqué qui n’est pas celui du dépôt', async () => {
+      await poser('X00.html', fiche.replace(EMPREINTE, 'b'.repeat(64)))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu, pont: PONT })).toEqual([
+        expect.stringContaining(
+          'le pont embarqué (bbbbbbbb…) n’est pas celui du dépôt (aaaaaaaa…)',
+        ),
+      ])
+    })
+
+    it('refuse un manifeste dont le champ pont ne dit pas la version du pont embarqué', async () => {
+      await poser(
+        'X00.html',
+        avecManifeste(fiche, (manifeste) => {
+          manifeste.pont = 2
+        }),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu, pont: PONT })).toEqual([
+        expect.stringContaining(
+          'le manifeste déclare pont 2 mais le pont embarqué est en version 1',
+        ),
+      ])
+    })
+
+    it('refuse de comparer à un pont construit sans en-tête', async () => {
+      await poser('X00.html', fiche)
+
+      await expect(
+        verifierLesFiches({ dossierContenu: contenu, pont: 'window.JanusPont = {}' }),
+      ).rejects.toThrow(/en-tête/)
+    })
+  })
+
+  describe('les blocs fixes, comparés au gabarit de la formation', () => {
+    beforeEach(async () => {
+      await mkdir(join(contenu, 'test', 'gabarit'), { recursive: true })
+      await writeFile(
+        join(contenu, 'test', 'gabarit', 'fiche.html'),
+        await readFile(GABARIT, 'utf8'),
+      )
+    })
+
+    it('accepte une fiche qui reprend les blocs fixes et remplit ses blocs libres', async () => {
+      await poser(
+        'X00.html',
+        fiche
+          .replace(
+            '<style id="styles-bloc"></style>',
+            '<style id="styles-bloc">.bloc { color: red }</style>',
+          )
+          .replace(
+            '<script id="outils-bloc"></script>',
+            '<script id="outils-bloc">console.log(1)</script>',
+          ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+
+    it('refuse un bloc fixe modifié, et un bloc fixe disparu', async () => {
+      await poser(
+        'X00.html',
+        fiche
+          .replace('<style id="styles-gabarit">', '<style id="styles-gabarit">.x { color: red }')
+          .replace('<script id="plomberie">', '<script>'),
+      )
+
+      const problemes = await verifierLesFiches({ dossierContenu: contenu })
+
+      expect(problemes).toEqual([
+        expect.stringContaining('le bloc fixe id="styles-gabarit" n’est pas celui du gabarit'),
+        expect.stringContaining('le bloc fixe id="plomberie" du gabarit manque'),
+      ])
+      expect(problemes[0]).toContain('styles-bloc')
+    })
+
+    it('ne compare rien quand la formation n’a pas de gabarit', async () => {
+      await rm(join(contenu, 'test', 'gabarit'), { recursive: true })
+      await poser('X00.html', fiche.replace('<script id="plomberie">', '<script>'))
 
       expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
     })

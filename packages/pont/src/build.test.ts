@@ -1,6 +1,8 @@
+import { createHash } from 'node:crypto'
 import { gzipSync } from 'node:zlib'
 import { build } from 'vite'
 import { describe, expect, it } from 'vitest'
+import { VERSION_PONT } from './version.ts'
 
 const LIMITE_GZIP_OCTETS = 15 * 1024
 
@@ -23,6 +25,14 @@ describe('pont.js', () => {
     expect(fichier.imports).toEqual([])
     expect(fichier.dynamicImports).toEqual([])
     expect(gzipSync(fichier.code).length).toBeLessThan(LIMITE_GZIP_OCTETS)
+  }, 30_000)
+
+  it('commence par son en-tête : la version du contrat et l’empreinte SHA-256 du code qui suit', async () => {
+    const fichier = await construire()
+    const [enTete, ...reste] = fichier.code.split('\n')
+    const empreinte = createHash('sha256').update(reste.join('\n')).digest('hex')
+
+    expect(enTete).toBe(`/*! janus-pont v${String(VERSION_PONT)} ${empreinte} */`)
   }, 30_000)
 
   it('pose window.JanusPont quand une fiche le charge', async () => {
