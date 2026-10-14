@@ -26,7 +26,11 @@ const Reponse = z.object({
 /** L'appel HTTP, injecté dans les tests. */
 export type AppelHttp = (url: string, init: RequestInit) => Promise<Response>
 
-/** L'API compatible OpenAI de DeepSeek, en mode JSON. */
+/**
+ * L'API compatible OpenAI de DeepSeek, en mode JSON, réflexion désactivée : `deepseek-flash` réfléchit
+ * par défaut, ce qui consomme le quota de sortie avant le JSON (réponse vide ou coupée), le facture au
+ * prix de la sortie et rend la température sans effet.
+ */
 export function creerDeepseek(
   reglages: ReglagesDeepseek,
   appel: AppelHttp = (url, init) => fetch(url, init),
@@ -45,6 +49,7 @@ export function creerDeepseek(
             model: reglages.modele,
             messages: messagesDeLaRequete(requete),
             response_format: { type: 'json_object' },
+            thinking: { type: 'disabled' },
             temperature: reglages.temperature,
             max_tokens: reglages.jetonsSortieMax,
           }),
@@ -63,6 +68,7 @@ export function creerDeepseek(
         texte: contenu,
         modele: reglages.modele,
         parametres: {
+          thinking: 'disabled',
           temperature: reglages.temperature,
           max_tokens: reglages.jetonsSortieMax,
           response_format: 'json_object',
