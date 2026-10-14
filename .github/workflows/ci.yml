@@ -65,7 +65,10 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm test
+      # Sans préfixe de paquet devant chaque ligne : les annotations « ::error » que Vitest émet sous
+      # GitHub Actions (test en échec, fichier, message) sont alors lues par le job, donc lisibles
+      # depuis l'API des check-runs sans ouvrir le journal.
+      - run: pnpm -r --if-present --reporter=append-only --reporter-hide-prefix test
         env:
           DATABASE_URL: postgres://janus:janus@localhost:5432/janus_test
 
