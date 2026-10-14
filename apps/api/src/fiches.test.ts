@@ -4,7 +4,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { extraireManifeste } from './domaines/catalogue/adaptateur.ts'
-import { lireLesFiches, verifierLesFiches } from './fiches.ts'
+import { TAILLE_MAX_FICHE, lireLesFiches, verifierLesFiches } from './fiches.ts'
 
 /** Le gabarit des fiches : une fiche complète (bloc X00), telle que `fiches:nouvelle` la copie. */
 const GABARIT = join(
@@ -129,6 +129,24 @@ describe('vérification des fiches du dépôt', () => {
     expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
       expect.stringContaining('le bloc X00 n’est pas dans le catalogue de test'),
     ])
+  })
+
+  it('refuse une fiche de plus de 5 Mo, et accepte une fiche juste en dessous', async () => {
+    const place = Buffer.byteLength(fiche, 'utf8')
+    const rembourrer = (octets: number) =>
+      fiche.replace(
+        '<div id="contenu"></div>',
+        `<div id="contenu"></div><!--${'x'.repeat(octets - 7)}-->`,
+      )
+    await poser('X00.html', rembourrer(TAILLE_MAX_FICHE - place + 1))
+
+    const problemes = await verifierLesFiches({ dossierContenu: contenu })
+
+    expect(problemes).toEqual([expect.stringContaining('plus que les 5 Mo autorisés')])
+    expect(problemes[0]).toContain('pèse 5.0 Mo')
+
+    await poser('X00.html', rembourrer(TAILLE_MAX_FICHE - place))
+    expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
   })
 
   describe('ce que la page doit contenir', () => {

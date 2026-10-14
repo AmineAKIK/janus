@@ -27,5 +27,6 @@
 3. Remplacer tout ce qui dit `À REMPLACER`.
 4. `pnpm fiches:verifier` doit répondre « aucun problème ». La CI le refait avant la fusion.
 5. Modifier une fiche déjà publiée : augmenter `version` dans le manifeste.
+6. Une fiche pèse au plus 5 Mo, images et sons compris : `pnpm fiches:verifier` refuse au-delà. Une fiche se conçoit sous cette limite, elle ne se réduit pas après coup.
 
-Aucun appel réseau dans une fiche, aucun fichier externe : images et audio en `data:`.
+Aucun appel réseau dans une fiche, aucun fichier externe : images et audio en `data:`, dans la limite des 5 Mo.
