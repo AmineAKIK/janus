@@ -56,12 +56,16 @@ export interface ResultatBloc {
   readonly echecsConsecutifs: number
   /** Vrai quand le bloc est redescendu d'un cran après des échecs de vérification et n'a pas réussi depuis. */
   readonly descendu: boolean
+  /** Les étapes de la fiche déjà affichées (`etape_vue`), dans l'ordre de leur première vue. */
+  readonly etapesVues: readonly string[]
   /** Les dates qui alimentent le panneau « Cinq preuves » ; la file du jour s'en sert aussi pour les échéances. */
   readonly preuves: {
     /** Fin de la série de consolidation réussie. */
     readonly consolidation: string | null
     /** Fin du dernier exercice de pratique atteint à l'aide 0 ; `null` s'il n'y a pas d'exercice ou s'il en reste un. */
     readonly pratique: string | null
+    /** Premier atelier réussi à l'aide 0 ; `null` s'il n'y a pas d'atelier ou s'il n'est pas encore réussi. */
+    readonly atelier: string | null
     /** Premier transfert solide, au premier tour et qui compte, d'une vérification valable. */
     readonly transfert: string | null
     /** Atteinte de la cible d'aisance. */
@@ -821,6 +825,7 @@ export interface Etapes {
   readonly erreursOuvertes: readonly string[]
   readonly transfert: string | null
   readonly force: ResultatBloc['force']
+  readonly etapesVues: readonly string[]
 }
 
 export function assembler(
@@ -900,10 +905,12 @@ export function assembler(
     erreursOuvertes: [...erreursOuvertes],
     echecsConsecutifs: verifications?.echecs ?? 0,
     descendu: verifications?.descendu ?? false,
+    etapesVues: [...etapes.etapesVues],
     preuves: {
       consolidation: consolidation.ok ? consolidation.date : null,
       pratique:
         manifeste.pratique.length > 0 && pratique.incompletes.length === 0 ? pratique.date : null,
+      atelier: atelier.date,
       transfert: etapes.transfert,
       aisance: aisance.date,
       aisanceRequise: manifeste.aisance !== undefined,
@@ -931,6 +938,8 @@ export interface EtatBloc {
   readonly aisance: SuiviAisance
   readonly transfert: SuiviTransfert
   readonly forcage: SuiviForcage
+  /** Les étapes affichées, dans l'ordre de leur première vue. */
+  readonly etapesVues: Set<string>
   /** Le nombre de faits lus. */
   faits: number
   /** Les vérifications et les erreurs ne se lisent qu'avec la date d'« acquis provisoirement » : elles repartent d'elle. */
@@ -943,6 +952,7 @@ export interface EtatBloc {
 export function lirePreuves(etat: EtatBloc, fait: Fait): void {
   etat.faits += 1
   if (fait.type === 'correction') etat.corrections.set(fait.id, fait)
+  if (fait.type === 'etape_vue') etat.etapesVues.add(fait.etape)
   etat.restitution.avancer(fait)
   etat.consolidation.avancer(fait)
   etat.pratique.avancer(fait)
@@ -1011,6 +1021,7 @@ export function construireEtat(
     aisance: new SuiviAisance(manifeste, reglages),
     transfert: new SuiviTransfert(),
     forcage: new SuiviForcage(),
+    etapesVues: new Set<string>(),
     faits: 0,
     provisoire: null,
     verifications: null,
@@ -1074,5 +1085,6 @@ export function etapesDe(etat: EtatBloc, maintenant: string): Etapes {
     erreursOuvertes: etat.erreurs.ouvertes,
     transfert: etat.transfert.date,
     force: etat.forcage.force,
+    etapesVues: [...etat.etapesVues],
   }
 }

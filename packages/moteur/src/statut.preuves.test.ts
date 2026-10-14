@@ -22,6 +22,7 @@ describe('les dates des preuves', () => {
     expect(preuves([])).toEqual({
       consolidation: null,
       pratique: null,
+      atelier: null,
       transfert: null,
       aisance: null,
       aisanceRequise: true,
@@ -47,6 +48,22 @@ describe('les dates des preuves', () => {
   it('ne date pas la pratique quand un exercice n’est pas atteint à l’aide 0', () => {
     const f = fabrique()
     expect(preuves(f.pratique(DEBUT, [0, 2])).pratique).toBeNull()
+  })
+
+  it('date le premier atelier réussi à l’aide 0', () => {
+    const f = fabrique()
+    const reussi = apres(DEBUT, 0, 5)
+    const resultat = preuves([
+      f.atelier(apres(DEBUT, 0, 2), 2),
+      f.atelier(reussi),
+      f.atelier(apres(DEBUT, 0, 9)),
+    ])
+    expect(resultat.atelier).toBe(reussi)
+  })
+
+  it('ne date pas un atelier réussi seulement avec de l’aide', () => {
+    const f = fabrique()
+    expect(preuves([f.atelier(DEBUT, 1)]).atelier).toBeNull()
   })
 
   it('date le premier transfert solide d’une vérification valable, puis la dernière réussite', () => {

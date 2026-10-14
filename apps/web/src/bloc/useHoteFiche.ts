@@ -1,5 +1,5 @@
 import { CorrectionRecue, ErreurApi, nouvelId } from '@janus/contrats'
-import type { Manque, MessageAppli, MessagePage, Niveau, Statut } from '@janus/contrats'
+import type { Avancement, Manque, MessageAppli, MessagePage, Niveau, Statut } from '@janus/contrats'
 import { lireTheme } from '@janus/ui'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
@@ -17,9 +17,17 @@ export interface DonneesFiche {
   readonly version: number
   readonly statut: Statut
   readonly manque: readonly Manque[]
+  /** L'avancement du bloc d'après les faits enregistrés : ce que le fil d'étapes coche. */
+  readonly avancement: Avancement
   readonly serieOuverte: { readonly restitution: boolean; readonly consolidation: boolean }
   /** L'état de page sauvegardé et sa version (0 s'il n'y en a pas). */
   readonly etatPage: { readonly version: number; readonly etat: EtatDePage } | null
+}
+
+/** Le gabarit garde le bilan envoyé sous la clé `bilan` de son état : sa présence dit qu'un bilan est parti. */
+function bilanDansLEtat(etat: EtatDePage | undefined): boolean {
+  const bilan = etat?.['bilan']
+  return typeof bilan === 'object' && bilan !== null
 }
 
 type EtatDePage = Extract<MessagePage, { type: 'etat.sauver' }>['etat']
@@ -48,6 +56,7 @@ export interface CorrectionSuivie {
 export interface ReponseStatut {
   readonly statut: Statut
   readonly manque: readonly Manque[]
+  readonly avancement: Avancement
 }
 
 /** Ce que la page apprend d'un message refusé : le plafond, la panne de l'IA, ou un simple refus. */
@@ -86,7 +95,9 @@ export function useHoteFiche(
   const [statut, setStatut] = useState<ReponseStatut>({
     statut: donnees.statut,
     manque: donnees.manque,
+    avancement: donnees.avancement,
   })
+  const [bilanFait, setBilanFait] = useState(() => bilanDansLEtat(donnees.etatPage?.etat))
   const [conflit, setConflit] = useState(false)
   const rappelActivite = useRef(surActivite)
   rappelActivite.current = surActivite
@@ -150,7 +161,7 @@ export function useHoteFiche(
   }, [restitutionOuverte, consolidationOuverte, phase, envoyerInit])
 
   // Le serveur a recalculé le statut (après une correction, ou en relisant le bloc).
-  const cleStatut = `${donnees.statut}:${JSON.stringify(donnees.manque)}`
+  const cleStatut = `${donnees.statut}:${JSON.stringify(donnees.manque)}:${JSON.stringify(donnees.avancement)}`
   const statutAvant = useRef(cleStatut)
   useEffect(() => {
     if (statutAvant.current === cleStatut) return
@@ -158,6 +169,7 @@ export function useHoteFiche(
     appliquerStatut({
       statut: dernieres.current.donnees.statut,
       manque: dernieres.current.donnees.manque,
+      avancement: dernieres.current.donnees.avancement,
     })
   }, [cleStatut, appliquerStatut])
 
@@ -205,6 +217,7 @@ export function useHoteFiche(
         }
         default: {
           if (message.type === 'etat.sauver') dernieres.current.etat = message.etat
+          if (message.type === 'bilan.erreurs') setBilanFait(true)
           if (message.type === 'etape.vue') {
             const vue = message.etape
             setEtapeVue(vue)
@@ -402,6 +415,7 @@ export function useHoteFiche(
     hauteur,
     etapeVue,
     etapesVues,
+    bilanFait,
     envoyees,
     chargement,
     recharger: () => {

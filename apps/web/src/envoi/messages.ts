@@ -1,5 +1,5 @@
 import { ROUTES } from '@janus/contrats'
-import type { Manque, MessagePage, Statut } from '@janus/contrats'
+import type { Avancement, Manque, MessagePage, Statut } from '@janus/contrats'
 
 /** Ce qu'il faut garder pour envoyer un message de la page : la route, ses paramètres et son corps. */
 export interface EnvoiDeMessage {
@@ -56,18 +56,25 @@ export function envoiDeMessage(message: MessagePage, versionEtat: number): Envoi
 export function statutDeReponse(
   route: string,
   reponse: unknown,
-): { readonly statut: Statut; readonly manque: readonly Manque[] } | null {
+): {
+  readonly statut: Statut
+  readonly manque: readonly Manque[]
+  readonly avancement: Avancement
+} | null {
   if (route === 'POST /evenements') {
     const { statut } = ROUTES['POST /evenements'].reponse.parse(reponse)
-    return statut === null ? null : { statut: statut.statut, manque: statut.manque }
+    return statut === null
+      ? null
+      : { statut: statut.statut, manque: statut.manque, avancement: statut.avancement }
   }
   if (route === 'POST /blocs/:id/erreurs') {
-    const { statut, manque } = ROUTES['POST /blocs/:id/erreurs'].reponse.parse(reponse)
-    return { statut, manque }
+    const { statut, manque, avancement } = ROUTES['POST /blocs/:id/erreurs'].reponse.parse(reponse)
+    return { statut, manque, avancement }
   }
   if (route === 'POST /corrections/:id/trancher') {
-    const { statut, manque } = ROUTES['POST /corrections/:id/trancher'].reponse.parse(reponse)
-    return { statut, manque }
+    const { statut, manque, avancement } =
+      ROUTES['POST /corrections/:id/trancher'].reponse.parse(reponse)
+    return { statut, manque, avancement }
   }
   return null
 }

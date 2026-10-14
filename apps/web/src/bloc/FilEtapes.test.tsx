@@ -1,5 +1,6 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import type { Avancement } from '@janus/contrats'
 import { describe, expect, it, vi } from 'vitest'
 import { etapesFaites, FilEtapes } from './FilEtapes.tsx'
 
@@ -8,25 +9,67 @@ const ETAPES = [
   { id: 'ET2', titre: 'Pré-test', type: 'pretest' as const },
   { id: 'ET3', titre: 'Explication', type: 'explication' as const },
   { id: 'ET4', titre: 'Pratique', type: 'pratique' as const },
+  { id: 'ET5', titre: 'Aisance', type: 'aisance' as const },
+  { id: 'ET6', titre: 'Restitution', type: 'restitution' as const },
+  { id: 'ET7', titre: 'Consolidation', type: 'consolidation' as const },
+  { id: 'ET8', titre: 'Bilan', type: 'bilan' as const },
 ]
 
+const RIEN: Avancement = {
+  etapes_vues: [],
+  restitution: null,
+  consolidation: null,
+  pratique: null,
+  atelier: null,
+  aisance: null,
+}
+const DATE = '2026-06-01T10:30:00Z'
+
 describe('etapesFaites', () => {
-  it('compte comme faites les étapes avant la plus avancée vue', () => {
-    expect(etapesFaites(ETAPES, ['ET1', 'ET3'])).toEqual(new Set(['ET1', 'ET2']))
+  it('n’en compte aucune sans fait, même quand une étape lointaine est affichée', () => {
+    expect(etapesFaites(ETAPES, RIEN, ['ET8'], false)).toEqual(new Set())
   })
 
-  it('n’en compte aucune tant que rien n’a été vu', () => {
-    expect(etapesFaites(ETAPES, [])).toEqual(new Set())
+  it('compte une étape de cours quand elle a été affichée, jamais celles qui la précèdent', () => {
+    expect(etapesFaites(ETAPES, RIEN, ['ET3'], false)).toEqual(new Set(['ET3']))
+    expect(etapesFaites(ETAPES, { ...RIEN, etapes_vues: ['ET1'] }, ['ET3'], false)).toEqual(
+      new Set(['ET1', 'ET3']),
+    )
+  })
+
+  it('compte une étape à preuve seulement quand le serveur date sa preuve', () => {
+    expect(etapesFaites(ETAPES, RIEN, ['ET4', 'ET5', 'ET6', 'ET7'], false)).toEqual(new Set())
+    expect(
+      etapesFaites(
+        ETAPES,
+        { ...RIEN, pratique: DATE, aisance: DATE, restitution: DATE, consolidation: DATE },
+        [],
+        false,
+      ),
+    ).toEqual(new Set(['ET4', 'ET5', 'ET6', 'ET7']))
+  })
+
+  it('compte le bilan quand il a été envoyé', () => {
+    expect(etapesFaites(ETAPES, RIEN, [], true)).toEqual(new Set(['ET8']))
   })
 
   it('ignore une étape inconnue', () => {
-    expect(etapesFaites(ETAPES, ['ZZ'])).toEqual(new Set())
+    expect(etapesFaites(ETAPES, { ...RIEN, etapes_vues: ['ZZ'] }, ['YY'], false)).toEqual(new Set())
   })
 })
 
 describe('FilEtapes', () => {
   it('liste un onglet par étape, dans l’ordre, la première est courante par défaut', () => {
-    render(<FilEtapes etapes={ETAPES} courante={null} vues={[]} surChoix={() => undefined} />)
+    render(
+      <FilEtapes
+        etapes={ETAPES.slice(0, 4)}
+        courante={null}
+        avancement={RIEN}
+        vues={[]}
+        bilanFait={false}
+        surChoix={() => undefined}
+      />,
+    )
 
     const onglets = within(screen.getByRole('list')).getAllByRole('button')
     expect(onglets.map((onglet) => onglet.textContent)).toEqual([
@@ -44,23 +87,36 @@ describe('FilEtapes', () => {
       <FilEtapes
         etapes={ETAPES}
         courante="ET3"
-        vues={['ET1', 'ET2', 'ET3']}
+        avancement={{ ...RIEN, etapes_vues: ['ET1'], pratique: DATE }}
+        vues={['ET2', 'ET3']}
+        bilanFait={false}
         surChoix={() => undefined}
       />,
     )
 
     expect(screen.getByRole('button', { name: 'Carte' }).textContent).toBe('✓ Carte')
     expect(screen.getByRole('button', { name: 'Pré-test' }).textContent).toBe('✓ Pré-test')
+    expect(screen.getByRole('button', { name: 'Pratique' }).textContent).toBe('✓ Pratique')
+    expect(screen.getByRole('button', { name: 'Restitution' }).textContent).toBe('Restitution')
     expect(screen.getByRole('button', { name: 'Explication' })).toHaveAttribute(
       'aria-current',
       'step',
     )
-    expect(screen.getByRole('button', { name: 'Explication' }).textContent).toBe('Explication')
+    expect(screen.getByRole('button', { name: 'Explication' }).textContent).toBe('✓ Explication')
   })
 
   it('demande l’étape cliquée', async () => {
     const choix = vi.fn()
-    render(<FilEtapes etapes={ETAPES} courante={null} vues={[]} surChoix={choix} />)
+    render(
+      <FilEtapes
+        etapes={ETAPES}
+        courante={null}
+        avancement={RIEN}
+        vues={[]}
+        bilanFait={false}
+        surChoix={choix}
+      />,
+    )
 
     await userEvent.setup().click(screen.getByRole('button', { name: 'Pratique' }))
 

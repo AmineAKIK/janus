@@ -13,6 +13,14 @@ const statutBloc = {
   statut: 'vu',
   manque: [{ code: 'consolidation_trop_tot', apres: '2026-06-01T11:30:00Z' }],
   erreurs_ouvertes: [],
+  avancement: {
+    etapes_vues: ['ET1', 'ET2', 'ET3'],
+    restitution: '2026-06-01T10:30:00Z',
+    consolidation: null,
+    pratique: '2026-06-01T10:20:00Z',
+    atelier: null,
+    aisance: null,
+  },
 }
 
 const correction = { ...EXEMPLE_CORRECTION, id: ID }

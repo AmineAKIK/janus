@@ -34,11 +34,32 @@ export const ProblemeApi = z.strictObject({
 export type ProblemeApi = z.infer<typeof ProblemeApi>
 
 /** Ce que l'appli doit afficher d'un bloc après un fait : son statut et ce qui manque pour le suivant. */
+/**
+ * L'avancement d'un bloc, d'après les faits enregistrés : les étapes déjà affichées, et la date à
+ * laquelle chaque étape à preuve a été prouvée (`null` tant qu'elle ne l'est pas, ou si la fiche
+ * n'a pas cette étape). C'est ce que le fil d'étapes de l'appli coche.
+ */
+export const Avancement = z.strictObject({
+  etapes_vues: z.array(Identifiant),
+  /** Toutes les questions de restitution envoyées au premier tour. */
+  restitution: InstantUtc.nullable(),
+  /** Série de consolidation réussie. */
+  consolidation: InstantUtc.nullable(),
+  /** Chaque exercice de pratique atteint à l'aide 0. */
+  pratique: InstantUtc.nullable(),
+  /** Atelier réussi à l'aide 0. */
+  atelier: InstantUtc.nullable(),
+  /** Cible d'aisance atteinte. */
+  aisance: InstantUtc.nullable(),
+})
+export type Avancement = z.infer<typeof Avancement>
+
 export const StatutBloc = z.strictObject({
   statut: Statut,
   manque: z.array(Manque),
   /** Identifiants des erreurs critiques ouvertes. */
   erreurs_ouvertes: z.array(Identifiant),
+  avancement: Avancement,
 })
 export type StatutBloc = z.infer<typeof StatutBloc>
 

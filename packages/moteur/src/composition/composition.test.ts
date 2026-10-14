@@ -43,6 +43,34 @@ describe('le statut et les preuves d’un bloc rendus par l’API', () => {
     expect(statutDuBloc(resultat)).toMatchObject({ statut: resultat.statut })
   })
 
+  it('rend l’avancement du bloc : les étapes vues et la date de chaque étape prouvée', () => {
+    const sansFait = statutDuBloc(calculerBloc([], MANIFESTE, REGLAGES, MAINTENANT))
+    expect(sansFait.avancement).toEqual({
+      etapes_vues: [],
+      restitution: null,
+      consolidation: null,
+      pratique: null,
+      atelier: null,
+      aisance: null,
+    })
+
+    const faits = [
+      f.etape(DEBUT, 'ET1'),
+      f.etape(apres(DEBUT, 0, 1), 'ET3'),
+      ...jusquaProvisoire(f),
+    ]
+    const resultat = calculerBloc(faits, MANIFESTE, REGLAGES, MAINTENANT)
+    const statut = statutDuBloc(resultat)
+    expect(statut.avancement.etapes_vues).toEqual(['ET1', 'ET3'])
+    expect(statut.avancement.restitution).toBe(resultat.dates.vu)
+    expect(statut.avancement.consolidation).toBe(resultat.preuves.consolidation)
+    expect(statut.avancement.pratique).toBe(resultat.preuves.pratique)
+    expect(statut.avancement.atelier).toBe(resultat.preuves.atelier)
+    expect(statut.avancement.aisance).toBe(resultat.preuves.aisance)
+    expect(statut.avancement.restitution).not.toBeNull()
+    expect(statut.avancement.consolidation).not.toBeNull()
+  })
+
   it('rend ce qui manque à un bloc sans fait', () => {
     const resultat = calculerBloc([], MANIFESTE, REGLAGES, MAINTENANT)
     const statut = statutDuBloc(resultat)
