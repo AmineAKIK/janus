@@ -27,7 +27,7 @@ describe('texteManque', () => {
   it('cite les questions, exercices et erreurs concernés', () => {
     expect(
       texteManque({ code: 'restitution_incomplete', questions: ['R2', 'R3'] }, MAINTENANT),
-    ).toBe('Envoie ta réponse aux questions de restitution : R2, R3.')
+    ).toBe('Envoie ta réponse aux questions R2 et R3 de la restitution.')
     expect(texteManque({ code: 'erreur_ouverte', erreurs: ['E1'] }, MAINTENANT)).toContain('E1')
     expect(texteManque({ code: 'pratique_aide', exercices: ['EX1'] }, MAINTENANT)).toContain('EX1')
     expect(
@@ -39,6 +39,35 @@ describe('texteManque', () => {
     expect(texteManque({ code: 'restitution_incomplete' }, MAINTENANT)).toBe(
       'Envoie ta réponse à toutes les questions de restitution.',
     )
+  })
+})
+
+describe('les noms que l’apprenant lit dans la fiche', () => {
+  const libelles = {
+    exercice: (id: string) => ({ PR1: '« Convertir »', PR2: '« Raisonner »' })[id] ?? id,
+    question: (id: string) => id.slice(1),
+  }
+
+  it('nomme les exercices par leur titre, jamais par leur identifiant', () => {
+    expect(
+      texteManque({ code: 'pratique_aide', exercices: ['PR1', 'PR2'] }, MAINTENANT, libelles),
+    ).toBe('Réussis sans aide les exercices « Convertir » et « Raisonner ».')
+    expect(texteManque({ code: 'pratique_aide', exercices: ['PR1'] }, MAINTENANT, libelles)).toBe(
+      'Réussis sans aide l’exercice « Convertir ».',
+    )
+  })
+
+  it('donne le rang des questions qui restent', () => {
+    expect(
+      texteManque(
+        { code: 'restitution_incomplete', questions: ['R1', 'R3', 'R5'] },
+        MAINTENANT,
+        libelles,
+      ),
+    ).toBe('Envoie ta réponse aux questions 1, 3 et 5 de la restitution.')
+    expect(
+      texteManque({ code: 'restitution_incomplete', questions: ['R2'] }, MAINTENANT, libelles),
+    ).toBe('Envoie ta réponse à la question 2 de la restitution.')
   })
 })
 
@@ -89,7 +118,7 @@ describe('formaterDelai', () => {
     const phrase = texteManque(
       { code: 'erreur_ouverte', erreurs: ['confond_compilateur_interpreteur'] },
       '2026-10-10T12:00:00Z',
-      () => 'Confond compilateur et interpréteur',
+      { erreur: () => 'Confond compilateur et interpréteur' },
     )
     expect(phrase).toBe(
       'Réussis une question sur chaque erreur ouverte : Confond compilateur et interpréteur.',

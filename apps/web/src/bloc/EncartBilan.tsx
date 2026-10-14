@@ -2,6 +2,7 @@ import type { Manque, Statut } from '@janus/contrats'
 import { BadgeNeComptePas, BadgeStatut, LIBELLES_STATUT } from '@janus/ui'
 import styles from './Bloc.module.css'
 import { STATUT_SUIVANT, TEXTES_ENCARTS, texteManque } from './textesManquants.ts'
+import type { Libelles } from './textesManquants.ts'
 
 /** À l'étape du bilan : le statut calculé et, une phrase par manque, ce qui reste à faire. */
 export function EncartBilan({
@@ -10,7 +11,7 @@ export function EncartBilan({
   maintenant,
   erreurEnAttente = false,
   reponsesApresRetourCours = [],
-  libelleErreur,
+  libelles,
   fuseau,
 }: {
   readonly statut: Statut
@@ -18,8 +19,8 @@ export function EncartBilan({
   readonly maintenant: string
   /** Une erreur repérée par l'IA attend la décision d'Amine. */
   readonly erreurEnAttente?: boolean
-  /** Le nom lisible d'une erreur critique, depuis le manifeste du bloc. */
-  readonly libelleErreur?: (id: string) => string
+  /** Les noms lisibles des erreurs, exercices et questions, depuis le manifeste du bloc. */
+  readonly libelles?: Libelles
   /** Le fuseau des réglages, pour écrire les heures. */
   readonly fuseau?: string
   /** Réponses faites après « Revoir le cours », visibles comme preuves non comptées. */
@@ -51,7 +52,7 @@ export function EncartBilan({
                 <li
                   key={`${element.code}:${(element.questions ?? element.exercices ?? element.erreurs ?? []).join()}`}
                 >
-                  {texteManque(element, maintenant, libelleErreur, fuseau)}
+                  {texteManque(element, maintenant, libelles, fuseau)}
                 </li>
               ))}
             </ul>

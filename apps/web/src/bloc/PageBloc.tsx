@@ -35,6 +35,7 @@ function FicheOuverte({
   problemes,
   erreursCritiques,
   questions,
+  exercices,
   relire,
   relireBloc,
   delaiConsolidationMinutes,
@@ -59,6 +60,8 @@ function FicheOuverte({
   readonly questions: Readonly<
     Record<SerieVerrou, readonly { readonly id: string; readonly question: string }[]>
   >
+  /** Les exercices de la pratique, pour les nommer dans le bilan. */
+  readonly exercices: readonly { readonly id: string; readonly titre: string }[]
   readonly donnees: DonneesFiche
   readonly titre: string
   readonly moduleId: string
@@ -85,6 +88,18 @@ function FicheOuverte({
     (erreursCritiques.find((erreur) => erreur.id === id)?.libelle ?? id).replace(/\.$/, '')
   const texteQuestion = (id: string) =>
     toutesQuestions.find((question) => question.id === id)?.question ?? id
+  // Le bilan nomme ce qui reste comme la fiche le montre : le titre d'un exercice, le rang d'une question.
+  const libelles = {
+    erreur: nomErreur,
+    exercice: (id: string) => {
+      const titre = exercices.find((exercice) => exercice.id === id)?.titre
+      return titre === undefined ? id : `« ${titre} »`
+    },
+    question: (id: string) => {
+      const rang = questions.restitution.findIndex((question) => question.id === id)
+      return rang < 0 ? id : String(rang + 1)
+    },
+  }
   const restantes = {
     restitution: questionsRestantes(
       'restitution',
@@ -199,7 +214,7 @@ function FicheOuverte({
         {typeCourant === 'bilan' && (
           <EncartBilan
             erreurEnAttente={enAttente.length > 0}
-            libelleErreur={nomErreur}
+            libelles={libelles}
             statut={hote.statut.statut}
             manque={hote.statut.manque}
             maintenant={instantReel()}
@@ -386,6 +401,7 @@ export function PageBloc({
           restitution: detail.manifeste.restitution,
           consolidation: detail.manifeste.consolidation,
         }}
+        exercices={detail.manifeste.pratique}
       />
     </GardeOuverture>
   )

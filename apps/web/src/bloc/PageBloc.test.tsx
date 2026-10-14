@@ -142,6 +142,21 @@ describe('retour ciblé', () => {
       '↺',
     )
   })
+
+  it('au bilan, ce qui reste se lit avec les noms de la fiche, pas ses identifiants', async () => {
+    marquerOuvert('B04')
+    const { envoyer } = await afficher({ bloc: 'B04' })
+
+    await envoyer({ ...etape('ET9'), bloc: 'B04' })
+
+    const pourPasser = await screen.findByText(/^Pour passer à/)
+    const reste = pourPasser.nextElementSibling
+    if (!(reste instanceof HTMLElement)) throw new Error('Rien sous « Pour passer à »')
+    expect(
+      within(reste).getByText('Réussis sans aide l’exercice « Pratique guidée ».'),
+    ).toBeVisible()
+    expect(reste.textContent).not.toMatch(/\bPR\d/)
+  })
 })
 
 describe('stockage indisponible', () => {
