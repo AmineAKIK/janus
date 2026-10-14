@@ -34,6 +34,17 @@ describe('lireConfig', () => {
     expect(config.DEEPSEEK_API_KEY).toBe('sk-test')
   })
 
+  it('tient une clé vide pour absente : la CI passe un secret manquant comme une chaîne vide', () => {
+    const config = lireConfig({
+      ...ENVIRONNEMENT_TEST,
+      DEEPSEEK_API_KEY: '',
+      ANTHROPIC_API_KEY: '',
+    })
+
+    expect(config.DEEPSEEK_API_KEY).toBeUndefined()
+    expect(config.ANTHROPIC_API_KEY).toBeUndefined()
+  })
+
   it('lit le modèle et les tarifs de correction dans la configuration, avec des valeurs par défaut', () => {
     const defaut = lireConfig(ENVIRONNEMENT_TEST)
     const choisie = lireConfig({
