@@ -169,7 +169,7 @@ export function creerServiceCorrection({
       jetonsEntree += brut.jetonsEntree
       jetonsSortie += brut.jetonsSortie
       cout += coutMillioniemes(brut, tarifs)
-      const validation = validerSortie(brut.texte, manifeste)
+      const validation = validerSortie(brut.texte, manifeste, requete.confiance)
       if (validation.valide) {
         return {
           sortie: validation.sortie,

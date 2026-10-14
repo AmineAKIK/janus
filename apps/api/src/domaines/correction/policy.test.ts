@@ -19,19 +19,20 @@ const sortie = (surcharge: Record<string, unknown> = {}) =>
     ...surcharge,
   })
 const motif = (texte: string) => {
-  const validation = validerSortie(texte, MANIFESTE)
+  const validation = validerSortie(texte, MANIFESTE, 'hesitant')
   return validation.valide ? undefined : validation.motif
 }
 
 describe('validerSortie', () => {
   it('accepte un JSON aux champs exacts', () => {
-    const validation = validerSortie(sortie(), MANIFESTE)
+    const validation = validerSortie(sortie(), MANIFESTE, 'sur')
 
     expect(validation).toEqual({
       valide: true,
       sortie: {
         message: MESSAGE,
         niveau: 'solide',
+        niveauRendu: 'solide',
         erreurs: [],
         source: 'deduit',
         ref: '',
@@ -79,6 +80,7 @@ describe('validerSortie', () => {
     const validation = validerSortie(
       sortie({ message: `${MESSAGE} Bravo${insecable}!${fine}Encore.` }),
       MANIFESTE,
+      'hesitant',
     )
 
     expect(validation.valide && validation.sortie.message.endsWith('Bravo ! Encore.')).toBe(true)
@@ -94,9 +96,60 @@ describe('validerSortie', () => {
     const validation = validerSortie(
       sortie({ erreurs_critiques: [erreur?.id, 'E99', erreur?.id] }),
       MANIFESTE,
+      'hesitant',
     )
 
     expect(validation.valide && validation.sortie.erreurs).toEqual([erreur?.id])
+  })
+
+  describe('la règle « erreur critique → niveau » (consigne, règle 10)', () => {
+    const niveaux = (texte: string, confiance: 'sur' | 'hesitant' | 'hasard') => {
+      const validation = validerSortie(texte, MANIFESTE, confiance)
+      if (!validation.valide) throw new Error(validation.motif)
+      return { niveau: validation.sortie.niveau, rendu: validation.sortie.niveauRendu }
+    }
+    const avecErreur = (niveau: string) => sortie({ niveau, erreurs_critiques: [erreur?.id] })
+
+    it('plafonne à fragile quand une erreur critique du bloc est signalée', () => {
+      expect(niveaux(avecErreur('solide'), 'hesitant')).toEqual({
+        niveau: 'fragile',
+        rendu: 'solide',
+      })
+      expect(niveaux(avecErreur('partiel'), 'hasard')).toEqual({
+        niveau: 'fragile',
+        rendu: 'partiel',
+      })
+    })
+
+    it('plafonne à pas_encore quand l’apprenant s’est dit sûr', () => {
+      expect(niveaux(avecErreur('partiel'), 'sur')).toEqual({
+        niveau: 'pas_encore',
+        rendu: 'partiel',
+      })
+      expect(niveaux(avecErreur('fragile'), 'sur')).toEqual({
+        niveau: 'pas_encore',
+        rendu: 'fragile',
+      })
+    })
+
+    it('ne relève jamais un niveau', () => {
+      expect(niveaux(avecErreur('pas_encore'), 'hesitant')).toEqual({
+        niveau: 'pas_encore',
+        rendu: 'pas_encore',
+      })
+      expect(niveaux(avecErreur('fragile'), 'hasard')).toEqual({
+        niveau: 'fragile',
+        rendu: 'fragile',
+      })
+    })
+
+    it('ne compte pas une erreur inconnue du bloc, ni l’absence d’erreur', () => {
+      expect(niveaux(sortie({ erreurs_critiques: ['E99'] }), 'sur')).toEqual({
+        niveau: 'solide',
+        rendu: 'solide',
+      })
+      expect(niveaux(sortie(), 'sur')).toEqual({ niveau: 'solide', rendu: 'solide' })
+    })
   })
 })
 
