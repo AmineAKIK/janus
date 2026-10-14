@@ -12,10 +12,18 @@ export interface BlocImporte {
   readonly manifeste: Manifeste
 }
 
-/** Ce que l'API rend d'un bloc après un fait : son statut, ce qui manque, les erreurs ouvertes. */
+/** Ce que l'API rend d'un bloc après un fait : son statut, ce qui manque, les erreurs ouvertes, l'avancement. */
 export function statutDuBloc(resultat: ResultatBloc): StatutBloc {
   return StatutBloc.parse({
     statut: resultat.statut,
+    avancement: {
+      etapes_vues: [...resultat.etapesVues],
+      restitution: resultat.dates.vu,
+      consolidation: resultat.preuves.consolidation,
+      pratique: resultat.preuves.pratique,
+      atelier: resultat.preuves.atelier,
+      aisance: resultat.preuves.aisance,
+    },
     manque: resultat.manque.map((manque) => ({
       code: manque.code,
       ...(manque.questions === undefined ? {} : { questions: [...manque.questions] }),

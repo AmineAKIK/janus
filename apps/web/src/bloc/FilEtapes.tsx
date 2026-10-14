@@ -1,4 +1,4 @@
-import type { TypeEtape } from '@janus/contrats'
+import type { Avancement, TypeEtape } from '@janus/contrats'
 import { useState } from 'react'
 import styles from './Bloc.module.css'
 import { TEXTES_BLOC } from './textes.ts'
@@ -9,13 +9,49 @@ export interface EtapeAffichee {
   readonly type: TypeEtape
 }
 
-/** Étape faite : la page a vu une étape plus loin dans le fil. */
+/** Une étape est faite d'après les faits, jamais d'après sa place dans le fil. */
+function estFaite(
+  { id, type }: EtapeAffichee,
+  avancement: Avancement,
+  vues: ReadonlySet<string>,
+  bilanFait: boolean,
+): boolean {
+  switch (type) {
+    // Une étape de cours n'a pas de preuve : elle est faite quand elle a été affichée.
+    case 'carte':
+    case 'pretest':
+    case 'explication':
+      return vues.has(id)
+    case 'restitution':
+      return avancement.restitution !== null
+    case 'consolidation':
+      return avancement.consolidation !== null
+    case 'pratique':
+      return avancement.pratique !== null
+    case 'atelier':
+      return avancement.atelier !== null
+    case 'aisance':
+      return avancement.aisance !== null
+    case 'bilan':
+      return bilanFait
+  }
+}
+
+/**
+ * Les étapes faites : une étape à preuve quand le serveur date sa preuve (restitution envoyée,
+ * pratique à l'aide 0, atelier, aisance, consolidation), une étape de cours quand elle a été
+ * affichée (par le serveur ou dans cet onglet), le bilan quand il a été envoyé.
+ */
 export function etapesFaites(
   etapes: readonly EtapeAffichee[],
+  avancement: Avancement,
   vues: readonly string[],
+  bilanFait: boolean,
 ): ReadonlySet<string> {
-  const plusLoin = Math.max(-1, ...vues.map((vue) => etapes.findIndex(({ id }) => id === vue)))
-  return new Set(etapes.slice(0, Math.max(0, plusLoin)).map(({ id }) => id))
+  const affichees = new Set([...avancement.etapes_vues, ...vues])
+  return new Set(
+    etapes.filter((etape) => estFaite(etape, avancement, affichees, bilanFait)).map(({ id }) => id),
+  )
 }
 
 const AUCUNE: ReadonlySet<string> = new Set()
@@ -24,20 +60,27 @@ const AUCUNE: ReadonlySet<string> = new Set()
 export function FilEtapes({
   etapes,
   courante,
+  avancement,
   vues,
+  bilanFait,
   surChoix,
   verrouillees = AUCUNE,
   surVerrou,
 }: {
   readonly etapes: readonly EtapeAffichee[]
   readonly courante: string | null
+  /** L'avancement du bloc d'après le serveur : ce qui coche les étapes à preuve. */
+  readonly avancement: Avancement
+  /** Les étapes affichées dans cet onglet, avant que le serveur ne les ait enregistrées. */
   readonly vues: readonly string[]
+  /** Le bilan a été envoyé (dans cet onglet, ou d'après l'état de page sauvegardé). */
+  readonly bilanFait: boolean
   readonly surChoix: (id: string) => void
   /** Les étapes qui demandent confirmation avant d'être rouvertes. */
   readonly verrouillees?: ReadonlySet<string>
   readonly surVerrou?: (id: string) => void
 }) {
-  const faites = etapesFaites(etapes, vues)
+  const faites = etapesFaites(etapes, avancement, vues, bilanFait)
   const active = courante ?? etapes[0]?.id
   const [ouvert, setOuvert] = useState(false)
   const rang = Math.max(

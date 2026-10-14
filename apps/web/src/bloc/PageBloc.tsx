@@ -138,7 +138,9 @@ function FicheOuverte({
         <FilEtapes
           etapes={etapes}
           courante={courante}
+          avancement={hote.statut.avancement}
           vues={hote.etapesVues}
+          bilanFait={hote.bilanFait}
           surChoix={hote.allerEtape}
           verrouillees={verrouillees}
           surVerrou={setRevoir}
@@ -358,6 +360,7 @@ export function PageBloc({
           version: detail.version,
           statut: detail.statut,
           manque: detail.manque,
+          avancement: detail.avancement,
           serieOuverte: detail.serie_ouverte,
           etatPage: detail.etat_page,
         }}

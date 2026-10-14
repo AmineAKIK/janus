@@ -357,8 +357,9 @@ describe('restitution verrouillée', () => {
       )
     }
 
+    // L'étape de cours n'a pas été affichée : elle n'est pas cochée, mais elle n'est plus verrouillée.
     const onglet = screen.getByRole('button', { name: cours?.titre ?? '' })
-    expect(onglet.textContent).toBe(`✓ ${cours?.titre ?? ''}`)
+    expect(onglet.textContent).toBe(cours?.titre ?? '')
     await utilisateur.click(onglet)
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
