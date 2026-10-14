@@ -31,7 +31,8 @@ if (option !== '--faux' && config.DEEPSEEK_API_KEY === undefined) {
   process.exit(1)
 }
 
-const chemin = resolve(fichier)
+// `pnpm ia:evaluer` s'exécute dans apps/api : le chemin du jeu est relatif à là où la commande a été lancée.
+const chemin = resolve(process.env['INIT_CWD'] ?? process.cwd(), fichier)
 const jeu = JeuDeTest.parse(JSON.parse(await readFile(chemin, 'utf8')))
 const manifeste = Manifeste.parse(
   JSON.parse(await readFile(resolve(dirname(chemin), jeu.manifeste), 'utf8')),

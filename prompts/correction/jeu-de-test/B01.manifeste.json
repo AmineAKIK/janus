@@ -1,0 +1,299 @@
+{
+  "schema": 2,
+  "bloc": "B01",
+  "version": 2,
+  "type": "systemes",
+  "titre": "L’information en bits",
+  "titre_court": "Information en bits",
+  "objectif": "Convertir à la main un nombre de 0 à 255 entre décimal et binaire, expliquer pourquoi un octet donne 256 valeurs mais un maximum de 255, et lire une couleur écrite en #RRGGBB.",
+  "prerequis": [],
+  "pont": 1,
+  "contexte_ia": "Bloc B01 du module « Écosystème et outils du développeur » (DWWM). L'apprenant découvre que l'information, pour une machine, est une suite de bits (0 ou 1). Notions : bit, octet (8 bits), poids des positions (128, 64, 32, 16, 8, 4, 2, 1, le plus lourd à gauche), valeur = somme des poids des bits à 1. Un octet donne 256 valeurs (de 0 à 255) : le nombre de valeurs est 2 puissance 8, le maximum est 255 parce que le 0 compte. Conversion décimal vers binaire par retrait des poids de gauche à droite ; binaire vers décimal par addition des poids allumés. Convention de lecture : la même suite de bits (par exemple 01000001) vaut 65 comme nombre, « A » comme caractère ASCII, une quantité de rouge comme composante de couleur ; sans convention, une suite de bits ne veut rien dire. Couleur #FF8800 : trois octets (rouge FF = 255, vert 88 = 136, bleu 00 = 0) ; en hexadécimal un chiffre représente 4 bits (A=10 à F=15). L'hexadécimal général et la photo ne sont pas au programme du bloc : une photo est une grille de points colorés, donc des octets, rien de plus. Pièges à repérer : confondre 256 valeurs et maximum 255 ; croire qu'une suite de bits a un sens sans convention ; confondre binaire (écriture des nombres) et langage de programmation (PHP, JavaScript) ; lire les poids de droite à gauche. Erreur de Studi à ne pas répéter : « chaque combinaison de bits donne une instruction » est faux en général, la plupart des suites de bits sont des données. Ne pas valider une réponse qui donne 255 comme nombre de valeurs, ou 256 comme maximum, sans explication du zéro.",
+  "sources": [
+    {
+      "id": "S1",
+      "titre": "Studi, Jeux de logique, pages 3 à 5 (corrigé et complété)"
+    }
+  ],
+  "etapes": [
+    {
+      "id": "ET1",
+      "titre": "Carte du bloc",
+      "type": "carte"
+    },
+    {
+      "id": "ET2",
+      "titre": "Essaie d’abord",
+      "type": "explication"
+    },
+    {
+      "id": "ET3",
+      "titre": "Les poids et la somme",
+      "type": "explication"
+    },
+    {
+      "id": "ET4",
+      "titre": "Une suite de bits, plusieurs lectures",
+      "type": "explication"
+    },
+    {
+      "id": "ET5",
+      "titre": "Pratique",
+      "type": "pratique"
+    },
+    {
+      "id": "ET6",
+      "titre": "Aisance",
+      "type": "aisance"
+    },
+    {
+      "id": "ET7",
+      "titre": "Restitution",
+      "type": "restitution"
+    },
+    {
+      "id": "ET8",
+      "titre": "Consolidation",
+      "type": "consolidation"
+    },
+    {
+      "id": "ET9",
+      "titre": "Bilan",
+      "type": "bilan"
+    }
+  ],
+  "erreurs_critiques": [
+    {
+      "id": "E1",
+      "libelle": "Confondre le nombre de valeurs d’un octet (256) et son maximum (255)",
+      "etape": "ET3"
+    },
+    {
+      "id": "E2",
+      "libelle": "Croire qu’une suite de bits a un sens sans convention de lecture",
+      "etape": "ET4"
+    },
+    {
+      "id": "E3",
+      "libelle": "Confondre le binaire (une façon d’écrire les nombres) et un langage de programmation",
+      "etape": "ET4"
+    },
+    {
+      "id": "E4",
+      "libelle": "Inverser le sens des poids (le plus lourd est à gauche)",
+      "etape": "ET3"
+    }
+  ],
+  "restitution": [
+    {
+      "id": "R1",
+      "question": "Un octet donne 256 valeurs, mais son maximum est 255. Explique pourquoi, avec tes mots.",
+      "attendu": "256 valeurs parce que 8 bits donnent 2 puissance 8 combinaisons ; le maximum est 255 (tous les poids allumés, 128+64+32+16+8+4+2+1) parce que la première valeur est 0 et compte comme une valeur.",
+      "erreurs": ["E1"]
+    },
+    {
+      "id": "R2",
+      "question": "Convertis 150 en binaire et montre les étapes.",
+      "attendu": "10010110 : 150-128=22 (bit 128 à 1), 64 et 32 à 0, 22-16=6 (16 à 1), 8 à 0, 6-4=2 (4 à 1), 2-2=0 (2 à 1), 1 à 0. Le poids le plus lourd est à gauche.",
+      "erreurs": ["E4"]
+    },
+    {
+      "id": "R3",
+      "question": "La suite de bits 01000001 est-elle « la lettre A » ? Explique.",
+      "attendu": "Non, pas à elle seule : c'est 65 lue comme un nombre, « A » lue avec la table ASCII, ou une quantité de rouge dans une couleur. Il faut une convention de lecture.",
+      "erreurs": ["E2"]
+    },
+    {
+      "id": "R4",
+      "question": "Le binaire est-il un langage de programmation ? Réponds en une ou deux phrases.",
+      "attendu": "Non : c'est une façon d'écrire les nombres avec deux chiffres, 0 et 1. Un langage comme PHP ou JavaScript s'écrit avec des mots et doit être traduit pour la machine.",
+      "erreurs": ["E3"]
+    },
+    {
+      "id": "R5",
+      "question": "Comment lit-on la couleur #FF8800 ? Donne la valeur de chaque composante.",
+      "attendu": "Trois octets, deux chiffres hexadécimaux chacun (4 bits par chiffre) : rouge FF=255, vert 88=136, bleu 00=0, donc de l'orange. La convention est rouge, vert, bleu.",
+      "erreurs": ["E2"]
+    }
+  ],
+  "consolidation": [
+    {
+      "id": "C1",
+      "question": "Un octet vaut 200. Écris-le en binaire en montrant quels poids tu retiens.",
+      "attendu": "11001000 : 200-128=72 (128 à 1), 72-64=8 (64 à 1), 32 et 16 à 0, 8-8=0 (8 à 1), 4, 2, 1 à 0. Poids lourd à gauche.",
+      "erreurs": ["E4"]
+    },
+    {
+      "id": "C2",
+      "question": "Avec 10 interrupteurs, combien de valeurs et quel maximum ? Explique pourquoi les deux nombres ne sont pas les mêmes.",
+      "attendu": "1024 valeurs (2 puissance 10), maximum 1023 parce que le 0 compte comme une valeur.",
+      "erreurs": ["E1"]
+    },
+    {
+      "id": "C3",
+      "question": "La couleur #00FF40 : donne la valeur décimale de chaque composante, et dis ce qui te permet de savoir que le premier octet est le rouge.",
+      "attendu": "Rouge 00=0, vert FF=255, bleu 40=64 (4 vaut 0100 et 0 vaut 0000, donc 01000000). Le premier octet est le rouge par convention du format #RRGGBB, ce n'est pas écrit dans les bits.",
+      "erreurs": ["E2"]
+    }
+  ],
+  "rappel": [
+    {
+      "id": "Q1",
+      "question": "Cite les huit poids d’un octet, dans l’ordre, du plus lourd au plus léger.",
+      "attendu": "128, 64, 32, 16, 8, 4, 2, 1.",
+      "erreurs": ["E4"]
+    },
+    {
+      "id": "Q2",
+      "question": "Combien de valeurs dans un octet, et quel est le maximum ?",
+      "attendu": "256 valeurs, de 0 à 255.",
+      "erreurs": ["E1"]
+    },
+    {
+      "id": "Q3",
+      "question": "Convertis 12 en binaire.",
+      "attendu": "00001100 (8+4).",
+      "erreurs": ["E4"]
+    },
+    {
+      "id": "Q4",
+      "question": "Que vaut la suite 00001111 ?",
+      "attendu": "15 (8+4+2+1).",
+      "erreurs": ["E4"]
+    },
+    {
+      "id": "Q5",
+      "question": "Si je te donne la suite 01000001, que peux-tu dire sans autre information ?",
+      "attendu": "Rien de certain : il faut savoir si c'est un nombre (65), un caractère ASCII (A) ou autre chose.",
+      "erreurs": ["E2"]
+    },
+    {
+      "id": "Q6",
+      "question": "Le binaire est-il un langage de programmation ? Pourquoi ?",
+      "attendu": "Non, c'est une écriture des nombres avec deux chiffres ; PHP ou JavaScript sont des langages qu'on traduit.",
+      "erreurs": ["E3"]
+    }
+  ],
+  "differees": [
+    {
+      "id": "DE1",
+      "type": "explication",
+      "consigne": "Explique pourquoi un octet donne 256 valeurs mais s’arrête à 255.",
+      "attendu": "2 puissance 8 combinaisons, de 0 à 255, car le 0 est la première valeur.",
+      "erreurs": ["E1"]
+    },
+    {
+      "id": "DE2",
+      "type": "explication",
+      "consigne": "Explique avec tes mots pourquoi la suite 01000001 ne veut rien dire sans convention de lecture.",
+      "attendu": "Elle peut être le nombre 65, la lettre A ou une quantité de rouge selon la convention (nombre, ASCII, couleur).",
+      "erreurs": ["E2"]
+    },
+    {
+      "id": "DE3",
+      "type": "explication",
+      "consigne": "Explique comment convertir 150 en binaire, étape par étape.",
+      "attendu": "Retirer les poids de gauche à droite : 128, puis 16, 4 et 2, ce qui donne 10010110.",
+      "erreurs": ["E4"]
+    },
+    {
+      "id": "DR1",
+      "type": "transfert",
+      "forme": "choisir_methode",
+      "consigne": "On te donne 11111111 et on te demande sa valeur. Tu peux additionner les huit poids, ou raisonner autrement. Quelle méthode est la plus rapide ici, et pourquoi ?",
+      "attendu": "Tous les bits sont à 1 : c'est le maximum de l'octet, 255 (256 valeurs moins 1), sans additionner un à un.",
+      "erreurs": ["E1"]
+    },
+    {
+      "id": "DR2",
+      "type": "transfert",
+      "forme": "adapter_condition",
+      "consigne": "Même système, mais avec 10 interrupteurs au lieu de 8. Combien de valeurs, quel maximum, quel poids pour l’interrupteur le plus à gauche ?",
+      "attendu": "1024 valeurs, maximum 1023, poids de gauche 512.",
+      "erreurs": ["E1"]
+    },
+    {
+      "id": "DR3",
+      "type": "transfert",
+      "forme": "hors_champ",
+      "consigne": "Comment une machine écrit-elle un nombre négatif avec ses bits ? Réponds seulement avec ce que tu sais, et dis ce qui te manque.",
+      "attendu": "Avec ce bloc on ne peut pas le dire : il faut une autre convention de lecture, que le bloc n'enseigne pas. La réponse honnête reconnaît la limite sans inventer.",
+      "erreurs": ["E2"]
+    }
+  ],
+  "pratique": [
+    {
+      "id": "PR1",
+      "titre": "Convertir dans les deux sens",
+      "items": [
+        {
+          "id": "PR1-1"
+        },
+        {
+          "id": "PR1-2"
+        },
+        {
+          "id": "PR1-3"
+        },
+        {
+          "id": "PR1-4"
+        },
+        {
+          "id": "PR1-5"
+        }
+      ],
+      "reussite": 4
+    },
+    {
+      "id": "PR2",
+      "titre": "Raisonner sur les bits",
+      "items": [
+        {
+          "id": "PR2-1"
+        },
+        {
+          "id": "PR2-2"
+        }
+      ],
+      "reussite": 2
+    },
+    {
+      "id": "PR3",
+      "titre": "Vérifier avec la machine",
+      "items": [
+        {
+          "id": "PR3-1"
+        }
+      ],
+      "reussite": 1
+    }
+  ],
+  "aisance": {
+    "libelle": "Convertir un nombre de 0 à 255 entre décimal et binaire en moins de 30 secondes",
+    "duree_max_s": 30,
+    "reussites_requises": 9,
+    "sur_jours_differents": 3
+  },
+  "cartes": [
+    {
+      "id": "K1",
+      "recto": "Combien de valeurs dans un octet, et quel maximum ?",
+      "verso": "256 valeurs, de 0 à 255 : le 0 compte."
+    },
+    {
+      "id": "K2",
+      "recto": "Quels sont les huit poids d’un octet ?",
+      "verso": "128, 64, 32, 16, 8, 4, 2, 1 : le plus lourd est à gauche."
+    },
+    {
+      "id": "K3",
+      "recto": "Que veut dire la suite 01000001 ?",
+      "verso": "Rien toute seule : 65 comme nombre, A comme lettre ASCII, du rouge comme couleur. La convention décide."
+    },
+    {
+      "id": "K4",
+      "recto": "Combien de bits représente un chiffre hexadécimal ?",
+      "verso": "4 bits : F vaut 1111, 8 vaut 1000. Deux chiffres font un octet."
+    }
+  ]
+}
