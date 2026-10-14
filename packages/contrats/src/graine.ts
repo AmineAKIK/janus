@@ -56,22 +56,25 @@ export const ERREUR_COMPILATEUR = 'confond_compilateur_interpreteur'
 
 const MODELE = Manifeste.parse(demo)
 
+/** La différée de la graine qui touche l'erreur de B04 : toute erreur critique doit pouvoir se refermer. */
+const DIFFEREE_COMPILATEUR = 'DE2'
+
 /** Un manifeste par bloc : le manifeste de démonstration cloné, avec le code, le titre et les prérequis du bloc. */
 export function manifesteDuBloc({ code, titre, prerequis }: BlocDuPlan): Manifeste {
-  const erreurs =
-    code === 'B04'
-      ? [
-          ...MODELE.erreurs_critiques,
-          { id: ERREUR_COMPILATEUR, libelle: 'Confond compilateur et interpréteur.' },
-        ]
-      : MODELE.erreurs_critiques
+  const base = { ...MODELE, bloc: code, titre, titre_court: titre, prerequis }
+  if (code !== 'B04') return Manifeste.parse(base)
+  // B04 porte une erreur critique de plus, cochée dans la graine ; une différée la touche.
   return Manifeste.parse({
-    ...MODELE,
-    bloc: code,
-    titre,
-    titre_court: titre,
-    prerequis,
-    erreurs_critiques: erreurs,
+    ...base,
+    erreurs_critiques: [
+      ...MODELE.erreurs_critiques,
+      { id: ERREUR_COMPILATEUR, libelle: 'Confond compilateur et interpréteur.' },
+    ],
+    differees: MODELE.differees.map((differee) =>
+      differee.id === DIFFEREE_COMPILATEUR
+        ? { ...differee, erreurs: [...differee.erreurs, ERREUR_COMPILATEUR] }
+        : differee,
+    ),
   })
 }
 
