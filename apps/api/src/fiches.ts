@@ -9,6 +9,12 @@ import { extraireManifeste } from './domaines/catalogue/composition.ts'
 /** Le dossier des fiches d'une formation, à côté de son catalogue : `contenu/<formation>/fiches/`. */
 export const DOSSIER_FICHES = 'fiches'
 
+/**
+ * Le poids maximal d'une fiche, images et sons en `data:` compris (décision du 14 octobre 2026) :
+ * au-delà, une fiche se charge mal sur un téléphone et se réduit après coup, au prix du contenu.
+ */
+export const TAILLE_MAX_FICHE = 5_000_000
+
 export interface FicheDuDepot {
   /** Le chemin lisible : `dwwm/fiches/B01.html`. */
   readonly nom: string
@@ -212,6 +218,12 @@ export async function verifierLesFiches({
     const vues = new Map<string, string>()
     for (const fiche of fiches) {
       const signaler = (message: string) => problemes.push(`${fiche.nom} : ${message}`)
+      const taille = Buffer.byteLength(fiche.html, 'utf8')
+      if (taille > TAILLE_MAX_FICHE) {
+        signaler(
+          `la fiche pèse ${(taille / 1_000_000).toFixed(1)} Mo, plus que les ${String(TAILLE_MAX_FICHE / 1_000_000)} Mo autorisés : allège les images et les sons embarqués en data:.`,
+        )
+      }
       if (!pontEstPresent(fiche.html)) {
         signaler('le pont de l’appli n’est pas dans la fiche : lance `pnpm fiches:assembler`.')
       }
