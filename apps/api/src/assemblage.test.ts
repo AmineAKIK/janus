@@ -4,7 +4,17 @@ import { fileURLToPath } from 'node:url'
 import { validerManifeste } from '@janus/contrats'
 import { describe, expect, it } from 'vitest'
 import { extraireManifeste } from './domaines/catalogue/composition.ts'
-import { injecterLePont, nouvelleFiche, pontEstPresent } from './assemblage.ts'
+import {
+  enTeteDuPont,
+  injecterLePont,
+  nouvelleFiche,
+  pontEmbarque,
+  pontEstPresent,
+  remplacerLePont,
+} from './assemblage.ts'
+
+const EMPREINTE = 'a'.repeat(64)
+const PONT = `/*! janus-pont v1 ${EMPREINTE} */\nwindow.JanusPont = {}`
 
 const GABARIT = readFileSync(
   join(dirname(fileURLToPath(import.meta.url)), '../../../contenu/dwwm/gabarit/fiche.html'),
@@ -44,5 +54,41 @@ describe('nouvelleFiche', () => {
 
   it('refuse un code de bloc invalide', () => {
     expect(() => nouvelleFiche(GABARIT, 'bloc 3', 'x')).toThrow(/code de bloc/)
+  })
+})
+
+describe('enTeteDuPont', () => {
+  it('lit la version et l’empreinte, même après un reformatage qui indente', () => {
+    expect(enTeteDuPont(PONT)).toEqual({ version: 1, empreinte: EMPREINTE })
+    expect(enTeteDuPont(`\n      /*! janus-pont v12 ${EMPREINTE} */\n      window.x = 1`)).toEqual({
+      version: 12,
+      empreinte: EMPREINTE,
+    })
+  })
+
+  it('ne lit rien sans en-tête, ou avec une empreinte qui n’en est pas une', () => {
+    expect(enTeteDuPont('window.JanusPont = {}')).toBeUndefined()
+    expect(enTeteDuPont('/*! janus-pont v1 abc */')).toBeUndefined()
+  })
+})
+
+describe('pontEmbarque et remplacerLePont', () => {
+  it('rend le code embarqué, </script rétabli, et rien sans pont', () => {
+    const html = injecterLePont(GABARIT, 'window.JanusPont = "</script>"')
+    expect(pontEmbarque(html)).toBe('window.JanusPont = "</script>"')
+    expect(pontEmbarque(GABARIT)).toBeUndefined()
+    expect(pontEmbarque('<html></html>')).toBeUndefined()
+  })
+
+  it('remplace un pont déjà embarqué, et écrit dans une balise vide', () => {
+    const ancienne = injecterLePont(GABARIT, 'window.JanusPont = "vieux</script>"')
+    const neuve = remplacerLePont(ancienne, PONT)
+    expect(pontEmbarque(neuve)).toBe(PONT)
+    expect(neuve).not.toContain('vieux')
+    expect(neuve.replace(PONT, 'window.JanusPont = {}')).toBe(
+      injecterLePont(GABARIT, 'window.JanusPont = {}'),
+    )
+    expect(remplacerLePont(GABARIT, PONT)).toBe(injecterLePont(GABARIT, PONT))
+    expect(() => remplacerLePont('<html></html>', PONT)).toThrow(/balise/)
   })
 })

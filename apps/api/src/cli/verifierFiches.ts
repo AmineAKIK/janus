@@ -1,4 +1,6 @@
+import { readFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
+import { CHEMIN_PONT } from '../assemblage.ts'
 import { DOSSIER_CONTENU } from '../contenu.ts'
 import { contenuGit, verifierLesFiches } from '../fiches.ts'
 
@@ -11,8 +13,18 @@ if (option !== undefined && (option !== '--base' || revision === undefined)) {
   process.exit(1)
 }
 
+// Le pont embarqué dans chaque fiche est comparé au pont construit : il faut l'avoir construit.
+let pont: string
+try {
+  pont = await readFile(CHEMIN_PONT, 'utf8')
+} catch {
+  process.stderr.write('Le pont n’est pas construit : lance `pnpm --filter @janus/pont build`.\n')
+  process.exit(1)
+}
+
 const problemes = await verifierLesFiches({
   dossierContenu: DOSSIER_CONTENU,
+  pont,
   ...(revision === undefined
     ? {}
     : {

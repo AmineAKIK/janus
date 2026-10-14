@@ -225,6 +225,24 @@ function verifierErreursCitees(manifeste: Manifeste, problemes: Probleme[]): voi
   verifier(manifeste.differees, 'differees')
 }
 
+/**
+ * Une erreur cochée au bilan ne se referme que par une réponse réussie à une question qui la touche :
+ * la restitution est déjà passée, la consolidation ne se joue qu'une fois ; seules les différées
+ * reviennent (vérification, retest, entretien). Sans différée qui la touche, l'erreur resterait ouverte.
+ */
+function verifierErreursFermables(manifeste: Manifeste, problemes: Probleme[]): void {
+  const touchees = new Set(manifeste.differees.flatMap((differee) => differee.erreurs))
+  manifeste.erreurs_critiques.forEach((erreur, i) => {
+    if (!touchees.has(erreur.id)) {
+      ajouter(
+        problemes,
+        `erreurs_critiques[${String(i)}]`,
+        `L’erreur critique « ${erreur.id} » n’est touchée par aucune question différée : une fois cochée au bilan, seule une différée réussie (vérification, retest, entretien) pourrait la refermer.`,
+      )
+    }
+  })
+}
+
 function verifierEtapesCitees(manifeste: Manifeste, problemes: Probleme[]): void {
   const connues = new Set(manifeste.etapes.map((etape) => etape.id))
   manifeste.erreurs_critiques.forEach((erreur, i) => {
@@ -285,6 +303,7 @@ export function validerManifeste(donnees: unknown): ResultatManifeste {
   verifierConsolidationDistincte(manifeste, problemes)
   verifierDifferees(manifeste, problemes)
   verifierErreursCitees(manifeste, problemes)
+  verifierErreursFermables(manifeste, problemes)
   verifierEtapesCitees(manifeste, problemes)
   verifierPratique(manifeste, problemes)
   verifierPrerequis(manifeste, problemes)

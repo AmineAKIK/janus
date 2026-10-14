@@ -39,6 +39,14 @@ function parType(brouillon: Brouillon, type: string): { index: number; element: 
   return { index, element }
 }
 
+/** Donne toutes les erreurs critiques à la première différée restante : la règle « erreur fermable » ne se mêle pas du test. */
+function couvrirLesErreurs(brouillon: Brouillon): Brouillon {
+  const ids = liste(brouillon, 'erreurs_critiques').map((e) => e['id'])
+  const [premiere] = liste(brouillon, 'differees')
+  if (premiere !== undefined) premiere['erreurs'] = ids
+  return brouillon
+}
+
 function problemesDe(donnees: unknown): readonly Probleme[] {
   const resultat = validerManifeste(donnees)
   if (resultat.ok) throw new Error('Le manifeste aurait dû être refusé.')
@@ -252,7 +260,7 @@ describe('validerManifeste, règles du cadrage (une règle, un test)', () => {
     const m = copie()
     const { index } = parType(m, 'explication')
     liste(m, 'differees').splice(index, 2)
-    expect(problemesDe(m)).toEqual([
+    expect(problemesDe(couvrirLesErreurs(m))).toEqual([
       {
         chemin: 'differees',
         message: 'Il faut au moins 3 questions différées de type « explication » (il y en a 2).',
@@ -260,11 +268,14 @@ describe('validerManifeste, règles du cadrage (une règle, un test)', () => {
     ])
   })
 
-  it('différées : une liste vide manque de chaque type et de chaque forme', () => {
+  it('différées : une liste vide manque de chaque type et de chaque forme, et ne referme aucune erreur', () => {
     const m = copie()
     m['differees'] = []
     const problemes = problemesDe(m)
-    expect(problemes).toHaveLength(7)
+    expect(problemes.filter((p) => p.chemin === 'differees')).toHaveLength(7)
+    expect(problemes.filter((p) => p.chemin.startsWith('erreurs_critiques['))).toHaveLength(
+      liste(m, 'erreurs_critiques').length,
+    )
   })
 
   it('transferts : les 4 formes doivent être couvertes', () => {
@@ -345,6 +356,22 @@ describe('validerManifeste, règles du cadrage (une règle, un test)', () => {
       {
         chemin: `differees[${String(index)}].verification`,
         message: 'Seule une tâche a une vérification.',
+      },
+    ])
+  })
+
+  it('chaque erreur critique est touchée par au moins une différée, sinon rien ne la refermerait', () => {
+    const m = copie()
+    for (const differee of liste(m, 'differees')) {
+      const erreurs = differee['erreurs']
+      if (Array.isArray(erreurs)) differee['erreurs'] = erreurs.filter((e) => e !== 'E3')
+    }
+    const index = liste(m, 'erreurs_critiques').findIndex((e) => e['id'] === 'E3')
+    expect(problemesDe(m)).toEqual([
+      {
+        chemin: `erreurs_critiques[${String(index)}]`,
+        message:
+          'L’erreur critique « E3 » n’est touchée par aucune question différée : une fois cochée au bilan, seule une différée réussie (vérification, retest, entretien) pourrait la refermer.',
       },
     ])
   })
@@ -435,7 +462,7 @@ describe('validerManifeste, type de contenu', () => {
   })
 
   it('conventions : valide sans tâche ni transfert', () => {
-    const m = sansDifferees(copie(), ['tache', 'transfert'])
+    const m = couvrirLesErreurs(sansDifferees(copie(), ['tache', 'transfert']))
     m['type'] = 'conventions'
     expect(validerManifeste(m).ok).toBe(true)
   })
@@ -450,7 +477,7 @@ describe('validerManifeste, type de contenu', () => {
   })
 
   it('procédures : valide sans explication différée ni forme « choisir » ou « hors champ »', () => {
-    const m = sansDifferees(copie(), ['explication'])
+    const m = couvrirLesErreurs(sansDifferees(copie(), ['explication']))
     m['type'] = 'procedures'
     const formes = ['adapter_condition', 'trouver_erreur', 'adapter_condition', 'trouver_erreur']
     liste(m, 'differees')
