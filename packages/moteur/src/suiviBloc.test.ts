@@ -580,6 +580,8 @@ const scenario = fc
   })
 
 describe('SuiviBloc : propriété, sur des jeux tordus (égalités de date, identifiants en double, désordre, tranchages, forçages)', () => {
+  // 400 tirages, et chaque préfixe recalculé en entier : une seconde ici, mais un exécuteur de CI
+  // chargé a dépassé les 5 s par défaut (main, 14 octobre 2026). Le délai dit ce que le test coûte.
   it('chaque préfixe donne le résultat complet de calculerBloc', () => {
     const rencontres = new Set<string>()
     fc.assert(
@@ -620,5 +622,5 @@ describe('SuiviBloc : propriété, sur des jeux tordus (égalités de date, iden
     ]) {
       expect(rencontres, attendu).toContain(attendu)
     }
-  })
+  }, 60_000)
 })
