@@ -122,6 +122,20 @@ describe('coutMillioniemes', () => {
     ).toBe(Math.ceil(2_400 + 180_000 + 120_000))
   })
 
+  it('facture l’écriture dans le cache un quart plus cher que l’entrée', () => {
+    expect(
+      coutMillioniemes(
+        {
+          jetonsEntree: 1_000_000,
+          jetonsEntreeCache: 0,
+          jetonsEntreeCacheEcrits: 400_000,
+          jetonsSortie: 0,
+        },
+        tarifs,
+      ),
+    ).toBe(Math.ceil(400_000 * 0.3 * 1.25 + 600_000 * 0.3))
+  })
+
   it('arrondit au-dessus, jamais moins que le coût réel', () => {
     expect(
       coutMillioniemes({ jetonsEntree: 1, jetonsEntreeCache: 0, jetonsSortie: 0 }, tarifs),

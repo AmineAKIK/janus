@@ -4,7 +4,7 @@ import { creerClaude, schemaSortie } from './claude.ts'
 import type { ReglagesClaude } from './claude.ts'
 import { ErreurCorrecteur } from './correcteur.ts'
 import type { RequeteCorrection } from './correcteur.ts'
-import { CONSIGNE, RAPPEL_JSON } from './message.ts'
+import { CONSIGNE, messagesDeLaRequete, RAPPEL_JSON } from './message.ts'
 
 const REQUETE: RequeteCorrection = {
   titre: 'Bloc de démonstration',
@@ -41,11 +41,20 @@ const reponseOk = (surcharge: Record<string, unknown> = {}) =>
     ...surcharge,
   })
 
+interface Bloc {
+  readonly type: string
+  readonly text: string
+  readonly cache_control?: unknown
+}
+
 interface Corps {
   readonly model: string
   readonly max_tokens: number
-  readonly system: string
-  readonly messages: readonly { readonly role: string; readonly content: string }[]
+  readonly system: readonly Bloc[]
+  readonly messages: readonly {
+    readonly role: string
+    readonly content: string | readonly Bloc[]
+  }[]
   readonly thinking: unknown
   readonly output_config: unknown
   readonly temperature?: unknown
@@ -76,22 +85,38 @@ describe('creerClaude', () => {
     })
     expect(corps.model).toBe('claude-haiku-5-5')
     expect(corps.max_tokens).toBe(1000)
-    expect(corps.system).toBe(CONSIGNE)
+    expect(corps.system).toEqual([
+      { type: 'text', text: CONSIGNE, cache_control: { type: 'ephemeral' } },
+    ])
     expect(corps.thinking).toEqual({ type: 'disabled' })
     expect(corps.output_config).toEqual({
       format: { type: 'json_schema', schema: schemaSortie(REQUETE) },
     })
     expect(corps).not.toHaveProperty('temperature')
     expect(corps.messages.map(({ role }) => role)).toEqual(['user'])
-    expect(corps.messages[0]?.content).toContain('<reponse>')
     expect(brut).toEqual({
       texte: '{"niveau":"solide"}',
       modele: 'claude-haiku-5-5',
       parametres: { thinking: 'disabled', max_tokens: 1000, format: 'json_schema' },
       jetonsEntree: 900,
       jetonsEntreeCache: 600,
+      jetonsEntreeCacheEcrits: 0,
       jetonsSortie: 120,
     })
+  })
+
+  it('coupe le premier message en deux blocs, le contexte du bloc mémorisable, le même texte que pour DeepSeek', async () => {
+    const { corps } = await appeler(REQUETE)
+    const blocs = corps.messages[0]?.content
+    if (typeof blocs === 'string') throw new Error('Un seul bloc.')
+
+    expect(blocs?.map(({ type }) => type)).toEqual(['text', 'text'])
+    expect(blocs?.[0]?.cache_control).toEqual({ type: 'ephemeral' })
+    expect(blocs?.[0]?.text).toContain('Cours du bloc :')
+    expect(blocs?.[0]?.text).not.toContain('<reponse>')
+    expect(blocs?.[1]).not.toHaveProperty('cache_control')
+    expect(blocs?.[1]?.text).toContain('<reponse>')
+    expect(blocs?.map(({ text }) => text).join('')).toBe(messagesDeLaRequete(REQUETE)[1]?.content)
   })
 
   it('rejoue l’historique d’une relance et finit toujours par un message de l’apprenant', async () => {
@@ -103,8 +128,12 @@ describe('creerClaude', () => {
     })
 
     expect(corps.messages.map(({ role }) => role)).toEqual(['user', 'assistant', 'user', 'user'])
+    const premier = corps.messages[0]?.content
+    if (typeof premier === 'string') throw new Error('Un seul bloc.')
+    expect(premier?.[1]?.text).toContain('première')
+    expect(corps.messages[1]?.content).toBe('retour 1')
     expect(corps.messages.at(-1)?.content).toBe(RAPPEL_JSON)
-    expect(corps.system).toBe(CONSIGNE)
+    expect(corps.system[0]?.text).toBe(CONSIGNE)
   })
 
   it('impose les champs exacts de la sortie, avec les valeurs des contrats', () => {
@@ -165,8 +194,17 @@ describe('creerClaude', () => {
       reponseOk({ usage: { input_tokens: 10, output_tokens: 5 } }),
     )
 
-    expect(avec.brut).toMatchObject({ jetonsEntree: 200, jetonsEntreeCache: 40, jetonsSortie: 5 })
-    expect(sans.brut).toMatchObject({ jetonsEntree: 10, jetonsEntreeCache: 0 })
+    expect(avec.brut).toMatchObject({
+      jetonsEntree: 200,
+      jetonsEntreeCache: 40,
+      jetonsEntreeCacheEcrits: 60,
+      jetonsSortie: 5,
+    })
+    expect(sans.brut).toMatchObject({
+      jetonsEntree: 10,
+      jetonsEntreeCache: 0,
+      jetonsEntreeCacheEcrits: 0,
+    })
   })
 
   it('assemble les blocs de texte et ignore les autres', async () => {

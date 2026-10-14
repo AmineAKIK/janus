@@ -15,8 +15,8 @@ export interface MessageChat {
   readonly content: string
 }
 
-/** Le message utilisateur du cadrage : le cours, la question, l'attendu, la réponse entre délimiteurs. */
-function messageUtilisateur(requete: RequeteCorrection, reponse: string): string {
+/** Le contexte du bloc : titre, cours, sources, erreurs critiques. Identique d'une réponse à l'autre du même bloc. */
+export function contexteDuBloc(requete: RequeteCorrection): string {
   return [
     `Bloc : ${requete.titre}`,
     'Cours du bloc :',
@@ -25,6 +25,12 @@ function messageUtilisateur(requete: RequeteCorrection, reponse: string): string
     `Erreurs critiques de ce bloc : ${requete.erreursCritiques
       .map(({ id, texte }) => `${id} : ${texte}`)
       .join('\n')}`,
+  ].join('\n')
+}
+
+/** La question, l'attendu, la confiance et la réponse entre délimiteurs : la part qui change à chaque appel. */
+export function questionEtReponse(requete: RequeteCorrection, reponse: string): string {
+  return [
     '',
     `Question : ${requete.question}`,
     `Attendu (appui, pas barème) : ${requete.attendu}`,
@@ -33,6 +39,11 @@ function messageUtilisateur(requete: RequeteCorrection, reponse: string): string
     reponse.slice(0, REPONSE_MAX),
     '</reponse>',
   ].join('\n')
+}
+
+/** Le message utilisateur du cadrage : le contexte du bloc, puis la question et la réponse. */
+function messageUtilisateur(requete: RequeteCorrection, reponse: string): string {
+  return `${contexteDuBloc(requete)}\n${questionEtReponse(requete, reponse)}`
 }
 
 /**
