@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import type { Page } from '@playwright/test'
 import { ecrans } from './ecrans.ts'
 import { activerInterrupteurs, ficheALaHauteur, ouvrirSession } from './session.ts'
 
@@ -11,6 +12,22 @@ const themes = [
   { nom: 'clair', colorScheme: 'light' },
   { nom: 'sombre', colorScheme: 'dark' },
 ] as const
+
+/**
+ * Chromium échoue parfois à capturer une page entière (« Protocol error (Page.captureScreenshot):
+ * Unable to capture screenshot »), sans rapport avec l'écran : on réessaie jusqu'à trois fois.
+ */
+async function capturer(page: Page, path: string): Promise<void> {
+  for (let essai = 1; ; essai += 1) {
+    try {
+      await page.screenshot({ path, fullPage: true })
+      return
+    } catch (erreur) {
+      if (essai === 3) throw erreur
+      await page.waitForTimeout(500)
+    }
+  }
+}
 
 for (const ecran of ecrans) {
   for (const taille of tailles) {
@@ -45,10 +62,7 @@ for (const ecran of ecrans) {
           .getByRole('status')
           .filter({ hasText: 'Dans l’appli' })
         if (await fichePrete.isVisible()) await ficheALaHauteur(page)
-        await page.screenshot({
-          path: `captures/${ecran.nom}-${String(taille.width)}-${theme.nom}.png`,
-          fullPage: true,
-        })
+        await capturer(page, `captures/${ecran.nom}-${String(taille.width)}-${theme.nom}.png`)
 
         expect(erreurs, 'erreurs dans la console du navigateur').toEqual([])
       })
