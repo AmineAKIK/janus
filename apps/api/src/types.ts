@@ -39,7 +39,7 @@ export interface Dependances {
   readonly base: Base
   /** La connexion du rôle propriétaire : seule la suppression d'un compte s'en sert. */
   readonly proprietaire: Base
-  /** Le correcteur : absent, la configuration (`CORRECTEUR` et sa clé) en crée un, sans clé la correction est indisponible. */
+  /** Le correcteur : absent, la configuration (`CORRECTEUR` et sa clé) en crée un ; sans clé, l'API refuse de démarrer. */
   readonly correcteur?: Correcteur
   /** L'envoi des notifications Web Push ; absent, aucun rappel ne peut partir. */
   readonly envoyeur?: Envoyeur
