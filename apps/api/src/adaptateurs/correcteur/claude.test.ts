@@ -1,0 +1,174 @@
+import { Certitude, Niveau, Source } from '@janus/contrats'
+import { describe, expect, it } from 'vitest'
+import { creerClaude, SCHEMA_SORTIE } from './claude.ts'
+import type { ReglagesClaude } from './claude.ts'
+import { ErreurCorrecteur } from './correcteur.ts'
+import type { RequeteCorrection } from './correcteur.ts'
+import { CONSIGNE, RAPPEL_JSON } from './message.ts'
+
+const REQUETE: RequeteCorrection = {
+  titre: 'Bloc de démonstration',
+  contexteIa: 'Une fiche résume un seul bloc de cours.',
+  sources: [{ id: 'S1', ref: 'cours §1' }],
+  erreursCritiques: [{ id: 'E1', texte: 'Confond fiche et cours' }],
+  question: 'Qu’est-ce qu’une fiche ?',
+  attendu: 'Une fiche résume un seul bloc de cours avec ses exercices.',
+  confiance: 'sur',
+  reponse: 'Une fiche résume un seul bloc de cours avec ses exercices pratiques.',
+  historique: [],
+  strict: false,
+}
+
+const REGLAGES: ReglagesClaude = {
+  cle: 'sk-ant-test',
+  url: 'https://api.test/',
+  modele: 'claude-haiku-5-5',
+  delaiMs: 30_000,
+  jetonsSortieMax: 1000,
+}
+
+const reponseOk = (surcharge: Record<string, unknown> = {}) =>
+  Response.json({
+    id: 'msg_01',
+    content: [{ type: 'text', text: '{"niveau":"solide"}' }],
+    stop_reason: 'end_turn',
+    usage: {
+      input_tokens: 300,
+      output_tokens: 120,
+      cache_read_input_tokens: 600,
+      cache_creation_input_tokens: 0,
+    },
+    ...surcharge,
+  })
+
+interface Corps {
+  readonly model: string
+  readonly max_tokens: number
+  readonly system: string
+  readonly messages: readonly { readonly role: string; readonly content: string }[]
+  readonly thinking: unknown
+  readonly output_config: unknown
+  readonly temperature?: unknown
+}
+
+/** Appelle le correcteur et rend ce qui est parti sur le réseau, avec son corps décodé. */
+async function appeler(requete: RequeteCorrection, reponse = reponseOk()) {
+  let vue: { url: string; init: RequestInit } | undefined
+  const correcteur = creerClaude(REGLAGES, (url, init) => {
+    vue = { url, init }
+    return Promise.resolve(reponse)
+  })
+  const brut = await correcteur.corriger(requete)
+  if (vue === undefined) throw new Error('Aucun appel.')
+  const corps = JSON.parse(typeof vue.init.body === 'string' ? vue.init.body : '') as Corps
+  return { brut, vue, corps }
+}
+
+describe('creerClaude', () => {
+  it('appelle /v1/messages : consigne en system, réflexion désactivée, JSON imposé, sans température', async () => {
+    const { brut, vue, corps } = await appeler(REQUETE)
+
+    expect(vue.url).toBe('https://api.test/v1/messages')
+    expect(vue.init.method).toBe('POST')
+    expect(vue.init.headers).toMatchObject({
+      'x-api-key': 'sk-ant-test',
+      'anthropic-version': '2023-06-01',
+    })
+    expect(corps.model).toBe('claude-haiku-5-5')
+    expect(corps.max_tokens).toBe(1000)
+    expect(corps.system).toBe(CONSIGNE)
+    expect(corps.thinking).toEqual({ type: 'disabled' })
+    expect(corps.output_config).toEqual({
+      format: { type: 'json_schema', schema: SCHEMA_SORTIE },
+    })
+    expect(corps).not.toHaveProperty('temperature')
+    expect(corps.messages.map(({ role }) => role)).toEqual(['user'])
+    expect(corps.messages[0]?.content).toContain('<reponse>')
+    expect(brut).toEqual({
+      texte: '{"niveau":"solide"}',
+      modele: 'claude-haiku-5-5',
+      parametres: { thinking: 'disabled', max_tokens: 1000, format: 'json_schema' },
+      jetonsEntree: 900,
+      jetonsEntreeCache: 600,
+      jetonsSortie: 120,
+    })
+  })
+
+  it('rejoue l’historique d’une relance et finit toujours par un message de l’apprenant', async () => {
+    const { corps } = await appeler({
+      ...REQUETE,
+      reponse: 'deuxième',
+      historique: [{ reponse: 'première', message: 'retour 1' }],
+      strict: true,
+    })
+
+    expect(corps.messages.map(({ role }) => role)).toEqual(['user', 'assistant', 'user', 'user'])
+    expect(corps.messages.at(-1)?.content).toBe(RAPPEL_JSON)
+    expect(corps.system).toBe(CONSIGNE)
+  })
+
+  it('impose les champs exacts de la sortie, avec les valeurs des contrats', () => {
+    expect(SCHEMA_SORTIE.required).toEqual([
+      'message',
+      'niveau',
+      'erreurs_critiques',
+      'source',
+      'ref',
+      'certitude',
+    ])
+    expect(Object.keys(SCHEMA_SORTIE.properties)).toEqual([...SCHEMA_SORTIE.required])
+    expect(SCHEMA_SORTIE.additionalProperties).toBe(false)
+    expect(SCHEMA_SORTIE.properties.niveau.enum).toEqual(Niveau.options)
+    expect(SCHEMA_SORTIE.properties.source.enum).toEqual(Source.options)
+    expect(SCHEMA_SORTIE.properties.certitude.enum).toEqual(Certitude.options)
+  })
+
+  it('additionne les jetons hors cache, lus et écrits dans le cache ; zéro quand le fournisseur ne le dit pas', async () => {
+    const avec = await appeler(
+      REQUETE,
+      reponseOk({
+        usage: {
+          input_tokens: 100,
+          output_tokens: 5,
+          cache_read_input_tokens: 40,
+          cache_creation_input_tokens: 60,
+        },
+      }),
+    )
+    const sans = await appeler(
+      REQUETE,
+      reponseOk({ usage: { input_tokens: 10, output_tokens: 5 } }),
+    )
+
+    expect(avec.brut).toMatchObject({ jetonsEntree: 200, jetonsEntreeCache: 40, jetonsSortie: 5 })
+    expect(sans.brut).toMatchObject({ jetonsEntree: 10, jetonsEntreeCache: 0 })
+  })
+
+  it('assemble les blocs de texte et ignore les autres', async () => {
+    const { brut } = await appeler(
+      REQUETE,
+      reponseOk({
+        content: [
+          { type: 'thinking', thinking: '', signature: 'x' },
+          { type: 'text', text: '{"niveau":' },
+          { type: 'text', text: '"partiel"}' },
+        ],
+      }),
+    )
+
+    expect(brut.texte).toBe('{"niveau":"partiel"}')
+  })
+
+  it.each([
+    ['un statut d’erreur', () => Promise.resolve(new Response('{}', { status: 529 }))],
+    ['un réseau en panne', () => Promise.reject(new Error('ECONNRESET'))],
+    ['un corps illisible', () => Promise.resolve(new Response('pas du json'))],
+    ['aucun bloc de texte', () => Promise.resolve(reponseOk({ content: [] }))],
+    ['un texte vide', () => Promise.resolve(reponseOk({ content: [{ type: 'text', text: '' }] }))],
+    ['un refus', () => Promise.resolve(reponseOk({ stop_reason: 'refusal' }))],
+  ])('lève ErreurCorrecteur sur %s', async (_nom, appel) => {
+    const correcteur = creerClaude(REGLAGES, appel)
+
+    await expect(correcteur.corriger(REQUETE)).rejects.toBeInstanceOf(ErreurCorrecteur)
+  })
+})

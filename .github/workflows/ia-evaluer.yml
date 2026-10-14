@@ -8,6 +8,12 @@ on:
         description: Le jeu de test à passer
         default: prompts/correction/jeu-de-test/exemple.json
         required: true
+      correcteur:
+        description: Le fournisseur à évaluer
+        type: choice
+        options: [deepseek, claude]
+        default: deepseek
+        required: true
 
 permissions:
   contents: read
@@ -28,6 +34,8 @@ jobs:
       - run: pnpm ia:evaluer "$JEU"
         env:
           JEU: ${{ inputs.jeu }}
+          CORRECTEUR: ${{ inputs.correcteur }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       # Le rapport s'affiche dans le résumé de l'exécution.
       - run: cat prompts/correction/rapports/*.md >> "$GITHUB_STEP_SUMMARY"
