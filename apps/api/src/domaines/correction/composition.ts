@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync } from 'fastify'
 import type { Base } from '../../base/base.ts'
-import { creerDeepseek } from '../../adaptateurs/correcteur/deepseek.ts'
+import { correcteurDeLaConfig } from '../../adaptateurs/correcteur/choix.ts'
 import type { CorrigerPartie, Dependances } from '../../types.ts'
 import { creerControleurCorrection } from './controleur.ts'
 import { creerDepotCorrection } from './depot.ts'
@@ -23,28 +23,16 @@ export function monterCorrection({ base, horloge, config, correcteur, hasard }: 
   routes: FastifyPluginAsync
   corrigerPartie: CorrigerPartie
 } {
-  const cle = config.DEEPSEEK_API_KEY
+  const choix = correcteurDeLaConfig(config, {
+    delaiMs: DELAI_CORRECTEUR_MS,
+    jetonsSortieMax: JETONS_SORTIE_MAX,
+  })
   const service = creerServiceCorrection({
     base,
     depot: creerDepotCorrection(),
     horloge,
-    correcteur:
-      correcteur ??
-      (cle === undefined
-        ? undefined
-        : creerDeepseek({
-            cle,
-            url: config.DEEPSEEK_URL,
-            modele: config.DEEPSEEK_MODELE,
-            temperature: config.DEEPSEEK_TEMPERATURE,
-            delaiMs: DELAI_CORRECTEUR_MS,
-            jetonsSortieMax: JETONS_SORTIE_MAX,
-          })),
-    tarifs: {
-      entreeCache: config.DEEPSEEK_PRIX_ENTREE_CACHE,
-      entree: config.DEEPSEEK_PRIX_ENTREE,
-      sortie: config.DEEPSEEK_PRIX_SORTIE,
-    },
+    correcteur: correcteur ?? choix.correcteur,
+    tarifs: choix.tarifs,
     jetonsSortieMax: JETONS_SORTIE_MAX,
     hasard: hasard ?? Math.random,
   })

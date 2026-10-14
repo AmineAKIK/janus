@@ -17,7 +17,9 @@ export const SchemaConfig = z.object({
   COOKIE_SECURE: Booleen,
   /** Le port d'écoute de l'API. */
   PORT: z.coerce.number().int().min(1).max(65_535).default(3000),
-  /** Facultative en test : sans elle, la correction par l'IA est indisponible. */
+  /** Le fournisseur de la correction. Sans la clé qui va avec, la correction par l'IA est indisponible. */
+  CORRECTEUR: z.enum(['deepseek', 'claude']).default('deepseek'),
+  /** Facultative en test : sans elle, la correction par DeepSeek est indisponible. */
   DEEPSEEK_API_KEY: z.string().min(1).optional(),
   /** Le modèle de correction (`deepseek-flash` à la date du cadrage). */
   DEEPSEEK_MODELE: z.string().min(1).default('deepseek-flash'),
@@ -31,6 +33,21 @@ export const SchemaConfig = z.object({
   DEEPSEEK_PRIX_ENTREE_CACHE: z.coerce.number().int().min(0).default(6_000),
   DEEPSEEK_PRIX_ENTREE: z.coerce.number().int().min(0).default(300_000),
   DEEPSEEK_PRIX_SORTIE: z.coerce.number().int().min(0).default(1_200_000),
+  /** Facultative (vide ou absente) : sans elle, la correction par Claude est indisponible. */
+  ANTHROPIC_API_KEY: z.preprocess(
+    (valeur) => (valeur === '' ? undefined : valeur),
+    z.string().min(1).optional(),
+  ),
+  /** Le modèle Claude de correction : Haiku 5.5, le moins cher, réflexion désactivée. */
+  CLAUDE_MODELE: z.string().min(1).default('claude-haiku-5-5'),
+  CLAUDE_URL: z.url().default('https://api.anthropic.com'),
+  /**
+   * Les tarifs de `claude-haiku-5-5` en dollars par million de jetons, en millionièmes, pour une
+   * demande de 100 000 jetons au plus (0,01 lecture du cache / 0,10 / 0,50).
+   */
+  CLAUDE_PRIX_ENTREE_CACHE: z.coerce.number().int().min(0).default(10_000),
+  CLAUDE_PRIX_ENTREE: z.coerce.number().int().min(0).default(100_000),
+  CLAUDE_PRIX_SORTIE: z.coerce.number().int().min(0).default(500_000),
   VAPID_PUBLIC_KEY: z.string().min(1),
   VAPID_PRIVATE_KEY: z.string().min(1),
   VAPID_SUJET: z.string().min(1),
@@ -45,6 +62,25 @@ export const SchemaConfig = z.object({
     .default('info'),
 })
 export type Config = z.infer<typeof SchemaConfig>
+
+/** Ce que lit le choix du correcteur : le fournisseur, ses clés, ses modèles et ses tarifs. */
+export const SchemaConfigCorrecteur = SchemaConfig.pick({
+  CORRECTEUR: true,
+  DEEPSEEK_API_KEY: true,
+  DEEPSEEK_MODELE: true,
+  DEEPSEEK_URL: true,
+  DEEPSEEK_TEMPERATURE: true,
+  DEEPSEEK_PRIX_ENTREE_CACHE: true,
+  DEEPSEEK_PRIX_ENTREE: true,
+  DEEPSEEK_PRIX_SORTIE: true,
+  ANTHROPIC_API_KEY: true,
+  CLAUDE_MODELE: true,
+  CLAUDE_URL: true,
+  CLAUDE_PRIX_ENTREE_CACHE: true,
+  CLAUDE_PRIX_ENTREE: true,
+  CLAUDE_PRIX_SORTIE: true,
+})
+export type ConfigCorrecteur = z.infer<typeof SchemaConfigCorrecteur>
 
 /** Ce que lit la commande d'import des fiches : la base et le dossier où elles sont servies. */
 export const SchemaImport = z.object({

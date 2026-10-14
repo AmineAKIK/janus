@@ -62,6 +62,35 @@ describe('lireConfig', () => {
     )
   })
 
+  it('choisit le correcteur : DeepSeek par défaut, Claude avec sa clé, ses tarifs et son modèle', () => {
+    const defaut = lireConfig(ENVIRONNEMENT_TEST)
+    const claude = lireConfig({
+      ...ENVIRONNEMENT_TEST,
+      CORRECTEUR: 'claude',
+      ANTHROPIC_API_KEY: 'sk-ant-test',
+      CLAUDE_PRIX_SORTIE: '2500000',
+    })
+
+    expect(defaut).toMatchObject({
+      CORRECTEUR: 'deepseek',
+      CLAUDE_MODELE: 'claude-haiku-5-5',
+      CLAUDE_URL: 'https://api.anthropic.com',
+      CLAUDE_PRIX_ENTREE_CACHE: 10_000,
+      CLAUDE_PRIX_ENTREE: 100_000,
+      CLAUDE_PRIX_SORTIE: 500_000,
+    })
+    expect(defaut.ANTHROPIC_API_KEY).toBeUndefined()
+    expect(
+      lireConfig({ ...ENVIRONNEMENT_TEST, ANTHROPIC_API_KEY: '' }).ANTHROPIC_API_KEY,
+    ).toBeUndefined()
+    expect(claude).toMatchObject({
+      CORRECTEUR: 'claude',
+      ANTHROPIC_API_KEY: 'sk-ant-test',
+      CLAUDE_PRIX_SORTIE: 2_500_000,
+    })
+    expect(() => lireConfig({ ...ENVIRONNEMENT_TEST, CORRECTEUR: 'gpt' })).toThrow(/CORRECTEUR/)
+  })
+
   it('arrête le démarrage en nommant chaque variable qui manque', () => {
     const sans = sansVariables('DATABASE_URL', 'VAPID_SUJET')
 
