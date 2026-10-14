@@ -5,12 +5,16 @@ import { validerManifeste } from '@janus/contrats'
 import { describe, expect, it } from 'vitest'
 import { extraireManifeste } from './domaines/catalogue/composition.ts'
 import {
+  BLOCS_FIXES,
+  blocsFixes,
+  contenuDuBloc,
   enTeteDuPont,
   injecterLePont,
   nouvelleFiche,
   pontEmbarque,
   pontEstPresent,
   remplacerLePont,
+  remplacerLesBlocsFixes,
 } from './assemblage.ts'
 
 const EMPREINTE = 'a'.repeat(64)
@@ -29,6 +33,15 @@ describe('le gabarit de fiche', () => {
 
   it('attend le pont à sa place, sans l’avoir', () => {
     expect(pontEstPresent(GABARIT)).toBe(false)
+  })
+
+  it('a ses trois blocs fixes, pleins, et ses deux blocs libres, vides', () => {
+    const fixes = blocsFixes(GABARIT)
+    expect([...fixes.keys()]).toEqual([...BLOCS_FIXES])
+    for (const contenu of fixes.values()) expect(contenu.trim()).not.toBe('')
+    expect(contenuDuBloc(GABARIT, 'styles-bloc')).toBe('')
+    expect(contenuDuBloc(GABARIT, 'outils-bloc')).toBe('')
+    expect(contenuDuBloc(GABARIT, 'inconnu')).toBeUndefined()
   })
 })
 
@@ -90,5 +103,26 @@ describe('pontEmbarque et remplacerLePont', () => {
     )
     expect(remplacerLePont(GABARIT, PONT)).toBe(injecterLePont(GABARIT, PONT))
     expect(() => remplacerLePont('<html></html>', PONT)).toThrow(/balise/)
+  })
+})
+
+describe('les blocs fixes du gabarit dans une fiche', () => {
+  const abimee = GABARIT.replace('<style id="styles-gabarit">', '<style id="styles-gabarit">.x{}')
+    .replace('<style id="styles-bloc"></style>', '<style id="styles-bloc">.y{}</style>')
+    .replace('<script id="outils-bloc"></script>', '<script id="outils-bloc">y()</script>')
+
+  it('remplace chaque bloc fixe par celui du gabarit, sans toucher aux blocs libres', () => {
+    const reparee = remplacerLesBlocsFixes(abimee, GABARIT)
+    for (const [id, contenu] of blocsFixes(GABARIT))
+      expect(contenuDuBloc(reparee, id)).toBe(contenu)
+    expect(contenuDuBloc(reparee, 'styles-bloc')).toBe('.y{}')
+    expect(contenuDuBloc(reparee, 'outils-bloc')).toBe('y()')
+    expect(remplacerLesBlocsFixes(GABARIT, GABARIT)).toBe(GABARIT)
+  })
+
+  it('refuse une fiche qui a perdu un bloc fixe, et un gabarit qui n’en a plus', () => {
+    const sans = GABARIT.replace('<script id="plomberie">', '<script>')
+    expect(() => remplacerLesBlocsFixes(sans, GABARIT)).toThrow(/bloc fixe id="plomberie"/)
+    expect(() => blocsFixes(sans)).toThrow(/gabarit n’a plus de bloc fixe id="plomberie"/)
   })
 })

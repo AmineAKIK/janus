@@ -6,14 +6,15 @@ import {
   nouvelleFiche,
   pontEstPresent,
   remplacerLePont,
+  remplacerLesBlocsFixes,
 } from '../assemblage.ts'
 import { DOSSIER_CONTENU } from '../contenu.ts'
-import { DOSSIER_FICHES, lireLesFiches } from '../fiches.ts'
+import { DOSSIER_FICHES, lireLeGabarit, lireLesFiches } from '../fiches.ts'
 
 const USAGE = [
   'pnpm fiches:nouvelle <formation> <bloc>   crée la fiche du bloc depuis le gabarit',
   'pnpm fiches:assembler                     écrit le pont dans les fiches qui ne l’ont pas',
-  'pnpm fiches:assembler --forcer            réécrit le pont dans toutes les fiches (puis augmente leur version)',
+  'pnpm fiches:assembler --forcer            réécrit le pont et les blocs fixes du gabarit dans toutes les fiches (puis augmente leur version)',
 ].join('\n')
 
 async function lirePont(): Promise<string> {
@@ -44,13 +45,19 @@ try {
       .filter((entree) => entree.isDirectory())
       .map((entree) => entree.name)
     for (const dossier of formations) {
+      const gabarit = forcer ? await lireLeGabarit(DOSSIER_CONTENU, dossier) : undefined
       for (const fiche of await lireLesFiches(DOSSIER_CONTENU, dossier)) {
         if (pontEstPresent(fiche.html) && !forcer) continue
-        const html = forcer ? remplacerLePont(fiche.html, pont) : injecterLePont(fiche.html, pont)
+        let html = forcer ? remplacerLePont(fiche.html, pont) : injecterLePont(fiche.html, pont)
+        if (gabarit !== undefined) html = remplacerLesBlocsFixes(html, gabarit)
         if (html === fiche.html) continue
         await writeFile(fiche.chemin, html)
         nombre += 1
-        process.stdout.write(`Pont ${forcer ? 'réécrit' : 'écrit'} dans ${fiche.nom}\n`)
+        process.stdout.write(
+          forcer
+            ? `Pont et blocs fixes réécrits dans ${fiche.nom}\n`
+            : `Pont écrit dans ${fiche.nom}\n`,
+        )
       }
     }
     if (nombre === 0) process.stdout.write('Toutes les fiches ont déjà leur pont.\n')

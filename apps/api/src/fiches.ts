@@ -3,8 +3,8 @@ import { readdir, readFile } from 'node:fs/promises'
 import { join, relative } from 'node:path'
 import { Catalogue, validerManifeste } from '@janus/contrats'
 import type { Manifeste, TypeEtape } from '@janus/contrats'
-import { enTeteDuPont, pontEmbarque } from './assemblage.ts'
-import type { EnTetePont } from './assemblage.ts'
+import { blocsFixes, contenuDuBloc, enTeteDuPont, pontEmbarque } from './assemblage.ts'
+import type { BlocFixe, EnTetePont } from './assemblage.ts'
 import { extraireManifeste } from './domaines/catalogue/composition.ts'
 
 /** Le dossier des fiches d'une formation, à côté de son catalogue : `contenu/<formation>/fiches/`. */
@@ -214,6 +214,42 @@ function verifierLePont(
   }
 }
 
+/**
+ * Les blocs fixes (polices, feuille de style, plomberie) sont ceux du gabarit, octet pour octet : une
+ * fiche n'y touche pas, ce qui lui est propre va dans `<style id="styles-bloc">` et `<script id="outils-bloc">`.
+ */
+function verifierBlocsFixes(
+  html: string,
+  attendus: ReadonlyMap<BlocFixe, string>,
+  signaler: (message: string) => void,
+): void {
+  for (const [id, attendu] of attendus) {
+    const contenu = contenuDuBloc(html, id)
+    if (contenu === undefined) {
+      signaler(
+        `le bloc fixe id="${id}" du gabarit manque : reprends ses balises, relance \`pnpm fiches:assembler --forcer\`, puis augmente la version du manifeste.`,
+      )
+    } else if (contenu !== attendu) {
+      signaler(
+        `le bloc fixe id="${id}" n’est pas celui du gabarit : ce qui est propre à la fiche va dans <style id="styles-bloc"> ou <script id="outils-bloc"> ; relance \`pnpm fiches:assembler --forcer\`, puis augmente la version du manifeste.`,
+      )
+    }
+  }
+}
+
+/** Le gabarit d'une formation (`contenu/<formation>/gabarit/fiche.html`), ou `undefined` si elle n'en a pas. */
+export async function lireLeGabarit(
+  dossierContenu: string,
+  formation: string,
+): Promise<string | undefined> {
+  try {
+    return await readFile(join(dossierContenu, formation, 'gabarit', 'fiche.html'), 'utf8')
+  } catch (cause) {
+    if ((cause as NodeJS.ErrnoException).code === 'ENOENT') return undefined
+    throw cause
+  }
+}
+
 export interface OptionsVerification {
   /** Le dossier `contenu/` du dépôt. */
   readonly dossierContenu: string
@@ -254,6 +290,8 @@ export async function verifierLesFiches({
     const codes = codesDuCatalogue(
       JSON.parse(await readFile(join(dossierContenu, formation, 'catalogue.json'), 'utf8')),
     )
+    const gabarit = await lireLeGabarit(dossierContenu, formation)
+    const fixes = gabarit === undefined ? undefined : blocsFixes(gabarit)
     const vues = new Map<string, string>()
     for (const fiche of fiches) {
       const signaler = (message: string) => problemes.push(`${fiche.nom} : ${message}`)
@@ -263,6 +301,7 @@ export async function verifierLesFiches({
           `la fiche pèse ${(taille / 1_000_000).toFixed(1)} Mo, plus que les ${String(TAILLE_MAX_FICHE / 1_000_000)} Mo autorisés : allège les images et les sons embarqués en data:.`,
         )
       }
+      if (fixes !== undefined) verifierBlocsFixes(fiche.html, fixes, signaler)
       const embarque = pontEmbarque(fiche.html)
       if (embarque === undefined) {
         signaler('le pont de l’appli n’est pas dans la fiche : lance `pnpm fiches:assembler`.')

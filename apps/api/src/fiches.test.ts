@@ -260,6 +260,57 @@ describe('vérification des fiches du dépôt', () => {
     })
   })
 
+  describe('les blocs fixes, comparés au gabarit de la formation', () => {
+    beforeEach(async () => {
+      await mkdir(join(contenu, 'test', 'gabarit'), { recursive: true })
+      await writeFile(
+        join(contenu, 'test', 'gabarit', 'fiche.html'),
+        await readFile(GABARIT, 'utf8'),
+      )
+    })
+
+    it('accepte une fiche qui reprend les blocs fixes et remplit ses blocs libres', async () => {
+      await poser(
+        'X00.html',
+        fiche
+          .replace(
+            '<style id="styles-bloc"></style>',
+            '<style id="styles-bloc">.bloc { color: red }</style>',
+          )
+          .replace(
+            '<script id="outils-bloc"></script>',
+            '<script id="outils-bloc">console.log(1)</script>',
+          ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+
+    it('refuse un bloc fixe modifié, et un bloc fixe disparu', async () => {
+      await poser(
+        'X00.html',
+        fiche
+          .replace('<style id="styles-gabarit">', '<style id="styles-gabarit">.x { color: red }')
+          .replace('<script id="plomberie">', '<script>'),
+      )
+
+      const problemes = await verifierLesFiches({ dossierContenu: contenu })
+
+      expect(problemes).toEqual([
+        expect.stringContaining('le bloc fixe id="styles-gabarit" n’est pas celui du gabarit'),
+        expect.stringContaining('le bloc fixe id="plomberie" du gabarit manque'),
+      ])
+      expect(problemes[0]).toContain('styles-bloc')
+    })
+
+    it('ne compare rien quand la formation n’a pas de gabarit', async () => {
+      await rm(join(contenu, 'test', 'gabarit'), { recursive: true })
+      await poser('X00.html', fiche.replace('<script id="plomberie">', '<script>'))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+  })
+
   describe('contre la révision de référence', () => {
     it('refuse un contenu changé sans que la version change', async () => {
       await poser('X00.html', fiche.replace('À REMPLACER : titre du bloc', 'Titre du bloc'))

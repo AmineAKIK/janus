@@ -40,7 +40,7 @@
           format('woff2');
       }
     </style>
-    <style>
+    <style id="styles-gabarit">
       /*
        * Mise en page de la fiche = celle de l'appli. Les tokens sont ceux de packages/ui/src/tokens.css
        * (la fiche tourne dans une iframe sandboxée : elle n'a pas accès aux feuilles de l'appli), les
@@ -974,6 +974,11 @@
         font-weight: 600;
       }
     </style>
+    <!--
+      CSS PROPRE À LA FICHE : ce bloc est libre. Les deux blocs au-dessus (polices, styles-gabarit) sont
+      ceux du gabarit, octet pour octet : fiches:verifier les compare, fiches:assembler --forcer les réécrit.
+    -->
+    <style id="styles-bloc"></style>
   </head>
   <body>
     <header class="barre">
@@ -1257,7 +1262,16 @@
     <!-- La bibliothèque du pont est insérée ici au build (packages/pont/scripts/injecter.ts). -->
     <script id="pont"></script>
 
-    <script>
+    <!--
+      JS PROPRE À LA FICHE (outils interactifs, montés sur l'événement fiche:rendu) : ce bloc est libre.
+    -->
+    <script id="outils-bloc"></script>
+
+    <!--
+      PLOMBERIE : ne pas toucher. Ce bloc est celui du gabarit, octet pour octet, comme <style id="polices">
+      et <style id="styles-gabarit"> : fiches:verifier les compare, fiches:assembler --forcer les réécrit.
+    -->
+    <script id="plomberie">
       'use strict'
       const manifeste = JSON.parse(document.getElementById('bloc-manifest').textContent)
       const CLE_ETAT = 'janus.fiche.' + manifeste.bloc + '.etat'

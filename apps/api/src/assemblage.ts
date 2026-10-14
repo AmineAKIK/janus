@@ -38,6 +38,63 @@ export function pontEstPresent(html: string): boolean {
 }
 
 /**
+ * Les blocs du gabarit que toute fiche reprend tels quels, octet pour octet : les polices, la feuille
+ * de style et la plomberie. Ce qui est propre à une fiche va dans `<style id="styles-bloc">` et
+ * `<script id="outils-bloc">`.
+ */
+export const BLOCS_FIXES = ['polices', 'styles-gabarit', 'plomberie'] as const
+export type BlocFixe = (typeof BLOCS_FIXES)[number]
+
+interface PositionDuBloc {
+  readonly debut: number
+  readonly fin: number
+}
+
+/** Où commence et finit le contenu du `<style id="…">` ou `<script id="…">` de la page. */
+function positionDuBloc(html: string, id: string): PositionDuBloc | undefined {
+  const ouverture = new RegExp(`<(style|script)\\b[^>]*\\sid="${id}"[^>]*>`).exec(html)
+  if (ouverture === null) return undefined
+  const debut = ouverture.index + ouverture[0].length
+  const fin = html.indexOf(`</${ouverture[1] ?? ''}>`, debut)
+  return fin === -1 ? undefined : { debut, fin }
+}
+
+/** Le contenu d'un `<style id="…">` ou `<script id="…">` de la page, `undefined` s'il n'y est pas. */
+export function contenuDuBloc(html: string, id: string): string | undefined {
+  const position = positionDuBloc(html, id)
+  return position === undefined ? undefined : html.slice(position.debut, position.fin)
+}
+
+/** Les blocs fixes du gabarit, par identifiant ; une erreur si le gabarit en a perdu un. */
+export function blocsFixes(gabarit: string): ReadonlyMap<BlocFixe, string> {
+  const blocs = new Map<BlocFixe, string>()
+  for (const id of BLOCS_FIXES) {
+    const contenu = contenuDuBloc(gabarit, id)
+    if (contenu === undefined) throw new Error(`Le gabarit n’a plus de bloc fixe id="${id}".`)
+    blocs.set(id, contenu)
+  }
+  return blocs
+}
+
+/**
+ * Remplace, dans une fiche, le contenu de chaque bloc fixe par celui du gabarit (`fiches:assembler
+ * --forcer`) : la fiche reprend la plomberie du jour, ses blocs propres ne bougent pas.
+ */
+export function remplacerLesBlocsFixes(html: string, gabarit: string): string {
+  let resultat = html
+  for (const [id, contenu] of blocsFixes(gabarit)) {
+    const position = positionDuBloc(resultat, id)
+    if (position === undefined) {
+      throw new Error(
+        `La fiche n’a pas de bloc fixe id="${id}" : reprends les balises du gabarit (LISEZ-MOI).`,
+      )
+    }
+    resultat = `${resultat.slice(0, position.debut)}${contenu}${resultat.slice(position.fin)}`
+  }
+  return resultat
+}
+
+/**
  * Écrit `pont.js` dans la balise vide de la fiche. Le code ne peut pas contenir `</script`, qui
  * fermerait la balise : on l'écrit `<\/script`, ce que JavaScript lit de la même façon.
  */

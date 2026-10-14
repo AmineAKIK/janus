@@ -4,7 +4,8 @@
 
 ## Ce qui est fixé (ne pas toucher)
 
-- Le pont avec l'appli, la reprise de l'état, le mode autonome (ouvrir le fichier seul dans un navigateur).
+- Trois blocs repris du gabarit octet pour octet : `<style id="polices">`, `<style id="styles-gabarit">` et `<script id="plomberie">`. `pnpm fiches:verifier` les compare au gabarit et refuse une fiche qui les a modifiés.
+- Le pont avec l'appli (`<script id="pont">`, le `pont.js` construit, dont l'en-tête `/*! janus-pont v… */` donne la version du contrat et l'empreinte que `pnpm fiches:verifier` compare), la reprise de l'état, le mode autonome (ouvrir le fichier seul dans un navigateur).
 - Le fil d'étapes, le masquage du cours pendant la restitution, la note de confiance, les boutons d'aide de la pratique, les messages de résultat.
 - Le lien externe : `<a data-lien="https://…">`, ouvert par l'appli dans un nouvel onglet, avec l'adresse écrite à côté.
 
@@ -12,10 +13,11 @@
 
 - Une étape `aisance` est dessinée comme une étape libre : son `<template data-etape="ETx">` porte l'exercice chronométré, qui envoie lui-même `aisance.resultat` au pont. Le manifeste déclare le seuil dans `aisance`.
 - La carte affiche l'objectif, puis le `<template data-etape="ET1">` s'il existe. `contexte_ia` (pour le correcteur) n'est jamais affiché.
-- Un `<script>` de la fiche peut animer le HTML libre : le gabarit émet l'événement `fiche:rendu` sur `document` après chaque étape dessinée. Les scripts dans un `<template>` ne s'exécutent pas, d'où cet événement.
+- Le `<script id="outils-bloc">` de la fiche peut animer le HTML libre : le gabarit émet l'événement `fiche:rendu` sur `document` après chaque étape dessinée. Les scripts dans un `<template>` ne s'exécutent pas, d'où cet événement.
 
 ## Ce qui est libre
 
+- Le CSS propre à la fiche, dans `<style id="styles-bloc">` ; ses outils interactifs, dans `<script id="outils-bloc">`. Rien d'autre ne s'ajoute aux blocs fixes.
 - Le HTML de chaque étape, dans un `<template data-etape="ET2">` par étape à lire.
 - L'énoncé de chaque item de pratique, dans un `<template data-item="PR1-1">`.
 - Le manifeste (`<script id="bloc-manifest">`) : les étapes, les questions, les erreurs critiques, les cartes. Le champ `type` (`systemes`, `procedures`, `regles_cas`, `conventions`) décide des réserves exigées ; sans lui, la composition complète est exigée. Une tâche différée peut se vérifier en `exacte`, en `code` ou en `constat`.
@@ -26,7 +28,7 @@
 2. `pnpm fiches:nouvelle dwwm B03` crée `contenu/dwwm/fiches/B03.html` avec le pont.
 3. Remplacer tout ce qui dit `À REMPLACER`.
 4. `pnpm fiches:verifier` doit répondre « aucun problème ». La CI le refait avant la fusion.
-5. Modifier une fiche déjà publiée : augmenter `version` dans le manifeste.
+5. Modifier une fiche déjà publiée : augmenter `version` dans le manifeste. Le gabarit ou le pont a changé : `pnpm fiches:assembler --forcer` réécrit le pont et les blocs fixes dans toutes les fiches, puis chacune augmente sa `version`.
 6. Une fiche pèse au plus 5 Mo, images et sons compris : `pnpm fiches:verifier` refuse au-delà. Une fiche se conçoit sous cette limite, elle ne se réduit pas après coup.
 
 Aucun appel réseau dans une fiche, aucun fichier externe : images et audio en `data:`, dans la limite des 5 Mo.
