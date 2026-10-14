@@ -92,24 +92,24 @@ describe('formaterInstant', () => {
     const midi = new Date(2026, 9, 6, 12, 0).toISOString()
     const lendemain = new Date(2026, 9, 7, 9, 5).toISOString()
 
-    expect(formaterInstant(quinzeVingt, midi)).toBe('15 h 20')
-    expect(formaterInstant(lendemain, midi)).toBe('7 octobre à 9 h 05')
+    expect(formaterInstant(quinzeVingt, midi)).toBe('15\u00a0h\u00a020')
+    expect(formaterInstant(lendemain, midi)).toBe('7\u00a0octobre à 9\u00a0h\u00a005')
   })
 
   it('passe à la date quand la consolidation tombe après minuit', () => {
     const tard = new Date(2026, 9, 6, 23, 30).toISOString()
     const apresMinuit = new Date(2026, 9, 7, 0, 30).toISOString()
 
-    expect(formaterInstant(apresMinuit, tard)).toBe('7 octobre à 0 h 30')
+    expect(formaterInstant(apresMinuit, tard)).toBe('7\u00a0octobre à 0\u00a0h\u00a030')
   })
 })
 
 describe('formaterDelai', () => {
   it.each([
-    [60, '1 h'],
-    [45, '45 min'],
-    [90, '1 h 30'],
-    [1440, '24 h'],
+    [60, '1\u00a0h'],
+    [45, '45\u00a0min'],
+    [90, '1\u00a0h\u00a030'],
+    [1440, '24\u00a0h'],
   ])('%i minutes : %s', (minutes, attendu) => {
     expect(formaterDelai(minutes)).toBe(attendu)
   })
@@ -130,14 +130,14 @@ describe('formaterInstant dans le fuseau des réglages', () => {
   it("écrit l'heure du fuseau demandé, quel que soit celui de l'appareil", () => {
     const instant = '2026-10-06T13:20:00Z'
     const midi = '2026-10-06T10:00:00Z'
-    expect(formaterInstant(instant, midi, 'Europe/Paris')).toBe('15 h 20')
-    expect(formaterInstant(instant, midi, 'America/New_York')).toBe('9 h 20')
+    expect(formaterInstant(instant, midi, 'Europe/Paris')).toBe('15\u00a0h\u00a020')
+    expect(formaterInstant(instant, midi, 'America/New_York')).toBe('9\u00a0h\u00a020')
   })
 
   it('compare les jours dans ce fuseau : 23 h 30 à Paris est encore le même jour', () => {
     const tard = '2026-10-06T21:30:00Z'
     const minuit = '2026-10-06T22:30:00Z'
-    expect(formaterInstant(minuit, tard, 'Europe/Paris')).toBe('7 octobre à 0 h 30')
-    expect(formaterInstant(minuit, tard, 'UTC')).toBe('22 h 30')
+    expect(formaterInstant(minuit, tard, 'Europe/Paris')).toBe('7\u00a0octobre à 0\u00a0h\u00a030')
+    expect(formaterInstant(minuit, tard, 'UTC')).toBe('22\u00a0h\u00a030')
   })
 })

@@ -93,7 +93,7 @@ function FicheOuverte({
     erreur: nomErreur,
     exercice: (id: string) => {
       const titre = exercices.find((exercice) => exercice.id === id)?.titre
-      return titre === undefined ? id : `« ${titre} »`
+      return titre === undefined ? id : `«\u00a0${titre}\u00a0»`
     },
     question: (id: string) => {
       const rang = questions.restitution.findIndex((question) => question.id === id)
