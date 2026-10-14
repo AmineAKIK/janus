@@ -31,10 +31,11 @@ B01 a été écrite à partir d'un cours et vérifiée sur sa forme seulement. E
 
 ### Dans quel ordre on l'écrit
 
-1. Partir de l'objectif du bloc dans le plan du module, pas d'un cours. Si la preuve attendue du plan dépasse son objectif (B01 : décoder #FF8800 alors que l'objectif ne parle pas d'hexadécimal), l'un des deux est faux : le dire à Amine avant d'écrire.
-2. Découper l'objectif en notions vérifiables et remplir le tableau d'alignement (`<script id="alignement">`, voir le LISEZ-MOI du gabarit) : pour chaque notion, l'étape qui la montre, ce qui l'entraîne, les questions et les cartes qui l'interrogent. `pnpm fiches:verifier` refuse une question ou une carte sans notion, une explication ou un exercice qui ne sert aucune notion.
-3. Écrire les étapes dans l'ordre de la méthode : démonstration, exercice guidé, exercice seul. Une règle montrée sur un seul exemple n'est pas enseignée : on n'interroge pas un cas nouveau sans que la règle soit écrite.
-4. Écrire les questions en dernier, à partir du tableau.
+1. Partir de l'entrée du bloc dans le plan du module, pas d'un cours, et la passer d'abord au contrôle du plan : un agent neuf reçoit l'entrée, celles de ses prérequis et la consigne `prompts/fiches/controle-plan.md`. Le plan a ses propres fautes : celui du module 1 faisait corriger un cours (B01, B15, B16, B20), demandait en preuve ce que l'objectif n'annonce pas (B01 : décoder #FF8800 sans hexadécimal dans l'objectif) et faisait utiliser la console ou le terminal avant de les présenter. Les dépendances à un cours et les prérequis manquants se corrigent dans le plan ; une exigence qui dépasse l'objectif va à Amine, qui choisit d'élargir l'objectif ou de réduire l'exigence. On n'écrit rien tant que le contrôle n'est pas propre.
+2. Recopier l'objectif du plan, mot pour mot, dans le manifeste : s'il doit changer, c'est le plan qui change d'abord, avec l'accord d'Amine. B01 avait réécrit le sien (#RRGGBB ajouté, « pourquoi la base 2 » retiré) : son tableau d'alignement, rempli à partir de cet objectif réécrit, ne pouvait pas voir que la photo, UTF-8 et les préfixes promis par le plan manquaient.
+3. Remplir le tableau d'alignement (`<script id="alignement">`, voir le LISEZ-MOI du gabarit) avec la liste des notions que donne le contrôle du plan : pour chaque notion, l'étape qui la montre, ce qui l'entraîne, les questions et les cartes qui l'interrogent. `pnpm fiches:verifier` refuse une question ou une carte sans notion, une explication ou un exercice qui ne sert aucune notion.
+4. Écrire les étapes dans l'ordre de la méthode : démonstration, exercice guidé, exercice seul. Une règle montrée sur un seul exemple n'est pas enseignée : on n'interroge pas un cas nouveau sans que la règle soit écrite.
+5. Écrire les questions en dernier, à partir du tableau.
 
 ### Avant de dire qu'elle est prête
 

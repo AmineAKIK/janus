@@ -33,7 +33,7 @@
 
 1. `pnpm --filter @janus/pont build` (une fois).
 2. `pnpm fiches:nouvelle dwwm B03` crée `contenu/dwwm/fiches/B03.html` avec le pont.
-3. **Avant tout HTML**, remplir le tableau d'alignement à partir de l'objectif du bloc dans le plan du module. Si la preuve attendue du plan dépasse son objectif, le signaler à Amine avant d'écrire.
+3. **Avant tout HTML**, passer l'entrée du bloc dans le plan du module au contrôle du plan (consigne `prompts/fiches/controle-plan.md`, agent neuf), et corriger le plan jusqu'à un contrôle propre : une exigence qui dépasse l'objectif va à Amine. Recopier ensuite l'objectif du plan, mot pour mot, dans le manifeste, et remplir le tableau d'alignement avec la liste des notions que donne le contrôle.
 4. Écrire les étapes (démonstration, exercice guidé, exercice seul), puis les questions à partir du tableau, et remplacer tout ce qui dit `À REMPLACER`.
 5. `pnpm fiches:verifier` doit répondre « aucun problème » : il refuse aussi une question ou une carte sans notion, une explication ou un exercice qui ne sert aucune notion, et les renvois à un cours déjà rencontrés. La CI le refait avant la fusion.
 6. Passer les deux épreuves d'AGENTS.md (« Avant de dire qu'elle est prête ») : l'apprenant neuf, avec `pnpm fiches:texte dwwm B03` et la consigne `prompts/fiches/apprenant-neuf.md`, puis le parcours complet dans l'appli. Leurs résultats vont dans la PR.
