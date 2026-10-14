@@ -17,6 +17,8 @@ export const TEXTES_BLOC = {
   faite: '✓',
   verrou: '🔒',
   verrouillee: 'Verrouillée tant que la série n’est pas envoyée',
+  revoirMarque: '↺',
+  aRevoir: 'À revoir',
 } as const
 
 export const TEXTES_REVOIR_COURS = {

@@ -54,6 +54,27 @@ export function etapesFaites(
   )
 }
 
+/**
+ * Les étapes à revoir quand le bloc est « à reprendre » : celle que le manifeste lie à chaque erreur
+ * critique ouverte, et la restitution que le serveur a rouverte après qu'elle a été envoyée. Le reste
+ * garde ses preuves : on retourne là où l'erreur se corrige, on ne repart pas de zéro.
+ */
+export function etapesARevoir(
+  etapes: readonly EtapeAffichee[],
+  erreurs: readonly { readonly id: string; readonly etape?: string | undefined }[],
+  ouvertes: readonly string[],
+  avancement: Avancement,
+  restitutionOuverte: boolean,
+): ReadonlySet<string> {
+  const liees = new Set(erreurs.filter(({ id }) => ouvertes.includes(id)).map(({ etape }) => etape))
+  const restitutionRouverte = restitutionOuverte && avancement.restitution !== null
+  return new Set(
+    etapes
+      .filter(({ id, type }) => liees.has(id) || (type === 'restitution' && restitutionRouverte))
+      .map(({ id }) => id),
+  )
+}
+
 const AUCUNE: ReadonlySet<string> = new Set()
 
 /** Le fil d'étapes : un onglet par étape du manifeste, qui demande à la page de l'afficher. */
@@ -66,6 +87,7 @@ export function FilEtapes({
   surChoix,
   verrouillees = AUCUNE,
   surVerrou,
+  aRevoir = AUCUNE,
 }: {
   readonly etapes: readonly EtapeAffichee[]
   readonly courante: string | null
@@ -79,6 +101,8 @@ export function FilEtapes({
   /** Les étapes qui demandent confirmation avant d'être rouvertes. */
   readonly verrouillees?: ReadonlySet<string>
   readonly surVerrou?: (id: string) => void
+  /** Les étapes où retourner quand le bloc est « à reprendre » : « ↺ » remplace « ✓ ». */
+  readonly aRevoir?: ReadonlySet<string>
 }) {
   const faites = etapesFaites(etapes, avancement, vues, bilanFait)
   const active = courante ?? etapes[0]?.id
@@ -109,7 +133,13 @@ export function FilEtapes({
               type="button"
               aria-current={id === active ? 'step' : undefined}
               className={`${styles['onglet'] ?? ''} ${id === active ? (styles['courant'] ?? '') : ''} texte-petit-14`}
-              title={verrouillees.has(id) ? TEXTES_BLOC.verrouillee : undefined}
+              title={
+                verrouillees.has(id)
+                  ? TEXTES_BLOC.verrouillee
+                  : aRevoir.has(id)
+                    ? TEXTES_BLOC.aRevoir
+                    : undefined
+              }
               onClick={() => {
                 setOuvert(false)
                 if (verrouillees.has(id) && surVerrou !== undefined) surVerrou(id)
@@ -118,6 +148,8 @@ export function FilEtapes({
             >
               {verrouillees.has(id) ? (
                 <span aria-hidden="true">{TEXTES_BLOC.verrou} </span>
+              ) : aRevoir.has(id) ? (
+                <span aria-hidden="true">{TEXTES_BLOC.revoirMarque} </span>
               ) : (
                 faites.has(id) && <span aria-hidden="true">{TEXTES_BLOC.faite} </span>
               )}

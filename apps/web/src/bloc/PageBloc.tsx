@@ -17,7 +17,7 @@ import { EncartHorsConnexion } from './EncartHorsConnexion.tsx'
 import { useEtatEnvoi } from './useEtatEnvoi.ts'
 import { useTempsActif } from './useTempsActif.ts'
 import styles from './Bloc.module.css'
-import { FilEtapes } from './FilEtapes.tsx'
+import { etapesARevoir, FilEtapes } from './FilEtapes.tsx'
 import type { EtapeAffichee } from './FilEtapes.tsx'
 import { IframeFiche } from './HoteFiche.tsx'
 import type { SerieVerrou } from './verrou.ts'
@@ -51,7 +51,11 @@ function FicheOuverte({
   readonly etapeDemandee: string | undefined
   readonly etapes: readonly EtapeAffichee[]
   readonly problemes: readonly string[]
-  readonly erreursCritiques: readonly { readonly id: string; readonly libelle: string }[]
+  readonly erreursCritiques: readonly {
+    readonly id: string
+    readonly libelle: string
+    readonly etape?: string | undefined
+  }[]
   readonly questions: Readonly<
     Record<SerieVerrou, readonly { readonly id: string; readonly question: string }[]>
   >
@@ -120,6 +124,13 @@ function FicheOuverte({
   // Une erreur déjà ouverte n'a plus besoin d'être tranchée.
   const ouvertes = hote.statut.manque.find(({ code }) => code === 'erreur_ouverte')?.erreurs ?? []
   const enAttente = hote.propositions.filter(({ erreur }) => !ouvertes.includes(erreur))
+  const aRevoir = etapesARevoir(
+    etapes,
+    erreursCritiques,
+    ouvertes,
+    hote.statut.avancement,
+    donnees.serieOuverte.restitution,
+  )
   const refusee = [
     ...problemes,
     ...(hote.refus === null ? [] : [PROBLEMES_POIGNEE_DE_MAIN[hote.refus]]),
@@ -144,6 +155,7 @@ function FicheOuverte({
           surChoix={hote.allerEtape}
           verrouillees={verrouillees}
           surVerrou={setRevoir}
+          aRevoir={aRevoir}
         />
       </header>
       {revoir !== null && (

@@ -63,12 +63,13 @@ const DIFFEREE_COMPILATEUR = 'DE2'
 export function manifesteDuBloc({ code, titre, prerequis }: BlocDuPlan): Manifeste {
   const base = { ...MODELE, bloc: code, titre, titre_court: titre, prerequis }
   if (code !== 'B04') return Manifeste.parse(base)
-  // B04 porte une erreur critique de plus, cochée dans la graine ; une différée la touche.
+  // B04 porte une erreur critique de plus, cochée dans la graine, liée à l'explication (où la revoir) ;
+  // une différée la touche.
   return Manifeste.parse({
     ...base,
     erreurs_critiques: [
       ...MODELE.erreurs_critiques,
-      { id: ERREUR_COMPILATEUR, libelle: 'Confond compilateur et interpréteur.' },
+      { id: ERREUR_COMPILATEUR, libelle: 'Confond compilateur et interpréteur.', etape: 'ET3' },
     ],
     differees: MODELE.differees.map((differee) =>
       differee.id === DIFFEREE_COMPILATEUR
