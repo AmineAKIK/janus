@@ -143,7 +143,9 @@ test.describe('page d’un bloc', () => {
     await expect(page.getByText('Statut calculé')).toBeVisible()
     await expect(page.getByText(/Statut calculé/)).toContainText('Acquis provisoirement')
     await expect(
-      page.getByText(/La vérification sera possible à partir de \d{1,2} \S+ à \d{1,2} h \d{2}\./),
+      page.getByText(
+        /La vérification sera possible à partir de \d{1,2}\s\S+ à \d{1,2}\sh\s\d{2}\./,
+      ),
     ).toBeVisible()
   })
 })
