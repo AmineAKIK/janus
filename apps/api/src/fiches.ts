@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process'
 import { readdir, readFile } from 'node:fs/promises'
 import { join, relative } from 'node:path'
 import { Catalogue, validerManifeste } from '@janus/contrats'
+import type { Manifeste, TypeEtape } from '@janus/contrats'
 import { pontEstPresent } from './assemblage.ts'
 import { extraireManifeste } from './domaines/catalogue/composition.ts'
 
@@ -48,6 +49,133 @@ function codesDuCatalogue(json: unknown): ReadonlySet<string> {
       leModule.importe ? leModule.parties.flatMap(({ blocs }) => blocs) : [],
     ),
   )
+}
+
+/** Les étapes dont le contenu vient d'un `<template data-etape="…">` de la page (gabarit : `afficherLibre`). */
+const ETAPES_A_TEMPLATE: ReadonlySet<TypeEtape> = new Set<TypeEtape>(['explication', 'aisance'])
+
+/** Le HTML sans ses scripts ni ses commentaires : ce que la page affiche, où les templates se cherchent. */
+function sansScriptsNiCommentaires(html: string): string {
+  return html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<!--[\s\S]*?-->/g, '')
+}
+
+/** Le HTML sans la bibliothèque du pont (`<script id="pont">`), qui appartient à l'appli, ni ses commentaires. */
+function sansPontNiCommentaires(html: string): string {
+  return html
+    .replace(/<script\s+id=["']pont["'][^>]*>[\s\S]*?<\/script>/i, '')
+    .replace(/<!--[\s\S]*?-->/g, '')
+}
+
+/** Les `<template data-etape="…">` et `<template data-item="…">` que la page affiche. */
+function templatesDeLaPage(html: string): {
+  etapes: ReadonlySet<string>
+  items: ReadonlySet<string>
+} {
+  const etapes = new Set<string>()
+  const items = new Set<string>()
+  for (const [, attributs] of sansScriptsNiCommentaires(html).matchAll(/<template\b([^>]*)>/gi)) {
+    const etape = /\bdata-etape\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
+    const item = /\bdata-item\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
+    if (etape !== undefined) etapes.add(etape)
+    if (item !== undefined) items.add(item)
+  }
+  return { etapes, items }
+}
+
+/**
+ * Une étape à lire sans son template s'afficherait « Rien à lire dans cette étape », un item de
+ * pratique sans son énoncé n'aurait pas de consigne : la page le tait, la vérification le dit.
+ */
+function verifierTemplates(
+  manifeste: Manifeste,
+  html: string,
+  signaler: (message: string) => void,
+): void {
+  const { etapes, items } = templatesDeLaPage(html)
+  for (const etape of manifeste.etapes) {
+    if (ETAPES_A_TEMPLATE.has(etape.type) && !etapes.has(etape.id)) {
+      signaler(
+        `l’étape ${etape.id} (${etape.type}) n’a pas de <template data-etape="${etape.id}"> : la page afficherait « Rien à lire dans cette étape ».`,
+      )
+    }
+  }
+  for (const exercice of manifeste.pratique) {
+    for (const item of exercice.items) {
+      if (!items.has(item.id)) {
+        signaler(
+          `l’item ${item.id} n’a pas de <template data-item="${item.id}"> : l’apprenant n’aurait pas d’énoncé.`,
+        )
+      }
+    }
+  }
+}
+
+/**
+ * Une adresse qui sort de la page (`http(s)://…` ou `//…`) là où le navigateur la chargerait ou la
+ * suivrait : un attribut `src`, `href`, `srcset`, `poster`, `action`, `formaction`, `data` ou `ping`,
+ * un `url()` de CSS, un `@import`. `data-lien` n'en fait pas partie : c'est l'appli qui ouvre ces liens.
+ */
+const ADRESSE_EXTERNE =
+  /(?:(?<![\w-])(?:src|href|srcset|poster|action|formaction|data|ping)\s*=\s*["']?\s*|\burl\(\s*["']?\s*|@import\s+(?:url\(\s*)?["']?\s*)((?:https?:)?\/\/[^\s"')>]+)/gi
+
+/** La fiche n'a aucun accès réseau (section « Pont » du cadrage, et la CSP de son origine coupe tout) : rien d'externe. */
+function verifierAdressesExternes(html: string, signaler: (message: string) => void): void {
+  const vues = new Set<string>()
+  for (const [, adresse] of sansPontNiCommentaires(html).matchAll(ADRESSE_EXTERNE)) {
+    if (adresse === undefined || vues.has(adresse)) continue
+    vues.add(adresse)
+    signaler(
+      `une adresse externe est chargée ou liée (${adresse}) : la fiche n’a aucun accès réseau, embarque le fichier en data: ; un lien vers un site s’écrit <a data-lien="https://…">.`,
+    )
+  }
+}
+
+/** Texte comparé sans tenir compte de la casse ni des espaces en trop, comme dans le validateur. */
+function normaliserTexte(texte: string): string {
+  return texte.trim().replace(/\s+/g, ' ').toLowerCase()
+}
+
+/** Les textes qui font le sens d'une question, par liste et identifiant : la question (ou la consigne) et l'attendu. */
+function textesDesQuestions(manifeste: Manifeste): ReadonlyMap<string, string> {
+  const textes = new Map<string, string>()
+  const poser = <T extends { readonly id: string; readonly attendu: string }>(
+    liste: readonly T[],
+    nom: string,
+    enonce: (element: T) => string,
+  ) => {
+    for (const element of liste) {
+      textes.set(
+        `${nom} ${element.id}`,
+        `${normaliserTexte(enonce(element))}\n${normaliserTexte(element.attendu)}`,
+      )
+    }
+  }
+  poser(manifeste.restitution, 'restitution', (q) => q.question)
+  poser(manifeste.consolidation, 'consolidation', (q) => q.question)
+  poser(manifeste.rappel, 'rappel', (q) => q.question)
+  poser(manifeste.differees, 'differees', (d) => d.consigne)
+  return textes
+}
+
+/**
+ * Les identifiants sont stables (cadrage) : les réponses déjà données s'y rattachent. Une question dont
+ * le texte change sous le même identifiant est refusée ; elle reçoit un nouvel identifiant, l'ancien
+ * reste en base pour l'historique. Ajouter ou retirer une question ne change rien aux autres.
+ */
+function verifierIdentifiantsStables(
+  avant: Manifeste,
+  apres: Manifeste,
+  signaler: (message: string) => void,
+): void {
+  const anciens = textesDesQuestions(avant)
+  for (const [cle, texte] of textesDesQuestions(apres)) {
+    const ancien = anciens.get(cle)
+    if (ancien === undefined || ancien === texte) continue
+    const [nom, id] = cle.split(' ')
+    signaler(
+      `la question ${id ?? ''} (${nom ?? ''}) a changé de texte sous le même identifiant : une question dont le sens change reçoit un nouvel identifiant, l’ancien reste en base pour l’historique.`,
+    )
+  }
 }
 
 export interface OptionsVerification {
@@ -115,6 +243,8 @@ export async function verifierLesFiches({
       const autre = vues.get(bloc)
       if (autre !== undefined) signaler(`le bloc ${bloc} a déjà sa fiche : ${autre}.`)
       vues.set(bloc, fiche.nom)
+      verifierTemplates(resultat.manifeste, fiche.html, signaler)
+      verifierAdressesExternes(fiche.html, signaler)
 
       const avant = contenuDeReference?.(fiche.nom)
       if (avant !== undefined && avant !== fiche.html) {
@@ -124,6 +254,8 @@ export async function verifierLesFiches({
             `le contenu a changé mais la version ${String(version)} du manifeste est la même : incrémente-la, sinon l’API refuse la fiche au démarrage.`,
           )
         }
+        if (ancienne.ok)
+          verifierIdentifiantsStables(ancienne.manifeste, resultat.manifeste, signaler)
       }
     }
   }
