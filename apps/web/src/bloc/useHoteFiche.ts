@@ -82,8 +82,11 @@ export function useHoteFiche(
   donnees: DonneesFiche,
   iframe: RefObject<HTMLIFrameElement | null>,
   surActivite?: () => void,
-  /** Appelé quand une correction est rendue : le statut et les séries ouvertes ont pu changer. */
-  surCorrection?: () => void,
+  /**
+   * Appelé quand le serveur a pu rouvrir ou fermer une série : une correction rendue, ou un bilan
+   * envoyé (une erreur cochée rouvre la restitution). L'appli relit alors le bloc.
+   */
+  surSeriesChangees?: () => void,
   /** L'étape à montrer à l'ouverture (le lien « partie du bloc concernée »), une seule fois. */
   etapeDemandee?: string,
 ) {
@@ -101,8 +104,8 @@ export function useHoteFiche(
   const [conflit, setConflit] = useState(false)
   const rappelActivite = useRef(surActivite)
   rappelActivite.current = surActivite
-  const rappelCorrection = useRef(surCorrection)
-  rappelCorrection.current = surCorrection
+  const rappelSeries = useRef(surSeriesChangees)
+  rappelSeries.current = surSeriesChangees
   const [refus, setRefus] = useState<CauseRefus | null>(null)
   const [hauteur, setHauteur] = useState<number | null>(null)
   const [etapeVue, setEtapeVue] = useState<string | null>(null)
@@ -264,11 +267,12 @@ export function useHoteFiche(
                       )
                       .map((erreur) => ({ erreur, correction: recue.id, reponse: reponseDonnee })),
                   ])
-                  rappelCorrection.current?.()
+                  rappelSeries.current?.()
                   return
                 }
                 const recalcule = statutDeReponse(envoi.route, reponse)
                 if (recalcule !== null) appliquerStatut(recalcule)
+                if (message.type === 'bilan.erreurs') rappelSeries.current?.()
               },
               surConflit: () => {
                 setConflit(true)
