@@ -16,6 +16,7 @@ Décisions prises depuis le cadrage, qui s'y ajoutent :
 
 - Les règles de méthode (délais de vérification, seuil de 80 %) sont affichées en lecture seule dans les réglages : aucun écran ne les modifie. Les changer passe par une PR sur le moteur.
 - Le référencement compte, même en v1 : la vitrine publique est l’accueil (`/`) et la connexion, indexables, avec leurs balises de partage, leurs données structurées, `robots.txt` et `sitemap.xml` (gardés par `apps/web/src/seo.test.ts`). Tout le reste est derrière un compte et se déclare non indexable (balise `robots` posée par le gabarit, en-tête `X-Robots-Tag` du Caddyfile).
+- Correction IA (14 octobre 2026) : Claude Haiku 5.5 est le correcteur principal, DeepSeek le secours (`CORRECTEUR=deepseek` dans l'environnement du serveur), et une correction rendue par le secours se voit dans l'appli. La consigne est le fichier `prompts/correction/v1.md`, seule source (le cadrage n'en garde pas de copie) ; son empreinte est enregistrée avec chaque correction, et on ne la modifie que sur la parole d'Amine. Le jeu de test `prompts/correction/jeu-de-test/B01.json` (40 cas, niveaux d'Amine) se relance à chaque changement de consigne, de modèle ou de paramètre (`pnpm ia:evaluer`, workflow `ia-evaluer.yml`), jamais par bloc ; critère d'acceptation : au moins 75 % d'accord avec les niveaux d'Amine, au plus deux écarts de deux crans sur 40, aucun écart de trois crans.
 
 ## Règles permanentes pour l'IA qui code
 
