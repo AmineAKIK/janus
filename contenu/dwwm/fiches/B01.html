@@ -1418,13 +1418,6 @@
           <summary>Un coup de pouce</summary>
           <p>150 − 128 = 22, puis 22 − 16 = 6, puis 6 − 4 = 2, puis 2 − 2 = 0.</p>
         </details>
-        <details>
-          <summary>Ce que Studi écrit et qui est incomplet</summary>
-          <p>
-            Le cours donne le principe (« chaque position est une puissance de 2 ») mais ne montre
-            jamais une conversion. Ici, tu la fais.
-          </p>
-        </details>
       </div>
     </template>
 
@@ -1449,15 +1442,6 @@
           C’est une façon d’écrire les nombres avec deux chiffres. PHP ou JavaScript sont des
           langages qu’on écrit avec des lettres, et qu’il faut ensuite traduire.
         </p>
-        <details>
-          <summary>Ce que Studi écrit et qui est trompeur</summary>
-          <p>
-            Le cours dit que « chaque combinaison de ces interrupteurs donne une instruction
-            différente ». Faux en général : la plupart des suites de bits sont des données (nombres,
-            lettres, couleurs). Certaines suites sont des instructions pour le processeur, on y
-            revient en P1.4.
-          </p>
-        </details>
       </div>
       <div data-ecran="Lire une couleur">
         <p class="accroche">
@@ -1554,18 +1538,26 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 3,
+        "version": 4,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
         "objectif": "Convertir à la main un nombre de 0 à 255 entre décimal et binaire, expliquer pourquoi un octet donne 256 valeurs mais un maximum de 255, et lire une couleur écrite en #RRGGBB.",
         "prerequis": [],
         "pont": 1,
-        "contexte_ia": "Bloc B01 du module « Écosystème et outils du développeur » (DWWM). L'apprenant découvre que l'information, pour une machine, est une suite de bits (0 ou 1). Notions : bit, octet (8 bits), poids des positions (128, 64, 32, 16, 8, 4, 2, 1, le plus lourd à gauche), valeur = somme des poids des bits à 1. Un octet donne 256 valeurs (de 0 à 255) : le nombre de valeurs est 2 puissance 8, le maximum est 255 parce que le 0 compte. Conversion décimal vers binaire par retrait des poids de gauche à droite ; binaire vers décimal par addition des poids allumés. Convention de lecture : la même suite de bits (par exemple 01000001) vaut 65 comme nombre, « A » comme caractère ASCII, une quantité de rouge comme composante de couleur ; sans convention, une suite de bits ne veut rien dire. Couleur #FF8800 : trois octets (rouge FF = 255, vert 88 = 136, bleu 00 = 0) ; en hexadécimal un chiffre représente 4 bits (A=10 à F=15). L'hexadécimal général et la photo ne sont pas au programme du bloc : une photo est une grille de points colorés, donc des octets, rien de plus. Pièges à repérer : confondre 256 valeurs et maximum 255 ; croire qu'une suite de bits a un sens sans convention ; confondre binaire (écriture des nombres) et langage de programmation (PHP, JavaScript) ; lire les poids de droite à gauche. Erreur de Studi à ne pas répéter : « chaque combinaison de bits donne une instruction » est faux en général, la plupart des suites de bits sont des données. Ne pas valider une réponse qui donne 255 comme nombre de valeurs, ou 256 comme maximum, sans explication du zéro.",
+        "contexte_ia": "Bloc B01 du module « Écosystème et outils du développeur » (DWWM). L'apprenant découvre que l'information, pour une machine, est une suite de bits (0 ou 1). Notions : bit, octet (8 bits), poids des positions (128, 64, 32, 16, 8, 4, 2, 1, le plus lourd à gauche), valeur = somme des poids des bits à 1. Un octet donne 256 valeurs (de 0 à 255) : le nombre de valeurs est 2 puissance 8, le maximum est 255 parce que le 0 compte. Conversion décimal vers binaire par retrait des poids de gauche à droite ; binaire vers décimal par addition des poids allumés. Convention de lecture : la même suite de bits (par exemple 01000001) vaut 65 comme nombre, « A » comme caractère ASCII, une quantité de rouge comme composante de couleur ; sans convention, une suite de bits ne veut rien dire. Couleur #FF8800 : trois octets (rouge FF = 255, vert 88 = 136, bleu 00 = 0) ; en hexadécimal un chiffre représente 4 bits (A=10 à F=15). L'hexadécimal général et la photo ne sont pas au programme du bloc : une photo est une grille de points colorés, donc des octets, rien de plus. Pièges à repérer : confondre 256 valeurs et maximum 255 ; croire qu'une suite de bits a un sens sans convention ; confondre binaire (écriture des nombres) et langage de programmation (PHP, JavaScript) ; lire les poids de droite à gauche. Idée fausse à ne pas valider : « chaque combinaison de bits donne une instruction » ; la plupart des suites de bits sont des données. Ne pas valider une réponse qui donne 255 comme nombre de valeurs, ou 256 comme maximum, sans explication du zéro.",
         "sources": [
           {
             "id": "S1",
-            "titre": "Studi, Jeux de logique, pages 3 à 5 (corrigé et complété)"
+            "titre": "Étape 3 de la fiche, Les poids et la somme"
+          },
+          {
+            "id": "S2",
+            "titre": "Étape 4 de la fiche, Une suite de bits, plusieurs lectures"
+          },
+          {
+            "id": "S3",
+            "titre": "Étape 2 de la fiche, Essaie d’abord"
           }
         ],
         "etapes": [
@@ -1855,6 +1847,57 @@
             "recto": "Combien de bits représente un chiffre hexadécimal ?",
             "verso": "4 bits : F vaut 1111, 8 vaut 1000. Deux chiffres font un octet."
           }
+        ]
+      }
+    </script>
+
+    <!--
+      TABLEAU D'ALIGNEMENT (LISEZ-MOI du gabarit) : chaque notion de l'objectif, l'étape qui la montre,
+      ce qui l'entraîne, les questions et les cartes qui l'interrogent. L'appli ne le lit pas.
+    -->
+    <script id="alignement" type="application/json">
+      {
+        "bloc": "B01",
+        "notions": [
+          {
+            "id": "N1",
+            "notion": "Convertir un nombre de 0 à 255 entre décimal et binaire, avec les poids 128 à 1, le plus lourd à gauche",
+            "montree": ["ET3"],
+            "pratiquee": ["PR1", "PR3", "ET6"],
+            "questions": ["R2", "C1", "Q1", "Q3", "Q4", "DE3", "DR1", "DR3", "K2"]
+          },
+          {
+            "id": "N2",
+            "notion": "Expliquer pourquoi n bits donnent 2 puissance n valeurs, et un octet 256 valeurs mais un maximum de 255",
+            "montree": ["ET2", "ET3"],
+            "pratiquee": ["PR2"],
+            "questions": ["R1", "C2", "Q2", "DE1", "DR2", "K1"]
+          },
+          {
+            "id": "N3",
+            "notion": "Dire qu'une suite de bits ne veut rien dire sans convention de lecture : nombre, caractère ASCII, composante de couleur",
+            "montree": ["ET4"],
+            "pratiquee": ["PR3"],
+            "questions": ["R3", "Q5", "DE2", "K3"]
+          },
+          {
+            "id": "N4",
+            "notion": "Distinguer le binaire, une façon d'écrire les nombres, d'un langage de programmation",
+            "montree": ["ET4"],
+            "pratiquee": [],
+            "questions": ["R4", "Q6", "DE4"]
+          },
+          {
+            "id": "N5",
+            "notion": "Lire une couleur écrite en #RRGGBB",
+            "montree": ["ET4"],
+            "pratiquee": ["PR2", "PR3"],
+            "questions": ["R5", "C3", "K4"]
+          }
+        ],
+        "hors_objectif": [
+          "Les nombres négatifs en binaire : DR3 demande seulement de reconnaître que la fiche ne l'enseigne pas",
+          "La photo, une grille de points colorés : un écran de l'étape 4, jamais interrogé"
         ]
       }
     </script>

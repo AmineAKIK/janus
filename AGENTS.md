@@ -19,6 +19,36 @@ Décisions prises depuis le cadrage, qui s'y ajoutent :
 - Correction IA (14 octobre 2026) : Claude Haiku 5.5 est le correcteur principal, DeepSeek le secours (`CORRECTEUR=deepseek` dans l'environnement du serveur), et une correction rendue par le secours se voit dans l'appli. La consigne est le fichier `prompts/correction/v1.md`, seule source (le cadrage n'en garde pas de copie) ; son empreinte est enregistrée avec chaque correction, et on ne la modifie que sur la parole d'Amine. Le jeu de test `prompts/correction/jeu-de-test/B01.json` (40 cas, niveaux d'Amine) se relance à chaque changement de consigne, de modèle ou de paramètre (`pnpm ia:evaluer`, workflow `ia-evaluer.yml`), jamais par bloc ; critère d'acceptation : au moins 70 % d'accord avec les niveaux d'Amine, au plus deux écarts de deux crans sur 40, aucun écart de trois crans. Sans la clé du correcteur désigné par `CORRECTEUR` (`ANTHROPIC_API_KEY` ou `DEEPSEEK_API_KEY`), l'API refuse de démarrer : pas de serveur qui répond sans savoir corriger. La validation de la sortie du correcteur (`apps/api/src/domaines/correction/policy.ts`) applique elle-même la règle « erreur critique → niveau » : une erreur critique du bloc retenue plafonne le niveau à fragile, à pas_encore si l'apprenant s'est dit sûr ; le niveau rendu par l'IA est gardé, et le rapport d'évaluation l'affiche quand il diffère.
 - Fiches (14 octobre 2026) : `pnpm fiches:verifier`, lancé en CI, refuse une fiche de plus de 5 Mo (images et sons en `data:` compris : une fiche se conçoit sous cette limite, elle ne se réduit pas après coup), une étape d'explication ou d'aisance sans `<template data-etape>` (la page afficherait « Rien à lire dans cette étape ») et un item de pratique sans `<template data-item>` (pas d'énoncé), toute adresse externe chargée ou liée (`src`, `href`, `url()`, `@import`… vers `http(s)://` ou `//` : une fiche n'a aucun accès réseau, un lien vers un site s'écrit `<a data-lien>`), et une question (restitution, consolidation, rappel, différée) dont le texte change sous le même identifiant, casse et espaces mises à part : une question qui change de sens reçoit un nouvel identifiant, l'ancien reste en base pour l'historique. Il refuse aussi une fiche dont le pont embarqué n'est pas le pont construit du dépôt (en-tête `/*! janus-pont v<version> <empreinte> */`, version égale au champ `pont` du manifeste) ou dont un bloc fixe du gabarit (`<style id="polices">`, `<style id="styles-gabarit">`, `<script id="plomberie">`) diffère du gabarit : ce qui est propre à une fiche va dans `<style id="styles-bloc">` et `<script id="outils-bloc">`, et `pnpm fiches:assembler --forcer` réécrit pont et blocs fixes dans toutes les fiches quand le gabarit ou le pont change (puis chaque fiche augmente sa version). Le validateur de manifeste exige que chaque erreur critique soit touchée par au moins une question différée, seule façon de la refermer une fois cochée au bilan.
 
+## Concevoir une fiche (décision du 14 octobre 2026)
+
+B01 a été écrite à partir d'un cours et vérifiée sur sa forme seulement. En la jouant, Amine a trouvé des questions sur ce qu'elle n'enseignait pas, des renvois au cours, une pratique validée sans réponse et des états faux dans l'appli. Ces règles valent pour toute IA qui écrit ou modifie une fiche, pour que ça ne se reproduise sur aucune.
+
+### Ce qu'est une fiche
+
+- **Elle se suffit à elle-même.** Un cours sert à tracer le chemin et à fixer les objectifs, jamais de lecture obligée. Ni la page ni le manifeste (que lit le correcteur) ne citent, ne corrigent ou ne renvoient à un cours, une page de document ou une partie du plan. Les erreurs d'un cours se notent pour l'auteur, pas pour l'apprenant. Les `sources` du manifeste désignent des étapes de la fiche. `pnpm fiches:verifier` refuse les renvois déjà rencontrés (Studi, « pages 3 », « Solution n°2 », « P1.4 »…).
+- **Elle n'interroge que ce qu'elle enseigne, et enseigne tout ce que son objectif promet.** Ce qui dépasse l'objectif va dans `hors_objectif` du tableau d'alignement, jamais dans une question ni dans une carte.
+- **Ce qu'il faut savoir est écrit.** Un outil interactif fait manipuler, il ne remplace pas le texte, et une image a sa description (`aria-label`, `alt`).
+
+### Dans quel ordre on l'écrit
+
+1. Partir de l'objectif du bloc dans le plan du module, pas d'un cours. Si la preuve attendue du plan dépasse son objectif (B01 : décoder #FF8800 alors que l'objectif ne parle pas d'hexadécimal), l'un des deux est faux : le dire à Amine avant d'écrire.
+2. Découper l'objectif en notions vérifiables et remplir le tableau d'alignement (`<script id="alignement">`, voir le LISEZ-MOI du gabarit) : pour chaque notion, l'étape qui la montre, ce qui l'entraîne, les questions et les cartes qui l'interrogent. `pnpm fiches:verifier` refuse une question ou une carte sans notion, une explication ou un exercice qui ne sert aucune notion.
+3. Écrire les étapes dans l'ordre de la méthode : démonstration, exercice guidé, exercice seul. Une règle montrée sur un seul exemple n'est pas enseignée : on n'interroge pas un cas nouveau sans que la règle soit écrite.
+4. Écrire les questions en dernier, à partir du tableau.
+
+### Avant de dire qu'elle est prête
+
+Le vérificateur vert ne dit que la forme. Une fiche n'est prête qu'après deux épreuves, faites dans la PR qui la modifie, jamais « après fusion » :
+
+1. **L'apprenant neuf.** `pnpm fiches:texte <formation> <bloc>` écrit ce que lit l'apprenant, sans aucune réponse. Un agent neuf, sans historique ni autre fichier, reçoit ce texte et la consigne `prompts/fiches/apprenant-neuf.md`, et répond à tout. Il faut zéro élément non déductible ou recopié tel quel de l'explication (hors champ assumé à part) et des réponses conformes aux attendus. Le résultat va dans la description de la PR.
+2. **Le parcours dans l'appli.** Sur le banc local, la fiche se joue comme un apprenant, en entier, y compris en se trompant, en laissant un champ vide, en cochant puis en décochant, en revenant en arrière, avec une erreur cochée au bilan puis « à reprendre », une correction échantillonnée (« D'accord avec ce niveau ? ») et l'aisance. Les captures 390 px, en clair et en sombre, de chaque état atteint vont dans la PR.
+
+Un défaut que l'apprenant verrait ne part jamais en « hors périmètre » : il est corrigé dans la PR, ou c'est Amine qui décide de le reporter.
+
+### Quand on trouve un défaut
+
+On corrige la classe, pas seulement le cas : on cherche la règle qui l'a laissé passer, et on l'écrit ici ou dans `pnpm fiches:verifier` dans la même PR. Les agents n'ont pas de mémoire d'une conversation à l'autre : une leçon qui n'est ni écrite ici ni vérifiée par la machine est perdue.
+
 ## Règles permanentes pour l'IA qui code
 
 Ces règles valent pour toutes les PR. La PR-001 les recopie dans `AGENTS.md` à la racine du dépôt (avec un `CLAUDE.md` qui contient seulement `Lire AGENTS.md.`), pour que n'importe quelle IA les trouve.

@@ -3,7 +3,7 @@ import { CodeBloc } from '@janus/contrats'
 /** L'emplacement de la bibliothèque du pont dans une fiche : une balise vide, repérée par son identifiant. */
 const BALISE_PONT = '<script id="pont"></script>'
 const OUVERTURE_PONT = '<script id="pont">'
-/** Le code du bloc que porte le gabarit : le seul endroit à changer pour créer une fiche. */
+/** Le code du bloc que porte le gabarit, dans le manifeste et dans le tableau d'alignement : ce qui change pour créer une fiche. */
 const BLOC_DU_GABARIT = '"bloc": "X00"'
 
 /** Le pont construit par `pnpm --filter @janus/pont build`, que les fiches embarquent. */
@@ -128,7 +128,7 @@ export function nouvelleFiche(gabarit: string, bloc: string, pont: string): stri
     throw new Error(`Le gabarit n’a plus la ligne ${BLOC_DU_GABARIT}.`)
   }
   return injecterLePont(
-    gabarit.replace(BLOC_DU_GABARIT, () => `"bloc": "${bloc}"`),
+    gabarit.replaceAll(BLOC_DU_GABARIT, () => `"bloc": "${bloc}"`),
     pont,
   )
 }
