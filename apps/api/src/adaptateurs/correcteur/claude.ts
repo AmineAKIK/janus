@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { ErreurCorrecteur } from './correcteur.ts'
 import type { Correcteur, RequeteCorrection, ResultatBrut } from './correcteur.ts'
 import type { AppelHttp } from './deepseek.ts'
-import { messagesDeLaRequete } from './message.ts'
+import { contexteDuBloc, messagesDeLaRequete, questionEtReponse } from './message.ts'
 
 /** Les réglages du fournisseur : jamais écrits dans le code, ils viennent de la configuration. */
 export interface ReglagesClaude {
@@ -56,11 +56,15 @@ const Reponse = z.object({
   }),
 })
 
+/** Un bloc de texte mémorisable par le fournisseur (5 minutes, rafraîchies à chaque lecture). */
+const CACHE = { type: 'ephemeral' } as const
+
 /**
  * L'API Messages de Claude : la consigne en `system`, la réflexion désactivée, le JSON imposé par un
- * schéma. Pas de température : Haiku 5.5 n'en accepte pas d'autre que la sienne. Pas de cache
- * demandé ; comme `input_tokens` ne compte pas les jetons lus ou écrits dans le cache, on les
- * additionne pour ne jamais sous-compter.
+ * schéma. Pas de température : Haiku 5.5 n'en accepte pas d'autre que la sienne. La consigne et le
+ * contexte du bloc, identiques d'une réponse à l'autre du même bloc, sont marqués mémorisables : lus
+ * depuis le cache, ils coûtent un dixième de l'entrée. Comme `input_tokens` ne compte pas les jetons
+ * lus ou écrits dans le cache, on les additionne pour ne jamais sous-compter.
  */
 export function creerClaude(
   reglages: ReglagesClaude,
@@ -70,9 +74,19 @@ export function creerClaude(
     async corriger(requete): Promise<ResultatBrut> {
       const tous = messagesDeLaRequete(requete)
       const consigne = tous.find(({ role }) => role === 'system')?.content ?? ''
+      // Le premier message en deux blocs : le contexte du bloc (mémorisé), puis la question et la
+      // réponse du premier tour. Mis bout à bout, ils forment le même texte que pour DeepSeek.
+      const premiereReponse = requete.historique[0]?.reponse ?? requete.reponse
+      const premier = [
+        { type: 'text', text: contexteDuBloc(requete), cache_control: CACHE },
+        { type: 'text', text: `\n${questionEtReponse(requete, premiereReponse)}` },
+      ]
       const messages = tous
         .filter(({ role }) => role !== 'system')
-        .map(({ role, content }) => ({ role, content }))
+        .map(({ role, content }, indice) => ({
+          role,
+          content: indice === 0 ? premier : content,
+        }))
       let reponse: Response
       try {
         reponse = await appel(`${reglages.url.replace(/\/$/, '')}/v1/messages`, {
@@ -85,7 +99,7 @@ export function creerClaude(
           body: JSON.stringify({
             model: reglages.modele,
             max_tokens: reglages.jetonsSortieMax,
-            system: consigne,
+            system: [{ type: 'text', text: consigne, cache_control: CACHE }],
             messages,
             thinking: { type: 'disabled' },
             output_config: { format: { type: 'json_schema', schema: schemaSortie(requete) } },
@@ -119,6 +133,7 @@ export function creerClaude(
         },
         jetonsEntree: usage.input_tokens + lus + ecrits,
         jetonsEntreeCache: lus,
+        jetonsEntreeCacheEcrits: ecrits,
         jetonsSortie: usage.output_tokens,
       }
     },

@@ -63,6 +63,8 @@ export interface ResultatBrut {
   readonly jetonsEntree: number
   /** La part de `jetonsEntree` servie par le cache de préfixe du fournisseur. */
   readonly jetonsEntreeCache: number
+  /** La part de `jetonsEntree` écrite dans ce cache, facturée plus cher que l'entrée (absente : zéro). */
+  readonly jetonsEntreeCacheEcrits?: number
   readonly jetonsSortie: number
 }
 
