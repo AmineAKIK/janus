@@ -84,6 +84,40 @@ describe('evaluer', () => {
     expect(refuse?.certitude).toBeUndefined()
   })
 
+  it('retient le niveau plafonné par la règle « erreur critique → niveau », et garde celui rendu', async () => {
+    const [erreur] = MANIFESTE.erreurs_critiques
+    const correcteur = creerFaux((_requete, appel) =>
+      appel === 1
+        ? JSON.stringify({
+            message: 'Tu confonds deux choses ici, et je te le dis clairement. '.repeat(4),
+            niveau: 'partiel',
+            erreurs_critiques: [erreur?.id],
+            source: 'deduit',
+            ref: '',
+            certitude: 'sur',
+          })
+        : undefined,
+    )
+
+    const evaluation = await evaluer({ jeu: JEU, manifeste: MANIFESTE, correcteur, tarifs: TARIFS })
+    const texte = rapport(evaluation, {
+      date: '2026-10-14',
+      modele: 'faux',
+      empreinteConsigne: 'abc',
+      jeu: 'exemple.json',
+    })
+
+    // Le cas « juste » est sûr : partiel avec une erreur critique devient pas_encore.
+    expect(evaluation.resultats[0]).toMatchObject({
+      id: 'juste',
+      niveauIa: 'pas_encore',
+      niveauRendu: 'partiel',
+      ecart: 3,
+    })
+    expect(texte).toContain('| juste | normal | solide | pas_encore (rendu partiel) |')
+    expect(texte).toContain('### juste : Amine solide, IA pas_encore (rendu partiel), écart 3')
+  })
+
   it('signale une question inconnue du manifeste', async () => {
     const jeu = JeuDeTest.parse({
       manifeste: 'x.json',
