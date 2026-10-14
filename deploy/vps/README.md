@@ -47,7 +47,8 @@ Creer les trois DNS A vers le VPS puis obtenir un certificat couvrant les trois
 noms. Auditer et tester le vhost Nginx avant activation ; `nginx.conf.example`
 suppose ce certificat deja present. L'automatisation ne modifie jamais Nginx.
 
-Renseigner la cle DeepSeek directement dans le fichier protege. Les mots de passe
+Renseigner la cle Anthropic (correcteur principal) et, pour le secours, la cle DeepSeek
+directement dans le fichier protege. Les mots de passe
 PostgreSQL et les cles VAPID sont generes lors de l'installation ; le contact (`VAPID_SUJET`, de la forme
 `mailto:<adresse>`) se renseigne dans le meme fichier. Ne rien de cela dans le depot.
 

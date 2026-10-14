@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from 'fastify'
 import type { Base } from '../../base/base.ts'
 import { correcteurDeLaConfig } from '../../adaptateurs/correcteur/choix.ts'
+import { ErreurConfig } from '../../config.ts'
 import type { CorrigerPartie, Dependances } from '../../types.ts'
 import { creerControleurCorrection } from './controleur.ts'
 import { creerDepotCorrection } from './depot.ts'
@@ -18,7 +19,11 @@ export async function libererLesReservations(base: Base): Promise<void> {
 const JETONS_SORTIE_MAX = 1000
 const DELAI_CORRECTEUR_MS = 30_000
 
-/** Branche la correction : dépôt → service → contrôleur → routes, et le correcteur choisi par la config. */
+/**
+ * Branche la correction : dépôt → service → contrôleur → routes, et le correcteur choisi par la config.
+ * Sans correcteur (ni injecté, ni créé faute de clé), l'API refuse de démarrer : un serveur qui répond
+ * « correction indisponible » à chaque question passerait le contrôle de santé du déploiement.
+ */
 export function monterCorrection({ base, horloge, config, correcteur, hasard }: Dependances): {
   routes: FastifyPluginAsync
   corrigerPartie: CorrigerPartie
@@ -27,11 +32,18 @@ export function monterCorrection({ base, horloge, config, correcteur, hasard }: 
     delaiMs: DELAI_CORRECTEUR_MS,
     jetonsSortieMax: JETONS_SORTIE_MAX,
   })
+  const actif = correcteur ?? choix.correcteur
+  if (actif === undefined) {
+    const cle = config.CORRECTEUR === 'claude' ? 'ANTHROPIC_API_KEY' : 'DEEPSEEK_API_KEY'
+    throw new ErreurConfig([
+      `Le correcteur « ${config.CORRECTEUR} » n’a pas sa clé : ${cle} est vide ou absente. Sans correction, l’API ne démarre pas.`,
+    ])
+  }
   const service = creerServiceCorrection({
     base,
     depot: creerDepotCorrection(),
     horloge,
-    correcteur: correcteur ?? choix.correcteur,
+    correcteur: actif,
     tarifs: choix.tarifs,
     jetonsSortieMax: JETONS_SORTIE_MAX,
     hasard: hasard ?? Math.random,
