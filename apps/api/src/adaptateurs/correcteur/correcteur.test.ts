@@ -160,7 +160,7 @@ describe('creerDeepseek', () => {
       ...surcharge,
     })
 
-  it('appelle /chat/completions en mode JSON avec le modèle et la température configurés', async () => {
+  it('appelle /chat/completions en mode JSON, réflexion désactivée, avec le modèle et la température configurés', async () => {
     let vue: { url: string; init: RequestInit } | undefined
     const correcteur = creerDeepseek(REGLAGES, (url, init) => {
       vue = { url, init }
@@ -176,13 +176,19 @@ describe('creerDeepseek', () => {
     expect(corps).toMatchObject({
       model: 'deepseek-flash',
       response_format: { type: 'json_object' },
+      thinking: { type: 'disabled' },
       temperature: 0.2,
       max_tokens: 1500,
     })
     expect(brut).toEqual({
       texte: '{"niveau":"solide"}',
       modele: 'deepseek-flash',
-      parametres: { temperature: 0.2, max_tokens: 1500, response_format: 'json_object' },
+      parametres: {
+        thinking: 'disabled',
+        temperature: 0.2,
+        max_tokens: 1500,
+        response_format: 'json_object',
+      },
       jetonsEntree: 900,
       jetonsEntreeCache: 600,
       jetonsSortie: 120,
