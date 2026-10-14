@@ -409,19 +409,6 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('POST /corrections contre Postgr
     })
   })
 
-  it('sans correcteur branché (pas de clé), la correction est indisponible (503)', async () => {
-    const base = baseDepuisPool(bases.db, bases.pool)
-    const sansCorrecteur = await serveurDeTest({
-      base,
-      proprietaire: base,
-      config: configDeTest({ NIVEAU_JOURNAL: 'silent' }),
-    })
-
-    const reponse = await corriger(demande(), sansCorrecteur)
-
-    expect(reponse.statusCode).toBe(503)
-  })
-
   describe('le budget', () => {
     it('refuse en 429 « budget_atteint » quand le plafond du mois serait dépassé, sans appeler le correcteur', async () => {
       await reglages({ plafondIaMillioniemes: 100 })

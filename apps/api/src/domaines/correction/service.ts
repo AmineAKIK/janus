@@ -71,8 +71,8 @@ export interface DependancesService {
   readonly base: Base
   readonly depot: DepotCorrection
   readonly horloge: Horloge
-  /** Absent : la correction est indisponible (pas de clé pour le fournisseur choisi). */
-  readonly correcteur: Correcteur | undefined
+  /** Toujours présent : sans correcteur (pas de clé), `monterCorrection` refuse de démarrer l'API. */
+  readonly correcteur: Correcteur
   readonly tarifs: Tarifs
   /** Le plafond de jetons de sortie demandé au fournisseur. */
   readonly jetonsSortieMax: number
@@ -283,9 +283,6 @@ export function creerServiceCorrection({
       )
     }
 
-    if (correcteur === undefined) {
-      throw new CorrectionIndisponible('La correction n’est pas branchée sur le serveur.')
-    }
     const recopiee = estRecopiee(
       demande.reponse,
       [manifeste.contexte_ia, question.attendu],
