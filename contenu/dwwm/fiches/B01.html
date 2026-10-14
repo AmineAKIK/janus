@@ -649,8 +649,20 @@
         white-space: pre-line;
         overflow-wrap: anywhere;
       }
-      .correction + p {
-        margin: 0;
+      /* Sous la question : la correction, puis l'accord sur le niveau quand elle est tirée au sort. */
+      .sortie {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-12);
+      }
+      .sortie:empty {
+        display: none;
+      }
+      .accord {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--espacement-8) var(--espacement-12);
       }
       /* BadgeNeComptePas de l'appli : une réponse qui ne compte pas pour le statut, et pourquoi. */
       .badge-compte {
@@ -1482,29 +1494,35 @@
 
     <!-- Pratique 1 : convertir dans les deux sens -->
     <template data-item="PR1-1"
-      ><div data-widget="convertir" data-sens="dec-bin" data-valeur="150"></div
+      ><div data-verifie data-widget="convertir" data-sens="dec-bin" data-valeur="150"></div
     ></template>
     <template data-item="PR1-2"
-      ><div data-widget="convertir" data-sens="bin-dec" data-valeur="178"></div
+      ><div data-verifie data-widget="convertir" data-sens="bin-dec" data-valeur="178"></div
     ></template>
     <template data-item="PR1-3"
-      ><div data-widget="convertir" data-sens="dec-bin" data-valeur="128"></div
+      ><div data-verifie data-widget="convertir" data-sens="dec-bin" data-valeur="128"></div
     ></template>
     <template data-item="PR1-4"
-      ><div data-widget="convertir" data-sens="bin-dec" data-valeur="255"></div
+      ><div data-verifie data-widget="convertir" data-sens="bin-dec" data-valeur="255"></div
     ></template>
     <template data-item="PR1-5"
-      ><div data-widget="convertir" data-sens="dec-bin" data-valeur="0"></div
+      ><div data-verifie data-widget="convertir" data-sens="dec-bin" data-valeur="0"></div
     ></template>
 
     <!-- Pratique 2 : raisonner sur les bits -->
     <template data-item="PR2-1">
-      <div data-widget="nombre" data-reponse="32" data-succes="2 × 2 × 2 × 2 × 2 = 32.">
+      <div
+        data-verifie
+        data-widget="nombre"
+        data-reponse="32"
+        data-succes="2 × 2 × 2 × 2 × 2 = 32."
+      >
         Avec <strong>5</strong> interrupteurs, combien de valeurs différentes ?
       </div>
     </template>
     <template data-item="PR2-2">
       <div
+        data-verifie
         data-widget="nombre"
         data-reponse="136"
         data-succes="88 en hexadécimal : 8 vaut 1000, donc 10001000, soit 128 + 8 = 136."
@@ -1538,7 +1556,7 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 4,
+        "version": 5,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
@@ -4084,6 +4102,12 @@
           maj()
         }
 
+        /** Dit au gabarit qu'une réponse a été vérifiée : il note l'item réussi ou pas. */
+        const signaler = (n, juste, aide = 0) =>
+          n.dispatchEvent(
+            new CustomEvent('fiche:verification', { bubbles: true, detail: { juste, aide } }),
+          )
+
         /** Une conversion à faire à la main, vérifiée par la machine. */
         function convertir(n) {
           const sens = n.dataset.sens
@@ -4106,9 +4130,10 @@
             if (binaire) {
               const bon = /^\d+$/.test(saisie) && Number(saisie) === valeur
               retour.textContent = bon
-                ? '✓ Juste. Tu peux cliquer sur « J’ai réussi ».'
+                ? '✓ Juste.'
                 : 'Pas encore. Additionne les poids des bits à 1.'
               retour.dataset.juste = bon ? 'oui' : 'non'
+              signaler(n, bon)
               return
             }
             if (!/^[01]{1,8}$/.test(saisie)) {
@@ -4119,13 +4144,14 @@
             const lu = parseInt(saisie, 2)
             const bon = lu === valeur
             retour.textContent = bon
-              ? '✓ Juste. Tu peux cliquer sur « J’ai réussi ».'
+              ? '✓ Juste.'
               : 'Ta suite vaut ' +
                 lu +
                 ', pas ' +
                 valeur +
                 '. Reprends les poids de gauche à droite.'
             retour.dataset.juste = bon ? 'oui' : 'non'
+            signaler(n, bon)
           }
           champ.addEventListener('keydown', (e) => e.key === 'Enter' && verifier())
           n.append(
@@ -4156,6 +4182,8 @@
           })
           const retour = el('p', { className: 'retour' })
           retour.setAttribute('aria-live', 'polite')
+          // Après « Voir la réponse », une réponse juste compte avec l'aide 4 (la solution complète).
+          let reponseVue = false
           const verifier = () => {
             const saisie = champ.value.trim()
             if (saisie === '') return void (retour.textContent = 'Écris un nombre.')
@@ -4164,6 +4192,7 @@
             retour.textContent = bon
               ? '✓ ' + (n.dataset.succes ?? 'Juste.')
               : 'Pas encore. Essaie encore ou regarde la réponse.'
+            signaler(n, bon, reponseVue ? 4 : 0)
           }
           champ.addEventListener('keydown', (e) => e.key === 'Enter' && verifier())
           const actions = el(
@@ -4184,6 +4213,7 @@
                 className: 'bouton secondaire',
                 textContent: 'Voir la réponse',
                 onclick: () => {
+                  reponseVue = true
                   retour.dataset.juste = 'non'
                   retour.textContent = 'Réponse : ' + attendu + '. ' + (n.dataset.succes ?? '')
                 },
@@ -4291,8 +4321,9 @@
           const serie = Number(n.dataset.serie ?? 3)
           const zone = el('div', { className: 'outil-zone' })
           n.append(zone)
-          function accueil(message) {
+          function accueil(message, avant = []) {
             zone.replaceChildren(
+              ...avant,
               ...(message ? [el('p', { textContent: message })] : []),
               el('button', {
                 type: 'button',
@@ -4346,9 +4377,18 @@
                   ? 'Juste, mais en ' + secondes.toFixed(1) + ' s (limite ' + duree + ' s).'
                   : 'Faux : la réponse était ' + attendu + '.'
               const total = reussis + (reussi ? 1 : 0)
+              // La conversion et ta réponse restent sous les yeux, à côté du résultat.
+              const rappel = [
+                el('p', { textContent: 'Conversion ' + (i + 1) + ' sur ' + serie }),
+                el('p', {}, el('strong', { textContent: consigne })),
+                el('p', {
+                  textContent: 'Ta réponse : ' + (saisie === '' ? 'aucune' : saisie) + '.',
+                }),
+                el('p', { className: 'retour', textContent: bilan }),
+              ]
               if (i + 1 < serie) {
                 zone.replaceChildren(
-                  el('p', { className: 'retour', textContent: bilan }),
+                  ...rappel,
                   el('button', {
                     type: 'button',
                     className: 'bouton',
@@ -4358,12 +4398,12 @@
                 )
               } else {
                 accueil(
-                  bilan +
-                    ' Série terminée : ' +
+                  'Série terminée : ' +
                     total +
                     ' sur ' +
                     serie +
                     '. Reviens un autre jour pour que ça compte vraiment.',
+                  rappel,
                 )
               }
             }
@@ -4830,9 +4870,7 @@
           Math.max(etat.itemCourant ?? (premierRestant < 0 ? 0 : premierRestant), 0),
           liste.length - 1,
         )
-        const { exercice, item, rang } = liste[index]
-        const nbReussis = liste.filter(reussi).length
-        const fait = etat.pratique[item.id]
+        const { exercice, item } = liste[index]
         let aide = 0
         const etape = etapes.find((e) => e.type === 'pratique')
         const aller_a = (k) => {
@@ -4849,38 +4887,41 @@
               type: 'button',
               className: 'point',
               textContent: String(k + 1),
-              dataset: {
-                etat: reussi(entree) ? 'fait' : 'a-faire',
-              },
             })
-            p.setAttribute(
-              'aria-label',
-              'Item ' + (k + 1) + ' sur ' + liste.length + (reussi(entree) ? ', réussi' : ''),
-            )
             if (k === index) p.setAttribute('aria-current', 'step')
             p.addEventListener('click', () => aller_a(k))
             return p
           }),
         )
-        const resultat = creer('p', {
-          className: 'discret',
-          textContent: fait
-            ? 'Envoyé\u00a0: ' + (fait.reussi ? 'réussi' : 'non réussi') + ', aide ' + fait.aide
-            : '',
-        })
-        const envoyer = (ok) => {
-          const essais = (fait?.essais ?? 0) + 1
+        // L'énoncé de l'item : <template data-item="PR1-1"> dans la page.
+        const enonce = document.querySelector('template[data-item="' + item.id + '"]')
+        // Un outil marqué data-verifie contrôle la réponse : c'est lui qui dit si l'item est réussi.
+        const verifie = Boolean(enonce?.content.querySelector('[data-verifie]'))
+        const consigne = creer('div', { className: 'enonce' })
+        if (enonce) consigne.append(enonce.content.cloneNode(true))
+        activerLiens(consigne)
+        const compteur = creer('p', { className: 'discret' })
+        const etatItem = creer('span', { className: 'item-etat' })
+        const resultat = creer('p', { className: 'discret' })
+        const noter = (ok, aideUtilisee) => {
+          const essais = (etat.pratique[item.id]?.essais ?? 0) + 1
           pont.envoyer('pratique.resultat', {
             exercice: exercice.id,
             item: item.id,
             reussi: ok,
-            aide,
+            aide: aideUtilisee,
             essais,
           })
-          etat.pratique[item.id] = { reussi: ok, aide, essais }
-          const suivant = liste.findIndex((entree, k) => k > index && !reussi(entree))
-          if (ok && suivant >= 0) etat.itemCourant = suivant
+          etat.pratique[item.id] = { reussi: ok, aide: aideUtilisee, essais }
           enregistrer()
+        }
+        const envoyer = (ok) => {
+          noter(ok, aide)
+          const suivant = liste.findIndex((entree, k) => k > index && !reussi(entree))
+          if (ok && suivant >= 0) {
+            etat.itemCourant = suivant
+            enregistrer()
+          }
           afficher()
           if (ok && suivant >= 0) remonter($('contenu'))
         }
@@ -4897,69 +4938,88 @@
           })
           return b
         })
-        // L'énoncé de l'item : <template data-item="PR1-1"> dans la page.
-        const enonce = document.querySelector('template[data-item="' + item.id + '"]')
-        const consigne = creer('div', { className: 'enonce' })
-        if (enonce) consigne.append(enonce.content.cloneNode(true))
-        activerLiens(consigne)
+        const boite = creer(
+          'div',
+          { className: 'item' },
+          creer(
+            'div',
+            { className: 'item-tete' },
+            creer('span', { className: 'item-num', textContent: String(index + 1) }),
+            creer('strong', { textContent: exercice.titre }),
+            etatItem,
+          ),
+          consigne,
+          creer(
+            'details',
+            { className: 'aide' },
+            creer('summary', { textContent: 'J’ai eu besoin d’aide' }),
+            creer('p', {
+              className: 'discret',
+              textContent:
+                'Niveau d’aide utilisé\u00a0: 1 = une question qui t’oriente, 2 = un indice, 3 = l’étape détaillée, 4 = la solution complète.',
+            }),
+            creer('div', { className: 'actions' }, ...aides),
+          ),
+          // Ce que la page ne voit pas (une manipulation ailleurs), l'apprenant le déclare.
+          ...(verifie
+            ? []
+            : [
+                creer(
+                  'div',
+                  { className: 'actions' },
+                  creer('button', {
+                    type: 'button',
+                    className: 'bouton',
+                    textContent: 'J’ai réussi',
+                    onclick: () => envoyer(true),
+                  }),
+                  creer('button', {
+                    type: 'button',
+                    className: 'bouton secondaire',
+                    textContent: 'Pas réussi',
+                    onclick: () => envoyer(false),
+                  }),
+                ),
+              ]),
+          resultat,
+        )
+        /** Le compteur, les points, l'état de l'item et la ligne du résultat, d'après l'état noté. */
+        const majItem = () => {
+          const fait = etat.pratique[item.id]
+          const nbReussis = liste.filter(reussi).length
+          compteur.textContent =
+            nbReussis + ' réussi' + (nbReussis > 1 ? 's' : '') + ' sur\u00a0' + liste.length + '.'
+          liste.forEach((entree, k) => {
+            const p = points.children[k]
+            p.dataset.etat = reussi(entree) ? 'fait' : 'a-faire'
+            p.setAttribute(
+              'aria-label',
+              'Item ' + (k + 1) + ' sur ' + liste.length + (reussi(entree) ? ', réussi' : ''),
+            )
+          })
+          boite.dataset.fait = fait?.reussi ? 'oui' : 'non'
+          etatItem.textContent = fait ? (fait.reussi ? 'Réussi' : 'À refaire') : ''
+          resultat.textContent = fait
+            ? 'Envoyé\u00a0: ' + (fait.reussi ? 'réussi' : 'non réussi') + ', aide ' + fait.aide
+            : ''
+        }
+        majItem()
+        // L'outil émet fiche:verification à chaque réponse vérifiée. L'item se met à jour sans être
+        // redessiné : la réponse et le message de l'outil restent à l'écran.
+        consigne.addEventListener('fiche:verification', (evenement) => {
+          const detail = evenement.detail ?? {}
+          if (!verifie || typeof detail.juste !== 'boolean') return
+          const aideOutil = [1, 2, 3, 4].includes(detail.aide) ? detail.aide : 0
+          noter(detail.juste, Math.max(aide, aideOutil))
+          majItem()
+        })
         return creer(
           'section',
           {},
           creer('h2', { textContent: 'Pratique guidée' }),
-          creer('p', {
-            className: 'discret',
-            textContent:
-              nbReussis +
-              ' réussi' +
-              (nbReussis > 1 ? 's' : '') +
-              ' sur\u00a0' +
-              liste.length +
-              '.',
-          }),
+          compteur,
           points,
-          creer(
-            'div',
-            { className: 'item', dataset: { fait: fait?.reussi ? 'oui' : 'non' } },
-            creer(
-              'div',
-              { className: 'item-tete' },
-              creer('span', { className: 'item-num', textContent: String(index + 1) }),
-              creer('strong', { textContent: exercice.titre }),
-              creer('span', {
-                className: 'item-etat',
-                textContent: fait ? (fait.reussi ? 'Réussi' : 'À refaire') : '',
-              }),
-            ),
-            consigne,
-            creer(
-              'details',
-              { className: 'aide' },
-              creer('summary', { textContent: 'J’ai eu besoin d’aide' }),
-              creer('p', {
-                className: 'discret',
-                textContent:
-                  'Niveau d’aide utilisé\u00a0: 1 = une question qui t’oriente, 2 = un indice, 3 = l’étape détaillée, 4 = la solution complète.',
-              }),
-              creer('div', { className: 'actions' }, ...aides),
-            ),
-            creer(
-              'div',
-              { className: 'actions' },
-              creer('button', {
-                type: 'button',
-                className: 'bouton',
-                textContent: 'J’ai réussi',
-                onclick: () => envoyer(true),
-              }),
-              creer('button', {
-                type: 'button',
-                className: 'bouton secondaire',
-                textContent: 'Pas réussi',
-                onclick: () => envoyer(false),
-              }),
-            ),
-            resultat,
-          ),
+          boite,
           creer(
             'div',
             { className: 'ecran-nav' },
@@ -5179,7 +5239,8 @@
           ),
         )
         const message = creer('p', { className: 'erreur', role: 'alert' })
-        const sortie = creer('div', { 'aria-live': 'polite' })
+        const sortie = creer('div', { className: 'sortie' })
+        sortie.setAttribute('aria-live', 'polite')
         const bouton = creer('button', {
           type: 'button',
           className: 'bouton',
@@ -5214,28 +5275,44 @@
               enregistrer()
             }
             sortie.replaceChildren(bulleCorrection(correction))
-            if (correction.echantillon)
-              sortie.append(
+            if (correction.echantillon) {
+              // Une correction tirée au sort : l'apprenant dit si le niveau lui semble juste.
+              const intitule = creer('span', {
+                id: 'accord-' + question.id,
+                textContent: 'D’accord avec ce niveau\u00a0?',
+              })
+              const accord = creer(
+                'div',
+                { className: 'accord' },
+                intitule,
                 creer(
-                  'p',
-                  {},
-                  'D’accord avec ce niveau\u00a0? ',
+                  'div',
+                  { className: 'actions' },
                   ...[
                     [true, 'Oui'],
                     [false, 'Non'],
-                  ].map(([accord, libelle]) =>
+                  ].map(([daccord, libelle]) =>
                     creer('button', {
                       type: 'button',
                       className: 'bouton secondaire',
                       textContent: libelle,
                       onclick: () => {
-                        pont.envoyer('correction.accord', { correction: correction.id, accord })
-                        sortie.lastChild.remove()
+                        pont.envoyer('correction.accord', {
+                          correction: correction.id,
+                          accord: daccord,
+                        })
+                        accord.replaceWith(
+                          creer('p', { className: 'discret', textContent: 'Merci, c’est noté.' }),
+                        )
                       },
                     }),
                   ),
                 ),
               )
+              accord.setAttribute('role', 'group')
+              accord.setAttribute('aria-labelledby', intitule.id)
+              sortie.append(accord)
+            }
             if (correction.niveau === 'solide' || correction.tour >= 2) {
               etat.envoyees[question.id] = { reponse: zone.value, confiance: choisie.value }
               enregistrer()
@@ -5413,13 +5490,21 @@
             ),
           ),
         )
-        const bouton = creer('button', {
-          type: 'button',
-          className: 'bouton',
-          textContent: etat.bilan && restitutionFaite ? 'Bilan envoyé' : 'Envoyer le bilan',
-          // Déjà envoyé : il se renvoie quand une case change.
-          disabled: !restitutionFaite || Boolean(etat.bilan),
-        })
+        const bouton = creer('button', { type: 'button', className: 'bouton' })
+        // Déjà envoyé, il ne se renvoie que si les cases disent autre chose que la référence : les
+        // erreurs encore ouvertes, que donnent le dernier bilan ou le dernier statut de l'appli.
+        let reference = erreursOuvertes()
+        const cochees = () => cases.filter((c) => c.checked).map((c) => c.value)
+        const differe = () => {
+          const ids = cochees()
+          return ids.length !== reference.length || ids.some((id) => !reference.includes(id))
+        }
+        const direBouton = () => {
+          const envoye = restitutionFaite && Boolean(etat.bilan) && !differe()
+          bouton.disabled = !restitutionFaite || envoye
+          bouton.textContent = envoye ? 'Bilan envoyé' : 'Envoyer le bilan'
+        }
+        direBouton()
         const retour = creer('p', { className: 'retour', role: 'status' })
         const restitution = etapes.find((e) => e.type === 'restitution')
         const actions = creer('div', { className: 'ecran-nav pied' }, bouton)
@@ -5442,22 +5527,15 @@
           versRestitution.hidden = restitutionFaite && aRefermer === 0
         }
         majRestitution()
-        let touche = false
-        erreurs.addEventListener('change', () => {
-          touche = true
-          if (!restitutionFaite) return
-          bouton.disabled = false
-          bouton.textContent = 'Envoyer le bilan'
-        })
+        erreurs.addEventListener('change', direBouton)
         const direStatut = () => {
           if (bilanEnvoye === null) return
           if (bilanEnvoye.refus) {
             retour.textContent = 'Le bilan n’est pas parti\u00a0: ' + bilanEnvoye.refus
-            // Refusé : le bilan qui fait foi reste le précédent, et celui-ci peut repartir.
+            // Refusé : le bilan qui fait foi reste le précédent, et les cases cochées peuvent repartir.
             etat.bilan = bilanEnvoye.precedent
             enregistrer()
-            bouton.disabled = false
-            bouton.textContent = 'Envoyer le bilan'
+            reference = erreursOuvertes()
             return
           }
           if (mode !== 'appli') {
@@ -5472,7 +5550,7 @@
         }
         bouton.addEventListener('click', () => {
           if (!restitutionFaite) return
-          const ids = cases.filter((c) => c.checked).map((c) => c.value)
+          const ids = cochees()
           const id = pont.envoyer('bilan.erreurs', { ids })
           if (!id) {
             retour.textContent = 'Le bilan n’a pas pu partir. Réessaie dans un instant.'
@@ -5481,15 +5559,20 @@
           bilanEnvoye = { id, statut: null, refus: null, precedent: etat.bilan }
           etat.bilan = { ids }
           enregistrer()
-          touche = false
-          bouton.disabled = true
-          bouton.textContent = 'Bilan envoyé'
+          reference = ids
+          direBouton()
           direStatut()
         })
         majBilan = () => {
-          if (!touche) for (const c of cases) c.checked = erreursOuvertes().includes(c.value)
-          majRestitution()
+          // Un refus remet d'abord le bilan précédent : les cases refusées restent alors cochées.
           direStatut()
+          // Des cases que l'apprenant n'a pas changées suivent les erreurs encore ouvertes.
+          if (!differe()) {
+            reference = erreursOuvertes()
+            for (const c of cases) c.checked = reference.includes(c.value)
+          }
+          majRestitution()
+          direBouton()
         }
         return creer(
           'section',
