@@ -1,7 +1,7 @@
 import { Certitude, Niveau, Source } from '@janus/contrats'
 import { z } from 'zod'
 import { ErreurCorrecteur } from './correcteur.ts'
-import type { Correcteur, ResultatBrut } from './correcteur.ts'
+import type { Correcteur, RequeteCorrection, ResultatBrut } from './correcteur.ts'
 import type { AppelHttp } from './deepseek.ts'
 import { messagesDeLaRequete } from './message.ts'
 
@@ -20,22 +20,30 @@ const VERSION_API = '2023-06-01'
 
 /**
  * Le JSON que le correcteur doit rendre, imposé au modèle (sortie structurée) : les mêmes champs
- * que `validerSortie`, qui reste seul juge des valeurs (longueur du message, ref connue, mots de
- * statut). L'API n'accepte ni longueur minimale ni maximale dans le schéma.
+ * que `validerSortie`, qui reste juge du message (longueur, mots de statut) et du couple
+ * source/ref. `ref` et `erreurs_critiques` sont bornés aux identifiants du bloc : le modèle ne peut
+ * plus en inventer. L'API n'accepte ni longueur minimale ni maximale dans le schéma.
  */
-export const SCHEMA_SORTIE = {
-  type: 'object',
-  properties: {
-    message: { type: 'string' },
-    niveau: { type: 'string', enum: Niveau.options },
-    erreurs_critiques: { type: 'array', items: { type: 'string' } },
-    source: { type: 'string', enum: Source.options },
-    ref: { type: 'string' },
-    certitude: { type: 'string', enum: Certitude.options },
-  },
-  required: ['message', 'niveau', 'erreurs_critiques', 'source', 'ref', 'certitude'],
-  additionalProperties: false,
-} as const
+export function schemaSortie(requete: Pick<RequeteCorrection, 'sources' | 'erreursCritiques'>) {
+  const erreurs = requete.erreursCritiques.map(({ id }) => id)
+  return {
+    type: 'object',
+    properties: {
+      message: { type: 'string' },
+      niveau: { type: 'string', enum: Niveau.options },
+      // Un `enum` vide est invalide : sans erreur critique, la liste reste libre et `validerSortie` écarte ce qui est inconnu.
+      erreurs_critiques: {
+        type: 'array',
+        items: erreurs.length === 0 ? { type: 'string' } : { type: 'string', enum: erreurs },
+      },
+      source: { type: 'string', enum: Source.options },
+      ref: { type: 'string', enum: ['', ...requete.sources.map(({ id }) => id)] },
+      certitude: { type: 'string', enum: Certitude.options },
+    },
+    required: ['message', 'niveau', 'erreurs_critiques', 'source', 'ref', 'certitude'],
+    additionalProperties: false,
+  } as const
+}
 
 const Reponse = z.object({
   content: z.array(z.object({ type: z.string(), text: z.string().optional() })),
@@ -80,7 +88,7 @@ export function creerClaude(
             system: consigne,
             messages,
             thinking: { type: 'disabled' },
-            output_config: { format: { type: 'json_schema', schema: SCHEMA_SORTIE } },
+            output_config: { format: { type: 'json_schema', schema: schemaSortie(requete) } },
           }),
           signal: AbortSignal.timeout(reglages.delaiMs),
         })

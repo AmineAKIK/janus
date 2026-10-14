@@ -1,6 +1,6 @@
 import { Certitude, Niveau, Source } from '@janus/contrats'
 import { describe, expect, it } from 'vitest'
-import { creerClaude, SCHEMA_SORTIE } from './claude.ts'
+import { creerClaude, schemaSortie } from './claude.ts'
 import type { ReglagesClaude } from './claude.ts'
 import { ErreurCorrecteur } from './correcteur.ts'
 import type { RequeteCorrection } from './correcteur.ts'
@@ -79,7 +79,7 @@ describe('creerClaude', () => {
     expect(corps.system).toBe(CONSIGNE)
     expect(corps.thinking).toEqual({ type: 'disabled' })
     expect(corps.output_config).toEqual({
-      format: { type: 'json_schema', schema: SCHEMA_SORTIE },
+      format: { type: 'json_schema', schema: schemaSortie(REQUETE) },
     })
     expect(corps).not.toHaveProperty('temperature')
     expect(corps.messages.map(({ role }) => role)).toEqual(['user'])
@@ -108,7 +108,8 @@ describe('creerClaude', () => {
   })
 
   it('impose les champs exacts de la sortie, avec les valeurs des contrats', () => {
-    expect(SCHEMA_SORTIE.required).toEqual([
+    const schema = schemaSortie(REQUETE)
+    expect(schema.required).toEqual([
       'message',
       'niveau',
       'erreurs_critiques',
@@ -116,11 +117,35 @@ describe('creerClaude', () => {
       'ref',
       'certitude',
     ])
-    expect(Object.keys(SCHEMA_SORTIE.properties)).toEqual([...SCHEMA_SORTIE.required])
-    expect(SCHEMA_SORTIE.additionalProperties).toBe(false)
-    expect(SCHEMA_SORTIE.properties.niveau.enum).toEqual(Niveau.options)
-    expect(SCHEMA_SORTIE.properties.source.enum).toEqual(Source.options)
-    expect(SCHEMA_SORTIE.properties.certitude.enum).toEqual(Certitude.options)
+    expect(Object.keys(schema.properties)).toEqual([...schema.required])
+    expect(schema.additionalProperties).toBe(false)
+    expect(schema.properties.niveau.enum).toEqual(Niveau.options)
+    expect(schema.properties.source.enum).toEqual(Source.options)
+    expect(schema.properties.certitude.enum).toEqual(Certitude.options)
+  })
+
+  it('borne ref et erreurs_critiques aux identifiants du bloc, ref pouvant rester vide', () => {
+    const schema = schemaSortie({
+      sources: [
+        { id: 'S1', ref: 'cours §1' },
+        { id: 'S2', ref: 'cours §2' },
+      ],
+      erreursCritiques: [
+        { id: 'E1', texte: 'a' },
+        { id: 'E2', texte: 'b' },
+      ],
+    })
+    expect(schema.properties.ref.enum).toEqual(['', 'S1', 'S2'])
+    expect(schema.properties.erreurs_critiques.items).toEqual({
+      type: 'string',
+      enum: ['E1', 'E2'],
+    })
+  })
+
+  it('laisse la liste des erreurs libre quand le bloc n’en déclare aucune (un enum vide est invalide)', () => {
+    const schema = schemaSortie({ sources: [], erreursCritiques: [] })
+    expect(schema.properties.ref.enum).toEqual([''])
+    expect(schema.properties.erreurs_critiques.items).toEqual({ type: 'string' })
   })
 
   it('additionne les jetons hors cache, lus et écrits dans le cache ; zéro quand le fournisseur ne le dit pas', async () => {
