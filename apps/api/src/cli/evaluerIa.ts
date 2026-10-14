@@ -1,4 +1,5 @@
 import { Manifeste, Niveau } from '@janus/contrats'
+import type { Certitude } from '@janus/contrats'
 import { z } from 'zod'
 import { coutMillioniemes } from '../adaptateurs/correcteur/cout.ts'
 import type { Tarifs } from '../adaptateurs/correcteur/cout.ts'
@@ -42,6 +43,10 @@ export interface ResultatCas {
   readonly niveauAmine: Niveau
   /** `undefined` : le correcteur n'a rien rendu de valide. */
   readonly niveauIa: Niveau | undefined
+  /** Rendus avec le niveau : le message pour l'apprenant, les erreurs critiques repérées, la certitude. */
+  readonly message: string | undefined
+  readonly erreursIa: readonly string[] | undefined
+  readonly certitude: Certitude | undefined
   readonly ecart: number | undefined
   readonly ordreSuivi: boolean | undefined
   /** Pour « je ne sais pas » : le message donne-t-il la réponse attendue en entier ? */
@@ -85,7 +90,9 @@ export async function evaluer({
       historique: [],
     })
     let niveauIa: Niveau | undefined
-    let message = ''
+    let message: string | undefined
+    let erreursIa: readonly string[] | undefined
+    let certitude: Certitude | undefined
     let motifRefus: string | undefined
     let cout = 0
     try {
@@ -95,6 +102,8 @@ export async function evaluer({
       if (validation.valide) {
         niveauIa = validation.sortie.niveau
         message = validation.sortie.message
+        erreursIa = validation.sortie.erreurs
+        certitude = validation.sortie.certitude
       } else {
         motifRefus = validation.motif
       }
@@ -106,6 +115,9 @@ export async function evaluer({
       genre: cas.genre,
       niveauAmine: cas.niveauAmine,
       niveauIa,
+      message,
+      erreursIa,
+      certitude,
       ecart:
         niveauIa === undefined ? undefined : Math.abs(RANGS[niveauIa] - RANGS[cas.niveauAmine]),
       ordreSuivi:
@@ -114,7 +126,7 @@ export async function evaluer({
           : undefined,
       reponseCompleteDonnee:
         cas.genre === 'je_ne_sais_pas' && niveauIa !== undefined
-          ? message.toLowerCase().includes(question.attendu.toLowerCase())
+          ? (message ?? '').toLowerCase().includes(question.attendu.toLowerCase())
           : undefined,
       motifRefus,
       cout,
@@ -137,7 +149,30 @@ export async function evaluer({
 
 const liste = (ids: readonly string[]) => (ids.length === 0 ? 'aucun' : ids.join(', '))
 
-/** Le rapport Markdown écrit dans `prompts/correction/rapports/<date>-v1.md`. */
+const erreurs = ({ erreursIa }: ResultatCas) =>
+  erreursIa === undefined ? '-' : erreursIa.length === 0 ? 'aucune' : erreursIa.join(', ')
+
+/**
+ * Le message rendu pour un cas, sous un titre qui dit l'écart : le workflow `ia-evaluer.yml` ne remonte
+ * en annotation que les cas en désaccord, reconnus à ce titre.
+ */
+const messageDuCas = (r: ResultatCas): string[] => {
+  const titre =
+    r.niveauIa === undefined
+      ? `### ${r.id} : Amine ${r.niveauAmine}, IA refusé (${r.motifRefus ?? ''})`
+      : `### ${r.id} : Amine ${r.niveauAmine}, IA ${r.niveauIa}, écart ${String(r.ecart ?? 0)}`
+  if (r.message === undefined) return [titre, '']
+  return [
+    titre,
+    '',
+    `Erreurs critiques repérées : ${erreurs(r)} · Certitude : ${r.certitude ?? '-'}`,
+    '',
+    r.message,
+    '',
+  ]
+}
+
+/** Le rapport Markdown écrit dans `prompts/correction/rapports/<date>-v1-<modèle>.md`. */
 export function rapport(
   evaluation: Evaluation,
   contexte: { date: string; modele: string; empreinteConsigne: string; jeu: string },
@@ -161,12 +196,15 @@ export function rapport(
     '',
     '## Détail',
     '',
-    '| Cas | Genre | Amine | IA | Écart |',
-    '| --- | --- | --- | --- | --- |',
+    '| Cas | Genre | Amine | IA | Erreurs critiques | Certitude | Écart |',
+    '| --- | --- | --- | --- | --- | --- | --- |',
     ...evaluation.resultats.map(
       (r) =>
-        `| ${r.id} | ${r.genre} | ${r.niveauAmine} | ${r.niveauIa ?? `refusé (${r.motifRefus ?? ''})`} | ${r.ecart === undefined ? '-' : String(r.ecart)} |`,
+        `| ${r.id} | ${r.genre} | ${r.niveauAmine} | ${r.niveauIa ?? `refusé (${r.motifRefus ?? ''})`} | ${erreurs(r)} | ${r.certitude ?? '-'} | ${r.ecart === undefined ? '-' : String(r.ecart)} |`,
     ),
     '',
+    '## Messages',
+    '',
+    ...evaluation.resultats.flatMap(messageDuCas),
   ].join('\n')
 }

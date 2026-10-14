@@ -39,8 +39,26 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       # Le rapport s'affiche dans le résumé de l'exécution.
       - run: cat prompts/correction/rapports/*.md >> "$GITHUB_STEP_SUMMARY"
-      # Ses lignes de synthèse, les cas refusés et les cas en désaccord remontent aussi en annotation du job : l'API des check-runs les rend lisibles sans ouvrir le résumé.
+      # Ses lignes de synthèse, les cas refusés et les cas en désaccord remontent aussi en annotation du job, et les
+      # messages rendus pour les cas en désaccord dans les suivantes : l'API des check-runs les rend lisibles sans ouvrir
+      # le résumé. Une annotation est coupée au-delà de 4 000 caractères environ : les messages sont groupés par paquets
+      # de 3 500 caractères au plus, un paquet par annotation (dix annotations au plus par étape).
       - run: |
           set -- prompts/correction/rapports/*.md
-          lignes=$(grep -E '^- |refusé \(|\| [1-9] \|$' "$1" | sed 's/%/%25/g' | sed -z 's/\n/%0A/g')
-          echo "::notice title=Évaluation::$lignes"
+          echapper() { sed 's/%/%25/g' | sed -z 's/\n/%0A/g'; }
+          synthese=$(sed '/^## Messages$/q' "$1" | grep -E '^- |refusé \(|\| [1-9] \|$' | echapper)
+          echo "::notice title=Évaluation::$synthese"
+          paquet=""
+          numero=1
+          publier() {
+            [ -n "$paquet" ] || return 0
+            echo "::notice title=Messages des cas en désaccord ($numero)::$(printf '%s' "$paquet" | echapper)"
+            numero=$((numero + 1))
+            paquet=""
+          }
+          # Un cas par enregistrement (séparés par un caractère nul), les cas à écart 0 écartés.
+          while IFS= read -r -d '' cas || [ -n "$cas" ]; do
+            if [ -n "$paquet" ] && [ $(( ${#paquet} + ${#cas} )) -gt 3500 ]; then publier; fi
+            paquet="$paquet$cas"
+          done < <(awk '/^## Messages$/ { dedans = 1; next } dedans && /^### / { if (garde) printf "%c", 0; garde = ($0 !~ /, écart 0$/) } dedans && garde { print }' "$1"; printf '\0')
+          publier

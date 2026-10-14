@@ -48,7 +48,13 @@ describe('evaluer', () => {
     })
 
     const parId = Object.fromEntries(evaluation.resultats.map((r) => [r.id, r]))
-    expect(parId['juste']).toMatchObject({ niveauIa: 'solide', ecart: 0 })
+    expect(parId['juste']).toMatchObject({
+      niveauIa: 'solide',
+      ecart: 0,
+      erreursIa: [],
+      certitude: 'sur',
+    })
+    expect(parId['juste']?.message).toContain('correcteur simulé')
     expect(parId['vide']).toMatchObject({
       niveauIa: 'pas_encore',
       ecart: 0,
@@ -72,6 +78,10 @@ describe('evaluer', () => {
     expect(evaluation.refus).toEqual(['juste', 'vide'])
     expect(evaluation.resultats.find(({ id }) => id === 'court')).toMatchObject({ ecart: 2 })
     expect(evaluation.accord).toBe(0)
+    const refuse = evaluation.resultats.find(({ id }) => id === 'juste')
+    expect(refuse?.message).toBeUndefined()
+    expect(refuse?.erreursIa).toBeUndefined()
+    expect(refuse?.certitude).toBeUndefined()
   })
 
   it('signale une question inconnue du manifeste', async () => {
@@ -106,6 +116,27 @@ describe('rapport', () => {
     expect(texte).toContain("Accord avec les niveaux d'Amine : 50 %")
     expect(texte).toContain('Ordres glissés suivis : ordre')
     expect(texte).toContain("Écarts de plus d'un cran : court")
-    expect(texte).toContain('| juste | normal | solide | solide | 0 |')
+    expect(texte).toContain('| juste | normal | solide | solide | aucune | sur | 0 |')
+  })
+
+  it('garde, sous un titre qui dit l’écart, le message rendu pour chaque cas', async () => {
+    const correcteur = creerFaux((_requete, appel) => (appel === 1 ? 'pas du json' : undefined))
+    const evaluation = await evaluer({ jeu: JEU, manifeste: MANIFESTE, correcteur, tarifs: TARIFS })
+
+    const texte = rapport(evaluation, {
+      date: '2026-10-14',
+      modele: 'faux',
+      empreinteConsigne: 'abc',
+      jeu: 'exemple.json',
+    })
+
+    expect(texte).toContain('## Messages')
+    expect(texte).toContain(
+      '### juste : Amine solide, IA refusé (JSON absent ou aux champs inattendus)',
+    )
+    expect(texte).toContain('### court : Amine solide, IA fragile, écart 2')
+    expect(texte).toContain('### ordre : Amine pas_encore, IA fragile, écart 1')
+    expect(texte).toContain('Erreurs critiques repérées : aucune · Certitude : sur')
+    expect(texte).toContain('correcteur simulé')
   })
 })
