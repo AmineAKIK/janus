@@ -2,6 +2,12 @@ import { z } from 'zod'
 
 const Booleen = z.enum(['true', 'false']).transform((valeur) => valeur === 'true')
 
+/** Une clé facultative : vide (la CI passe un secret absent comme une chaîne vide) vaut absente. */
+const CleFacultative = z.preprocess(
+  (valeur) => (valeur === '' ? undefined : valeur),
+  z.string().min(1).optional(),
+)
+
 /** Les variables d'environnement de l'API, lues et validées une seule fois au démarrage. */
 export const SchemaConfig = z.object({
   /** La connexion de l'API : le rôle `janus_app`, sans UPDATE ni DELETE sur les faits. */
@@ -19,8 +25,8 @@ export const SchemaConfig = z.object({
   PORT: z.coerce.number().int().min(1).max(65_535).default(3000),
   /** Le fournisseur de la correction. Sans la clé qui va avec, la correction par l'IA est indisponible. */
   CORRECTEUR: z.enum(['deepseek', 'claude']).default('deepseek'),
-  /** Facultative en test : sans elle, la correction par DeepSeek est indisponible. */
-  DEEPSEEK_API_KEY: z.string().min(1).optional(),
+  /** Facultative (vide ou absente) : sans elle, la correction par DeepSeek est indisponible. */
+  DEEPSEEK_API_KEY: CleFacultative,
   /** Le modèle de correction (`deepseek-flash` à la date du cadrage). */
   DEEPSEEK_MODELE: z.string().min(1).default('deepseek-flash'),
   DEEPSEEK_URL: z.url().default('https://api.deepseek.com'),
@@ -34,10 +40,7 @@ export const SchemaConfig = z.object({
   DEEPSEEK_PRIX_ENTREE: z.coerce.number().int().min(0).default(300_000),
   DEEPSEEK_PRIX_SORTIE: z.coerce.number().int().min(0).default(1_200_000),
   /** Facultative (vide ou absente) : sans elle, la correction par Claude est indisponible. */
-  ANTHROPIC_API_KEY: z.preprocess(
-    (valeur) => (valeur === '' ? undefined : valeur),
-    z.string().min(1).optional(),
-  ),
+  ANTHROPIC_API_KEY: CleFacultative,
   /** Le modèle Claude de correction : Haiku 5.5, le moins cher, réflexion désactivée. */
   CLAUDE_MODELE: z.string().min(1).default('claude-haiku-5-5'),
   CLAUDE_URL: z.url().default('https://api.anthropic.com'),
