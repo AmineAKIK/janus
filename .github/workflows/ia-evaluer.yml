@@ -39,8 +39,8 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       # Le rapport s'affiche dans le résumé de l'exécution.
       - run: cat prompts/correction/rapports/*.md >> "$GITHUB_STEP_SUMMARY"
-      # Ses lignes de synthèse et les cas refusés remontent aussi en annotation du job : l'API des check-runs les rend lisibles sans ouvrir le résumé.
+      # Ses lignes de synthèse, les cas refusés et les cas en désaccord remontent aussi en annotation du job : l'API des check-runs les rend lisibles sans ouvrir le résumé.
       - run: |
           set -- prompts/correction/rapports/*.md
-          lignes=$(grep -E '^- |refusé \(' "$1" | sed 's/%/%25/g' | sed -z 's/\n/%0A/g')
+          lignes=$(grep -E '^- |refusé \(|\| [1-9] \|$' "$1" | sed 's/%/%25/g' | sed -z 's/\n/%0A/g')
           echo "::notice title=Évaluation::$lignes"
