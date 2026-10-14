@@ -5,6 +5,14 @@ import type { Tarifs } from './cout.ts'
 import { creerDeepseek } from './deepseek.ts'
 import type { AppelHttp } from './deepseek.ts'
 
+/**
+ * Décision du 14 octobre 2026 : Haiku (Claude) est le tuteur principal, DeepSeek le secours, et une
+ * correction rendue par le secours se voit dans l'appli.
+ */
+export function estDeSecours(modele: string): boolean {
+  return modele.startsWith('deepseek')
+}
+
 /** Ce que l'appelant fixe, quel que soit le fournisseur. */
 export interface LimitesCorrecteur {
   readonly delaiMs: number

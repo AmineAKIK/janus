@@ -109,6 +109,16 @@ export const ecrans: readonly Ecran[] = [
     },
   },
   {
+    nom: 'questions-correction-secours',
+    chemin: './#/questions',
+    etat: 'Questions de début de séance',
+    interrupteurs: ['correctionSecours'],
+    scenario: async (page) => {
+      await page.getByRole('button', { name: 'Je ne sais pas' }).click()
+      await expect(page.getByText(/tuteur de secours/)).toBeVisible()
+    },
+  },
+  {
     nom: 'questions-indisponible',
     chemin: './#/questions',
     etat: 'Questions de début de séance',
@@ -244,6 +254,18 @@ export const ecrans: readonly Ecran[] = [
       await apresRestitution(page)
       await cliquerEtape(page, 'Bilan')
       await expect(page.getByText(/Statut calculé/)).toBeVisible()
+    },
+  },
+  {
+    nom: 'bloc-bilan-secours',
+    chemin: './#/blocs/B03',
+    etat: 'Ordinateur et composants',
+    titre: 'Page de bloc',
+    interrupteurs: ['correctionNonVerifiee', 'correctionSecours'],
+    scenario: async (page) => {
+      await apresRestitution(page)
+      await cliquerEtape(page, 'Bilan')
+      await expect(page.getByText(/tuteur de secours/).first()).toBeVisible()
     },
   },
   { nom: 'revision', chemin: './#/revision', etat: 'Révision' },

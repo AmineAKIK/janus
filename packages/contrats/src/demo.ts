@@ -3,7 +3,7 @@ import { ResultatVerification } from './api/apprentissage.ts'
 import { IdeeJournal, NoteJournal } from './api/suivi.ts'
 import { Confiance, Niveau, NoteCarte, TypeDifferee, TypeVerification } from './enums.ts'
 import { Fait, InstantUtc } from './faits.ts'
-import { CodeBloc, CorrectionRecue, EtatPage, IdUuid, Identifiant } from './pont.ts'
+import { CodeBloc, EtatPage, IdUuid, Identifiant, champsCorrection } from './pont.ts'
 import { TypeEtape } from './manifeste.ts'
 import { Reglages } from './reglages.ts'
 
@@ -25,6 +25,8 @@ export const InterrupteursDemo = z.strictObject({
   toutFait: z.boolean().default(false),
   /** La prochaine correction propose la première erreur critique du manifeste du bloc. */
   erreurIa: z.boolean().default(false),
+  /** Les corrections viennent du tuteur de secours (DeepSeek) : l'appli le dit. */
+  correctionSecours: z.boolean().default(false),
 })
 export type InterrupteursDemo = z.infer<typeof InterrupteursDemo>
 
@@ -124,7 +126,12 @@ export const EtatDemo = z.strictObject({
         bloc: CodeBloc,
         confiance: Confiance,
         reponse: z.string(),
-        correction: CorrectionRecue,
+        /** Les états gardés avant le tuteur de secours n'ont ni modèle ni `secours` : la démo simulait. */
+        correction: z.strictObject({
+          ...champsCorrection,
+          modele: z.string().min(1).default('simule'),
+          secours: z.boolean().default(false),
+        }),
       }),
     )
     .default({}),

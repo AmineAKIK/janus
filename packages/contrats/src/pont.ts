@@ -158,7 +158,7 @@ export const MessagePage = z.discriminatedUnion('type', [
 export type MessagePage = z.infer<typeof MessagePage>
 
 /** Une correction rendue par le serveur : ce que la page affiche, et que l'API de corrections renvoie. */
-const champsCorrection = {
+export const champsCorrection = {
   /** L'identifiant de la correction, que la page renvoie dans `correction.accord`. */
   id: IdUuid,
   /** Vrai pour une correction de premier tour sur dix : la page demande alors l'avis d'Amine. */
@@ -176,6 +176,28 @@ const champsCorrection = {
 }
 export const CorrectionRecue = z.strictObject(champsCorrection)
 export type CorrectionRecue = z.infer<typeof CorrectionRecue>
+
+/**
+ * La correction telle que l'API la rend à l'appli (`POST /corrections`, la série du jour) : celle de
+ * la page, plus le modèle qui l'a rendue et s'il est le tuteur de secours. Décision du 14 octobre
+ * 2026 : Haiku est le tuteur principal, DeepSeek le secours, et une correction de secours se voit.
+ * La page, elle, ne reçoit que `CorrectionRecue` : le pont embarqué dans les fiches publiées refuse
+ * tout champ en plus.
+ */
+export const CorrectionRendue = z.strictObject({
+  ...champsCorrection,
+  /** Le modèle du fournisseur (`claude-haiku-5-5`, `deepseek-flash`, `faux`…). */
+  modele: z.string().min(1),
+  secours: z.boolean(),
+})
+export type CorrectionRendue = z.infer<typeof CorrectionRendue>
+
+const CorrectionSansExtras = z.object(champsCorrection)
+
+/** Ce que la page reçoit d'une correction rendue : les champs du pont, rien de plus. */
+export function pourLaPage(rendue: CorrectionRendue): CorrectionRecue {
+  return CorrectionSansExtras.parse(rendue)
+}
 
 /** Un message de l'appli vers la page. */
 export const MessageAppli = z.discriminatedUnion('type', [

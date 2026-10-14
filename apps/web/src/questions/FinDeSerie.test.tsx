@@ -1,4 +1,4 @@
-import type { CorrectionRecue } from '@janus/contrats'
+import type { CorrectionRendue } from '@janus/contrats'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
@@ -11,7 +11,7 @@ const QUESTIONS = [
   { id: 'Q3', question: 'Une question laissée sans réponse' },
 ]
 
-const correction = (extra: Partial<CorrectionRecue> = {}): CorrectionRecue => ({
+const correction = (extra: Partial<CorrectionRendue> = {}): CorrectionRendue => ({
   id: '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a01',
   echantillon: false,
   question: 'Q1',
@@ -23,12 +23,14 @@ const correction = (extra: Partial<CorrectionRecue> = {}): CorrectionRecue => ({
   ref: '',
   certitude: 'sur',
   compte: true,
+  modele: 'claude-haiku-5-5',
+  secours: false,
   ...extra,
 })
 
 const corrigee = (
   confiance: 'sur' | 'hesitant',
-  extra: Partial<CorrectionRecue> = {},
+  extra: Partial<CorrectionRendue> = {},
   bloc: string | null = 'B03',
 ): EtatQuestion => ({
   phase: 'corrigee',
@@ -70,6 +72,30 @@ describe('fin de la série de questions', () => {
 
     await utilisateur.click(screen.getAllByRole('button', { expanded: true })[0] ?? premiere)
     expect(screen.queryByText('Tu as bien identifié la raison principale.')).not.toBeInTheDocument()
+  })
+
+  it('dit quand la correction vient du tuteur de secours, et le tait sinon', async () => {
+    const utilisateur = userEvent.setup()
+    render(
+      <FinDeSerie
+        questions={QUESTIONS}
+        etats={[
+          corrigee('sur', { modele: 'deepseek-flash', secours: true }),
+          corrigee('sur', { id: '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a02', question: 'Q2' }),
+        ]}
+      />,
+    )
+
+    const [secours, habituelle] = screen.getAllByRole('button', { expanded: false })
+    if (secours === undefined || habituelle === undefined) throw new Error('lignes absentes')
+
+    await utilisateur.click(secours)
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Corrigé par le tuteur de secours (deepseek-flash), pas par le tuteur habituel.',
+    )
+
+    await utilisateur.click(habituelle)
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
 
   it('signale une erreur commise en étant sûr', () => {

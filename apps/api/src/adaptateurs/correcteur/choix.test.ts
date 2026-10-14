@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { SchemaConfigCorrecteur } from '../../config.ts'
-import { correcteurDeLaConfig } from './choix.ts'
+import { correcteurDeLaConfig, estDeSecours } from './choix.ts'
 import type { RequeteCorrection } from './correcteur.ts'
 
 const LIMITES = { delaiMs: 30_000, jetonsSortieMax: 1000 }
@@ -40,8 +40,18 @@ const reponseClaude = () =>
   })
 
 describe('correcteurDeLaConfig', () => {
-  it('prend DeepSeek par défaut, avec ses tarifs et son modèle', async () => {
+  it('prend Claude par défaut : sans clé Anthropic, la correction est indisponible', () => {
     const config = SchemaConfigCorrecteur.parse({ DEEPSEEK_API_KEY: 'sk-deepseek' })
+
+    expect(config.CORRECTEUR).toBe('claude')
+    expect(correcteurDeLaConfig(config, LIMITES).correcteur).toBeUndefined()
+  })
+
+  it('prend DeepSeek quand CORRECTEUR=deepseek, avec ses tarifs et son modèle', async () => {
+    const config = SchemaConfigCorrecteur.parse({
+      CORRECTEUR: 'deepseek',
+      DEEPSEEK_API_KEY: 'sk-deepseek',
+    })
     const appels: string[] = []
     const choix = correcteurDeLaConfig(config, LIMITES, (url) => {
       appels.push(url)
@@ -83,7 +93,7 @@ describe('correcteurDeLaConfig', () => {
       LIMITES,
     )
     const deepseek = correcteurDeLaConfig(
-      SchemaConfigCorrecteur.parse({ ANTHROPIC_API_KEY: 'sk-ant' }),
+      SchemaConfigCorrecteur.parse({ CORRECTEUR: 'deepseek', ANTHROPIC_API_KEY: 'sk-ant' }),
       LIMITES,
     )
 
@@ -91,5 +101,14 @@ describe('correcteurDeLaConfig', () => {
     expect(claude.modele).toBe('claude-haiku-5-5')
     expect(deepseek.correcteur).toBeUndefined()
     expect(deepseek.modele).toBe('deepseek-flash')
+  })
+})
+
+describe('estDeSecours', () => {
+  it('reconnaît le tuteur de secours à son modèle : DeepSeek, et rien d’autre', () => {
+    expect(estDeSecours('deepseek-flash')).toBe(true)
+    expect(estDeSecours('deepseek-v4-pro')).toBe(true)
+    expect(estDeSecours('claude-haiku-5-5')).toBe(false)
+    expect(estDeSecours('faux')).toBe(false)
   })
 })

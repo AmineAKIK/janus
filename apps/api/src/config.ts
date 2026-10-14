@@ -23,8 +23,11 @@ export const SchemaConfig = z.object({
   COOKIE_SECURE: Booleen,
   /** Le port d'écoute de l'API. */
   PORT: z.coerce.number().int().min(1).max(65_535).default(3000),
-  /** Le fournisseur de la correction. Sans la clé qui va avec, la correction par l'IA est indisponible. */
-  CORRECTEUR: z.enum(['deepseek', 'claude']).default('deepseek'),
+  /**
+   * Le fournisseur de la correction : Claude (Haiku) par défaut, le tuteur principal ; DeepSeek est
+   * le secours. Sans la clé qui va avec, la correction par l'IA est indisponible.
+   */
+  CORRECTEUR: z.enum(['deepseek', 'claude']).default('claude'),
   /** Facultative (vide ou absente) : sans elle, la correction par DeepSeek est indisponible. */
   DEEPSEEK_API_KEY: CleFacultative,
   /** Le modèle de correction (`deepseek-flash` à la date du cadrage). */

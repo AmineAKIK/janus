@@ -78,6 +78,7 @@ export function etatVide(maintenant: string): EtatDemo {
       reseauLent: false,
       toutFait: false,
       erreurIa: false,
+      correctionSecours: false,
     },
   }
 }

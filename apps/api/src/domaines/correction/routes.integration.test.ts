@@ -105,7 +105,8 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('POST /corrections contre Postgr
       base,
       proprietaire: base,
       hacheur,
-      config: configDeTest({ NIVEAU_JOURNAL: 'silent' }),
+      // Les coûts attendus par cette suite sont écrits aux tarifs DeepSeek : elle les garde.
+      config: configDeTest({ NIVEAU_JOURNAL: 'silent', CORRECTEUR: 'deepseek' }),
       correcteur: faux,
       hasard: () => hasardCourant,
     })
@@ -144,6 +145,8 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('POST /corrections contre Postgr
       certitude: 'sur',
       compte: true,
       echantillon: false,
+      modele: 'faux',
+      secours: false,
     })
     const { rows } = await bases.pool.query<{
       modele: string

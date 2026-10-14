@@ -6,6 +6,7 @@ import {
   TEXTES_QUESTIONS as T,
   texteNiveauEtConfiance,
   texteSource,
+  texteTuteurDeSecours,
   texteVenaitDe,
 } from './textes.ts'
 import type { EtatQuestion } from './useSerie.ts'
@@ -176,6 +177,11 @@ export function CorrectionAffichee({
         nonVerifie={nonVerifiee}
       />
       {nonVerifiee && <p className="texte-petit-14">{T.nonVerifiee}</p>}
+      {correction.secours && (
+        <p role="status" className="texte-petit-14">
+          {texteTuteurDeSecours(correction.modele)}
+        </p>
+      )}
       {erreurEnEtantSur(etat) && <p className="texte-petit-14">{T.tuEtaisSur}</p>}
       {!correction.compte && correction.raison_non_compte !== undefined && (
         <BadgeNeComptePas raison={correction.raison_non_compte} />

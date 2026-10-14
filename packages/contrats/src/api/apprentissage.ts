@@ -11,7 +11,7 @@ import {
 } from '../enums.ts'
 import { InstantUtc } from '../faits.ts'
 import { VerificationParCode, VerificationParConstat } from '../manifeste.ts'
-import { CodeBloc, CorrectionRecue, IdUuid, Identifiant, Reponse } from './commun.ts'
+import { CodeBloc, CorrectionRendue, IdUuid, Identifiant, Reponse } from './commun.ts'
 import type { DefinitionRoute } from './routes.ts'
 
 /** Une tâche de l'écran Aujourd'hui, dans l'ordre où le moteur les range. */
@@ -69,7 +69,7 @@ const QuestionDebut = z.strictObject({
       bloc: CodeBloc,
       confiance: Confiance,
       reponse: Reponse,
-      correction: CorrectionRecue,
+      correction: CorrectionRendue,
     })
     .nullable(),
 })

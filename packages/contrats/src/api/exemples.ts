@@ -23,7 +23,7 @@ const statutBloc = {
   },
 }
 
-const correction = { ...EXEMPLE_CORRECTION, id: ID }
+const correction = { ...EXEMPLE_CORRECTION, id: ID, modele: 'claude-haiku-5-5', secours: false }
 
 const noteJournal = {
   id: ID,
@@ -257,6 +257,7 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
       { partie: 'corps', valeur: { ...demandeCorrection, reponse: '' } },
       { partie: 'corps', valeur: { ...demandeCorrection, tentative: 0 } },
       { partie: 'reponse', valeur: { ...correction, niveau: 'moyen' } },
+      { partie: 'reponse', valeur: { ...correction, secours: 'oui' } },
     ],
   },
   'POST /corrections/:id/accord': {
@@ -386,6 +387,8 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
               ref: 'RA2',
               certitude: 'sur',
               compte: true,
+              modele: 'claude-haiku-5-5',
+              secours: false,
             },
           },
         },
