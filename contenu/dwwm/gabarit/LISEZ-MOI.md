@@ -14,6 +14,7 @@
 - Une étape `aisance` est dessinée comme une étape libre : son `<template data-etape="ETx">` porte l'exercice chronométré, qui envoie lui-même `aisance.resultat` au pont. Le manifeste déclare le seuil dans `aisance`.
 - La carte affiche l'objectif, puis le `<template data-etape="ET1">` s'il existe. `contexte_ia` (pour le correcteur) n'est jamais affiché.
 - Le `<script id="outils-bloc">` de la fiche peut animer le HTML libre : le gabarit émet l'événement `fiche:rendu` sur `document` après chaque étape dessinée. Les scripts dans un `<template>` ne s'exécutent pas, d'où cet événement.
+- Un item de pratique dont l'outil contrôle la réponse porte `data-verifie` sur l'élément de l'outil, dans son `<template data-item>`. Le gabarit n'y montre ni « J’ai réussi » ni « Pas réussi ». À chaque réponse vérifiée, l'outil émet sur son élément l'événement `fiche:verification` (avec `bubbles: true`) et `detail: { juste, aide }`, où `aide` va de 0 à 4 (4 quand l'outil a montré la réponse). Le gabarit note le résultat sans redessiner l'item : la réponse et le message de l'outil restent à l'écran. Un champ vide n'est pas une réponse : l'outil le refuse sans rien émettre.
 
 ## Ce qui est libre
 
