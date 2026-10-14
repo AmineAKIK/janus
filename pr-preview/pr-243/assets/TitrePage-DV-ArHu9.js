@@ -1,1 +1,0 @@
-import{G as e}from"./src-gxSzeIlO.js";var t={titre:`_titre_1lphj_1`},n=e();function r({children:e,taille:r=`texte-titre-28`,className:i}){return(0,n.jsx)(`h1`,{tabIndex:-1,className:`${t.titre??``} ${i??``} ${r}`,children:e})}export{r as t};
