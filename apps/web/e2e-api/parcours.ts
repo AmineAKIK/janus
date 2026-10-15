@@ -6,6 +6,7 @@ import { avancer } from './banc.ts'
 
 export interface Question {
   readonly id: string
+  readonly question: string
   readonly attendu: string
 }
 interface Manifeste {

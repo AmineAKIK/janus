@@ -172,13 +172,15 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
           ' data-aide1="Combien de valeurs avec 5 bits ?" data-solution="31 : 32 valeurs, de 0 à 31."',
           ' data-si-e1="32" data-retour-e1="32, c’est le nombre de valeurs : la première est 0."',
           ' data-si-poids="16" data-retour-poids="16, c’est le poids du bit de gauche."',
-          ' data-succes="31, tous les bits à 1.">Le plus grand nombre sur 5 bits ?</div></template>',
-          '<template data-item="PR1-3"><div data-widget="choix" data-reponse="b">Le binaire, c’est :',
+          ' data-sinon="Relis les poids." data-succes="31, tous les bits à 1.">Le plus grand nombre sur 5 bits ?</div></template>',
+          '<template data-item="PR1-3"><div data-widget="choix" data-reponse="b" data-justifier="Explique ton choix.">Le binaire, c’est :',
           '<ul><li data-option="a" data-erreur="E2" data-retour="Le binaire écrit des nombres.">Un langage</li>',
           '<li data-option="b">Une base</li></ul></div>',
           '<table><tr data-reponse="oui" data-question="128 tient-il dans 178 ?" data-explication="178 − 128 = 50.">',
           '<td>128</td></tr></table>',
-          '<div data-widget="nombre" data-accepte="huit|8">Combien de bits ?</div></template>',
+          '<div data-widget="nombre" data-accepte="huit|8">Combien de bits ?</div>',
+          '<div data-widget="schema-memoire"><div data-case="Bit" data-accepte="bit|bits" data-indice="deux états.">Case 1</div>',
+          '<p data-lien="qui donne" data-choix="qui donne|qui lit">Lien</p></div></template>',
           '<template data-variante="PR1-3"><div data-widget="choix" data-reponse="a">Écrire 101, c’est :',
           '<ul><li data-option="a">Écrire un nombre</li></ul></div></template>',
         ].join(''),
@@ -199,6 +201,9 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
       'Écrire 101',
       '178 − 128',
       'huit',
+      'Relis les poids',
+      'Explique ton choix',
+      'deux états',
     ]) {
       expect(pourLApprenant).not.toContain(cache)
     }
@@ -215,6 +220,7 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
         '- Solution : 31 : 32 valeurs, de 0 à 31.',
         '- Retour si « 32 » (E1) : 32, c’est le nombre de valeurs : la première est 0.',
         '- Retour si « 16 » : 16, c’est le poids du bit de gauche.',
+        '- Retour pour toute autre réponse fausse : Relis les poids.',
         '- Réussite : 31, tous les bits à 1.',
       ].join('\n'),
     )
@@ -223,10 +229,15 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
         '### PR1-3',
         '',
         '- Réponse attendue : « Une base »',
+        '- Après une bonne réponse, à justifier : Explique ton choix. Puis comparée à la solution.',
         '- Retour à l’option « Un langage » (E2) : Le binaire écrit des nombres.',
         '- Réponse attendue à « 128 tient-il dans 178 ? » : oui',
         '- Après la réponse : 178 − 128 = 50.',
         '- Réponses acceptées : « huit » ou « 8 »',
+        '- Case à remplir de mémoire : « Bit »',
+        '- Réponses acceptées : « bit » ou « bits »',
+        '- Indice après une première vérification fausse : deux états.',
+        '- Lien à choisir : « qui donne », parmi « qui donne » ou « qui lit »',
       ].join('\n'),
     )
     expect(conception).toContain('### PR1-3, variante après une solution vue')

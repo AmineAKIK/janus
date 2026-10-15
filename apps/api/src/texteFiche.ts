@@ -156,8 +156,11 @@ const enGuillemets = (valeurs: string) => `« ${valeurs.split('|').join(' » ou 
  * Ce que la page ne montre qu'après une tentative, dans un template : la réponse que l'outil attend
  * (`data-reponse`, l'option juste d'un choix ; `data-accepte`, les réponses acceptées), les coups de
  * pouce (`data-aide1` à `data-aide3`, `data-solution`), les retours écrits à la conception
- * (`data-retour-e1` avec `data-si-e1`, `data-retour` d'une option avec son `data-erreur`),
- * l'explication montrée après la réponse (`data-explication`) et le message de réussite.
+ * (`data-retour-e1` avec `data-si-e1`, `data-retour` d'une option avec son `data-erreur`,
+ * `data-sinon` pour toute autre réponse fausse), l'explication montrée après la réponse
+ * (`data-explication`), la justification demandée (`data-justifier`), le message de réussite, et,
+ * pour un schéma à refaire de mémoire, ses cases (`data-case`), ses liens (`data-lien` parmi
+ * `data-choix`) et leurs indices (`data-indice`).
  */
 function cachesDuTemplate(contenu: string): string[] {
   const lignes: string[] = []
@@ -180,8 +183,20 @@ function cachesDuTemplate(contenu: string): string[] {
         `- Réponse attendue${question === undefined ? '' : ` à « ${question} »`} : ${option === undefined ? reponse : `« ${option.texte} »`}`,
       )
     }
+    const enCase = lire('data-case')
+    if (enCase !== undefined) lignes.push(`- Case à remplir de mémoire : « ${enCase} »`)
+    const lien = lire('data-lien')
+    if (lien !== undefined) {
+      const choix = lire('data-choix')
+      lignes.push(
+        `- Lien à choisir : « ${lien} »${choix === undefined ? '' : `, parmi ${enGuillemets(choix)}`}`,
+      )
+    }
     const accepte = lire('data-accepte')
     if (accepte !== undefined) lignes.push(`- Réponses acceptées : ${enGuillemets(accepte)}`)
+    const indice = lire('data-indice')
+    if (indice !== undefined)
+      lignes.push(`- Indice après une première vérification fausse : ${indice}`)
     for (const cran of ['1', '2', '3']) {
       const aide = lire(`data-aide${cran}`)
       if (aide !== undefined) lignes.push(`- Coup de pouce ${cran} : ${aide}`)
@@ -213,6 +228,13 @@ function cachesDuTemplate(contenu: string): string[] {
             : ''
       lignes.push(`- Retour${qui}${erreur === undefined ? '' : ` (${erreur})`} : ${retour}`)
     }
+    const sinon = lire('data-sinon')
+    if (sinon !== undefined) lignes.push(`- Retour pour toute autre réponse fausse : ${sinon}`)
+    const justifier = lire('data-justifier')
+    if (justifier !== undefined)
+      lignes.push(
+        `- Après une bonne réponse, à justifier : ${justifier} Puis comparée à la solution.`,
+      )
     const explication = lire('data-explication')
     if (explication !== undefined) lignes.push(`- Après la réponse : ${explication}`)
     const succes = lire('data-succes')
@@ -237,6 +259,7 @@ export const CE_QUE_FAIT_LE_GABARIT: readonly string[] = [
   'Restitution : de la première réponse à la dernière, le cours (perception, pré-test, explications, pratique, ensemble) est masqué. « Revenir au cours » le rouvre ; une réponse donnée ensuite, ou collée, ne compte pas pour le statut (« Ne compte pas · Avec support »).',
   'Restitution et consolidation : une question à la fois, la suivante paraît quand la précédente est finie ; les réponses envoyées restent lisibles au-dessus. Chaque question a un champ libre, puis « Ta confiance » (Sûr, Hésitant, Au hasard), à choisir avant d’envoyer.',
   'La correction de l’appli compare la réponse à l’attendu du manifeste, avec le contexte du correcteur (`contexte_ia`) : un niveau (Solide, Partiel, Fragile, Pas encore) et un message qui dit ce que la réponse montre de compris, ce qu’elle mélange et ce qui manque. Une réponse à moitié juste est à moitié juste ; un correcteur qui n’est pas sûr de son jugement le dit, et la réponse ne compte pas (« Ne compte pas · Non vérifiée »). Une erreur critique présente dans la réponse la met au plus à Fragile, à Pas encore si l’apprenant s’était dit sûr.',
+  'Chaque correction dit d’où vient ce qu’elle corrige : du support (avec sa référence, une des `sources` du manifeste, qui désignent des étapes de la fiche), déduit du support, ou ajouté par le correcteur. Les questions que pose l’appli (rappel, vérifications) l’affichent sous la correction : « D’après le cours », « Déduit du cours » ou « Ajouté hors du cours », puis « Source · Fiche », le bloc et la référence.',
   'Une réponse qui n’est pas Solide reçoit une relance : l’apprenant répond une seconde fois, après le message (« Répondre à la relance ») ; seule la première réponse compte pour le statut. Une correction tirée au sort demande « D’accord avec ce niveau ? ». Le Suivi de l’appli compare la confiance déclarée aux résultats.',
   'La consolidation s’ouvre plus tard : c’est l’appli qui l’ouvre.',
   'Bilan, une fois la restitution finie : ce qui est fait (restitution, consolidation, items réussis dont ceux sans aide), puis toutes les erreurs critiques du bloc, à cocher ; celles que le correcteur a repérées sont marquées « Repérée dans tes réponses ».',
