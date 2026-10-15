@@ -113,7 +113,7 @@ describe('validerManifeste, structure', () => {
     Object.assign(premier(m, 'etapes'), { type: 'inconnu' })
     const [probleme] = problemesDe(m)
     expect(probleme?.chemin).toBe('etapes[0].type')
-    expect(probleme?.message).toContain('Valeurs possibles : carte, pretest')
+    expect(probleme?.message).toContain('Valeurs possibles : carte, perception, pretest')
   })
 
   it('refuse un champ inconnu', () => {

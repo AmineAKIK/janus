@@ -68,7 +68,13 @@ function codesDuCatalogue(json: unknown): ReadonlySet<string> {
 }
 
 /** Les étapes dont le contenu vient d'un `<template data-etape="…">` de la page (gabarit : `afficherLibre`). */
-const ETAPES_A_TEMPLATE: ReadonlySet<TypeEtape> = new Set<TypeEtape>(['explication', 'aisance'])
+const ETAPES_A_TEMPLATE: ReadonlySet<TypeEtape> = new Set<TypeEtape>([
+  'perception',
+  'pretest',
+  'explication',
+  'ensemble',
+  'aisance',
+])
 
 /** Le HTML sans ses scripts ni ses commentaires : ce que la page affiche, où les templates se cherchent. */
 function sansScriptsNiCommentaires(html: string): string {

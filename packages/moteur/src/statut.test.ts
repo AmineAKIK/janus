@@ -221,6 +221,33 @@ describe('la consolidation', () => {
     }
   })
 
+  it('une perception ou un retour à l’ensemble rouvre le cours comme une explication', () => {
+    const manifeste = {
+      ...MANIFESTE,
+      etapes: [
+        ...MANIFESTE.etapes,
+        { id: 'ETP', titre: 'Perception', type: 'perception' as const },
+        { id: 'ETE', titre: 'L’ensemble', type: 'ensemble' as const },
+      ],
+    }
+    for (const etape of ['ETP', 'ETE']) {
+      const f = fabrique()
+      const faits = [
+        ...f.pratique(DEBUT),
+        f.atelier(DEBUT),
+        ...f.restitution(apres(DEBUT, 0, 30)),
+        f.etape(apres(DEBUT, 0, 60), etape),
+        ...f.consolidation(apres(DEBUT, 0, 90)),
+      ]
+      const resultat = calculerBloc(faits, manifeste, REGLAGES, apres(DEBUT, 0, 200))
+      expect(resultat.statut).toBe('vu')
+      expect(resultat.manque).toContainEqual({
+        code: 'consolidation_trop_tot',
+        apres: apres(DEBUT, 0, 120),
+      })
+    }
+  })
+
   it('le cours rouvert pendant une série d’après la restitution ne la bloque plus pour toujours', () => {
     const f = fabrique()
     const faits = [

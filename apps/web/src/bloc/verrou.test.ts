@@ -3,7 +3,9 @@ import { etapesVerrouillees, questionsRestantes } from './verrou.ts'
 
 const ETAPES = [
   { id: 'ET1', type: 'carte' },
+  { id: 'ETP', type: 'perception' },
   { id: 'ET2', type: 'explication' },
+  { id: 'ETE', type: 'ensemble' },
   { id: 'ET3', type: 'pratique' },
   { id: 'ET4', type: 'restitution' },
   { id: 'ET5', type: 'consolidation' },
@@ -40,11 +42,10 @@ describe('questionsRestantes', () => {
 describe('etapesVerrouillees', () => {
   const restantes = (restitution: number, consolidation = 0) => ({ restitution, consolidation })
 
-  it('verrouille les étapes de cours pendant une série pas finie', () => {
-    expect(etapesVerrouillees(ETAPES, 'ET4', restantes(2))).toEqual(new Set(['ET1', 'ET2', 'ET3']))
-    expect(etapesVerrouillees(ETAPES, 'ET5', restantes(0, 1))).toEqual(
-      new Set(['ET1', 'ET2', 'ET3']),
-    )
+  it('verrouille les étapes de cours pendant une série pas finie, perception et ensemble compris', () => {
+    const cours = new Set(['ET1', 'ETP', 'ET2', 'ETE', 'ET3'])
+    expect(etapesVerrouillees(ETAPES, 'ET4', restantes(2))).toEqual(cours)
+    expect(etapesVerrouillees(ETAPES, 'ET5', restantes(0, 1))).toEqual(cours)
   })
 
   it('ne verrouille rien quand la série de l’étape courante est complète', () => {

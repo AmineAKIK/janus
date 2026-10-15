@@ -21,6 +21,8 @@ describe('tempsActif', () => {
       { date: '2026-10-12T10:00:00Z', bloc: 'B01', secondes: 60, etape: 'carte' },
       { date: '2026-10-12T10:01:00Z', bloc: 'B01', secondes: 30, etape: 'pretest' },
       { date: '2026-10-12T10:02:00Z', bloc: 'B01', secondes: 10, etape: 'explication' },
+      { date: '2026-10-12T10:03:00Z', bloc: 'B01', secondes: 3, etape: 'perception' },
+      { date: '2026-10-12T10:04:00Z', bloc: 'B01', secondes: 4, etape: 'ensemble' },
       { date: '2026-10-13T10:00:00Z', bloc: 'B02', secondes: 120, etape: 'pratique' },
       { date: '2026-10-13T10:02:00Z', bloc: 'B02', secondes: 20, etape: 'atelier' },
       { date: '2026-10-13T10:03:00Z', bloc: 'B02', secondes: 5, etape: 'aisance' },
@@ -29,11 +31,11 @@ describe('tempsActif', () => {
       { date: '2026-10-14T10:02:00Z', bloc: 'B03', secondes: 9, etape: 'bilan' },
     ]
     expect(tempsActif(mesures, MAINTENANT, REGLAGES)).toEqual({
-      totalS: 269,
-      groupes: { lecture: 100, pratique: 145, restitution: 24 },
+      totalS: 276,
+      groupes: { lecture: 107, pratique: 145, restitution: 24 },
       blocs: [
         { bloc: 'B02', secondes: 145 },
-        { bloc: 'B01', secondes: 100 },
+        { bloc: 'B01', secondes: 107 },
         { bloc: 'B03', secondes: 24 },
       ],
     })

@@ -5,8 +5,10 @@ export type SerieVerrou = 'restitution' | 'consolidation'
 /** Les étapes de cours : tout ce qui précède la restitution. */
 const ETAPES_DE_COURS: ReadonlySet<TypeEtape> = new Set([
   'carte',
+  'perception',
   'pretest',
   'explication',
+  'ensemble',
   'pratique',
   'atelier',
   'aisance',

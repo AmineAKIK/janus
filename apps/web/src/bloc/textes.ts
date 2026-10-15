@@ -9,8 +9,11 @@ export const TEXTES_BLOC = {
   retourFormations: 'Retour aux formations',
   reessayer: 'Réessayer',
   etapes: 'Étapes de la fiche',
-  etapeSurTotal: (titre: string, rang: number, total: number) =>
-    `${titre} · étape ${String(rang)} sur ${String(total)}`,
+  moments: 'Moments',
+  listeEtapes: 'Étapes',
+  /** L'étape affichée, son moment, et son rang parmi les étapes de ce moment. */
+  etapeSurTotal: (titre: string, moment: string, rang: number, total: number) =>
+    `${titre} · ${moment} · étape ${String(rang)} sur ${String(total)}`,
   envoyee: 'Envoyée dès le retour du réseau.',
   stockageIndisponible: 'Les réponses ne peuvent pas être gardées sur cet appareil.',
   conflit: 'Ce bloc a été modifié sur un autre appareil.',
