@@ -157,14 +157,41 @@
       .bascule {
         display: none;
       }
-      .etapes {
+      .etapes,
+      .moment > ol {
         display: flex;
         flex-wrap: wrap;
-        gap: 0 var(--espacement-4);
-        justify-content: center;
         margin: 0;
-        padding: 0 var(--espacement-12);
+        padding: 0;
         list-style: none;
+      }
+      .etapes {
+        gap: var(--espacement-4) var(--espacement-16);
+        justify-content: center;
+        padding: 0 var(--espacement-12);
+      }
+      /* Un moment du cycle : son nom, puis ses étapes ; celui de l'étape courante prend l'accent. */
+      .moment {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0 var(--espacement-4);
+      }
+      .moment > ol {
+        gap: 0 var(--espacement-4);
+      }
+      .moment-nom {
+        padding: 0 var(--espacement-8);
+        color: var(--couleur-texte-discret);
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 1rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .moment[data-courant='oui'] > .moment-nom {
+        color: var(--couleur-accent);
       }
       .onglet {
         position: relative;
@@ -221,7 +248,17 @@
         }
         .etapes {
           flex-direction: column;
+          gap: var(--espacement-4);
           justify-content: flex-start;
+          padding-block-end: var(--espacement-8);
+        }
+        .moment,
+        .moment > ol {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .moment-nom {
+          padding: var(--espacement-8) var(--espacement-12) 0;
         }
         .onglet {
           inline-size: 100%;
@@ -681,7 +718,7 @@
         white-space: nowrap;
       }
 
-      /* Détails repliables. */
+      /* Détails repliables ; l'objectif d'examen replié (carte, pratique) en est un. */
       details {
         padding: 0 var(--espacement-16);
         border: 1px solid var(--couleur-ligne);
@@ -759,6 +796,10 @@
         padding: 0 var(--espacement-12);
         font-size: 0.875rem;
         white-space: nowrap;
+      }
+      /* Un seul écran : la barre ne porte que « Écouter », à droite. */
+      .ecran-barre > .ecouter:only-child {
+        margin-inline-start: auto;
       }
       .ecran-progres {
         height: 0.5rem;
@@ -916,6 +957,14 @@
         margin-inline-start: auto;
         color: var(--couleur-texte-secondaire);
         font-size: 0.875rem;
+      }
+      /* La solution a été montrée : l'item se refait sans la regarder. */
+      .item-refaire {
+        margin: 0;
+        color: var(--couleur-accent);
+        font-size: 0.875rem;
+        font-weight: 500;
+        line-height: 1.25rem;
       }
       .points {
         display: flex;
@@ -1751,7 +1800,7 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 6,
+        "version": 7,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
@@ -4812,16 +4861,25 @@
       'use strict'
       const manifeste = JSON.parse(document.getElementById('bloc-manifest').textContent)
       const CLE_ETAT = 'janus.fiche.' + manifeste.bloc + '.etat'
-      const ETAPES_FICHE = [
-        'carte',
-        'explication',
-        'pratique',
-        'atelier',
-        'aisance',
-        'restitution',
-        'consolidation',
-        'bilan',
+      /*
+       * Les quatre moments du cycle de la méthode (percevoir, tenter, modéliser, faire, recevoir un
+       * retour, ajuster), dans l'ordre du fil, avec les types d'étape de chacun. `perception`,
+       * `pretest` et `ensemble` sont nouveaux : le contrat des fiches (PR séparée) les ajoute au
+       * manifeste ; le gabarit sait déjà les dessiner, comme une explication (afficherLibre).
+       */
+      const MOMENTS = [
+        { nom: 'Découvrir', types: ['carte', 'perception'] },
+        { nom: 'Comprendre', types: ['pretest', 'explication', 'ensemble'] },
+        { nom: 'S’entraîner', types: ['pratique', 'atelier', 'aisance'] },
+        { nom: 'Prouver', types: ['restitution', 'consolidation', 'bilan'] },
       ]
+      const momentDe = (etape) => MOMENTS.find((moment) => moment.types.includes(etape.type))
+      /** Les types d'étape que le gabarit sait dessiner : chacun a son moment. */
+      const ETAPES_FICHE = MOMENTS.flatMap((moment) => moment.types)
+      /** Les étapes à lire, dessinées depuis leur `<template data-etape>`. */
+      const ETAPES_LIBRES = ['perception', 'pretest', 'explication', 'ensemble', 'aisance']
+      /** Le cours : ce que la restitution sans support masque jusqu'à la dernière réponse. */
+      const ETAPES_COURS = ['perception', 'pretest', 'explication', 'ensemble', 'pratique']
       const LIBELLES_STATUT = {
         non_commence: 'Non commencé',
         en_cours: 'En cours',
@@ -5008,7 +5066,11 @@
         return [creer('div', { className: 'ecran-nav pied' }, bouton), raison]
       }
 
-      /** Le fil d'étapes de l'aperçu : même forme que celui de l'appli (onglets, ou liste repliable en étroit). */
+      /**
+       * Le fil d'étapes de l'aperçu : même forme que celui de l'appli (onglets, ou liste repliable en
+       * étroit). Les étapes qui se suivent dans un même moment du cycle font un groupe, sous le nom du
+       * moment ; le moment de l'étape courante est marqué.
+       */
       function afficherEtapes() {
         const trouvee = etapes.findIndex((etape) => etape.id === etat.etape)
         const courant = trouvee < 0 ? 0 : trouvee
@@ -5016,8 +5078,7 @@
         const bascule = $('bascule')
         bascule.replaceChildren(
           creer('span', {
-            textContent:
-              etapes[courant].titre + ' · étape ' + (courant + 1) + ' sur ' + etapes.length,
+            textContent: momentDe(etapes[courant]).nom + ' · ' + etapes[courant].titre,
           }),
           creer('span', { textContent: fil.dataset.ouvert === 'true' ? '▴' : '▾' }),
         )
@@ -5027,40 +5088,70 @@
           fil.dataset.ouvert = String(fil.dataset.ouvert !== 'true')
           afficherEtapes()
         }
+        const groupes = []
+        etapes.forEach((etape, k) => {
+          const moment = momentDe(etape)
+          const dernier = groupes[groupes.length - 1]
+          if (dernier && dernier.moment === moment) dernier.etapes.push([etape, k])
+          else groupes.push({ moment, etapes: [[etape, k]] })
+        })
         $('etapes').replaceChildren(
-          ...etapes.map((etape, k) => {
-            const onglet = creer('button', {
-              type: 'button',
-              className: 'onglet',
-              textContent: etape.titre,
-            })
-            if (k === courant) onglet.setAttribute('aria-current', 'step')
-            onglet.addEventListener('click', () => {
-              fil.dataset.ouvert = 'false'
-              aller(etape.id)
-            })
-            return creer('li', {}, onglet)
-          }),
+          ...groupes.map((groupe) =>
+            creer(
+              'li',
+              {
+                className: 'moment',
+                dataset: { courant: groupe.etapes.some(([, k]) => k === courant) ? 'oui' : 'non' },
+              },
+              creer('span', { className: 'moment-nom', textContent: groupe.moment.nom }),
+              creer(
+                'ol',
+                {},
+                ...groupe.etapes.map(([etape, k]) => {
+                  const onglet = creer('button', {
+                    type: 'button',
+                    className: 'onglet',
+                    textContent: etape.titre,
+                  })
+                  if (k === courant) onglet.setAttribute('aria-current', 'step')
+                  onglet.addEventListener('click', () => {
+                    fil.dataset.ouvert = 'false'
+                    aller(etape.id)
+                  })
+                  return creer('li', {}, onglet)
+                }),
+              ),
+            ),
+          ),
+        )
+      }
+
+      /** L'objectif d'examen, replié : ce que l'épreuve vérifiera, à ouvrir quand on veut le relire. */
+      function objectifReplie() {
+        return creer(
+          'details',
+          { className: 'objectif' },
+          creer('summary', { textContent: 'Ce qui sera vérifié' }),
+          creer('p', { textContent: manifeste.objectif }),
         )
       }
 
       /**
-       * La carte : l'objectif, puis le `<template data-etape="ET1">` de la page s'il existe (sinon la
-       * liste des étapes). `contexte_ia` est destiné au correcteur : il n'est jamais affiché.
+       * La carte : d'abord le `<template data-etape="ET1">` de la page (où tu es, à quoi ça sert, ce que
+       * tu sauras faire), lisible avec « Écouter », puis l'objectif d'examen replié, puis Commencer.
+       * Sans template (les fiches d'avant) : l'objectif, puis la liste des étapes. `contexte_ia` est
+       * destiné au correcteur : il n'est jamais affiché.
        */
       function afficherCarte() {
-        const section = creer(
-          'section',
-          {},
-          creer('h2', { textContent: 'Carte du bloc' }),
-          creer('p', { textContent: manifeste.objectif }),
-        )
+        const section = creer('section', {}, creer('h2', { textContent: 'Carte du bloc' }))
         const modele = document.querySelector('template[data-etape="' + etapes[0].id + '"]')
         if (modele) {
-          section.append(modele.content.cloneNode(true))
+          const { ecran, lu } = ecranUnique(modele)
+          section.append(barreEcoute(lu), ecran, objectifReplie())
           activerLiens(section)
         } else
           section.append(
+            creer('p', { textContent: manifeste.objectif }),
             creer(
               'ul',
               { className: 'plain' },
@@ -5102,56 +5193,30 @@
           setTimeout(fin, 1500)
         })
       }
-
+      /** Ce qu'« Écouter » lit dans un écran : son `data-lecture`, sinon ses h3, p et li de premier niveau. */
+      const texteLu = (ecran) =>
+        ecran.dataset.lecture ??
+        Array.from(ecran.querySelectorAll(':scope > h3, :scope > p, :scope > ul > li'))
+          .map((n) => n.textContent.replace(/\s+/g, ' ').trim())
+          .join(' ')
       /**
-       * Le contenu libre d'une étape : le `<template data-etape="ETx">` de la page, cloné tel quel.
-       * Tout ce qui est dans le gabarit (pont, masquage du cours, confiance, aide, messages) est fixe ;
-       * ce que dit le bloc et comment il le dit ne l'est pas.
+       * Le bouton « Écouter » : la synthèse vocale lit l'écran que donne `source` (une fonction : l'écran
+       * courant d'une étape à plusieurs écrans, ou le seul écran). `arreter` coupe la lecture.
        */
-      function afficherLibre(etape) {
-        const modele = document.querySelector('template[data-etape="' + etape.id + '"]')
-        const section = creer('section', {}, creer('h2', { textContent: etape.titre }))
-        if (!modele) {
-          section.append(
-            creer('p', { className: 'discret', textContent: 'Rien à lire dans cette étape.' }),
-          )
-          return section
-        }
-        const contenu = modele.content.cloneNode(true)
-        const ecrans = Array.from(contenu.children).filter((n) => n.hasAttribute('data-ecran'))
-        if (ecrans.length < 2) {
-          section.append(contenu)
-          activerLiens(section)
-          section.append(...piedEtape(etape))
-          return section
-        }
-        // Plusieurs écrans : un seul visible à la fois, les autres restent dans la page (outils déjà montés).
-        const suivante = etapes[etapes.findIndex((e) => e.id === etape.id) + 1]
-        const titre = creer('p', { className: 'ecran-titre' })
-        const compte = creer('span', { className: 'ecran-compte' })
-        const remplissage = creer('span')
-        const progres = creer('div', { className: 'ecran-progres' }, remplissage)
-        progres.setAttribute('aria-hidden', 'true')
-        const ecouter = creer('button', { type: 'button', className: 'bouton secondaire ecouter' })
-        const precedent = creer('button', {
+      function boutonEcouter(source) {
+        const ecouter = creer('button', {
           type: 'button',
-          className: 'bouton secondaire',
-          textContent: 'Retour',
+          className: 'bouton secondaire ecouter',
+          textContent: 'Écouter',
         })
-        const avancer = creer('button', { type: 'button', className: 'bouton' })
-        let courant = Math.min(etat.ecrans?.[etape.id] ?? 0, ecrans.length - 1)
-        const texteLu = (ecran) =>
-          ecran.dataset.lecture ??
-          Array.from(ecran.querySelectorAll(':scope > h3, :scope > p, :scope > ul > li'))
-            .map((n) => n.textContent.replace(/\s+/g, ' ').trim())
-            .join(' ')
+        ecouter.dataset.actif = 'non'
         const arreter = () => {
           window.speechSynthesis?.cancel()
           ecouter.textContent = 'Écouter'
           ecouter.dataset.actif = 'non'
         }
         const lire = (voix) => {
-          const parole = new SpeechSynthesisUtterance(texteLu(ecrans[courant]))
+          const parole = new SpeechSynthesisUtterance(texteLu(source()))
           const choisie = meilleureVoix(voix)
           parole.lang = choisie?.lang ?? 'fr-FR'
           if (choisie) parole.voice = choisie
@@ -5172,6 +5237,63 @@
               if (ecouter.dataset.actif === 'oui') lire(chargees)
             })
         })
+        return { ecouter, arreter }
+      }
+      /** La barre d'un écran seul : rien que « Écouter », qui lit `lu`. */
+      const barreEcoute = (lu) =>
+        creer('div', { className: 'ecran-barre' }, boutonEcouter(() => lu).ecouter)
+      /**
+       * Un template qui tient en un écran : son contenu d'un bloc (`ecran`), et ce qu'« Écouter » lit
+       * (`lu`) : le seul `[data-ecran]` s'il y en a un, sinon le bloc entier ; `data-lecture` posé sur le
+       * `<template>` l'emporte.
+       */
+      function ecranUnique(modele) {
+        const contenu = modele.content.cloneNode(true)
+        const marque = Array.from(contenu.children).find((n) => n.hasAttribute('data-ecran'))
+        const ecran = creer('div', { className: 'ecran' }, contenu)
+        if (modele.dataset.lecture !== undefined) ecran.dataset.lecture = modele.dataset.lecture
+        return { ecran, lu: ecran.dataset.lecture !== undefined ? ecran : (marque ?? ecran) }
+      }
+
+      /**
+       * Le contenu libre d'une étape : le `<template data-etape="ETx">` de la page, cloné tel quel.
+       * Tout ce qui est dans le gabarit (pont, masquage du cours, confiance, aide, messages) est fixe ;
+       * ce que dit le bloc et comment il le dit ne l'est pas.
+       */
+      function afficherLibre(etape) {
+        const modele = document.querySelector('template[data-etape="' + etape.id + '"]')
+        const section = creer('section', {}, creer('h2', { textContent: etape.titre }))
+        if (!modele) {
+          section.append(
+            creer('p', { className: 'discret', textContent: 'Rien à lire dans cette étape.' }),
+          )
+          return section
+        }
+        const contenu = modele.content.cloneNode(true)
+        const ecrans = Array.from(contenu.children).filter((n) => n.hasAttribute('data-ecran'))
+        if (ecrans.length < 2) {
+          // Un seul écran : tout le template d'un bloc, avec « Écouter ».
+          const { ecran, lu } = ecranUnique(modele)
+          section.append(barreEcoute(lu), ecran)
+          activerLiens(section)
+          section.append(...piedEtape(etape))
+          return section
+        }
+        // Plusieurs écrans : un seul visible à la fois, les autres restent dans la page (outils déjà montés).
+        const suivante = etapes[etapes.findIndex((e) => e.id === etape.id) + 1]
+        const titre = creer('p', { className: 'ecran-titre' })
+        const compte = creer('span', { className: 'ecran-compte' })
+        const remplissage = creer('span')
+        const progres = creer('div', { className: 'ecran-progres' }, remplissage)
+        progres.setAttribute('aria-hidden', 'true')
+        const precedent = creer('button', {
+          type: 'button',
+          className: 'bouton secondaire',
+          textContent: 'Retour',
+        })
+        const avancer = creer('button', { type: 'button', className: 'bouton' })
+        let courant = Math.min(etat.ecrans?.[etape.id] ?? 0, ecrans.length - 1)
+        const { ecouter, arreter } = boutonEcouter(() => ecrans[courant])
         const montrer = (k) => {
           arreter()
           courant = k
@@ -5271,7 +5393,9 @@
         const compteur = creer('p', { className: 'discret' })
         const etatItem = creer('span', { className: 'item-etat' })
         const resultat = creer('p', { className: 'discret' })
-        const noter = (ok, aideUtilisee) => {
+        const solutionVue = () => Boolean(etat.pratique[item.id]?.solutionVue)
+        /** Note un résultat ; `vue` : l'outil vient de montrer la solution, et l'item s'en souvient. */
+        const noter = (ok, aideUtilisee, vue = false) => {
           const essais = (etat.pratique[item.id]?.essais ?? 0) + 1
           pont.envoyer('pratique.resultat', {
             exercice: exercice.id,
@@ -5280,7 +5404,12 @@
             aide: aideUtilisee,
             essais,
           })
-          etat.pratique[item.id] = { reussi: ok, aide: aideUtilisee, essais }
+          etat.pratique[item.id] = {
+            reussi: ok,
+            aide: aideUtilisee,
+            essais,
+            solutionVue: vue || solutionVue(),
+          }
           enregistrer()
         }
         const envoyer = (ok) => {
@@ -5366,25 +5495,47 @@
             )
           })
           boite.dataset.fait = fait?.reussi ? 'oui' : 'non'
-          etatItem.textContent = fait ? (fait.reussi ? 'Réussi' : 'À refaire') : ''
-          resultat.textContent = fait
-            ? 'Envoyé\u00a0: ' + (fait.reussi ? 'réussi' : 'non réussi') + ', aide ' + fait.aide
+          // La solution a été montrée et l'item n'est pas refait : on le dit, à la place du résultat.
+          const aRefaire = Boolean(fait?.solutionVue) && !fait.reussi
+          etatItem.textContent = fait
+            ? fait.reussi
+              ? 'Réussi'
+              : aRefaire
+                ? 'Solution vue'
+                : 'À refaire'
             : ''
+          resultat.className = aRefaire ? 'item-refaire' : 'discret'
+          resultat.textContent = aRefaire
+            ? 'Tu as vu la solution. Refais-la sans la regarder.'
+            : fait
+              ? 'Envoyé\u00a0: ' + (fait.reussi ? 'réussi' : 'non réussi') + ', aide ' + fait.aide
+              : ''
         }
         majItem()
         // L'outil émet fiche:verification à chaque réponse vérifiée. L'item se met à jour sans être
-        // redessiné : la réponse et le message de l'outil restent à l'écran.
+        // redessiné : la réponse et le message de l'outil restent à l'écran. Sauf quand l'outil a montré
+        // la réponse (aide 4) : rien n'est réussi, l'item se note « solution vue » et se redessine à
+        // neuf (l'outil se remonte sur fiche:rendu, son aide repart de zéro), pour être refait sans la
+        // regarder. Une fois la solution vue, chaque résultat de l'item part avec l'aide 4.
         consigne.addEventListener('fiche:verification', (evenement) => {
           const detail = evenement.detail ?? {}
           if (!verifie || typeof detail.juste !== 'boolean') return
           const aideOutil = [1, 2, 3, 4].includes(detail.aide) ? detail.aide : 0
-          noter(detail.juste, Math.max(aide, aideOutil))
+          if (aideOutil >= 4) {
+            noter(false, 4, true)
+            etat.itemCourant = index
+            enregistrer()
+            afficher()
+            return
+          }
+          noter(detail.juste, solutionVue() ? 4 : Math.max(aide, aideOutil))
           majItem()
         })
         return creer(
           'section',
           {},
           creer('h2', { textContent: 'Pratique guidée' }),
+          objectifReplie(),
           compteur,
           points,
           boite,
@@ -5961,7 +6112,7 @@
         majBilan = () => {}
         afficherEtapes()
         const etape = etapes.find((e) => e.id === etat.etape) ?? etapes[0]
-        const cours = etape.type === 'explication' || etape.type === 'pratique'
+        const cours = ETAPES_COURS.includes(etape.type)
         let vue
         if (cours && coursMasque()) {
           vue = creer(
@@ -5989,16 +6140,16 @@
           )
         } else
           vue =
-            {
-              carte: afficherCarte,
-              explication: () => afficherLibre(etape),
-              pratique: afficherPratique,
-              atelier: afficherAtelier,
-              aisance: () => afficherLibre(etape),
-              restitution: () => afficherSerie('restitution', 'Restitution'),
-              consolidation: () => afficherSerie('consolidation', 'Consolidation'),
-              bilan: afficherBilan,
-            }[etape.type]?.() ??
+            (ETAPES_LIBRES.includes(etape.type)
+              ? () => afficherLibre(etape)
+              : {
+                  carte: afficherCarte,
+                  pratique: afficherPratique,
+                  atelier: afficherAtelier,
+                  restitution: () => afficherSerie('restitution', 'Restitution'),
+                  consolidation: () => afficherSerie('consolidation', 'Consolidation'),
+                  bilan: afficherBilan,
+                }[etape.type])?.() ??
             creer('p', {
               className: 'discret',
               textContent: 'Cette étape n’est pas dans cette fiche.',
