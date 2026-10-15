@@ -65,6 +65,21 @@ export function contenuDuBloc(html: string, id: string): string | undefined {
   return position === undefined ? undefined : html.slice(position.debut, position.fin)
 }
 
+/**
+ * La page où le contenu du `<style id="…">` ou `<script id="…">` est remplacé par ce que `remplacer`
+ * rend de l'actuel ; la page telle quelle si le bloc n'y est pas.
+ */
+export function remplacerLeContenuDuBloc(
+  html: string,
+  id: string,
+  remplacer: (contenu: string) => string,
+): string {
+  const position = positionDuBloc(html, id)
+  if (position === undefined) return html
+  const contenu = remplacer(html.slice(position.debut, position.fin))
+  return `${html.slice(0, position.debut)}${contenu}${html.slice(position.fin)}`
+}
+
 /** Les blocs fixes du gabarit, par identifiant ; une erreur si le gabarit en a perdu un. */
 export function blocsFixes(gabarit: string): ReadonlyMap<BlocFixe, string> {
   const blocs = new Map<BlocFixe, string>()

@@ -3,7 +3,14 @@ import { readdir, readFile } from 'node:fs/promises'
 import { join, relative } from 'node:path'
 import { Catalogue, validerAlignement, validerManifeste } from '@janus/contrats'
 import type { Manifeste, TypeEtape } from '@janus/contrats'
-import { blocsFixes, contenuDuBloc, enTeteDuPont, pontEmbarque } from './assemblage.ts'
+import {
+  BLOCS_FIXES,
+  blocsFixes,
+  contenuDuBloc,
+  enTeteDuPont,
+  pontEmbarque,
+  remplacerLeContenuDuBloc,
+} from './assemblage.ts'
 import type { BlocFixe, EnTetePont } from './assemblage.ts'
 import { extraireManifeste } from './domaines/catalogue/composition.ts'
 import { CHEMIN_REGLES, lireLesRegles, nomDeLaGrille, verifierGrille } from './grille.ts'
@@ -331,6 +338,30 @@ function verifierBlocsFixes(
   }
 }
 
+/** Ce que `fiches:assembler --forcer` réécrit dans une fiche : les blocs fixes du gabarit et le pont. */
+const BLOCS_REECRITS_A_L_ASSEMBLAGE: readonly string[] = [...BLOCS_FIXES, 'pont']
+
+/**
+ * La fiche sans ce qu'un réassemblage change : les blocs fixes et le pont vidés, la version du manifeste
+ * ramenée à zéro. Deux fiches égales ainsi n'ont rien de différent à montrer à l'apprenant : la grille
+ * de la méthode n'a pas à se refaire entre elles.
+ */
+function sansCeQueLAssemblageReecrit(html: string): string {
+  let resultat = html
+  for (const id of BLOCS_REECRITS_A_L_ASSEMBLAGE) {
+    resultat = remplacerLeContenuDuBloc(resultat, id, () => '')
+  }
+  return remplacerLeContenuDuBloc(resultat, 'bloc-manifest', (texte) => {
+    try {
+      const manifeste: unknown = JSON.parse(texte)
+      if (typeof manifeste !== 'object' || manifeste === null) return texte
+      return JSON.stringify({ ...manifeste, version: 0 })
+    } catch {
+      return texte
+    }
+  })
+}
+
 /** Le contenu d'un fichier facultatif, ou `undefined` s'il n'existe pas ; toute autre erreur remonte. */
 async function lireSiPresent(chemin: string): Promise<string | undefined> {
   try {
@@ -472,9 +503,15 @@ export async function verifierLesFiches({
         )
         if (grille !== undefined) {
           verifierGrille(grille, regles, resultat.manifeste, signaler)
-        } else if (contenuDeReference !== undefined && avant !== fiche.html) {
-          // Nouvelle (pas de référence) ou modifiée : la grille se refait avec la fiche. Sans
-          // référence (lancement local sans `--base`), on ne sait pas si la fiche a changé : rien.
+        } else if (
+          contenuDeReference !== undefined &&
+          (avant === undefined ||
+            sansCeQueLAssemblageReecrit(avant) !== sansCeQueLAssemblageReecrit(fiche.html))
+        ) {
+          // Nouvelle (pas de référence) ou modifiée : la grille se refait avec la fiche. Un simple
+          // réassemblage (blocs fixes, pont, version) ne montre rien de neuf à l'apprenant : rien à
+          // refaire. Sans référence (lancement local sans `--base`), on ne sait pas si la fiche a
+          // changé : rien.
           signaler(
             `pas de grille de la méthode (${nomDeLaGrille(bloc)}) : une fiche nouvelle ou modifiée ne se fusionne pas sans sa grille, une ligne par règle de ${CHEMIN_REGLES} (« Concevoir une fiche » dans AGENTS.md).`,
           )
