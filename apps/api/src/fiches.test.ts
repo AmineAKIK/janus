@@ -491,4 +491,251 @@ describe('vérification des fiches du dépôt', () => {
       ).toEqual([])
     })
   })
+
+  describe('la grille de la méthode', () => {
+    /** Un petit jeu de règles, du même format que `methode/regles.json`, avec un statut de chaque sorte. */
+    const REGLES = {
+      version: 'test',
+      statuts: { noyau: 'toujours', 'par défaut': 'sauf raison', réglage: 'à ajuster' },
+      regles: [
+        { id: 'C01', section: 'Boucle', statut: 'noyau', titre: 'Le cycle', texte: 'Le cycle.' },
+        { id: 'C02', section: 'Boucle', statut: 'par défaut', titre: 'Percevoir', texte: 'Voir.' },
+        { id: 'C11', section: 'Boucle', statut: 'par défaut', titre: 'À retenir', texte: 'Peu.' },
+        { id: 'A01', section: 'Aisance', statut: 'réglage', titre: 'Aisance', texte: 'Vite.' },
+      ],
+    }
+    const EN_TETE = '# Grille de la méthode : X00, version 1'
+    /** Les lignes du tableau d'une grille complète ; dans `grille()`, la première est la ligne 7 du fichier. */
+    const LIGNES = [
+      '| C01 | appliquée | ET1 à ET6 : le cycle entier, pari repris en ET6 |',
+      '| C02 | appliquée | ET2 : la démonstration, pari à la fin |',
+      '| C11 | écartée | rien à mettre en répétition espacée dans ce bloc |',
+      '| A01 | appliquée | PR1-2, et le manifeste fixe la réussite |',
+    ]
+    /** Une grille telle qu'on l'écrit : l'en-tête, un texte libre, le tableau. */
+    const grille = (lignes: readonly string[], enTete = EN_TETE) =>
+      [
+        enTete,
+        '',
+        'Une phrase libre.',
+        '',
+        '| Règle | Statut | Où, ou pourquoi pas |',
+        '| --- | --- | --- |',
+        ...lignes,
+        '',
+      ].join('\n')
+    /** La fiche du gabarit, modifiée (sa version monte) : la grille est exigée quand il y a une référence. */
+    let modifiee: string
+    const poserGrille = (texte: string) =>
+      writeFile(join(contenu, 'test', 'fiches', 'X00.grille.md'), texte)
+    const poserRegles = async (regles: unknown) => {
+      await mkdir(join(contenu, 'test', 'methode'), { recursive: true })
+      await writeFile(join(contenu, 'test', 'methode', 'regles.json'), JSON.stringify(regles))
+    }
+
+    beforeEach(async () => {
+      modifiee = fiche.replace('"version": 1', '"version": 2')
+      await poserRegles(REGLES)
+    })
+
+    it('refuse une fiche modifiée ou nouvelle sans grille, quand il y a une référence', async () => {
+      await poser('X00.html', modifiee)
+
+      const message = 'test/fiches/X00.html : pas de grille de la méthode (X00.grille.md)'
+      expect(
+        await verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => fiche }),
+      ).toEqual([expect.stringContaining(message)])
+      expect(
+        await verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => undefined }),
+      ).toEqual([expect.stringContaining(message)])
+    })
+
+    it('accepte une fiche inchangée sans grille, et ne réclame rien sans référence', async () => {
+      await poser('X00.html', fiche)
+      expect(
+        await verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => fiche }),
+      ).toEqual([])
+
+      await poser('X00.html', modifiee)
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+
+    it('ne contrôle rien quand la formation n’a pas de methode/regles.json', async () => {
+      await rm(join(contenu, 'test', 'methode'), { recursive: true })
+      await poser('X00.html', modifiee)
+      expect(
+        await verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => fiche }),
+      ).toEqual([])
+
+      await poserGrille('n’importe quoi')
+      expect(
+        await verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => fiche }),
+      ).toEqual([])
+    })
+
+    it('signale une seule fois un regles.json illisible, et ne contrôle alors aucune grille', async () => {
+      await poser('X00.html', modifiee)
+      await poserGrille('n’importe quoi')
+
+      await poserRegles({ ...REGLES, regles: [...REGLES.regles, { ...REGLES.regles[0] }] })
+      expect(
+        await verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => fiche }),
+      ).toEqual([
+        expect.stringContaining('test/methode/regles.json : le fichier ne se lit pas (regles : '),
+      ])
+
+      await writeFile(join(contenu, 'test', 'methode', 'regles.json'), '{ "version": ')
+      expect(
+        await verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => fiche }),
+      ).toEqual([
+        expect.stringContaining('test/methode/regles.json : le fichier n’est pas du JSON valide'),
+      ])
+    })
+
+    it('accepte une grille complète, le statut écrit avec une autre casse ou des espaces', async () => {
+      await poser('X00.html', modifiee)
+      await poserGrille(
+        grille(
+          [
+            '|C01|  Appliquée  |ET1 à ET6 : le cycle entier|',
+            '| C02 | appliquée | ET2 : la démonstration, pari à la fin |',
+            '| C11 | ÉCARTÉE | rien à mettre en répétition espacée dans ce bloc |',
+            '| A01 | appliquée | PR1 : les trois items, et l’alignement |',
+          ],
+          '# Grille de la méthode : X00, version 2',
+        ),
+      )
+
+      expect(
+        await verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => fiche }),
+      ).toEqual([])
+    })
+
+    it('vérifie une grille présente même sans référence', async () => {
+      await poser('X00.html', fiche)
+      await poserGrille(grille(LIGNES.slice(0, 3)))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('test/fiches/X00.html : grille : il manque les règles A01'),
+      ])
+    })
+
+    it('refuse un en-tête qui ne dit pas le bloc et la version du manifeste', async () => {
+      await poser('X00.html', modifiee)
+      const message =
+        'grille : la première ligne doit être « # Grille de la méthode : X00, version 2 »'
+
+      await poserGrille(grille(LIGNES, '# Grille de la méthode : X00, version 1'))
+      const problemes = await verifierLesFiches({ dossierContenu: contenu })
+      expect(problemes).toEqual([expect.stringContaining(message)])
+      expect(problemes[0]).toContain('et non « # Grille de la méthode : X00, version 1 »')
+
+      await poserGrille(grille(LIGNES, '# Grille de la méthode : B01, version 2'))
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(message),
+      ])
+
+      await poserGrille('')
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('et non rien.'),
+        expect.stringContaining('il manque les règles C01, C02, C11, A01'),
+      ])
+    })
+
+    it('refuse une grille où des règles manquent, en les listant toutes dans un message', async () => {
+      await poser('X00.html', fiche)
+      await poserGrille(grille([LIGNES[0] ?? '', LIGNES[2] ?? '']))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('grille : il manque les règles C02, A01 : une ligne par règle'),
+      ])
+    })
+
+    it('refuse une règle inconnue et une règle en double, avec les lignes', async () => {
+      await poser('X00.html', fiche)
+      await poserGrille(grille([...LIGNES, '| Z99 | appliquée | ET2 |', LIGNES[0] ?? '']))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'grille : ligne 11 : la règle « Z99 » n’est pas dans methode/regles.json',
+        ),
+        expect.stringContaining('grille : la règle C01 figure deux fois (lignes 7 et 12)'),
+      ])
+    })
+
+    it('refuse un statut qui n’est ni « appliquée » ni « écartée »', async () => {
+      await poser('X00.html', fiche)
+      await poserGrille(grille([...LIGNES.slice(0, 3), '| A01 | appliqué | PR1-2 |']))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'grille : ligne 10 (A01) : le statut « appliqué » n’est ni « appliquée » ni « écartée »',
+        ),
+      ])
+    })
+
+    it('refuse d’écarter une règle du noyau, en la nommant', async () => {
+      await poser('X00.html', fiche)
+      await poserGrille(
+        grille(['| C01 | écartée | pas de cycle dans ce bloc |', ...LIGNES.slice(1)]),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'grille : la règle C01 (Le cycle) est du noyau de la méthode : elle ne s’écarte pas',
+        ),
+      ])
+    })
+
+    it('refuse une troisième colonne vide, pour une règle écartée comme appliquée', async () => {
+      await poser('X00.html', fiche)
+      await poserGrille(
+        grille([...LIGNES.slice(0, 2), '| C11 | écartée |  |', '| A01 | appliquée ||']),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'grille : ligne 9 (C11) : la troisième colonne est vide : dis pourquoi la règle est écartée',
+        ),
+        expect.stringContaining(
+          'grille : ligne 10 (A01) : la troisième colonne est vide : dis où la règle est appliquée',
+        ),
+      ])
+    })
+
+    it('refuse une règle appliquée qui ne dit pas où, et une étape citée que le manifeste n’a pas', async () => {
+      await poser('X00.html', fiche)
+      await poserGrille(
+        grille([
+          '| C01 | appliquée | ET1 à ET7, PR1-1 et PR9-1 : le cycle entier |',
+          '| C02 | appliquée | partout dans la fiche |',
+          ...LIGNES.slice(2),
+        ]),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'grille : ligne 7 (C01) cite ET7, qui n’est pas une étape du manifeste',
+        ),
+        expect.stringContaining(
+          'grille : ligne 7 (C01) cite PR9-1, qui n’est ni un exercice ni un item de pratique du manifeste',
+        ),
+        expect.stringContaining(
+          'grille : ligne 8 (C02, appliquée) : la colonne ne dit pas où : cite une étape (ET2), un item de pratique (PR1-2), le manifeste ou l’alignement',
+        ),
+      ])
+    })
+
+    it('refuse une ligne du tableau qui ne se lit pas, avec son numéro', async () => {
+      await poser('X00.html', fiche)
+      await poserGrille(grille([LIGNES[0] ?? '', '| C02 appliquée ET2 |', ...LIGNES.slice(2)]))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'grille : la ligne 8 du tableau ne se lit pas : attendu « | <règle> |',
+        ),
+        expect.stringContaining('grille : il manque les règles C02'),
+      ])
+    })
+  })
 })
