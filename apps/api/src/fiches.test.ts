@@ -524,7 +524,7 @@ describe('vérification des fiches du dépôt', () => {
         ...lignes,
         '',
       ].join('\n')
-    /** La fiche du gabarit, modifiée (sa version monte) : la grille est exigée quand il y a une référence. */
+    /** La fiche du gabarit, modifiée (un titre change, sa version monte) : la grille est exigée quand il y a une référence. */
     let modifiee: string
     const poserGrille = (texte: string) =>
       writeFile(join(contenu, 'test', 'fiches', 'X00.grille.md'), texte)
@@ -534,7 +534,9 @@ describe('vérification des fiches du dépôt', () => {
     }
 
     beforeEach(async () => {
-      modifiee = fiche.replace('"version": 1', '"version": 2')
+      modifiee = fiche
+        .replace('"version": 1', '"version": 2')
+        .replace('À REMPLACER : titre du bloc', 'Titre du bloc')
       await poserRegles(REGLES)
     })
 
@@ -558,6 +560,22 @@ describe('vérification des fiches du dépôt', () => {
 
       await poser('X00.html', modifiee)
       expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+
+    it('n’exige pas de grille d’une fiche seulement réassemblée : blocs fixes, pont, version', async () => {
+      // Hier : une autre plomberie, un autre pont, version 1. Aujourd'hui : ceux du dépôt, version 2.
+      const hier = fiche
+        .replace('<script id="plomberie">', '<script id="plomberie">/* plomberie d’hier */')
+        .replace(PONT, `/*! janus-pont v1 ${'b'.repeat(64)} */\nwindow.JanusPont = { hier: true }`)
+      await poser('X00.html', fiche.replace('"version": 1', '"version": 2'))
+      expect(
+        await verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => hier }),
+      ).toEqual([])
+
+      await poser('X00.html', modifiee)
+      expect(
+        await verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => hier }),
+      ).toEqual([expect.stringContaining('pas de grille de la méthode')])
     })
 
     it('ne contrôle rien quand la formation n’a pas de methode/regles.json', async () => {

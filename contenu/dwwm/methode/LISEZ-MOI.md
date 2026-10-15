@@ -27,4 +27,4 @@ Une ou deux phrases libres, si utile.
 - `appliquée` cite au moins une étape (`ET2`), un item de pratique (`PR1-3`) ou le mot « manifeste » ou « alignement » ; chaque étape citée existe dans le manifeste.
 - `écartée` donne la raison ; une règle noyau ne s'écarte pas.
 
-`pnpm fiches:verifier` refuse une fiche nouvelle ou modifiée sans grille (avec `--base`, comme en CI), et toute grille incomplète ou mal formée. L'épreuve du gardien de la méthode (`prompts/fiches/gardien-methode.md`) vérifie ensuite que la grille dit vrai : la grille décrit, elle ne décide pas.
+`pnpm fiches:verifier` refuse une fiche nouvelle ou modifiée sans grille (avec `--base`, comme en CI), et toute grille incomplète ou mal formée. Une fiche seulement réassemblée (`pnpm fiches:assembler --forcer`, puis sa version) n'est pas modifiée au sens de la grille : l'apprenant n'y voit rien de nouveau ; si elle a déjà une grille, seule la version de l'en-tête change. L'épreuve du gardien de la méthode (`prompts/fiches/gardien-methode.md`) vérifie ensuite que la grille dit vrai : la grille décrit, elle ne décide pas.
