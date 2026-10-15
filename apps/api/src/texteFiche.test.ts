@@ -90,6 +90,58 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
     }
   })
 
+  it('lit aussi la perception, le pré-test et l’ensemble, dans l’ordre du manifeste', () => {
+    const texteManifeste = extraireManifeste(html) ?? ''
+    const manifeste = JSON.parse(texteManifeste) as {
+      etapes: { id: string; titre: string; type: string }[]
+    }
+    const [carte, explication, ...suite] = manifeste.etapes
+    if (carte === undefined || explication === undefined) throw new Error('gabarit')
+    manifeste.etapes = [
+      carte,
+      { id: 'ET7', titre: 'Perception', type: 'perception' },
+      { id: 'ET8', titre: 'Pré-test', type: 'pretest' },
+      explication,
+      { id: 'ET9', titre: 'L’ensemble', type: 'ensemble' },
+      ...suite,
+    ]
+    const page = html
+      .replace(texteManifeste, () => JSON.stringify(manifeste))
+      .replace(
+        '</body>',
+        [
+          '<template data-etape="ET7"><p>Regarde les huit lampes s’allumer.</p></template>',
+          '<template data-etape="ET8"><p>Parie : combien de valeurs ?</p></template>',
+          '<template data-etape="ET9"><p>Le tout : les poids font le nombre.</p></template>',
+          '</body>',
+        ].join(''),
+      )
+    const resultat = validerManifeste(JSON.parse(extraireManifeste(page) ?? 'null'))
+    if (!resultat.ok) throw new Error(resultat.problemes.map(({ message }) => message).join(' ; '))
+
+    const lu = texteDeLaFiche(page, resultat.manifeste)
+
+    // Le gabarit n'a pas de template ET1 : la carte ne donne rien à lire ici.
+    const positions = [
+      '### ET7 : Perception',
+      'Regarde les huit lampes s’allumer.',
+      '### ET8 : Pré-test',
+      'Parie : combien de valeurs ?',
+      '### ET2 : Explication',
+      '### ET9 : L’ensemble',
+      'Le tout : les poids font le nombre.',
+      '## Ce qu’on te demande',
+    ].map((titre) => lu.indexOf(titre))
+    expect(positions.every((position) => position >= 0)).toBe(true)
+    expect([...positions].sort((a, b) => a - b)).toEqual(positions)
+  })
+
+  it('ne prend pas pour un template ce que la plomberie en dit dans un commentaire', () => {
+    // La plomberie cite `<template data-etape="ET1">` : ce n'est pas la carte.
+    expect(texte).not.toContain('afficherCarte')
+    expect(texte).not.toContain('etapes[0].id')
+  })
+
   it('met tout l’enseignement avant la première question', () => {
     const positions = [
       '## Ce que la fiche enseigne',

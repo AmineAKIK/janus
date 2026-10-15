@@ -159,6 +159,30 @@ describe('retour ciblé', () => {
   })
 })
 
+describe('moments', () => {
+  it('nomme le moment de l’étape affichée et compte les étapes dans ce moment', async () => {
+    const { envoyer } = await afficher()
+
+    // B03 : pré-test puis explication forment « Comprendre » ; l'explication en est la deuxième.
+    await envoyer(etape('ET3'))
+
+    const fil = screen.getByRole('navigation', { name: 'Étapes de la fiche' })
+    expect(
+      within(fil).getByRole('button', { name: 'Explication · Comprendre · étape 2 sur 2' }),
+    ).toBeInTheDocument()
+    const moments = within(within(fil).getByRole('list', { name: 'Moments' })).getAllByRole(
+      'listitem',
+    )
+    expect(moments.map((moment) => moment.textContent.replace('✓ ', ''))).toEqual([
+      'Découvrir',
+      'Comprendre',
+      'S’entraîner',
+      'Prouver',
+    ])
+    expect(moments[1]).toHaveAttribute('aria-current', 'step')
+  })
+})
+
 describe('stockage indisponible', () => {
   it('prévient que les réponses ne peuvent pas être gardées', async () => {
     await afficher({ stockageIndisponible: true })

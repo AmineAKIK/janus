@@ -106,8 +106,10 @@ export const texteDesaccords = (desaccords: number, relues: number) =>
 
 const LIBELLE_ETAPE: Readonly<Record<TypeEtape, string>> = {
   carte: 'Carte',
+  perception: 'Perception',
   pretest: 'Pré-test',
   explication: 'Explication',
+  ensemble: 'L’ensemble',
   pratique: 'Pratique',
   atelier: 'Atelier',
   aisance: 'Aisance',

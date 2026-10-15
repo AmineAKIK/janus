@@ -1,4 +1,5 @@
 import type { Avancement, TypeEtape } from '@janus/contrats'
+import { MOMENTS, momentDeLEtape } from '@janus/contrats'
 import { useState } from 'react'
 import styles from './Bloc.module.css'
 import { TEXTES_BLOC } from './textes.ts'
@@ -19,8 +20,10 @@ function estFaite(
   switch (type) {
     // Une étape de cours n'a pas de preuve : elle est faite quand elle a été affichée.
     case 'carte':
+    case 'perception':
     case 'pretest':
     case 'explication':
+    case 'ensemble':
       return vues.has(id)
     case 'restitution':
       return avancement.restitution !== null
@@ -77,7 +80,15 @@ export function etapesARevoir(
 
 const AUCUNE: ReadonlySet<string> = new Set()
 
-/** Le fil d'étapes : un onglet par étape du manifeste, qui demande à la page de l'afficher. */
+/** Les étapes d'un moment, dans l'ordre du fil. */
+function etapesDuMoment(etapes: readonly EtapeAffichee[], moment: string): EtapeAffichee[] {
+  return etapes.filter(({ type }) => momentDeLEtape(type).id === moment)
+}
+
+/**
+ * Le fil d'étapes : les quatre moments de la méthode, puis un onglet par étape du manifeste, qui
+ * demande à la page de l'afficher. Un moment est coché quand toutes ses étapes sont faites.
+ */
 export function FilEtapes({
   etapes,
   courante,
@@ -107,12 +118,30 @@ export function FilEtapes({
   const faites = etapesFaites(etapes, avancement, vues, bilanFait)
   const active = courante ?? etapes[0]?.id
   const [ouvert, setOuvert] = useState(false)
+  const etapeActive = etapes.find(({ id }) => id === active) ?? etapes[0]
+  const moment = etapeActive === undefined ? MOMENTS[0] : momentDeLEtape(etapeActive.type)
+  const duMoment = etapesDuMoment(etapes, moment.id)
   const rang = Math.max(
     0,
-    etapes.findIndex(({ id }) => id === active),
+    duMoment.findIndex(({ id }) => id === etapeActive?.id),
   )
   return (
     <nav aria-label={TEXTES_BLOC.etapes} className={styles['fil']} data-ouvert={ouvert}>
+      <ol
+        className={`${styles['moments'] ?? ''} texte-legende-12`}
+        aria-label={TEXTES_BLOC.moments}
+      >
+        {MOMENTS.map((candidat) => {
+          const siennes = etapesDuMoment(etapes, candidat.id)
+          const fait = siennes.length > 0 && siennes.every(({ id }) => faites.has(id))
+          return (
+            <li key={candidat.id} aria-current={candidat.id === moment.id ? 'step' : undefined}>
+              {fait && <span aria-hidden="true">{TEXTES_BLOC.faite} </span>}
+              {candidat.libelle}
+            </li>
+          )
+        })}
+      </ol>
       {/* Étroit, le fil tient sur une ligne : l'étape en cours, et la liste au toucher. */}
       <button
         type="button"
@@ -123,10 +152,17 @@ export function FilEtapes({
           setOuvert((courant) => !courant)
         }}
       >
-        <span>{TEXTES_BLOC.etapeSurTotal(etapes[rang]?.titre ?? '', rang + 1, etapes.length)}</span>
+        <span>
+          {TEXTES_BLOC.etapeSurTotal(
+            etapeActive?.titre ?? '',
+            moment.libelle,
+            rang + 1,
+            duMoment.length,
+          )}
+        </span>
         <span aria-hidden="true">{ouvert ? '▴' : '▾'}</span>
       </button>
-      <ol id="liste-etapes" className={styles['etapes']}>
+      <ol id="liste-etapes" className={styles['etapes']} aria-label={TEXTES_BLOC.listeEtapes}>
         {etapes.map(({ id, titre }) => (
           <li key={id}>
             <button

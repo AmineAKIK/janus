@@ -1,4 +1,4 @@
-import type { Manifeste } from '@janus/contrats'
+import type { Manifeste, TypeEtape } from '@janus/contrats'
 
 // Le texte d'une fiche tel que l'apprenant le lit, pour l'épreuve de l'apprenant neuf (LISEZ-MOI du
 // gabarit) : ce que la fiche enseigne, puis tout ce qu'elle demande, sans aucune réponse. Ni les
@@ -75,12 +75,15 @@ function imagesEnTexte(html: string): string {
   })
 }
 
+/** La page sans ses commentaires, ses scripts ni ses styles : ce qui reste est ce que le navigateur montre. */
+function sansCommentairesScriptsNiStyles(html: string): string {
+  return html.replace(/<!--[\s\S]*?-->/g, '').replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, '')
+}
+
 /** Le HTML d'une étape en texte simple : un paragraphe par ligne, les écrans en titres, les outils nommés. */
 function enTexte(html: string): string {
   return decoder(
-    imagesEnTexte(
-      html.replace(/<!--[\s\S]*?-->/g, '').replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, ''),
-    )
+    imagesEnTexte(sansCommentairesScriptsNiStyles(html))
       .replace(/\s+/g, ' ')
       .replace(
         /<div\b[^>]*\bdata-widget\s*=\s*["']([^"']+)["'][^>]*>/gi,
@@ -102,15 +105,18 @@ function enTexte(html: string): string {
     .join('\n')
 }
 
-/** Le contenu des `<template data-etape>` et `<template data-item>` de la page, par identifiant. */
+/**
+ * Le contenu des `<template data-etape>` et `<template data-item>` de la page, par identifiant. Les
+ * scripts et les styles sont écartés d'abord : la plomberie cite `<template data-etape="ET1">` dans un
+ * commentaire, ce qui n'est pas un template.
+ */
 function templates(html: string): {
   etapes: ReadonlyMap<string, string>
   items: ReadonlyMap<string, string>
 } {
   const etapes = new Map<string, string>()
   const items = new Map<string, string>()
-  const sansCommentaires = html.replace(/<!--[\s\S]*?-->/g, '')
-  for (const [, attributs, contenu] of sansCommentaires.matchAll(
+  for (const [, attributs, contenu] of sansCommentairesScriptsNiStyles(html).matchAll(
     /<template\b([^>]*)>([\s\S]*?)<\/template>/gi,
   )) {
     const etape = /\bdata-etape\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
@@ -121,7 +127,19 @@ function templates(html: string): {
   return { etapes, items }
 }
 
-/** Ce que lit l'apprenant neuf : l'objectif, la carte et les explications, puis tout ce qu'on lui demande. */
+/** Les étapes dont le template est du texte à lire, dans l'ordre du manifeste : ce que la fiche enseigne. */
+const ETAPES_LUES: ReadonlySet<TypeEtape> = new Set<TypeEtape>([
+  'carte',
+  'perception',
+  'pretest',
+  'explication',
+  'ensemble',
+])
+
+/**
+ * Ce que lit l'apprenant neuf : l'objectif, puis les étapes à lire (carte, perception, pré-test,
+ * explications, ensemble) dans l'ordre du manifeste, puis tout ce qu'on lui demande.
+ */
 export function texteDeLaFiche(html: string, manifeste: Manifeste): string {
   const { etapes, items } = templates(html)
   const lignes = [
@@ -132,7 +150,7 @@ export function texteDeLaFiche(html: string, manifeste: Manifeste): string {
     '## Ce que la fiche enseigne',
   ]
   for (const etape of manifeste.etapes) {
-    if (etape.type !== 'carte' && etape.type !== 'explication') continue
+    if (!ETAPES_LUES.has(etape.type)) continue
     const contenu = etapes.get(etape.id)
     if (contenu === undefined) continue
     lignes.push('', `### ${etape.id} : ${etape.titre}`, '', enTexte(contenu))
