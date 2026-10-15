@@ -6,6 +6,8 @@ import type { Manifeste, TypeEtape } from '@janus/contrats'
 import { blocsFixes, contenuDuBloc, enTeteDuPont, pontEmbarque } from './assemblage.ts'
 import type { BlocFixe, EnTetePont } from './assemblage.ts'
 import { extraireManifeste } from './domaines/catalogue/composition.ts'
+import { CHEMIN_REGLES, lireLesRegles, nomDeLaGrille, verifierGrille } from './grille.ts'
+import type { RegleDeLaMethode } from './grille.ts'
 
 /** Le dossier des fiches d'une formation, à côté de son catalogue : `contenu/<formation>/fiches/`. */
 export const DOSSIER_FICHES = 'fiches'
@@ -335,17 +337,42 @@ function verifierBlocsFixes(
   }
 }
 
-/** Le gabarit d'une formation (`contenu/<formation>/gabarit/fiche.html`), ou `undefined` si elle n'en a pas. */
-export async function lireLeGabarit(
-  dossierContenu: string,
-  formation: string,
-): Promise<string | undefined> {
+/** Le contenu d'un fichier facultatif, ou `undefined` s'il n'existe pas ; toute autre erreur remonte. */
+async function lireSiPresent(chemin: string): Promise<string | undefined> {
   try {
-    return await readFile(join(dossierContenu, formation, 'gabarit', 'fiche.html'), 'utf8')
+    return await readFile(chemin, 'utf8')
   } catch (cause) {
     if ((cause as NodeJS.ErrnoException).code === 'ENOENT') return undefined
     throw cause
   }
+}
+
+/** Le gabarit d'une formation (`contenu/<formation>/gabarit/fiche.html`), ou `undefined` si elle n'en a pas. */
+export function lireLeGabarit(
+  dossierContenu: string,
+  formation: string,
+): Promise<string | undefined> {
+  return lireSiPresent(join(dossierContenu, formation, 'gabarit', 'fiche.html'))
+}
+
+/**
+ * Les règles de la méthode d'une formation (`methode/regles.json`), par identifiant. Sans ce fichier,
+ * la formation n'exige pas de grille ; s'il ne se lit pas, un seul problème le dit pour la formation et
+ * aucune grille n'est contrôlée : on ne juge pas les fiches à l'aune de règles qu'on ne lit pas.
+ */
+async function reglesDeLaMethode(
+  dossierContenu: string,
+  formation: string,
+  signaler: (message: string) => void,
+): Promise<ReadonlyMap<string, RegleDeLaMethode> | undefined> {
+  const texte = await lireSiPresent(join(dossierContenu, formation, CHEMIN_REGLES))
+  if (texte === undefined) return undefined
+  const lecture = lireLesRegles(texte)
+  if (!lecture.ok) {
+    signaler(lecture.probleme)
+    return undefined
+  }
+  return lecture.regles
 }
 
 export interface OptionsVerification {
@@ -355,7 +382,8 @@ export interface OptionsVerification {
   readonly pont?: string
   /**
    * Le contenu d'une fiche à une révision de référence (la branche de base), ou `undefined` si elle
-   * n'y existait pas. Sert à refuser un contenu modifié sans que la version du manifeste change.
+   * n'y existait pas. Sert à refuser un contenu modifié sans que la version du manifeste change, et
+   * à exiger la grille de la méthode d'une fiche nouvelle ou modifiée.
    */
   readonly contenuDeReference?: (nom: string) => string | undefined
 }
@@ -390,6 +418,9 @@ export async function verifierLesFiches({
     )
     const gabarit = await lireLeGabarit(dossierContenu, formation)
     const fixes = gabarit === undefined ? undefined : blocsFixes(gabarit)
+    const regles = await reglesDeLaMethode(dossierContenu, formation, (message) =>
+      problemes.push(`${formation}/${CHEMIN_REGLES} : ${message}`),
+    )
     const vues = new Map<string, string>()
     for (const fiche of fiches) {
       const signaler = (message: string) => problemes.push(`${fiche.nom} : ${message}`)
@@ -441,6 +472,20 @@ export async function verifierLesFiches({
       verifierAlignement(resultat.manifeste, fiche.html, signaler)
 
       const avant = contenuDeReference?.(fiche.nom)
+      if (regles !== undefined) {
+        const grille = await lireSiPresent(
+          join(dossierContenu, formation, DOSSIER_FICHES, nomDeLaGrille(bloc)),
+        )
+        if (grille !== undefined) {
+          verifierGrille(grille, regles, resultat.manifeste, signaler)
+        } else if (contenuDeReference !== undefined && avant !== fiche.html) {
+          // Nouvelle (pas de référence) ou modifiée : la grille se refait avec la fiche. Sans
+          // référence (lancement local sans `--base`), on ne sait pas si la fiche a changé : rien.
+          signaler(
+            `pas de grille de la méthode (${nomDeLaGrille(bloc)}) : une fiche nouvelle ou modifiée ne se fusionne pas sans sa grille, une ligne par règle de ${CHEMIN_REGLES} (« Concevoir une fiche » dans AGENTS.md).`,
+          )
+        }
+      }
       if (avant !== undefined && avant !== fiche.html) {
         const ancienne = validerManifeste(JSON.parse(extraireManifeste(avant) ?? 'null'))
         if (ancienne.ok && ancienne.manifeste.version === version) {
