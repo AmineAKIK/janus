@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process'
 import { readdir, readFile } from 'node:fs/promises'
 import { join, relative } from 'node:path'
-import { Catalogue, validerManifeste } from '@janus/contrats'
+import { Catalogue, validerAlignement, validerManifeste } from '@janus/contrats'
 import type { Manifeste, TypeEtape } from '@janus/contrats'
 import { blocsFixes, contenuDuBloc, enTeteDuPont, pontEmbarque } from './assemblage.ts'
 import type { BlocFixe, EnTetePont } from './assemblage.ts'
@@ -134,6 +134,98 @@ function verifierAdressesExternes(html: string, signaler: (message: string) => v
     signaler(
       `une adresse externe est chargée ou liée (${adresse}) : la fiche n’a aucun accès réseau, embarque le fichier en data: ; un lien vers un site s’écrit <a data-lien="https://…">.`,
     )
+  }
+}
+
+/**
+ * Une fiche se suffit à elle-même (Amine, 14 octobre 2026) : un cours sert à tracer le chemin et à fixer
+ * l'objectif, jamais de lecture obligée. Ni la page ni le manifeste (que lit le correcteur) ne renvoient
+ * donc à un support extérieur. La liste reprend les renvois déjà trouvés dans une fiche et s'allonge à
+ * chaque nouveau ; elle ne remplace pas l'épreuve de l'apprenant neuf (LISEZ-MOI du gabarit).
+ */
+const RENVOIS_A_UN_COURS: readonly RegExp[] = [
+  /\bStudi\b/gi,
+  /\bcorrigé officiel\b/gi,
+  /\bsolution\s+n[°o]\s*\d+/gi,
+  /\bpages\s+\d+/gi,
+  /\bp\.\s?\d+/gi,
+  /\bP\d+\.\d+\b/g,
+]
+
+/** Chaque texte du manifeste, avec son chemin (`sources[0].titre`), dans l'ordre du fichier. */
+function textesDuManifeste(
+  valeur: unknown,
+  chemin: string,
+  rendre: (chemin: string, texte: string) => void,
+): void {
+  if (typeof valeur === 'string') rendre(chemin, valeur)
+  else if (Array.isArray(valeur))
+    valeur.forEach((element, index) => {
+      textesDuManifeste(element, `${chemin}[${String(index)}]`, rendre)
+    })
+  else if (typeof valeur === 'object' && valeur !== null)
+    for (const [cle, element] of Object.entries(valeur))
+      textesDuManifeste(element, chemin === '' ? cle : `${chemin}.${cle}`, rendre)
+}
+
+function verifierRenvoisAuxCours(
+  manifeste: Manifeste,
+  html: string,
+  signaler: (message: string) => void,
+): void {
+  const chercher = (texte: string, ou: string) => {
+    const vus = new Set<string>()
+    for (const motif of RENVOIS_A_UN_COURS) {
+      for (const [trouve] of texte.matchAll(motif)) {
+        if (vus.has(trouve)) continue
+        vus.add(trouve)
+        signaler(
+          `la fiche renvoie à un support extérieur (« ${trouve} » dans ${ou}) : une fiche se suffit à elle-même, un cours ne sert qu’à fixer l’objectif et à vérifier les faits.`,
+        )
+      }
+    }
+  }
+  chercher(
+    sansScriptsNiCommentaires(html).replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ''),
+    'le texte affiché',
+  )
+  textesDuManifeste(manifeste, '', (chemin, texte) => {
+    chercher(texte, chemin)
+  })
+}
+
+/** Le texte JSON d'un `<script type="application/json" id="…">` de la page. */
+function blocJson(html: string, id: string): string | undefined {
+  for (const [, attributs, contenu] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+    const type = /\btype\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
+    const identifiant = /\bid\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
+    if (type === 'application/json' && identifiant === id) return contenu
+  }
+  return undefined
+}
+
+/** Le tableau d'alignement (`<script id="alignement">`) confronté au manifeste : voir `validerAlignement`. */
+function verifierAlignement(
+  manifeste: Manifeste,
+  html: string,
+  signaler: (message: string) => void,
+): void {
+  const texte = blocJson(html, 'alignement')
+  if (texte === undefined) {
+    signaler(
+      'pas de tableau d’alignement (<script type="application/json" id="alignement">) : il se remplit avant la fiche, voir « Créer la fiche d’un bloc » dans le LISEZ-MOI du gabarit.',
+    )
+    return
+  }
+  let brut: unknown
+  try {
+    brut = JSON.parse(texte)
+  } catch {
+    signaler('le tableau d’alignement n’est pas du JSON valide.')
+    return
+  }
+  for (const { chemin, message } of validerAlignement(brut, manifeste)) {
+    signaler(chemin === '' ? `alignement : ${message}` : `alignement.${chemin} : ${message}`)
   }
 }
 
@@ -339,6 +431,8 @@ export async function verifierLesFiches({
       }
       verifierTemplates(resultat.manifeste, fiche.html, signaler)
       verifierAdressesExternes(fiche.html, signaler)
+      verifierRenvoisAuxCours(resultat.manifeste, fiche.html, signaler)
+      verifierAlignement(resultat.manifeste, fiche.html, signaler)
 
       const avant = contenuDeReference?.(fiche.nom)
       if (avant !== undefined && avant !== fiche.html) {

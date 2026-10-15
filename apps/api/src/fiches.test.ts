@@ -35,10 +35,14 @@ const PONT = `/*! janus-pont v1 ${EMPREINTE} */\nwindow.JanusPont = {}`
 type Manifeste = {
   version: number
   pont: number
+  contexte_ia: string
+  sources: { id: string; titre: string }[]
   restitution: { id: string; question: string; attendu: string }[]
   rappel: { id: string; question: string; attendu: string; erreurs: string[] }[]
   differees: { id: string; consigne: string; attendu: string }[]
 }
+
+type Alignement = { notions: { id: string; questions: string[] }[] }
 
 /** La fiche avec son manifeste modifié (le texte JSON est remplacé dans la page). */
 function avecManifeste(html: string, modifier: (manifeste: Manifeste) => void): string {
@@ -46,6 +50,24 @@ function avecManifeste(html: string, modifier: (manifeste: Manifeste) => void): 
   const manifeste = JSON.parse(texte) as Manifeste
   modifier(manifeste)
   return html.replace(texte, () => JSON.stringify(manifeste, null, 2))
+}
+
+const TABLEAU = /(<script id="alignement" type="application\/json">)([\s\S]*?)(<\/script>)/
+
+/** La fiche avec son tableau d'alignement modifié. */
+function avecAlignement(html: string, modifier: (alignement: Alignement) => void): string {
+  const texte = TABLEAU.exec(html)?.[2]
+  if (texte === undefined) throw new Error('Le gabarit n’a pas de tableau d’alignement.')
+  const alignement = JSON.parse(texte) as Alignement
+  modifier(alignement)
+  return html.replace(texte, () => JSON.stringify(alignement, null, 2))
+}
+
+/** Les questions d'une notion du tableau, modifiables en place. */
+function questionsDe(alignement: Alignement, id: string): string[] {
+  const notion = alignement.notions.find((n) => n.id === id)
+  if (notion === undefined) throw new Error(`Pas de notion ${id} dans le gabarit.`)
+  return notion.questions
 }
 
 /** Un `<template data-…="id">…</template>` et son contenu, retirés de la page. */
@@ -201,6 +223,84 @@ describe('vérification des fiches du dépôt', () => {
         fiche.replace(
           'window.JanusPont = {}',
           'window.JanusPont = { exemple: "https://exemple.test" }; x.src = "https://exemple.test/x.js"',
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+  })
+
+  describe('ce que la fiche enseigne et ce qu’elle interroge', () => {
+    it('refuse une fiche sans tableau d’alignement', async () => {
+      await poser('X00.html', fiche.replace(TABLEAU, ''))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('test/fiches/X00.html : pas de tableau d’alignement'),
+      ])
+    })
+
+    it('refuse un tableau qui n’est pas du JSON', async () => {
+      await poser('X00.html', fiche.replace(TABLEAU, '$1{ "bloc": "X00", }$3'))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('le tableau d’alignement n’est pas du JSON valide'),
+      ])
+    })
+
+    it('refuse une question que le tableau ne rattache à aucune notion, avec le champ en cause', async () => {
+      await poser(
+        'X00.html',
+        avecAlignement(fiche, (alignement) => {
+          const questions = questionsDe(alignement, 'N2')
+          questions.splice(questions.indexOf('R5'), 1)
+          questionsDe(alignement, 'N1').push('R9')
+        }),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        'test/fiches/X00.html : alignement.notions[0].questions : R9 n’est ni une question ni une carte du manifeste.',
+        expect.stringContaining(
+          'test/fiches/X00.html : alignement : R5 (restitution) n’est rattachée à aucune notion',
+        ),
+      ])
+    })
+  })
+
+  describe('une fiche qui se suffit à elle-même', () => {
+    it('refuse tout renvoi à un cours, dans la page comme dans le manifeste', async () => {
+      await poser(
+        'X00.html',
+        avecManifeste(
+          fiche.replace(
+            "<p>À REMPLACER : l'explication du bloc.</p>",
+            '<details><summary>Ce que Studi écrit</summary><p>Relis les pages 3 à 5.</p></details>',
+          ),
+          (manifeste) => {
+            manifeste.contexte_ia =
+              'Erreur de la Solution n°2 à ne pas répéter ; on y revient en P1.4.'
+            manifeste.sources = [{ id: 'S1', titre: 'Jeux de logique, p. 3' }]
+          },
+        ),
+      )
+
+      const problemes = await verifierLesFiches({ dossierContenu: contenu })
+
+      expect(problemes).toEqual([
+        expect.stringContaining('« Studi » dans le texte affiché'),
+        expect.stringContaining('« pages 3 » dans le texte affiché'),
+        expect.stringContaining('« Solution n°2 » dans contexte_ia'),
+        expect.stringContaining('« P1.4 » dans contexte_ia'),
+        expect.stringContaining('« p. 3 » dans sources[0].titre'),
+      ])
+      expect(problemes[0]).toContain('se suffit à elle-même')
+    })
+
+    it('ne prend pas les mots du métier pour un renvoi', async () => {
+      await poser(
+        'X00.html',
+        fiche.replace(
+          "<p>À REMPLACER : l'explication du bloc.</p>",
+          '<p>Une page 404, un fichier PDF, HTTP/1.1, la page 3 de ton carnet : rien de tout ça ne renvoie à un cours.</p>',
         ),
       )
 
@@ -373,14 +473,17 @@ describe('vérification des fiches du dépôt', () => {
     it('accepte une question ajoutée, et un texte qui ne change que d’espaces ou de casse', async () => {
       await poser(
         'X00.html',
-        avecManifeste(fiche, (manifeste) => {
-          manifeste.version = 2
-          const [premiere] = manifeste.restitution
-          const [q1] = manifeste.rappel
-          if (premiere === undefined || q1 === undefined) throw new Error('gabarit')
-          premiere.question = `  ${premiere.question.toUpperCase()}  `
-          manifeste.rappel.push({ ...q1, id: 'Q7' })
-        }),
+        avecAlignement(
+          avecManifeste(fiche, (manifeste) => {
+            manifeste.version = 2
+            const [premiere] = manifeste.restitution
+            const [q1] = manifeste.rappel
+            if (premiere === undefined || q1 === undefined) throw new Error('gabarit')
+            premiere.question = `  ${premiere.question.toUpperCase()}  `
+            manifeste.rappel.push({ ...q1, id: 'Q7' })
+          }),
+          (alignement) => questionsDe(alignement, 'N1').push('Q7'),
+        ),
       )
 
       expect(

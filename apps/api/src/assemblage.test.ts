@@ -58,10 +58,15 @@ describe('injecterLePont', () => {
 })
 
 describe('nouvelleFiche', () => {
-  it('donne le code du bloc au manifeste et assemble le pont', () => {
+  it('donne le code du bloc au manifeste et au tableau d’alignement, et assemble le pont', () => {
     const html = nouvelleFiche(GABARIT, 'B03', 'window.JanusPont = {}')
     const manifeste = JSON.parse(extraireManifeste(html) ?? 'null') as { bloc: string }
+    const tableau = /<script id="alignement" type="application\/json">([\s\S]*?)<\/script>/.exec(
+      html,
+    )?.[1]
     expect(manifeste.bloc).toBe('B03')
+    expect((JSON.parse(tableau ?? 'null') as { bloc: string }).bloc).toBe('B03')
+    expect(html).not.toContain('X00')
     expect(pontEstPresent(html)).toBe(true)
   })
 
