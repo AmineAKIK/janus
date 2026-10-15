@@ -86,8 +86,10 @@ export type TranchageCorrection = FaitDe<'correction_tranchee'>
 
 const ETAPES_DE_COURS: ReadonlySet<TypeEtape> = new Set([
   'carte',
+  'perception',
   'pretest',
   'explication',
+  'ensemble',
   'pratique',
   'atelier',
   'aisance',

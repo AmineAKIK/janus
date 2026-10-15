@@ -6,8 +6,10 @@ import { etapesARevoir, etapesFaites, FilEtapes } from './FilEtapes.tsx'
 
 const ETAPES = [
   { id: 'ET1', titre: 'Carte', type: 'carte' as const },
+  { id: 'ETP', titre: 'Perception', type: 'perception' as const },
   { id: 'ET2', titre: 'Pré-test', type: 'pretest' as const },
   { id: 'ET3', titre: 'Explication', type: 'explication' as const },
+  { id: 'ETE', titre: 'L’ensemble', type: 'ensemble' as const },
   { id: 'ET4', titre: 'Pratique', type: 'pratique' as const },
   { id: 'ET5', titre: 'Aisance', type: 'aisance' as const },
   { id: 'ET6', titre: 'Restitution', type: 'restitution' as const },
@@ -35,6 +37,7 @@ describe('etapesFaites', () => {
     expect(etapesFaites(ETAPES, { ...RIEN, etapes_vues: ['ET1'] }, ['ET3'], false)).toEqual(
       new Set(['ET1', 'ET3']),
     )
+    expect(etapesFaites(ETAPES, RIEN, ['ETP', 'ETE'], false)).toEqual(new Set(['ETP', 'ETE']))
   })
 
   it('compte une étape à preuve seulement quand le serveur date sa preuve', () => {
@@ -95,12 +98,12 @@ describe('FilEtapes', () => {
       />,
     )
 
-    const onglets = within(screen.getByRole('list')).getAllByRole('button')
+    const onglets = within(screen.getByRole('list', { name: 'Étapes' })).getAllByRole('button')
     expect(onglets.map((onglet) => onglet.textContent)).toEqual([
       'Carte',
+      'Perception',
       'Pré-test',
       'Explication',
-      'Pratique',
     ])
     expect(onglets[0]).toHaveAttribute('aria-current', 'step')
     expect(onglets[1]).not.toHaveAttribute('aria-current')
@@ -147,6 +150,58 @@ describe('FilEtapes', () => {
     expect(explication).toHaveAttribute('title', 'À revoir')
     expect(screen.getByRole('button', { name: 'Restitution' }).textContent).toBe('↺ Restitution')
     expect(screen.getByRole('button', { name: 'Carte' })).not.toHaveAttribute('title')
+  })
+
+  it('nomme le moment de l’étape courante et compte les étapes dans ce moment', () => {
+    render(
+      <FilEtapes
+        etapes={ETAPES}
+        courante="ET3"
+        avancement={RIEN}
+        vues={[]}
+        bilanFait={false}
+        surChoix={() => undefined}
+      />,
+    )
+
+    // Comprendre : pré-test, explication, l'ensemble ; l'explication est la deuxième.
+    expect(
+      screen.getByRole('button', { name: 'Explication · Comprendre · étape 2 sur 3' }),
+    ).toBeInTheDocument()
+    const moments = within(screen.getByRole('list', { name: 'Moments' })).getAllByRole('listitem')
+    expect(moments.map((moment) => moment.textContent)).toEqual([
+      'Découvrir',
+      'Comprendre',
+      'S’entraîner',
+      'Prouver',
+    ])
+    expect(moments[1]).toHaveAttribute('aria-current', 'step')
+    expect(moments[0]).not.toHaveAttribute('aria-current')
+  })
+
+  it('coche un moment quand toutes ses étapes sont faites, pas avant', () => {
+    render(
+      <FilEtapes
+        etapes={ETAPES}
+        courante="ET4"
+        avancement={{ ...RIEN, etapes_vues: ['ET1', 'ETP', 'ET2'] }}
+        vues={['ET3']}
+        bilanFait={false}
+        surChoix={() => undefined}
+      />,
+    )
+
+    const moments = within(screen.getByRole('list', { name: 'Moments' })).getAllByRole('listitem')
+    expect(moments.map((moment) => moment.textContent)).toEqual([
+      '✓ Découvrir',
+      'Comprendre',
+      'S’entraîner',
+      'Prouver',
+    ])
+    expect(moments[2]).toHaveAttribute('aria-current', 'step')
+    expect(
+      screen.getByRole('button', { name: 'Pratique · S’entraîner · étape 1 sur 2' }),
+    ).toBeInTheDocument()
   })
 
   it('demande l’étape cliquée', async () => {

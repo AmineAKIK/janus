@@ -14,8 +14,10 @@ export type GroupeTemps = 'lecture' | 'pratique' | 'restitution'
 /** Les types d'étape regroupés comme l'écran : Lecture, Pratique, Restitution. */
 export const GROUPE_DE_L_ETAPE: Readonly<Record<TypeEtape, GroupeTemps>> = {
   carte: 'lecture',
+  perception: 'lecture',
   pretest: 'lecture',
   explication: 'lecture',
+  ensemble: 'lecture',
   pratique: 'pratique',
   atelier: 'pratique',
   aisance: 'pratique',
