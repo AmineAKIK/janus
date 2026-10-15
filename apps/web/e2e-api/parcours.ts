@@ -37,13 +37,17 @@ export async function ouvrirEtape(page: Page, etape: string) {
   return fiche
 }
 
-/** Répond à chaque question de la série affichée, avec la réponse attendue du manifeste. */
+/**
+ * Répond à chaque question de la série affichée, avec la réponse attendue du manifeste. La fiche les
+ * pose une à la fois : la suivante paraît sous la précédente, une fois sa correction arrivée.
+ */
 export async function repondreALaSerie(page: Page, etape: string, questions: readonly Question[]) {
   const fiche = await ouvrirEtape(page, etape)
   const items = fiche.locator('.item')
-  await expect(items).toHaveCount(questions.length)
+  await expect(items).toHaveCount(1)
   for (const [rang, question] of questions.entries()) {
     const item = items.nth(rang)
+    await expect(item.locator('label strong')).toHaveText(question.question)
     await item
       .locator('textarea')
       .fill(`${question.attendu} Voilà ce que j’en retiens, avec mes mots.`)
@@ -51,6 +55,7 @@ export async function repondreALaSerie(page: Page, etape: string, questions: rea
     await item.getByRole('button', { name: 'Envoyer' }).click()
     await expect(item.locator('.correction')).toBeVisible()
   }
+  await expect(items).toHaveCount(questions.length)
 }
 
 /**

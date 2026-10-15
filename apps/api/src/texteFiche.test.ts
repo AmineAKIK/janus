@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { validerManifeste } from '@janus/contrats'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { extraireManifeste } from './domaines/catalogue/adaptateur.ts'
-import { texteDeLaFiche } from './texteFiche.ts'
+import { CE_QUE_FAIT_LE_GABARIT, texteDeLaFiche } from './texteFiche.ts'
 
 const GABARIT = join(
   dirname(fileURLToPath(import.meta.url)),
@@ -55,8 +55,11 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
     texte = texteDeLaFiche(html, resultat.manifeste)
   })
 
-  it('donne l’objectif, puis chaque explication, écran par écran, en texte simple', () => {
-    expect(texte).toContain('Objectif : À REMPLACER : ce que tu sauras faire à la fin')
+  it('donne chaque étape dans l’ordre, les explications écran par écran, en texte simple', () => {
+    // Sans template, la carte montre l'objectif puis la liste des étapes.
+    expect(texte).toContain(
+      '### ET1 : Carte du bloc\n\nÀ REMPLACER : ce que tu sauras faire à la fin, vérifiable en une phrase.\n- Carte du bloc\n- Explication',
+    )
     expect(texte).toContain('### ET2 : Explication')
     expect(texte).toContain('#### Les poids')
     expect(texte).toContain('Un octet a 8 bits & 256 valeurs.')
@@ -90,18 +93,21 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
     }
   })
 
-  it('lit aussi la perception, le pré-test et l’ensemble, dans l’ordre du manifeste', () => {
+  it('lit la perception, le pré-test, l’aisance et l’ensemble à leur place, l’objectif replié dans la carte', () => {
     const texteManifeste = extraireManifeste(html) ?? ''
     const manifeste = JSON.parse(texteManifeste) as {
       etapes: { id: string; titre: string; type: string }[]
     }
-    const [carte, explication, ...suite] = manifeste.etapes
-    if (carte === undefined || explication === undefined) throw new Error('gabarit')
+    const [carte, explication, pratique, ...suite] = manifeste.etapes
+    if (carte === undefined || explication === undefined || pratique === undefined)
+      throw new Error('gabarit')
     manifeste.etapes = [
-      carte,
       { id: 'ET7', titre: 'Perception', type: 'perception' },
+      carte,
       { id: 'ET8', titre: 'Pré-test', type: 'pretest' },
       explication,
+      pratique,
+      { id: 'ET10', titre: 'Aisance', type: 'aisance' },
       { id: 'ET9', titre: 'L’ensemble', type: 'ensemble' },
       ...suite,
     ]
@@ -110,8 +116,10 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
       .replace(
         '</body>',
         [
+          '<template data-etape="ET1"><p>Tu es ici : le premier bloc.</p></template>',
           '<template data-etape="ET7"><p>Regarde les huit lampes s’allumer.</p></template>',
           '<template data-etape="ET8"><p>Parie : combien de valeurs ?</p></template>',
+          '<template data-etape="ET10"><p>Des séries chronométrées.</p></template>',
           '<template data-etape="ET9"><p>Le tout : les poids font le nombre.</p></template>',
           '</body>',
         ].join(''),
@@ -121,15 +129,23 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
 
     const lu = texteDeLaFiche(page, resultat.manifeste)
 
-    // Le gabarit n'a pas de template ET1 : la carte ne donne rien à lire ici.
     const positions = [
       '### ET7 : Perception',
       'Regarde les huit lampes s’allumer.',
+      '### ET1 : Carte du bloc',
+      'Tu es ici : le premier bloc.\nReplié sous « Ce qui sera vérifié » : À REMPLACER',
       '### ET8 : Pré-test',
       'Parie : combien de valeurs ?',
       '### ET2 : Explication',
+      '### ET3 : Pratique\n\nReplié sous « Ce qui sera vérifié » : À REMPLACER',
+      'plus bas, dans « Ce qu’on te demande », partie Pratique.',
+      '### ET10 : Aisance',
+      'Des séries chronométrées.',
       '### ET9 : L’ensemble',
       'Le tout : les poids font le nombre.',
+      '### ET4 : Restitution',
+      'Le cours est masqué de ta première réponse à la dernière.',
+      '### ET6 : Bilan',
       '## Ce qu’on te demande',
     ].map((titre) => lu.indexOf(titre))
     expect(positions.every((position) => position >= 0)).toBe(true)
@@ -142,11 +158,12 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
     expect(texte).not.toContain('etapes[0].id')
   })
 
-  it('ne montre à l’apprenant neuf ni coup de pouce, ni retour, ni variante', () => {
-    expect(texte).not.toContain('## Ce que la page montre sur demande')
+  it('ne montre à l’apprenant neuf ni coup de pouce, ni retour, ni variante, ni le gabarit', () => {
+    expect(texte).not.toContain('## Pour le gardien de la méthode')
+    expect(texte).not.toContain('## Ce que la page montre après une tentative')
   })
 
-  it('pour le gardien, ajoute ce que la page montre sur demande : coups de pouce, retours, variantes', () => {
+  it('pour le gardien, ajoute ce que la page montre après une tentative : réponse, coups de pouce, retours, variantes', () => {
     const page = html
       .replace(
         '<template data-item="PR1-2"><p>À REMPLACER : énoncé de l\'item PR1-2.</p></template>',
@@ -158,7 +175,10 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
           ' data-succes="31, tous les bits à 1.">Le plus grand nombre sur 5 bits ?</div></template>',
           '<template data-item="PR1-3"><div data-widget="choix" data-reponse="b">Le binaire, c’est :',
           '<ul><li data-option="a" data-erreur="E2" data-retour="Le binaire écrit des nombres.">Un langage</li>',
-          '<li data-option="b">Une base</li></ul></div></template>',
+          '<li data-option="b">Une base</li></ul></div>',
+          '<table><tr data-reponse="oui" data-question="128 tient-il dans 178 ?" data-explication="178 − 128 = 50.">',
+          '<td>128</td></tr></table>',
+          '<div data-widget="nombre" data-accepte="huit|8">Combien de bits ?</div></template>',
           '<template data-variante="PR1-3"><div data-widget="choix" data-reponse="a">Écrire 101, c’est :',
           '<ul><li data-option="a">Écrire un nombre</li></ul></div></template>',
         ].join(''),
@@ -173,15 +193,24 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
     const pourLApprenant = texteDeLaFiche(page, resultat.manifeste)
     const pourLeGardien = texteDeLaFiche(page, resultat.manifeste, { conception: true })
 
-    for (const cache of ['Combien de valeurs avec 5 bits', 'la première est 0', 'Écrire 101']) {
+    for (const cache of [
+      'Combien de valeurs avec 5 bits',
+      'la première est 0',
+      'Écrire 101',
+      '178 − 128',
+      'huit',
+    ]) {
       expect(pourLApprenant).not.toContain(cache)
     }
     expect(pourLeGardien.startsWith(pourLApprenant.trimEnd())).toBe(true)
-    const conception = pourLeGardien.slice(pourLeGardien.indexOf('## Ce que la page montre sur demande'))
+    const conception = pourLeGardien.slice(
+      pourLeGardien.indexOf('## Ce que la page montre après une tentative'),
+    )
     expect(conception).toContain(
       [
         '### PR1-2',
         '',
+        '- Réponse attendue : 31',
         '- Coup de pouce 1 : Combien de valeurs avec 5 bits ?',
         '- Solution : 31 : 32 valeurs, de 0 à 31.',
         '- Retour si « 32 » (E1) : 32, c’est le nombre de valeurs : la première est 0.',
@@ -190,10 +219,80 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
       ].join('\n'),
     )
     expect(conception).toContain(
-      '- Retour à l’option « Un langage » (E2) : Le binaire écrit des nombres.',
+      [
+        '### PR1-3',
+        '',
+        '- Réponse attendue : « Une base »',
+        '- Retour à l’option « Un langage » (E2) : Le binaire écrit des nombres.',
+        '- Réponse attendue à « 128 tient-il dans 178 ? » : oui',
+        '- Après la réponse : 178 − 128 = 50.',
+        '- Réponses acceptées : « huit » ou « 8 »',
+      ].join('\n'),
     )
     expect(conception).toContain('### PR1-3, variante après une solution vue')
     expect(conception).toContain('Écrire 101, c’est :')
+    expect(conception).toContain('- Réponse attendue : « Écrire un nombre »')
+  })
+
+  it('pour le gardien, dit ce que fait le gabarit, ce que déclarent les outils, les erreurs critiques et l’alignement', () => {
+    const page = html
+      .replace(
+        '</body>',
+        '<template data-conception><p>L’outil convertir repère seul les bits à l’envers.</p></template></body>',
+      )
+      .replace(
+        '<template data-item="PR1-2"><p>À REMPLACER : énoncé de l\'item PR1-2.</p></template>',
+        '<template data-item="PR1-2"><div data-widget="nombre" data-reponse="31" data-si-e1="32" data-retour-e1="Le premier est 0.">?</div></template>',
+      )
+    const resultat = validerManifeste(JSON.parse(extraireManifeste(page) ?? 'null'))
+    if (!resultat.ok) throw new Error('Le gabarit rempli doit rester valide.')
+    const gardien = texteDeLaFiche(page, resultat.manifeste, { conception: true })
+    const positions = [
+      '## Pour le gardien de la méthode',
+      '### Ce que fait le gabarit, sur toute fiche',
+      '### Ce que les outils de cette fiche font d’eux-mêmes',
+      'L’outil convertir repère seul les bits à l’envers.',
+      '### Les erreurs critiques',
+      '### Le tableau d’alignement',
+      'Notions :',
+      '- N1 : À REMPLACER',
+      'Hors objectif (noté pour plus tard, jamais interrogé) :',
+      '## Ce que la page montre après une tentative',
+    ].map((titre) => gardien.indexOf(titre))
+    expect(positions.every((position) => position >= 0)).toBe(true)
+    expect([...positions].sort((a, b) => a - b)).toEqual(positions)
+    expect(gardien).toMatch(
+      /- E1 : .+ Questions qui la touchent : R\d.*Retour écrit pour elle dans : PR1-2\./,
+    )
+  })
+
+  it('ne cite du gabarit que des libellés que la page affiche', async () => {
+    const gabarit = (await readFile(GABARIT, 'utf8')).replaceAll('\\u00a0', ' ')
+    const faits = CE_QUE_FAIT_LE_GABARIT.join(' ')
+    for (const libelle of [
+      'Écouter',
+      'Ce qui sera vérifié',
+      'J’ai réussi',
+      'Pas réussi',
+      'J’ai eu besoin d’aide',
+      'Solution vue',
+      'Tu as vu la solution. Refais-la sans la regarder.',
+      'Revenir au cours',
+      'Ne compte pas · ',
+      'Avec support',
+      'Non vérifiée',
+      'Ta confiance',
+      'Sûr',
+      'Hésitant',
+      'Au hasard',
+      'Répondre à la relance',
+      'D’accord avec ce niveau ?',
+      'Repérée dans tes réponses',
+      'À reprendre',
+    ]) {
+      expect(faits, libelle).toContain(libelle.trim())
+      expect(gabarit.replaceAll('\u00a0', ' '), libelle).toContain(libelle)
+    }
   })
 
   it('met tout l’enseignement avant la première question', () => {

@@ -1397,14 +1397,15 @@
       const CLE_ETAT = 'janus.fiche.' + manifeste.bloc + '.etat'
       /*
        * Les quatre moments du cycle de la méthode (percevoir, tenter, modéliser, faire, recevoir un
-       * retour, ajuster), dans l'ordre du fil, avec les types d'étape de chacun. `perception`,
-       * `pretest` et `ensemble` sont nouveaux : le contrat des fiches (PR séparée) les ajoute au
-       * manifeste ; le gabarit sait déjà les dessiner, comme une explication (afficherLibre).
+       * retour, ajuster), dans l'ordre du fil, avec les types d'étape de chacun. `ensemble`, c'est
+       * ajuster : en fin de bloc, après la pratique, le pari du début repris puis le schéma refait de
+       * mémoire (règle C08). `perception`, `pretest` et `ensemble` se dessinent comme une explication
+       * (afficherLibre).
        */
       const MOMENTS = [
         { nom: 'Découvrir', types: ['carte', 'perception'] },
-        { nom: 'Comprendre', types: ['pretest', 'explication', 'ensemble'] },
-        { nom: 'S’entraîner', types: ['pratique', 'atelier', 'aisance'] },
+        { nom: 'Comprendre', types: ['pretest', 'explication'] },
+        { nom: 'S’entraîner', types: ['pratique', 'atelier', 'aisance', 'ensemble'] },
         { nom: 'Prouver', types: ['restitution', 'consolidation', 'bilan'] },
       ]
       const momentDe = (etape) => MOMENTS.find((moment) => moment.types.includes(etape.type))
@@ -1535,6 +1536,12 @@
       }
       const pluriel = (nombre, singulier, plusieurs) =>
         nombre + ' ' + (nombre > 1 ? plusieurs : singulier)
+      /** Le jour sur cet appareil, AAAA-MM-JJ : une solution vue ne compte plus le lendemain. */
+      function aujourdhui() {
+        const date = new Date()
+        const deux = (nombre) => String(nombre).padStart(2, '0')
+        return date.getFullYear() + '-' + deux(date.getMonth() + 1) + '-' + deux(date.getDate())
+      }
 
       const questions = (serie) =>
         serie === 'restitution' ? manifeste.restitution : manifeste.consolidation
@@ -1931,9 +1938,13 @@
         const etatItem = creer('span', { className: 'item-etat' })
         const resultat = creer('p', { className: 'discret' })
         const solutionVue = () => Boolean(etat.pratique[item.id]?.solutionVue)
+        // La solution vue garde son jour : ce jour-là, l'item ne peut pas compter sans aide ; un autre
+        // jour, il repart sans aide (une marque d'avant, sans jour, ne retient plus rien).
+        const vueAujourdhui = () => etat.pratique[item.id]?.solutionVue === aujourdhui()
         /** Note un résultat ; `vue` : l'outil vient de montrer la solution, et l'item s'en souvient. */
         const noter = (ok, aideUtilisee, vue = false) => {
-          const essais = (etat.pratique[item.id]?.essais ?? 0) + 1
+          const avant = etat.pratique[item.id]
+          const essais = (avant?.essais ?? 0) + 1
           pont.envoyer('pratique.resultat', {
             exercice: exercice.id,
             item: item.id,
@@ -1945,7 +1956,7 @@
             reussi: ok,
             aide: aideUtilisee,
             essais,
-            solutionVue: vue || solutionVue(),
+            solutionVue: vue ? aujourdhui() : (avant?.solutionVue ?? false),
           }
           enregistrer()
         }
@@ -2044,10 +2055,21 @@
                 : 'À refaire'
             : ''
           resultat.className = aRefaire ? 'item-refaire' : 'discret'
+          // Réussi avec de l'aide : l'appli ne le compte pas encore, la page dit comment il comptera.
+          const pourCompter =
+            !fait?.reussi || fait.aide === 0
+              ? ''
+              : vueAujourdhui()
+                ? '. Tu as vu la solution aujourd’hui\u00a0: refais-le un autre jour, sans aide, pour qu’il compte.'
+                : '. Refais-le sans aide pour qu’il compte.'
           resultat.textContent = aRefaire
             ? 'Tu as vu la solution. Refais-la sans la regarder.'
             : fait
-              ? 'Envoyé\u00a0: ' + (fait.reussi ? 'réussi' : 'non réussi') + ', aide ' + fait.aide
+              ? 'Envoyé\u00a0: ' +
+                (fait.reussi ? 'réussi' : 'non réussi') +
+                ', aide ' +
+                fait.aide +
+                pourCompter
               : ''
         }
         majItem()
@@ -2055,7 +2077,7 @@
         // redessiné : la réponse et le message de l'outil restent à l'écran. Sauf quand l'outil a montré
         // la réponse (aide 4) : rien n'est réussi, l'item se note « solution vue » et se redessine à
         // neuf (l'outil se remonte sur fiche:rendu, son aide repart de zéro), pour être refait sans la
-        // regarder. Une fois la solution vue, chaque résultat de l'item part avec l'aide 4.
+        // regarder. Le jour où la solution est vue, chaque résultat de l'item part avec l'aide 4.
         consigne.addEventListener('fiche:verification', (evenement) => {
           const detail = evenement.detail ?? {}
           if (!verifie || typeof detail.juste !== 'boolean') return
@@ -2067,7 +2089,7 @@
             afficher()
             return
           }
-          noter(detail.juste, solutionVue() ? 4 : Math.max(aide, aideOutil))
+          noter(detail.juste, vueAujourdhui() ? 4 : Math.max(aide, aideOutil))
           majItem()
         })
         return creer(
@@ -2184,7 +2206,8 @@
             ...piedEtape(etape),
           )
         }
-        // Série ouverte : les réponses envoyées se lisent, les autres questions attendent leur réponse.
+        // Série ouverte, une question à la fois (règle I01) : les réponses envoyées se lisent, puis la
+        // première question qui attend sa réponse ; la suivante paraît sous elle quand elle est finie.
         // Une question qui touche une erreur critique ouverte se repose (restitution rouverte).
         const refaire = aRefaire(serie)
         const section = creer('section', {}, creer('h2', { textContent: titre }))
@@ -2207,14 +2230,27 @@
             }),
           )
         for (const question of questions(serie)) {
-          const reprise = refaire.includes(question)
-          section.append(
-            etat.envoyees[question.id] && !reprise
-              ? carteEnvoyee(question)
-              : afficherQuestion(serie, question, reprise),
-          )
+          if (etat.envoyees[question.id] && !refaire.includes(question))
+            section.append(carteEnvoyee(question))
         }
-        section.append(...piedEtape(etape))
+        const aPoser = questions(serie).filter((q) => !etat.envoyees[q.id] || refaire.includes(q))
+        const pied = piedEtape(etape)
+        section.append(...pied)
+        let rang = 0
+        const poserLaSuivante = () => {
+          const question = aPoser[rang]
+          rang += 1
+          if (!question) return
+          const bloc = afficherQuestion(
+            serie,
+            question,
+            refaire.includes(question),
+            poserLaSuivante,
+          )
+          if (pied.length > 0) pied[0].before(bloc)
+          else section.append(bloc)
+        }
+        poserLaSuivante()
         return section
       }
 
@@ -2260,8 +2296,9 @@
       /**
        * Une question de la série, à répondre. `reprise` : elle a déjà sa réponse mais touche une erreur
        * critique ouverte ; on y répond de nouveau, depuis zéro (nouvelle tentative, premier tour).
+       * `apres` : ce qui suit quand elle est finie (la question suivante de la série).
        */
-      function afficherQuestion(serie, question, reprise = false) {
+      function afficherQuestion(serie, question, reprise = false, apres = () => {}) {
         const envoyee = reprise ? undefined : etat.envoyees[question.id]
         if (reprise) delete corrections[question.id]
         const zone = creer('textarea', {
@@ -2376,6 +2413,7 @@
               enregistrer()
               // Les corrections restent à l'écran ; le cours se rouvre à la prochaine étape affichée.
               majPied()
+              apres()
             } else {
               bouton.disabled = false
               bouton.textContent = 'Répondre à la relance'

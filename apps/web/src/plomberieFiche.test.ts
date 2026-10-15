@@ -190,6 +190,52 @@ describe('une correction tirée au sort', () => {
   })
 })
 
+describe('une série de questions', () => {
+  const correction = {
+    id: '0199f5a0-0000-7000-8000-000000000002',
+    echantillon: false,
+    question: 'R1',
+    tour: 1,
+    message: 'Bien vu.',
+    niveau: 'solide',
+    erreurs_critiques: [],
+    source: 'deduit',
+    ref: 'R1',
+    certitude: 'sur',
+    compte: true,
+  }
+
+  it('pose une question à la fois : la suivante paraît sous la précédente, une fois finie', async () => {
+    const { pont } = pontSimule(aLEtape('ET4'), correction)
+    monter(GABARIT, pont)
+    const [zone, ...autres] = await screen.findAllByRole('textbox')
+    const question = zone?.closest('.item')
+    if (!(zone instanceof HTMLTextAreaElement) || !(question instanceof HTMLElement))
+      throw new Error('Aucune question à répondre')
+    expect(autres).toHaveLength(0)
+
+    fireEvent.input(zone, { target: { value: 'Une réponse.' } })
+    fireEvent.click(within(question).getByRole('radio', { name: 'Sûr' }))
+    fireEvent.click(within(question).getByRole('button', { name: 'Envoyer' }))
+    await within(question).findByText('Bien vu.')
+
+    const zones = screen.getAllByRole('textbox')
+    expect(zones).toHaveLength(2)
+    expect(zones[0]).toBe(zone)
+    expect(zones[1]).not.toBeDisabled()
+    expect(zones[1]?.closest('.item')?.previousElementSibling).toBe(question)
+  })
+
+  it('montre les réponses déjà envoyées, puis la première question qui attend', async () => {
+    const envoyees = { R1: { reponse: 'Ma réponse à R1.', confiance: 'sur' } }
+    const { pont } = pontSimule({ ...aLEtape('ET4'), envoyees })
+    monter(GABARIT, pont)
+    await screen.findByText('Ma réponse à R1.')
+
+    expect(screen.getAllByRole('textbox')).toHaveLength(1)
+  })
+})
+
 describe('la pratique', () => {
   /** Le gabarit, avec un premier item dont un outil contrôle la réponse. */
   const avecOutil = GABARIT.replace(
@@ -285,9 +331,40 @@ describe('la pratique', () => {
     })
     expect(screen.getByText('Réussi')).toBeInTheDocument()
     expect(screen.getByText('1 réussi sur 3.')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Envoyé : réussi, aide 4. Tu as vu la solution aujourd’hui : refais-le un autre jour, sans aide, pour qu’il compte.',
+      ),
+    ).toBeInTheDocument()
     expect(rendus).toBe(1)
     document.removeEventListener('fiche:rendu', compter)
   })
+
+  // Une solution vue un jour passé, et une marque d'avant, sans jour.
+  it.each(['2020-01-01', true])(
+    'un autre jour (%s), l’item dont la solution a été vue repart sans aide, sur sa variante',
+    async (solutionVue) => {
+      const { pont, envois } = pontSimule(
+        auPratique({
+          itemCourant: 0,
+          pratique: { 'PR1-1': { reussi: true, aide: 4, essais: 2, solutionVue } },
+        }),
+      )
+      monter(avecOutil, pont)
+      const boite = (await screen.findByText('Outil de la fiche')).closest('.item')
+
+      expect(boite).toHaveAttribute('data-solution-vue')
+      expect(
+        screen.getByText('Envoyé : réussi, aide 4. Refais-le sans aide pour qu’il compte.'),
+      ).toBeInTheDocument()
+      verifier({ juste: true })
+      expect(envois.at(-1)).toEqual({
+        type: 'pratique.resultat',
+        donnees: { exercice: 'PR1', item: 'PR1-1', reussi: true, aide: 0, essais: 3 },
+      })
+      expect(screen.getByText('Envoyé : réussi, aide 0')).toBeInTheDocument()
+    },
+  )
 
   it('après la solution montrée, la boîte de l’item le dit à l’outil, qui propose une variante', async () => {
     const { pont } = pontSimule(auPratique())
@@ -412,7 +489,7 @@ describe('une étape à lire', () => {
   it.each([
     ['perception', 'Découvrir'],
     ['pretest', 'Comprendre'],
-    ['ensemble', 'Comprendre'],
+    ['ensemble', 'S’entraîner'],
   ])('de type %s se dessine comme une explication, dans le moment « %s »', async (type, moment) => {
     const fiche = GABARIT.replace(
       /"titre": "Explication",\s*"type": "explication"/,
