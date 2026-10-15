@@ -17,7 +17,7 @@ import { EncartHorsConnexion } from './EncartHorsConnexion.tsx'
 import { useEtatEnvoi } from './useEtatEnvoi.ts'
 import { useTempsActif } from './useTempsActif.ts'
 import styles from './Bloc.module.css'
-import { FilEtapes } from './FilEtapes.tsx'
+import { etapesARevoir, FilEtapes } from './FilEtapes.tsx'
 import type { EtapeAffichee } from './FilEtapes.tsx'
 import { IframeFiche } from './HoteFiche.tsx'
 import type { SerieVerrou } from './verrou.ts'
@@ -35,6 +35,7 @@ function FicheOuverte({
   problemes,
   erreursCritiques,
   questions,
+  exercices,
   relire,
   relireBloc,
   delaiConsolidationMinutes,
@@ -51,10 +52,16 @@ function FicheOuverte({
   readonly etapeDemandee: string | undefined
   readonly etapes: readonly EtapeAffichee[]
   readonly problemes: readonly string[]
-  readonly erreursCritiques: readonly { readonly id: string; readonly libelle: string }[]
+  readonly erreursCritiques: readonly {
+    readonly id: string
+    readonly libelle: string
+    readonly etape?: string | undefined
+  }[]
   readonly questions: Readonly<
     Record<SerieVerrou, readonly { readonly id: string; readonly question: string }[]>
   >
+  /** Les exercices de la pratique, pour les nommer dans le bilan. */
+  readonly exercices: readonly { readonly id: string; readonly titre: string }[]
   readonly donnees: DonneesFiche
   readonly titre: string
   readonly moduleId: string
@@ -81,6 +88,18 @@ function FicheOuverte({
     (erreursCritiques.find((erreur) => erreur.id === id)?.libelle ?? id).replace(/\.$/, '')
   const texteQuestion = (id: string) =>
     toutesQuestions.find((question) => question.id === id)?.question ?? id
+  // Le bilan nomme ce qui reste comme la fiche le montre : le titre d'un exercice, le rang d'une question.
+  const libelles = {
+    erreur: nomErreur,
+    exercice: (id: string) => {
+      const titre = exercices.find((exercice) => exercice.id === id)?.titre
+      return titre === undefined ? id : `«\u00a0${titre}\u00a0»`
+    },
+    question: (id: string) => {
+      const rang = questions.restitution.findIndex((question) => question.id === id)
+      return rang < 0 ? id : String(rang + 1)
+    },
+  }
   const restantes = {
     restitution: questionsRestantes(
       'restitution',
@@ -120,6 +139,13 @@ function FicheOuverte({
   // Une erreur déjà ouverte n'a plus besoin d'être tranchée.
   const ouvertes = hote.statut.manque.find(({ code }) => code === 'erreur_ouverte')?.erreurs ?? []
   const enAttente = hote.propositions.filter(({ erreur }) => !ouvertes.includes(erreur))
+  const aRevoir = etapesARevoir(
+    etapes,
+    erreursCritiques,
+    ouvertes,
+    hote.statut.avancement,
+    donnees.serieOuverte.restitution,
+  )
   const refusee = [
     ...problemes,
     ...(hote.refus === null ? [] : [PROBLEMES_POIGNEE_DE_MAIN[hote.refus]]),
@@ -144,6 +170,7 @@ function FicheOuverte({
           surChoix={hote.allerEtape}
           verrouillees={verrouillees}
           surVerrou={setRevoir}
+          aRevoir={aRevoir}
         />
       </header>
       {revoir !== null && (
@@ -187,7 +214,7 @@ function FicheOuverte({
         {typeCourant === 'bilan' && (
           <EncartBilan
             erreurEnAttente={enAttente.length > 0}
-            libelleErreur={nomErreur}
+            libelles={libelles}
             statut={hote.statut.statut}
             manque={hote.statut.manque}
             maintenant={instantReel()}
@@ -374,6 +401,7 @@ export function PageBloc({
           restitution: detail.manifeste.restitution,
           consolidation: detail.manifeste.consolidation,
         }}
+        exercices={detail.manifeste.pratique}
       />
     </GardeOuverture>
   )

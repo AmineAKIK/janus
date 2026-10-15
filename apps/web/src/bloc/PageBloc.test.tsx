@@ -1,22 +1,24 @@
 import { EXEMPLES_PAGE } from '@janus/contrats'
 import { createMemoryHistory } from '@tanstack/react-router'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { creerRouteur } from '../routes/arbre.tsx'
 import { creerContexteTest } from '../routes/contexteTest.tsx'
+import { marquerOuvert } from './ouvertures.ts'
 
-async function afficher(options: { stockageIndisponible?: boolean } = {}) {
-  const banc = creerContexteTest(options)
+async function afficher(options: { stockageIndisponible?: boolean; bloc?: string } = {}) {
+  const { bloc = 'B03', ...reglages } = options
+  const banc = creerContexteTest(reglages)
   const routeur = creerRouteur(
-    createMemoryHistory({ initialEntries: ['/blocs/B03'] }),
+    createMemoryHistory({ initialEntries: [`/blocs/${bloc}`] }),
     banc.contexte,
   )
   await act(async () => {
     render(banc.application(routeur))
     await routeur.load()
   })
-  const iframe = await screen.findByTitle(/^Fiche du bloc B03/)
+  const iframe = await screen.findByTitle(new RegExp(`^Fiche du bloc ${bloc}`))
   if (!(iframe instanceof HTMLIFrameElement) || iframe.contentWindow === null) {
     throw new Error('iframe absente')
   }
@@ -120,6 +122,40 @@ describe('conflit d’état', () => {
         screen.queryByText('Ce bloc a été modifié sur un autre appareil.'),
       ).not.toBeInTheDocument()
     })
+  })
+})
+
+describe('retour ciblé', () => {
+  it('« à reprendre » : l’étape liée à l’erreur ouverte et la restitution rouverte passent à « ↺ »', async () => {
+    // B04 a déjà été ouvert avant ses prérequis : la raison est donnée, la page ne la redemande pas.
+    marquerOuvert('B04')
+    await afficher({ bloc: 'B04' })
+
+    const fil = screen.getByRole('navigation', { name: 'Étapes de la fiche' })
+    expect(within(fil).getByRole('button', { name: 'Explication' }).textContent).toBe(
+      '↺ Explication',
+    )
+    expect(within(fil).getByRole('button', { name: 'Restitution' }).textContent).toBe(
+      '↺ Restitution',
+    )
+    expect(within(fil).getByRole('button', { name: 'Pratique guidée' }).textContent).not.toContain(
+      '↺',
+    )
+  })
+
+  it('au bilan, ce qui reste se lit avec les noms de la fiche, pas ses identifiants', async () => {
+    marquerOuvert('B04')
+    const { envoyer } = await afficher({ bloc: 'B04' })
+
+    await envoyer({ ...etape('ET9'), bloc: 'B04' })
+
+    const pourPasser = await screen.findByText(/^Pour passer à/)
+    const reste = pourPasser.nextElementSibling
+    if (!(reste instanceof HTMLElement)) throw new Error('Rien sous « Pour passer à »')
+    expect(
+      within(reste).getByText('Réussis sans aide l’exercice « Pratique guidée ».'),
+    ).toBeVisible()
+    expect(reste.textContent).not.toMatch(/\bPR\d/)
   })
 })
 

@@ -28,6 +28,7 @@ B01 a été écrite à partir d'un cours et vérifiée sur sa forme seulement. E
 - **Elle se suffit à elle-même.** Un cours sert à tracer le chemin et à fixer les objectifs, jamais de lecture obligée. Ni la page ni le manifeste (que lit le correcteur) ne citent, ne corrigent ou ne renvoient à un cours, une page de document ou une partie du plan. Les erreurs d'un cours se notent pour l'auteur, pas pour l'apprenant. Les `sources` du manifeste désignent des étapes de la fiche. `pnpm fiches:verifier` refuse les renvois déjà rencontrés (Studi, « pages 3 », « Solution n°2 », « P1.4 »…).
 - **Elle n'interroge que ce qu'elle enseigne, et enseigne tout ce que son objectif promet.** Ce qui dépasse l'objectif va dans `hors_objectif` du tableau d'alignement, jamais dans une question ni dans une carte.
 - **Ce qu'il faut savoir est écrit.** Un outil interactif fait manipuler, il ne remplace pas le texte, et une image a sa description (`aria-label`, `alt`).
+- **Ce que la page peut vérifier, elle le vérifie.** B01 faisait cliquer « J’ai réussi » à côté d'un outil qui savait déjà si la réponse était juste, et ce clic passait sans aucune réponse. Un item dont l'outil contrôle la réponse porte `data-verifie` (voir le LISEZ-MOI du gabarit) : c'est l'outil qui dit réussi ou pas. L'apprenant ne déclare lui-même que ce que la page ne voit pas, comme une manipulation dans un autre logiciel. Un champ vide n'est jamais une réponse.
 
 ### Dans quel ordre on l'écrit
 

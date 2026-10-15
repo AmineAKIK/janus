@@ -14,6 +14,8 @@ const MOIS = [
 ] as const
 
 const deuxChiffres = (nombre: number) => String(nombre).padStart(2, '0')
+/** Espace insécable : « 1 h 19 » ne se coupe jamais en fin de ligne. */
+const INSECABLE = '\u00a0'
 
 interface Calendrier {
   readonly annee: number
@@ -54,15 +56,17 @@ const nomDuMois = (mois: number) => MOIS[mois - 1] ?? ''
 export function formaterInstant(instant: string, maintenant: string, fuseau?: string): string {
   const date = calendrier(instant, fuseau)
   const ref = calendrier(maintenant, fuseau)
-  const heure = `${String(date.heure)} h ${deuxChiffres(date.minute)}`
+  const heure = `${String(date.heure)}${INSECABLE}h${INSECABLE}${deuxChiffres(date.minute)}`
   const memeJour = date.annee === ref.annee && date.mois === ref.mois && date.jour === ref.jour
-  return memeJour ? heure : `${String(date.jour)} ${nomDuMois(date.mois)} à ${heure}`
+  return memeJour ? heure : `${String(date.jour)}${INSECABLE}${nomDuMois(date.mois)} à ${heure}`
 }
 
 /** Un délai en minutes, dit à la française : « 1 h », « 45 min », « 1 h 30 ». */
 export function formaterDelai(minutes: number): string {
   const heures = Math.floor(minutes / 60)
   const reste = minutes % 60
-  if (heures === 0) return `${String(reste)} min`
-  return reste === 0 ? `${String(heures)} h` : `${String(heures)} h ${deuxChiffres(reste)}`
+  if (heures === 0) return `${String(reste)}${INSECABLE}min`
+  return reste === 0
+    ? `${String(heures)}${INSECABLE}h`
+    : `${String(heures)}${INSECABLE}h${INSECABLE}${deuxChiffres(reste)}`
 }

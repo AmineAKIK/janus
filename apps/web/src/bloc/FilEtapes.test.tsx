@@ -2,7 +2,7 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { Avancement } from '@janus/contrats'
 import { describe, expect, it, vi } from 'vitest'
-import { etapesFaites, FilEtapes } from './FilEtapes.tsx'
+import { etapesARevoir, etapesFaites, FilEtapes } from './FilEtapes.tsx'
 
 const ETAPES = [
   { id: 'ET1', titre: 'Carte', type: 'carte' as const },
@@ -58,6 +58,30 @@ describe('etapesFaites', () => {
   })
 })
 
+describe('etapesARevoir', () => {
+  const ERREURS = [
+    { id: 'E1', libelle: 'Une', etape: 'ET3' },
+    { id: 'E2', libelle: 'Deux' },
+    { id: 'E3', libelle: 'Trois', etape: 'ZZ' },
+  ]
+
+  it('marque l’étape liée à une erreur ouverte, plus rien une fois l’erreur refermée', () => {
+    expect(etapesARevoir(ETAPES, ERREURS, ['E1'], RIEN, false)).toEqual(new Set(['ET3']))
+    expect(etapesARevoir(ETAPES, ERREURS, [], RIEN, false)).toEqual(new Set())
+  })
+
+  it('ignore une erreur sans étape, ou liée à une étape que la fiche n’a pas', () => {
+    expect(etapesARevoir(ETAPES, ERREURS, ['E2', 'E3'], RIEN, false)).toEqual(new Set())
+  })
+
+  it('marque la restitution envoyée puis rouverte, jamais celle qui n’a pas encore été envoyée', () => {
+    const envoyee = { ...RIEN, restitution: DATE }
+    expect(etapesARevoir(ETAPES, ERREURS, [], envoyee, true)).toEqual(new Set(['ET6']))
+    expect(etapesARevoir(ETAPES, ERREURS, [], RIEN, true)).toEqual(new Set())
+    expect(etapesARevoir(ETAPES, ERREURS, [], envoyee, false)).toEqual(new Set())
+  })
+})
+
 describe('FilEtapes', () => {
   it('liste un onglet par étape, dans l’ordre, la première est courante par défaut', () => {
     render(
@@ -103,6 +127,26 @@ describe('FilEtapes', () => {
       'step',
     )
     expect(screen.getByRole('button', { name: 'Explication' }).textContent).toBe('✓ Explication')
+  })
+
+  it('marque « ↺ » une étape à revoir, même faite, et l’explique au survol', () => {
+    render(
+      <FilEtapes
+        etapes={ETAPES}
+        courante="ET1"
+        avancement={{ ...RIEN, etapes_vues: ['ET3'], restitution: DATE }}
+        vues={[]}
+        bilanFait={false}
+        surChoix={() => undefined}
+        aRevoir={new Set(['ET3', 'ET6'])}
+      />,
+    )
+
+    const explication = screen.getByRole('button', { name: 'Explication' })
+    expect(explication.textContent).toBe('↺ Explication')
+    expect(explication).toHaveAttribute('title', 'À revoir')
+    expect(screen.getByRole('button', { name: 'Restitution' }).textContent).toBe('↺ Restitution')
+    expect(screen.getByRole('button', { name: 'Carte' })).not.toHaveAttribute('title')
   })
 
   it('demande l’étape cliquée', async () => {

@@ -15,7 +15,9 @@ async function afficher(chemin = '/blocs/B03') {
     render(banc.application(routeur))
     await routeur.load()
   })
-  const iframe = await screen.findByTitle(/^Fiche du bloc B03/)
+  const iframe = await screen.findByTitle(
+    new RegExp(`^Fiche du bloc ${chemin.split('/').pop() ?? ''}`),
+  )
   if (!(iframe instanceof HTMLIFrameElement) || iframe.contentWindow === null) {
     throw new Error('iframe absente')
   }
@@ -246,6 +248,25 @@ describe('page d’un bloc', () => {
         }),
         '*',
       )
+    })
+  })
+
+  it('une erreur cochée au bilan rouvre la restitution : la page le sait aussitôt', async () => {
+    const { envoyer, recu } = await afficher('/blocs/B05')
+    const erreur = MANIFESTES_GRAINE['B05']?.erreurs_critiques[0]?.id ?? ''
+    const ouverte = (m: unknown) =>
+      (m as { type?: string; serie_ouverte?: { restitution: boolean } }).serie_ouverte?.restitution
+    await envoyer({ ...prete, bloc: 'B05' })
+    const inits = () =>
+      recu.mock.calls
+        .map(([m]): unknown => m)
+        .filter((m) => (m as { type: string }).type === 'etat.init')
+    expect(inits().map(ouverte)).toEqual([false])
+
+    await envoyer({ ...EXEMPLES_PAGE['bilan.erreurs'], bloc: 'B05', version: 1, ids: [erreur] })
+
+    await waitFor(() => {
+      expect(inits().map(ouverte)).toEqual([false, true])
     })
   })
 
