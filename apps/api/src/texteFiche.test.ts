@@ -142,6 +142,60 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
     expect(texte).not.toContain('etapes[0].id')
   })
 
+  it('ne montre à l’apprenant neuf ni coup de pouce, ni retour, ni variante', () => {
+    expect(texte).not.toContain('## Ce que la page montre sur demande')
+  })
+
+  it('pour le gardien, ajoute ce que la page montre sur demande : coups de pouce, retours, variantes', () => {
+    const page = html
+      .replace(
+        '<template data-item="PR1-2"><p>À REMPLACER : énoncé de l\'item PR1-2.</p></template>',
+        [
+          '<template data-item="PR1-2"><div data-widget="nombre" data-verifie data-reponse="31"',
+          ' data-aide1="Combien de valeurs avec 5 bits ?" data-solution="31 : 32 valeurs, de 0 à 31."',
+          ' data-si-e1="32" data-retour-e1="32, c’est le nombre de valeurs : la première est 0."',
+          ' data-si-poids="16" data-retour-poids="16, c’est le poids du bit de gauche."',
+          ' data-succes="31, tous les bits à 1.">Le plus grand nombre sur 5 bits ?</div></template>',
+          '<template data-item="PR1-3"><div data-widget="choix" data-reponse="b">Le binaire, c’est :',
+          '<ul><li data-option="a" data-erreur="E2" data-retour="Le binaire écrit des nombres.">Un langage</li>',
+          '<li data-option="b">Une base</li></ul></div></template>',
+          '<template data-variante="PR1-3"><div data-widget="choix" data-reponse="a">Écrire 101, c’est :',
+          '<ul><li data-option="a">Écrire un nombre</li></ul></div></template>',
+        ].join(''),
+      )
+      .replace(
+        '<template data-item="PR1-3"><p>À REMPLACER : énoncé de l\'item PR1-3.</p></template>',
+        '',
+      )
+    const resultat = validerManifeste(JSON.parse(extraireManifeste(page) ?? 'null'))
+    if (!resultat.ok) throw new Error('Le gabarit rempli doit rester valide.')
+
+    const pourLApprenant = texteDeLaFiche(page, resultat.manifeste)
+    const pourLeGardien = texteDeLaFiche(page, resultat.manifeste, { conception: true })
+
+    for (const cache of ['Combien de valeurs avec 5 bits', 'la première est 0', 'Écrire 101']) {
+      expect(pourLApprenant).not.toContain(cache)
+    }
+    expect(pourLeGardien.startsWith(pourLApprenant.trimEnd())).toBe(true)
+    const conception = pourLeGardien.slice(pourLeGardien.indexOf('## Ce que la page montre sur demande'))
+    expect(conception).toContain(
+      [
+        '### PR1-2',
+        '',
+        '- Coup de pouce 1 : Combien de valeurs avec 5 bits ?',
+        '- Solution : 31 : 32 valeurs, de 0 à 31.',
+        '- Retour si « 32 » (E1) : 32, c’est le nombre de valeurs : la première est 0.',
+        '- Retour si « 16 » : 16, c’est le poids du bit de gauche.',
+        '- Réussite : 31, tous les bits à 1.',
+      ].join('\n'),
+    )
+    expect(conception).toContain(
+      '- Retour à l’option « Un langage » (E2) : Le binaire écrit des nombres.',
+    )
+    expect(conception).toContain('### PR1-3, variante après une solution vue')
+    expect(conception).toContain('Écrire 101, c’est :')
+  })
+
   it('met tout l’enseignement avant la première question', () => {
     const positions = [
       '## Ce que la fiche enseigne',

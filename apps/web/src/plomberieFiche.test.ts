@@ -289,6 +289,22 @@ describe('la pratique', () => {
     document.removeEventListener('fiche:rendu', compter)
   })
 
+  it('après la solution montrée, la boîte de l’item le dit à l’outil, qui propose une variante', async () => {
+    const { pont } = pontSimule(auPratique())
+    monter(avecOutil, pont)
+    const boite = (await screen.findByText('Outil de la fiche')).closest('.item')
+
+    expect(boite).not.toHaveAttribute('data-solution-vue')
+    verifier({ juste: true, aide: 4 })
+    // L'item redessiné porte la marque, et la garde quand il est refait.
+    const redessinee = screen.getByText('Outil de la fiche').closest('.item')
+    expect(redessinee).toHaveAttribute('data-solution-vue')
+    verifier({ juste: true })
+    expect(screen.getByText('Outil de la fiche').closest('.item')).toHaveAttribute(
+      'data-solution-vue',
+    )
+  })
+
   it('rappelle l’objectif, replié, à l’entrée de la pratique', async () => {
     const { pont } = pontSimule(auPratique())
     monter(avecOutil, pont)
@@ -336,6 +352,29 @@ describe('la carte du bloc', () => {
     expect(within(details).getByText(OBJECTIF)).toBeInTheDocument()
     expect(precede(carte, details)).toBe(true)
     expect(precede(details, commencer)).toBe(true)
+  })
+
+  it('après une perception : la carte lit son propre template, et mène à l’étape d’après', async () => {
+    // Une perception (ET1) ouvre la fiche, la carte vient en second (ET2).
+    const apresPerception = GABARIT.replace(
+      '"id": "ET1",\n            "titre": "Carte du bloc",\n            "type": "carte"',
+      '"id": "ET1",\n            "titre": "Une photo, de près",\n            "type": "perception"\n          },\n          {\n            "id": "ET1b",\n            "titre": "Où tu es",\n            "type": "carte"',
+    ).replace(
+      '<template data-etape="ET2">',
+      '<template data-etape="ET1"><p>Regarde la photo.</p></template><template data-etape="ET1b"><p>Où tu es : ce bloc ouvre la partie.</p></template><template data-etape="ET2">',
+    )
+    expect(apresPerception).not.toBe(GABARIT)
+    const { pont, envois } = pontSimule(aLEtape('ET1b'))
+    monter(apresPerception, pont)
+    const suivante = await screen.findByRole('button', { name: 'Étape suivante' })
+
+    expect(screen.getByRole('heading', { name: 'Où tu es' })).toBeInTheDocument()
+    expect(screen.getByText('Où tu es : ce bloc ouvre la partie.')).toBeInTheDocument()
+    expect(screen.queryByText('Regarde la photo.')).toBeNull()
+    expect(screen.getByText('Ce qui sera vérifié')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Commencer' })).toBeNull()
+    fireEvent.click(suivante)
+    expect(envois).toContainEqual({ type: 'etape.vue', donnees: { etape: 'ET2' } })
   })
 
   it('sans template ET1 : l’objectif, puis la liste des étapes (les fiches d’avant)', async () => {

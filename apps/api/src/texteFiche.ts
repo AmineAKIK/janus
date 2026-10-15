@@ -106,25 +106,127 @@ function enTexte(html: string): string {
 }
 
 /**
- * Le contenu des `<template data-etape>` et `<template data-item>` de la page, par identifiant. Les
- * scripts et les styles sont écartés d'abord : la plomberie cite `<template data-etape="ET1">` dans un
- * commentaire, ce qui n'est pas un template.
+ * Le contenu des `<template data-etape>`, `<template data-item>` et `<template data-variante>` de la
+ * page, par identifiant. Les scripts et les styles sont écartés d'abord : la plomberie cite
+ * `<template data-etape="ET1">` dans un commentaire, ce qui n'est pas un template.
  */
 function templates(html: string): {
   etapes: ReadonlyMap<string, string>
   items: ReadonlyMap<string, string>
+  variantes: ReadonlyMap<string, string>
 } {
   const etapes = new Map<string, string>()
   const items = new Map<string, string>()
+  const variantes = new Map<string, string>()
   for (const [, attributs, contenu] of sansCommentairesScriptsNiStyles(html).matchAll(
     /<template\b([^>]*)>([\s\S]*?)<\/template>/gi,
   )) {
     const etape = /\bdata-etape\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
     const item = /\bdata-item\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
+    const variante = /\bdata-variante\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
     if (etape !== undefined) etapes.set(etape, contenu ?? '')
     if (item !== undefined) items.set(item, contenu ?? '')
+    if (variante !== undefined) variantes.set(variante, contenu ?? '')
   }
-  return { etapes, items }
+  return { etapes, items, variantes }
+}
+
+/** Les attributs d'une balise ouvrante, par nom, valeurs décodées. */
+function attributsDe(balise: string): ReadonlyMap<string, string> {
+  const attributs = new Map<string, string>()
+  for (const [, nom = '', guillemets, apostrophes] of balise.matchAll(
+    /\s([a-z][a-z0-9-]*)\s*=\s*(?:"([^"]*)"|'([^']*)')/gi,
+  )) {
+    attributs.set(nom.toLowerCase(), decoder(guillemets ?? apostrophes ?? ''))
+  }
+  return attributs
+}
+
+/**
+ * Ce que la page ne montre qu'à la demande ou après une erreur, dans un template : les coups de pouce
+ * (`data-aide1` à `data-aide3`, `data-solution`), les retours écrits à la conception (`data-retour-e1`
+ * avec `data-si-e1`, `data-retour` d'une option avec son `data-erreur`) et le message de réussite.
+ */
+function cachesDuTemplate(contenu: string): string[] {
+  const lignes: string[] = []
+  const sansScripts = sansCommentairesScriptsNiStyles(contenu)
+  // Les options d'un choix : leur texte et leur retour vont ensemble.
+  const options = new Map<number, string>()
+  for (const option of sansScripts.matchAll(/<li\b([^>]*)>([\s\S]*?)<\/li>/gi)) {
+    options.set(option.index, enTexte(option[2] ?? '').replaceAll('\n', ' '))
+  }
+  for (const balise of sansScripts.matchAll(/<[a-z][a-z0-9-]*\b[^>]*>/gi)) {
+    const attributs = attributsDe(balise[0])
+    const lire = (nom: string) => attributs.get(nom)
+    for (const cran of ['1', '2', '3']) {
+      const aide = lire(`data-aide${cran}`)
+      if (aide !== undefined) lignes.push(`- Coup de pouce ${cran} : ${aide}`)
+    }
+    const solution = lire('data-solution')
+    if (solution !== undefined) lignes.push(`- Solution : ${solution}`)
+    for (const [nom, texte] of attributs) {
+      // `e1` nomme une erreur critique ; une autre clé (`pixels`), une erreur courante.
+      const cle = /^data-retour-([a-z][a-z0-9]*)$/.exec(nom)?.[1]
+      if (cle === undefined || cle === 'ajoute') continue
+      const si = lire(`data-si-${cle}`)
+      const condition = si === undefined ? '' : ` si « ${si.split('|').join(' » ou « ')} »`
+      const erreur = /^e\d+$/.test(cle) ? ` (${cle.toUpperCase()})` : ''
+      lignes.push(`- Retour${condition}${erreur} : ${texte}`)
+    }
+    const retourAjoute = lire('data-retour-ajoute')
+    if (retourAjoute !== undefined)
+      lignes.push(`- Retour si les paris ajoutent au lieu de doubler : ${retourAjoute}`)
+    const retour = lire('data-retour')
+    if (retour !== undefined) {
+      const option = options.get(balise.index)
+      const erreur = lire('data-erreur')
+      const si = lire('data-si')
+      const qui =
+        option !== undefined ? ` à l’option « ${option} »` : si !== undefined ? ` si ${si}` : ''
+      lignes.push(`- Retour${qui}${erreur === undefined ? '' : ` (${erreur})`} : ${retour}`)
+    }
+    const succes = lire('data-succes')
+    if (succes !== undefined) lignes.push(`- Réussite : ${succes}`)
+  }
+  return lignes
+}
+
+/**
+ * Pour l'épreuve du gardien de la méthode : ce que la page montre sur demande ou après une erreur (les
+ * coups de pouce, les retours des erreurs critiques, le message de réussite), étape par étape et item
+ * par item, puis la variante qui remplace un item après une solution vue. L'apprenant neuf ne le lit
+ * pas : il y trouverait les réponses.
+ */
+function conceptionDeLaFiche(html: string, manifeste: Manifeste): string[] {
+  const { etapes, items, variantes } = templates(html)
+  const lignes = [
+    '',
+    '## Ce que la page montre sur demande',
+    '',
+    'Les coups de pouce, les retours écrits pour les erreurs et les variantes proposées après une solution vue : l’apprenant ne les voit qu’en les demandant ou en se trompant.',
+  ]
+  const section = (titre: string, contenu: string | undefined) => {
+    if (contenu === undefined) return
+    const caches = cachesDuTemplate(contenu)
+    if (caches.length > 0) lignes.push('', `### ${titre}`, '', ...caches)
+  }
+  for (const etape of manifeste.etapes) section(`${etape.id} : ${etape.titre}`, etapes.get(etape.id))
+  for (const exercice of manifeste.pratique) {
+    for (const { id } of exercice.items) {
+      section(id, items.get(id))
+      const variante = variantes.get(id)
+      if (variante !== undefined) {
+        lignes.push(
+          '',
+          `### ${id}, variante après une solution vue`,
+          '',
+          enTexte(variante).replaceAll('\n', ' '),
+          ...cachesDuTemplate(variante),
+        )
+      }
+    }
+  }
+  return lignes
 }
 
 /** Les étapes dont le template est du texte à lire, dans l'ordre du manifeste : ce que la fiche enseigne. */
@@ -138,9 +240,14 @@ const ETAPES_LUES: ReadonlySet<TypeEtape> = new Set<TypeEtape>([
 
 /**
  * Ce que lit l'apprenant neuf : l'objectif, puis les étapes à lire (carte, perception, pré-test,
- * explications, ensemble) dans l'ordre du manifeste, puis tout ce qu'on lui demande.
+ * explications, ensemble) dans l'ordre du manifeste, puis tout ce qu'on lui demande. Avec
+ * `conception`, pour le gardien de la méthode : en plus, ce que la page montre sur demande.
  */
-export function texteDeLaFiche(html: string, manifeste: Manifeste): string {
+export function texteDeLaFiche(
+  html: string,
+  manifeste: Manifeste,
+  { conception = false }: { readonly conception?: boolean } = {},
+): string {
   const { etapes, items } = templates(html)
   const lignes = [
     `# ${manifeste.bloc} : ${manifeste.titre} (version ${String(manifeste.version)})`,
@@ -193,5 +300,6 @@ export function texteDeLaFiche(html: string, manifeste: Manifeste): string {
     'Cartes',
     manifeste.cartes.map(({ id, recto }) => ({ id, texte: recto })),
   )
+  if (conception) lignes.push(...conceptionDeLaFiche(html, manifeste))
   return `${lignes.join('\n')}\n`
 }

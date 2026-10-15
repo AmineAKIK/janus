@@ -1671,14 +1671,15 @@
       }
 
       /**
-       * La carte : d'abord le `<template data-etape="ET1">` de la page (où tu es, à quoi ça sert, ce que
-       * tu sauras faire), lisible avec « Écouter », puis l'objectif d'examen replié, puis Commencer.
-       * Sans template (les fiches d'avant) : l'objectif, puis la liste des étapes. `contexte_ia` est
-       * destiné au correcteur : il n'est jamais affiché.
+       * La carte : d'abord son `<template data-etape>` (où tu es, à quoi ça sert, ce que tu sauras
+       * faire), lisible avec « Écouter », puis l'objectif d'examen replié, puis le bouton vers l'étape
+       * d'après (Commencer quand la carte ouvre la fiche). Elle n'est pas forcément la première étape :
+       * une perception peut la précéder. Sans template (les fiches d'avant) : l'objectif, puis la liste
+       * des étapes. `contexte_ia` est destiné au correcteur : il n'est jamais affiché.
        */
-      function afficherCarte() {
-        const section = creer('section', {}, creer('h2', { textContent: 'Carte du bloc' }))
-        const modele = document.querySelector('template[data-etape="' + etapes[0].id + '"]')
+      function afficherCarte(carte) {
+        const section = creer('section', {}, creer('h2', { textContent: carte.titre }))
+        const modele = document.querySelector('template[data-etape="' + carte.id + '"]')
         if (modele) {
           const { ecran, lu } = ecranUnique(modele)
           section.append(barreEcoute(lu), ecran, objectifReplie())
@@ -1692,7 +1693,9 @@
               ...etapes.map((etape) => creer('li', { textContent: etape.titre })),
             ),
           )
-        section.append(...piedEtape(etapes[0], 'Commencer'))
+        section.append(
+          ...piedEtape(carte, carte.id === etapes[0].id ? 'Commencer' : 'Étape suivante'),
+        )
         return section
       }
 
@@ -1969,9 +1972,11 @@
           })
           return b
         })
+        // Après une solution montrée, l'outil de la fiche le lit (`data-solution-vue` sur la boîte de
+        // l'item) pour proposer une variante : on refait un cas comparable, pas celui qu'on a vu.
         const boite = creer(
           'div',
-          { className: 'item' },
+          { className: 'item', dataset: solutionVue() ? { solutionVue: '' } : {} },
           creer(
             'div',
             { className: 'item-tete' },
@@ -2677,7 +2682,7 @@
             (ETAPES_LIBRES.includes(etape.type)
               ? () => afficherLibre(etape)
               : {
-                  carte: afficherCarte,
+                  carte: () => afficherCarte(etape),
                   pratique: afficherPratique,
                   atelier: afficherAtelier,
                   restitution: () => afficherSerie('restitution', 'Restitution'),
