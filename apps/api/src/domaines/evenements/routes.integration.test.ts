@@ -173,16 +173,16 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
         expect(await compter('temps.actif')).toBe(1)
       })
 
-      it('ouvre puis ferme les erreurs du bilan : le dernier état fait foi', async () => {
+      it('ouvre les erreurs du bilan ; une case décochée ne ferme rien', async () => {
         const ouvre = await envoyer({ ...commun(), type: 'bilan.erreurs', ids: ['E1', 'E3'] })
-        const ferme = await envoyer({ ...commun(), type: 'bilan.erreurs', ids: ['E3'] })
+        const decoche = await envoyer({ ...commun(), type: 'bilan.erreurs', ids: ['E3'] })
 
         expect(
           ouvre.json<{ statut: { erreurs_ouvertes: string[] } }>().statut.erreurs_ouvertes,
         ).toEqual(['E1', 'E3'])
         expect(
-          ferme.json<{ statut: { erreurs_ouvertes: string[] } }>().statut.erreurs_ouvertes,
-        ).toEqual(['E3'])
+          decoche.json<{ statut: { erreurs_ouvertes: string[] } }>().statut.erreurs_ouvertes,
+        ).toEqual(['E1', 'E3'])
       })
 
       it('refuse une erreur que le bloc ne connaît pas (400)', async () => {

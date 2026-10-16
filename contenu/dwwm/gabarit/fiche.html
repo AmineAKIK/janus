@@ -1413,7 +1413,7 @@
       const ETAPES_FICHE = MOMENTS.flatMap((moment) => moment.types)
       /** Les étapes à lire, dessinées depuis leur `<template data-etape>`. */
       const ETAPES_LIBRES = ['perception', 'pretest', 'explication', 'ensemble', 'aisance']
-      /** Le cours : ce que la restitution sans support masque jusqu'à la dernière réponse. */
+      /** Le cours : ce que la restitution et la consolidation masquent, de « Commencer » à la dernière réponse. */
       const ETAPES_COURS = ['perception', 'pretest', 'explication', 'ensemble', 'pratique']
       const LIBELLES_STATUT = {
         non_commence: 'Non commencé',
@@ -1519,6 +1519,17 @@
       function enregistrer() {
         pont.sauver(etat)
       }
+      /**
+       * Les traces de la fiche : un outil émet `fiche:trace` (`detail: { cle, valeur }`) pour garder ce
+       * que l'apprenant a fait sans note (un pari, une reprise, un schéma refait). Elles vont dans l'état
+       * de la page, que l'appli enregistre, et reviennent à l'outil dans `fiche:rendu` (`detail.traces`).
+       */
+      document.addEventListener('fiche:trace', (evenement) => {
+        const { cle, valeur } = evenement.detail ?? {}
+        if (typeof cle !== 'string' || cle === '' || valeur === undefined) return
+        etat.traces = { ...(etat.traces ?? {}), [cle]: JSON.parse(JSON.stringify(valeur)) }
+        enregistrer()
+      })
       function aller(id) {
         etat.etape = id
         pont.envoyer('etape.vue', { etape: id })
@@ -1545,7 +1556,6 @@
 
       const questions = (serie) =>
         serie === 'restitution' ? manifeste.restitution : manifeste.consolidation
-      const restitutionTerminee = () => manifeste.restitution.every((q) => etat.envoyees[q.id])
       const reponsesFinies = (serie) => questions(serie).filter((q) => etat.envoyees[q.id]).length
       /**
        * Ce qui retient dans une étape : les questions d'une série ouverte qui n'ont pas encore leur
@@ -1567,12 +1577,21 @@
           ' pour l’instant.'
         )
       }
-      /** Restitution sans support : dès la première réponse, le cours est masqué jusqu'à la dernière, sauf retour au cours. */
-      const coursMasque = () =>
-        serieOuverte.restitution &&
-        Object.keys(etat.envoyees).length > 0 &&
-        !restitutionTerminee() &&
-        !etat.retourCours
+      /** Les questions d'une série ouverte qui attendent une réponse : pas encore répondues, ou à reprendre. */
+      const aPoserDans = (serie) =>
+        serieOuverte[serie]
+          ? questions(serie).filter((q) => !etat.envoyees[q.id] || aRefaire(serie).includes(q))
+          : []
+      /** La série commencée (bouton « Commencer ») qui a encore des questions à poser, s'il y en a une. */
+      const serieEnCours = () =>
+        ['restitution', 'consolidation'].find(
+          (serie) => etat.enCours?.[serie] && aPoserDans(serie).length > 0,
+        )
+      /**
+       * Restitution et consolidation sans support : de « Commencer » à la dernière réponse, le cours est
+       * masqué, sauf retour au cours.
+       */
+      const coursMasque = () => serieEnCours() !== undefined && !etat.retourCours
 
       function creer(balise, { dataset = {}, ...proprietes } = {}, ...enfants) {
         const element = Object.assign(document.createElement(balise), proprietes)
@@ -1941,22 +1960,32 @@
         // La solution vue garde son jour : ce jour-là, l'item ne peut pas compter sans aide ; un autre
         // jour, il repart sans aide (une marque d'avant, sans jour, ne retient plus rien).
         const vueAujourdhui = () => etat.pratique[item.id]?.solutionVue === aujourdhui()
+        // Toute aide garde de même son jour : refait le même jour, l'item part avec l'aide la plus forte
+        // reçue ce jour-là. On ne le refait pas sans aide dans la foulée, la réponse encore sous les yeux.
+        const aideDuJour = () =>
+          etat.pratique[item.id]?.aideLe === aujourdhui()
+            ? (etat.pratique[item.id].aideMax ?? 0)
+            : 0
         /** Note un résultat ; `vue` : l'outil vient de montrer la solution, et l'item s'en souvient. */
         const noter = (ok, aideUtilisee, vue = false) => {
           const avant = etat.pratique[item.id]
           const essais = (avant?.essais ?? 0) + 1
+          const aideNotee = Math.max(aideUtilisee, aideDuJour(), vue ? 4 : 0)
           pont.envoyer('pratique.resultat', {
             exercice: exercice.id,
             item: item.id,
             reussi: ok,
-            aide: aideUtilisee,
+            aide: aideNotee,
             essais,
           })
           etat.pratique[item.id] = {
             reussi: ok,
-            aide: aideUtilisee,
+            aide: aideNotee,
             essais,
             solutionVue: vue ? aujourdhui() : (avant?.solutionVue ?? false),
+            ...(aideNotee > 0
+              ? { aideLe: aujourdhui(), aideMax: aideNotee }
+              : { aideLe: avant?.aideLe ?? null, aideMax: avant?.aideMax ?? 0 }),
           }
           enregistrer()
         }
@@ -2061,7 +2090,9 @@
               ? ''
               : vueAujourdhui()
                 ? '. Tu as vu la solution aujourd’hui\u00a0: refais-le un autre jour, sans aide, pour qu’il compte.'
-                : '. Refais-le sans aide pour qu’il compte.'
+                : aideDuJour() > 0
+                  ? '. Tu as eu de l’aide aujourd’hui\u00a0: refais-le un autre jour, sans aide, pour qu’il compte.'
+                  : '. Refais-le sans aide pour qu’il compte.'
           resultat.textContent = aRefaire
             ? 'Tu as vu la solution. Refais-la sans la regarder.'
             : fait
@@ -2077,20 +2108,29 @@
         // redessiné : la réponse et le message de l'outil restent à l'écran. Sauf quand l'outil a montré
         // la réponse (aide 4) : rien n'est réussi, l'item se note « solution vue » et se redessine à
         // neuf (l'outil se remonte sur fiche:rendu, son aide repart de zéro), pour être refait sans la
-        // regarder. Le jour où la solution est vue, chaque résultat de l'item part avec l'aide 4.
+        // regarder. Avec `garder: true`, l'outil montre la solution à l'instant : l'item la note tout de
+        // suite, sans se redessiner, et se redessine quand l'outil émet fiche:refaire (« je refais »).
+        // Le jour où une aide est reçue, chaque résultat de l'item part avec l'aide la plus forte du jour.
+        const redessiner = () => {
+          etat.itemCourant = index
+          enregistrer()
+          afficher()
+        }
         consigne.addEventListener('fiche:verification', (evenement) => {
           const detail = evenement.detail ?? {}
           if (!verifie || typeof detail.juste !== 'boolean') return
           const aideOutil = [1, 2, 3, 4].includes(detail.aide) ? detail.aide : 0
           if (aideOutil >= 4) {
             noter(false, 4, true)
-            etat.itemCourant = index
-            enregistrer()
-            afficher()
+            if (detail.garder === true) majItem()
+            else redessiner()
             return
           }
-          noter(detail.juste, vueAujourdhui() ? 4 : Math.max(aide, aideOutil))
+          noter(detail.juste, Math.max(aide, aideOutil))
           majItem()
+        })
+        consigne.addEventListener('fiche:refaire', () => {
+          if (verifie && solutionVue()) redessiner()
         })
         return creer(
           'section',
@@ -2235,12 +2275,47 @@
         }
         const aPoser = questions(serie).filter((q) => !etat.envoyees[q.id] || refaire.includes(q))
         const pied = piedEtape(etape)
+        // Sans support : la série commence sur « Commencer », qui masque le cours jusqu'à la dernière
+        // réponse. Une erreur rouverte se reprend de même, quand l'apprenant a revu le cours.
+        if (aPoser.length > 0 && !etat.enCours?.[serie]) {
+          section.append(
+            creer('p', {
+              textContent:
+                (serie === 'restitution' ? 'La restitution' : 'La consolidation') +
+                ' se fait sans le cours : dès que tu commences, il est masqué jusqu’à ta dernière réponse.',
+            }),
+            creer(
+              'div',
+              { className: 'actions' },
+              creer('button', {
+                type: 'button',
+                className: 'bouton',
+                textContent: 'Commencer',
+                onclick: () => {
+                  etat.enCours = { ...(etat.enCours ?? {}), [serie]: true }
+                  etat.retourCours = false
+                  enregistrer()
+                  afficher()
+                },
+              }),
+            ),
+            ...pied,
+          )
+          return section
+        }
         section.append(...pied)
         let rang = 0
         const poserLaSuivante = () => {
           const question = aPoser[rang]
           rang += 1
-          if (!question) return
+          if (!question) {
+            // La dernière réponse est là : le cours se rouvre à la prochaine étape affichée.
+            if (etat.enCours?.[serie]) {
+              etat.enCours = { ...etat.enCours, [serie]: false }
+              enregistrer()
+            }
+            return
+          }
           const bloc = afficherQuestion(
             serie,
             question,
@@ -2360,13 +2435,17 @@
               support: { colle, retour_cours: etat.retourCours },
             })
             corrections[question.id] = correction
-            // Les erreurs repérées par le correcteur restent connues après un rechargement (bilan).
+            // Les erreurs repérées par le correcteur restent connues après un rechargement : le bilan
+            // suivant les coche d'office (`aCocher`), et l'apprenant ne peut pas les décocher.
             if (correction.erreurs_critiques.length > 0) {
               const deja = etat.erreurs?.[question.id] ?? []
               etat.erreurs = {
                 ...(etat.erreurs ?? {}),
                 [question.id]: [...new Set([...deja, ...correction.erreurs_critiques])],
               }
+              etat.aCocher = [
+                ...new Set([...(etat.aCocher ?? []), ...correction.erreurs_critiques]),
+              ]
               enregistrer()
             }
             sortie.replaceChildren(bulleCorrection(correction))
@@ -2474,8 +2553,9 @@
 
       /**
        * Le bilan : ce qui est fait dans la fiche, puis les erreurs critiques du bloc à cocher. Une
-       * erreur cochée reste ouverte (à revoir), une erreur décochée se ferme : c'est le dernier bilan
-       * envoyé qui fait foi. On ne l'envoie qu'une fois la restitution faite.
+       * erreur ouverte, ou repérée par le correcteur depuis le dernier bilan, est cochée et ne se
+       * décoche pas : seule une réponse solide à une question qui la touche la referme (règles P01 et
+       * V01). On ne l'envoie qu'une fois la restitution faite.
        */
       function afficherBilan() {
         // Le résultat d'un bilan se lit là où on l'a envoyé : à la visite suivante, il serait périmé
@@ -2548,14 +2628,24 @@
           )
 
         const reperees = new Set(Object.values(etat.erreurs ?? {}).flat())
+        /** Cochée d'office et verrouillée : ouverte, ou repérée depuis le dernier bilan. */
+        const verrouillee = (id) =>
+          erreursOuvertes().includes(id) || (etat.aCocher ?? []).includes(id)
         const cases = manifeste.erreurs_critiques.map((erreur) =>
           creer('input', {
             type: 'checkbox',
             name: 'erreur',
             value: erreur.id,
-            checked: erreursOuvertes().includes(erreur.id),
+            checked: verrouillee(erreur.id),
+            disabled: verrouillee(erreur.id),
           }),
         )
+        const majCases = () => {
+          for (const c of cases) {
+            c.disabled = verrouillee(c.value)
+            if (c.disabled) c.checked = true
+          }
+        }
         const erreurs = creer(
           'fieldset',
           { className: 'cases' },
@@ -2563,7 +2653,7 @@
           creer('p', {
             className: 'discret',
             textContent:
-              'Coche celles que tu as faites et que tu dois encore revoir. Décoche celles que tu as corrigées.',
+              'Coche celles que tu as faites et que tu dois encore revoir. Une erreur cochée, ou repérée dans tes réponses, reste cochée\u00a0: seule une réponse solide à une question qui la touche la referme.',
           }),
           ...manifeste.erreurs_critiques.map((erreur, k) =>
             creer(
@@ -2630,6 +2720,7 @@
             retour.textContent = 'Le bilan n’est pas parti\u00a0: ' + bilanEnvoye.refus
             // Refusé : le bilan qui fait foi reste le précédent, et les cases cochées peuvent repartir.
             etat.bilan = bilanEnvoye.precedent
+            etat.aCocher = [...new Set([...(etat.aCocher ?? []), ...bilanEnvoye.aCocher])]
             enregistrer()
             reference = erreursOuvertes()
             return
@@ -2652,8 +2743,16 @@
             retour.textContent = 'Le bilan n’a pas pu partir. Réessaie dans un instant.'
             return
           }
-          bilanEnvoye = { id, statut: null, refus: null, precedent: etat.bilan }
+          bilanEnvoye = {
+            id,
+            statut: null,
+            refus: null,
+            precedent: etat.bilan,
+            aCocher: etat.aCocher ?? [],
+          }
           etat.bilan = { ids }
+          // Envoyées, les erreurs repérées sont ouvertes : c'est le statut qui les verrouille désormais.
+          etat.aCocher = []
           enregistrer()
           reference = ids
           direBouton()
@@ -2667,6 +2766,7 @@
             reference = erreursOuvertes()
             for (const c of cases) c.checked = reference.includes(c.value)
           }
+          majCases()
           majRestitution()
           direBouton()
         }
@@ -2698,7 +2798,9 @@
             creer('h2', { textContent: etape.titre }),
             creer('p', {
               textContent:
-                'Masqué\u00a0: la restitution se fait sans le cours. Il s’ouvrira après ta dernière réponse.',
+                'Masqué\u00a0: ' +
+                (serieEnCours() === 'consolidation' ? 'la consolidation' : 'la restitution') +
+                ' se fait sans le cours. Il s’ouvrira après ta dernière réponse.',
             }),
             creer('button', {
               type: 'button',
@@ -2733,7 +2835,10 @@
             })
         $('contenu').replaceChildren(vue)
         // Point d'accroche des fiches : le HTML libre de l'étape est en place, son script peut l'animer.
-        document.dispatchEvent(new CustomEvent('fiche:rendu', { detail: { etape } }))
+        // Les traces gardées (fiche:trace) lui reviennent avec.
+        document.dispatchEvent(
+          new CustomEvent('fiche:rendu', { detail: { etape, traces: { ...(etat.traces ?? {}) } } }),
+        )
       }
 
       async function demarrer() {

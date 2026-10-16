@@ -158,9 +158,10 @@ const enGuillemets = (valeurs: string) => `« ${valeurs.split('|').join(' » ou 
  * pouce (`data-aide1` à `data-aide3`, `data-solution`), les retours écrits à la conception
  * (`data-retour-e1` avec `data-si-e1`, `data-retour` d'une option avec son `data-erreur`,
  * `data-sinon` pour toute autre réponse fausse), l'explication montrée après la réponse
- * (`data-explication`), la justification demandée (`data-justifier`), le message de réussite, et,
+ * (`data-explication`), la justification demandée (`data-justifier`), le message de réussite, le
+ * message après un pari (`data-apres`), et,
  * pour un schéma à refaire de mémoire, ses cases (`data-case`), ses liens (`data-lien` parmi
- * `data-choix`) et leurs indices (`data-indice`).
+ * `data-choix`, ou à écrire, accepté sur ses mots `data-mots`) et leurs indices (`data-indice`).
  */
 function cachesDuTemplate(contenu: string): string[] {
   const lignes: string[] = []
@@ -189,9 +190,19 @@ function cachesDuTemplate(contenu: string): string[] {
     if (lien !== undefined) {
       const choix = lire('data-choix')
       lignes.push(
-        `- Lien à choisir : « ${lien} »${choix === undefined ? '' : `, parmi ${enGuillemets(choix)}`}`,
+        choix === undefined
+          ? `- Lien à écrire de mémoire : « ${lien} »`
+          : `- Lien à choisir : « ${lien} », parmi ${enGuillemets(choix)}`,
       )
     }
+    const mots = lire('data-mots')
+    if (mots !== undefined)
+      lignes.push(
+        `- Lien accepté s’il dit, avec ses mots : ${mots
+          .split(';')
+          .map((groupe) => enGuillemets(groupe))
+          .join(', et ')}`,
+      )
     const accepte = lire('data-accepte')
     if (accepte !== undefined) lignes.push(`- Réponses acceptées : ${enGuillemets(accepte)}`)
     const indice = lire('data-indice')
@@ -239,7 +250,55 @@ function cachesDuTemplate(contenu: string): string[] {
     if (explication !== undefined) lignes.push(`- Après la réponse : ${explication}`)
     const succes = lire('data-succes')
     if (succes !== undefined) lignes.push(`- Réussite : ${succes}`)
+    const apres = lire('data-apres')
+    if (apres !== undefined) lignes.push(`- Après le choix : ${apres}`)
+    const pari = lire('data-avant')
+    if (pari !== undefined) {
+      const option = options.find(({ position }) => position === balise.index)
+      lignes.push(
+        `- Rappel du pari du début, si l’apprenant avait choisi « ${option?.texte ?? ''} » : « ${pari} »`,
+      )
+    }
+    lignes.push(...varianteDuCours(lire))
   }
+  return lignes
+}
+
+/**
+ * La variante d'un outil du cours : un autre nombre pour une conversion (`data-variante`), ou un autre
+ * cas (`data-variante-reponse`, avec `data-variante-enonce`, ses coups de pouce, sa solution et ses
+ * retours, tous préfixés `data-variante-`), refait sans regarder après une solution, à la place de
+ * l'énoncé d'origine.
+ */
+function varianteDuCours(lire: (nom: string) => string | undefined): string[] {
+  const nombre = lire('data-variante')
+  if (nombre !== undefined)
+    return [`- Après la solution, à refaire sans regarder sur un autre nombre : ${nombre}`]
+  const reponse = lire('data-variante-reponse')
+  if (reponse === undefined) return []
+  const lignes = [
+    `- Après la solution, à refaire sans regarder sur un autre cas : « ${lire('data-variante-enonce') ?? ''} » Réponse attendue : ${reponse}`,
+  ]
+  for (const cran of ['1', '2', '3']) {
+    const aide = lire(`data-variante-aide${cran}`)
+    if (aide !== undefined) lignes.push(`- Sur l’autre cas, coup de pouce ${cran} : ${aide}`)
+  }
+  const solution = lire('data-variante-solution')
+  if (solution !== undefined) lignes.push(`- Sur l’autre cas, solution : ${solution}`)
+  for (const cle of ['e1', 'e2', 'e3', 'e4', 'pixels']) {
+    const retour = lire(`data-variante-retour-${cle}`)
+    if (retour === undefined) continue
+    const si = lire(`data-variante-si-${cle}`)
+    const erreur = /^e\d+$/.test(cle) ? ` (${cle.toUpperCase()})` : ''
+    lignes.push(
+      `- Sur l’autre cas, retour${si === undefined ? '' : ` si ${enGuillemets(si)}`}${erreur} : ${retour}`,
+    )
+  }
+  const sinon = lire('data-variante-sinon')
+  if (sinon !== undefined)
+    lignes.push(`- Sur l’autre cas, retour pour toute autre réponse fausse : ${sinon}`)
+  const succes = lire('data-variante-succes')
+  if (succes !== undefined) lignes.push(`- Sur l’autre cas, réussite : ${succes}`)
   return lignes
 }
 
@@ -254,16 +313,19 @@ export const CE_QUE_FAIT_LE_GABARIT: readonly string[] = [
   'Une étape à plusieurs écrans les montre un par un, avec Retour et Suivant ; chaque écran a « Écouter », qui le lit à voix haute.',
   'La carte montre son texte, puis l’objectif replié sous « Ce qui sera vérifié » ; le même objectif replié ouvre la pratique.',
   'Pratique : un item à la fois. Quand l’outil de l’item vérifie la réponse, c’est lui qui dit si l’item est réussi ; sinon l’apprenant déclare « J’ai réussi » ou « Pas réussi ». Sous « J’ai eu besoin d’aide », il déclare le cran utilisé : 1 une question qui oriente, 2 un indice, 3 l’étape détaillée, 4 la solution complète. Chaque résultat part à l’appli avec son aide (« Envoyé : réussi, aide 1 »).',
-  'Quand l’outil a montré la solution, l’item n’est pas réussi : il affiche « Solution vue » et « Tu as vu la solution. Refais-la sans la regarder. », puis se redessine, et l’outil propose sa variante. Le même jour, chaque résultat de l’item part avec l’aide 4 ; un autre jour, il repart sans aide.',
+  'Quand l’outil a montré la solution, l’item n’est pas réussi : il affiche « Solution vue » et « Tu as vu la solution. Refais-la sans la regarder. », puis se redessine, et l’outil propose sa variante. La solution compte comme vue dès qu’elle s’affiche, même si l’apprenant quitte l’item. Le même jour, chaque résultat de l’item part avec l’aide 4 ; un autre jour, il repart sans aide.',
+  'Toute aide garde son jour : refait le même jour, un item part avec l’aide la plus forte reçue ce jour-là (« Tu as eu de l’aide aujourd’hui : refais-le un autre jour, sans aide, pour qu’il compte. ») ; un autre jour, il repart sans aide.',
   'L’appli ne tient un exercice de pratique pour fait que quand le nombre d’items demandé (`reussite` dans le manifeste) est réussi sans aide, et le bloc ne devient pas « acquis provisoirement » sans toute sa pratique.',
-  'Restitution : de la première réponse à la dernière, le cours (perception, pré-test, explications, pratique, ensemble) est masqué. « Revenir au cours » le rouvre ; une réponse donnée ensuite, ou collée, ne compte pas pour le statut (« Ne compte pas · Avec support »).',
+  'Restitution et consolidation, sans support : la série commence sur « Commencer » (« dès que tu commences, il est masqué jusqu’à ta dernière réponse »), avant toute question ; de ce clic à la dernière réponse, le cours (perception, pré-test, explications, pratique, ensemble) est masqué. Une erreur rouverte se reprend de même, sur « Commencer ». « Revenir au cours » le rouvre ; une réponse donnée ensuite, ou collée, ne compte pas pour le statut (« Ne compte pas · Avec support »).',
   'Restitution et consolidation : une question à la fois, la suivante paraît quand la précédente est finie ; les réponses envoyées restent lisibles au-dessus. Chaque question a un champ libre, puis « Ta confiance » (Sûr, Hésitant, Au hasard), à choisir avant d’envoyer.',
   'La correction de l’appli compare la réponse à l’attendu du manifeste, avec le contexte du correcteur (`contexte_ia`) : un niveau (Solide, Partiel, Fragile, Pas encore) et un message qui dit ce que la réponse montre de compris, ce qu’elle mélange et ce qui manque. Une réponse à moitié juste est à moitié juste ; un correcteur qui n’est pas sûr de son jugement le dit, et la réponse ne compte pas (« Ne compte pas · Non vérifiée »). Une erreur critique présente dans la réponse la met au plus à Fragile, à Pas encore si l’apprenant s’était dit sûr.',
   'Chaque correction dit d’où vient ce qu’elle corrige : du support (avec sa référence, une des `sources` du manifeste, qui désignent des étapes de la fiche), déduit du support, ou ajouté par le correcteur. Les questions que pose l’appli (rappel, vérifications) l’affichent sous la correction : « D’après le cours », « Déduit du cours » ou « Ajouté hors du cours », puis « Source · Fiche », le bloc et la référence.',
   'Une réponse qui n’est pas Solide reçoit une relance : l’apprenant répond une seconde fois, après le message (« Répondre à la relance ») ; seule la première réponse compte pour le statut. Une correction tirée au sort demande « D’accord avec ce niveau ? ». Le Suivi de l’appli compare la confiance déclarée aux résultats.',
   'La consolidation s’ouvre plus tard : c’est l’appli qui l’ouvre.',
-  'Bilan, une fois la restitution finie : ce qui est fait (restitution, consolidation, items réussis dont ceux sans aide), puis toutes les erreurs critiques du bloc, à cocher ; celles que le correcteur a repérées sont marquées « Repérée dans tes réponses ».',
-  'Une erreur critique cochée met le bloc « À reprendre », quoi qu’il ait réussi ailleurs : rien ne la compense. Elle rouvre la restitution, où les questions qui la touchent reviennent sous « À reprendre », et elle se ferme quand l’apprenant la décoche ou qu’une réponse Solide, qui compte, touche la même erreur (restitution, consolidation ou vérification).',
+  'Le statut du bloc suit les preuves : « En cours » dès la première trace, « Vu » quand chaque question de la restitution a sa première réponse, puis « Acquis provisoirement » (consolidation, pratique et atelier faits), « Acquis » (vérifications réussies) et « Maîtrisé » (acquis, retesté avec succès, et la cible d’aisance atteinte). Une erreur critique ouverte le met « À reprendre », quel que soit le reste.',
+  'Ce que la fiche note sans le corriger (un pari, la reprise du pari, le schéma refait de mémoire), un outil le confie au gabarit (événement `fiche:trace`) : il part à l’appli dans l’état de la page, que l’appli garde, et revient à l’outil à la visite suivante.',
+  'Bilan, une fois la restitution finie : ce qui est fait (restitution, consolidation, items réussis dont ceux sans aide), puis toutes les erreurs critiques du bloc, à cocher. Une erreur déjà ouverte, ou repérée par le correcteur dans une réponse depuis le dernier bilan (« Repérée dans tes réponses »), est cochée d’office et ne se décoche pas : « Une erreur cochée, ou repérée dans tes réponses, reste cochée : seule une réponse solide à une question qui la touche la referme. »',
+  'Une erreur critique cochée met le bloc « À reprendre », quoi qu’il ait réussi ailleurs : rien ne la compense. Elle rouvre la restitution, où les questions qui la touchent reviennent sous « À reprendre », et elle ne se ferme que par une réponse Solide, qui compte, à une question qui touche la même erreur (restitution, consolidation ou vérification). Décocher ne ferme rien.',
   'Le rappel, les tâches différées et les cartes ne sont pas dans la page : l’appli pose le rappel en début de séance, tire les tâches différées dans ses vérifications, plus tard, et fait revenir les cartes en répétition.',
 ]
 

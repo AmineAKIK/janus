@@ -84,14 +84,16 @@ describe('enregistrementDe', () => {
 })
 
 describe('decisionsDuBilan', () => {
+  // Une case décochée ne ferme rien : seule une réponse solide referme une erreur ouverte.
   it.each([
-    [[], ['E1'], ['E1'], []],
-    [['E1'], ['E1'], [], []],
-    [['E1', 'E2'], ['E2'], [], ['E1']],
-    [['E1'], [], [], ['E1']],
-    [[], [], [], []],
-  ])('ouvertes %j, cochées %j', (ouvertes, cochees, aCocher, aDecocher) => {
-    expect(decisionsDuBilan(ouvertes, cochees)).toEqual({ aCocher, aDecocher })
+    [[], ['E1'], ['E1']],
+    [['E1'], ['E1'], []],
+    [['E1', 'E2'], ['E2'], []],
+    [['E1'], [], []],
+    [['E1'], ['E1', 'E3'], ['E3']],
+    [[], [], []],
+  ])('ouvertes %j, cochées %j', (ouvertes, cochees, aCocher) => {
+    expect(decisionsDuBilan(ouvertes, cochees)).toEqual({ aCocher })
   })
 })
 

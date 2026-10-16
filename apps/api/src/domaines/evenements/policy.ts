@@ -131,14 +131,12 @@ export function incoherence(message: Message, manifeste: Manifeste): string | un
 }
 
 /**
- * Le bilan des erreurs critiques : les cases cochées deviennent des erreurs ouvertes, les cases
- * décochées ferment celles qui l'étaient. Le dernier état fait foi.
+ * Le bilan des erreurs critiques : les cases cochées deviennent des erreurs ouvertes. Une case
+ * décochée ne ferme rien : une erreur ouverte ne se referme que par une réponse solide à une question
+ * qui la touche (règles P01 et V01 de la méthode), jamais sur une déclaration.
  */
 export function decisionsDuBilan(ouvertes: readonly string[], cochees: readonly string[]) {
-  return {
-    aCocher: cochees.filter((erreur) => !ouvertes.includes(erreur)),
-    aDecocher: ouvertes.filter((erreur) => !cochees.includes(erreur)),
-  }
+  return { aCocher: cochees.filter((erreur) => !ouvertes.includes(erreur)) }
 }
 
 /** Vrai si l'IA a repéré cette erreur dans la correction (`erreurs_ids` est un tableau JSON). */

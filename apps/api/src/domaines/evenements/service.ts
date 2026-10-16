@@ -122,18 +122,15 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
         if (message.type === 'bilan.erreurs') {
           const faits = await lireFaits(tx, userId, [bloc])
           const ouvertes = calculerBloc(faits, manifeste, reglages, maintenant).erreursOuvertes
-          const { aCocher, aDecocher } = decisionsDuBilan(ouvertes, message.ids)
+          const { aCocher } = decisionsDuBilan(ouvertes, message.ids)
           await depot.ajouterDecisions(
             tx,
-            [
-              ...aCocher.map((erreurId) => ({ erreurId, decision: 'cochee' as const })),
-              ...aDecocher.map((erreurId) => ({ erreurId, decision: 'decochee' as const })),
-            ].map(({ erreurId, decision }) => ({
+            aCocher.map((erreurId) => ({
               id: identifiant(),
               userId,
               blocId: bloc.id,
               erreurId,
-              decision,
+              decision: 'cochee' as const,
               source: 'amine' as const,
               correctionId: null,
               dateServeur: maintenant,

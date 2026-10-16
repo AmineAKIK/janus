@@ -25,13 +25,13 @@ describe('bilan.erreurs de la démo', () => {
     expect(reponse.statut?.erreurs_ouvertes).toEqual(['E1'])
   })
 
-  it('l’état complet fait foi : une erreur décochée se referme', async () => {
+  it('une erreur décochée reste ouverte : seule une réponse solide la referme', async () => {
     const { transport } = monterDemo()
     await cocher(transport, 1, ['E1', 'E2'])
 
     const reponse = await cocher(transport, 2, ['E2'])
 
-    expect(reponse.statut?.erreurs_ouvertes).toEqual(['E2'])
+    expect(reponse.statut?.erreurs_ouvertes).toEqual(['E1', 'E2'])
   })
 
   it('ne compte pas deux fois une demande déjà reçue', async () => {

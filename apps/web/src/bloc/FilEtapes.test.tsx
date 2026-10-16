@@ -9,9 +9,9 @@ const ETAPES = [
   { id: 'ETP', titre: 'Perception', type: 'perception' as const },
   { id: 'ET2', titre: 'Pré-test', type: 'pretest' as const },
   { id: 'ET3', titre: 'Explication', type: 'explication' as const },
-  { id: 'ETE', titre: 'L’ensemble', type: 'ensemble' as const },
   { id: 'ET4', titre: 'Pratique', type: 'pratique' as const },
   { id: 'ET5', titre: 'Aisance', type: 'aisance' as const },
+  { id: 'ETE', titre: 'L’ensemble', type: 'ensemble' as const },
   { id: 'ET6', titre: 'Restitution', type: 'restitution' as const },
   { id: 'ET7', titre: 'Consolidation', type: 'consolidation' as const },
   { id: 'ET8', titre: 'Bilan', type: 'bilan' as const },
@@ -164,9 +164,9 @@ describe('FilEtapes', () => {
       />,
     )
 
-    // Comprendre : pré-test, explication, l'ensemble ; l'explication est la deuxième.
+    // Comprendre : pré-test, explication ; l'explication est la deuxième.
     expect(
-      screen.getByRole('button', { name: 'Explication · Comprendre · étape 2 sur 3' }),
+      screen.getByRole('button', { name: 'Explication · Comprendre · étape 2 sur 2' }),
     ).toBeInTheDocument()
     const moments = within(screen.getByRole('list', { name: 'Moments' })).getAllByRole('listitem')
     expect(moments.map((moment) => moment.textContent)).toEqual([
@@ -185,22 +185,23 @@ describe('FilEtapes', () => {
         etapes={ETAPES}
         courante="ET4"
         avancement={{ ...RIEN, etapes_vues: ['ET1', 'ETP', 'ET2'] }}
-        vues={['ET3']}
+        vues={['ET3', 'ETE']}
         bilanFait={false}
         surChoix={() => undefined}
       />,
     )
 
+    // S'entraîner : l'ensemble est vu, mais pas la pratique ni l'aisance.
     const moments = within(screen.getByRole('list', { name: 'Moments' })).getAllByRole('listitem')
     expect(moments.map((moment) => moment.textContent)).toEqual([
       '✓ Découvrir',
-      'Comprendre',
+      '✓ Comprendre',
       'S’entraîner',
       'Prouver',
     ])
     expect(moments[2]).toHaveAttribute('aria-current', 'step')
     expect(
-      screen.getByRole('button', { name: 'Pratique · S’entraîner · étape 1 sur 2' }),
+      screen.getByRole('button', { name: 'Pratique · S’entraîner · étape 1 sur 3' }),
     ).toBeInTheDocument()
   })
 
