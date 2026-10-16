@@ -144,7 +144,7 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
       '### ET9 : L’ensemble',
       'Le tout : les poids font le nombre.',
       '### ET4 : Restitution',
-      'Le cours est masqué de ta première réponse à la dernière.',
+      'dès que tu commences, il est masqué jusqu’à ta dernière réponse.',
       '### ET6 : Bilan',
       '## Ce qu’on te demande',
     ].map((titre) => lu.indexOf(titre))

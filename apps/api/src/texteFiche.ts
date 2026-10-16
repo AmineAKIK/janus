@@ -506,11 +506,11 @@ function etapeEnTexte(
       return ['Tu dis si tu as réussi l’atelier, sans aide ou non.']
     case 'restitution':
       return [
-        'Les questions, une à la fois : plus bas, dans « Ce qu’on te demande », partie Restitution. Le cours est masqué de ta première réponse à la dernière.',
+        'Les questions, une à la fois : plus bas, dans « Ce qu’on te demande », partie Restitution. Elle se fait sans le cours : dès que tu commences, il est masqué jusqu’à ta dernière réponse.',
       ]
     case 'consolidation':
       return [
-        'Les questions, une à la fois : plus bas, dans « Ce qu’on te demande », partie Consolidation. Cette série s’ouvre plus tard.',
+        'Les questions, une à la fois : plus bas, dans « Ce qu’on te demande », partie Consolidation. Cette série s’ouvre plus tard, et se fait aussi sans le cours, dès que tu commences.',
       ]
     case 'bilan':
       return [
