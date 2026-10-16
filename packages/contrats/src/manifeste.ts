@@ -8,7 +8,7 @@ const Entier = z.number().int()
 /**
  * Les types d'étape d'une fiche, dans l'ordre du cycle de la méthode (percevoir, tenter, modéliser,
  * faire, recevoir un retour, ajuster). Les étapes de cours (`carte`, `perception`, `pretest`,
- * `explication`, `ensemble`, `pratique`, `atelier`, `aisance`) sont masquées pendant la restitution ;
+ * `explication`, `pratique`, `atelier`, `aisance`, `ensemble`) sont masquées pendant la restitution ;
  * `perception`, `pretest`, `explication`, `ensemble` et `aisance` lisent leur contenu dans un
  * `<template data-etape>` de la page. Les quatre moments qui les regroupent sont dans `moments.ts`.
  */
@@ -18,11 +18,11 @@ export const TypeEtape = z.enum([
   'perception',
   'pretest',
   'explication',
-  /** Le retour à l'ensemble en fin de cours : le schéma complété de mémoire, le pari du début repris et corrigé, avant la pratique. */
-  'ensemble',
   'pratique',
   'atelier',
   'aisance',
+  /** Ajuster, en fin de bloc (règle C08) : après la pratique, le pari du début repris et corrigé, puis le schéma refait de mémoire. */
+  'ensemble',
   'restitution',
   'consolidation',
   'bilan',

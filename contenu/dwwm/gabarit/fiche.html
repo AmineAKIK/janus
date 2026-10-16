@@ -560,8 +560,16 @@
         border-radius: var(--rayon-champ);
         background: var(--couleur-fond);
       }
-      .item > label {
+      .item > label,
+      .relance > label {
         font-weight: 500;
+      }
+      /* Le complément d'une réponse, après sa correction, dans la carte de la question. */
+      .relance {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-12);
+        min-width: 0;
       }
       .item[data-fait='oui'] {
         border-color: var(--couleur-succes);
@@ -1397,14 +1405,15 @@
       const CLE_ETAT = 'janus.fiche.' + manifeste.bloc + '.etat'
       /*
        * Les quatre moments du cycle de la méthode (percevoir, tenter, modéliser, faire, recevoir un
-       * retour, ajuster), dans l'ordre du fil, avec les types d'étape de chacun. `perception`,
-       * `pretest` et `ensemble` sont nouveaux : le contrat des fiches (PR séparée) les ajoute au
-       * manifeste ; le gabarit sait déjà les dessiner, comme une explication (afficherLibre).
+       * retour, ajuster), dans l'ordre du fil, avec les types d'étape de chacun. `ensemble`, c'est
+       * ajuster : en fin de bloc, après la pratique, le pari du début repris puis le schéma refait de
+       * mémoire (règle C08). `perception`, `pretest` et `ensemble` se dessinent comme une explication
+       * (afficherLibre).
        */
       const MOMENTS = [
         { nom: 'Découvrir', types: ['carte', 'perception'] },
-        { nom: 'Comprendre', types: ['pretest', 'explication', 'ensemble'] },
-        { nom: 'S’entraîner', types: ['pratique', 'atelier', 'aisance'] },
+        { nom: 'Comprendre', types: ['pretest', 'explication'] },
+        { nom: 'S’entraîner', types: ['pratique', 'atelier', 'aisance', 'ensemble'] },
         { nom: 'Prouver', types: ['restitution', 'consolidation', 'bilan'] },
       ]
       const momentDe = (etape) => MOMENTS.find((moment) => moment.types.includes(etape.type))
@@ -1412,8 +1421,6 @@
       const ETAPES_FICHE = MOMENTS.flatMap((moment) => moment.types)
       /** Les étapes à lire, dessinées depuis leur `<template data-etape>`. */
       const ETAPES_LIBRES = ['perception', 'pretest', 'explication', 'ensemble', 'aisance']
-      /** Le cours : ce que la restitution sans support masque jusqu'à la dernière réponse. */
-      const ETAPES_COURS = ['perception', 'pretest', 'explication', 'ensemble', 'pratique']
       const LIBELLES_STATUT = {
         non_commence: 'Non commencé',
         en_cours: 'En cours',
@@ -1503,7 +1510,6 @@
       let mode = 'autonome'
       let serieOuverte = { restitution: true, consolidation: true }
       let etat = { etape: etapes[0].id, envoyees: {}, retourCours: false, pratique: {} }
-      const corrections = {}
       const pont = window.JanusPont
       if (window.parent !== window) document.documentElement.dataset.integree = ''
       /** Le dernier statut reçu de l'appli : `manque` dit, entre autres, les erreurs encore ouvertes. */
@@ -1512,12 +1518,51 @@
       let majPied = () => {}
       /** Remet à jour le bilan affiché quand un statut arrive. */
       let majBilan = () => {}
+      /** Remet à jour l'heure d'ouverture de la consolidation affichée quand un statut arrive. */
+      let majQuand = () => {}
       /** Le dernier bilan envoyé depuis cette page : son identifiant, pour reconnaître un refus. */
       let bilanEnvoye = null
 
       function enregistrer() {
         pont.sauver(etat)
       }
+      /**
+       * Les traces de la fiche : un outil émet `fiche:trace` (`detail: { cle, valeur }`) pour garder ce
+       * que l'apprenant a fait sans note (un pari, une reprise, un schéma refait). Elles vont dans l'état
+       * de la page, que l'appli enregistre, et reviennent à l'outil dans `fiche:rendu` (`detail.traces`).
+       */
+      document.addEventListener('fiche:trace', (evenement) => {
+        const { cle, valeur } = evenement.detail ?? {}
+        if (typeof cle !== 'string' || cle === '' || valeur === undefined) return
+        etat.traces = { ...(etat.traces ?? {}), [cle]: JSON.parse(JSON.stringify(valeur)) }
+        enregistrer()
+      })
+      /**
+       * Une erreur critique repérée, par le correcteur dans une réponse ou par un outil : elle reste
+       * connue après un rechargement, et le bilan suivant la coche d'office (`aCocher`) sans que
+       * l'apprenant puisse la décocher (règle V01). `cle` dit où : l'identifiant de la question, ou
+       * « outil: » suivi de l'endroit que l'outil nomme.
+       */
+      function noterReperees(cle, ids) {
+        if (ids.length === 0) return
+        const deja = etat.erreurs?.[cle] ?? []
+        etat.erreurs = { ...(etat.erreurs ?? {}), [cle]: [...new Set([...deja, ...ids])] }
+        etat.aCocher = [...new Set([...(etat.aCocher ?? []), ...ids])]
+        enregistrer()
+      }
+      /**
+       * Un outil qui reconnaît une erreur critique dans une réponse (des bits lus à l'envers, un départ
+       * de 256) émet sur son élément `fiche:erreur` (`bubbles: true`, `cancelable: true`, `detail:
+       * { erreur, ou }`). Une fois la restitution faite, l'erreur attend le bilan : le gabarit annule
+       * l'événement, et l'outil dit d'envoyer le bilan avant de continuer.
+       */
+      $('contenu').addEventListener('fiche:erreur', (evenement) => {
+        const { erreur, ou } = evenement.detail ?? {}
+        if (typeof ou !== 'string' || ou === '') return
+        if (!manifeste.erreurs_critiques.some((e) => e.id === erreur)) return
+        noterReperees('outil:' + ou, [erreur])
+        if (bilanAttendu()) evenement.preventDefault()
+      })
       function aller(id) {
         etat.etape = id
         pont.envoyer('etape.vue', { etape: id })
@@ -1535,10 +1580,15 @@
       }
       const pluriel = (nombre, singulier, plusieurs) =>
         nombre + ' ' + (nombre > 1 ? plusieurs : singulier)
+      /** Le jour sur cet appareil, AAAA-MM-JJ : une solution vue ne compte plus le lendemain. */
+      function aujourdhui() {
+        const date = new Date()
+        const deux = (nombre) => String(nombre).padStart(2, '0')
+        return date.getFullYear() + '-' + deux(date.getMonth() + 1) + '-' + deux(date.getDate())
+      }
 
       const questions = (serie) =>
         serie === 'restitution' ? manifeste.restitution : manifeste.consolidation
-      const restitutionTerminee = () => manifeste.restitution.every((q) => etat.envoyees[q.id])
       const reponsesFinies = (serie) => questions(serie).filter((q) => etat.envoyees[q.id]).length
       /**
        * Ce qui retient dans une étape : les questions d'une série ouverte qui n'ont pas encore leur
@@ -1560,12 +1610,70 @@
           ' pour l’instant.'
         )
       }
-      /** Restitution sans support : dès la première réponse, le cours est masqué jusqu'à la dernière, sauf retour au cours. */
-      const coursMasque = () =>
-        serieOuverte.restitution &&
-        Object.keys(etat.envoyees).length > 0 &&
-        !restitutionTerminee() &&
-        !etat.retourCours
+      /** Les questions d'une série ouverte qui attendent une réponse : pas encore répondues, ou à reprendre. */
+      const aPoserDans = (serie) =>
+        serieOuverte[serie]
+          ? questions(serie).filter((q) => !etat.envoyees[q.id] || aRefaire(serie).includes(q))
+          : []
+      /** La série commencée (bouton « Commencer ») qui a encore des questions à poser, s'il y en a une. */
+      const serieEnCours = () =>
+        ['restitution', 'consolidation'].find(
+          (serie) => etat.enCours?.[serie] && aPoserDans(serie).length > 0,
+        )
+      /**
+       * Restitution et consolidation sans support : de « Commencer » à la dernière réponse, tout le reste
+       * de la fiche est masqué, sauf retour au cours. Le cours, mais aussi la carte, la pratique,
+       * l'atelier, l'aisance, le bilan (la liste des erreurs critiques soufflerait des réponses) et
+       * l'autre série, avec ses corrections.
+       */
+      const coursMasque = () => serieEnCours() !== undefined && !etat.retourCours
+      /** Une étape que la série en cours masque : toutes, sauf la série elle-même. */
+      const masquee = (etape) => coursMasque() && etape.type !== serieEnCours()
+      /** La restitution faite (ou fermée par l'appli) : le bilan peut partir. */
+      const restitutionTerminee = () =>
+        !serieOuverte.restitution || reponsesFinies('restitution') === manifeste.restitution.length
+      /**
+       * Une erreur critique repérée attend le bilan : la restitution est faite, et le bilan ne l'a pas
+       * encore reçue. Tant qu'il n'est pas envoyé, la consolidation ne commence pas et l'aisance
+       * s'arrête : sans cela, une erreur repérée qu'on ne coche jamais n'empêcherait rien (règle V01).
+       */
+      const bilanAttendu = () => restitutionTerminee() && (etat.aCocher ?? []).length > 0
+      /** Ce qui attend le bilan : les erreurs repérées, nommées, et le chemin vers le bilan. */
+      function attenteBilan(quoi) {
+        const reperees = manifeste.erreurs_critiques.filter((e) =>
+          (etat.aCocher ?? []).includes(e.id),
+        )
+        const bilan = etapes.find((e) => e.type === 'bilan')
+        return [
+          creer('p', {
+            textContent:
+              (reperees.length > 1
+                ? 'Des erreurs critiques ont été repérées dans tes réponses : '
+                : 'Une erreur critique a été repérée dans tes réponses : ') +
+              reperees.map((e) => e.libelle).join(' ; ') +
+              '. ' +
+              quoi +
+              ' reprend une fois ton bilan envoyé. ' +
+              (reperees.length > 1
+                ? 'Elles y sont cochées d’office, et chacune se referme par une réponse solide à une question qui la touche.'
+                : 'L’erreur y est cochée d’office, et une réponse solide à une question qui la touche la refermera.'),
+          }),
+          ...(bilan
+            ? [
+                creer(
+                  'div',
+                  { className: 'actions' },
+                  creer('button', {
+                    type: 'button',
+                    className: 'bouton',
+                    textContent: 'Aller au bilan',
+                    onclick: () => aller(bilan.id),
+                  }),
+                ),
+              ]
+            : []),
+        ]
+      }
 
       function creer(balise, { dataset = {}, ...proprietes } = {}, ...enfants) {
         const element = Object.assign(document.createElement(balise), proprietes)
@@ -1671,14 +1779,15 @@
       }
 
       /**
-       * La carte : d'abord le `<template data-etape="ET1">` de la page (où tu es, à quoi ça sert, ce que
-       * tu sauras faire), lisible avec « Écouter », puis l'objectif d'examen replié, puis Commencer.
-       * Sans template (les fiches d'avant) : l'objectif, puis la liste des étapes. `contexte_ia` est
-       * destiné au correcteur : il n'est jamais affiché.
+       * La carte : d'abord son `<template data-etape>` (où tu es, à quoi ça sert, ce que tu sauras
+       * faire), lisible avec « Écouter », puis l'objectif d'examen replié, puis le bouton vers l'étape
+       * d'après (Commencer quand la carte ouvre la fiche). Elle n'est pas forcément la première étape :
+       * une perception peut la précéder. Sans template (les fiches d'avant) : l'objectif, puis la liste
+       * des étapes. `contexte_ia` est destiné au correcteur : il n'est jamais affiché.
        */
-      function afficherCarte() {
-        const section = creer('section', {}, creer('h2', { textContent: 'Carte du bloc' }))
-        const modele = document.querySelector('template[data-etape="' + etapes[0].id + '"]')
+      function afficherCarte(carte) {
+        const section = creer('section', {}, creer('h2', { textContent: carte.titre }))
+        const modele = document.querySelector('template[data-etape="' + carte.id + '"]')
         if (modele) {
           const { ecran, lu } = ecranUnique(modele)
           section.append(barreEcoute(lu), ecran, objectifReplie())
@@ -1692,7 +1801,9 @@
               ...etapes.map((etape) => creer('li', { textContent: etape.titre })),
             ),
           )
-        section.append(...piedEtape(etapes[0], 'Commencer'))
+        section.append(
+          ...piedEtape(carte, carte.id === etapes[0].id ? 'Commencer' : 'Étape suivante'),
+        )
         return section
       }
 
@@ -1928,21 +2039,35 @@
         const etatItem = creer('span', { className: 'item-etat' })
         const resultat = creer('p', { className: 'discret' })
         const solutionVue = () => Boolean(etat.pratique[item.id]?.solutionVue)
+        // La solution vue garde son jour : ce jour-là, l'item ne peut pas compter sans aide ; un autre
+        // jour, il repart sans aide (une marque d'avant, sans jour, ne retient plus rien).
+        const vueAujourdhui = () => etat.pratique[item.id]?.solutionVue === aujourdhui()
+        // Toute aide garde de même son jour : refait le même jour, l'item part avec l'aide la plus forte
+        // reçue ce jour-là. On ne le refait pas sans aide dans la foulée, la réponse encore sous les yeux.
+        const aideDuJour = () =>
+          etat.pratique[item.id]?.aideLe === aujourdhui()
+            ? (etat.pratique[item.id].aideMax ?? 0)
+            : 0
         /** Note un résultat ; `vue` : l'outil vient de montrer la solution, et l'item s'en souvient. */
         const noter = (ok, aideUtilisee, vue = false) => {
-          const essais = (etat.pratique[item.id]?.essais ?? 0) + 1
+          const avant = etat.pratique[item.id]
+          const essais = (avant?.essais ?? 0) + 1
+          const aideNotee = Math.max(aideUtilisee, aideDuJour(), vue ? 4 : 0)
           pont.envoyer('pratique.resultat', {
             exercice: exercice.id,
             item: item.id,
             reussi: ok,
-            aide: aideUtilisee,
+            aide: aideNotee,
             essais,
           })
           etat.pratique[item.id] = {
             reussi: ok,
-            aide: aideUtilisee,
+            aide: aideNotee,
             essais,
-            solutionVue: vue || solutionVue(),
+            solutionVue: vue ? aujourdhui() : (avant?.solutionVue ?? false),
+            ...(aideNotee > 0
+              ? { aideLe: aujourdhui(), aideMax: aideNotee }
+              : { aideLe: avant?.aideLe ?? null, aideMax: avant?.aideMax ?? 0 }),
           }
           enregistrer()
         }
@@ -1969,9 +2094,15 @@
           })
           return b
         })
+        // Après une solution montrée, l'outil de la fiche le lit (`data-solution-vue` sur la boîte de
+        // l'item) pour proposer une variante : on refait un cas comparable, pas celui qu'on a vu.
+        // `data-item` nomme l'item : l'outil le donne quand il repère une erreur (`fiche:erreur`).
         const boite = creer(
           'div',
-          { className: 'item' },
+          {
+            className: 'item',
+            dataset: { item: item.id, ...(solutionVue() ? { solutionVue: '' } : {}) },
+          },
           creer(
             'div',
             { className: 'item-tete' },
@@ -2039,10 +2170,23 @@
                 : 'À refaire'
             : ''
           resultat.className = aRefaire ? 'item-refaire' : 'discret'
+          // Réussi avec de l'aide : l'appli ne le compte pas encore, la page dit comment il comptera.
+          const pourCompter =
+            !fait?.reussi || fait.aide === 0
+              ? ''
+              : vueAujourdhui()
+                ? '. Tu as vu la solution aujourd’hui\u00a0: refais-le un autre jour, sans aide, pour qu’il compte.'
+                : aideDuJour() > 0
+                  ? '. Tu as eu de l’aide aujourd’hui\u00a0: refais-le un autre jour, sans aide, pour qu’il compte.'
+                  : '. Refais-le sans aide pour qu’il compte.'
           resultat.textContent = aRefaire
             ? 'Tu as vu la solution. Refais-la sans la regarder.'
             : fait
-              ? 'Envoyé\u00a0: ' + (fait.reussi ? 'réussi' : 'non réussi') + ', aide ' + fait.aide
+              ? 'Envoyé\u00a0: ' +
+                (fait.reussi ? 'réussi' : 'non réussi') +
+                ', aide ' +
+                fait.aide +
+                pourCompter
               : ''
         }
         majItem()
@@ -2050,20 +2194,29 @@
         // redessiné : la réponse et le message de l'outil restent à l'écran. Sauf quand l'outil a montré
         // la réponse (aide 4) : rien n'est réussi, l'item se note « solution vue » et se redessine à
         // neuf (l'outil se remonte sur fiche:rendu, son aide repart de zéro), pour être refait sans la
-        // regarder. Une fois la solution vue, chaque résultat de l'item part avec l'aide 4.
+        // regarder. Avec `garder: true`, l'outil montre la solution à l'instant : l'item la note tout de
+        // suite, sans se redessiner, et se redessine quand l'outil émet fiche:refaire (« je refais »).
+        // Le jour où une aide est reçue, chaque résultat de l'item part avec l'aide la plus forte du jour.
+        const redessiner = () => {
+          etat.itemCourant = index
+          enregistrer()
+          afficher()
+        }
         consigne.addEventListener('fiche:verification', (evenement) => {
           const detail = evenement.detail ?? {}
           if (!verifie || typeof detail.juste !== 'boolean') return
           const aideOutil = [1, 2, 3, 4].includes(detail.aide) ? detail.aide : 0
           if (aideOutil >= 4) {
             noter(false, 4, true)
-            etat.itemCourant = index
-            enregistrer()
-            afficher()
+            if (detail.garder === true) majItem()
+            else redessiner()
             return
           }
-          noter(detail.juste, solutionVue() ? 4 : Math.max(aide, aideOutil))
+          noter(detail.juste, Math.max(aide, aideOutil))
           majItem()
+        })
+        consigne.addEventListener('fiche:refaire', () => {
+          if (verifie && solutionVue()) redessiner()
         })
         return creer(
           'section',
@@ -2144,9 +2297,14 @@
         return section
       }
 
-      /** Une réponse déjà envoyée : lisible, avec sa correction si elle est encore en mémoire. */
-      function carteEnvoyee(question) {
-        return creer(
+      /**
+       * Une réponse déjà envoyée, lisible. Sa correction n'apparaît qu'une fois la série finie (règle
+       * M01) : avant, elle soufflerait les questions suivantes. Finie, une réponse qui n'est pas Solide
+       * peut se compléter, une fois, après sa correction (« Compléter ma réponse ») ; ce second tour ne
+       * compte pas pour le statut.
+       */
+      function carteEnvoyee(question, serie) {
+        const carte = creer(
           'div',
           { className: 'item', dataset: { fait: 'oui' } },
           creer('strong', { textContent: question.question }),
@@ -2154,8 +2312,58 @@
             className: 'reponse-envoyee',
             textContent: etat.envoyees[question.id].reponse,
           }),
-          ...(corrections[question.id] ? [bulleCorrection(corrections[question.id])] : []),
         )
+        const gardee = etat.corrigees?.[question.id]
+        if (serieEnCours() === serie) {
+          carte.append(
+            creer('p', { className: 'discret', textContent: 'Corrigée à la fin de la série.' }),
+          )
+          return carte
+        }
+        if (!gardee) return carte
+        const sortie = creer('div', { className: 'sortie' })
+        sortie.setAttribute('aria-live', 'polite')
+        sortie.append(bulleCorrection(gardee.premiere), ...accordSur(gardee.premiere))
+        carte.append(sortie)
+        if (gardee.relance)
+          carte.append(
+            creer('p', { className: 'reponse-envoyee', textContent: gardee.relance.reponse }),
+            bulleCorrection(gardee.relance.correction),
+            ...accordSur(gardee.relance.correction),
+          )
+        else if (gardee.premiere.niveau !== 'solide' && serieOuverte[serie]) {
+          const completer = creer(
+            'div',
+            { className: 'actions' },
+            creer('button', {
+              type: 'button',
+              className: 'bouton secondaire',
+              textContent: 'Compléter ma réponse',
+              onclick: () =>
+                completer.replaceWith(afficherQuestion(serie, question, { relance: true })),
+            }),
+          )
+          carte.append(completer)
+        }
+        return carte
+      }
+
+      /** Quand la consolidation s'ouvre, d'après le dernier statut de l'appli : l'heure, et le jour s'il change. */
+      function quandConsolidation() {
+        const apres = Array.isArray(dernierStatut?.manque)
+          ? dernierStatut.manque.find((m) => m.code === 'consolidation_trop_tot')?.apres
+          : undefined
+        const date = apres ? new Date(apres) : null
+        if (!date || Number.isNaN(date.getTime()))
+          return 'La consolidation n’est pas encore ouverte\u00a0: elle s’ouvre un moment après ta restitution, reviens plus tard.'
+        const heure = date.getHours() + '\u00a0h\u00a0' + String(date.getMinutes()).padStart(2, '0')
+        const jour =
+          date.toDateString() === new Date().toDateString()
+            ? ''
+            : 'le ' +
+              date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) +
+              ' '
+        return 'La consolidation s’ouvre ' + jour + 'à ' + heure + '\u00a0: reviens à ce moment-là.'
       }
 
       function afficherSerie(serie, titre) {
@@ -2164,22 +2372,28 @@
         const finie = reponsesFinies(serie) === total
         const envoyees = questions(serie).filter((q) => etat.envoyees[q.id])
         if (!serieOuverte[serie]) {
+          const dire = () =>
+            finie
+              ? titre + ' terminée\u00a0: tes ' + total + ' réponses sont envoyées.'
+              : serie === 'consolidation'
+                ? quandConsolidation()
+                : 'Cette série n’est pas ouverte.'
+          const avis = creer('p', { textContent: dire() })
+          // L'heure d'ouverture vient du statut, qui arrive juste après le premier affichage.
+          majQuand = () => {
+            avis.textContent = dire()
+          }
           return creer(
             'section',
             {},
             creer('h2', { textContent: titre }),
-            creer('p', {
-              textContent: finie
-                ? titre + ' terminée\u00a0: tes ' + total + ' réponses sont envoyées.'
-                : serie === 'consolidation'
-                  ? 'La consolidation n’est pas encore ouverte\u00a0: reviens plus tard.'
-                  : 'Cette série n’est pas ouverte.',
-            }),
-            ...envoyees.map(carteEnvoyee),
+            avis,
+            ...envoyees.map((question) => carteEnvoyee(question, serie)),
             ...piedEtape(etape),
           )
         }
-        // Série ouverte : les réponses envoyées se lisent, les autres questions attendent leur réponse.
+        // Série ouverte, une question à la fois (règle I01) : les réponses envoyées se lisent, puis la
+        // première question qui attend sa réponse ; la suivante paraît sous elle quand elle est finie.
         // Une question qui touche une erreur critique ouverte se repose (restitution rouverte).
         const refaire = aRefaire(serie)
         const section = creer('section', {}, creer('h2', { textContent: titre }))
@@ -2202,14 +2416,77 @@
             }),
           )
         for (const question of questions(serie)) {
-          const reprise = refaire.includes(question)
-          section.append(
-            etat.envoyees[question.id] && !reprise
-              ? carteEnvoyee(question)
-              : afficherQuestion(serie, question, reprise),
-          )
+          if (etat.envoyees[question.id] && !refaire.includes(question))
+            section.append(carteEnvoyee(question, serie))
         }
-        section.append(...piedEtape(etape))
+        const aPoser = questions(serie).filter((q) => !etat.envoyees[q.id] || refaire.includes(q))
+        const pied = piedEtape(etape)
+        // Sans support : la série commence sur « Commencer », qui masque le cours jusqu'à la dernière
+        // réponse. Une erreur rouverte se reprend de même, quand l'apprenant a revu le cours. Une erreur
+        // repérée depuis la restitution passe d'abord par le bilan.
+        if (
+          aPoser.length > 0 &&
+          !etat.enCours?.[serie] &&
+          serie === 'consolidation' &&
+          bilanAttendu()
+        ) {
+          section.append(...attenteBilan('La consolidation'), ...pied)
+          return section
+        }
+        if (aPoser.length > 0 && !etat.enCours?.[serie]) {
+          section.append(
+            creer('p', {
+              textContent:
+                (serie === 'restitution' ? 'La restitution' : 'La consolidation') +
+                ' se fait sans le cours : dès que tu commences, il est masqué jusqu’à ta dernière réponse, comme le reste de la fiche. Tes réponses sont corrigées à la fin de la série, pour qu’une correction ne souffle pas la question suivante.',
+            }),
+            creer(
+              'div',
+              { className: 'actions' },
+              creer('button', {
+                type: 'button',
+                className: 'bouton',
+                textContent: 'Commencer',
+                onclick: () => {
+                  etat.enCours = { ...(etat.enCours ?? {}), [serie]: true }
+                  etat.retourCours = false
+                  enregistrer()
+                  afficher()
+                },
+              }),
+            ),
+            ...pied,
+          )
+          return section
+        }
+        section.append(...pied)
+        let rang = 0
+        const poserLaSuivante = () => {
+          const question = aPoser[rang]
+          rang += 1
+          if (!question) {
+            // La dernière réponse est là : le cours se rouvre à la prochaine étape affichée.
+            if (etat.enCours?.[serie]) {
+              etat.enCours = { ...etat.enCours, [serie]: false }
+              enregistrer()
+            }
+            // Une réponse vient d'être envoyée : la série se redessine avec toutes ses corrections.
+            if (rang > 1) {
+              afficher()
+              remonter($('contenu'))
+            }
+            return
+          }
+          const bloc = afficherQuestion(
+            serie,
+            question,
+            { reprise: refaire.includes(question) },
+            poserLaSuivante,
+          )
+          if (pied.length > 0) pied[0].before(bloc)
+          else section.append(bloc)
+        }
+        poserLaSuivante()
         return section
       }
 
@@ -2252,44 +2529,97 @@
         )
       }
 
+      /** Ce que la page garde d'une correction pour l'afficher plus tard, même après un rechargement. */
+      const resumeCorrection = (correction) => ({
+        id: correction.id,
+        niveau: correction.niveau,
+        message: correction.message,
+        compte: correction.compte,
+        raison_non_compte: correction.raison_non_compte ?? null,
+        tour: correction.tour,
+        echantillon: Boolean(correction.echantillon),
+      })
+
+      /**
+       * Une correction tirée au sort : l'apprenant dit, une fois, si le niveau lui semble juste. La
+       * réponse est gardée avec la correction : l'avis n'est pas redemandé à la visite suivante.
+       */
+      function accordSur(correction) {
+        if (!correction.echantillon || correction.avis !== undefined) return []
+        const intitule = creer('span', {
+          id: 'accord-' + correction.id,
+          textContent: 'D’accord avec ce niveau\u00a0?',
+        })
+        const accord = creer(
+          'div',
+          { className: 'accord' },
+          intitule,
+          creer(
+            'div',
+            { className: 'actions' },
+            ...[
+              [true, 'Oui'],
+              [false, 'Non'],
+            ].map(([daccord, libelle]) =>
+              creer('button', {
+                type: 'button',
+                className: 'bouton secondaire',
+                textContent: libelle,
+                onclick: () => {
+                  pont.envoyer('correction.accord', { correction: correction.id, accord: daccord })
+                  correction.avis = daccord
+                  enregistrer()
+                  accord.replaceWith(
+                    creer('p', { className: 'discret', textContent: 'Merci, c’est noté.' }),
+                  )
+                },
+              }),
+            ),
+          ),
+        )
+        accord.setAttribute('role', 'group')
+        accord.setAttribute('aria-labelledby', intitule.id)
+        return [accord]
+      }
+
       /**
        * Une question de la série, à répondre. `reprise` : elle a déjà sa réponse mais touche une erreur
        * critique ouverte ; on y répond de nouveau, depuis zéro (nouvelle tentative, premier tour).
+       * Pendant la série, une réponse envoyée n'affiche pas sa correction (règle M01) : la page la garde
+       * et la montre à la fin de la série, avec toutes les autres. `relance` : la série finie, l'apprenant
+       * complète une réponse qui n'était pas Solide, après sa correction ; ce second tour ne compte pas
+       * pour le statut, et sa correction s'affiche aussitôt. `apres` : ce qui suit quand elle est finie
+       * (la question suivante de la série).
        */
-      function afficherQuestion(serie, question, reprise = false) {
-        const envoyee = reprise ? undefined : etat.envoyees[question.id]
-        if (reprise) delete corrections[question.id]
+      function afficherQuestion(
+        serie,
+        question,
+        { reprise = false, relance = false } = {},
+        apres = () => {},
+      ) {
+        const premiere = etat.corrigees?.[question.id]?.premiere
+        const cle = (relance ? 'relance-' : 'rep-') + question.id
         const zone = creer('textarea', {
-          id: 'rep-' + question.id,
-          value: envoyee ? envoyee.reponse : '',
-          disabled: Boolean(envoyee),
+          id: cle,
+          value: relance ? etat.envoyees[question.id].reponse : '',
         })
         let colle = false
         zone.addEventListener('paste', () => {
           colle = true
         })
+        const radios = [
+          ['sur', 'Sûr'],
+          ['hesitant', 'Hésitant'],
+          ['hasard', 'Au hasard'],
+        ].map(([valeur, libelle]) => ({
+          libelle,
+          entree: creer('input', { type: 'radio', name: 'conf-' + cle, value: valeur }),
+        }))
         const confiance = creer(
           'fieldset',
           { className: 'choix' },
           creer('legend', { textContent: 'Ta confiance' }),
-          ...[
-            ['sur', 'Sûr'],
-            ['hesitant', 'Hésitant'],
-            ['hasard', 'Au hasard'],
-          ].map(([valeur, libelle]) =>
-            creer(
-              'label',
-              {},
-              creer('input', {
-                type: 'radio',
-                name: 'conf-' + question.id,
-                value: valeur,
-                disabled: Boolean(envoyee),
-                checked: envoyee?.confiance === valeur,
-              }),
-              libelle,
-            ),
-          ),
+          ...radios.map(({ libelle, entree }) => creer('label', {}, entree, libelle)),
         )
         const message = creer('p', { className: 'erreur', role: 'alert' })
         const sortie = creer('div', { className: 'sortie' })
@@ -2297,9 +2627,12 @@
         const bouton = creer('button', {
           type: 'button',
           className: 'bouton',
-          textContent: 'Envoyer',
-          disabled: Boolean(envoyee),
+          textContent: relance ? 'Envoyer le complément' : 'Envoyer',
         })
+        const figer = () => {
+          zone.disabled = true
+          for (const { entree } of radios) entree.disabled = true
+        }
         bouton.addEventListener('click', async () => {
           const choisie = confiance.querySelector('input:checked')
           if (zone.value.trim() === '')
@@ -2307,74 +2640,46 @@
           if (!choisie) return void (message.textContent = 'Choisis ta confiance avant d’envoyer.')
           message.textContent = ''
           bouton.disabled = true
-          const precedente = corrections[question.id]
           try {
             const correction = await pont.demanderCorrection({
               serie,
               question: question.id,
               reponse: zone.value,
               confiance: choisie.value,
-              relance: precedente && precedente.niveau !== 'solide' ? precedente.message : '',
+              relance: relance ? premiere.message : '',
               support: { colle, retour_cours: etat.retourCours },
             })
-            corrections[question.id] = correction
-            // Les erreurs repérées par le correcteur restent connues après un rechargement (bilan).
-            if (correction.erreurs_critiques.length > 0) {
-              const deja = etat.erreurs?.[question.id] ?? []
-              etat.erreurs = {
-                ...(etat.erreurs ?? {}),
-                [question.id]: [...new Set([...deja, ...correction.erreurs_critiques])],
+            noterReperees(question.id, correction.erreurs_critiques)
+            figer()
+            bouton.hidden = true
+            if (relance) {
+              const gardee = resumeCorrection(correction)
+              etat.corrigees = {
+                ...etat.corrigees,
+                [question.id]: {
+                  ...etat.corrigees[question.id],
+                  relance: { reponse: zone.value, correction: gardee },
+                },
               }
               enregistrer()
+              sortie.replaceChildren(bulleCorrection(gardee), ...accordSur(gardee))
+              return
             }
-            sortie.replaceChildren(bulleCorrection(correction))
-            if (correction.echantillon) {
-              // Une correction tirée au sort : l'apprenant dit si le niveau lui semble juste.
-              const intitule = creer('span', {
-                id: 'accord-' + question.id,
-                textContent: 'D’accord avec ce niveau\u00a0?',
-              })
-              const accord = creer(
-                'div',
-                { className: 'accord' },
-                intitule,
-                creer(
-                  'div',
-                  { className: 'actions' },
-                  ...[
-                    [true, 'Oui'],
-                    [false, 'Non'],
-                  ].map(([daccord, libelle]) =>
-                    creer('button', {
-                      type: 'button',
-                      className: 'bouton secondaire',
-                      textContent: libelle,
-                      onclick: () => {
-                        pont.envoyer('correction.accord', {
-                          correction: correction.id,
-                          accord: daccord,
-                        })
-                        accord.replaceWith(
-                          creer('p', { className: 'discret', textContent: 'Merci, c’est noté.' }),
-                        )
-                      },
-                    }),
-                  ),
-                ),
-              )
-              accord.setAttribute('role', 'group')
-              accord.setAttribute('aria-labelledby', intitule.id)
-              sortie.append(accord)
+            etat.corrigees = {
+              ...(etat.corrigees ?? {}),
+              [question.id]: { premiere: resumeCorrection(correction), relance: null },
             }
-            if (correction.niveau === 'solide' || correction.tour >= 2) {
-              etat.envoyees[question.id] = { reponse: zone.value, confiance: choisie.value }
-              enregistrer()
-              // Les corrections restent à l'écran ; le cours se rouvre à la prochaine étape affichée.
-              majPied()
-            } else {
-              bouton.disabled = false
-              bouton.textContent = 'Répondre à la relance'
-            }
+            etat.envoyees[question.id] = { reponse: zone.value, confiance: choisie.value }
+            enregistrer()
+            sortie.replaceChildren(
+              creer('p', {
+                className: 'discret',
+                textContent:
+                  'Envoyée. Sa correction s’affichera à la fin de la série, pour ne pas souffler les questions suivantes.',
+              }),
+            )
+            majPied()
+            apres()
           } catch (erreur) {
             message.textContent =
               'Correction impossible\u00a0: ' +
@@ -2382,6 +2687,21 @@
             bouton.disabled = false
           }
         })
+        if (relance)
+          return creer(
+            'div',
+            { className: 'relance' },
+            creer('label', {
+              htmlFor: zone.id,
+              textContent:
+                'Complète ta réponse, d’après sa correction. Ce complément ne compte pas pour le statut.',
+            }),
+            zone,
+            confiance,
+            creer('div', { className: 'actions' }, bouton),
+            message,
+            sortie,
+          )
         const ouvertes = erreursOuvertes()
         const touchees = manifeste.erreurs_critiques.filter(
           (e) => (question.erreurs ?? []).includes(e.id) && ouvertes.includes(e.id),
@@ -2431,8 +2751,9 @@
 
       /**
        * Le bilan : ce qui est fait dans la fiche, puis les erreurs critiques du bloc à cocher. Une
-       * erreur cochée reste ouverte (à revoir), une erreur décochée se ferme : c'est le dernier bilan
-       * envoyé qui fait foi. On ne l'envoie qu'une fois la restitution faite.
+       * erreur ouverte, ou repérée par le correcteur depuis le dernier bilan, est cochée et ne se
+       * décoche pas : seule une réponse solide à une question qui la touche la referme (règles P01 et
+       * V01). On ne l'envoie qu'une fois la restitution faite.
        */
       function afficherBilan() {
         // Le résultat d'un bilan se lit là où on l'a envoyé : à la visite suivante, il serait périmé
@@ -2505,14 +2826,24 @@
           )
 
         const reperees = new Set(Object.values(etat.erreurs ?? {}).flat())
+        /** Cochée d'office et verrouillée : ouverte, ou repérée depuis le dernier bilan. */
+        const verrouillee = (id) =>
+          erreursOuvertes().includes(id) || (etat.aCocher ?? []).includes(id)
         const cases = manifeste.erreurs_critiques.map((erreur) =>
           creer('input', {
             type: 'checkbox',
             name: 'erreur',
             value: erreur.id,
-            checked: erreursOuvertes().includes(erreur.id),
+            checked: verrouillee(erreur.id),
+            disabled: verrouillee(erreur.id),
           }),
         )
+        const majCases = () => {
+          for (const c of cases) {
+            c.disabled = verrouillee(c.value)
+            if (c.disabled) c.checked = true
+          }
+        }
         const erreurs = creer(
           'fieldset',
           { className: 'cases' },
@@ -2520,7 +2851,7 @@
           creer('p', {
             className: 'discret',
             textContent:
-              'Coche celles que tu as faites et que tu dois encore revoir. Décoche celles que tu as corrigées.',
+              'Coche celles que tu as faites et que tu dois encore revoir. Une erreur cochée met le bloc «\u00a0À reprendre\u00a0», quel que soit le reste. Une erreur cochée, ou repérée dans tes réponses, reste cochée\u00a0: seule une réponse solide à une question qui la touche la referme.',
           }),
           ...manifeste.erreurs_critiques.map((erreur, k) =>
             creer(
@@ -2587,6 +2918,7 @@
             retour.textContent = 'Le bilan n’est pas parti\u00a0: ' + bilanEnvoye.refus
             // Refusé : le bilan qui fait foi reste le précédent, et les cases cochées peuvent repartir.
             etat.bilan = bilanEnvoye.precedent
+            etat.aCocher = [...new Set([...(etat.aCocher ?? []), ...bilanEnvoye.aCocher])]
             enregistrer()
             reference = erreursOuvertes()
             return
@@ -2609,8 +2941,16 @@
             retour.textContent = 'Le bilan n’a pas pu partir. Réessaie dans un instant.'
             return
           }
-          bilanEnvoye = { id, statut: null, refus: null, precedent: etat.bilan }
+          bilanEnvoye = {
+            id,
+            statut: null,
+            refus: null,
+            precedent: etat.bilan,
+            aCocher: etat.aCocher ?? [],
+          }
           etat.bilan = { ids }
+          // Envoyées, les erreurs repérées sont ouvertes : c'est le statut qui les verrouille désormais.
+          etat.aCocher = []
           enregistrer()
           reference = ids
           direBouton()
@@ -2624,6 +2964,7 @@
             reference = erreursOuvertes()
             for (const c of cases) c.checked = reference.includes(c.value)
           }
+          majCases()
           majRestitution()
           direBouton()
         }
@@ -2644,18 +2985,20 @@
         window.speechSynthesis?.cancel()
         majPied = () => {}
         majBilan = () => {}
+        majQuand = () => {}
         afficherEtapes()
         const etape = etapes.find((e) => e.id === etat.etape) ?? etapes[0]
-        const cours = ETAPES_COURS.includes(etape.type)
         let vue
-        if (cours && coursMasque()) {
+        if (masquee(etape)) {
           vue = creer(
             'section',
             {},
             creer('h2', { textContent: etape.titre }),
             creer('p', {
               textContent:
-                'Masqué\u00a0: la restitution se fait sans le cours. Il s’ouvrira après ta dernière réponse.',
+                'Masqué\u00a0: ' +
+                (serieEnCours() === 'consolidation' ? 'la consolidation' : 'la restitution') +
+                ' se fait sans le cours. Cette étape s’ouvrira après ta dernière réponse.',
             }),
             creer('button', {
               type: 'button',
@@ -2672,12 +3015,21 @@
               textContent: 'Tes prochaines réponses seront alors marquées « retour au cours ».',
             }),
           )
-        } else
+        } else if (etape.type === 'aisance' && bilanAttendu())
+          // L'aisance compte pour « Maîtrisé » : une erreur repérée passe d'abord par le bilan.
+          vue = creer(
+            'section',
+            {},
+            creer('h2', { textContent: etape.titre }),
+            ...attenteBilan('L’aisance'),
+            ...piedEtape(etape),
+          )
+        else
           vue =
             (ETAPES_LIBRES.includes(etape.type)
               ? () => afficherLibre(etape)
               : {
-                  carte: afficherCarte,
+                  carte: () => afficherCarte(etape),
                   pratique: afficherPratique,
                   atelier: afficherAtelier,
                   restitution: () => afficherSerie('restitution', 'Restitution'),
@@ -2690,7 +3042,10 @@
             })
         $('contenu').replaceChildren(vue)
         // Point d'accroche des fiches : le HTML libre de l'étape est en place, son script peut l'animer.
-        document.dispatchEvent(new CustomEvent('fiche:rendu', { detail: { etape } }))
+        // Les traces gardées (fiche:trace) lui reviennent avec.
+        document.dispatchEvent(
+          new CustomEvent('fiche:rendu', { detail: { etape, traces: { ...(etat.traces ?? {}) } } }),
+        )
       }
 
       async function demarrer() {
@@ -2705,6 +3060,7 @@
           $('statut').textContent = 'Statut\u00a0: ' + (LIBELLES_STATUT[statut] ?? statut)
           if (bilanEnvoye !== null && bilanEnvoye.statut === null) bilanEnvoye.statut = statut
           majBilan()
+          majQuand()
         })
         pont.surErreur((erreur) => {
           $('statut').textContent = 'Erreur\u00a0: ' + erreur.detail
@@ -2739,7 +3095,7 @@
           const consolidationChangee =
             serieOuverte.consolidation !== init.serie_ouverte.consolidation
           serieOuverte = init.serie_ouverte
-          // Redessiner efface les corrections affichées : seulement quand la consolidation s'ouvre.
+          // Redessiner efface une réponse en cours d'écriture : seulement quand la consolidation s'ouvre.
           if (consolidationChangee) afficher()
           else {
             majPied()

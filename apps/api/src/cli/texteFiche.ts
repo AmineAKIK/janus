@@ -7,10 +7,12 @@ import { DOSSIER_FICHES } from '../fiches.ts'
 import { texteDeLaFiche } from '../texteFiche.ts'
 
 // Écrit sur la sortie le texte d'une fiche pour l'épreuve de l'apprenant neuf (LISEZ-MOI du gabarit).
+// Avec --conception, pour le gardien de la méthode : en plus, ce que la page montre sur demande.
 
-const USAGE = 'pnpm fiches:texte <formation> <bloc>'
+const USAGE = 'pnpm fiches:texte <formation> <bloc> [--conception]'
 
-const [formation, bloc] = process.argv.slice(2)
+const conception = process.argv.includes('--conception')
+const [formation, bloc] = process.argv.slice(2).filter((argument) => argument !== '--conception')
 if (formation === undefined || bloc === undefined) {
   process.stderr.write(`Usage : ${USAGE}\n`)
   process.exit(1)
@@ -29,4 +31,4 @@ if (!resultat.ok) {
   process.stderr.write('Le manifeste n’est pas valide : lance `pnpm fiches:verifier`.\n')
   process.exit(1)
 }
-process.stdout.write(texteDeLaFiche(html, resultat.manifeste))
+process.stdout.write(texteDeLaFiche(html, resultat.manifeste, { conception }))

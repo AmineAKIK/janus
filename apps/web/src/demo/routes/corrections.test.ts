@@ -304,7 +304,7 @@ describe('POST /corrections de la démo', () => {
     expect(statut.erreurs_ouvertes).toEqual(['E1'])
   })
 
-  it('fait passer bilan.erreurs par les événements, avec le dernier état qui fait foi', async () => {
+  it('fait passer bilan.erreurs par les événements ; une case décochée ne ferme rien', async () => {
     const { transport } = monterDemo({ delaiCorrectionMs: 0 })
     const commun = {
       bloc: 'B08',
@@ -322,8 +322,8 @@ describe('POST /corrections de la démo', () => {
     const decochee = await transport.appeler(ROUTES['POST /evenements'], {
       corps: { ...commun, id: ID(94), ids: [] },
     })
-    expect(decochee.statut?.statut).not.toBe('a_reprendre')
-    expect(decochee.statut?.erreurs_ouvertes).toEqual([])
+    expect(decochee.statut?.statut).toBe('a_reprendre')
+    expect(decochee.statut?.erreurs_ouvertes).toEqual(['E1'])
   })
 
   it('revenir au cours pendant la restitution : la réponse ne compte pas', async () => {

@@ -2,8 +2,9 @@ import type { TypeEtape } from './manifeste.ts'
 
 /**
  * Les quatre moments d'un bloc, dans l'ordre de la méthode : découvrir (carte, perception),
- * comprendre (pré-test, explication, ensemble), s'entraîner (pratique, atelier, aisance), prouver
- * (restitution, consolidation, bilan). L'appli les affiche au-dessus du fil d'étapes.
+ * comprendre (pré-test, explication), s'entraîner (pratique, atelier, aisance, puis ensemble : ajuster
+ * en fin de bloc, règle C08), prouver (restitution, consolidation, bilan). L'appli les affiche
+ * au-dessus du fil d'étapes.
  */
 export const MOMENTS = [
   { id: 'decouvrir', libelle: 'Découvrir' },
@@ -21,10 +22,10 @@ const MOMENT_DE_L_ETAPE: Readonly<Record<TypeEtape, Moment>> = {
   perception: DECOUVRIR,
   pretest: COMPRENDRE,
   explication: COMPRENDRE,
-  ensemble: COMPRENDRE,
   pratique: ENTRAINER,
   atelier: ENTRAINER,
   aisance: ENTRAINER,
+  ensemble: ENTRAINER,
   restitution: PROUVER,
   consolidation: PROUVER,
   bilan: PROUVER,

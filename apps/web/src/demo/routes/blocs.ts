@@ -213,16 +213,8 @@ export const ROUTES_BLOCS_DEMO = [
           erreur,
           source: 'amine',
         }))
-      const decochees: Fait[] = ouvertes
-        .filter((erreur) => !corps.ids.includes(erreur))
-        .map((erreur) => ({
-          ...commun,
-          id: `${corps.id}:${erreur}:off`,
-          type: 'erreur_decochee',
-          erreur,
-          source: 'amine',
-        }))
-      enregistrer(magasin, corps.id, [...cochees, ...decochees])
+      // Comme l'API : une case décochée ne ferme rien, seule une réponse solide referme une erreur.
+      enregistrer(magasin, corps.id, cochees)
       recalcule = true
     } else {
       const fait = faitDuMessage(corps, maintenant)

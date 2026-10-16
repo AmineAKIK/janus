@@ -10,7 +10,7 @@ describe('momentDeLEtape', () => {
       'decouvrir',
       'comprendre',
       'comprendre',
-      'comprendre',
+      'entrainer',
       'entrainer',
       'entrainer',
       'entrainer',
@@ -21,7 +21,7 @@ describe('momentDeLEtape', () => {
   })
 
   it('rend le moment lui-même, avec son libellé affichable', () => {
-    expect(momentDeLEtape('ensemble')).toBe(MOMENTS[1])
+    expect(momentDeLEtape('ensemble')).toBe(MOMENTS[2])
     expect(momentDeLEtape('perception').libelle).toBe('Découvrir')
   })
 })

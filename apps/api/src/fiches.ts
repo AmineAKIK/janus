@@ -210,7 +210,7 @@ function verifierRenvoisAuxCours(
 }
 
 /** Le texte JSON d'un `<script type="application/json" id="…">` de la page. */
-function blocJson(html: string, id: string): string | undefined {
+export function blocJson(html: string, id: string): string | undefined {
   for (const [, attributs, contenu] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
     const type = /\btype\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
     const identifiant = /\bid\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
