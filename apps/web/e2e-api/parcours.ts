@@ -6,7 +6,6 @@ import { avancer } from './banc.ts'
 
 export interface Question {
   readonly id: string
-  readonly question: string
   readonly attendu: string
 }
 interface Manifeste {
@@ -38,28 +37,20 @@ export async function ouvrirEtape(page: Page, etape: string) {
   return fiche
 }
 
-/**
- * Répond à chaque question de la série affichée, avec la réponse attendue du manifeste. La fiche les
- * pose une à la fois : la suivante paraît sous la précédente, une fois envoyée. Les corrections
- * s'affichent toutes après la dernière réponse, pour ne pas souffler les questions suivantes.
- */
+/** Répond à chaque question de la série affichée, avec la réponse attendue du manifeste. */
 export async function repondreALaSerie(page: Page, etape: string, questions: readonly Question[]) {
   const fiche = await ouvrirEtape(page, etape)
   const items = fiche.locator('.item')
-  await expect(items).toHaveCount(1)
+  await expect(items).toHaveCount(questions.length)
   for (const [rang, question] of questions.entries()) {
     const item = items.nth(rang)
-    await expect(item.locator('label strong')).toHaveText(question.question)
     await item
       .locator('textarea')
       .fill(`${question.attendu} Voilà ce que j’en retiens, avec mes mots.`)
     await item.getByLabel('Sûr').check()
     await item.getByRole('button', { name: 'Envoyer' }).click()
-    if (rang < questions.length - 1)
-      await expect(item.getByText(/Sa correction s’affichera à la fin de la série/)).toBeVisible()
+    await expect(item.locator('.correction')).toBeVisible()
   }
-  await expect(items).toHaveCount(questions.length)
-  await expect(fiche.locator('.correction')).toHaveCount(questions.length)
 }
 
 /**
