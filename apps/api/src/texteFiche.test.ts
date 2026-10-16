@@ -179,7 +179,8 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
           '<table><tr data-reponse="oui" data-question="128 tient-il dans 178 ?" data-explication="178 − 128 = 50.">',
           '<td>128</td></tr></table>',
           '<div data-widget="nombre" data-accepte="huit|8">Combien de bits ?</div>',
-          '<div data-widget="schema-memoire"><div data-case="Bit" data-accepte="bit|bits" data-indice="deux états.">Case 1</div>',
+          '<div data-widget="schema-memoire" data-explication="Du bit au sens, par la convention.">',
+          '<div data-case="Bit" data-accepte="bit|bits" data-indice="deux états.">Case 1</div>',
           '<p data-lien="qui donne" data-choix="qui donne|qui lit">Lien</p>',
           '<p data-lien="qui est lu par" data-mots="lu|lit|lire;par|avec">Lien</p></div>',
           '<div data-widget="pari" data-apres="C’est noté, sans note.">Ton pari</div>',
@@ -214,6 +215,7 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
       'deux états',
       'avec 3 bits',
       'Avec sa règle',
+      'Du bit au sens',
     ]) {
       expect(pourLApprenant).not.toContain(cache)
     }
@@ -261,6 +263,8 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
         '- Réponse attendue : 100',
         '- Après la solution, à refaire sans regarder sur un autre nombre : 88',
         '- Rappel du pari du début, si l’apprenant avait choisi « Avec sa convention » : « Avec sa règle. »',
+        // L'explication du schéma ne vient qu'une fois ses cases justes : elle suit tout le reste.
+        '- Schéma de mémoire, une fois toutes les cases justes, si l’apprenant a ouvert l’étape détaillée d’un élément : il explique le schéma sans le regarder, puis la page montre, pour comparer : « Du bit au sens, par la convention. »',
       ].join('\n'),
     )
     expect(conception).toContain('### PR1-3, variante après une solution vue')

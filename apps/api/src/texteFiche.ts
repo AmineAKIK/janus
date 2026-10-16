@@ -161,10 +161,12 @@ const enGuillemets = (valeurs: string) => `« ${valeurs.split('|').join(' » ou 
  * (`data-explication`), la justification demandée (`data-justifier`), le message de réussite, le
  * message après un pari (`data-apres`), et,
  * pour un schéma à refaire de mémoire, ses cases (`data-case`), ses liens (`data-lien` parmi
- * `data-choix`, ou à écrire, accepté sur ses mots `data-mots`) et leurs indices (`data-indice`).
+ * `data-choix`, ou à écrire, accepté sur ses mots `data-mots`), leurs indices (`data-indice`), et
+ * l'explication du schéma, qui ne vient qu'une fois toutes ses cases justes : elle suit ses cases.
  */
 function cachesDuTemplate(contenu: string): string[] {
   const lignes: string[] = []
+  const apresLeSchema: string[] = []
   const sansScripts = sansCommentairesScriptsNiStyles(contenu)
   // Les options d'un choix : leur texte et leur retour vont ensemble.
   const options = [...sansScripts.matchAll(/<li\b([^>]*)>([\s\S]*?)<\/li>/gi)].map((option) => ({
@@ -247,7 +249,11 @@ function cachesDuTemplate(contenu: string): string[] {
         `- Après une bonne réponse, à justifier : ${justifier} Puis comparée à la solution.`,
       )
     const explication = lire('data-explication')
-    if (explication !== undefined) lignes.push(`- Après la réponse : ${explication}`)
+    if (explication !== undefined && lire('data-widget') === 'schema-memoire')
+      apresLeSchema.push(
+        `- Schéma de mémoire, une fois toutes les cases justes, si l’apprenant a ouvert l’étape détaillée d’un élément : il explique le schéma sans le regarder, puis la page montre, pour comparer : « ${explication} »`,
+      )
+    else if (explication !== undefined) lignes.push(`- Après la réponse : ${explication}`)
     const succes = lire('data-succes')
     if (succes !== undefined) lignes.push(`- Réussite : ${succes}`)
     const apres = lire('data-apres')
@@ -261,7 +267,7 @@ function cachesDuTemplate(contenu: string): string[] {
     }
     lignes.push(...varianteDuCours(lire))
   }
-  return lignes
+  return [...lignes, ...apresLeSchema]
 }
 
 /**
@@ -515,7 +521,7 @@ function etapeEnTexte(
       ]
     case 'bilan':
       return [
-        'Ce que tu as fait, puis les erreurs critiques du bloc : tu coches celles que tu as faites et dois encore revoir. Une erreur cochée met le bloc « À reprendre » jusqu’à ce qu’une réponse solide la referme.',
+        'Ce que tu as fait, puis les erreurs critiques du bloc. Celles que la page a repérées dans tes réponses y sont déjà cochées ; tu coches aussi celles que tu sais avoir faites et dois encore revoir. Une erreur cochée met le bloc « À reprendre » jusqu’à ce qu’une réponse solide, à une question qui la touche, la referme.',
       ]
     default:
       return []
