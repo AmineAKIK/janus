@@ -40,7 +40,8 @@ export async function ouvrirEtape(page: Page, etape: string) {
 
 /**
  * Répond à chaque question de la série affichée, avec la réponse attendue du manifeste. La fiche les
- * pose une à la fois : la suivante paraît sous la précédente, une fois sa correction arrivée.
+ * pose une à la fois : la suivante paraît sous la précédente, une fois envoyée. Les corrections
+ * s'affichent toutes après la dernière réponse, pour ne pas souffler les questions suivantes.
  */
 export async function repondreALaSerie(page: Page, etape: string, questions: readonly Question[]) {
   const fiche = await ouvrirEtape(page, etape)
@@ -54,9 +55,11 @@ export async function repondreALaSerie(page: Page, etape: string, questions: rea
       .fill(`${question.attendu} Voilà ce que j’en retiens, avec mes mots.`)
     await item.getByLabel('Sûr').check()
     await item.getByRole('button', { name: 'Envoyer' }).click()
-    await expect(item.locator('.correction')).toBeVisible()
+    if (rang < questions.length - 1)
+      await expect(item.getByText(/Sa correction s’affichera à la fin de la série/)).toBeVisible()
   }
   await expect(items).toHaveCount(questions.length)
+  await expect(fiche.locator('.correction')).toHaveCount(questions.length)
 }
 
 /**

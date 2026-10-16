@@ -1,5 +1,5 @@
 // @vitest-environment-options {"runScripts": "dangerously"}
-import { fireEvent, screen, within } from '@testing-library/react'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
@@ -22,6 +22,8 @@ function pontSimule(
   serieOuverte = { restitution: true, consolidation: false },
 ) {
   const envois: Envoi[] = []
+  /** Chaque demande de correction de la page. */
+  const demandes: Record<string, unknown>[] = []
   /** Chaque état que la page a demandé de sauver. */
   const sauvees: Record<string, unknown>[] = []
   const statuts = new Set<Rappel>()
@@ -40,8 +42,10 @@ function pontSimule(
     sauver: (etat: Record<string, unknown>) => {
       sauvees.push(structuredClone(etat))
     },
-    demanderCorrection: () =>
-      correction === undefined ? new Promise(() => undefined) : Promise.resolve(correction),
+    demanderCorrection: (demande: Record<string, unknown>) => {
+      demandes.push(demande)
+      return correction === undefined ? new Promise(() => undefined) : Promise.resolve(correction)
+    },
     surStatut: (rappel: Rappel) => {
       statuts.add(rappel)
       return () => statuts.delete(rappel)
@@ -61,7 +65,7 @@ function pontSimule(
     for (const rappel of erreurs)
       rappel({ code: 'message_refuse', detail, message_id: 'message-' + String(envois.length) })
   }
-  return { pont, envois, sauvees, direStatut, refuserDernier }
+  return { pont, envois, demandes, sauvees, direStatut, refuserDernier }
 }
 
 /** Met la page de la fiche dans le document du test, puis lance sa plomberie. */
@@ -74,6 +78,24 @@ function monter(fiche: string, pont: object) {
   )
   Object.assign(window, { JanusPont: pont })
   window.eval(plomberie)
+}
+
+/** Répond à chaque question de la série affichée, une à une, jusqu'à la dernière. */
+async function repondreATout(reponse = 'Une réponse.') {
+  for (;;) {
+    const zone = screen
+      .queryAllByRole('textbox')
+      .find((champ) => champ instanceof HTMLTextAreaElement && !champ.disabled)
+    if (!(zone instanceof HTMLTextAreaElement)) return
+    const question = zone.closest('.item')
+    if (!(question instanceof HTMLElement)) throw new Error('Une question sans sa carte')
+    fireEvent.input(zone, { target: { value: reponse } })
+    fireEvent.click(within(question).getByRole('radio', { name: 'Sûr' }))
+    fireEvent.click(within(question).getByRole('button', { name: 'Envoyer' }))
+    await waitFor(() => {
+      expect(zone).toBeDisabled()
+    })
+  }
 }
 
 /** Une page arrivée au bilan, la restitution faite (les cinq questions du gabarit répondues). */
@@ -209,20 +231,15 @@ describe('une correction tirée au sort', () => {
     compte: true,
   }
 
-  it('demande l’avis sur le niveau dans un groupe à part, puis remercie', async () => {
+  it('demande l’avis sur le niveau à la fin de la série, dans un groupe à part, puis remercie', async () => {
     const etat = { etape: 'ET4', envoyees: {}, pratique: {}, retourCours: false }
-    const { pont, envois } = pontSimule(etat, correction)
+    const { pont, envois, sauvees } = pontSimule(etat, correction)
     monter(GABARIT, pont)
     fireEvent.click(await screen.findByRole('button', { name: 'Commencer' }))
-    const [zone] = await screen.findAllByRole('textbox')
-    const question = zone?.closest('.item')
-    if (!(zone instanceof HTMLTextAreaElement) || !(question instanceof HTMLElement))
-      throw new Error('Aucune question à répondre')
-
-    fireEvent.input(zone, { target: { value: 'Une réponse.' } })
-    fireEvent.click(within(question).getByRole('radio', { name: 'Sûr' }))
-    fireEvent.click(within(question).getByRole('button', { name: 'Envoyer' }))
-    const accord = await within(question).findByRole('group', { name: /D’accord avec ce niveau/ })
+    await repondreATout()
+    const [question] = document.querySelectorAll<HTMLElement>('.item')
+    if (question === undefined) throw new Error('Aucune carte de question')
+    const accord = within(question).getByRole('group', { name: /D’accord avec ce niveau/ })
 
     expect(accord.closest('[aria-live="polite"]')).not.toBeNull()
     fireEvent.click(within(accord).getByRole('button', { name: 'Oui' }))
@@ -232,6 +249,8 @@ describe('une correction tirée au sort', () => {
     })
     expect(within(question).queryByRole('group', { name: /D’accord/ })).toBeNull()
     expect(within(question).getByText('Merci, c’est noté.')).toBeInTheDocument()
+    // L'avis est gardé : il n'est pas redemandé à la visite suivante.
+    expect(sauvees.at(-1)?.['corrigees']).toMatchObject({ R1: { premiere: { avis: true } } })
   })
 })
 
@@ -276,13 +295,76 @@ describe('une série de questions', () => {
     fireEvent.input(zone, { target: { value: 'Une réponse.' } })
     fireEvent.click(within(question).getByRole('radio', { name: 'Sûr' }))
     fireEvent.click(within(question).getByRole('button', { name: 'Envoyer' }))
-    await within(question).findByText('Bien vu.')
+    await within(question).findByText(/Envoyée\. Sa correction s’affichera à la fin de la série/)
 
+    // La correction ne souffle pas la question suivante : elle attend la fin de la série.
+    expect(screen.queryByText('Bien vu.')).toBeNull()
     const zones = screen.getAllByRole('textbox')
     expect(zones).toHaveLength(2)
     expect(zones[0]).toBe(zone)
+    expect(zones[0]).toBeDisabled()
     expect(zones[1]).not.toBeDisabled()
     expect(zones[1]?.closest('.item')?.previousElementSibling).toBe(question)
+  })
+
+  it('corrige toute la série à la fin : après la dernière réponse, chaque carte a sa correction', async () => {
+    const { pont, demandes } = pontSimule(aLEtape('ET4'), correction)
+    monter(GABARIT, pont)
+    fireEvent.click(await screen.findByRole('button', { name: 'Commencer' }))
+    await repondreATout()
+
+    expect(demandes.map((demande) => demande['question'])).toEqual(['R1', 'R2', 'R3', 'R4', 'R5'])
+    expect(demandes.every((demande) => demande['relance'] === '')).toBe(true)
+    expect(screen.getAllByText('Bien vu.')).toHaveLength(5)
+    expect(screen.getByText(/Restitution terminée/)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Compléter ma réponse' })).toBeNull()
+  })
+
+  it('garde les corrections dans l’état : la série reprise après un rechargement les cache, finie les montre', async () => {
+    const envoyees = { R1: { reponse: 'Ma réponse à R1.', confiance: 'sur' } }
+    const corrigees = {
+      R1: {
+        premiere: { ...correction, message: 'Gardée.', raison_non_compte: null },
+        relance: null,
+      },
+    }
+    const { pont } = pontSimule(
+      { ...aLEtape('ET4'), envoyees, corrigees, enCours: { restitution: true } },
+      correction,
+    )
+    monter(GABARIT, pont)
+    await screen.findByText('Ma réponse à R1.')
+
+    expect(screen.queryByText('Gardée.')).toBeNull()
+    expect(screen.getByText('Corrigée à la fin de la série.')).toBeInTheDocument()
+    await repondreATout()
+    expect(screen.getByText('Gardée.')).toBeInTheDocument()
+  })
+
+  it('la série finie, une réponse qui n’est pas solide se complète une fois, sans compter', async () => {
+    const partielle = { ...correction, niveau: 'partiel', message: 'Il manque la raison.' }
+    const { pont, demandes } = pontSimule(aLEtape('ET4'), partielle)
+    monter(GABARIT, pont)
+    fireEvent.click(await screen.findByRole('button', { name: 'Commencer' }))
+    await repondreATout('Ma première réponse.')
+    const [completer] = screen.getAllByRole('button', { name: 'Compléter ma réponse' })
+    if (completer === undefined) throw new Error('Rien à compléter')
+    const carte = completer.closest('.item')
+    if (!(carte instanceof HTMLElement)) throw new Error('Un complément hors de sa carte')
+
+    fireEvent.click(completer)
+    const zone = within(carte).getByRole('textbox', { name: /Complète ta réponse/ })
+    expect(zone).toHaveValue('Ma première réponse.')
+    fireEvent.input(zone, { target: { value: 'Ma réponse complétée.' } })
+    fireEvent.click(within(carte).getByRole('radio', { name: 'Sûr' }))
+    fireEvent.click(within(carte).getByRole('button', { name: 'Envoyer le complément' }))
+    await waitFor(() => {
+      expect(zone).toBeDisabled()
+    })
+
+    expect(demandes.at(-1)).toMatchObject({ question: 'R1', relance: 'Il manque la raison.' })
+    expect(within(carte).getAllByText('Il manque la raison.')).toHaveLength(2)
+    expect(within(carte).queryByRole('button', { name: 'Compléter ma réponse' })).toBeNull()
   })
 
   it('montre les réponses déjà envoyées, puis la première question qui attend', async () => {
@@ -297,6 +379,37 @@ describe('une série de questions', () => {
 
 describe('le cours pendant une série', () => {
   const masque = /Masqué : la (restitution|consolidation) se fait sans le cours/
+
+  it('masque aussi le reste de la fiche : la carte, la pratique et le bilan', async () => {
+    for (const etape of ['ET1', 'ET3', 'ET6']) {
+      document.body.replaceChildren()
+      const { pont } = pontSimule({ ...aLEtape(etape), enCours: { restitution: true } })
+      monter(GABARIT, pont)
+
+      expect(
+        await screen.findByText(/Cette étape s’ouvrira après ta dernière réponse/),
+      ).toBeInTheDocument()
+      // Le bilan nomme les erreurs critiques : il soufflerait des réponses.
+      expect(screen.queryAllByRole('checkbox')).toHaveLength(0)
+    }
+  })
+
+  it('pendant la consolidation, masque la restitution et ses corrections', async () => {
+    const restitution = Object.fromEntries(
+      ['R1', 'R2', 'R3', 'R4', 'R5'].map((id) => [id, { reponse: 'Réponse.', confiance: 'sur' }]),
+    )
+    const { pont } = pontSimule(
+      { ...aLEtape('ET4'), envoyees: restitution, enCours: { consolidation: true } },
+      undefined,
+      { restitution: true, consolidation: true },
+    )
+    monter(GABARIT, pont)
+
+    expect(
+      await screen.findByText(/Masqué : la consolidation se fait sans le cours/),
+    ).toBeInTheDocument()
+    expect(screen.queryByText('Réponse.')).toBeNull()
+  })
 
   it('reste ouvert tant que la restitution n’est pas commencée', async () => {
     const { pont } = pontSimule(aLEtape('ET2'))
@@ -714,5 +827,86 @@ describe('le fil d’étapes', () => {
       'aria-current',
       'step',
     )
+  })
+})
+
+describe('une erreur critique repérée par un outil', () => {
+  const restitution = Object.fromEntries(
+    ['R1', 'R2', 'R3', 'R4', 'R5'].map((id) => [id, { reponse: 'Réponse.', confiance: 'sur' }]),
+  )
+  /** L'outil émet fiche:erreur ; rend vrai si le gabarit a annulé l'événement. */
+  const reperer = (detail: Record<string, unknown>) =>
+    !document
+      .getElementById('contenu')
+      ?.dispatchEvent(new CustomEvent('fiche:erreur', { bubbles: true, cancelable: true, detail }))
+  /** Le gabarit, avec une étape d'aisance (ET7) après la pratique. */
+  const avecAisance = GABARIT.replace(
+    '"id": "ET3",\n            "titre": "Pratique",\n            "type": "pratique"\n          },',
+    '"id": "ET3",\n            "titre": "Pratique",\n            "type": "pratique"\n          },\n          { "id": "ET7", "titre": "Aisance", "type": "aisance" },',
+  ).replace(
+    '<template data-etape="ET2">',
+    '<template data-etape="ET7"><p>Outil d’aisance</p></template>\n    <template data-etape="ET2">',
+  )
+
+  it('se garde pour le bilan suivant, qui la coche d’office', async () => {
+    const { pont, sauvees } = pontSimule(aLEtape('ET3'))
+    monter(GABARIT, pont)
+    await screen.findByText('0 réussi sur 3.')
+
+    expect(reperer({ erreur: 'E2', ou: 'PR1-1' })).toBe(false)
+    expect(sauvees.at(-1)).toMatchObject({ aCocher: ['E2'], erreurs: { 'outil:PR1-1': ['E2'] } })
+    // Une erreur que le bloc ne liste pas, ou sans endroit, ne compte pas.
+    const avant = sauvees.length
+    reperer({ erreur: 'E9', ou: 'PR1-1' })
+    reperer({ erreur: 'E1' })
+    expect(sauvees).toHaveLength(avant)
+
+    document.body.replaceChildren()
+    const gardee = sauvees.at(-1) ?? {}
+    const { pont: auBilanEnsuite } = pontSimule(
+      auBilan({ aCocher: gardee['aCocher'], erreurs: gardee['erreurs'] }),
+    )
+    monter(GABARIT, auBilanEnsuite)
+    await screen.findByRole('button', { name: 'Envoyer le bilan' })
+    const [, deuxieme] = screen.getAllByRole('checkbox')
+    expect(deuxieme).toBeChecked()
+    expect(deuxieme).toBeDisabled()
+    expect(screen.getByText(/Repérée dans tes réponses/)).toBeInTheDocument()
+  })
+
+  it('la restitution faite, elle attend le bilan : la consolidation ne commence pas', async () => {
+    const { pont } = pontSimule(
+      { ...aLEtape('ET5'), envoyees: restitution, aCocher: ['E1'] },
+      undefined,
+      { restitution: true, consolidation: true },
+    )
+    monter(GABARIT, pont)
+
+    expect(
+      await screen.findByText(/Une erreur critique a été repérée dans tes réponses/),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(/La consolidation reprend une fois ton bilan envoyé/),
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Commencer' })).toBeNull()
+    expect(reperer({ erreur: 'E2', ou: 'aisance' })).toBe(true)
+    fireEvent.click(screen.getByRole('button', { name: 'Aller au bilan' }))
+    expect(await screen.findByRole('button', { name: 'Envoyer le bilan' })).toBeEnabled()
+  })
+
+  it('la restitution faite, elle arrête l’aisance jusqu’au bilan', async () => {
+    expect(avecAisance).not.toBe(GABARIT)
+    const { pont } = pontSimule({ ...aLEtape('ET7'), envoyees: restitution, aCocher: ['E1'] })
+    monter(avecAisance, pont)
+
+    expect(
+      await screen.findByText(/L’aisance reprend une fois ton bilan envoyé/),
+    ).toBeInTheDocument()
+    expect(screen.queryByText('Outil d’aisance')).toBeNull()
+
+    document.body.replaceChildren()
+    const { pont: sansErreur } = pontSimule({ ...aLEtape('ET7'), envoyees: restitution })
+    monter(avecAisance, sansErreur)
+    expect(await screen.findByText('Outil d’aisance')).toBeInTheDocument()
   })
 })
