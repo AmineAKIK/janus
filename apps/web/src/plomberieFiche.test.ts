@@ -377,6 +377,57 @@ describe('une série de questions', () => {
   })
 })
 
+/** Un pont en mode autonome : comme le vrai, il fait corriger la page par sa propre fonction `ask`. */
+function pontAutonome(etat: Record<string, unknown>) {
+  const { pont } = pontSimule(etat)
+  let ask: ((demande: Record<string, unknown>) => Promise<unknown>) | undefined
+  return {
+    ...pont,
+    demarrer: ({ autonome }: { autonome: { ask: NonNullable<typeof ask> } }) => {
+      ask = autonome.ask
+      return Promise.resolve({ mode: 'autonome', etat, init: null })
+    },
+    demanderCorrection: (demande: Record<string, unknown>) => {
+      if (ask === undefined) throw new Error('Pas de correcteur autonome')
+      return ask(demande)
+    },
+  }
+}
+
+describe('la correction simulée, hors de l’appli', () => {
+  it('ne dit jamais « solide », même à une réponse qui reprend les mots de l’attendu', async () => {
+    monter(GABARIT, pontAutonome(aLEtape('ET4')))
+    fireEvent.click(await screen.findByRole('button', { name: 'Commencer' }))
+    await repondreATout(
+      'À remplacer : ce qu’une bonne réponse contient, une réponse qui contient les mots.',
+    )
+
+    const bulles = await screen.findAllByText('À comparer', {}, { timeout: 3000 })
+    expect(bulles).toHaveLength(5)
+    expect(screen.queryByText('Solide')).toBeNull()
+    expect(screen.getAllByText('Ne compte pas · Non vérifiée')).toHaveLength(5)
+    // Le texte se lit espaces normalisées : une espace insécable s'y lit comme une espace.
+    expect(
+      screen.getByText(
+        /Ce qui était attendu : « À REMPLACER : ce qu'une bonne réponse contient \(question R1\)\. »/,
+      ),
+    ).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'Compléter ma réponse' })).toHaveLength(5)
+  })
+
+  it('dit « Pas encore » à « je ne sais pas », et « Trop courte » à une réponse trop courte', async () => {
+    monter(GABARIT, pontAutonome(aLEtape('ET4')))
+    fireEvent.click(await screen.findByRole('button', { name: 'Commencer' }))
+    await repondreATout('Je ne sais pas')
+    expect(await screen.findAllByText('Pas encore', {}, { timeout: 3000 })).toHaveLength(5)
+
+    monter(GABARIT, pontAutonome(aLEtape('ET4')))
+    fireEvent.click(await screen.findByRole('button', { name: 'Commencer' }))
+    await repondreATout('Une idée.')
+    expect(await screen.findAllByText('Trop courte', {}, { timeout: 3000 })).toHaveLength(5)
+  })
+})
+
 describe('le cours pendant une série', () => {
   const masque = /Masqué : la (restitution|consolidation) se fait sans le cours/
 
