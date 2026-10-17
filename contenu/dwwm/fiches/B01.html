@@ -2347,11 +2347,35 @@
           Les poids des bits sont les puissances de 2 : 1 = 2<sup>0</sup> pour le bit de droite,
           jusqu’à 128 = 2<sup>7</sup> pour le bit de gauche d’un octet.
         </p>
-        <p>
-          C’est le principe du décimal, où 345 vaut 3 × 100 + 4 × 10 + 5 × 1. Avec deux
-          différences : un chiffre binaire vaut seulement 0 ou 1, et les poids doublent au lieu
-          d’être multipliés par 10.
-        </p>
+        <p>C’est le principe du décimal, avec deux différences. Côte à côte :</p>
+        <div class="defile">
+          <table>
+            <thead>
+              <tr>
+                <td></td>
+                <th scope="col">Décimal</th>
+                <th scope="col">Binaire</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Chiffres</th>
+                <td>dix : de 0 à 9</td>
+                <td>deux : 0 et 1</td>
+              </tr>
+              <tr>
+                <th scope="row">Poids, depuis la droite</th>
+                <td>1, 10, 100 : chacun vaut 10 fois le précédent</td>
+                <td>1, 2, 4, 8 : chacun vaut le double du précédent</td>
+              </tr>
+              <tr>
+                <th scope="row">Exemple</th>
+                <td>345 = 3 × 100 + 4 × 10 + 5 × 1</td>
+                <td>1101 = 1 × 8 + 1 × 4 + 0 × 2 + 1 × 1, soit 13</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <div
           class="ex"
           data-widget="choix"
@@ -3518,11 +3542,36 @@
           d’instructions du processeur, pas le binaire qui sert à l’écrire. Tu viens de le voir avec
           l’autre processeur : les mêmes octets font tout autre chose avec une autre table.
         </p>
+        <p>Le binaire et un langage de programmation, côte à côte :</p>
+        <div class="defile">
+          <table>
+            <thead>
+              <tr>
+                <td></td>
+                <th scope="col">Le binaire</th>
+                <th scope="col">Un <strong>langage de programmation</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Ce que c’est</th>
+                <td>
+                  une façon d’écrire des nombres avec deux chiffres, comme le décimal en utilise dix
+                </td>
+                <td>
+                  des mots et des règles de grammaire pour écrire un programme sous forme de texte
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Exemple</th>
+                <td>01001100, qui vaut 76</td>
+                <td>PHP, JavaScript</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <p>
-          Le binaire, lui, est une façon d’écrire des nombres avec deux chiffres, comme le décimal
-          en utilise dix. Un <strong>langage de programmation</strong>, comme PHP ou JavaScript, a
-          des mots et des règles de grammaire pour écrire un programme sous forme de texte. Pour
-          s’exécuter, ce texte est traduit en code machine, ou confié à un
+          Pour s’exécuter, le texte d’un programme est traduit en code machine, ou confié à un
           <strong>interpréteur</strong> : un programme, lui-même en code machine, qui l’exécute.
           C’est le cas de PHP.
         </p>
@@ -3626,21 +3675,21 @@
               >ce qu’on obtient</span
             >
           </div>
-          <p class="discret">Quatre codages :</p>
+          <p class="discret">Quatre règles :</p>
           <div class="lectures">
             <p class="lecture" data-case="binaire" data-mots="binaire|base 2|base2">
-              Codage … donne un nombre
+              Règle … donne un nombre
             </p>
             <p class="lecture" data-case="ASCII" data-mots="ascii|utf|latin">
-              Codage … donne une lettre
+              Règle … donne une lettre
             </p>
-            <p class="lecture" data-case="RGB" data-mots="rgb">Codage … donne une couleur</p>
+            <p class="lecture" data-case="RGB" data-mots="rgb">Règle … donne une couleur</p>
             <p
               class="lecture"
               data-case="jeu d’instructions"
               data-mots="jeu d instruction|table d instruction|table des instruction|code machine|x86|arm"
             >
-              Codage … donne une instruction
+              Règle … donne une instruction
             </p>
           </div>
         </div>
@@ -3991,7 +4040,7 @@
           ><span class="lampe-col"><span class="lampe" data-on="0">0</span></span>
         </div>
         <details>
-          <summary>L’extrait de la table ASCII</summary>
+          <summary>Un extrait de table : un numéro, un caractère</summary>
           <p class="ascii-titre">Ponctuation</p>
           <ul class="ascii">
             <li><span>32</span><b>␣</b></li>
@@ -4098,7 +4147,7 @@
           ><span class="lampe-col"><span class="lampe" data-on="1">1</span></span>
         </div>
         <details>
-          <summary>L’extrait de la table ASCII</summary>
+          <summary>Un extrait de table : un numéro, un caractère</summary>
           <p class="ascii-titre">Ponctuation</p>
           <ul class="ascii">
             <li><span>32</span><b>␣</b></li>
@@ -4276,12 +4325,26 @@
     </template>
 
     <template data-item="PR8-1">
-      <div class="ex" data-widget="octet" data-verifie data-saisie="texte" data-reponse="0">
+      <div
+        class="ex"
+        data-widget="octet"
+        data-verifie
+        data-saisie="texte"
+        data-reponse="0"
+        data-justifier="Explique comment tu vérifies que ton octet vaut bien 0."
+      >
         <p class="q">Écris 0 en binaire, avec 8 chiffres.</p>
       </div>
     </template>
     <template data-variante="PR8-1">
-      <div class="ex" data-widget="octet" data-verifie data-saisie="texte" data-reponse="1">
+      <div
+        class="ex"
+        data-widget="octet"
+        data-verifie
+        data-saisie="texte"
+        data-reponse="1"
+        data-justifier="Explique comment tu vérifies que ton octet vaut bien 1."
+      >
         <p class="q">Écris 1 en binaire, avec 8 chiffres.</p>
       </div>
     </template>
@@ -4355,6 +4418,7 @@
         data-saisie="texte"
         data-reponse="32,192,96"
         data-noms="Rouge,Vert,Bleu"
+        data-justifier="Explique comment tu as écrit 192 en binaire, en partant du poids 128."
       >
         <p class="q">
           Écris en binaire les trois octets de <code>rgb(32, 192, 96)</code>, avec 8 chiffres
@@ -4370,6 +4434,7 @@
         data-saisie="texte"
         data-reponse="128,32,255"
         data-noms="Rouge,Vert,Bleu"
+        data-justifier="Explique comment tu as écrit 32 en binaire, en partant du poids 128."
       >
         <p class="q">
           Écris en binaire les trois octets de <code>rgb(128, 32, 255)</code>, avec 8 chiffres
@@ -4386,6 +4451,7 @@
         data-casse="non"
         data-diag="css"
         data-pastille="#20c060"
+        data-justifier="Explique comment tu as trouvé les deux chiffres hexadécimaux du vert, 192."
       >
         <p class="q">
           Écris <code>rgb(32, 192, 96)</code> en hexadécimal, comme dans le CSS, avec le # devant.
@@ -4401,6 +4467,7 @@
         data-casse="non"
         data-diag="css"
         data-pastille="#8020ff"
+        data-justifier="Explique comment tu as trouvé les deux chiffres hexadécimaux du rouge, 128."
       >
         <p class="q">
           Écris <code>rgb(128, 32, 255)</code> en hexadécimal, comme dans le CSS, avec le # devant.
@@ -4416,6 +4483,7 @@
         data-diag="pixels"
         data-largeur="800"
         data-hauteur="600"
+        data-justifier="Explique ton calcul : d’où vient chaque nombre que tu as multiplié."
       >
         <p class="q">
           Une image fait 800 × 600 pixels. Sans compression, combien d’octets pour ses pixels ?
@@ -4431,6 +4499,7 @@
         data-diag="pixels"
         data-largeur="1000"
         data-hauteur="500"
+        data-justifier="Explique ton calcul : d’où vient chaque nombre que tu as multiplié."
       >
         <p class="q">
           Une image fait 1 000 × 500 pixels. Sans compression, combien d’octets pour ses pixels ?
@@ -4679,7 +4748,14 @@
           la méthode suivie et pourquoi (data-justifier) : comment l’octet a été lu, pourquoi
           commencer par 128, avec quel codage le Bloc-notes lit l’octet, pourquoi lire le programme
           deux octets par deux octets. L’énoncé de PR7-5 ne nomme pas la table : « Le Bloc-notes
-          ouvre un fichier qui contient cet octet. »
+          ouvre un fichier qui contient cet octet. », et son extrait s’intitule « Un extrait de
+          table : un numéro, un caractère ».
+        </li>
+        <li>
+          Dans « En chiffres seulement » (PR8), les items à calculer demandent de même, après une
+          réussite, d’expliquer le geste : comment vérifier qu’un octet vaut 0 ou 1, comment écrire
+          192 ou 32 en binaire, comment trouver les deux chiffres hexadécimaux d’un octet, d’où
+          vient chaque nombre du calcul de taille.
         </li>
         <li>
           Cinq items sont des choix à trois options (PR7-3, PR7-4, PR8-2, PR8-6, PR8-7) : trouver
@@ -4750,7 +4826,9 @@
           information ; binaire ; ASCII, UTF ou Latin ; RGB ; jeu d’instructions, table des
           instructions ou code machine), sans tenir compte des accents ni des majuscules, et colore
           en rouge les cases à revoir. Un exemple, comme « lettre » pour le sens, ou le seul mot
-          « instruction », n’est pas accepté : l’étiquette des codages le donne déjà.
+          « instruction », n’est pas accepté : les lignes des quatre règles le donnent déjà. Ces
+          lignes s’écrivent « Règle … donne un nombre », et non « Codage … » : la case de la règle
+          suivie attend justement « codage ».
         </li>
       </ul>
     </template>
@@ -9191,15 +9269,13 @@
                 type: 'text',
                 autocomplete: 'off',
                 spellcheck: 'false',
-                'aria-label': lecture
-                  ? 'Codage qui ' + consigne.replace(/^Codage … /, '')
-                  : consigne,
+                'aria-label': lecture ? 'Règle qui ' + consigne.replace(/^Règle … /, '') : consigne,
                 placeholder: lecture ? '' : consigne,
               })
               if (lecture) {
-                const resultat = consigne.replace(/^Codage … /, '')
+                const resultat = consigne.replace(/^Règle … /, '')
                 caseVide.replaceChildren(
-                  el('span', { class: 'codage', text: 'Codage' }),
+                  el('span', { class: 'codage', text: 'Règle' }),
                   input,
                   el('span', { text: resultat }),
                 )
