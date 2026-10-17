@@ -3110,6 +3110,27 @@
           son chiffre. Fais-le pour les trois octets de <code>rgb(255, 136, 0)</code>. Réponds à
           chaque question avant de passer à la suivante.
         </p>
+        <div class="outil">
+          <p class="outil-titre">Les 16 chiffres de l’hexadécimal</p>
+          <ul class="hexa-table">
+            <li><b>0</b><span>0000</span><span>vaut 0</span></li>
+            <li><b>1</b><span>0001</span><span>vaut 1</span></li>
+            <li><b>2</b><span>0010</span><span>vaut 2</span></li>
+            <li><b>3</b><span>0011</span><span>vaut 3</span></li>
+            <li><b>4</b><span>0100</span><span>vaut 4</span></li>
+            <li><b>5</b><span>0101</span><span>vaut 5</span></li>
+            <li><b>6</b><span>0110</span><span>vaut 6</span></li>
+            <li><b>7</b><span>0111</span><span>vaut 7</span></li>
+            <li><b>8</b><span>1000</span><span>vaut 8</span></li>
+            <li><b>9</b><span>1001</span><span>vaut 9</span></li>
+            <li><b>a</b><span>1010</span><span>vaut 10</span></li>
+            <li><b>b</b><span>1011</span><span>vaut 11</span></li>
+            <li><b>c</b><span>1100</span><span>vaut 12</span></li>
+            <li><b>d</b><span>1101</span><span>vaut 13</span></li>
+            <li><b>e</b><span>1110</span><span>vaut 14</span></li>
+            <li><b>f</b><span>1111</span><span>vaut 15</span></li>
+          </ul>
+        </div>
         <div
           class="ex"
           data-widget="texte"
@@ -3172,6 +3193,27 @@
           une fois. Pourquoi 16 fois ? Le chiffre de gauche écrit la moitié gauche de l’octet, dont
           les poids, 128, 64, 32 et 16, valent 16 fois ceux de la moitié droite, 8, 4, 2 et 1.
         </p>
+        <div class="outil">
+          <p class="outil-titre">Les 16 chiffres de l’hexadécimal</p>
+          <ul class="hexa-table">
+            <li><b>0</b><span>0000</span><span>vaut 0</span></li>
+            <li><b>1</b><span>0001</span><span>vaut 1</span></li>
+            <li><b>2</b><span>0010</span><span>vaut 2</span></li>
+            <li><b>3</b><span>0011</span><span>vaut 3</span></li>
+            <li><b>4</b><span>0100</span><span>vaut 4</span></li>
+            <li><b>5</b><span>0101</span><span>vaut 5</span></li>
+            <li><b>6</b><span>0110</span><span>vaut 6</span></li>
+            <li><b>7</b><span>0111</span><span>vaut 7</span></li>
+            <li><b>8</b><span>1000</span><span>vaut 8</span></li>
+            <li><b>9</b><span>1001</span><span>vaut 9</span></li>
+            <li><b>a</b><span>1010</span><span>vaut 10</span></li>
+            <li><b>b</b><span>1011</span><span>vaut 11</span></li>
+            <li><b>c</b><span>1100</span><span>vaut 12</span></li>
+            <li><b>d</b><span>1101</span><span>vaut 13</span></li>
+            <li><b>e</b><span>1110</span><span>vaut 14</span></li>
+            <li><b>f</b><span>1111</span><span>vaut 15</span></li>
+          </ul>
+        </div>
         <div
           class="ex"
           data-widget="nombre"
@@ -3259,6 +3301,10 @@
             L’hexadécimal ne change rien aux octets. C’est une autre façon de les écrire, plus
             courte que le binaire et facile à convertir : un octet tient toujours en deux chiffres
             hexadécimaux, de <span class="mono">00</span> à <span class="mono">ff</span>.
+          </p>
+          <p>
+            Retiens les six lettres : a vaut 10, b 11, c 12, d 13, e 14 et f 15. Dans la pratique,
+            la table ne sera plus là : une moitié se calcule avec les poids 8, 4, 2 et 1.
           </p>
         </div>
       </div>
@@ -4658,7 +4704,8 @@
           comptés au lieu d’additionner leurs poids, poids lus à l’envers, poids 1 oublié, bits
           rangés à l’envers à l’écriture, octet qui vaut un autre nombre (avec sa valeur), nombre de
           valeurs donné pour le plus grand nombre et l’inverse, nombre de pixels donné pour le
-          nombre d’octets, chiffre hexadécimal lu en décimal ou chiffres inversés, rouge et bleu
+          nombre d’octets, chiffre hexadécimal lu en décimal ou chiffres inversés, moitié de gauche
+          d’un octet lue avec les poids de l’octet entier (« 240 15 » pour ff), rouge et bleu
           échangés dans une couleur CSS, octets additionnés au lieu d’être lus deux par deux par le
           processeur, majuscule ou minuscule de la table ASCII. Sinon, le retour écrit dans la fiche
           pour cet exercice (data-sinon), qui redit la méthode sur ses nombres.
@@ -4837,7 +4884,7 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 13,
+        "version": 14,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
@@ -7984,6 +8031,20 @@
               return {
                 m: 'Les deux chiffres sont inversés : la moitié de gauche donne le premier.',
               }
+            const n = parseInt(rep, 16)
+            const [g, d] = [n >> 4, n & 15]
+            const lus = (brut.match(/\d+/g) || []).map(Number)
+            if (g > 0 && lus.length === 2 && lus[0] === g * 16 && lus[1] === d)
+              return {
+                m:
+                  'La moitié de gauche se lit seule, avec les poids 8, 4, 2 et 1 : ' +
+                  binaire(n).slice(0, 4) +
+                  ' vaut ' +
+                  g +
+                  ', pas ' +
+                  g * 16 +
+                  '. Puis écris chaque moitié avec un seul chiffre.',
+              }
             if (/^\d+$/.test(t))
               return {
                 m: 'En hexadécimal, chaque moitié s’écrit avec un seul chiffre. De 10 à 15, on utilise a à f.',
@@ -8815,7 +8876,8 @@
               .map(Number)
               .sort((a, b) => b - a)
             const bits = ex.dataset.bits
-            const { ligne, input, bouton } = ligneSaisie(ex, 'nombre')
+            // Le clavier complet : le pavé numérique d'un téléphone n'a pas toujours d'espace.
+            const { ligne, input, bouton } = ligneSaisie(ex, 'texte')
             ex.append(ligne)
             const c = {
               solution: () => 'les bits à 1 sont sous les poids ' + rep.join(', '),
