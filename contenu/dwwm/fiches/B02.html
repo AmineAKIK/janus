@@ -10246,36 +10246,42 @@ if (age &lt; 12) {
           h.slice(7, 19)
         )
       }
-      const mots = (texte) => texte.toLowerCase().match(/[a-zà-ÿ]+/g) ?? []
+      /**
+       * Hors de l'appli, personne ne juge le sens d'une réponse : compter des mots laisserait passer une
+       * paraphrase vide. La page ne dit donc jamais « solide » : elle montre ce qui était attendu, et
+       * l'apprenant compare. La correction n'est pas vérifiée, elle ne compte pas (le moteur dit de même
+       * pour une certitude `non_verifie`) : la bulle porte le badge « Non vérifiée ».
+       */
       function corrigerLocalement(demande) {
         const question = [...manifeste.restitution, ...manifeste.consolidation].find(
           (q) => q.id === demande.question,
         )
         const reponse = demande.reponse.trim()
-        const base = {
+        const message = (texte, niveau) => ({
           id: uuidV7(),
           echantillon: false,
           question: demande.question,
           tour: demande.relance === '' ? 1 : 2,
+          niveau,
+          message:
+            'Correction simulée (mode autonome)\u00a0: ' +
+            texte +
+            (question ? ' Ce qui était attendu\u00a0: «\u00a0' + question.attendu + '\u00a0»' : ''),
           erreurs_critiques: [],
           source: 'deduit',
           ref: 'autonome',
           certitude: 'non_verifie',
-          compte: true,
-        }
-        const message = (texte, niveau) => ({
-          ...base,
-          niveau,
-          message: 'Correction simulée (mode autonome)\u00a0: ' + texte,
+          compte: false,
+          raison_non_compte: 'non_verifiee',
         })
         if (reponse.toLowerCase() === 'je ne sais pas')
-          return message('pas encore. Indice\u00a0: relis la carte du bloc.', 'pas_encore')
-        if (reponse.length < 40) return message('réponse trop courte, développe.', 'fragile')
-        const attendus = mots(question ? question.attendu : '').filter((mot) => mot.length > 4)
-        const presents = attendus.filter((mot) => mots(reponse).includes(mot))
-        return presents.length * 2 >= attendus.length
-          ? message('solide.', 'solide')
-          : message('partiel, il manque des éléments.', 'partiel')
+          return message('pas encore. Relis la carte du bloc.', 'pas_encore')
+        if (reponse.length < 40)
+          return message('ta réponse est trop courte pour montrer une idée, développe.', 'fragile')
+        return message(
+          'la page ne juge pas le sens de ta réponse. Compare-la avec l’attendu, et complète-la avec tes mots s’il te manque une idée.',
+          'partiel',
+        )
       }
       const autonome = {
         ask: (demande) =>
@@ -11286,6 +11292,11 @@ if (age &lt; 12) {
         fragile: 'Fragile',
         pas_encore: 'Pas encore',
       }
+      /** Hors de l'appli, la correction simulée ne juge pas : la bulle dit ce qu'elle a vu, sans niveau. */
+      const LIBELLES_AUTONOME = {
+        partiel: 'À comparer',
+        fragile: 'Trop courte',
+      }
 
       const LIBELLES_RAISON = {
         relance: 'Relance',
@@ -11303,7 +11314,10 @@ if (age &lt; 12) {
           'div',
           { className: 'correction', dataset: { niveau: correction.niveau } },
           creer('strong', {
-            textContent: LIBELLES_NIVEAU[correction.niveau] ?? correction.niveau,
+            textContent:
+              (mode === 'autonome' ? LIBELLES_AUTONOME[correction.niveau] : undefined) ??
+              LIBELLES_NIVEAU[correction.niveau] ??
+              correction.niveau,
           }),
           creer('p', { textContent: correction.message }),
           ...(!correction.compte && correction.raison_non_compte
