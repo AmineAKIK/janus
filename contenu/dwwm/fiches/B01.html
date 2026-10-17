@@ -2048,7 +2048,8 @@
           Dans un circuit, le courant passe ou ne passe pas. Ces deux états sont faciles à
           distinguer, même quand le courant est un peu perturbé. C’est pour ça que la machine écrit
           tout avec deux chiffres : 1 quand le courant passe, 0 quand il ne passe pas. Ici, des
-          lampes jouent ce rôle : allumée, c’est 1 ; éteinte, c’est 0.
+          lampes jouent ce rôle : allumée, c’est 1 ; éteinte, c’est 0. Chaque lampe est un
+          <strong>bit</strong> : un chiffre qui vaut 0 ou 1.
         </p>
         <p>
           Ce compteur avance de 1 à chaque clic, et montre le nombre avec ses lampes. Cherche
@@ -2057,6 +2058,7 @@
         <div class="outil" data-widget="compteur"><p class="outil-titre">Compteur à lampes</p></div>
         <div
           class="ex"
+          data-essai
           data-widget="nombre"
           data-id="c1"
           data-sinon="Clique sur +1 jusqu’à ce que le compteur repasse à 0. Le plus grand nombre est celui affiché juste avant."
@@ -2071,6 +2073,7 @@
         </div>
         <div
           class="ex"
+          data-essai
           data-widget="nombre"
           data-id="c2"
           data-sinon="Compte tous les nombres que tu as vus, du 0 jusqu’au plus grand : 0, 1, 2…"
@@ -2094,6 +2097,7 @@
           <div class="mini">
             <div
               class="ex"
+              data-essai
               data-widget="nombre"
               data-id="c3a"
               data-sinon="Avec 1 lampe, compte les nombres affichés avant le retour à 0, 0 compris."
@@ -2105,6 +2109,7 @@
             </div>
             <div
               class="ex"
+              data-essai
               data-widget="nombre"
               data-id="c3b"
               data-sinon="Avec 2 lampes, compte les nombres affichés avant le retour à 0, 0 compris."
@@ -2116,6 +2121,7 @@
             </div>
             <div
               class="ex"
+              data-essai
               data-widget="nombre"
               data-id="c3c"
               data-sinon="Avec 4 lampes, compte les nombres affichés avant le retour à 0, 0 compris."
@@ -2127,7 +2133,7 @@
             </div>
           </div>
         </div>
-        <div class="ex" data-widget="choix" data-id="c4" data-reponse="double">
+        <div class="ex" data-essai data-widget="choix" data-id="c4" data-reponse="double">
           <p class="q">Quand tu ajoutes une lampe, que devient le nombre de valeurs possibles ?</p>
           <ul class="options">
             <li
@@ -2147,6 +2153,7 @@
         </div>
         <div
           class="ex"
+          data-essai
           data-widget="nombre"
           data-id="c5"
           data-reponse="256"
@@ -2157,6 +2164,7 @@
         </div>
         <div
           class="ex"
+          data-essai
           data-widget="nombre"
           data-id="c6"
           data-reponse="255"
@@ -2177,6 +2185,7 @@
           <div class="mini">
             <div
               class="ex"
+              data-essai
               data-widget="nombre"
               data-id="c7a"
               data-reponse="1"
@@ -2187,6 +2196,7 @@
             </div>
             <div
               class="ex"
+              data-essai
               data-widget="nombre"
               data-id="c7b"
               data-reponse="2"
@@ -2197,6 +2207,7 @@
             </div>
             <div
               class="ex"
+              data-essai
               data-widget="nombre"
               data-id="c7c"
               data-reponse="4"
@@ -2207,6 +2218,7 @@
             </div>
             <div
               class="ex"
+              data-essai
               data-widget="nombre"
               data-id="c7d"
               data-reponse="8"
@@ -2219,6 +2231,7 @@
         </div>
         <div
           class="ex"
+          data-essai
           data-widget="nombre"
           data-id="c7e"
           data-reponse="11"
@@ -2237,6 +2250,7 @@
           <div class="mini">
             <div
               class="ex"
+              data-essai
               data-widget="nombre"
               data-id="c8a"
               data-reponse="16"
@@ -2247,6 +2261,7 @@
             </div>
             <div
               class="ex"
+              data-essai
               data-widget="nombre"
               data-id="c8b"
               data-reponse="128"
@@ -2270,9 +2285,9 @@
         <p class="accroche">Ce que tu viens de trouver avec le compteur a des noms.</p>
         <ul>
           <li>
-            Chaque lampe est un <strong>bit</strong> : un chiffre qui vaut 0 ou 1. Huit bits à la
-            suite forment un <strong>octet</strong>. Huit, c’est une convention, que presque toutes
-            les machines suivent aujourd’hui. Le fichier du début fait 12 octets.
+            Chaque lampe du compteur est un bit. Huit bits à la suite forment un
+            <strong>octet</strong>. Huit, c’est une convention, que presque toutes les machines
+            suivent aujourd’hui. Le fichier du début fait 12 octets.
           </li>
         </ul>
         <p>
@@ -2360,7 +2375,7 @@
             </li>
             <li
               data-option="zero"
-              data-retour="0 s’écrit toujours avec toutes les lampes éteintes, quels que soient les poids."
+              data-retour="0 s’écrit toujours avec tous les bits à 0, quels que soient les poids."
             >
               On ne pourrait plus écrire 0.
             </li>
@@ -2391,7 +2406,16 @@
         <div class="ex" data-widget="nombre" data-id="l1" data-reponse="128" data-diag="gauche">
           <p class="q">Le bit tout à gauche a quel poids ?</p>
         </div>
-        <div class="ex" data-widget="poids" data-id="l2" data-reponse="64 8 4" data-bits="01001100">
+        <div
+          class="ex"
+          data-widget="poids"
+          data-id="l2"
+          data-reponse="64 8 4"
+          data-aide1="Quel poids a chaque bit ?"
+          data-aide2="Écris 128, 64, 32, 16, 8, 4, 2 et 1 sous les bits, de gauche à droite."
+          data-aide3="Les bits à 1 sont le 2e, le 5e et le 6e en partant de la gauche."
+          data-bits="01001100"
+        >
           <p class="q">Sous quels poids y a-t-il un 1 ? Écris-les, séparés par des espaces.</p>
           <div
             class="lampes"
@@ -2657,6 +2681,11 @@
           <span class="boite-fixe">un sens<small>la lettre L</small></span>
         </figure>
         <p>
+          La chaîne a sa limite : un codage ne donne pas un sens à n’importe quels bits. Dans la
+          table ASCII, les numéros 0 à 31 ne donnent aucun signe à l’écran : ce sont des codes
+          invisibles, qui commandent par exemple le retour à la ligne.
+        </p>
+        <p>
           Pour lire un octet comme une lettre : calcule son nombre, puis cherche ce numéro dans la
           table. Le nombre est déjà une lecture, avec le codage binaire ; la table en fait une
           autre, qui donne un caractère à chaque numéro.
@@ -2768,6 +2797,9 @@
           data-widget="nombre"
           data-id="t2"
           data-reponse="32"
+          data-aide1="Où les deux octets diffèrent-ils ?"
+          data-aide2="Compare-les chiffre par chiffre : un seul bit change. Quel poids a sa place ?"
+          data-aide3="Le bit qui change est le 3e en partant de la gauche."
           data-sinon="Compare les deux octets chiffre par chiffre : un seul est différent. Quel poids a sa place ?"
           data-solution="01000001 et 01100001 ne diffèrent que par le 3e bit en partant de la gauche, de poids 32 : 97 − 65 = 32"
         >
@@ -2781,6 +2813,9 @@
           data-widget="nombre"
           data-id="t3"
           data-reponse="98"
+          data-aide1="Que faut-il ajouter à une majuscule pour avoir sa minuscule ?"
+          data-aide2="Une minuscule, c’est sa majuscule plus le poids que tu viens de trouver."
+          data-aide3="Ce poids est 32. Ajoute-le à 66."
           data-sinon="Une minuscule, c’est sa majuscule plus le poids que tu viens de trouver."
           data-solution="b = B + 32 = 66 + 32 = 98"
           data-explication="Une minuscule, c’est sa majuscule plus 32 : un seul bit à allumer."
@@ -2986,7 +3021,7 @@
           moitiés de 4 bits. Coupée de l’octet, chaque moitié se lit seule, avec les poids 8, 4, 2
           et 1 : elle vaut de 0 à 15, soit 16 valeurs. L’<strong>hexadécimal</strong>, ou base 16,
           écrit chaque moitié avec un seul signe : les chiffres 0 à 9, puis a pour 10, b pour 11, et
-          ainsi de suite jusqu’à f pour 15.
+          ainsi de suite jusqu’à f pour 15. Ces lettres sont une convention.
         </p>
         <div class="outil">
           <p class="outil-titre">Les 16 chiffres de l’hexadécimal</p>
@@ -3048,11 +3083,50 @@
       <div data-ecran="Écrire un octet">
         <p class="accroche">
           Pour un octet entier : écris ses 8 bits, coupe au milieu, puis écris chaque moitié avec
-          son chiffre. 136 s’écrit <span class="mono">1000 1000</span>, soit 8 et 8 :
-          <span class="mono">88</span>. 255 s’écrit <span class="mono">1111 1111</span> :
-          <span class="mono">ff</span>. 0 s’écrit <span class="mono">0000 0000</span> :
-          <span class="mono">00</span>. D’où <code>#ff8800</code> : le rouge vaut ff, le vert 88, le
-          bleu 00. Attention, 88 se lit « huit, huit » : ce n’est pas quatre-vingt-huit.
+          son chiffre. Fais-le pour les trois octets de <code>rgb(255, 136, 0)</code>. Réponds à
+          chaque question avant de passer à la suivante.
+        </p>
+        <div
+          class="ex"
+          data-widget="texte"
+          data-id="hxe1"
+          data-reponse="ff"
+          data-casse="non"
+          data-diag="hexa"
+        >
+          <p class="q">
+            Le rouge, 255, s’écrit <span class="mono">1111 1111</span>. Quels sont ses deux chiffres
+            hexadécimaux ?
+          </p>
+        </div>
+        <div
+          class="ex"
+          data-widget="texte"
+          data-id="hxe2"
+          data-reponse="88"
+          data-casse="non"
+          data-diag="hexa"
+        >
+          <p class="q">
+            Le vert, 136, s’écrit <span class="mono">1000 1000</span>. Quels sont ses deux
+            chiffres ?
+          </p>
+        </div>
+        <div
+          class="ex"
+          data-widget="texte"
+          data-id="hxe3"
+          data-reponse="00"
+          data-casse="non"
+          data-diag="hexa"
+        >
+          <p class="q">
+            Le bleu, 0, s’écrit <span class="mono">0000 0000</span>. Quels sont ses deux chiffres ?
+          </p>
+        </div>
+        <p>
+          D’où <code>#ff8800</code> : le rouge vaut ff, le vert 88, le bleu 00. Attention, 88 se lit
+          « huit, huit » : ce n’est pas quatre-vingt-huit.
         </p>
         <div
           class="ex"
@@ -3071,9 +3145,34 @@
       <div data-ecran="Relire">
         <p class="accroche">
           Pour relire deux chiffres hexadécimaux : celui de gauche compte 16 fois, celui de droite
-          une fois. <span class="mono">88</span> vaut 8 × 16 + 8 = 136.
-          <span class="mono">c8</span> vaut 12 × 16 + 8 = 200.
+          une fois. Pourquoi 16 fois ? Le chiffre de gauche écrit la moitié gauche de l’octet, dont
+          les poids, 128, 64, 32 et 16, valent 16 fois ceux de la moitié droite, 8, 4, 2 et 1.
         </p>
+        <div
+          class="ex"
+          data-widget="nombre"
+          data-id="rl1"
+          data-reponse="128"
+          data-aide1="Que faut-il calculer pour le chiffre de gauche ?"
+          data-aide2="Le chiffre de gauche compte 16 fois : multiplie 8 par 16."
+          data-aide3="8 × 16, c’est 8 × 10 + 8 × 6."
+          data-solution="8 × 16 = 128"
+        >
+          <p class="q">Dans <span class="mono">88</span>, que vaut le 8 de gauche ?</p>
+        </div>
+        <div
+          class="ex"
+          data-widget="nombre"
+          data-id="rl2"
+          data-reponse="136"
+          data-hex="88"
+          data-diag="hexa16"
+        >
+          <p class="q">
+            Ajoute le 8 de droite, qui compte une fois. Que vaut <span class="mono">88</span> ?
+          </p>
+        </div>
+        <p>De même, <span class="mono">c8</span> vaut 12 × 16 + 8 = 200.</p>
         <div class="groupe">
           <p class="q">Que vaut <code>#4000a0</code> en <code>rgb</code> ? Relis chaque octet.</p>
           <div class="mini">
@@ -3186,15 +3285,17 @@
       </div>
       <div data-ecran="La taille d’une photo">
         <p class="accroche">
-          Si on range chaque pixel tel quel, sans le <strong>compresser</strong>, ses pixels
-          prennent donc : largeur × hauteur × 3 octets. L’en-tête ajoute quelques octets, presque
-          rien.
+          Si on range chaque pixel tel quel, sans le compresser, ses pixels prennent donc : largeur
+          × hauteur × 3 octets. L’en-tête ajoute quelques octets, presque rien.
         </p>
         <div
           class="ex"
           data-widget="nombre"
           data-id="s1"
           data-reponse="12000000"
+          data-aide1="Que faut-il compter, et comment le calculer ?"
+          data-aide2="Le nombre de pixels, c’est la largeur × la hauteur."
+          data-aide3="4 000 × 3 000 : calcule 4 × 3, puis ajoute les six zéros."
           data-sinon="Le nombre de pixels, c’est la largeur × la hauteur."
           data-solution="4 000 × 3 000 = 12 000 000 pixels"
         >
@@ -3211,22 +3312,28 @@
         >
           <p class="q">Combien d’octets pour ses pixels, sans compression ?</p>
         </div>
-        <p>
+      </div>
+      <div data-ecran="Ko, Mo, Go">
+        <p class="accroche">
           On compte les octets par milliers : 1 kilooctet (ko, souvent écrit Ko) vaut 1 000 octets,
-          1 mégaoctet (Mo) 1 000 000, 1 gigaoctet (Go) 1 000 Mo, 1 téraoctet (To) 1 000 Go. Cette
-          photo prend donc 36 Mo. Attention : Windows compte par 1 024, soit 2<sup>10</sup>, au lieu
-          de 1 000, et l’écart grandit à chaque unité. Un disque vendu 1 To y affiche environ 931
-          Go.
+          1 mégaoctet (Mo) 1 000 000, 1 gigaoctet (Go) 1 000 Mo, 1 téraoctet (To) 1 000 Go. La photo
+          de 36 000 000 octets prend donc 36 Mo.
         </p>
         <p>
-          Les photos de ton téléphone prennent bien moins de place : elles sont compressées. Un
-          format comme JPEG réécrit les pixels avec beaucoup moins d’octets, en acceptant de perdre
-          de petits détails.
+          Attention : Windows compte par 1 024, soit 2<sup>10</sup>, au lieu de 1 000, et l’écart
+          grandit à chaque unité. Un disque vendu 1 To y affiche environ 931 Go.
+        </p>
+      </div>
+      <div data-ecran="Une photo compressée">
+        <p class="accroche">
+          Les photos de ton téléphone prennent bien moins de place : elles sont
+          <strong>compressées</strong>. Un format comme JPEG réécrit les pixels avec beaucoup moins
+          d’octets, en acceptant de perdre de petits détails.
         </p>
         <p>
-          Et une photo ouverte dans le Bloc-notes ? Il lit ses octets avec sa table de caractères.
-          La plupart tombent sur des signes sans suite ou des codes invisibles, des numéros qui ne
-          donnent aucun signe à l’écran : d’où le charabia.
+          Compressée ou non, une photo reste une suite d’octets. Ouverte dans le Bloc-notes, elle
+          est lue avec sa table de caractères. La plupart des octets tombent sur des signes sans
+          suite ou sur des codes invisibles : d’où le charabia.
         </p>
       </div>
     </template>
@@ -3280,27 +3387,99 @@
             </tr>
           </tbody>
         </table>
+        <p>
+          Voici un programme de 6 octets :
+          <span class="mono">00000001 00000101 00000010 00000011 00000011 00000000</span>, soit 1 5
+          2 3 3 0. Le processeur le lit deux octets à la fois. Réponds à chaque question avant de
+          passer à la suivante.
+        </p>
+        <div
+          class="ex"
+          data-widget="nombre"
+          data-id="pp1"
+          data-sinon="L’instruction 1 range dans le registre le nombre qui la suit."
+          data-reponse="5"
+          data-aide1="Que fait l’instruction 1 ?"
+          data-aide2="Cherche 1 dans la table : il range dans le registre le nombre qui le suit."
+          data-aide3="Le nombre qui suit 1 est le deuxième octet du programme."
+          data-solution="1 range dans le registre le nombre qui le suit : le registre contient 5"
+        >
+          <p class="q">
+            Les deux premiers octets valent 1 et 5. Que contient le registre après eux ?
+          </p>
+        </div>
+        <div
+          class="ex"
+          data-widget="nombre"
+          data-id="pp2"
+          data-sinon="L’instruction 2 ajoute le nombre qui la suit à ce que contient déjà le registre, 5."
+          data-reponse="8"
+          data-aide1="Que fait l’instruction 2 ?"
+          data-aide2="Cherche 2 dans la table : il ajoute au registre le nombre qui le suit."
+          data-aide3="Le registre contenait 5. Ajoute le nombre qui suit 2."
+          data-solution="2 ajoute 3 au registre : 5 + 3 = 8"
+        >
+          <p class="q">Viennent 2 et 3. Que contient maintenant le registre ?</p>
+        </div>
+        <div
+          class="ex"
+          data-widget="nombre"
+          data-id="pp3"
+          data-sinon="L’instruction 3 affiche ce que contient le registre."
+          data-reponse="8"
+          data-aide1="Que fait l’instruction 3 ?"
+          data-aide2="Cherche 3 dans la table : il affiche ce que contient le registre."
+          data-aide3="Que contient le registre après les deux premières instructions ?"
+          data-solution="3 affiche le registre, qui contient 8"
+        >
+          <p class="q">Viennent 3 et 0. Qu’affiche l’écran ?</p>
+        </div>
+        <p>Vérifie en regardant le processeur l’exécuter, une instruction à la fois.</p>
+        <div class="outil" data-widget="processeur">
+          <p class="outil-titre">Exécution pas à pas</p>
+        </div>
+      </div>
+      <div data-ecran="À compléter">
+        <p class="accroche">
+          À toi de finir la lecture d’un autre programme. Le processeur a déjà lu ses deux premiers
+          octets, 1 et 3 : le registre contient 3.
+        </p>
+        <div
+          class="ex"
+          data-widget="nombre"
+          data-id="pc1"
+          data-reponse="11"
+          data-diag="programme"
+          data-octets="1 3 2 8 3 0"
+        >
+          <p class="q">Finis de lire ce programme. Qu’affichera l’écran ?</p>
+          <p class="octet-texte">00000001 00000011 00000010 00001000 00000011 00000000</p>
+        </div>
+      </div>
+      <div data-ecran="Sans aide">
         <div
           class="ex"
           data-widget="nombre"
           data-id="p1"
-          data-reponse="8"
+          data-reponse="35"
           data-diag="programme"
-          data-octets="1 5 2 3 3 0"
+          data-octets="1 20 2 15 3 0"
         >
           <p class="q">
-            Voici un programme de 6 octets. Lis-le avec le jeu d’instructions, deux octets par deux
+            Voici un troisième programme. Lis-le avec le jeu d’instructions, deux octets par deux
             octets. Qu’affichera l’écran ?
           </p>
-          <p class="octet-texte">00000001 00000101 00000010 00000011 00000011 00000000</p>
+          <p class="octet-texte">00000001 00010100 00000010 00001111 00000011 00000000</p>
         </div>
-      </div>
-      <div data-ecran="Pas à pas">
-        <p>Regarde le processeur lire ce programme, une instruction à la fois.</p>
-        <div class="outil" data-widget="processeur">
-          <p class="outil-titre">Exécution pas à pas</p>
-        </div>
-        <div class="ex" data-widget="programme" data-id="p2" data-reponse="12">
+        <div
+          class="ex"
+          data-widget="programme"
+          data-id="p2"
+          data-reponse="12"
+          data-aide1="Quelles instructions faut-il, et dans quel ordre ?"
+          data-aide2="Range un premier nombre avec 1, ajoute-lui un second avec 2, puis affiche avec 3 et 0."
+          data-aide3="Par exemple, commence par 1 et 10 : que faut-il ajouter ensuite pour arriver à 12 ?"
+        >
           <p class="q">
             À toi d’écrire un programme de trois instructions qui affiche 12. Tape un nombre de 0 à
             255 dans chaque octet.
@@ -3356,7 +3535,7 @@
             <li
               data-erreur="E3"
               data-option="rien"
-              data-retour="Tout est rangé en bits, oui. Mais être rangé en bits n’en fait pas un langage : une photo aussi est rangée en bits."
+              data-retour="Tout est rangé en bits, oui. Mais être rangé en bits n’en fait pas un langage : une photo aussi est rangée en bits. Ce qui fait un langage, ce sont des mots et des règles pour écrire un programme."
             >
               Rien : tous les langages finissent en bits.
             </li>
@@ -3388,7 +3567,7 @@
             <li
               data-erreur="E3"
               data-option="binaire"
-              data-retour="Tout est rangé en bits, oui. Mais ces bits sont du texte, lus avec un codage de caractères."
+              data-retour="Tout est rangé en bits, oui. Mais ces bits sont du texte, lus avec un codage de caractères. Le langage, c’est PHP, avec ses mots et ses règles."
             >
               du binaire, puisque tout est en bits.
             </li>
@@ -3416,8 +3595,8 @@
     <template data-etape="ET14">
       <div data-ecran="Le schéma, de mémoire">
         <p class="accroche">
-          Tu sais maintenant lire un octet comme un nombre, une lettre, une couleur ou une
-          instruction. Avant de revenir au fichier du début, refais le schéma du bloc, de mémoire.
+          Tu as vu les quatre lectures. Avant de revenir au point de départ, refais le schéma de
+          mémoire.
         </p>
         <div class="ex" data-widget="schema" data-id="f2">
           <p class="q">Complète le schéma de mémoire, avec tes mots : un ou deux mots par case.</p>
@@ -3425,7 +3604,7 @@
             <span
               class="boite"
               data-case="des bits"
-              data-mots="bit|octet|chiffre|donnee|0 et 1|zero|fichier"
+              data-mots="bit|octet|chiffre|donnee|0 et 1|zero"
               >ce qui est rangé</span
             >
             <span class="fleche">lus par</span>
@@ -3443,10 +3622,7 @@
               >la règle suivie</span
             >
             <span class="fleche">donnent</span>
-            <span
-              class="boite"
-              data-case="un sens"
-              data-mots="sens|signification|information|nombre|lettre|couleur|image|texte"
+            <span class="boite" data-case="un sens" data-mots="sens|signification|information"
               >ce qu’on obtient</span
             >
           </div>
@@ -3462,7 +3638,7 @@
             <p
               class="lecture"
               data-case="jeu d’instructions"
-              data-mots="jeu d instruction|instruction|code machine|x86|arm"
+              data-mots="jeu d instruction|table d instruction|table des instruction|code machine|x86|arm"
             >
               Codage … donne une instruction
             </p>
@@ -3481,7 +3657,7 @@
             <li
               data-erreur="E2"
               data-option="abime"
-              data-retour="Rien n’est abîmé : chaque programme lit les 12 octets sans erreur. Ce qui change, c’est ce qu’il en fait."
+              data-retour="Rien n’est abîmé : chaque programme lit les 12 octets sans erreur, avec son propre codage. Ce qui change, c’est le codage, pas les octets."
             >
               Le fichier est abîmé : un des deux programmes le lit mal.
             </li>
@@ -3491,7 +3667,7 @@
             <li
               data-erreur="E2"
               data-option="deux"
-              data-retour="Il n’y a qu’une suite de 12 octets. Tu as déjà lu l’octet 76 comme la lettre L, puis comme le rouge d’un pixel."
+              data-retour="Il n’y a qu’une suite de 12 octets. Tu as déjà lu l’octet 76 comme la lettre L avec la table ASCII, puis comme le rouge d’un pixel avec le codage RGB."
             >
               Le fichier contient deux parties : une pour l’image, une pour le texte.
             </li>
@@ -3603,6 +3779,7 @@
         data-reponse="150"
         data-bits="10010110"
         data-diag="lire"
+        data-justifier="Dis comment tu as trouvé ce nombre, et pourquoi chaque bit à 1 compte pour son poids."
       >
         <p class="q">Que vaut cet octet ?</p>
         <div class="lampes" role="img" aria-label="Lampes de gauche à droite : 10010110">
@@ -3625,6 +3802,7 @@
         data-reponse="166"
         data-bits="10100110"
         data-diag="lire"
+        data-justifier="Dis comment tu as trouvé ce nombre, et pourquoi chaque bit à 1 compte pour son poids."
       >
         <p class="q">Que vaut cet octet ?</p>
         <div class="lampes" role="img" aria-label="Lampes de gauche à droite : 10100110">
@@ -3640,12 +3818,24 @@
       </div>
     </template>
     <template data-item="PR7-2">
-      <div class="ex" data-widget="octet" data-verifie data-reponse="77">
+      <div
+        class="ex"
+        data-widget="octet"
+        data-verifie
+        data-reponse="77"
+        data-justifier="Explique pourquoi tu as commencé par le poids 128."
+      >
         <p class="q">Écris 77 en binaire. Clique sur une lampe pour mettre son bit à 1 ou à 0.</p>
       </div>
     </template>
     <template data-variante="PR7-2">
-      <div class="ex" data-widget="octet" data-verifie data-reponse="54">
+      <div
+        class="ex"
+        data-widget="octet"
+        data-verifie
+        data-reponse="54"
+        data-justifier="Explique pourquoi tu as commencé par le poids 128."
+      >
         <p class="q">Écris 54 en binaire. Clique sur une lampe pour mettre son bit à 1 ou à 0.</p>
       </div>
     </template>
@@ -3779,8 +3969,17 @@
       </div>
     </template>
     <template data-item="PR7-5">
-      <div class="ex" data-widget="texte" data-verifie data-reponse="Z" data-bits="01011010">
-        <p class="q">Lu avec la table ASCII, quelle lettre écrit cet octet ?</p>
+      <div
+        class="ex"
+        data-widget="texte"
+        data-verifie
+        data-reponse="Z"
+        data-bits="01011010"
+        data-justifier="Dis avec quel codage le Bloc-notes lit cet octet, et les deux lectures que tu as faites."
+      >
+        <p class="q">
+          Le Bloc-notes ouvre un fichier qui contient cet octet. Quel caractère affiche-t-il ?
+        </p>
         <div class="lampes" role="img" aria-label="Lampes de gauche à droite : 01011010">
           <span class="lampe-col"><span class="lampe" data-on="0">0</span></span
           ><span class="lampe-col"><span class="lampe" data-on="1">1</span></span
@@ -3877,8 +4076,17 @@
       </div>
     </template>
     <template data-variante="PR7-5">
-      <div class="ex" data-widget="texte" data-verifie data-reponse="K" data-bits="01001011">
-        <p class="q">Lu avec la table ASCII, quelle lettre écrit cet octet ?</p>
+      <div
+        class="ex"
+        data-widget="texte"
+        data-verifie
+        data-reponse="K"
+        data-bits="01001011"
+        data-justifier="Dis avec quel codage le Bloc-notes lit cet octet, et les deux lectures que tu as faites."
+      >
+        <p class="q">
+          Le Bloc-notes ouvre un fichier qui contient cet octet. Quel caractère affiche-t-il ?
+        </p>
         <div class="lampes" role="img" aria-label="Lampes de gauche à droite : 01001011">
           <span class="lampe-col"><span class="lampe" data-on="0">0</span></span
           ><span class="lampe-col"><span class="lampe" data-on="1">1</span></span
@@ -3982,6 +4190,7 @@
         data-reponse="20"
         data-diag="programme"
         data-octets="1 10 2 10 3 0"
+        data-justifier="Explique pourquoi tu as lu ce programme deux octets par deux octets."
       >
         <p class="q">
           Le processeur à trois instructions reçoit ce programme. Qu’affichera l’écran ?
@@ -4027,6 +4236,7 @@
         data-reponse="13"
         data-diag="programme"
         data-octets="1 4 2 9 3 0"
+        data-justifier="Explique pourquoi tu as lu ce programme deux octets par deux octets."
       >
         <p class="q">
           Le processeur à trois instructions reçoit ce programme. Qu’affichera l’écran ?
@@ -4143,11 +4353,12 @@
         data-widget="octets"
         data-verifie
         data-saisie="texte"
-        data-reponse="64,0,160"
+        data-reponse="32,192,96"
         data-noms="Rouge,Vert,Bleu"
       >
         <p class="q">
-          Écris en binaire les trois octets de <code>rgb(64, 0, 160)</code>, avec 8 chiffres chacun.
+          Écris en binaire les trois octets de <code>rgb(32, 192, 96)</code>, avec 8 chiffres
+          chacun.
         </p>
       </div>
     </template>
@@ -4171,13 +4382,13 @@
         class="ex"
         data-widget="texte"
         data-verifie
-        data-reponse="#4000a0"
+        data-reponse="#20c060"
         data-casse="non"
         data-diag="css"
-        data-pastille="#4000a0"
+        data-pastille="#20c060"
       >
         <p class="q">
-          Écris <code>rgb(64, 0, 160)</code> en hexadécimal, comme dans le CSS, avec le # devant.
+          Écris <code>rgb(32, 192, 96)</code> en hexadécimal, comme dans le CSS, avec le # devant.
         </p>
       </div>
     </template>
@@ -4351,9 +4562,10 @@
       <ul>
         <li>
           Dans un écran, tout ce qui suit un exercice pas encore fini reste caché jusqu’à ce qu’il
-          le soit : réussi, ou solution vue. Un groupe de petites questions sous une même consigne
-          compte pour une seule question. Le texte d’explication placé après un exercice paraît donc
-          seulement une fois l’exercice fini.
+          le soit : réussi, ou solution vue puis refaite ou expliquée (voir « Les coups de pouce »).
+          Un groupe de petites questions sous une même consigne compte pour une seule question. Le
+          texte d’explication placé après un exercice paraît donc seulement une fois l’exercice
+          fini.
         </li>
         <li>
           À l’étape 2, la question du pari paraît une fois le fichier ouvert avec les deux
@@ -4381,6 +4593,16 @@
           échangés dans une couleur CSS, octets additionnés au lieu d’être lus deux par deux par le
           processeur, majuscule ou minuscule de la table ASCII. Sinon, le retour écrit dans la fiche
           pour cet exercice (data-sinon), qui redit la méthode sur ses nombres.
+        </li>
+        <li>
+          Les retours calculés des erreurs critiques, mot pour mot. E4, à la lecture : « Tu as lu
+          les poids à l’envers. Le poids 128 est tout à gauche, le poids 1 tout à droite. » E4, à
+          l’écriture : « Tes bits sont rangés à l’envers : le bit de poids 128 se place tout à
+          gauche. » E1, quand le nombre de valeurs est donné pour le plus grand nombre : « Ça, c’est
+          le nombre de valeurs. Comme on compte à partir de 0, le plus grand nombre est un de
+          moins. » E1, dans l’autre sens : « Ça, c’est le plus grand nombre. Le 0 compte aussi comme
+          une valeur : il y en a une de plus. » Bits à 1 comptés : « Tu as compté les bits à 1.
+          Chacun compte pour son poids : additionne les poids des bits à 1. »
         </li>
         <li>
           Un choix faux reçoit le retour écrit pour cette option. Au deuxième choix faux, la bonne
@@ -4412,11 +4634,26 @@
           × 3 octets = 1 440 000 octets », la trace du registre pour un programme.
         </li>
         <li>
-          Dans le cours, après une solution vue : « Je refais sans regarder, sur un autre cas »
-          propose un nouvel exercice du même genre, tiré au hasard (un autre octet à lire ou à
-          écrire, un autre nombre de bits, de 2 à 12, un autre octet hexadécimal, une autre couleur
-          CSS, une autre moitié de 4 bits). Une fois réussi, il demande d’expliquer pourquoi c’est
-          juste, en une ou deux phrases, puis de comparer avec la solution de la fiche.
+          Dans le cours, après une solution vue, la suite de l’écran attend. Quand l’exercice a un
+          autre cas possible, « Je refais sans regarder, sur un autre cas » propose un nouvel
+          exercice du même genre, tiré au hasard (un autre octet à lire ou à écrire, un autre nombre
+          de bits, de 2 à 12, un autre octet hexadécimal, une autre couleur CSS, une autre moitié de
+          4 bits, un autre programme, une autre taille de photo), et la suite paraît une fois ce
+          nouvel exercice fini. Réussi, il demande d’expliquer pourquoi c’est juste, en une ou deux
+          phrases, puis de comparer avec la solution de la fiche. Sans autre cas possible (un choix,
+          les caractères de « Lis- », la différence entre majuscule et minuscule), la page demande
+          d’expliquer la solution avec ses mots, et la suite paraît une fois l’explication comparée
+          avec celle de la fiche.
+        </li>
+        <li>
+          Un choix du cours n’a pas de crans : le retour de l’option fausse sert d’indice, et la
+          deuxième option fausse laisse une seule option, qui est alors marquée. La solution vue se
+          traite comme ci-dessus.
+        </li>
+        <li>
+          Exception : l’étape 3 est une tentative, sans note, avant toute explication. Ses exercices
+          ont un retour par réponse fausse, puis leur solution, et ne demandent ni de refaire ni
+          d’expliquer : l’étape 4 part de ces essais.
         </li>
         <li>
           Le même cadre « Explique maintenant pourquoi c’est juste » suit une réussite obtenue au
@@ -4436,6 +4673,13 @@
           se refait sur sa variante, un cas comparable écrit dans la fiche (par exemple 166 au lieu
           de 150, 9 bits au lieu de 6). Si c’est la solution de la variante qui est vue, il revient
           à l’énoncé d’origine. Réussi après une solution vue, il demande aussi d’expliquer.
+        </li>
+        <li>
+          Dans « Tout, mélangé » (PR7), chaque réussite d’un item à calculer demande aussi de dire
+          la méthode suivie et pourquoi (data-justifier) : comment l’octet a été lu, pourquoi
+          commencer par 128, avec quel codage le Bloc-notes lit l’octet, pourquoi lire le programme
+          deux octets par deux octets. L’énoncé de PR7-5 ne nomme pas la table : « Le Bloc-notes
+          ouvre un fichier qui contient cet octet. »
         </li>
         <li>
           Cinq items sont des choix à trois options (PR7-3, PR7-4, PR8-2, PR8-6, PR8-7) : trouver
@@ -4476,6 +4720,13 @@
       <h3>Les outils du cours</h3>
       <ul>
         <li>
+          Le fichier de l’étape 2 : 12 octets, 76 105 115 45 109 111 105 32 98 105 101 110. La
+          visionneuse en fait une image de 2 × 2 pixels, quatre couleurs, rgb(76, 105, 115) puis
+          rgb(45, 109, 111), rgb(105, 32, 98) et rgb(105, 101, 110). Le Bloc-notes en fait le texte
+          « Lis-moi bien ». Chaque fenêtre reste vide jusqu’à son bouton, et le pari paraît une fois
+          les deux ouvertes.
+        </li>
+        <li>
           Le compteur à lampes : de 1 à 8 lampes, +1 à chaque clic ; au-delà du plus grand nombre,
           il repasse à 0 et le dit. Avec 8 lampes, « Aller à 250 » permet de vérifier la fin du
           compte.
@@ -4489,14 +4740,17 @@
           de l’en-tête, 6, donne l’image juste, et la suite d’octets affichée ne change pas.
         </li>
         <li>
-          Le processeur pas à pas : le programme de l’exercice, ou le fichier du début, qui l’arrête
-          dès le premier octet ; il montre les deux octets lus, le registre et l’écran.
+          Le processeur pas à pas : le programme de la démonstration de l’étape 11 (1 5 2 3 3 0), ou
+          le fichier du début, qui l’arrête dès le premier octet ; il montre les deux octets lus, le
+          registre et l’écran.
         </li>
         <li>
-          Le schéma de l’étape 14 accepte plusieurs mots par case (bit, octet ou 0 et 1 ; programme,
-          logiciel, processeur ; codage, table, convention ; sens, nombre, lettre, couleur ;
-          binaire ; ASCII, UTF ou Latin ; RGB ; jeu d’instructions ou code machine), sans tenir
-          compte des accents ni des majuscules, et colore en rouge les cases à revoir.
+          Le schéma de l’étape 14 accepte plusieurs mots par case (bit, octet, chiffre ou 0 et 1 ;
+          programme, logiciel, processeur ; codage, table, convention ; sens, signification ou
+          information ; binaire ; ASCII, UTF ou Latin ; RGB ; jeu d’instructions, table des
+          instructions ou code machine), sans tenir compte des accents ni des majuscules, et colore
+          en rouge les cases à revoir. Un exemple, comme « lettre » pour le sens, ou le seul mot
+          « instruction », n’est pas accepté : l’étiquette des codages le donne déjà.
         </li>
       </ul>
     </template>
@@ -4845,8 +5099,8 @@
             "id": "DT21",
             "type": "transfert",
             "forme": "choisir_methode",
-            "consigne": "Trois suites d’octets, trois situations. Pour chacune, dis avec quel codage la lire, puis lis-la. a) Dans un fichier texte : 72 105 (extrait de la table ASCII : H = 72, i = 105). b) Dans une feuille CSS : #4000a0. c) Pour le processeur imaginaire à trois instructions (1 suivi d’un nombre le range dans le registre, 2 suivi d’un nombre l’ajoute, 3 suivi de 0 affiche le registre) : 1 9 3 0.",
-            "attendu": "a) La table ASCII : « Hi ». b) RGB, écrit en hexadécimal : 40 = 64, 00 = 0, a0 = 160, soit rgb(64, 0, 160). c) Le jeu d’instructions du processeur : il range 9, puis l’affiche. C’est la situation, le programme qui lit, qui dit quel codage appliquer. Déduit des étapes 7, 9, 11 et 14.",
+            "consigne": "Trois suites d’octets, trois situations. Pour chacune, dis avec quel codage la lire, puis lis-la. a) Dans un fichier texte : 72 105 (extrait de la table ASCII : H = 72, i = 105). b) Dans une feuille CSS : #c03060. c) Pour le processeur imaginaire à trois instructions (1 suivi d’un nombre le range dans le registre, 2 suivi d’un nombre l’ajoute, 3 suivi de 0 affiche le registre) : 1 9 3 0.",
+            "attendu": "a) La table ASCII : « Hi ». b) RGB, écrit en hexadécimal : c0 = 192, 30 = 48, 60 = 96, soit rgb(192, 48, 96). c) Le jeu d’instructions du processeur : il range 9, puis l’affiche. C’est la situation, le programme qui lit, qui dit quel codage appliquer. Déduit des étapes 7, 9, 11 et 14.",
             "erreurs": ["E2"]
           },
           {
@@ -8075,7 +8329,7 @@
          * Après une solution montrée, l'apprenant refait sans regarder puis explique (règle F03) : il
          * écrit son explication, puis la compare avec la solution de la fiche.
          */
-        function expliquer(ex, solution, consigne) {
+        function expliquer(ex, solution, consigne, apres) {
           if ($(':scope > .expliquer', ex)) return
           const champ = el('textarea', {
             id: 'explique-' + Math.random().toString(36).slice(2),
@@ -8100,6 +8354,7 @@
             )
             modele.hidden = false
             bouton.disabled = true
+            apres?.()
           })
           ex.append(
             el(
@@ -8148,6 +8403,30 @@
               }),
             )
           devoiler(ex.closest('.ecran, [data-ecran]'))
+          const parent = ex.parentElement?.closest('.ex')
+          if (parent) libererReprise(parent)
+        }
+
+        /**
+         * Dans le cours, après une solution vue (règles F03 et F04) : la suite de l'écran attend que
+         * l'apprenant refasse sur un autre cas, ou, quand il n'y en a pas, qu'il explique la solution
+         * avec ses mots. Pas pendant la tentative de l'étape 3, ni dans une variante.
+         */
+        const avecReprise = (ex) =>
+          !dansItem(ex) && !ex.dataset.variante && !('essai' in ex.dataset)
+        function apresSolution(ex, c) {
+          if (c.variante) return proposerVariante(ex, c)
+          expliquer(
+            ex,
+            c.solution(),
+            fr('Pour continuer, explique cette solution avec tes mots, en une ou deux phrases :'),
+            () => libererReprise(ex),
+          )
+        }
+        function libererReprise(ex) {
+          if (ex.dataset.reprise !== 'oui') return
+          delete ex.dataset.reprise
+          devoiler(ex.closest('.ecran, [data-ecran]'))
         }
 
         /**
@@ -8188,7 +8467,10 @@
             if (fautes + 1 >= 2) {
               if (!dansItem(ex) && ex.dataset.id)
                 tracer('ex:' + ex.dataset.id, { e: 'vu', v: res.v ?? null })
+              const reprise = avecReprise(ex)
+              if (reprise) ex.dataset.reprise = 'oui'
               appliquer(ex, c, 'vu', res.v, m + ' La bonne réponse est marquée.')
+              if (reprise) apresSolution(ex, c)
             }
             return
           }
@@ -8228,8 +8510,15 @@
           }
           if (ex.dataset.id && !ex.dataset.variante)
             tracer('ex:' + ex.dataset.id, { e: 'vu', v: null })
-          appliquer(ex, c, 'vu', null, 'Solution : ' + solution)
-          proposerVariante(ex, c)
+          const reprise = avecReprise(ex)
+          if (reprise) ex.dataset.reprise = 'oui'
+          const suite =
+            reprise && c.variante
+              ? ' Pour continuer, refais-le sur un autre cas, sans regarder.'
+              : ''
+          appliquer(ex, c, 'vu', null, 'Solution : ' + solution + suite)
+          if (reprise) apresSolution(ex, c)
+          else proposerVariante(ex, c)
         }
 
         /** Dans le cours, après une solution : refaire sans regarder, sur un autre cas tiré au hasard. */
@@ -8380,6 +8669,42 @@
                       { reponse: 2 ** k - 1, diag: 'max', n: k },
                       'Avec ' + k + ' bits, quel est le plus grand nombre ?',
                     )
+              }
+            if (d.diag === 'programme')
+              c.variante = () => {
+                let a, b
+                do {
+                  a = auHasard(2, 40)
+                  b = auHasard(2, 40)
+                } while (a + b === rep)
+                const o = [1, a, 2, b, 3, 0]
+                return nouvelEx(
+                  'nombre',
+                  { reponse: a + b, diag: 'programme', octets: o.join(' ') },
+                  'Lis ce programme avec le jeu d’instructions. Qu’affichera l’écran ?',
+                  el('p', { class: 'octet-texte', text: o.map(binaire).join(' ') }),
+                )
+              }
+            if (d.diag === 'pixels')
+              c.variante = () => {
+                const tailles = [
+                  [800, 600],
+                  [1024, 768],
+                  [1280, 720],
+                  [1920, 1080],
+                  [2000, 1500],
+                  [3000, 2000],
+                ].filter(([w]) => w !== Number(d.largeur))
+                const [w, h] = tailles[auHasard(0, tailles.length - 1)]
+                return nouvelEx(
+                  'nombre',
+                  { reponse: w * h * 3, diag: 'pixels', largeur: w, hauteur: h },
+                  'Une photo fait ' +
+                    milliers(w) +
+                    ' × ' +
+                    milliers(h) +
+                    ' pixels. Combien d’octets pour ses pixels, sans compression ?',
+                )
               }
             if (d.diag === 'hexa16')
               c.variante = () => {
@@ -8976,7 +9301,7 @@
             }
             delete enfant.dataset.attente
             const exercices = enfant.matches('.ex[data-id]') ? [enfant] : $$('.ex[data-id]', enfant)
-            if (exercices.some((ex) => !fini(ex))) attendre = true
+            if (exercices.some((ex) => !fini(ex) || ex.dataset.reprise === 'oui')) attendre = true
           }
         }
 
@@ -9258,7 +9583,7 @@
         /** Le processeur pas à pas, sur le programme de l'exercice ou sur le fichier du début. */
         function processeur(n) {
           const progs = {
-            'Le programme de l’exercice': [1, 5, 2, 3, 3, 0],
+            'Le programme ci-dessus': [1, 5, 2, 3, 3, 0],
             'Le fichier du début': FICHIER,
           }
           let octets = []
