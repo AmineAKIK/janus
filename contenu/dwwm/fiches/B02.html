@@ -3498,6 +3498,11 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></pr
           </tbody>
         </table>
         <p>
+          Tu n’as pas à apprendre cette table par cœur : elle te sera redonnée chaque fois qu’une
+          question transcrit en JavaScript. Ce qu’il faut retenir, c’est le schéma : des if, des
+          branches entre accolades, et = qui range quand === compare.
+        </p>
+        <p>
           Ces signes sont des conventions de JavaScript. Ils viennent de langages plus anciens, et
           on les retrouve dans beaucoup d’autres, comme PHP.
         </p>
@@ -3846,8 +3851,10 @@ if (age &lt; 12) {
             choisit ce qui s’exécute.
           </p>
           <p>
-            Une condition se calcule dans un ordre fixé : parenthèses, comparaisons, NON, ET, OU. Le
-            OU de la logique accepte les deux à la fois ; le « ou » du français, pas toujours.
+            Une condition se calcule dans un ordre fixé : parenthèses, comparaisons, NON, ET, OU.
+            Cette liste te sera redonnée chaque fois qu’une question calcule : ce qu’il faut
+            retenir, c’est le geste, repérer l’opération qui passe en premier. Le OU de la logique
+            accepte les deux à la fois ; le « ou » du français, pas toujours.
           </p>
           <p>
             On teste une chaîne sur ses valeurs limites, et on prédit ce qu’elle affiche avant de
@@ -3971,12 +3978,12 @@ if (age &lt; 12) {
         data-verifie
         data-expr="âge &lt; 12 OU âge ≥ 65 ET résident"
         data-valeurs="âge=8, résident=FAUX"
-        data-justifier="Dis pourquoi tu as calculé le ET avant le OU, et ce que donnerait l’autre ordre."
       >
         <p class="q">
           Un musée est gratuit SI âge &lt; 12 OU âge ≥ 65 ET résident. Calcule la condition pour âge
           = 8 et résident = FAUX, une opération à la fois.
         </p>
+        <p class="discret">Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</p>
       </div>
     </template>
     <template data-variante="PR1-2">
@@ -3986,12 +3993,12 @@ if (age &lt; 12) {
         data-verifie
         data-expr="points ≥ 50 OU parrain ET NON suspendu"
         data-valeurs="points=60, parrain=FAUX, suspendu=VRAI"
-        data-justifier="Dis pourquoi tu as calculé le ET avant le OU, et ce que donnerait l’autre ordre."
       >
         <p class="q">
           Un cadeau est offert SI points ≥ 50 OU parrain ET NON suspendu. Calcule la condition pour
           points = 60, parrain = FAUX et suspendu = VRAI, une opération à la fois.
         </p>
+        <p class="discret">Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</p>
       </div>
     </template>
     <template data-item="PR1-3">
@@ -4006,6 +4013,7 @@ if (age &lt; 12) {
           Le bouton Commander s’affiche SI (connecté OU invité) ET NON (articles = 0). Calcule la
           condition pour connecté = FAUX, invité = VRAI et articles = 3.
         </p>
+        <p class="discret">Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</p>
       </div>
     </template>
     <template data-variante="PR1-3">
@@ -4020,6 +4028,7 @@ if (age &lt; 12) {
           Une vidéo se lance SI (abonné OU essai) ET NON (retard &gt; 30). Calcule la condition pour
           abonné = FAUX, essai = FAUX et retard = 10.
         </p>
+        <p class="discret">Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</p>
       </div>
     </template>
     <template data-item="PR1-4">
@@ -4029,6 +4038,7 @@ if (age &lt; 12) {
         data-verifie
         data-reponse="juste"
         data-justifier="Dis à quoi servent les parenthèses dans la condition que tu as choisie."
+        data-fiche="Les parenthèses font calculer le OU avant le ET : jours ≤ 30 OU défectueux d’abord, puis ET NON personnalisé. Sans elles, ET passerait avant OU, et un article personnalisé rendu sous 30 jours serait remboursé."
       >
         <p class="q">
           « Remboursement sous 30 jours, ou à tout moment pour un article défectueux, sauf pour les
@@ -4062,6 +4072,7 @@ if (age &lt; 12) {
         data-verifie
         data-reponse="juste"
         data-justifier="Dis à quoi servent les parenthèses dans la condition que tu as choisie."
+        data-fiche="Les parenthèses font calculer le OU avant le ET : premium OU durée &gt; 6 d’abord, puis ET NON gratuit. Sans elles, ET passerait avant OU, et un client premium avec un billet gratuit entrerait."
       >
         <p class="q">
           « Accès au salon pour les clients premium ou pour les vols de plus de 6 heures, sauf avec
@@ -4155,7 +4166,6 @@ if (age &lt; 12) {
         data-verifie
         data-chaine="âge &lt; 4 =&gt; gratuit | âge &lt; 18 OU habitant =&gt; 2 € | âge ≥ 60 =&gt; 3 € | SINON =&gt; 5 €"
         data-cas="âge=17, habitant=FAUX | âge=18, habitant=VRAI | âge=60, habitant=FAUX"
-        data-justifier="Pour le client de 18 ans, dis pourquoi la ligne 3 n’est pas testée."
       >
         <p class="q">
           Une piscine calcule son tarif avec cette chaîne. Trace-la pour trois clients : 17 ans, pas
@@ -4181,7 +4191,6 @@ if (age &lt; 12) {
         data-verifie
         data-chaine="âge &lt; 4 =&gt; gratuit | âge &lt; 18 OU habitant =&gt; 2 € | âge ≥ 60 =&gt; 3 € | SINON =&gt; 5 €"
         data-cas="âge=4, habitant=FAUX | âge=59, habitant=FAUX | âge=70, habitant=VRAI"
-        data-justifier="Pour le client de 70 ans, dis pourquoi il ne paie pas 3 €."
       >
         <p class="q">
           Une piscine calcule son tarif avec cette chaîne. Trace-la pour trois clients : 4 ans, pas
@@ -4290,7 +4299,6 @@ if (age &lt; 12) {
         data-widget="choix"
         data-verifie
         data-reponse="affecte"
-        data-justifier="Écris la ligne corrigée, et dis ce que fait le signe que tu as mis."
         data-solution="if (code === 1234) : === compare code à 1234 et donne true ou false ; = rangeait 1234 dans code"
       >
         <p class="q">
@@ -4326,7 +4334,6 @@ if (age &lt; 12) {
         data-widget="choix"
         data-verifie
         data-reponse="affecte"
-        data-justifier="Écris la ligne corrigée, et dis ce que fait le signe que tu as mis."
         data-solution="if (essais === 3) : === compare essais à 3 et donne true ou false ; = rangeait 3 dans essais"
       >
         <p class="q">
@@ -4365,7 +4372,6 @@ if (age &lt; 12) {
         data-sinon-ligne="aucun"
         data-cas="points=5000 =&gt; or | points=1000 =&gt; or | points=999 =&gt; argent | points=500 =&gt; argent | points=499 =&gt; bronze | points=100 =&gt; bronze | points=99 =&gt; aucun"
         data-reponse="b,c,a"
-        data-justifier="Explique pourquoi la ligne points ≥ 1000 doit venir en premier."
       >
         <p class="cas">
           Un site marchand donne un niveau de fidélité selon les points du client : « or » à partir
@@ -4394,7 +4400,6 @@ if (age &lt; 12) {
         data-sinon-ligne="nouveau"
         data-cas="score=2000 =&gt; expert | score=800 =&gt; expert | score=799 =&gt; confirmé | score=400 =&gt; confirmé | score=399 =&gt; débutant | score=50 =&gt; débutant | score=49 =&gt; nouveau"
         data-reponse="c,a,b"
-        data-justifier="Explique pourquoi la ligne score ≥ 800 doit venir en premier."
       >
         <p class="cas">
           Un jeu donne un rang selon le score : « expert » à partir de 800, « confirmé » à partir de
@@ -4423,7 +4428,6 @@ if (age &lt; 12) {
         data-chaine="points ≥ 1000 =&gt; or | points ≥ 500 =&gt; argent | points ≥ 100 =&gt; bronze | SINON =&gt; aucun"
         data-variable="points"
         data-candidats="0|99|100|101|250|499|500|501|999|1000|1001|5000"
-        data-justifier="Explique pourquoi on teste ces valeurs-là, et pourquoi deux autour de chaque seuil."
       >
         <p class="cas">
           Un site marchand donne un niveau de fidélité selon les points du client : « or » à partir
@@ -4454,7 +4458,6 @@ if (age &lt; 12) {
         data-chaine="score ≥ 800 =&gt; expert | score ≥ 400 =&gt; confirmé | score ≥ 50 =&gt; débutant | SINON =&gt; nouveau"
         data-variable="score"
         data-candidats="0|49|50|51|200|399|400|401|799|800|801|2000"
-        data-justifier="Explique pourquoi on teste ces valeurs-là, et pourquoi deux autour de chaque seuil."
       >
         <p class="cas">
           Un jeu donne un rang selon le score : « expert » à partir de 800, « confirmé » à partir de
@@ -4545,6 +4548,7 @@ if (age &lt; 12) {
         data-aide3="La première branche s’écrit if (points &gt;= 1000) { console.log('or') }. Les deux suivantes suivent le même modèle avec else if, et else prend le reste."
         data-solution="if (points &gt;= 1000) { console.log('or') } else if (points &gt;= 500) { console.log('argent') } else if (points &gt;= 100) { console.log('bronze') } else { console.log('aucun') }"
         data-justifier="Explique pourquoi ta deuxième condition n’a pas besoin de dire « et moins de 1000 »."
+        data-fiche="La chaîne s’arrête à la première condition VRAIE : si elle arrive à la deuxième, points ≥ 1000 était FAUX, donc points est déjà sous 1000."
       >
         <p class="cas">
           Un site marchand donne un niveau de fidélité selon les points du client : « or » à partir
@@ -4554,6 +4558,10 @@ if (age &lt; 12) {
         <p class="q">
           Écris sa chaîne en JavaScript, avec la variable points. La page lui donne elle-même chaque
           valeur à tester : ne lui donne pas de valeur toi-même.
+        </p>
+        <p class="discret">
+          En JavaScript : ≥ s’écrit &gt;=, SI s’écrit if, SINON SI else if, SINON else, et afficher
+          s’écrit console.log.
         </p>
       </div>
     </template>
@@ -4569,6 +4577,7 @@ if (age &lt; 12) {
         data-aide3="La première branche s’écrit if (score &gt;= 800) { console.log('expert') }. Les deux suivantes suivent le même modèle avec else if, et else prend le reste."
         data-solution="if (score &gt;= 800) { console.log('expert') } else if (score &gt;= 400) { console.log('confirmé') } else if (score &gt;= 50) { console.log('débutant') } else { console.log('nouveau') }"
         data-justifier="Explique pourquoi ta deuxième condition n’a pas besoin de dire « et moins de 800 »."
+        data-fiche="La chaîne s’arrête à la première condition VRAIE : si elle arrive à la deuxième, score ≥ 800 était FAUX, donc score est déjà sous 800."
       >
         <p class="cas">
           Un jeu donne un rang selon le score : « expert » à partir de 800, « confirmé » à partir de
@@ -4578,6 +4587,10 @@ if (age &lt; 12) {
         <p class="q">
           Écris sa chaîne en JavaScript, avec la variable score. La page lui donne elle-même chaque
           valeur à tester : ne lui donne pas de valeur toi-même.
+        </p>
+        <p class="discret">
+          En JavaScript : ≥ s’écrit &gt;=, SI s’écrit if, SINON SI else if, SINON else, et afficher
+          s’écrit console.log.
         </p>
       </div>
     </template>
@@ -4810,9 +4823,11 @@ if (age &lt; 12) {
         </li>
         <li>
           Dans la pratique, après une solution vue, l’item se refait sur sa variante, puis
-          l’apprenant explique. Quand l’item porte une demande d’explication (data-justifier), elle
-          paraît après une réussite. Dans un choix entre options courtes (PR1-5, PR1-7, PR1-8),
-          l’apprenant choisit, puis justifie avec ses mots.
+          l’apprenant explique. Quatre items sur treize portent une demande d’explication
+          (data-justifier : PR1-4, PR1-5, PR1-7, PR2-4), sur ce que l’écran ne montre pas ; elle
+          paraît après une réussite, et la réponse de la fiche (data-fiche) se compare sans verdict,
+          par le gabarit (fiche:expliquer) : « Même idée » ou « Il me manque quelque chose », c’est
+          l’apprenant qui le dit.
         </li>
         <li>
           Chaque réponse vérifiée d’un item part au gabarit avec l’aide reçue : 0 du premier coup, 1
@@ -4840,13 +4855,13 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 2,
+        "version": 3,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 expressions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
         "prerequis": ["B01"],
         "pont": 1,
-        "contexte_ia": "Bloc B02 du module « Écosystème et outils du développeur » (DWWM), deuxième bloc de la partie La machine. Le modèle du bloc : des données, comparées, donnent des faits qui valent VRAI ou FAUX ; combinés par NON, ET et OU, dans l’ordre de calcul fixé (parenthèses, comparaisons, NON, ET, OU), ils donnent une condition, une seule valeur ; dans une chaîne SI / SINON SI / SINON, la première condition VRAIE, de haut en bas, choisit la seule branche exécutée, et SINON prend les cas où aucune ne l’est. Notations à accepter comme équivalentes : VRAI et FAUX, 1 et 0, true et false ; ET et &&, OU et ||, NON et ! ; en pseudo-code, = compare et ≥, ≤, ≠ s’écrivent ainsi ; en JavaScript, = range une valeur dans une variable (affectation), === compare (égalité stricte), et >=, <=, !== remplacent ≥, ≤, ≠. Le OU logique est inclusif (VRAI OU VRAI = VRAI) ; le ou exclusif s’écrit (A OU B) ET NON (A ET B). Les valeurs limites d’une comparaison sur des entiers : la dernière valeur qui la rend FAUSSE et la première qui la rend VRAIE (17 et 18 pour âge ≥ 18, 18 et 19 pour âge > 18). Quand le « ou » d’une phrase ne permet pas de trancher, la bonne réponse est de demander à l’auteur de la règle. La fiche n’enseigne ni l’opérateur XOR, ni les lois de De Morgan, ni le SI imbriqué, ni ==, ni switch : ne pénalise pas leur absence, et accepte une réponse juste qui les emploie. Pièges à repérer : E1, traiter OU comme exclusif (VRAI OU VRAI jugé FAUX) ; E2, calculer le OU avant le ET (A ET B OU C lu A ET (B OU C)) ; E3, croire que plusieurs branches d’une chaîne s’exécutent, ou que les lignes qui suivent la première VRAIE sont encore testées ; E4, confondre = (affectation), === (égalité stricte) et && (le ET). Une erreur de calcul isolée sur une comparaison n’est pas E2. Pour une explication, examiner : l’idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d’application, le terme exact (condition, valeur booléenne, opérateur logique, table de vérité, OU inclusif, OU exclusif, priorité des opérateurs, structure conditionnelle, branche, valeur limite, affectation, égalité stricte), la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Chaque attendu vient de la fiche : les étapes 3 à 9 et 12 (sources S1 à S8) ; ce qui est marqué « D’après » y est écrit ; ce qui est marqué « Déduit » s’obtient en appliquant une règle de la fiche à un autre cas.",
+        "contexte_ia": "Bloc B02 du module « Écosystème et outils du développeur » (DWWM), deuxième bloc de la partie La machine. Le modèle du bloc : des données, comparées, donnent des faits qui valent VRAI ou FAUX ; combinés par NON, ET et OU, dans l’ordre de calcul fixé (parenthèses, comparaisons, NON, ET, OU), ils donnent une condition, une seule valeur ; dans une chaîne SI / SINON SI / SINON, la première condition VRAIE, de haut en bas, choisit la seule branche exécutée, et SINON prend les cas où aucune ne l’est. Notations à accepter comme équivalentes : VRAI et FAUX, 1 et 0, true et false ; ET et &&, OU et ||, NON et ! ; en pseudo-code, = compare et ≥, ≤, ≠ s’écrivent ainsi ; en JavaScript, = range une valeur dans une variable (affectation), === compare (égalité stricte), et >=, <=, !== remplacent ≥, ≤, ≠. Le OU logique est inclusif (VRAI OU VRAI = VRAI) ; le ou exclusif s’écrit (A OU B) ET NON (A ET B). Les valeurs limites d’une comparaison sur des entiers : la dernière valeur qui la rend FAUSSE et la première qui la rend VRAIE (17 et 18 pour âge ≥ 18, 18 et 19 pour âge > 18). Quand le « ou » d’une phrase ne permet pas de trancher, la bonne réponse est de demander à l’auteur de la règle. La fiche n’enseigne ni l’opérateur XOR, ni les lois de De Morgan, ni le SI imbriqué, ni ==, ni switch : ne pénalise pas leur absence, et accepte une réponse juste qui les emploie. Pièges à repérer : E1, traiter OU comme exclusif (VRAI OU VRAI jugé FAUX) ; E2, calculer le OU avant le ET (A ET B OU C lu A ET (B OU C)) ; E3, croire que plusieurs branches d’une chaîne s’exécutent, ou que les lignes qui suivent la première VRAIE sont encore testées ; E4, confondre = (affectation), === (égalité stricte) et && (le ET). Une erreur de calcul isolée sur une comparaison n’est pas E2. Pour une explication, examiner : l’idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d’application, le terme exact (condition, valeur booléenne, opérateur logique, table de vérité, OU inclusif, OU exclusif, priorité des opérateurs, structure conditionnelle, branche, valeur limite, affectation, égalité stricte), la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Chaque attendu vient de la fiche : les étapes 3 à 9 et 12 (sources S1 à S8) ; ce qui est marqué « D’après » y est écrit ; ce qui est marqué « Déduit » s’obtient en appliquant une règle de la fiche à un autre cas. L’ordre de calcul et les signes de JavaScript sont redonnés avec chaque question qui s’en sert, comme la table hexadécimale en B01 : ce qui est à retenir, c’est le geste (repérer l’opération qui passe en premier, transcrire une condition), pas la liste.",
         "sources": [
           {
             "id": "S1",
@@ -4982,15 +4997,15 @@ if (age &lt; 12) {
         ],
         "restitution": [
           {
-            "id": "B02-R1",
-            "question": "Écris de mémoire la table de vérité de ET et celle de OU, ligne par ligne. Puis dis, pour chacune, le seul cas où elle donne une valeur différente des trois autres.",
-            "attendu": "ET : FAUX ET FAUX donne FAUX, FAUX ET VRAI donne FAUX, VRAI ET FAUX donne FAUX, VRAI ET VRAI donne VRAI ; ET n’est VRAI que si les deux sont VRAI. OU : FAUX OU FAUX donne FAUX, FAUX OU VRAI donne VRAI, VRAI OU FAUX donne VRAI, VRAI OU VRAI donne VRAI ; OU n’est FAUX que si les deux sont FAUX. VRAI OU VRAI donne VRAI : le OU est inclusif ; croire qu’il donne FAUX, c’est l’erreur E1. Les notations 1 et 0 sont acceptées. D’après l’étape 5.",
+            "id": "B02-R9",
+            "question": "Écris de mémoire la table de vérité de OU, ligne par ligne, puis celle de ET.",
+            "attendu": "OU : FAUX OU FAUX donne FAUX, FAUX OU VRAI donne VRAI, VRAI OU FAUX donne VRAI, VRAI OU VRAI donne VRAI ; OU n’est FAUX que si les deux sont FAUX. ET : FAUX ET FAUX donne FAUX, FAUX ET VRAI donne FAUX, VRAI ET FAUX donne FAUX, VRAI ET VRAI donne VRAI ; ET n’est VRAI que si les deux sont VRAI. VRAI OU VRAI donne VRAI : le OU est inclusif ; croire qu’il donne FAUX, c’est l’erreur E1. Les notations 1 et 0 sont acceptées. D’après l’étape 5.",
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-R2",
-            "question": "Avec note = 12, bonus = VRAI et absent = VRAI, calcule « note ≥ 10 OU bonus ET NON absent », une opération à la fois, en disant à chaque étape ce que tu calcules et pourquoi celle-là.",
-            "attendu": "Ordre de calcul : comparaisons, NON, ET, OU. 1) note ≥ 10 : 12 ≥ 10 est VRAI. 2) NON absent : NON VRAI donne FAUX. 3) bonus ET NON absent : VRAI ET FAUX donne FAUX, car ET passe avant OU. 4) VRAI OU FAUX donne VRAI. Résultat : VRAI. Calculer le OU d’abord, (VRAI OU VRAI) ET FAUX, donnerait FAUX : c’est l’erreur E2. Déduit de l’étape 6.",
+            "id": "B02-R8",
+            "question": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Avec note = 12, bonus = VRAI et absent = VRAI, calcule « note ≥ 10 OU bonus ET NON absent », une opération à la fois, en disant à chaque étape ce que tu calcules.",
+            "attendu": "1) note ≥ 10 : 12 ≥ 10 est VRAI. 2) NON absent : NON VRAI donne FAUX. 3) bonus ET NON absent : VRAI ET FAUX donne FAUX, car ET passe avant OU. 4) VRAI OU FAUX donne VRAI. Résultat : VRAI. Calculer le OU d’abord, (VRAI OU VRAI) ET FAUX, donnerait FAUX : c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
           {
@@ -5006,15 +5021,15 @@ if (age &lt; 12) {
             "erreurs": ["E3"]
           },
           {
-            "id": "B02-R5",
-            "question": "Une montre affiche « pleine » à partir de 80 % de batterie, « correcte » à partir de 40 %, « faible » à partir de 10 %, et « à charger » en dessous. Les pourcentages sont entiers. Écris en pseudo-code une chaîne SI / SINON SI / SINON à quatre branches, bien ordonnée. Donne ses valeurs limites, et ce que ta chaîne affiche pour chacune.",
-            "attendu": "SI batterie ≥ 80, afficher « pleine » ; SINON SI batterie ≥ 40, afficher « correcte » ; SINON SI batterie ≥ 10, afficher « faible » ; SINON, afficher « à charger ». La plus exigeante d’abord : dans l’ordre inverse, batterie ≥ 10 attraperait 90 %. Valeurs limites : 79 et 80, 39 et 40, 9 et 10 : 80 « pleine », 79 « correcte », 40 « correcte », 39 « faible », 10 « faible », 9 « à charger ». Les formes équivalentes (batterie > 79, ou des intervalles écrits en entier) sont acceptées. Déduit de l’étape 8.",
+            "id": "B02-R10",
+            "question": "Une montre affiche « pleine » à partir de 80 % de batterie, « correcte » à partir de 40 %, « faible » à partir de 10 %, et « à charger » en dessous. Les pourcentages sont entiers. Écris en pseudo-code une chaîne SI / SINON SI / SINON à quatre branches, bien ordonnée, puis donne ses valeurs limites.",
+            "attendu": "SI batterie ≥ 80, afficher « pleine » ; SINON SI batterie ≥ 40, afficher « correcte » ; SINON SI batterie ≥ 10, afficher « faible » ; SINON, afficher « à charger ». La plus exigeante d’abord : dans l’ordre inverse, batterie ≥ 10 attraperait 90 %. Valeurs limites : 79 et 80, 39 et 40, 9 et 10. Les formes équivalentes (batterie > 79, ou des intervalles écrits en entier) sont acceptées. Déduit de l’étape 8.",
             "erreurs": ["E3"]
           },
           {
-            "id": "B02-R6",
-            "question": "Transcris en JavaScript la condition « batterie ≥ 80 ET NON enCharge », dans un if qui affiche « débranche ». Puis explique ce que font =, === et && dans let batterie = 85, dans batterie === 100 et dans ton if.",
-            "attendu": "if (batterie >= 80 && !enCharge) { console.log('débranche') }. Dans let batterie = 85, le signe = range 85 dans la variable batterie : c’est l’affectation, il ne compare pas. batterie === 100 compare : true si batterie vaut 100 (égalité stricte). && est le ET : il combine les deux conditions. Confondre ces trois signes, par exemple écrire if (batterie = 100), c’est l’erreur E4. Déduit de l’étape 9.",
+            "id": "B02-R7",
+            "question": "En JavaScript : ET s’écrit &&, OU s’écrit ||, NON s’écrit !, ≥ et ≤ s’écrivent >= et <=, ≠ s’écrit !==, et === compare. Transcris en JavaScript la condition « batterie ≥ 80 ET NON enCharge », dans un if qui affiche « débranche ». Puis dis ce qui se passerait avec if (batterie = 100), et pourquoi.",
+            "attendu": "if (batterie >= 80 && !enCharge) { console.log('débranche') }. Avec if (batterie = 100), le signe = range 100 dans batterie au lieu de comparer : c’est une affectation, 100 compte comme VRAI, la branche s’exécute toujours, et batterie vaut 100 ensuite. Pour comparer, il faut l’égalité stricte, ===. Confondre = et ===, c’est l’erreur E4. Déduit de l’étape 9.",
             "erreurs": ["E4"]
           }
         ],
@@ -5026,8 +5041,8 @@ if (age &lt; 12) {
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-C2",
-            "question": "Avec heure = 20, weekend = FAUX et férié = VRAI, calcule « heure < 18 ET weekend OU férié », puis « heure < 18 ET (weekend OU férié) », étape par étape. Pourquoi les deux résultats diffèrent-ils ?",
+            "id": "B02-C6",
+            "question": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Avec heure = 20, weekend = FAUX et férié = VRAI, calcule « heure < 18 ET weekend OU férié », puis « heure < 18 ET (weekend OU férié) », étape par étape. Pourquoi les deux résultats diffèrent-ils ?",
             "attendu": "Première : 20 < 18 est FAUX ; FAUX ET FAUX donne FAUX, car ET passe avant OU ; FAUX OU VRAI donne VRAI. Seconde : les parenthèses d’abord, FAUX OU VRAI donne VRAI ; 20 < 18 est FAUX ; FAUX ET VRAI donne FAUX. Ils diffèrent parce que l’ordre de calcul change : sans parenthèses, ET passe avant OU ; les parenthèses imposent le OU d’abord. Lire la première comme la seconde, c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
@@ -5058,9 +5073,9 @@ if (age &lt; 12) {
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-Q2",
-            "question": "Dans A OU B ET C, qu’est-ce qui se calcule en premier ? Et dans (A OU B) ET C ?",
-            "attendu": "Dans A OU B ET C, le ET d’abord, même s’il vient après : A OU (B ET C), car ET a priorité sur OU. Dans (A OU B) ET C, les parenthèses d’abord : A OU B. Lire le premier comme le second, c’est l’erreur E2. Déduit de l’étape 6.",
+            "id": "B02-Q9",
+            "question": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Avec A = VRAI, B = VRAI et C = FAUX, que vaut A OU B ET C ? Et (A OU B) ET C ?",
+            "attendu": "A OU B ET C : le ET d’abord, même s’il vient après, VRAI ET FAUX donne FAUX, puis VRAI OU FAUX donne VRAI. (A OU B) ET C : les parenthèses d’abord, VRAI OU VRAI donne VRAI, puis VRAI ET FAUX donne FAUX. Lire le premier comme le second, c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
           {
@@ -5109,9 +5124,9 @@ if (age &lt; 12) {
             "erreurs": []
           },
           {
-            "id": "B02-DE2",
+            "id": "B02-DE6",
             "type": "explication",
-            "consigne": "Explique pourquoi FAUX ET VRAI OU VRAI et FAUX ET (VRAI OU VRAI) ne donnent pas le même résultat.",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Explique pourquoi FAUX ET VRAI OU VRAI et FAUX ET (VRAI OU VRAI) ne donnent pas le même résultat.",
             "attendu": "Sans parenthèses, ET passe avant OU, selon la priorité des opérateurs, une convention : (FAUX ET VRAI) OU VRAI = FAUX OU VRAI = VRAI. Avec les parenthèses, le OU d’abord : VRAI OU VRAI = VRAI, puis FAUX ET VRAI = FAUX. L’ordre de calcul change le résultat ; calculer le OU d’abord sans parenthèses, c’est l’erreur E2. D’après l’étape 6.",
             "erreurs": ["E2"]
           },
@@ -5123,10 +5138,10 @@ if (age &lt; 12) {
             "erreurs": ["E3"]
           },
           {
-            "id": "B02-DE4",
+            "id": "B02-DE7",
             "type": "explication",
-            "consigne": "Explique ce que font =, === et && en JavaScript, avec un exemple pour chacun.",
-            "attendu": "= range une valeur dans une variable, c’est l’affectation : let age = 70. === compare deux valeurs et donne true ou false : age === 70. && est le ET : il combine deux conditions, age >= 18 && inscrit. Écrire if (age = 18) range 18 au lieu de comparer : c’est l’erreur E4. D’après l’étape 9.",
+            "consigne": "En JavaScript, = range une valeur dans une variable et === compare. Explique pourquoi if (age = 18) s’exécute toujours, et comment écrire ce if pour tester l’âge.",
+            "attendu": "if (age = 18) range 18 dans age : c’est une affectation, pas une comparaison ; 18 compte comme VRAI, donc la branche s’exécute à chaque fois, et age vaut 18 ensuite. Pour tester l’âge, il faut l’égalité stricte : if (age === 18). Écrire = pour comparer, c’est l’erreur E4. D’après l’étape 9.",
             "erreurs": ["E4"]
           },
           {
@@ -5145,10 +5160,10 @@ if (age &lt; 12) {
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-DT2",
+            "id": "B02-DT6",
             "type": "transfert",
             "forme": "adapter_condition",
-            "consigne": "Une école affiche « admis » SI note ≥ 10, SINON « refusé ». Elle ajoute qu’un élève qui a fait le stage est aussi admis avec 8 ou 9. Les notes sont entières. Écris la nouvelle condition, et donne les valeurs à tester.",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Une école affiche « admis » SI note ≥ 10, SINON « refusé ». Elle ajoute qu’un élève qui a fait le stage est aussi admis avec 8 ou 9. Les notes sont entières. Écris la nouvelle condition, et donne les valeurs à tester.",
             "attendu": "SI note ≥ 10 OU (note ≥ 8 ET stage), afficher « admis » ; SINON, « refusé ». Les parenthèses ne changent pas le calcul, ET passant avant OU, mais rendent la règle lisible ; il ne faut pas lire (note ≥ 10 OU note ≥ 8) ET stage, qui refuserait un 15 sans stage : c’est l’erreur E2. Valeurs à tester : 7 et 8, 9 et 10, avec stage VRAI puis FAUX. Déduit des étapes 6 et 8.",
             "erreurs": ["E2"]
           },
@@ -5169,10 +5184,10 @@ if (age &lt; 12) {
             "erreurs": ["E3"]
           },
           {
-            "id": "B02-DT5",
+            "id": "B02-DT8",
             "type": "transfert",
             "forme": "adapter_condition",
-            "consigne": "Ton code ouvre la session avec if (motDePasse === 'secret' && essais < 3). On veut accepter aussi le code de secours 'urgence', même après 3 essais. Adapte la condition, avec les parenthèses qui gardent le sens, et dis ce que fait chaque signe.",
+            "consigne": "En JavaScript : ET s’écrit &&, OU s’écrit ||, NON s’écrit !, ≥ et ≤ s’écrivent >= et <=, ≠ s’écrit !==, et === compare. Ton code ouvre la session avec if (motDePasse === 'secret' && essais < 3). On veut accepter aussi le code de secours 'urgence', même après 3 essais. Adapte la condition, avec les parenthèses qui gardent le sens, et dis ce que fait chaque signe.",
             "attendu": "if ((motDePasse === 'secret' && essais < 3) || motDePasse === 'urgence'). && est le ET, || le OU ; ET passe avant OU, et les parenthèses rendent la lecture sûre. Il ne faut pas écrire motDePasse === 'secret' && (essais < 3 || motDePasse === 'urgence'), qui refuserait 'urgence' : c’est l’erreur E2. === compare les textes ; un seul = rangerait 'secret' dans motDePasse au lieu de comparer : c’est l’erreur E4. Déduit des étapes 6 et 9.",
             "erreurs": ["E2", "E4"]
           }
@@ -5275,14 +5290,14 @@ if (age &lt; 12) {
             "verso": "Une valeur où une condition change : la dernière où elle est FAUSSE et la première où elle est VRAIE, 17 et 18 pour âge ≥ 18, 18 et 19 pour âge > 18. D’après les étapes 4 et 8."
           },
           {
-            "id": "B02-K8",
-            "recto": "Que font =, === et && en JavaScript ?",
-            "verso": "= range une valeur dans une variable (affectation) ; === compare (égalité stricte) ; && est le ET. D’après l’étape 9."
+            "id": "B02-K12",
+            "recto": "Pourquoi if (age = 18) s’exécute-t-il toujours ?",
+            "verso": "= range 18 dans age au lieu de comparer, et 18 compte comme VRAI. Pour comparer, c’est === : if (age === 18). D’après l’étape 9."
           },
           {
-            "id": "B02-K9",
-            "recto": "Que veulent dire || et ! en JavaScript ?",
-            "verso": "|| est le OU, ! est le NON. D’après l’étape 9."
+            "id": "B02-K11",
+            "recto": "Quand une chaîne SI / SINON SI arrive à sa deuxième ligne, que sait-on déjà ?",
+            "verso": "Que la première condition était FAUSSE : chaque ligne sait que celles du dessus sont FAUSSES, elle n’a pas à le redire. D’après l’étape 8."
           },
           {
             "id": "B02-K10",
@@ -5316,14 +5331,14 @@ if (age &lt; 12) {
             "notion": "Réciter les tables de vérité de NON, ET et OU, et dire que le OU logique est inclusif (VRAI OU VRAI donne VRAI) ; dire pourquoi deux faits donnent quatre lignes",
             "montree": ["ET5"],
             "pratiquee": ["PR1", "ET11"],
-            "questions": ["B02-R1", "B02-C1", "B02-Q1", "B02-Q6", "B02-DE1", "B02-K2", "B02-K3"]
+            "questions": ["B02-R9", "B02-C1", "B02-Q1", "B02-Q6", "B02-DE1", "B02-K2", "B02-K3"]
           },
           {
             "id": "N3",
             "notion": "Évaluer une condition avec comparaisons et parenthèses, une opération à la fois, en justifiant chaque étape par l’ordre de calcul : parenthèses, comparaisons, NON, ET, OU",
             "montree": ["ET6"],
             "pratiquee": ["PR1"],
-            "questions": ["B02-R2", "B02-C2", "B02-Q2", "B02-DE2", "B02-K4"]
+            "questions": ["B02-R8", "B02-C6", "B02-Q9", "B02-DE6", "B02-K4"]
           },
           {
             "id": "N4",
@@ -5344,7 +5359,7 @@ if (age &lt; 12) {
             "notion": "Écrire une chaîne à quatre branches bien ordonnée, la plus exigeante d’abord, et choisir ses valeurs limites pour la tester",
             "montree": ["ET8"],
             "pratiquee": ["PR2"],
-            "questions": ["B02-R5", "B02-C3", "B02-DE3", "B02-DT2", "B02-DT4"]
+            "questions": ["B02-R10", "B02-C3", "B02-DE3", "B02-DT6", "B02-DT4", "B02-K11"]
           },
           {
             "id": "N7",
@@ -5352,14 +5367,13 @@ if (age &lt; 12) {
             "montree": ["ET9"],
             "pratiquee": ["PR2"],
             "questions": [
-              "B02-R6",
+              "B02-R7",
               "B02-C4",
               "B02-Q4",
               "B02-Q8",
-              "B02-DE4",
-              "B02-DT5",
-              "B02-K8",
-              "B02-K9",
+              "B02-DE7",
+              "B02-DT8",
+              "B02-K12",
               "B02-K10"
             ]
           }
@@ -5371,7 +5385,7 @@ if (age &lt; 12) {
             "vers": "N3",
             "type": "composition",
             "montree": "ET6",
-            "questions": ["B02-R2", "B02-C2"]
+            "questions": ["B02-R8", "B02-C6"]
           },
           {
             "id": "L2",
@@ -5379,7 +5393,7 @@ if (age &lt; 12) {
             "vers": "N3",
             "type": "composition",
             "montree": "ET6",
-            "questions": ["B02-DE2", "B02-Q2"]
+            "questions": ["B02-DE6", "B02-Q9"]
           },
           {
             "id": "L3",
@@ -5411,7 +5425,7 @@ if (age &lt; 12) {
             "vers": "N7",
             "type": "equivalence",
             "montree": "ET9",
-            "questions": ["B02-R6", "B02-DT4"]
+            "questions": ["B02-R7", "B02-DT4"]
           },
           {
             "id": "L7",
@@ -5419,7 +5433,7 @@ if (age &lt; 12) {
             "vers": "N7",
             "type": "opposition",
             "montree": "ET9",
-            "questions": ["B02-DE4", "B02-C4", "B02-K8"]
+            "questions": ["B02-DE7", "B02-C4", "B02-K12"]
           },
           {
             "id": "L8",
@@ -5433,7 +5447,7 @@ if (age &lt; 12) {
         "ensemble": {
           "montree": "ET2",
           "rappelee": "ET12",
-          "questions": ["B02-R4", "B02-R5", "B02-DT2"]
+          "questions": ["B02-R4", "B02-R10", "B02-DT6"]
         },
         "hors_objectif": [
           "L’opérateur OU exclusif lui-même, comme xor en PHP : la fiche écrit le ou exclusif avec ET, OU et NON (étape 7) et nomme l’opérateur dans « À explorer plus tard » (étape 12), jamais interrogé",
@@ -8228,45 +8242,37 @@ if (age &lt; 12) {
          * Après une solution montrée, l'apprenant refait sans regarder puis explique (règle F03) : il
          * écrit son explication, puis la compare avec la solution de la fiche.
          */
+        /** La clé de l'explication d'un exercice, pour la trace du gabarit (`explique:<cle>`). */
+        function cleExplication(ex) {
+          const item = ex.closest('.item')
+          const base = item ? item.dataset.item : 'ex:' + (ex.dataset.id ?? 'x')
+          return (
+            base +
+            (ex.dataset.variante || (item && montre[item.dataset.item] === 'variante')
+              ? ':variante'
+              : '')
+          )
+        }
         function expliquer(ex, solution, consigne, apres) {
           if ($(':scope > .expliquer', ex)) return
-          const champ = el('textarea', { id: uid('explique'), rows: '3' })
-          const avis = el('p', { class: 'discret', 'aria-live': 'polite' })
-          const modele = el('p', {
-            class: 'retour',
-            text: 'Ce que dit la fiche : ' + sansPoint(solution) + '.',
-          })
-          modele.hidden = true
-          const bouton = el('button', {
-            type: 'button',
-            class: 'bouton secondaire petit',
-            text: 'Comparer avec la fiche',
-          })
-          bouton.addEventListener('click', () => {
-            if (champ.value.trim() === '')
-              return void (avis.textContent = fr('Écris d’abord ton explication.'))
-            avis.textContent = fr(
-              'Ce qui manque à ton explication, c’est ce qu’il te reste à retenir.',
-            )
-            modele.hidden = false
-            bouton.disabled = true
-            apres?.()
-          })
-          ex.append(
-            el(
-              'div',
-              { class: 'expliquer' },
-              el('label', {
-                for: champ.id,
-                text:
-                  consigne ??
-                  'Tu as refait sans regarder. Explique maintenant pourquoi c’est juste, en une ou deux phrases :',
-              }),
-              champ,
-              el('div', { class: 'actions' }, bouton),
-              avis,
-              modele,
-            ),
+          const cle = cleExplication(ex)
+          if (apres) {
+            const fin = (e) => {
+              if (e.detail?.cle !== 'explique:' + cle) return
+              ex.removeEventListener('fiche:trace', fin)
+              apres()
+            }
+            ex.addEventListener('fiche:trace', fin)
+          }
+          ex.dispatchEvent(
+            new CustomEvent('fiche:expliquer', {
+              bubbles: true,
+              detail: {
+                cle,
+                solution: fr(ex.dataset.fiche ?? sansPoint(solution) + '.'),
+                consigne: consigne ? fr(consigne) : undefined,
+              },
+            }),
           )
         }
 
