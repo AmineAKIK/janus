@@ -132,6 +132,86 @@ function verifierTemplates(
   }
 }
 
+/** Le texte de chaque `<template data-item="…">`, hors scripts et commentaires, par identifiant. */
+function templatesDesItems(html: string): ReadonlyMap<string, string> {
+  const items = new Map<string, string>()
+  for (const [, id, corps] of sansScriptsNiCommentaires(html).matchAll(
+    /<template\b[^>]*\bdata-item\s*=\s*["']([^"']*)["'][^>]*>([\s\S]*?)<\/template\s*>/gi,
+  )) {
+    if (id !== undefined) items.set(id, corps ?? '')
+  }
+  return items
+}
+
+/**
+ * Leçons du B01 (AGENTS.md) : on n'explique que ce que l'écran ne montre pas, au plus un tiers des
+ * items demandent une explication en prose (`data-justifier`) ; et chaque erreur critique a un item
+ * de pratique qui la révèle (`data-erreur="E…"` sur l'option ou l'outil qui la repère), sinon elle
+ * n'est vue qu'aux questions, trop tard pour la corriger en s'entraînant.
+ */
+function verifierPratique(
+  manifeste: Manifeste,
+  html: string,
+  signaler: (message: string) => void,
+): void {
+  const templates = templatesDesItems(html)
+  const ids = manifeste.pratique.flatMap((exercice) => exercice.items.map((item) => item.id))
+  const avecExplication = ids.filter((id) => /\bdata-justifier\s*=/i.test(templates.get(id) ?? ''))
+  const plafond = Math.ceil(ids.length / 3)
+  if (avecExplication.length > plafond) {
+    signaler(
+      `pratique : ${String(avecExplication.length)} items sur ${String(ids.length)} demandent une explication (data-justifier : ${avecExplication.join(', ')}), au plus un tiers (${String(plafond)}) : ce que l’écran montre déjà ne se demande pas.`,
+    )
+  }
+  for (const erreur of manifeste.erreurs_critiques) {
+    const motif = new RegExp(`\\bdata-erreur\\s*=\\s*["']${erreur.id}["']`, 'i')
+    if (!ids.some((id) => motif.test(templates.get(id) ?? ''))) {
+      signaler(
+        `l’erreur critique ${erreur.id} n’a aucun item de pratique qui la révèle (data-erreur="${erreur.id}" dans un <template data-item>) : elle ne serait repérée qu’aux questions.`,
+      )
+    }
+  }
+}
+
+/** Une erreur critique se rattache à l'étape d'explication qui la montre : c'est là que le bilan renvoie. */
+function verifierErreursCritiques(manifeste: Manifeste, signaler: (message: string) => void): void {
+  for (const erreur of manifeste.erreurs_critiques) {
+    const etape = manifeste.etapes.find((e) => e.id === erreur.etape)
+    if (etape !== undefined && etape.type !== 'explication') {
+      signaler(
+        `l’erreur critique ${erreur.id} est rattachée à ${etape.id} (${etape.type}) : elle se rattache à l’étape d’explication qui la montre, celle où l’apprenant retourne depuis le bilan.`,
+      )
+    }
+  }
+}
+
+/** Une phrase qui demande quelque chose : une question, ou un ordre (« Écris… », « Puis explique… »). */
+const DEMANDE =
+  /^(?:puis\s+)?(?:écris|dis|explique|donne|calcule|traduis|trace|transcris|corrige|trouve|compare|décris|nomme|cite|justifie|montre|convertis|lis|relis|complète|adapte|remets|remplis|propose|indique|précise|réponds|choisis|range|fais|décode|encode|dessine|retrouve|vérifie)\b/i
+
+/** Combien de choses une question demande : ses phrases interrogatives et ses ordres. */
+function sousQuestions(question: string): number {
+  return question
+    .split(/(?<=[.?!])\s+/)
+    .filter((phrase) => phrase.endsWith('?') || DEMANDE.test(phrase)).length
+}
+
+/**
+ * Une question de restitution, une tâche, deux sous-questions au plus (leçons du B01) : au-delà,
+ * l'apprenant répond à la première et oublie les autres, et le correcteur note un manque qui n'en
+ * est pas un.
+ */
+function verifierRestitution(manifeste: Manifeste, signaler: (message: string) => void): void {
+  for (const question of manifeste.restitution) {
+    const n = sousQuestions(question.question)
+    if (n > 2) {
+      signaler(
+        `restitution ${question.id} : la question demande ${String(n)} choses ; une question de restitution, une tâche, deux sous-questions au plus.`,
+      )
+    }
+  }
+}
+
 /**
  * Une adresse qui sort de la page (`http(s)://…` ou `//…`) là où le navigateur la chargerait ou la
  * suivrait : un attribut `src`, `href`, `srcset`, `poster`, `action`, `formaction`, `data` ou `ping`,
@@ -498,6 +578,9 @@ export async function verifierLesFiches({
         verifierLePont(embarque, resultat.manifeste.pont, pontAttendu, signaler)
       }
       verifierTemplates(resultat.manifeste, fiche.html, signaler)
+      verifierPratique(resultat.manifeste, fiche.html, signaler)
+      verifierErreursCritiques(resultat.manifeste, signaler)
+      verifierRestitution(resultat.manifeste, signaler)
       verifierAdressesExternes(fiche.html, signaler)
       verifierRenvoisAuxCours(resultat.manifeste, fiche.html, signaler)
       verifierAlignement(resultat.manifeste, fiche.html, signaler)

@@ -62,6 +62,24 @@ Un défaut que l'apprenant verrait ne part jamais en « hors périmètre » : il
 
 On corrige la classe, pas seulement le cas : on cherche la règle qui l'a laissé passer, et on l'écrit ici, dans `regles.json` ou dans `pnpm fiches:verifier` dans la même PR. Puis on remonte d'un cran : si la règle existait et n'a pas été appliquée, c'est le contrôle qui manque, pas la règle. Les agents n'ont pas de mémoire d'une conversation à l'autre : une leçon qui n'est ni écrite ici ni vérifiée par la machine est perdue.
 
+### Leçons du B01 (18 octobre 2026)
+
+B01 a été jouée en apprenant par Amine, puis auditée en se mettant à sa place : zéro bloquant, mais vingt et un défauts gênants que le vérificateur vert n'avait pas vus, parce qu'il comptait les règles et pas ce que l'apprenant voit et tape. Ces leçons valent pour toute fiche ; chacune dit qui la tient.
+
+- **Toute convention interrogée est redonnée avec la question** (table hexadécimale, extrait ASCII, jeu d'instructions, ordre de calcul, signes de JavaScript), en cours, en pratique, en restitution et en différé, sauf si l'objectif demande le par cœur. Ce qui se refait seul, c'est le geste. Décision d'Amine, `regles.json` R01, C09, T01.
+- **On n'explique que ce qui n'est pas écrit à l'écran.** Au plus un tiers des items demandent une explication en prose (`data-justifier`), et la fiche répond à la question posée (`data-fiche`), pas à l'exercice. `pnpm fiches:verifier`.
+- **Une comparaison ne juge pas.** Après une explication, le gabarit montre ce que dit la fiche et l'apprenant dit lui-même « Même idée » ou « Il me manque quelque chose » ; aucun verdict calculé sur du texte libre. Gabarit, `fiche:expliquer`.
+- **L'aide est retirée après une réussite seule, jamais avant.** La fiche désigne l'écran où l'apprenant a réussi sans elle, et la grille le cite (F02).
+- **Ce qui est visible se lit, rien d'autre.** « Écouter » lit l'écran dans l'ordre, saute les champs, les boutons et ce qui n'est pas encore dévoilé ; un tableau, un outil ou une figure se lit par sa phrase `data-lecture`. Le test web « ce qui est visible se lit : les fiches du dépôt » refuse un écran muet.
+- **Un champ ouvre le clavier que la réponse demande** (`inputmode`). Gabarit.
+- **Une question de restitution, une tâche, deux sous-questions au plus.** `pnpm fiches:verifier`.
+- **La charge se compte du point de vue de l'apprenant** : le nombre de saisies et de pavés à écrire, pas le nombre de règles tenues. La PR le dit.
+- **Un écran, une consigne.** Un écran qui enchaîne plusieurs exercices sous une consigne se coupe.
+- **Les cartes portent la structure, pas la correspondance** : pas de carte « que veut dire || ».
+- **Chaque erreur critique a un item de pratique qui la révèle** (`data-erreur` sur l'option ou l'outil), sinon elle n'est vue qu'aux questions. `pnpm fiches:verifier`.
+- **L'erreur critique est rattachée à l'étape d'explication qui la montre**, celle où le bilan renvoie. `pnpm fiches:verifier`.
+- **Jouer le bloc en apprenant, sur téléphone, avant de le livrer**, pas seulement le faire passer au vérificateur : les trois quarts de cette liste se voient en dix minutes de jeu. C'est l'épreuve 4, et elle ne se saute pas.
+
 ## Règles permanentes pour l'IA qui code
 
 Ces règles valent pour toutes les PR. La PR-001 les recopie dans `AGENTS.md` à la racine du dépôt (avec un `CLAUDE.md` qui contient seulement `Lire AGENTS.md.`), pour que n'importe quelle IA les trouve.
