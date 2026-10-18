@@ -1411,6 +1411,11 @@
       section .crans > li + li {
         margin-top: 0;
       }
+      /* Un seul cran ouvert : pas de « 1. » qui annonce une liste. */
+      .crans:has(li:only-child) {
+        padding-inline-start: 0;
+        list-style: none;
+      }
       .crans:empty {
         display: none;
       }
@@ -1557,13 +1562,25 @@
       .table-conv tr.active td {
         background: var(--couleur-accent-douce);
       }
+      .table-conv .reste {
+        white-space: nowrap;
+      }
+      @media (max-width: 480px) {
+        .table-conv td {
+          padding: var(--espacement-4);
+          font-size: 0.875rem;
+        }
+        .mini {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
       .choix-conv {
         display: flex;
         gap: var(--espacement-4);
       }
       .ascii {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(4.25rem, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(3.5rem, 1fr));
         gap: var(--espacement-4);
         padding: 0;
         list-style: none;
@@ -2043,7 +2060,7 @@
       <div
         data-widget="pari"
         class="ex"
-        data-apres="Garde ta réponse en tête. Tu vas apprendre à faire ces deux lectures toi-même, à la main."
+        data-apres="Pari noté. Garde-le en tête : tu vas apprendre à faire ces deux lectures toi-même, à la main."
       >
         <p class="q">
           Les deux programmes ont lu exactement les mêmes 96 chiffres. À ton avis, pourquoi deux
@@ -3258,6 +3275,7 @@
           data-widget="nombre"
           data-id="rl1"
           data-reponse="128"
+          data-sinon="Pas encore. Le chiffre de gauche compte 16 fois : calcule 8 × 16."
           data-aide1="Que faut-il calculer pour le chiffre de gauche ?"
           data-aide2="Le chiffre de gauche compte 16 fois : multiplie 8 par 16."
           data-aide3="8 × 16, c’est 8 × 10 + 8 × 6."
@@ -3342,8 +3360,9 @@
             hexadécimaux, de <span class="mono">00</span> à <span class="mono">ff</span>.
           </p>
           <p>
-            Retiens les six lettres : a vaut 10, b 11, c 12, d 13, e 14 et f 15. Dans la pratique,
-            la table ne sera plus là : une moitié se calcule avec les poids 8, 4, 2 et 1.
+            Ce qu’il faut retenir, c’est la structure : deux chiffres par octet, 00 pour une lumière
+            éteinte, ff pour une lumière à fond, #rrggbb pour une couleur. La table des seize
+            chiffres te sera redonnée chaque fois qu’une question convertit.
           </p>
         </div>
       </div>
@@ -3499,8 +3518,43 @@
             </tr>
           </tbody>
         </table>
-        <p>
-          Voici un programme de 6 octets :
+      </div>
+      <div data-ecran="Un programme de 6 octets">
+        <p class="discret">Le jeu d’instructions, pour lire :</p>
+        <table
+          class="table-instr"
+          data-lecture="La table du processeur : le premier octet dit ce qu’il fait. 1 : il range le second octet dans le registre. 2 : il ajoute le second octet au registre ; le registre ne tient qu’un octet, au-delà de 255 il repart de 0. 3 : il affiche le registre à l’écran, et le second octet ne sert pas, il vaut 0. Un autre nombre : le processeur s’arrête."
+        >
+          <thead>
+            <tr>
+              <th>Premier octet</th>
+              <th>Ce que fait le processeur</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1 (00000001)</td>
+              <td>Range le second octet dans le registre.</td>
+            </tr>
+            <tr>
+              <td>2 (00000010)</td>
+              <td>
+                Ajoute le second octet au registre. Le registre ne tient qu’un octet : au-delà de
+                255, il repart de 0.
+              </td>
+            </tr>
+            <tr>
+              <td>3 (00000011)</td>
+              <td>Affiche le registre à l’écran. Le second octet ne sert pas : il vaut 0.</td>
+            </tr>
+            <tr>
+              <td>Un autre nombre</td>
+              <td>Le processeur s’arrête.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="accroche">
+          Voici un programme de 6 octets :
           <span class="mono">00000001 00000101 00000010 00000011 00000011 00000000</span>, soit 1 5
           2 3 3 0. Le processeur le lit deux octets à la fois. Réponds à chaque question avant de
           passer à la suivante.
@@ -3919,7 +3973,7 @@
         data-reponse="150"
         data-bits="10010110"
         data-diag="lire"
-        data-justifier="Dis comment tu as trouvé ce nombre, et pourquoi chaque bit à 1 compte pour son poids."
+        data-justifier="Pourquoi chaque bit à 1 compte-t-il pour son poids, et pas pour 1 ?"
       >
         <p class="q">Que vaut cet octet ?</p>
         <div class="lampes" role="img" aria-label="Lampes de gauche à droite : 10010110">
@@ -3942,7 +3996,7 @@
         data-reponse="166"
         data-bits="10100110"
         data-diag="lire"
-        data-justifier="Dis comment tu as trouvé ce nombre, et pourquoi chaque bit à 1 compte pour son poids."
+        data-justifier="Pourquoi chaque bit à 1 compte-t-il pour son poids, et pas pour 1 ?"
       >
         <p class="q">Que vaut cet octet ?</p>
         <div class="lampes" role="img" aria-label="Lampes de gauche à droite : 10100110">
@@ -3992,9 +4046,7 @@
           est son erreur ?
         </p>
         <ul class="options">
-          <li data-option="zero">
-            64 valeurs, c’est juste, mais 0 en est une : elles vont de 0 à 63.
-          </li>
+          <li data-option="zero">64 valeurs, c’est juste, mais le plus grand nombre est 63.</li>
           <li
             data-option="rien"
             data-erreur="E1"
@@ -4024,9 +4076,7 @@
           valeurs. » Où est son erreur ?
         </p>
         <ul class="options">
-          <li data-option="zero">
-            511 est bien le plus grand nombre, mais 0 compte aussi : il y a 512 valeurs.
-          </li>
+          <li data-option="zero">511 est bien le plus grand nombre, mais il y a 512 valeurs.</li>
           <li
             data-option="rien"
             data-erreur="E1"
@@ -4330,7 +4380,8 @@
         data-reponse="20"
         data-diag="programme"
         data-octets="1 10 2 10 3 0"
-        data-justifier="Explique pourquoi tu as lu ce programme deux octets par deux octets."
+        data-justifier="Que fait l’instruction 2 dans ce programme ?"
+        data-fiche="2 ajoute au registre le nombre qui le suit : 10 + 10 = 20."
       >
         <p class="q">
           Le processeur à trois instructions reçoit ce programme. Qu’affichera l’écran ?
@@ -4379,7 +4430,8 @@
         data-reponse="13"
         data-diag="programme"
         data-octets="1 4 2 9 3 0"
-        data-justifier="Explique pourquoi tu as lu ce programme deux octets par deux octets."
+        data-justifier="Que fait l’instruction 2 dans ce programme ?"
+        data-fiche="2 ajoute au registre le nombre qui le suit : 4 + 9 = 13."
       >
         <p class="q">
           Le processeur à trois instructions reçoit ce programme. Qu’affichera l’écran ?
@@ -4422,26 +4474,12 @@
     </template>
 
     <template data-item="PR8-1">
-      <div
-        class="ex"
-        data-widget="octet"
-        data-verifie
-        data-saisie="texte"
-        data-reponse="0"
-        data-justifier="Explique comment tu vérifies que ton octet vaut bien 0."
-      >
+      <div class="ex" data-widget="octet" data-verifie data-saisie="texte" data-reponse="0">
         <p class="q">Écris 0 en binaire, avec 8 chiffres.</p>
       </div>
     </template>
     <template data-variante="PR8-1">
-      <div
-        class="ex"
-        data-widget="octet"
-        data-verifie
-        data-saisie="texte"
-        data-reponse="1"
-        data-justifier="Explique comment tu vérifies que ton octet vaut bien 1."
-      >
+      <div class="ex" data-widget="octet" data-verifie data-saisie="texte" data-reponse="1">
         <p class="q">Écris 1 en binaire, avec 8 chiffres.</p>
       </div>
     </template>
@@ -4455,10 +4493,7 @@
       >
         <p class="q">Un fichier contient trois octets : 255, 136 et 0. Que sont-ils ?</p>
         <ul class="options">
-          <li data-option="depend">
-            Ça dépend du programme qui les lit : une couleur orange lue en RGB, trois caractères
-            pour le Bloc-notes.
-          </li>
+          <li data-option="depend">Ça dépend du programme qui les lit, et de son codage.</li>
           <li
             data-option="couleur"
             data-erreur="E2"
@@ -4486,10 +4521,7 @@
       >
         <p class="q">Un fichier contient trois octets : 65, 66 et 67. Que sont-ils ?</p>
         <ul class="options">
-          <li data-option="depend">
-            Ça dépend du programme qui les lit : le texte « ABC » pour le Bloc-notes, une couleur
-            lue en RGB.
-          </li>
+          <li data-option="depend">Ça dépend du programme qui les lit, et de son codage.</li>
           <li
             data-option="texte"
             data-erreur="E2"
@@ -4515,7 +4547,8 @@
         data-saisie="texte"
         data-reponse="32,192,96"
         data-noms="Rouge,Vert,Bleu"
-        data-justifier="Explique comment tu as écrit 192 en binaire, en partant du poids 128."
+        data-justifier="Dans 192, le poids 128 rentre. Que reste-t-il, et quel poids le fait ?"
+        data-fiche="192 − 128 = 64, et 64 rentre : il reste 0. Donc 192 = 11000000."
       >
         <p class="q">
           Écris en binaire les trois octets de <code>rgb(32, 192, 96)</code>, avec 8 chiffres
@@ -4531,7 +4564,8 @@
         data-saisie="texte"
         data-reponse="128,32,255"
         data-noms="Rouge,Vert,Bleu"
-        data-justifier="Explique comment tu as écrit 32 en binaire, en partant du poids 128."
+        data-justifier="Pourquoi 255 s’écrit-il avec huit 1 ?"
+        data-fiche="255 = 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 : tous les poids rentrent, donc 11111111."
       >
         <p class="q">
           Écris en binaire les trois octets de <code>rgb(128, 32, 255)</code>, avec 8 chiffres
@@ -4553,6 +4587,30 @@
         <p class="q">
           Écris <code>rgb(32, 192, 96)</code> en hexadécimal, comme dans le CSS, avec le # devant.
         </p>
+        <div
+          class="outil"
+          data-lecture="La table des seize chiffres de l’hexadécimal, sous les yeux pour convertir : de 0, pour 0000, à 9, pour 1001, puis a pour 10, b pour 11, c pour 12, d pour 13, e pour 14 et f pour 15."
+        >
+          <p class="outil-titre">Les 16 chiffres de l’hexadécimal</p>
+          <ul class="hexa-table">
+            <li><b>0</b><span>0000</span><span>vaut 0</span></li>
+            <li><b>1</b><span>0001</span><span>vaut 1</span></li>
+            <li><b>2</b><span>0010</span><span>vaut 2</span></li>
+            <li><b>3</b><span>0011</span><span>vaut 3</span></li>
+            <li><b>4</b><span>0100</span><span>vaut 4</span></li>
+            <li><b>5</b><span>0101</span><span>vaut 5</span></li>
+            <li><b>6</b><span>0110</span><span>vaut 6</span></li>
+            <li><b>7</b><span>0111</span><span>vaut 7</span></li>
+            <li><b>8</b><span>1000</span><span>vaut 8</span></li>
+            <li><b>9</b><span>1001</span><span>vaut 9</span></li>
+            <li><b>a</b><span>1010</span><span>vaut 10</span></li>
+            <li><b>b</b><span>1011</span><span>vaut 11</span></li>
+            <li><b>c</b><span>1100</span><span>vaut 12</span></li>
+            <li><b>d</b><span>1101</span><span>vaut 13</span></li>
+            <li><b>e</b><span>1110</span><span>vaut 14</span></li>
+            <li><b>f</b><span>1111</span><span>vaut 15</span></li>
+          </ul>
+        </div>
       </div>
     </template>
     <template data-variante="PR8-4">
@@ -4569,6 +4627,30 @@
         <p class="q">
           Écris <code>rgb(128, 32, 255)</code> en hexadécimal, comme dans le CSS, avec le # devant.
         </p>
+        <div
+          class="outil"
+          data-lecture="La table des seize chiffres de l’hexadécimal, sous les yeux pour convertir : de 0, pour 0000, à 9, pour 1001, puis a pour 10, b pour 11, c pour 12, d pour 13, e pour 14 et f pour 15."
+        >
+          <p class="outil-titre">Les 16 chiffres de l’hexadécimal</p>
+          <ul class="hexa-table">
+            <li><b>0</b><span>0000</span><span>vaut 0</span></li>
+            <li><b>1</b><span>0001</span><span>vaut 1</span></li>
+            <li><b>2</b><span>0010</span><span>vaut 2</span></li>
+            <li><b>3</b><span>0011</span><span>vaut 3</span></li>
+            <li><b>4</b><span>0100</span><span>vaut 4</span></li>
+            <li><b>5</b><span>0101</span><span>vaut 5</span></li>
+            <li><b>6</b><span>0110</span><span>vaut 6</span></li>
+            <li><b>7</b><span>0111</span><span>vaut 7</span></li>
+            <li><b>8</b><span>1000</span><span>vaut 8</span></li>
+            <li><b>9</b><span>1001</span><span>vaut 9</span></li>
+            <li><b>a</b><span>1010</span><span>vaut 10</span></li>
+            <li><b>b</b><span>1011</span><span>vaut 11</span></li>
+            <li><b>c</b><span>1100</span><span>vaut 12</span></li>
+            <li><b>d</b><span>1101</span><span>vaut 13</span></li>
+            <li><b>e</b><span>1110</span><span>vaut 14</span></li>
+            <li><b>f</b><span>1111</span><span>vaut 15</span></li>
+          </ul>
+        </div>
       </div>
     </template>
     <template data-item="PR8-5">
@@ -4580,7 +4662,8 @@
         data-diag="pixels"
         data-largeur="800"
         data-hauteur="600"
-        data-justifier="Explique ton calcul : d’où vient chaque nombre que tu as multiplié."
+        data-justifier="Dans ton calcul, que représente le 3 ?"
+        data-fiche="3 octets par pixel, un par lumière : rouge, vert, bleu."
       >
         <p class="q">
           Une image fait 800 × 600 pixels. Sans compression, combien d’octets pour ses pixels ?
@@ -4596,7 +4679,8 @@
         data-diag="pixels"
         data-largeur="1000"
         data-hauteur="500"
-        data-justifier="Explique ton calcul : d’où vient chaque nombre que tu as multiplié."
+        data-justifier="Dans ton calcul, que représente le 3 ?"
+        data-fiche="3 octets par pixel, un par lumière : rouge, vert, bleu."
       >
         <p class="q">
           Une image fait 1 000 × 500 pixels. Sans compression, combien d’octets pour ses pixels ?
@@ -4609,7 +4693,8 @@
         data-widget="choix"
         data-verifie
         data-reponse="envers"
-        data-justifier="Explique comment tu as repéré l’erreur."
+        data-justifier="Que vaut 11000101, l’octet qu’il a écrit ?"
+        data-fiche="Avec 128 à gauche : 128 + 64 + 4 + 1 = 197. Lu à l’envers, il donne 163."
       >
         <p class="q">Un camarade écrit 163 en binaire : 11000101. Où est son erreur ?</p>
         <ul class="options">
@@ -4638,7 +4723,8 @@
         data-widget="choix"
         data-verifie
         data-reponse="envers"
-        data-justifier="Explique comment tu as repéré l’erreur."
+        data-justifier="Que vaut 01001011, l’octet qu’elle a écrit ?"
+        data-fiche="Avec 128 à gauche : 64 + 8 + 2 + 1 = 75. Lu à l’envers, il donne 210."
       >
         <p class="q">Une camarade écrit 210 en binaire : 01001011. Où est son erreur ?</p>
         <ul class="options">
@@ -4666,29 +4752,29 @@
         class="ex"
         data-widget="choix"
         data-verifie
-        data-reponse="non"
-        data-justifier="Explique comment tu sais combien de valeurs donnent ces bits."
+        data-reponse="jeu"
+        data-justifier="Dis ce qui distingue le binaire d’un langage de programmation."
+        data-fiche="Le binaire est une façon d’écrire des nombres avec deux chiffres. Un langage de programmation a des mots et une grammaire ; ce qui fait du code machine un langage, c’est le jeu d’instructions du processeur."
       >
         <p class="q">
-          Un site veut numéroter ses 300 produits avec un seul octet. Est-ce possible ?
+          Un fichier contient les octets 1 6 3 0. Pour le processeur à trois instructions, c’est un
+          programme. Qu’est-ce qui en fait un programme ?
         </p>
         <ul class="options">
-          <li data-option="non">
-            Non : un octet n’a que 256 valeurs, de 0 à 255. Il faut au moins 9 bits, qui en donnent
-            512.
+          <li data-option="jeu">Le jeu d’instructions du processeur, qui lit ces octets.</li>
+          <li
+            data-option="binaire"
+            data-erreur="E3"
+            data-retour="Le binaire écrit des nombres, rien de plus : une photo aussi est en binaire. Ce qui fait de ces octets des instructions, c’est le jeu d’instructions qui les lit."
+          >
+            Le binaire : des 0 et des 1, c’est déjà le langage de la machine.
           </li>
           <li
-            data-option="oui"
-            data-retour="2 puissance 9 = 512 compte les valeurs de 9 bits. Un octet n’en a que 8 : 256 valeurs."
+            data-option="nombres"
+            data-erreur="E2"
+            data-retour="Lus en binaire, ce sont des nombres ; lus avec le jeu d’instructions, ce sont des instructions. Le même octet change de sens avec le codage."
           >
-            Oui : 300 est plus petit que 2 puissance 9.
-          </li>
-          <li
-            data-option="zero"
-            data-erreur="E1"
-            data-retour="Compter à partir de 0 ne crée pas de valeur : un octet en a 256, de 0 à 255. Il manque 44 numéros."
-          >
-            Oui, puisqu’on compte à partir de 0.
+            Rien : des octets sont toujours des nombres, un programme est autre chose.
           </li>
         </ul>
       </div>
@@ -4698,25 +4784,29 @@
         class="ex"
         data-widget="choix"
         data-verifie
-        data-reponse="non"
-        data-justifier="Explique comment tu sais combien de valeurs donnent ces bits."
+        data-reponse="faux"
+        data-justifier="Dis ce qui distingue le binaire d’un langage de programmation."
+        data-fiche="Le binaire est une façon d’écrire des nombres avec deux chiffres. Un langage de programmation a des mots et une grammaire ; son texte est traduit en code machine ou exécuté par un interpréteur."
       >
-        <p class="q">Une appli veut ranger un score de 0 à 1 000 dans 9 bits. Est-ce possible ?</p>
+        <p class="q">
+          Un camarade dit : « Programmer, c’est écrire des 0 et des 1. » Qu’en penses-tu ?
+        </p>
         <ul class="options">
-          <li data-option="non">
-            Non : 9 bits donnent 512 valeurs, de 0 à 511. Il faut 10 bits, qui en donnent 1 024.
+          <li data-option="faux">
+            Faux : on écrit dans un langage, comme PHP, traduit ou exécuté ensuite.
           </li>
           <li
-            data-option="oui"
-            data-retour="1 024, c’est 2 puissance 10 : il faut 10 bits. Avec 9, on s’arrête à 511."
+            data-option="vrai"
+            data-erreur="E3"
+            data-retour="Le processeur exécute du code machine, lu avec son jeu d’instructions. Le binaire n’est que l’écriture des octets, pas un langage."
           >
-            Oui : 9 bits vont jusqu’à 1 024.
+            Vrai : le processeur ne comprend que le binaire, donc on programme en binaire.
           </li>
           <li
-            data-option="somme"
-            data-retour="Les bits ne valent pas tous 128 : chaque bit ajouté double le nombre de valeurs. 9 bits : 2 puissance 9 = 512."
+            data-option="parfois"
+            data-retour="Aucun programme ne s’écrit en 0 et 1 à la main. Tous s’écrivent dans un langage, en texte, puis sont traduits en code machine ou exécutés par un interpréteur."
           >
-            Oui : 9 bits de 128 font plus de 1 000.
+            Vrai pour les programmes rapides seulement : les autres s’écrivent en texte.
           </li>
         </ul>
       </div>
@@ -4935,14 +5025,14 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 15,
+        "version": 16,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
         "objectif": "Faire 5 conversions à la main, au moins deux dans chaque sens, dont 0, 128 et 255 ; expliquer pourquoi un octet donne 256 valeurs mais un maximum de 255 et dire ce que deviennent ces deux nombres pour un autre nombre de bits ; lire un même octet comme un nombre, une lettre (avec un extrait de la table ASCII donné) et une intensité de couleur ; écrire en binaire les trois octets de rgb(255, 136, 0) et dire ce que code chacun ; écrire et relire une couleur en hexadécimal, comme #ff8800 ; expliquer pourquoi un « é » s’affiche « Ã© » ; calculer la taille d’une photo non compressée et dire en 4 phrases comment elle devient un fichier ; lire un programme de quelques octets avec le jeu d’instructions d’un processeur et dire pourquoi le binaire n’est pas un langage de programmation. Aisance : une série de 10 conversions justes, à 30 s, puis 20 s, puis 10 s chacune, un palier par jour.",
         "prerequis": [],
         "pont": 1,
-        "contexte_ia": "Bloc B01 du module « Écosystème et outils du développeur » (DWWM), premier bloc de la partie La machine. Le modèle du bloc : des bits, lus par un programme, avec un codage, donnent un sens. Un bit est un état à deux valeurs, noté 0 ou 1 (dans la fiche, une lampe éteinte ou allumée ; dans la machine, une tension haute ou basse, un point aimanté) ; 8 bits font un octet. Un codage (on dit aussi une convention de lecture) est la règle, fixée d'avance, qui dit comment lire des bits : une suite de bits n'a pas de sens sans lui, et relue avec un autre codage, la même suite prend un autre sens. Quatre codages sont enseignés et pratiqués. 1) Le système binaire (base 2), pour des entiers positifs : poids 128, 64, 32, 16, 8, 4, 2, 1, le plus lourd à gauche, chacun double de celui à sa droite ; valeur = somme des poids des bits à 1 (01000011 vaut 67, pas 3, le nombre de bits à 1). Écrire un nombre : partir de 128 ; un poids rentre s'il est plus petit que ce qui reste, ou égal ; s'il rentre, écrire 1 et le retirer, sinon écrire 0 ; toujours 8 chiffres. Repères : 0 = 00000000, 128 = 10000000, 255 = 11111111. Avec n bits, 2 puissance n valeurs, de 0 à 2 puissance n moins 1, parce qu'on compte à partir de 0 et que 0 est une valeur ; chaque bit ajouté double le nombre de valeurs (3 bits : 8 et 7 ; un octet : 256 et 255 ; 10 bits : 1 024 et 1 023 ; 12 bits : 4 096 et 4 095). Le nombre de bits qu'il faut pour un nombre de valeurs : la première puissance de 2 qui l'atteint (100 valeurs : 7 bits ; 1 000 valeurs : 10 bits). Les poids doublent pour que chaque nombre ait une seule écriture. 2) Les codages de caractères. La table ASCII (de 1963, reprise par les codages d'aujourd'hui) : A = 65 à Z = 90, a = 97 à z = 122, l'espace = 32 ; une minuscule vaut sa majuscule plus 32, un seul bit de différence. Chaque question qui fait lire une lettre redonne son extrait de table. Le « é » affiché « Ã© » : UTF-8 écrit « é » avec deux octets, 195 et 169 ; une page lue avec la table Latin-1 affiche ces deux octets séparément, Ã (195) puis © (169) ; les octets sont justes, c'est le codage choisi pour les lire qui est faux ; on l'évite en enregistrant la page en UTF-8 et en l'annonçant avec <meta charset=\"utf-8\">. Les numéros 195 et 169 et le détail d'UTF-8 ne sont pas exigés. 3) RGB : trois octets par couleur, rouge, vert, bleu, dans cet ordre, chacun de 0 (éteint) à 255 (à fond) ; rgb(255, 136, 0) = 11111111 10001000 00000000, un orange : rouge à fond, vert à 136 sur 255, bleu éteint. Les lumières s'ajoutent : rouge et vert donnent du jaune, les trois à fond du blanc, les trois éteintes du noir. Le nom exact d'une couleur obtenue n'est pas exigé : une réponse au niveau des lumières suffit. L'hexadécimal (base 16) écrit chaque moitié de 4 bits d'un octet avec un chiffre, 0 à 9 puis a (10) à f (15) : un octet tient en deux chiffres, de 00 à ff ; pour relire, le chiffre de gauche compte 16 fois (c8 = 12 × 16 + 8 = 200) ; #ff8800 = rgb(255, 136, 0) ; majuscules et minuscules sont justes (#FF8800). La forme courte #f80 et l'opacité (#ff880080) sont seulement nommées : ne pas les exiger. Une photo : une grille de pixels ; sans compression, 3 octets par pixel, un par lumière, rangés à la suite, pixel après pixel, ligne après ligne ; un en-tête au début du fichier donne la largeur et la hauteur, pour savoir où couper les lignes ; relus avec une autre largeur, les mêmes octets donnent une image qui glisse. Taille des pixels = largeur × hauteur × 3 octets ; 1 ko = 1 000 octets, 1 Mo = 1 000 000, 1 Go = 1 000 Mo, 1 To = 1 000 Go. Le compte de Windows par 1 024 est seulement nommé. La compression (JPEG) est nommée, pas enseignée : ne pas l'exiger. 4) Le jeu d'instructions d'un processeur : la table qui dit ce que fait chaque instruction ; les octets d'un programme prêt à s'exécuter, lus avec ce jeu d'instructions, forment le code machine, aussi appelé langage machine. La fiche utilise un processeur imaginaire à trois instructions de deux octets chacune : 1 n range n dans le registre ; 2 n ajoute n au registre (au-delà de 255, il repart de 0) ; 3 0 affiche le registre ; un autre premier octet l'arrête. Chaque question sur ce processeur redonne sa table. Un autre processeur, avec une autre table, fait autre chose des mêmes octets. Les vrais jeux d'instructions (x86, ARM) sont nommés, pas enseignés : ne jamais demander ce que fait un vrai octet de code machine. Le binaire n'est pas un langage de programmation : c'est une façon d'écrire les nombres, comme le décimal ; ce qui fait du code machine un langage, c'est le jeu d'instructions, pas le binaire. Un langage de programmation (PHP, JavaScript) a des mots et une grammaire ; le texte d'un programme est rangé en octets avec un codage de caractères comme UTF-8, puis traduit en code machine, ou exécuté par un interpréteur, un programme lui-même en code machine, comme pour PHP. Pièges à repérer : E1, confondre le nombre de valeurs (2 puissance n) et le plus grand nombre (2 puissance n moins 1) : ne pas valider 255 comme nombre de valeurs d'un octet ni 256 comme son maximum, même avec une explication ; E2, croire qu'une suite de bits a un sens toute seule, sans le codage qui la lit ; E3, confondre le binaire, une façon d'écrire les nombres, et un langage de programmation ; E4, inverser le sens des poids (01010101 lu 170, 99 écrit 11000110). Une erreur de calcul isolée, sans inversion des poids, n'est pas E4. Pour une explication, examiner : l'idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d'application, le terme exact (bit, octet, poids, système binaire, codage, table ASCII, RGB, hexadécimal, en-tête, jeu d'instructions, code machine), la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Chaque attendu vient de la fiche : les étapes 3 à 11 et 14 (sources S1 à S10) ; ce qui est marqué « déduit » s'obtient en appliquant une règle de la fiche à un autre cas.",
+        "contexte_ia": "Bloc B01 du module « Écosystème et outils du développeur » (DWWM), premier bloc de la partie La machine. Le modèle du bloc : des bits, lus par un programme, avec un codage, donnent un sens. Un bit est un état à deux valeurs, noté 0 ou 1 (dans la fiche, une lampe éteinte ou allumée ; dans la machine, une tension haute ou basse, un point aimanté) ; 8 bits font un octet. Un codage (on dit aussi une convention de lecture) est la règle, fixée d'avance, qui dit comment lire des bits : une suite de bits n'a pas de sens sans lui, et relue avec un autre codage, la même suite prend un autre sens. Quatre codages sont enseignés et pratiqués. 1) Le système binaire (base 2), pour des entiers positifs : poids 128, 64, 32, 16, 8, 4, 2, 1, le plus lourd à gauche, chacun double de celui à sa droite ; valeur = somme des poids des bits à 1 (01000011 vaut 67, pas 3, le nombre de bits à 1). Écrire un nombre : partir de 128 ; un poids rentre s'il est plus petit que ce qui reste, ou égal ; s'il rentre, écrire 1 et le retirer, sinon écrire 0 ; toujours 8 chiffres. Repères : 0 = 00000000, 128 = 10000000, 255 = 11111111. Avec n bits, 2 puissance n valeurs, de 0 à 2 puissance n moins 1, parce qu'on compte à partir de 0 et que 0 est une valeur ; chaque bit ajouté double le nombre de valeurs (3 bits : 8 et 7 ; un octet : 256 et 255 ; 10 bits : 1 024 et 1 023 ; 12 bits : 4 096 et 4 095). Le nombre de bits qu'il faut pour un nombre de valeurs : la première puissance de 2 qui l'atteint (100 valeurs : 7 bits ; 1 000 valeurs : 10 bits). Les poids doublent pour que chaque nombre ait une seule écriture. 2) Les codages de caractères. La table ASCII (de 1963, reprise par les codages d'aujourd'hui) : A = 65 à Z = 90, a = 97 à z = 122, l'espace = 32 ; une minuscule vaut sa majuscule plus 32, un seul bit de différence. Chaque question qui fait lire une lettre redonne son extrait de table. Le « é » affiché « Ã© » : UTF-8 écrit « é » avec deux octets, 195 et 169 ; une page lue avec la table Latin-1 affiche ces deux octets séparément, Ã (195) puis © (169) ; les octets sont justes, c'est le codage choisi pour les lire qui est faux ; on l'évite en enregistrant la page en UTF-8 et en l'annonçant avec <meta charset=\"utf-8\">. Les numéros 195 et 169 et le détail d'UTF-8 ne sont pas exigés. 3) RGB : trois octets par couleur, rouge, vert, bleu, dans cet ordre, chacun de 0 (éteint) à 255 (à fond) ; rgb(255, 136, 0) = 11111111 10001000 00000000, un orange : rouge à fond, vert à 136 sur 255, bleu éteint. Les lumières s'ajoutent : rouge et vert donnent du jaune, les trois à fond du blanc, les trois éteintes du noir. Le nom exact d'une couleur obtenue n'est pas exigé : une réponse au niveau des lumières suffit. L'hexadécimal (base 16) écrit chaque moitié de 4 bits d'un octet avec un chiffre, 0 à 9 puis a (10) à f (15) : un octet tient en deux chiffres, de 00 à ff ; pour relire, le chiffre de gauche compte 16 fois (c8 = 12 × 16 + 8 = 200) ; #ff8800 = rgb(255, 136, 0) ; majuscules et minuscules sont justes (#FF8800). Chaque question qui convertit en hexadécimal redonne la table des 16 chiffres, comme pour ASCII : ce qui est à retenir, c'est la structure (deux chiffres par octet, 00 éteint, ff à fond, #rrggbb), pas les lettres. La forme courte #f80 et l'opacité (#ff880080) sont seulement nommées : ne pas les exiger. Une photo : une grille de pixels ; sans compression, 3 octets par pixel, un par lumière, rangés à la suite, pixel après pixel, ligne après ligne ; un en-tête au début du fichier donne la largeur et la hauteur, pour savoir où couper les lignes ; relus avec une autre largeur, les mêmes octets donnent une image qui glisse. Taille des pixels = largeur × hauteur × 3 octets ; 1 ko = 1 000 octets, 1 Mo = 1 000 000, 1 Go = 1 000 Mo, 1 To = 1 000 Go. Le compte de Windows par 1 024 est seulement nommé. La compression (JPEG) est nommée, pas enseignée : ne pas l'exiger. 4) Le jeu d'instructions d'un processeur : la table qui dit ce que fait chaque instruction ; les octets d'un programme prêt à s'exécuter, lus avec ce jeu d'instructions, forment le code machine, aussi appelé langage machine. La fiche utilise un processeur imaginaire à trois instructions de deux octets chacune : 1 n range n dans le registre ; 2 n ajoute n au registre (au-delà de 255, il repart de 0) ; 3 0 affiche le registre ; un autre premier octet l'arrête. Chaque question sur ce processeur redonne sa table. Un autre processeur, avec une autre table, fait autre chose des mêmes octets. Les vrais jeux d'instructions (x86, ARM) sont nommés, pas enseignés : ne jamais demander ce que fait un vrai octet de code machine. Le binaire n'est pas un langage de programmation : c'est une façon d'écrire les nombres, comme le décimal ; ce qui fait du code machine un langage, c'est le jeu d'instructions, pas le binaire. Un langage de programmation (PHP, JavaScript) a des mots et une grammaire ; le texte d'un programme est rangé en octets avec un codage de caractères comme UTF-8, puis traduit en code machine, ou exécuté par un interpréteur, un programme lui-même en code machine, comme pour PHP. Pièges à repérer : E1, confondre le nombre de valeurs (2 puissance n) et le plus grand nombre (2 puissance n moins 1) : ne pas valider 255 comme nombre de valeurs d'un octet ni 256 comme son maximum, même avec une explication ; E2, croire qu'une suite de bits a un sens toute seule, sans le codage qui la lit ; E3, confondre le binaire, une façon d'écrire les nombres, et un langage de programmation ; E4, inverser le sens des poids (01010101 lu 170, 99 écrit 11000110). Une erreur de calcul isolée, sans inversion des poids, n'est pas E4. Pour une explication, examiner : l'idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d'application, le terme exact (bit, octet, poids, système binaire, codage, table ASCII, RGB, hexadécimal, en-tête, jeu d'instructions, code machine), la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Chaque attendu vient de la fiche : les étapes 3 à 11 et 14 (sources S1 à S10) ; ce qui est marqué « déduit » s'obtient en appliquant une règle de la fiche à un autre cas.",
         "sources": [
           {
             "id": "S1",
@@ -5081,7 +5171,7 @@
           {
             "id": "E2",
             "libelle": "Croire qu’une suite de bits a un sens toute seule, sans le codage qui la lit",
-            "etape": "ET14"
+            "etape": "ET7"
           },
           {
             "id": "E3",
@@ -5108,14 +5198,14 @@
             "erreurs": ["E4"]
           },
           {
-            "id": "R23",
-            "question": "Voici un octet : 01000011. Extrait de la table ASCII : A = 65, B = 66, C = 67, D = 68, a = 97, b = 98, c = 99. Lis cet octet comme un nombre, puis comme une lettre, puis comme l’intensité du rouge d’un pixel en RGB. Qu’est-ce qui décide de la bonne lecture ? Enfin, pourquoi un « é » s’affiche-t-il parfois « Ã© » sur une page web ?",
-            "attendu": "Comme un nombre : 64 + 2 + 1 = 67. Comme une lettre : 67, c’est C dans la table. Comme l’intensité du rouge : 67 sur 255, un rouge faible, environ un quart. Les bits ne décident pas : c’est le codage avec lequel le programme les lit (binaire, ASCII, RGB). Le « é » : la page l’écrit en UTF-8, avec deux octets ; le navigateur les lit avec un autre codage, Latin-1, qui donne un caractère à chaque octet : Ã puis ©. Les octets sont justes, c’est le codage choisi pour les lire qui est faux. Les numéros des deux octets ne sont pas exigés. D’après les étapes 5, 7, 8 et 14.",
+            "id": "R28",
+            "question": "Voici un octet : 01000011. Extrait de la table ASCII : A = 65, B = 66, C = 67, D = 68, a = 97, b = 98, c = 99. Lis cet octet comme un nombre, puis comme une lettre, puis comme l’intensité du rouge d’un pixel en RGB. Qu’est-ce qui décide de la bonne lecture ?",
+            "attendu": "Comme un nombre : 64 + 2 + 1 = 67. Comme une lettre : 67, c’est C dans la table. Comme l’intensité du rouge : 67 sur 255, un rouge faible, environ un quart. Les bits ne décident pas : c’est le codage avec lequel le programme les lit (binaire, ASCII, RGB). D’après les étapes 5, 7, 8 et 14.",
             "erreurs": ["E2"]
           },
           {
-            "id": "R24",
-            "question": "Écris en binaire les trois octets de rgb(255, 136, 0), et dis ce que règle chacun. Puis écris cette couleur en hexadécimal, comme dans le CSS.",
+            "id": "R27",
+            "question": "Écris en binaire les trois octets de rgb(255, 136, 0), et dis ce que règle chacun. Puis écris cette couleur en hexadécimal, comme dans le CSS. Table des 16 chiffres : 0 à 9 valent 0 à 9, puis a = 10, b = 11, c = 12, d = 13, e = 14, f = 15 ; un chiffre par moitié de 4 bits, et pour relire, le chiffre de gauche compte 16 fois.",
             "attendu": "11111111 : le rouge, à fond ; 10001000 : le vert, à 136 sur 255, un peu plus de la moitié ; 00000000 : le bleu, éteint. En hexadécimal, chaque moitié de 4 bits devient un chiffre : 1111 1111 = ff, 1000 1000 = 88, 0000 0000 = 00, soit #ff8800 (#FF8800 est juste aussi). D’après les étapes 8 et 9.",
             "erreurs": ["E4"]
           },
@@ -5152,8 +5242,8 @@
             "erreurs": ["E2"]
           },
           {
-            "id": "C24",
-            "question": "Que vaut #33cc99 en rgb ? Puis écris rgb(255, 64, 0) en hexadécimal.",
+            "id": "C26",
+            "question": "Que vaut #33cc99 en rgb ? Puis écris rgb(255, 64, 0) en hexadécimal. Table des 16 chiffres : 0 à 9 valent 0 à 9, puis a = 10, b = 11, c = 12, d = 13, e = 14, f = 15 ; un chiffre par moitié de 4 bits, et pour relire, le chiffre de gauche compte 16 fois.",
             "attendu": "33 = 3 × 16 + 3 = 51 ; cc = 12 × 16 + 12 = 204 ; 99 = 9 × 16 + 9 = 153 : rgb(51, 204, 153). 255 = ff ; 64 = 0100 0000 = 40 ; 0 = 00 : #ff4000 (les majuscules sont justes aussi). D’après l’étape 9.",
             "erreurs": []
           },
@@ -5196,8 +5286,8 @@
             "erreurs": ["E3"]
           },
           {
-            "id": "Q26",
-            "question": "Que vaut #00ff80 en rgb ?",
+            "id": "Q29",
+            "question": "Que vaut #00ff80 en rgb ? Table des 16 chiffres : 0 à 9 valent 0 à 9, puis a = 10, b = 11, c = 12, d = 13, e = 14, f = 15 ; un chiffre par moitié de 4 bits, et pour relire, le chiffre de gauche compte 16 fois.",
             "attendu": "00 = 0 ; ff = 15 × 16 + 15 = 255 ; 80 = 8 × 16 + 0 = 128 : rgb(0, 255, 128). D’après l’étape 9.",
             "erreurs": []
           },
@@ -5272,10 +5362,10 @@
             "erreurs": ["E4"]
           },
           {
-            "id": "DT21",
+            "id": "DT26",
             "type": "transfert",
             "forme": "choisir_methode",
-            "consigne": "Trois suites d’octets, trois situations. Pour chacune, dis avec quel codage la lire, puis lis-la. a) Dans un fichier texte : 72 105 (extrait de la table ASCII : H = 72, i = 105). b) Dans une feuille CSS : #c03060. c) Pour le processeur imaginaire à trois instructions (1 suivi d’un nombre le range dans le registre, 2 suivi d’un nombre l’ajoute, 3 suivi de 0 affiche le registre) : 1 9 3 0.",
+            "consigne": "Trois suites d’octets, trois situations. Pour chacune, dis avec quel codage la lire, puis lis-la. a) Dans un fichier texte : 72 105 (extrait de la table ASCII : H = 72, i = 105). b) Dans une feuille CSS : #c03060 (table des 16 chiffres : 0 à 9, puis a = 10, b = 11, c = 12, d = 13, e = 14, f = 15 ; le chiffre de gauche compte 16 fois). c) Pour le processeur imaginaire à trois instructions (1 suivi d’un nombre le range dans le registre, 2 suivi d’un nombre l’ajoute, 3 suivi de 0 affiche le registre) : 1 9 3 0.",
             "attendu": "a) La table ASCII : « Hi ». b) RGB, écrit en hexadécimal : c0 = 192, 30 = 48, 60 = 96, soit rgb(192, 48, 96). c) Le jeu d’instructions du processeur : il range 9, puis l’affiche. C’est la situation, le programme qui lit, qui dit quel codage appliquer. Déduit des étapes 7, 9, 11 et 14.",
             "erreurs": ["E2"]
           },
@@ -5417,7 +5507,7 @@
           {
             "id": "K29",
             "recto": "Comment s’écrit un octet en hexadécimal ?",
-            "verso": "Avec deux chiffres, un par moitié de 4 bits : 0 à 9, puis a à f. De 00 à ff. #ff8800 = rgb(255, 136, 0). D’après l’étape 9."
+            "verso": "Avec deux chiffres, un par moitié de 4 bits, de 00 (éteint) à ff (à fond) : la table donne les chiffres, c’est la structure qui est à retenir. Une couleur CSS s’écrit #rrggbb, deux chiffres par octet : #ff8800 = rgb(255, 136, 0). D’après l’étape 9."
           },
           {
             "id": "K30",
@@ -5457,7 +5547,7 @@
             "id": "N2",
             "notion": "Expliquer qu’avec n bits on forme 2ⁿ valeurs, de 0 à 2ⁿ − 1, parce que chaque bit double le nombre de valeurs et qu’on compte à partir de 0 : 256 valeurs et un maximum de 255 pour un octet ; dire ce que deviennent ces deux nombres pour un autre nombre de bits, et combien de bits il faut pour un nombre de valeurs",
             "montree": ["ET4"],
-            "pratiquee": ["PR7", "PR8"],
+            "pratiquee": ["PR7"],
             "questions": ["R21", "C22", "Q23", "DE21", "DE22", "DT22", "K23"]
           },
           {
@@ -5486,28 +5576,28 @@
             "notion": "Lire un octet comme une lettre avec un extrait de la table ASCII donné : calculer son nombre, puis le chercher dans la table ; dire qu’une table de ce genre est un codage",
             "montree": ["ET7"],
             "pratiquee": ["PR7"],
-            "questions": ["R23", "K26", "K27"]
+            "questions": ["R28", "K26", "K27"]
           },
           {
             "id": "N7",
             "notion": "Expliquer pourquoi un « é » s’affiche « Ã© » : écrit en UTF-8 sur deux octets, il est lu avec un autre codage, Latin-1, qui donne un caractère à chaque octet ; dire comment l’éviter",
             "montree": ["ET7"],
             "pratiquee": [],
-            "questions": ["R23", "C23"]
+            "questions": ["C23"]
           },
           {
             "id": "N8",
             "notion": "Lire un octet comme l’intensité d’une lumière, et écrire en binaire les trois octets de rgb(255, 136, 0) en disant ce que règle chacun : le rouge, le vert et le bleu, de 0 à 255",
             "montree": ["ET8"],
             "pratiquee": ["PR8"],
-            "questions": ["R24", "K28"]
+            "questions": ["R27", "K28"]
           },
           {
             "id": "N9",
             "notion": "Écrire et relire une couleur en hexadécimal, comme #ff8800 : un chiffre de 0 à f par moitié de 4 bits, deux chiffres par octet, le chiffre de gauche comptant 16 fois",
             "montree": ["ET9"],
             "pratiquee": ["PR8"],
-            "questions": ["R24", "C24", "Q26", "K29"]
+            "questions": ["R27", "C26", "Q29", "K29"]
           },
           {
             "id": "N10",
@@ -5527,7 +5617,7 @@
             "id": "N12",
             "notion": "Dire pourquoi le binaire n’est pas un langage de programmation : c’est une façon d’écrire les nombres ; ce qui fait du code machine un langage, c’est le jeu d’instructions ; un langage comme PHP s’écrit en texte, puis est traduit ou exécuté par un interpréteur",
             "montree": ["ET11"],
-            "pratiquee": [],
+            "pratiquee": ["PR8"],
             "questions": ["R26", "C25", "Q25", "DE25"]
           }
         ],
@@ -5562,7 +5652,7 @@
             "vers": "N7",
             "type": "cause",
             "montree": "ET7",
-            "questions": ["R23", "C23"]
+            "questions": ["C23"]
           },
           {
             "id": "L5",
@@ -5570,7 +5660,7 @@
             "vers": "N8",
             "type": "equivalence",
             "montree": "ET9",
-            "questions": ["R24", "C24"]
+            "questions": ["R27", "C26"]
           },
           {
             "id": "L6",
@@ -5594,13 +5684,13 @@
             "vers": "N4",
             "type": "categorie",
             "montree": "ET14",
-            "questions": ["DT21", "K26"]
+            "questions": ["DT26", "K26"]
           }
         ],
         "ensemble": {
           "montree": "ET2",
           "rappelee": "ET14",
-          "questions": ["R23", "DT21", "DE23", "DE24", "DT24", "Q24"]
+          "questions": ["R28", "DT26", "DE23", "DE24", "DT24", "Q24"]
         },
         "hors_objectif": [
           "Les nombres négatifs : nommés comme limite du système binaire du bloc dans « À explorer plus tard » (étape 14) ; DT24 demande seulement de dire cette limite, jamais une méthode",
@@ -8519,48 +8609,37 @@
          * Après une solution montrée, l'apprenant refait sans regarder puis explique (règle F03) : il
          * écrit son explication, puis la compare avec la solution de la fiche.
          */
+        /** La clé de l'explication d'un exercice, pour la trace du gabarit (`explique:<cle>`). */
+        function cleExplication(ex) {
+          const item = ex.closest('.item')
+          const base = item ? item.dataset.item : 'ex:' + (ex.dataset.id ?? 'x')
+          return (
+            base +
+            (ex.dataset.variante || (item && montre[item.dataset.item] === 'variante')
+              ? ':variante'
+              : '')
+          )
+        }
         function expliquer(ex, solution, consigne, apres) {
           if ($(':scope > .expliquer', ex)) return
-          const champ = el('textarea', {
-            id: 'explique-' + Math.random().toString(36).slice(2),
-            rows: '3',
-          })
-          const avis = el('p', { class: 'discret', 'aria-live': 'polite' })
-          const modele = el('p', {
-            class: 'retour',
-            text: 'Ce que dit la fiche : ' + sansPoint(solution) + '.',
-          })
-          modele.hidden = true
-          const bouton = el('button', {
-            type: 'button',
-            class: 'bouton secondaire petit',
-            text: 'Comparer avec la fiche',
-          })
-          bouton.addEventListener('click', () => {
-            if (champ.value.trim() === '')
-              return void (avis.textContent = fr('Écris d’abord ton explication.'))
-            avis.textContent = fr(
-              'Ce qui manque à ton explication, c’est ce qu’il te reste à retenir.',
-            )
-            modele.hidden = false
-            bouton.disabled = true
-            apres?.()
-          })
-          ex.append(
-            el(
-              'div',
-              { class: 'expliquer' },
-              el('label', {
-                for: champ.id,
-                text:
-                  consigne ??
-                  'Tu as refait sans regarder. Explique maintenant pourquoi c’est juste, en une ou deux phrases :',
-              }),
-              champ,
-              el('div', { class: 'actions' }, bouton),
-              avis,
-              modele,
-            ),
+          const cle = cleExplication(ex)
+          if (apres) {
+            const fin = (e) => {
+              if (e.detail?.cle !== 'explique:' + cle) return
+              ex.removeEventListener('fiche:trace', fin)
+              apres()
+            }
+            ex.addEventListener('fiche:trace', fin)
+          }
+          ex.dispatchEvent(
+            new CustomEvent('fiche:expliquer', {
+              bubbles: true,
+              detail: {
+                cle,
+                solution: fr(ex.dataset.fiche ?? sansPoint(solution) + '.'),
+                consigne: consigne ? fr(consigne) : undefined,
+              },
+            }),
           )
         }
 
@@ -9036,7 +9115,11 @@
               while (m === n)
               return nouvelEx(
                 'octet',
-                { reponse: m, ...(ex.dataset.saisie ? { saisie: ex.dataset.saisie } : {}) },
+                {
+                  reponse: m,
+                  ...(ex.dataset.saisie ? { saisie: ex.dataset.saisie } : {}),
+                  ...(ex.hasAttribute('data-poids') ? { poids: '' } : {}),
+                },
                 'Écris ' + m + ' en binaire.',
               )
             }
@@ -10042,22 +10125,21 @@
             const barre = el('span')
             const chrono = el('span', { class: 'chrono', 'aria-hidden': 'true' }, barre)
             const retour = el('p', { class: 'retour', 'aria-live': 'polite' })
+            const texteEntete = () =>
+              'Conversion ' +
+              (k + 1) +
+              ' sur 10 · ' +
+              justes +
+              ' juste' +
+              (justes > 1 ? 's' : '') +
+              ' · ' +
+              s +
+              ' secondes chacune'
+            const entete = el('p', { class: 'discret', text: texteEntete() })
             const bloc = el(
               'div',
               { class: 'ex' },
-              el('p', {
-                class: 'discret',
-                text:
-                  'Conversion ' +
-                  (k + 1) +
-                  ' sur 10 · ' +
-                  justes +
-                  ' juste' +
-                  (justes > 1 ? 's' : '') +
-                  ' · ' +
-                  s +
-                  ' secondes chacune',
-              }),
+              entete,
               el('p', { class: 'q mono', text: enonce }),
               chrono,
               el('div', { class: 'saisie' }, champ, valider),
@@ -10107,6 +10189,7 @@
               }
               if (ok && t <= s) {
                 justes += 1
+                entete.textContent = fr(texteEntete())
                 retour.className = 'retour bon'
                 retour.textContent = fr('Juste, en ' + Math.max(1, Math.round(t)) + ' s.')
               } else {
@@ -10146,7 +10229,7 @@
               })
               const cree = performance.now()
               suite.addEventListener('click', () => {
-                if (performance.now() - cree < 400) return
+                if (performance.now() - cree < 150) return
                 if (k < 10) question()
                 else {
                   zone.replaceChildren()
