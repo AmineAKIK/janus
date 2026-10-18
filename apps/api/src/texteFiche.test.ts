@@ -29,7 +29,7 @@ async function ficheRemplie(): Promise<string> {
       ].join('\n'),
     )
     .replace(
-      "<p>À REMPLACER : énoncé de l'item PR1-1.</p>",
+      '<p data-erreur="E1">À REMPLACER : item PR1-1 (E1).</p>',
       '<p>Convertis <code>150</code> en binaire.</p><div data-widget="convertir" data-reponse="10010110" data-succes="Bravo, 10010110."></div>',
     )
   const texte = extraireManifeste(html) ?? ''
@@ -166,7 +166,7 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
   it('pour le gardien, ajoute ce que la page montre après une tentative : réponse, coups de pouce, retours, variantes', () => {
     const page = html
       .replace(
-        '<template data-item="PR1-2"><p>À REMPLACER : énoncé de l\'item PR1-2.</p></template>',
+        '<template data-item="PR1-2"><p data-erreur="E2">À REMPLACER : item PR1-2 (E2).</p></template>',
         [
           '<template data-item="PR1-2"><div data-widget="nombre" data-verifie data-reponse="31"',
           ' data-aide1="Combien de valeurs avec 5 bits ?" data-solution="31 : 32 valeurs, de 0 à 31."',
@@ -279,7 +279,7 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
         '<template data-conception><p>L’outil convertir repère seul les bits à l’envers.</p></template></body>',
       )
       .replace(
-        '<template data-item="PR1-2"><p>À REMPLACER : énoncé de l\'item PR1-2.</p></template>',
+        '<template data-item="PR1-2"><p data-erreur="E2">À REMPLACER : item PR1-2 (E2).</p></template>',
         '<template data-item="PR1-2"><div data-widget="nombre" data-reponse="31" data-si-e1="32" data-retour-e1="Le premier est 0.">?</div></template>',
       )
     const resultat = validerManifeste(JSON.parse(extraireManifeste(page) ?? 'null'))
