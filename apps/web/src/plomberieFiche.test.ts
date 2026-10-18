@@ -415,6 +415,26 @@ describe('la correction simulée, hors de l’appli', () => {
     expect(screen.getAllByRole('button', { name: 'Compléter ma réponse' })).toHaveLength(5)
   })
 
+  it('dit l’attendu avec des mots : le titre de l’étape, le nom de l’erreur, jamais leurs codes', async () => {
+    const avecCodes = GABARIT.replace(
+      "À REMPLACER : ce qu'une bonne réponse contient (question R1).",
+      "Lu à l'envers, on trouverait 45 : c'est l'erreur E1. D'après les étapes 2 et 3.",
+    )
+    expect(avecCodes).not.toBe(GABARIT)
+    monter(avecCodes, pontAutonome(aLEtape('ET4')))
+    fireEvent.click(await screen.findByRole('button', { name: 'Commencer' }))
+    await repondreATout(
+      'Une réponse assez longue pour montrer une idée, avec quelques mots de plus.',
+    )
+
+    await screen.findAllByText('À comparer', {}, { timeout: 3000 })
+    const attendu = screen.getByText(/Lu à l'envers, on trouverait 45/)
+    expect(attendu).toHaveTextContent(
+      "c'est l'erreur « À REMPLACER : confusion centrale 1 ». D'après les étapes 2 (Explication) et 3 (Pratique).",
+    )
+    expect(attendu).not.toHaveTextContent(/\bE1\b/)
+  })
+
   it('dit « Pas encore » à « je ne sais pas », et « Trop courte » à une réponse trop courte', async () => {
     monter(GABARIT, pontAutonome(aLEtape('ET4')))
     fireEvent.click(await screen.findByRole('button', { name: 'Commencer' }))
@@ -731,6 +751,29 @@ describe('la pratique', () => {
 
     expect(details.open).toBe(false)
     expect(within(details).getByText(OBJECTIF)).toBeInTheDocument()
+  })
+
+  it('un objectif qui aligne plusieurs attendus, séparés par « ; », se lit en puces', async () => {
+    const enPuces = avecOutil.replace(
+      OBJECTIF,
+      'Faire cinq conversions à la main ; expliquer pourquoi 255 et pas 256 ; lire un octet de trois façons. Aisance : dix conversions en 30 s.',
+    )
+    expect(enPuces).not.toBe(avecOutil)
+    const { pont } = pontSimule(auPratique())
+    monter(enPuces, pont)
+    await screen.findByText('Outil de la fiche')
+    const details = screen.getByText('Ce qui sera vérifié').closest('details')
+    if (!(details instanceof HTMLDetailsElement)) throw new Error('Pas de détails repliables')
+
+    expect(
+      within(details)
+        .getAllByRole('listitem')
+        .map((li) => li.textContent),
+    ).toEqual([
+      'Faire cinq conversions à la main',
+      'Expliquer pourquoi 255 et pas 256',
+      'Lire un octet de trois façons. Aisance : dix conversions en 30 s.',
+    ])
   })
 
   it('un item sans outil qui vérifie garde « J’ai réussi » et « Pas réussi »', async () => {

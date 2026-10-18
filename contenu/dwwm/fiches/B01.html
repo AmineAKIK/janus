@@ -846,6 +846,19 @@
           flex: 0 1 auto;
         }
       }
+      /* Expliquer puis comparer avec la fiche (fiche:expliquer). */
+      .expliquer {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-8);
+      }
+      .objectif-liste {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-4);
+        margin: 0;
+        padding-inline-start: var(--espacement-20);
+      }
       .retour {
         font-weight: 500;
       }
@@ -10299,6 +10312,31 @@
        * l'apprenant compare. La correction n'est pas vérifiée, elle ne compte pas (le moteur dit de même
        * pour une certitude `non_verifie`) : la bulle porte le badge « Non vérifiée ».
        */
+      /**
+       * L'attendu d'une question est écrit pour le correcteur : il cite les étapes par leur numéro et les
+       * erreurs critiques par leur code. Montré à l'apprenant, il dit le titre de l'étape et le nom de
+       * l'erreur, qu'il connaît, à la place.
+       */
+      function attenduEnMots(texte) {
+        const titre = (n) => manifeste.etapes.find((e) => e.id === 'ET' + n)?.titre
+        const libelle = (code) =>
+          (manifeste.erreurs_critiques ?? []).find((e) => e.id === code)?.libelle
+        return String(texte)
+          .replace(/\bl([’'])erreur (E\d+)\b/g, (tout, apostrophe, code) => {
+            const nom = libelle(code)
+            return nom ? 'l' + apostrophe + 'erreur «\u00a0' + nom + '\u00a0»' : tout
+          })
+          .replace(/(étapes?) (\d+(?:, \d+)*(?: et \d+)?)/g, (tout, mot, liste) => {
+            return (
+              mot +
+              ' ' +
+              liste.replace(/\d+/g, (n) => {
+                const t = titre(n)
+                return t ? n + ' (' + t + ')' : n
+              })
+            )
+          })
+      }
       function corrigerLocalement(demande) {
         const question = [...manifeste.restitution, ...manifeste.consolidation].find(
           (q) => q.id === demande.question,
@@ -10313,7 +10351,9 @@
           message:
             'Correction simulée (mode autonome)\u00a0: ' +
             texte +
-            (question ? ' Ce qui était attendu\u00a0: «\u00a0' + question.attendu + '\u00a0»' : ''),
+            (question
+              ? ' Ce qui était attendu\u00a0: «\u00a0' + attenduEnMots(question.attendu) + '\u00a0»'
+              : ''),
           erreurs_critiques: [],
           source: 'deduit',
           ref: 'autonome',
@@ -10709,11 +10749,26 @@
 
       /** L'objectif d'examen, replié : ce que l'épreuve vérifiera, à ouvrir quand on veut le relire. */
       function objectifReplie() {
+        // Un objectif qui aligne plusieurs attendus, séparés par « ; », se lit en puces.
+        const attendus = String(manifeste.objectif)
+          .split(/\s*;\s+/)
+          .map((a) => a.trim())
+          .filter(Boolean)
+        const corps =
+          attendus.length >= 3
+            ? creer(
+                'ul',
+                { className: 'objectif-liste' },
+                ...attendus.map((a) =>
+                  creer('li', { textContent: a[0].toUpperCase() + a.slice(1) }),
+                ),
+              )
+            : creer('p', { textContent: manifeste.objectif })
         return creer(
           'details',
           { className: 'objectif' },
           creer('summary', { textContent: 'Ce qui sera vérifié' }),
-          creer('p', { textContent: manifeste.objectif }),
+          corps,
         )
       }
 
