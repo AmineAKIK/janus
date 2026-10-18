@@ -1,6 +1,6 @@
 // @vitest-environment-options {"runScripts": "dangerously"}
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
@@ -669,8 +669,8 @@ describe('la pratique', () => {
       type: 'pratique.resultat',
       donnees: { exercice: 'PR1', item: 'PR1-1', reussi: true, aide: 4, essais: 2 },
     })
-    expect(screen.getByText('Réussi')).toBeInTheDocument()
-    expect(screen.getByText('1 réussi sur 3.')).toBeInTheDocument()
+    expect(screen.getByText('Réussi avec de l’aide')).toBeInTheDocument()
+    expect(screen.getByText('0 réussi sur 3, et 1 avec de l’aide.')).toBeInTheDocument()
     expect(
       screen.getByText(
         'Envoyé : réussi, aide 4. Tu as vu la solution aujourd’hui : refais-le un autre jour, sans aide, pour qu’il compte.',
@@ -842,6 +842,125 @@ describe('une étape à lire', () => {
 
     expect(screen.getByRole('heading', { name: 'Explication' })).toBeInTheDocument()
     expect(document.getElementById('bascule')).toHaveTextContent(`${moment} · Explication`)
+  })
+})
+
+describe('« Écouter » lit ce qui est visible, et rien d’autre', () => {
+  type Lecture = { texteLu: (ecran: Element, nonLus?: Element[]) => string }
+  const lecture = () => (window as unknown as { JanusLecture: Lecture }).JanusLecture
+  const ecranDe = (html: string) => {
+    const ecran = document.createElement('div')
+    ecran.innerHTML = html
+    return ecran
+  }
+
+  it('lit les énoncés, les encadrés et les options, dans l’ordre', async () => {
+    const { pont } = pontSimule(aLEtape('ET2'))
+    monter(GABARIT, pont)
+    await screen.findByRole('button', { name: 'Écouter' })
+    const ecran = ecranDe(`
+      <p class="accroche">Un octet, huit bits.</p>
+      <div class="cadre a-retenir"><p>À retenir : 256 valeurs.</p></div>
+      <div class="ex" data-widget="choix" data-reponse="a">
+        <p class="q">Combien de valeurs ?</p>
+        <ul class="options"><li data-option="a"><button type="button">256</button></li><li data-option="b"><button type="button">255</button></li></ul>
+        <div class="saisie"><input type="text" aria-label="Ta réponse"><button type="button" class="bouton">Vérifier</button></div>
+        <p class="retour">Juste.</p>
+      </div>
+      <p>Ce texte vient après.</p>`)
+    expect(lecture().texteLu(ecran)).toBe(
+      'Un octet, huit bits. À retenir : 256 valeurs. Combien de valeurs ? 256. 255. Ce texte vient après.',
+    )
+  })
+
+  it('saute ce qui n’est pas encore dévoilé, et lit un dessin par sa description', async () => {
+    const { pont } = pontSimule(aLEtape('ET2'))
+    monter(GABARIT, pont)
+    await screen.findByRole('button', { name: 'Écouter' })
+    const ecran = ecranDe(`
+      <p>Avant.</p>
+      <div class="lampes" role="img" aria-label="Lampes de gauche à droite : 01001100">0 1 0 0 1 1 0 0</div>
+      <p data-attente>D’où #ff8800, la réponse.</p>
+      <p hidden>Caché.</p>
+      <div class="outil" data-lecture="Les seize chiffres, de 0 à f."><p class="outil-titre">Table</p><ul><li>0</li><li>1</li></ul></div>`)
+    expect(lecture().texteLu(ecran)).toBe(
+      'Avant. Lampes de gauche à droite : 01001100. Les seize chiffres, de 0 à f.',
+    )
+  })
+
+  it('signale une table sans phrase de lecture, et un dessin sans description', async () => {
+    const { pont } = pontSimule(aLEtape('ET2'))
+    monter(GABARIT, pont)
+    await screen.findByRole('button', { name: 'Écouter' })
+    const ecran = ecranDe(`
+      <table><caption>Les poids</caption><tr><td>128</td><td>64</td></tr></table>
+      <div role="img">un dessin muet</div>
+      <div class="outil"><p class="outil-titre">Un extrait</p></div>`)
+    const nonLus: Element[] = []
+    expect(lecture().texteLu(ecran, nonLus)).toBe('Les poids. Un extrait.')
+    expect(nonLus.map((n) => n.tagName)).toEqual(['TABLE', 'DIV'])
+  })
+
+  it('est sur un item de pratique, sur une question et sur le bilan', async () => {
+    const { pont } = pontSimule(aLEtape('ET3'))
+    monter(GABARIT, pont)
+    await screen.findByRole('heading', { name: 'Pratique guidée' })
+    expect(screen.getByRole('button', { name: 'Écouter' })).toBeInTheDocument()
+
+    const { pont: aLaRestitution } = pontSimule(aLEtape('ET4'))
+    monter(GABARIT, aLaRestitution)
+    await screen.findByRole('button', { name: 'Commencer' })
+    fireEvent.click(screen.getByRole('button', { name: 'Commencer' }))
+    expect((await screen.findAllByRole('button', { name: 'Écouter' })).length).toBeGreaterThan(0)
+
+    const { pont: auBilan } = pontSimule({ ...aLEtape('ET6'), envoyees: {}, pratique: {} })
+    monter(GABARIT, auBilan)
+    await screen.findByRole('heading', { name: 'Bilan' })
+    expect(screen.getByRole('button', { name: 'Écouter' })).toBeInTheDocument()
+  })
+})
+
+describe('ce qui est visible se lit : les fiches du dépôt', () => {
+  type Lecture = { texteLu: (ecran: Element, nonLus?: Element[]) => string }
+  const dossier = join(process.cwd(), '../../contenu/dwwm/fiches')
+  const fiches = readdirSync(dossier).filter((nom) => nom.endsWith('.html'))
+  /** Un élément, nommé pour le message : balise, classe, et le début de son texte. */
+  const nommer = (n: Element) => {
+    const classe = n.classList.item(0)
+    const texte = n.textContent.replace(/\s+/g, ' ').trim().slice(0, 40)
+    return n.tagName.toLowerCase() + (classe === null ? '' : '.' + classe) + ' « ' + texte + ' »'
+  }
+
+  it.each(fiches)('%s : chaque écran, item et variante se lit en entier', async (nom) => {
+    const { pont } = pontSimule(aLEtape('ET1'))
+    monter(GABARIT, pont)
+    await screen.findByRole('button', { name: 'Commencer' })
+    const { texteLu } = (window as unknown as { JanusLecture: Lecture }).JanusLecture
+    const page = new DOMParser().parseFromString(
+      readFileSync(join(dossier, nom), 'utf8'),
+      'text/html',
+    )
+    const manques: string[] = []
+    for (const modele of page.querySelectorAll<HTMLTemplateElement>(
+      'template[data-etape], template[data-item], template[data-variante]',
+    )) {
+      const contenu = modele.content
+      const ecrans = Array.from(contenu.children).filter((n) => n.hasAttribute('data-ecran'))
+      const ou = modele.dataset.etape ?? modele.dataset.item ?? modele.dataset.variante ?? ''
+      for (const ecran of ecrans.length > 0 ? ecrans : [contenu]) {
+        const conteneur = document.createElement('div')
+        conteneur.append(ecran.cloneNode(true))
+        const nonLus: Element[] = []
+        texteLu(
+          ecran instanceof Element && ecran.hasAttribute('data-lecture') ? ecran : conteneur,
+          nonLus,
+        )
+        const titre = ecran instanceof Element ? (ecran.getAttribute('data-ecran') ?? '') : ''
+        for (const n of nonLus)
+          manques.push(ou + (titre ? ' « ' + titre + ' »' : '') + ' : ' + nommer(n))
+      }
+    }
+    expect(manques).toEqual([])
   })
 })
 

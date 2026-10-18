@@ -993,6 +993,11 @@
         border-color: var(--couleur-succes);
         color: var(--couleur-succes);
       }
+      /* Réussi avec de l'aide : pas encore compté, ni vert ni à faire. */
+      .point[data-etat='fait-aide'] {
+        border-color: var(--couleur-alerte);
+        color: var(--couleur-alerte);
+      }
       .point[aria-current='step'] {
         border-color: var(--couleur-accent);
         background: var(--couleur-accent-douce);
@@ -1005,7 +1010,7 @@
       }
       .aide .actions button {
         flex: 1 0 auto;
-        min-height: 40px;
+        min-height: var(--cible-tactile-min);
         padding: 0 var(--espacement-12);
         border: 1px solid var(--couleur-ligne);
         border-radius: var(--rayon-option);
@@ -1543,6 +1548,102 @@
         etat.traces = { ...(etat.traces ?? {}), [cle]: JSON.parse(JSON.stringify(valeur)) }
         enregistrer()
       })
+      /*
+       * Expliquer, puis comparer avec la fiche (règle F03) : un outil émet `fiche:expliquer` sur
+       * l'exercice, avec `detail: { cle, solution, consigne }`. La page y monte le champ, puis montre ce
+       * que dit la fiche et laisse l'apprenant juger lui-même, « Même idée » ou « Il me manque quelque
+       * chose » : la page ne compare rien et ne note rien, elle le dit. Le texte et le choix sont gardés
+       * comme une trace (`explique:<cle>`), pour l'apprenant qui revient.
+       */
+      document.addEventListener('fiche:expliquer', (evenement) => {
+        const { cle, solution, consigne } = evenement.detail ?? {}
+        const exercice = evenement.target
+        if (!(exercice instanceof HTMLElement) || typeof cle !== 'string' || cle === '') return
+        if (exercice.querySelector(':scope > .expliquer')) return
+        const trace = etat.traces?.['explique:' + cle]
+        const champ = creer('textarea', { id: 'explique-' + cle.replace(/[^\w-]/g, '_'), rows: 3 })
+        const modele = creer('p', {
+          className: 'retour',
+          textContent: 'Ce que dit la fiche : ' + String(solution ?? ''),
+          hidden: true,
+        })
+        const question = creer('p', {
+          textContent: 'Compare toi-même : dis-tu la même idée, même avec d’autres mots ?',
+          hidden: true,
+        })
+        const avis = creer('p', { className: 'discret', 'aria-live': 'polite' })
+        const choisir = (valeur) => {
+          avis.textContent =
+            valeur === 'meme'
+              ? 'Même idée. Rien n’est noté : c’est ton jugement.'
+              : 'Il te manque quelque chose : relis la fiche sur ce point avant de continuer.'
+          for (const b of jugements.children) b.disabled = true
+          exercice.dispatchEvent(
+            new CustomEvent('fiche:trace', {
+              bubbles: true,
+              detail: {
+                cle: 'explique:' + cle,
+                valeur: { texte: champ.value, avis: valeur, le: aujourdhui() },
+              },
+            }),
+          )
+        }
+        const jugements = creer(
+          'div',
+          { className: 'actions', hidden: true },
+          creer('button', {
+            type: 'button',
+            className: 'bouton secondaire petit',
+            textContent: 'Même idée',
+            onclick: () => choisir('meme'),
+          }),
+          creer('button', {
+            type: 'button',
+            className: 'bouton secondaire petit',
+            textContent: 'Il me manque quelque chose',
+            onclick: () => choisir('manque'),
+          }),
+        )
+        const comparer = creer('button', {
+          type: 'button',
+          className: 'bouton secondaire petit',
+          textContent: 'Comparer avec la fiche',
+        })
+        const montrer = () => {
+          champ.disabled = comparer.disabled = true
+          modele.hidden = question.hidden = jugements.hidden = false
+        }
+        comparer.addEventListener('click', () => {
+          if (champ.value.trim() === '')
+            return void (avis.textContent = 'Écris d’abord ton explication.')
+          avis.textContent = ''
+          montrer()
+        })
+        exercice.append(
+          creer(
+            'div',
+            { className: 'expliquer' },
+            creer('label', {
+              htmlFor: champ.id,
+              textContent:
+                typeof consigne === 'string' && consigne !== ''
+                  ? consigne
+                  : 'Explique pourquoi c’est juste, en une ou deux phrases :',
+            }),
+            champ,
+            creer('div', { className: 'actions' }, comparer),
+            modele,
+            question,
+            jugements,
+            avis,
+          ),
+        )
+        if (trace && typeof trace.texte === 'string') {
+          champ.value = trace.texte
+          montrer()
+          if (trace.avis === 'meme' || trace.avis === 'manque') choisir(trace.avis)
+        }
+      })
       /**
        * Une erreur critique repérée, par le correcteur dans une réponse ou par un outil : elle reste
        * connue après un rechargement, et le bilan suivant la coche d'office (`aCocher`) sans que
@@ -1844,12 +1945,98 @@
           setTimeout(fin, 1500)
         })
       }
-      /** Ce qu'« Écouter » lit dans un écran : son `data-lecture`, sinon ses h3, p et li de premier niveau. */
-      const texteLu = (ecran) =>
-        ecran.dataset.lecture ??
-        Array.from(ecran.querySelectorAll(':scope > h3, :scope > p, :scope > ul > li'))
-          .map((n) => n.textContent.replace(/\s+/g, ' ').trim())
-          .join(' ')
+      /*
+       * Ce qu'« Écouter » lit dans un écran : ce que l'apprenant voit, dans l'ordre, et rien d'autre.
+       * - Sauté : ce qui n'est pas encore dévoilé ([hidden], [data-attente]), les champs et les boutons
+       *   (sauf les options d'un choix), ce qu'un outil ajoute pour manipuler ou après une réponse
+       *   (.saisie, .retour, .actions, .echelle…), et le niveau d'aide d'un item.
+       * - `data-lecture` sur un élément : lu à sa place (vide : silence voulu) ; sur l'écran : tout.
+       * - Un dessin ou un groupe de lampes (role="img" ou "group" avec aria-label) se lit par sa description.
+       * - Une table, un outil, un schéma, une figure (RESUMES) se lisent par leur `data-lecture`, une phrase
+       *   écrite par la fiche, sinon par leur titre ; s'il reste du texte, l'élément est signalé dans
+       *   `nonLus` : le contrôle de lecture des fiches le refuse.
+       */
+      const BALISES_MUETTES = new Set([
+        'INPUT',
+        'SELECT',
+        'TEXTAREA',
+        'TEMPLATE',
+        'SCRIPT',
+        'STYLE',
+        'SVG',
+        'CANVAS',
+      ])
+      const CLASSES_MUETTES = [
+        'saisie',
+        'retour',
+        'actions',
+        'expliquer',
+        'refaire',
+        'echelle',
+        'aide',
+        'ecran-barre',
+        'ecran-nav',
+        'ecran-progres',
+      ]
+      const RESUMES = 'table, .outil, .defile, figure, .schema-bloc, .hexa-table, .lampes, .octets'
+      const EN_LIGNE =
+        /^(P|H[1-6]|LI|DT|DD|LABEL|LEGEND|SUMMARY|SPAN|EM|STRONG|CODE|B|I|SMALL|A|SUP|SUB|Q|CITE|ABBR)$/
+      const nettoyerTexte = (s) => s.replace(/\s+/g, ' ').trim()
+      function muet(n) {
+        if (BALISES_MUETTES.has(n.tagName)) return true
+        if (n.tagName === 'BUTTON' && !n.parentElement?.hasAttribute('data-option')) return true
+        if (n.hidden || n.hasAttribute('data-attente') || n.getAttribute('aria-hidden') === 'true')
+          return true
+        return CLASSES_MUETTES.some((c) => n.classList.contains(c))
+      }
+      function lireNoeud(n, morceaux, nonLus) {
+        if (n.nodeType === Node.TEXT_NODE) {
+          const t = nettoyerTexte(n.textContent)
+          if (t) morceaux.push(t)
+          return
+        }
+        if (n.nodeType !== Node.ELEMENT_NODE || muet(n)) return
+        if (n.dataset.lecture !== undefined) {
+          if (n.dataset.lecture) morceaux.push(n.dataset.lecture)
+          return
+        }
+        const role = n.getAttribute('role')
+        if (role === 'img' || (role === 'group' && n.hasAttribute('aria-label'))) {
+          const description = n.getAttribute('aria-label')
+          if (description) morceaux.push(description)
+          else nonLus.push(n)
+          return
+        }
+        if (n.matches(RESUMES)) {
+          const titre = n.querySelector(
+            ':scope > .outil-titre, :scope > caption, :scope > figcaption',
+          )
+          const lu = titre ? nettoyerTexte(titre.textContent) : ''
+          if (lu) morceaux.push(lu)
+          if (nettoyerTexte(n.textContent).length > lu.length) nonLus.push(n)
+          return
+        }
+        // Un élément en ligne se lit d'un bloc, pour garder ses espaces ; un bloc, enfant par enfant.
+        if (
+          EN_LIGNE.test(n.tagName) &&
+          !n.querySelector('[hidden], [data-attente], button, input, [role], [data-lecture]')
+        ) {
+          const t = nettoyerTexte(n.textContent)
+          if (t) morceaux.push(t)
+          return
+        }
+        for (const e of n.childNodes) lireNoeud(e, morceaux, nonLus)
+      }
+      /** Le texte lu dans `ecran` ; `nonLus` reçoit ce qui reste visible sans être lu. */
+      function texteLu(ecran, nonLus = []) {
+        if (ecran.dataset.lecture !== undefined) return ecran.dataset.lecture
+        const morceaux = []
+        for (const e of ecran.childNodes) lireNoeud(e, morceaux, nonLus)
+        // Une ponctuation entre deux morceaux, pour que la voix marque la pause.
+        return morceaux.map((m) => (/[.!?:;…»]$/.test(m) ? m : m + '.')).join(' ')
+      }
+      // Le contrôle de lecture des fiches (apps/web) applique la même règle aux pages du dépôt.
+      window.JanusLecture = { texteLu }
       /**
        * Le bouton « Écouter » : la synthèse vocale lit l'écran que donne `source` (une fonction : l'écran
        * courant d'une étape à plusieurs écrans, ou le seul écran). `arreter` coupe la lecture.
@@ -2154,15 +2341,26 @@
         /** Le compteur, les points, l'état de l'item et la ligne du résultat, d'après l'état noté. */
         const majItem = () => {
           const fait = etat.pratique[item.id]
-          const nbReussis = liste.filter(reussi).length
+          // Réussi avec de l'aide : l'appli ne le compte pas encore. La page le compte à part, pour ne
+          // pas dire « réussi » et « ne compte pas » du même item.
+          const avecAide = (entree) => reussi(entree) && etat.pratique[entree.item.id].aide > 0
+          const nbSansAide = liste.filter((entree) => reussi(entree) && !avecAide(entree)).length
+          const nbAvecAide = liste.filter(avecAide).length
           compteur.textContent =
-            nbReussis + ' réussi' + (nbReussis > 1 ? 's' : '') + ' sur\u00a0' + liste.length + '.'
+            pluriel(nbSansAide, 'réussi', 'réussis') +
+            ' sur\u00a0' +
+            liste.length +
+            (nbAvecAide > 0 ? ', et ' + nbAvecAide + ' avec de l’aide.' : '.')
           liste.forEach((entree, k) => {
             const p = points.children[k]
-            p.dataset.etat = reussi(entree) ? 'fait' : 'a-faire'
+            p.dataset.etat = avecAide(entree) ? 'fait-aide' : reussi(entree) ? 'fait' : 'a-faire'
             p.setAttribute(
               'aria-label',
-              'Item ' + (k + 1) + ' sur ' + liste.length + (reussi(entree) ? ', réussi' : ''),
+              'Item ' +
+                (k + 1) +
+                ' sur ' +
+                liste.length +
+                (avecAide(entree) ? ', réussi avec de l’aide' : reussi(entree) ? ', réussi' : ''),
             )
           })
           boite.dataset.fait = fait?.reussi ? 'oui' : 'non'
@@ -2170,7 +2368,9 @@
           const aRefaire = Boolean(fait?.solutionVue) && !fait.reussi
           etatItem.textContent = fait
             ? fait.reussi
-              ? 'Réussi'
+              ? fait.aide > 0
+                ? 'Réussi avec de l’aide'
+                : 'Réussi'
               : aRefaire
                 ? 'Solution vue'
                 : 'À refaire'
@@ -2231,6 +2431,8 @@
           objectifReplie(),
           compteur,
           points,
+          // « Écouter » lit l'énoncé de l'item, et ce que l'outil y a écrit depuis.
+          barreEcoute(consigne),
           boite,
           creer(
             'div',
@@ -2631,7 +2833,7 @@
         }))
         const confiance = creer(
           'fieldset',
-          { className: 'choix' },
+          { className: 'choix', dataset: { lecture: '' } },
           creer('legend', { textContent: 'Ta confiance' }),
           ...radios.map(({ libelle, entree }) => creer('label', {}, entree, libelle)),
         )
@@ -2720,7 +2922,7 @@
         const touchees = manifeste.erreurs_critiques.filter(
           (e) => (question.erreurs ?? []).includes(e.id) && ouvertes.includes(e.id),
         )
-        return creer(
+        const carte = creer(
           'div',
           { className: 'item', dataset: reprise ? { fait: 'reprise' } : {} },
           ...(reprise
@@ -2738,6 +2940,9 @@
           message,
           sortie,
         )
+        // « Écouter » lit la question, puis sa correction quand elle est là.
+        carte.prepend(barreEcoute(carte))
+        return carte
       }
 
       /** Les erreurs critiques ouvertes pour l'appli ; hors de l'appli, celles du dernier bilan. */
@@ -2982,7 +3187,7 @@
           majRestitution()
           direBouton()
         }
-        return creer(
+        const section = creer(
           'section',
           {},
           creer('h2', { textContent: 'Bilan' }),
@@ -2992,6 +3197,8 @@
           actions,
           retour,
         )
+        section.insertBefore(barreEcoute(section), section.children[1])
+        return section
       }
 
       function afficher() {

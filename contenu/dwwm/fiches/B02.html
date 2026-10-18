@@ -993,6 +993,11 @@
         border-color: var(--couleur-succes);
         color: var(--couleur-succes);
       }
+      /* Réussi avec de l'aide : pas encore compté, ni vert ni à faire. */
+      .point[data-etat='fait-aide'] {
+        border-color: var(--couleur-alerte);
+        color: var(--couleur-alerte);
+      }
       .point[aria-current='step'] {
         border-color: var(--couleur-accent);
         background: var(--couleur-accent-douce);
@@ -1005,7 +1010,7 @@
       }
       .aide .actions button {
         flex: 1 0 auto;
-        min-height: 40px;
+        min-height: var(--cible-tactile-min);
         padding: 0 var(--espacement-12);
         border: 1px solid var(--couleur-ligne);
         border-radius: var(--rayon-option);
@@ -2243,7 +2248,10 @@
           client deviennent des oui et des non, qui se combinent en une seule réponse, qui choisit
           une seule ligne.
         </p>
-        <div class="schema-bloc">
+        <div
+          class="schema-bloc"
+          data-lecture="Le schéma du bloc, en quatre marches. Les données, par exemple âge égale 70 et étudiant VRAI, sont comparées et donnent des faits, VRAI ou FAUX : étudiant, VRAI ; 70 plus petit que 26, FAUX. Les faits sont combinés par NON, ET, OU, dans l’ordre, et donnent une condition, une seule valeur : étudiant OU âge plus petit que 26, VRAI. La première condition VRAIE choisit une seule branche : afficher 7 euros."
+        >
           <span class="boite-fixe">Les données<small>âge = 70, étudiant = VRAI</small></span
           ><span class="fleche">comparées, donnent →</span
           ><span class="boite-fixe"
@@ -2262,7 +2270,10 @@
         </p>
       </div>
       <div data-ecran="VRAI ou FAUX">
-        <div class="schema-bloc">
+        <div
+          class="schema-bloc"
+          data-lecture="Le même schéma du bloc : la marche éclairée est celle des faits, VRAI ou FAUX, que les comparaisons produisent."
+        >
           <span class="boite-fixe">Les données<small>âge = 70, étudiant = VRAI</small></span
           ><span class="fleche">comparées, donnent →</span
           ><span class="boite-fixe"
@@ -2306,7 +2317,10 @@
         <p class="accroche">
           Une comparaison met deux nombres face à face et donne VRAI ou FAUX. Il y en a six :
         </p>
-        <table class="table-comparaisons">
+        <table
+          class="table-comparaisons"
+          data-lecture="La table des six signes, avec âge égale 18. Plus petit que, strictement : 18 plus petit que 18 est FAUX. Plus petit ou égal : VRAI. Plus grand que, strictement : FAUX. Plus grand ou égal : VRAI. Égal à : VRAI. Différent de : FAUX."
+        >
           <thead>
             <tr>
               <th>Signe</th>
@@ -2431,7 +2445,10 @@
     <!-- ET5, explication : NON, ET, OU, leurs tables, l'image des interrupteurs et sa limite. -->
     <template data-etape="ET5">
       <div data-ecran="NON">
-        <div class="schema-bloc">
+        <div
+          class="schema-bloc"
+          data-lecture="Le même schéma du bloc : la marche éclairée est celle où les faits se combinent par NON, ET, OU."
+        >
           <span class="boite-fixe">Les données<small>âge = 70, étudiant = VRAI</small></span
           ><span class="fleche">comparées, donnent →</span
           ><span class="boite-fixe"
@@ -2446,7 +2463,10 @@
           Les conditions se combinent avec trois opérateurs : NON, ET, OU. On les appelle des
           <strong>opérateurs logiques</strong>. Le plus simple, NON, inverse une valeur.
         </p>
-        <div class="defile">
+        <div
+          class="defile"
+          data-lecture="La table de NON : quand A est FAUX, NON A est VRAI ; quand A est VRAI, NON A est FAUX."
+        >
           <table class="verite">
             <thead>
               <tr>
@@ -2482,7 +2502,10 @@
           Essaie les quatre positions.
         </p>
         <div class="outil" data-widget="interrupteurs" data-op="et"></div>
-        <div class="defile">
+        <div
+          class="defile"
+          data-lecture="La table de ET : A ET B n’est VRAI que quand A et B sont VRAI tous les deux ; dans les trois autres cas, c’est FAUX."
+        >
           <table class="verite">
             <thead>
               <tr>
@@ -2527,7 +2550,10 @@
           fermé suffit pour l’allumer. Les deux fermés, elle s’allume aussi.
         </p>
         <div class="outil" data-widget="interrupteurs" data-op="ou"></div>
-        <div class="defile">
+        <div
+          class="defile"
+          data-lecture="La table de OU : A OU B est VRAI dès qu’un des deux est VRAI, et aussi quand les deux le sont ; il n’est FAUX que quand A et B sont FAUX tous les deux."
+        >
           <table class="verite">
             <thead>
               <tr>
@@ -2643,7 +2669,10 @@
     <!-- ET6, explication : l'ordre de calcul (priorité, parenthèses), démonstration, à compléter, seul. -->
     <template data-etape="ET6">
       <div data-ecran="ET avant OU">
-        <div class="schema-bloc">
+        <div
+          class="schema-bloc"
+          data-lecture="Le même schéma du bloc : la marche éclairée est celle de la condition, où ET passe avant OU."
+        >
           <span class="boite-fixe">Les données<small>âge = 70, étudiant = VRAI</small></span
           ><span class="fleche">comparées, donnent →</span
           ><span class="boite-fixe"
@@ -2702,14 +2731,18 @@
           deux calculs, faits avec les mêmes valeurs :
         </p>
         <div class="deux-calculs">
-          <figure>
+          <figure
+            data-lecture="Sans parenthèses, ET passe d’abord : FAUX ET VRAI OU VRAI, c’est FAUX ET VRAI entre parenthèses, OU VRAI, soit FAUX OU VRAI, soit VRAI."
+          >
             <figcaption>Sans parenthèses : ET d’abord</figcaption>
             <pre class="pseudo"><code>FAUX <b>ET</b> VRAI <b>OU</b> VRAI
 = (FAUX <b>ET</b> VRAI) <b>OU</b> VRAI
 = FAUX <b>OU</b> VRAI
 = VRAI</code></pre>
           </figure>
-          <figure>
+          <figure
+            data-lecture="Avec parenthèses, elles passent d’abord : FAUX ET, entre parenthèses, VRAI OU VRAI, c’est FAUX ET VRAI, soit FAUX."
+          >
             <figcaption>Avec parenthèses : elles d’abord</figcaption>
             <pre class="pseudo"><code>FAUX <b>ET</b> (VRAI <b>OU</b> VRAI)
 = FAUX <b>ET</b> VRAI
@@ -2891,7 +2924,10 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></pr
           Au restaurant, « fromage ou dessert » interdit les deux. Ce « ou »-là s’appelle le OU
           <strong>exclusif</strong> : il est VRAI quand un seul des deux est VRAI.
         </p>
-        <div class="defile">
+        <div
+          class="defile"
+          data-lecture="La table du OU exclusif, à côté du OU : un seul des deux. FAUX et FAUX donnent FAUX ; FAUX et VRAI donnent VRAI ; VRAI et FAUX donnent VRAI ; VRAI et VRAI donnent VRAI pour le OU, mais FAUX pour un seul des deux."
+        >
           <table class="verite">
             <thead>
               <tr>
@@ -3059,7 +3095,10 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></pr
     <!-- ET8, explication : la chaîne SI / SINON SI / SINON, une seule branche, tracer, ordre, valeurs limites. -->
     <template data-etape="ET8">
       <div data-ecran="La chaîne">
-        <div class="schema-bloc">
+        <div
+          class="schema-bloc"
+          data-lecture="Le même schéma du bloc : la marche éclairée est la dernière, celle où la première condition VRAIE choisit une seule branche."
+        >
           <span class="boite-fixe">Les données<small>âge = 70, étudiant = VRAI</small></span
           ><span class="fleche">comparées, donnent →</span
           ><span class="boite-fixe"
@@ -3082,7 +3121,10 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></pr
             que rien ne s’exécute.
           </p>
         </div>
-        <div class="defile">
+        <div
+          class="defile"
+          data-lecture="La chaîne, de haut en bas. Âge plus petit que 12 ? Si VRAI, afficher 5 euros. Sinon, étudiant OU âge plus petit que 26 ? Si VRAI, afficher 7 euros. Sinon, âge plus grand ou égal à 65 ? Si VRAI, afficher 8 euros. Sinon, afficher 10 euros. Puis la suite du programme."
+        >
           <svg
             class="organigramme"
             viewBox="0 0 460 400"
@@ -3188,7 +3230,10 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></pr
           </ul>
         </div>
         <p>Voici la trace de Hugo, que tu as vu passer au guichet, et celle de Rose :</p>
-        <table class="table-trace">
+        <table
+          class="table-trace"
+          data-lecture="La trace de deux clients. Hugo, 20 ans, étudiant : ligne 1, 20 plus petit que 12, FAUX ; ligne 2, VRAI OU 20 plus petit que 26, VRAI ; la ligne 3 n’est pas testée ; il affiche 7 euros. Rose, 68 ans, pas étudiante : ligne 1, FAUX ; ligne 2, FAUX OU 68 plus petit que 26, FAUX ; ligne 3, 68 plus grand ou égal à 65, VRAI ; il affiche 8 euros."
+        >
           <thead>
             <tr>
               <th>Client</th>
@@ -3378,7 +3423,10 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></pr
           JavaScript. Il écrit le même schéma : les données dans des variables, les conditions dans
           des if, chaque branche entre accolades. Tu n’as besoin que de ces quelques mots :
         </p>
-        <table class="table-js">
+        <table
+          class="table-js"
+          data-lecture="La table passe du pseudo-code au JavaScript. VRAI et FAUX s’écrivent true et false. NON a s’écrit point d’exclamation a. a ET b s’écrit a, deux esperluettes, b. a OU b s’écrit a, deux barres verticales, b. Pour comparer, égal s’écrit avec trois signes égal, et différent avec point d’exclamation et deux signes égal. Plus petit ou égal s’écrit avec le signe plus petit puis le signe égal, de même pour plus grand ou égal. SI c s’écrit if, c entre parenthèses, puis des accolades. SINON SI s’écrit else if, SINON s’écrit else. Afficher s’écrit console point log."
+        >
           <thead>
             <tr>
               <th>Pseudo-code</th>
@@ -4779,7 +4827,7 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 1,
+        "version": 2,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 expressions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
@@ -10333,6 +10381,102 @@ if (age &lt; 12) {
         etat.traces = { ...(etat.traces ?? {}), [cle]: JSON.parse(JSON.stringify(valeur)) }
         enregistrer()
       })
+      /*
+       * Expliquer, puis comparer avec la fiche (règle F03) : un outil émet `fiche:expliquer` sur
+       * l'exercice, avec `detail: { cle, solution, consigne }`. La page y monte le champ, puis montre ce
+       * que dit la fiche et laisse l'apprenant juger lui-même, « Même idée » ou « Il me manque quelque
+       * chose » : la page ne compare rien et ne note rien, elle le dit. Le texte et le choix sont gardés
+       * comme une trace (`explique:<cle>`), pour l'apprenant qui revient.
+       */
+      document.addEventListener('fiche:expliquer', (evenement) => {
+        const { cle, solution, consigne } = evenement.detail ?? {}
+        const exercice = evenement.target
+        if (!(exercice instanceof HTMLElement) || typeof cle !== 'string' || cle === '') return
+        if (exercice.querySelector(':scope > .expliquer')) return
+        const trace = etat.traces?.['explique:' + cle]
+        const champ = creer('textarea', { id: 'explique-' + cle.replace(/[^\w-]/g, '_'), rows: 3 })
+        const modele = creer('p', {
+          className: 'retour',
+          textContent: 'Ce que dit la fiche : ' + String(solution ?? ''),
+          hidden: true,
+        })
+        const question = creer('p', {
+          textContent: 'Compare toi-même : dis-tu la même idée, même avec d’autres mots ?',
+          hidden: true,
+        })
+        const avis = creer('p', { className: 'discret', 'aria-live': 'polite' })
+        const choisir = (valeur) => {
+          avis.textContent =
+            valeur === 'meme'
+              ? 'Même idée. Rien n’est noté : c’est ton jugement.'
+              : 'Il te manque quelque chose : relis la fiche sur ce point avant de continuer.'
+          for (const b of jugements.children) b.disabled = true
+          exercice.dispatchEvent(
+            new CustomEvent('fiche:trace', {
+              bubbles: true,
+              detail: {
+                cle: 'explique:' + cle,
+                valeur: { texte: champ.value, avis: valeur, le: aujourdhui() },
+              },
+            }),
+          )
+        }
+        const jugements = creer(
+          'div',
+          { className: 'actions', hidden: true },
+          creer('button', {
+            type: 'button',
+            className: 'bouton secondaire petit',
+            textContent: 'Même idée',
+            onclick: () => choisir('meme'),
+          }),
+          creer('button', {
+            type: 'button',
+            className: 'bouton secondaire petit',
+            textContent: 'Il me manque quelque chose',
+            onclick: () => choisir('manque'),
+          }),
+        )
+        const comparer = creer('button', {
+          type: 'button',
+          className: 'bouton secondaire petit',
+          textContent: 'Comparer avec la fiche',
+        })
+        const montrer = () => {
+          champ.disabled = comparer.disabled = true
+          modele.hidden = question.hidden = jugements.hidden = false
+        }
+        comparer.addEventListener('click', () => {
+          if (champ.value.trim() === '')
+            return void (avis.textContent = 'Écris d’abord ton explication.')
+          avis.textContent = ''
+          montrer()
+        })
+        exercice.append(
+          creer(
+            'div',
+            { className: 'expliquer' },
+            creer('label', {
+              htmlFor: champ.id,
+              textContent:
+                typeof consigne === 'string' && consigne !== ''
+                  ? consigne
+                  : 'Explique pourquoi c’est juste, en une ou deux phrases :',
+            }),
+            champ,
+            creer('div', { className: 'actions' }, comparer),
+            modele,
+            question,
+            jugements,
+            avis,
+          ),
+        )
+        if (trace && typeof trace.texte === 'string') {
+          champ.value = trace.texte
+          montrer()
+          if (trace.avis === 'meme' || trace.avis === 'manque') choisir(trace.avis)
+        }
+      })
       /**
        * Une erreur critique repérée, par le correcteur dans une réponse ou par un outil : elle reste
        * connue après un rechargement, et le bilan suivant la coche d'office (`aCocher`) sans que
@@ -10634,12 +10778,98 @@ if (age &lt; 12) {
           setTimeout(fin, 1500)
         })
       }
-      /** Ce qu'« Écouter » lit dans un écran : son `data-lecture`, sinon ses h3, p et li de premier niveau. */
-      const texteLu = (ecran) =>
-        ecran.dataset.lecture ??
-        Array.from(ecran.querySelectorAll(':scope > h3, :scope > p, :scope > ul > li'))
-          .map((n) => n.textContent.replace(/\s+/g, ' ').trim())
-          .join(' ')
+      /*
+       * Ce qu'« Écouter » lit dans un écran : ce que l'apprenant voit, dans l'ordre, et rien d'autre.
+       * - Sauté : ce qui n'est pas encore dévoilé ([hidden], [data-attente]), les champs et les boutons
+       *   (sauf les options d'un choix), ce qu'un outil ajoute pour manipuler ou après une réponse
+       *   (.saisie, .retour, .actions, .echelle…), et le niveau d'aide d'un item.
+       * - `data-lecture` sur un élément : lu à sa place (vide : silence voulu) ; sur l'écran : tout.
+       * - Un dessin ou un groupe de lampes (role="img" ou "group" avec aria-label) se lit par sa description.
+       * - Une table, un outil, un schéma, une figure (RESUMES) se lisent par leur `data-lecture`, une phrase
+       *   écrite par la fiche, sinon par leur titre ; s'il reste du texte, l'élément est signalé dans
+       *   `nonLus` : le contrôle de lecture des fiches le refuse.
+       */
+      const BALISES_MUETTES = new Set([
+        'INPUT',
+        'SELECT',
+        'TEXTAREA',
+        'TEMPLATE',
+        'SCRIPT',
+        'STYLE',
+        'SVG',
+        'CANVAS',
+      ])
+      const CLASSES_MUETTES = [
+        'saisie',
+        'retour',
+        'actions',
+        'expliquer',
+        'refaire',
+        'echelle',
+        'aide',
+        'ecran-barre',
+        'ecran-nav',
+        'ecran-progres',
+      ]
+      const RESUMES = 'table, .outil, .defile, figure, .schema-bloc, .hexa-table, .lampes, .octets'
+      const EN_LIGNE =
+        /^(P|H[1-6]|LI|DT|DD|LABEL|LEGEND|SUMMARY|SPAN|EM|STRONG|CODE|B|I|SMALL|A|SUP|SUB|Q|CITE|ABBR)$/
+      const nettoyerTexte = (s) => s.replace(/\s+/g, ' ').trim()
+      function muet(n) {
+        if (BALISES_MUETTES.has(n.tagName)) return true
+        if (n.tagName === 'BUTTON' && !n.parentElement?.hasAttribute('data-option')) return true
+        if (n.hidden || n.hasAttribute('data-attente') || n.getAttribute('aria-hidden') === 'true')
+          return true
+        return CLASSES_MUETTES.some((c) => n.classList.contains(c))
+      }
+      function lireNoeud(n, morceaux, nonLus) {
+        if (n.nodeType === Node.TEXT_NODE) {
+          const t = nettoyerTexte(n.textContent)
+          if (t) morceaux.push(t)
+          return
+        }
+        if (n.nodeType !== Node.ELEMENT_NODE || muet(n)) return
+        if (n.dataset.lecture !== undefined) {
+          if (n.dataset.lecture) morceaux.push(n.dataset.lecture)
+          return
+        }
+        const role = n.getAttribute('role')
+        if (role === 'img' || (role === 'group' && n.hasAttribute('aria-label'))) {
+          const description = n.getAttribute('aria-label')
+          if (description) morceaux.push(description)
+          else nonLus.push(n)
+          return
+        }
+        if (n.matches(RESUMES)) {
+          const titre = n.querySelector(
+            ':scope > .outil-titre, :scope > caption, :scope > figcaption',
+          )
+          const lu = titre ? nettoyerTexte(titre.textContent) : ''
+          if (lu) morceaux.push(lu)
+          if (nettoyerTexte(n.textContent).length > lu.length) nonLus.push(n)
+          return
+        }
+        // Un élément en ligne se lit d'un bloc, pour garder ses espaces ; un bloc, enfant par enfant.
+        if (
+          EN_LIGNE.test(n.tagName) &&
+          !n.querySelector('[hidden], [data-attente], button, input, [role], [data-lecture]')
+        ) {
+          const t = nettoyerTexte(n.textContent)
+          if (t) morceaux.push(t)
+          return
+        }
+        for (const e of n.childNodes) lireNoeud(e, morceaux, nonLus)
+      }
+      /** Le texte lu dans `ecran` ; `nonLus` reçoit ce qui reste visible sans être lu. */
+      function texteLu(ecran, nonLus = []) {
+        if (ecran.dataset.lecture !== undefined) return ecran.dataset.lecture
+        const morceaux = []
+        for (const e of ecran.childNodes) lireNoeud(e, morceaux, nonLus)
+        // Une ponctuation entre deux morceaux, pour que la voix marque la pause.
+        return morceaux.map((m) => (/[.!?:;…»]$/.test(m) ? m : m + '.')).join(' ')
+      }
+      // Le contrôle de lecture des fiches (apps/web) applique la même règle aux pages du dépôt.
+      window.JanusLecture = { texteLu }
       /**
        * Le bouton « Écouter » : la synthèse vocale lit l'écran que donne `source` (une fonction : l'écran
        * courant d'une étape à plusieurs écrans, ou le seul écran). `arreter` coupe la lecture.
@@ -10944,15 +11174,26 @@ if (age &lt; 12) {
         /** Le compteur, les points, l'état de l'item et la ligne du résultat, d'après l'état noté. */
         const majItem = () => {
           const fait = etat.pratique[item.id]
-          const nbReussis = liste.filter(reussi).length
+          // Réussi avec de l'aide : l'appli ne le compte pas encore. La page le compte à part, pour ne
+          // pas dire « réussi » et « ne compte pas » du même item.
+          const avecAide = (entree) => reussi(entree) && etat.pratique[entree.item.id].aide > 0
+          const nbSansAide = liste.filter((entree) => reussi(entree) && !avecAide(entree)).length
+          const nbAvecAide = liste.filter(avecAide).length
           compteur.textContent =
-            nbReussis + ' réussi' + (nbReussis > 1 ? 's' : '') + ' sur\u00a0' + liste.length + '.'
+            pluriel(nbSansAide, 'réussi', 'réussis') +
+            ' sur\u00a0' +
+            liste.length +
+            (nbAvecAide > 0 ? ', et ' + nbAvecAide + ' avec de l’aide.' : '.')
           liste.forEach((entree, k) => {
             const p = points.children[k]
-            p.dataset.etat = reussi(entree) ? 'fait' : 'a-faire'
+            p.dataset.etat = avecAide(entree) ? 'fait-aide' : reussi(entree) ? 'fait' : 'a-faire'
             p.setAttribute(
               'aria-label',
-              'Item ' + (k + 1) + ' sur ' + liste.length + (reussi(entree) ? ', réussi' : ''),
+              'Item ' +
+                (k + 1) +
+                ' sur ' +
+                liste.length +
+                (avecAide(entree) ? ', réussi avec de l’aide' : reussi(entree) ? ', réussi' : ''),
             )
           })
           boite.dataset.fait = fait?.reussi ? 'oui' : 'non'
@@ -10960,7 +11201,9 @@ if (age &lt; 12) {
           const aRefaire = Boolean(fait?.solutionVue) && !fait.reussi
           etatItem.textContent = fait
             ? fait.reussi
-              ? 'Réussi'
+              ? fait.aide > 0
+                ? 'Réussi avec de l’aide'
+                : 'Réussi'
               : aRefaire
                 ? 'Solution vue'
                 : 'À refaire'
@@ -11021,6 +11264,8 @@ if (age &lt; 12) {
           objectifReplie(),
           compteur,
           points,
+          // « Écouter » lit l'énoncé de l'item, et ce que l'outil y a écrit depuis.
+          barreEcoute(consigne),
           boite,
           creer(
             'div',
@@ -11421,7 +11666,7 @@ if (age &lt; 12) {
         }))
         const confiance = creer(
           'fieldset',
-          { className: 'choix' },
+          { className: 'choix', dataset: { lecture: '' } },
           creer('legend', { textContent: 'Ta confiance' }),
           ...radios.map(({ libelle, entree }) => creer('label', {}, entree, libelle)),
         )
@@ -11510,7 +11755,7 @@ if (age &lt; 12) {
         const touchees = manifeste.erreurs_critiques.filter(
           (e) => (question.erreurs ?? []).includes(e.id) && ouvertes.includes(e.id),
         )
-        return creer(
+        const carte = creer(
           'div',
           { className: 'item', dataset: reprise ? { fait: 'reprise' } : {} },
           ...(reprise
@@ -11528,6 +11773,9 @@ if (age &lt; 12) {
           message,
           sortie,
         )
+        // « Écouter » lit la question, puis sa correction quand elle est là.
+        carte.prepend(barreEcoute(carte))
+        return carte
       }
 
       /** Les erreurs critiques ouvertes pour l'appli ; hors de l'appli, celles du dernier bilan. */
@@ -11772,7 +12020,7 @@ if (age &lt; 12) {
           majRestitution()
           direBouton()
         }
-        return creer(
+        const section = creer(
           'section',
           {},
           creer('h2', { textContent: 'Bilan' }),
@@ -11782,6 +12030,8 @@ if (age &lt; 12) {
           actions,
           retour,
         )
+        section.insertBefore(barreEcoute(section), section.children[1])
+        return section
       }
 
       function afficher() {
