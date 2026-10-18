@@ -1,6 +1,6 @@
 # La méthode d'apprentissage, côté dépôt
 
-`regles.json` recopie, règle par règle, ce que la méthode d'apprentissage d'Amine demande à une fiche : [Ma méthode d'apprentissage : modèle complet](https://claude.ai/code/artifact/e97bf8ec-5bbd-4a10-8d4b-35de4301d518), version 3.2 du 15 octobre 2026. Le doc fait foi ; ce fichier est sa traduction pour les outils, et il change dans la même PR que le doc, sur la parole d'Amine.
+`regles.json` recopie, règle par règle, ce que la méthode d'apprentissage d'Amine demande à une fiche : [Ma méthode d'apprentissage : modèle complet](https://claude.ai/code/artifact/e97bf8ec-5bbd-4a10-8d4b-35de4301d518), version 3.2 du 15 octobre 2026, nuancée le 18 octobre sur la parole d'Amine (R01, C09, T01 : une convention est redonnée avec la question qui s'en sert, sauf par cœur demandé par l'objectif ; le doc reste à mettre à jour). Le doc fait foi ; ce fichier est sa traduction pour les outils, et il change dans la même PR que le doc, sur la parole d'Amine.
 
 Chaque règle a un `id` (une lettre pour la section, deux chiffres), un `statut` (noyau : toujours appliqué ; par défaut : appliqué sauf raison écrite ; réglage : valeur de départ, à ajuster d'après les résultats), la `section` du doc d'où elle vient, un `titre` et le `texte` de ce que la fiche doit tenir.
 

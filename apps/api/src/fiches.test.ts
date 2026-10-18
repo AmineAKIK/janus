@@ -37,6 +37,7 @@ type Manifeste = {
   pont: number
   contexte_ia: string
   sources: { id: string; titre: string }[]
+  erreurs_critiques: { id: string; libelle: string; etape: string }[]
   restitution: { id: string; question: string; attendu: string }[]
   rappel: { id: string; question: string; attendu: string; erreurs: string[] }[]
   differees: { id: string; consigne: string; attendu: string }[]
@@ -189,6 +190,7 @@ describe('vérification des fiches du dépôt', () => {
 
       expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
         expect.stringContaining('l’item PR1-2 n’a pas de <template data-item="PR1-2">'),
+        expect.stringContaining('l’erreur critique E2 n’a aucun item de pratique qui la révèle'),
       ])
     })
 
@@ -227,6 +229,95 @@ describe('vérification des fiches du dépôt', () => {
       )
 
       expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+  })
+
+  describe('les leçons du B01 : explications, erreurs critiques, restitution', () => {
+    it('refuse plus d’un tiers d’items qui demandent une explication', async () => {
+      await poser(
+        'X00.html',
+        fiche
+          .replace('<p data-erreur="E1">', '<p data-erreur="E1" data-justifier="Explique.">')
+          .replace('<p data-erreur="E2">', '<p data-erreur="E2" data-justifier="Explique.">'),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'pratique : 2 items sur 3 demandent une explication (data-justifier : PR1-1, PR1-2), au plus un tiers (1)',
+        ),
+      ])
+    })
+
+    it('accepte un tiers d’items avec explication, arrondi au-dessus', async () => {
+      await poser(
+        'X00.html',
+        fiche.replace('<p data-erreur="E1">', '<p data-erreur="E1" data-justifier="Explique.">'),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+
+    it('refuse une erreur critique qu’aucun item de pratique ne révèle', async () => {
+      await poser('X00.html', fiche.replace('<p data-erreur="E2">', '<p>'))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'l’erreur critique E2 n’a aucun item de pratique qui la révèle (data-erreur="E2"',
+        ),
+      ])
+    })
+
+    it('ne lit pas un data-erreur écrit dans un commentaire ou hors des items', async () => {
+      await poser(
+        'X00.html',
+        fiche
+          .replace('<p data-erreur="E2">', '<p>')
+          .replace(
+            '<div id="contenu"></div>',
+            '<div id="contenu" data-erreur="E2"></div><!-- data-erreur="E2" -->',
+          ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('l’erreur critique E2 n’a aucun item'),
+      ])
+    })
+
+    it('refuse une erreur critique rattachée à une étape qui n’explique pas', async () => {
+      await poser(
+        'X00.html',
+        avecManifeste(fiche, (m) => {
+          m.erreurs_critiques = m.erreurs_critiques.map((e, i) =>
+            i === 0 ? { ...e, etape: 'ET3' } : e,
+          )
+        }),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('l’erreur critique E1 est rattachée à ET3 (pratique)'),
+      ])
+    })
+
+    it('refuse une question de restitution qui demande plus de deux choses', async () => {
+      await poser(
+        'X00.html',
+        avecManifeste(fiche, (m) => {
+          const questions = [
+            'Écris 128 en binaire. Puis donne la valeur de 01010101. Pourquoi 255 s’écrit-il avec huit 1 ?',
+            'Voici un octet, 10010110, lu par le Bloc-notes. Quel caractère affiche-t-il ? Explique avec quel codage.',
+          ]
+          m.restitution = m.restitution.map((q, i) => ({
+            ...q,
+            question: questions[i] ?? q.question,
+          }))
+        }),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'restitution R1 : la question demande 3 choses ; une question de restitution, une tâche, deux sous-questions au plus',
+        ),
+      ])
     })
   })
 

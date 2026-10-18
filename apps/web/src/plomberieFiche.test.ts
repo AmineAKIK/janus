@@ -559,7 +559,7 @@ describe('les traces de la fiche', () => {
 describe('la pratique', () => {
   /** Le gabarit, avec un premier item dont un outil contrôle la réponse. */
   const avecOutil = GABARIT.replace(
-    '<template data-item="PR1-1"><p>À REMPLACER : énoncé de l\'item PR1-1.</p></template>',
+    '<template data-item="PR1-1"><p data-erreur="E1">À REMPLACER : item PR1-1 (E1).</p></template>',
     '<template data-item="PR1-1"><div data-verifie>Outil de la fiche</div></template>',
   )
   const auPratique = (suite: Record<string, unknown> = {}) => ({
