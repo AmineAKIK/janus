@@ -11,6 +11,7 @@ const INIT = {
   etat: { etape: 'ET2' },
   statut: 'en_cours',
   serie_ouverte: { restitution: true, consolidation: false },
+  aisance: [],
 } as const
 const ATTENDUE: CorrectionRecue = {
   id: ID,
@@ -302,6 +303,7 @@ describe('etat.init après le démarrage', () => {
       etat: null,
       statut: 'vu',
       serie_ouverte: { restitution: false, consolidation: false },
+      aisance: [],
     }
     depuisParent(init)
     await demarrage

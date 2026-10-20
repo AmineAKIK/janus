@@ -102,6 +102,7 @@ test.describe('fiche de démonstration', () => {
               etat: null,
               statut: 'vu',
               serie_ouverte: { restitution: false, consolidation: true },
+              aisance: [],
             },
             '*',
           )

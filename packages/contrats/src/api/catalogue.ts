@@ -82,6 +82,8 @@ const BlocDetail = z.strictObject({
   /** L'adresse de la fiche, servie par le sous-domaine des fiches. */
   fiche_url: z.url(),
   etat_page: z.strictObject({ version: z.number().int().min(0), etat: EtatPage }).nullable(),
+  /** Les séries d'aisance réussies, de la plus ancienne à la plus récente : la page y relit ses niveaux. */
+  aisance_reussies: z.array(z.strictObject({ le: InstantUtc, duree_s: z.number().min(0) })),
 })
 
 export const ROUTES_CATALOGUE = {

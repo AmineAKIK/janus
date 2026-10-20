@@ -22,6 +22,8 @@ export interface DonneesFiche {
   readonly serieOuverte: { readonly restitution: boolean; readonly consolidation: boolean }
   /** L'état de page sauvegardé et sa version (0 s'il n'y en a pas). */
   readonly etatPage: { readonly version: number; readonly etat: EtatDePage } | null
+  /** Les séries d'aisance réussies que le serveur garde : la page y relit ses niveaux. */
+  readonly aisanceReussies: readonly { readonly le: string; readonly duree_s: number }[]
 }
 
 /** Le gabarit garde le bilan envoyé sous la clé `bilan` de son état : sa présence dit qu'un bilan est parti. */
@@ -150,6 +152,7 @@ export function useHoteFiche(
       etat,
       statut: courant.statut,
       serie_ouverte: courantes.serieOuverte,
+      aisance: [...courantes.aisanceReussies],
       theme: lireTheme(),
     })
   }, [vers])

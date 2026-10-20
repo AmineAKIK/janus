@@ -20,6 +20,7 @@ function pontSimule(
   etat: Record<string, unknown>,
   correction?: Record<string, unknown>,
   serieOuverte = { restitution: true, consolidation: false },
+  aisance: readonly { le: string; duree_s: number }[] = [],
 ) {
   const envois: Envoi[] = []
   /** Chaque demande de correction de la page. */
@@ -34,7 +35,7 @@ function pontSimule(
       Promise.resolve({
         mode: 'appli',
         etat,
-        init: { statut: 'vu', serie_ouverte: serieOuverte },
+        init: { statut: 'vu', serie_ouverte: serieOuverte, aisance },
       }),
     envoyer: (type: string, donnees: unknown) => {
       envois.push({ type, donnees })
@@ -602,6 +603,19 @@ describe('les traces de la fiche', () => {
     expect(sauvees.at(-1)?.['traces']).toEqual({ 'pari-ET1': 'abime' })
     fireEvent.click(screen.getByRole('button', { name: /Étape suivante/ }))
     expect(rendus.at(-1)).toEqual({ 'pari-ET1': 'abime' })
+  })
+
+  it('rend dans fiche:rendu les séries d’aisance réussies que l’appli connaît, même sans traces', async () => {
+    const reussies = [{ le: '2026-10-19T08:00:00Z', duree_s: 21.4 }]
+    const { pont } = pontSimule(aLEtape('ET2'), undefined, undefined, reussies)
+    const rendus: unknown[] = []
+    document.addEventListener('fiche:rendu', (evenement) => {
+      rendus.push((evenement as CustomEvent<{ aisance: unknown }>).detail.aisance)
+    })
+    monter(GABARIT, pont)
+    await screen.findByRole('heading', { name: 'Explication' })
+
+    expect(rendus.at(-1)).toEqual(reussies)
   })
 })
 

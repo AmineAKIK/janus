@@ -1,12 +1,12 @@
 import { ErreurApi, ROUTES } from '@janus/contrats'
-import { cinqPreuvesDuBloc, seriesOuvertes, statutDuBloc } from '@janus/moteur'
+import { aisanceReussies, cinqPreuvesDuBloc, seriesOuvertes, statutDuBloc } from '@janus/moteur'
 import {
   catalogueGraine,
   formationsSupplementairesGraine,
   MANIFESTES_GRAINE,
   PLAN,
 } from '../graine.ts'
-import { accesDuBloc, resultatDuBloc } from './calculs.ts'
+import { accesDuBloc, faitsDuBloc, resultatDuBloc } from './calculs.ts'
 import { definir } from './definir.ts'
 
 function introuvable(quoi: string, id: string): ErreurApi {
@@ -129,6 +129,7 @@ export function routesCatalogueDemo({ racineFiches }: OptionsCatalogue) {
         preuves: cinqPreuvesDuBloc(resultat, etat.reglages),
         fiche_url: `${racineFiches}${FICHE_DEMO}`,
         etat_page: page === undefined ? null : { version: 1, etat: page },
+        aisance_reussies: aisanceReussies(faitsDuBloc(etat, params.id)),
       }
     }),
   ]

@@ -4986,13 +4986,13 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 21,
+        "version": 22,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
         "objectif": "Faire 5 conversions à la main, au moins deux dans chaque sens, dont 0, 128 et 255 ; expliquer pourquoi un octet donne 256 valeurs mais un maximum de 255 et dire ce que deviennent ces deux nombres pour un autre nombre de bits ; lire un même octet comme un nombre, une lettre (avec un extrait de la table ASCII donné) et une intensité de couleur ; écrire en binaire les trois octets de rgb(255, 136, 0) et dire ce que code chacun ; écrire et relire une couleur en hexadécimal, comme #ff8800 ; expliquer pourquoi un « é » s’affiche « Ã© » ; calculer la taille d’une photo non compressée et dire en 4 phrases comment elle devient un fichier ; lire un programme de quelques octets avec le jeu d’instructions d’un processeur et dire pourquoi le binaire n’est pas un langage de programmation. Aisance : une série de 10 conversions justes, à 30 s, puis 20 s, puis 10 s chacune, un palier par jour.",
         "prerequis": [],
-        "pont": 2,
+        "pont": 3,
         "contexte_ia": "Bloc B01 du module « Écosystème et outils du développeur » (DWWM), premier bloc de la partie La machine. Le modèle du bloc : des bits, lus par un programme, avec un codage, donnent un sens. Un bit est un état à deux valeurs, noté 0 ou 1 (dans la fiche, une lampe éteinte ou allumée ; dans la machine, une tension haute ou basse, un point aimanté) ; 8 bits font un octet. Un codage (on dit aussi une convention de lecture) est la règle, fixée d'avance, qui dit comment lire des bits : une suite de bits n'a pas de sens sans lui, et relue avec un autre codage, la même suite prend un autre sens. Quatre codages sont enseignés et pratiqués. 1) Le système binaire (base 2), pour des entiers positifs : poids 128, 64, 32, 16, 8, 4, 2, 1, le plus lourd à gauche, chacun double de celui à sa droite ; valeur = somme des poids des bits à 1 (01000011 vaut 67, pas 3, le nombre de bits à 1). Écrire un nombre : partir de 128 ; un poids rentre s'il est plus petit que ce qui reste, ou égal ; s'il rentre, écrire 1 et le retirer, sinon écrire 0 ; toujours 8 chiffres. Repères : 0 = 00000000, 128 = 10000000, 255 = 11111111. Avec n bits, 2 puissance n valeurs, de 0 à 2 puissance n moins 1, parce qu'on compte à partir de 0 et que 0 est une valeur ; chaque bit ajouté double le nombre de valeurs (3 bits : 8 et 7 ; un octet : 256 et 255 ; 10 bits : 1 024 et 1 023 ; 12 bits : 4 096 et 4 095). Le nombre de bits qu'il faut pour un nombre de valeurs : la première puissance de 2 qui l'atteint (100 valeurs : 7 bits ; 1 000 valeurs : 10 bits). Les poids doublent pour que chaque nombre ait une seule écriture. 2) Les codages de caractères. La table ASCII (de 1963, reprise par les codages d'aujourd'hui) : A = 65 à Z = 90, a = 97 à z = 122, l'espace = 32 ; une minuscule vaut sa majuscule plus 32, un seul bit de différence. Chaque question qui fait lire une lettre redonne son extrait de table. Le « é » affiché « Ã© » : UTF-8 écrit « é » avec deux octets, 195 et 169 ; une page lue avec la table Latin-1 affiche ces deux octets séparément, Ã (195) puis © (169) ; les octets sont justes, c'est le codage choisi pour les lire qui est faux ; on l'évite en enregistrant la page en UTF-8 et en l'annonçant avec <meta charset=\"utf-8\">. Les numéros 195 et 169 et le détail d'UTF-8 ne sont pas exigés. 3) RGB : trois octets par couleur, rouge, vert, bleu, dans cet ordre, chacun de 0 (éteint) à 255 (à fond) ; rgb(255, 136, 0) = 11111111 10001000 00000000, un orange : rouge à fond, vert à 136 sur 255, bleu éteint. Les lumières s'ajoutent : rouge et vert donnent du jaune, les trois à fond du blanc, les trois éteintes du noir. Le nom exact d'une couleur obtenue n'est pas exigé : une réponse au niveau des lumières suffit. L'hexadécimal (base 16) écrit chaque moitié de 4 bits d'un octet avec un chiffre, 0 à 9 puis a (10) à f (15) : un octet tient en deux chiffres, de 00 à ff ; pour relire, le chiffre de gauche compte 16 fois (c8 = 12 × 16 + 8 = 200) ; #ff8800 = rgb(255, 136, 0) ; majuscules et minuscules sont justes (#FF8800). Chaque question qui convertit en hexadécimal redonne la table des 16 chiffres, comme pour ASCII : ce qui est à retenir, c'est la structure (deux chiffres par octet, 00 éteint, ff à fond, #rrggbb), pas les lettres. La forme courte #f80 et l'opacité (#ff880080) sont seulement nommées : ne pas les exiger. Une photo : une grille de pixels ; sans compression, 3 octets par pixel, un par lumière, rangés à la suite, pixel après pixel, ligne après ligne ; un en-tête au début du fichier donne la largeur et la hauteur, pour savoir où couper les lignes ; relus avec une autre largeur, les mêmes octets donnent une image qui glisse. Taille des pixels = largeur × hauteur × 3 octets ; 1 ko = 1 000 octets, 1 Mo = 1 000 000, 1 Go = 1 000 Mo, 1 To = 1 000 Go. Le compte de Windows par 1 024 est seulement nommé. La compression (JPEG) est nommée, pas enseignée : ne pas l'exiger. 4) Le jeu d'instructions d'un processeur : la table qui dit ce que fait chaque instruction ; les octets d'un programme prêt à s'exécuter, lus avec ce jeu d'instructions, forment le code machine, aussi appelé langage machine. La fiche utilise un processeur imaginaire à trois instructions de deux octets chacune : 1 n range n dans le registre ; 2 n ajoute n au registre (au-delà de 255, il repart de 0) ; 3 0 affiche le registre ; un autre premier octet l'arrête. Chaque question sur ce processeur redonne sa table. Un autre processeur, avec une autre table, fait autre chose des mêmes octets. Les vrais jeux d'instructions (x86, ARM) sont nommés, pas enseignés : ne jamais demander ce que fait un vrai octet de code machine. Le binaire n'est pas un langage de programmation : c'est une façon d'écrire les nombres, comme le décimal ; ce qui fait du code machine un langage, c'est le jeu d'instructions, pas le binaire. Un langage de programmation (PHP, JavaScript) a des mots et une grammaire ; le texte d'un programme est rangé en octets avec un codage de caractères comme UTF-8, puis traduit en code machine, ou exécuté par un interpréteur, un programme lui-même en code machine, comme pour PHP. Pièges à repérer : E1, confondre le nombre de valeurs (2 puissance n) et le plus grand nombre (2 puissance n moins 1) : ne pas valider 255 comme nombre de valeurs d'un octet ni 256 comme son maximum, même avec une explication ; E2, croire qu'une suite de bits a un sens toute seule, sans le codage qui la lit ; E3, confondre le binaire, une façon d'écrire les nombres, et un langage de programmation ; E4, inverser le sens des poids (01010101 lu 170, 99 écrit 11000110). Une erreur de calcul isolée, sans inversion des poids, n'est pas E4. Pour une explication, examiner : l'idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d'application, le terme exact (bit, octet, poids, système binaire, codage, table ASCII, RGB, hexadécimal, en-tête, jeu d'instructions, code machine), la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Chaque attendu vient de la fiche : les étapes 3 à 11 et 14 (sources S1 à S10) ; ce qui est marqué « déduit » s'obtient en appliquant une règle de la fiche à un autre cas.",
         "sources": [
           {
@@ -5666,7 +5666,7 @@
 
     <!-- La bibliothèque du pont est insérée ici au build (packages/pont/scripts/injecter.ts). -->
     <script id="pont">
-      /*! janus-pont v2 e0d9206ca70269418697adcf2f98163d5cbe866bffa46e19e46bd41c3f6dc392 */
+      /*! janus-pont v3 3ae1382c22a0ba99b63129ba69547baa5c870f991757920bd3d265009fc6d4e5 */
       ;(function () {
         function e() {
           return Date.now()
@@ -7235,10 +7235,10 @@
         function Kt(e, t) {
           return new Ue({ check: `less_than`, ...x(t), value: e, inclusive: !0 })
         }
-        function qt(e, t) {
+        function z(e, t) {
           return new We({ check: `greater_than`, ...x(t), value: e, inclusive: !0 })
         }
-        function z(e, t) {
+        function qt(e, t) {
           return new Ke({ check: `max_length`, ...x(t), maximum: e })
         }
         function Jt(e, t) {
@@ -7450,9 +7450,9 @@
           In = 2e5,
           Y = () => V().check(Zt(), Jt(1)),
           Ln = () => V().check(Yt(/^[A-Z]{1,3}\d{2,3}$/)),
-          Rn = () => V().check(z(Pn)),
+          Rn = () => V().check(qt(Pn)),
           X = () => nn({ version: `v7` }),
-          Z = (e) => cn().check(qt(e)),
+          Z = (e) => cn().check(z(e)),
           zn = K([
             `non_commence`,
             `en_cours`,
@@ -7499,7 +7499,7 @@
           Q = { id: X(), bloc: Ln(), version: Z(1), t: Nn({ offset: !0 }) },
           Jn = K([`restitution`, `consolidation`]),
           Yn = an({ protocol: /^https$/ }).check(
-            z(2e3),
+            qt(2e3),
             An(
               (e) => {
                 if (!URL.canParse(e)) return !0
@@ -7529,13 +7529,13 @@
               predictions_justes: Z(0),
               aide: Gn,
             }),
-            G({ ...Q, type: q(`aisance.resultat`), reussi: U(), duree_s: H().check(qt(0)) }),
+            G({ ...Q, type: q(`aisance.resultat`), reussi: U(), duree_s: H().check(z(0)) }),
             G({
               ...Q,
               type: q(`restitution.demande`),
               serie: Jn,
               question: Y(),
-              reponse: V().check(Jt(1), z(Pn)),
+              reponse: V().check(Jt(1), qt(Pn)),
               confiance: Vn,
               relance: Rn(),
               support: G({ colle: U(), retour_cours: U() }),
@@ -7543,7 +7543,7 @@
             G({ ...Q, type: q(`bilan.erreurs`), ids: W(Y()) }),
             G({ ...Q, type: q(`etat.sauver`), etat: qn }),
             G({ ...Q, type: q(`lien.ouvrir`), url: Yn }),
-            G({ ...Q, type: q(`page.taille`), hauteur: cn().check(qt(1), Kt(In)) }),
+            G({ ...Q, type: q(`page.taille`), hauteur: cn().check(z(1), Kt(In)) }),
             G({ ...Q, type: q(`page.haut`) }),
             G({ ...Q, type: q(`correction.accord`), correction: X(), accord: U() }),
           ]),
@@ -7570,6 +7570,7 @@
               etat: En(qn),
               statut: zn,
               serie_ouverte: G({ restitution: U(), consolidation: U() }),
+              aisance: W(G({ le: Nn(), duree_s: H().check(z(0)) })),
               theme: J(K([`clair`, `sombre`, `systeme`])),
             }),
             G({ type: q(`restitution.correction`), ...Zn }),
@@ -7857,6 +7858,9 @@
         // confié au gabarit (fiche:trace), qui le range dans l'état de la page, que l'appli garde. Il
         // revient avec fiche:rendu, à la visite suivante aussi, sur un autre appareil.
         const traces = {}
+        // Les séries d'aisance réussies que le serveur garde (fiche:rendu, detail.aisance) : un
+        // recommencement vide les traces, pas elles.
+        let aisanceServeur = []
         function tracer(cle, val) {
           traces[cle] = val
           document.dispatchEvent(new CustomEvent('fiche:trace', { detail: { cle, valeur: val } }))
@@ -10015,10 +10019,28 @@
          * 10 conversions sont justes dans le temps du niveau, avec la durée de la plus lente.
          */
         const NIVEAUX = [30, 20, 10]
+        /**
+         * Les niveaux relus dans les séries réussies du serveur, avec la même règle : une série réussie
+         * dans le temps du niveau suivant, un autre jour que le niveau d'avant.
+         */
+        function niveauxDuServeur() {
+          const niveaux = []
+          for (const serie of aisanceServeur) {
+            if (niveaux.length >= NIVEAUX.length) break
+            const jour = jourCle(new Date(serie.le))
+            if (serie.duree_s > NIVEAUX[niveaux.length]) continue
+            if (niveaux.at(-1)?.jour === jour) continue
+            niveaux.push({ niveau: niveaux.length + 1, jour })
+          }
+          return niveaux
+        }
         function aisance(n) {
-          const reussis = Array.isArray(traces.vitesse)
+          const locaux = Array.isArray(traces.vitesse)
             ? traces.vitesse.filter((x) => x && typeof x.jour === 'string')
             : []
+          // Le serveur l'emporte quand il en sait plus : après un recommencement, les traces sont vides.
+          const duServeur = niveauxDuServeur()
+          const reussis = duServeur.length > locaux.length ? duServeur : locaux
           const liste = el('ol', { class: 'niveaux' })
           const info = el('p', { class: 'discret' })
           const zone = el('div', { class: 'zone-vitesse' })
@@ -10284,6 +10306,7 @@
         const montes = new WeakSet()
         document.addEventListener('fiche:rendu', (evenement) => {
           for (const [cle, val] of Object.entries(evenement.detail?.traces ?? {})) traces[cle] = val
+          if (Array.isArray(evenement.detail?.aisance)) aisanceServeur = evenement.detail.aisance
           poserLaVariante()
           // Les outils d'abord (le fichier décide si le pari paraît), puis les exercices.
           for (const n of $$('#contenu [data-widget]')) {
@@ -10457,6 +10480,12 @@
       let majQuand = () => {}
       /** Le dernier bilan envoyé depuis cette page : son identifiant, pour reconnaître un refus. */
       let bilanEnvoye = null
+      /**
+       * Les séries d'aisance réussies que l'appli connaît (`etat.init`), `{ le, duree_s }` de la plus
+       * ancienne à la plus récente : elles reviennent à l'outil dans `fiche:rendu` (`detail.aisance`),
+       * pour qu'il relise ses niveaux même quand l'état de la page a été vidé. Vide hors de l'appli.
+       */
+      let aisanceServeur = []
 
       function enregistrer() {
         pont.sauver(etat)
@@ -12234,7 +12263,9 @@
         // Point d'accroche des fiches : le HTML libre de l'étape est en place, son script peut l'animer.
         // Les traces gardées (fiche:trace) lui reviennent avec.
         document.dispatchEvent(
-          new CustomEvent('fiche:rendu', { detail: { etape, traces: { ...(etat.traces ?? {}) } } }),
+          new CustomEvent('fiche:rendu', {
+            detail: { etape, traces: { ...(etat.traces ?? {}) }, aisance: [...aisanceServeur] },
+          }),
         )
       }
 
@@ -12286,11 +12317,13 @@
         $('mode').textContent = mode === 'appli' ? 'Dans l’appli' : 'Mode autonome'
         if (depart.init) {
           serieOuverte = depart.init.serie_ouverte
+          aisanceServeur = depart.init.aisance ?? []
           dernierStatut ??= { statut: depart.init.statut, manque: null }
           $('statut').textContent =
             'Statut\u00a0: ' + (LIBELLES_STATUT[depart.init.statut] ?? depart.init.statut)
         }
         pont.surInit((init) => {
+          aisanceServeur = init.aisance ?? []
           const consolidationChangee =
             serieOuverte.consolidation !== init.serie_ouverte.consolidation
           serieOuverte = init.serie_ouverte

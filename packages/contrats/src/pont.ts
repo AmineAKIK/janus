@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { CodeBloc, Identifiant } from './primitives.ts'
 import { Aide, Certitude, Confiance, Niveau, RaisonNonCompte, Source, Statut } from './enums.ts'
+import { InstantUtc } from './faits.ts'
 
 // Les messages entre une fiche (iframe sandbox) et l'appli, section « Pont » du cadrage.
 // Les noms des champs sont ceux du cadrage (`duree_s`, `serie_ouverte`...), comme dans le manifeste.
@@ -210,6 +211,12 @@ export const MessageAppli = z.discriminatedUnion('type', [
     etat: EtatPage.nullable(),
     statut: Statut,
     serie_ouverte: z.strictObject({ restitution: z.boolean(), consolidation: z.boolean() }),
+    /**
+     * Les séries d'aisance réussies que le serveur garde, de la plus ancienne à la plus récente : la
+     * date et la durée de la conversion la plus lente. La fiche y relit ses niveaux, même après un
+     * recommencement qui a vidé son état.
+     */
+    aisance: z.array(z.strictObject({ le: InstantUtc, duree_s: z.number().min(0) })),
     /** Le thème choisi dans l'appli : la fiche s'y aligne (une fiche sans ce champ suit le réglage du téléphone). */
     theme: z.enum(['clair', 'sombre', 'systeme']).optional(),
   }),

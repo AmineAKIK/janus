@@ -38,6 +38,7 @@ const MESSAGES_APPLI = [
     etat: null,
     statut: 'en_cours',
     serie_ouverte: { restitution: true, consolidation: false },
+    aisance: [],
   },
   {
     type: 'etat.init',
@@ -46,6 +47,7 @@ const MESSAGES_APPLI = [
     etat: { etape: 'ET3' },
     statut: 'vu',
     serie_ouverte: { restitution: false, consolidation: true },
+    aisance: [{ le: '2026-06-01T10:00:00Z', duree_s: 12.3 }],
   },
   { type: 'restitution.correction', ...CORRECTION },
   { type: 'restitution.correction', ...CORRECTION, compte: false, raison_non_compte: 'relance' },
@@ -145,6 +147,7 @@ describe('parité avec packages/contrats', () => {
         etat: null,
         statut: 'inconnu',
         serie_ouverte: { restitution: true, consolidation: false },
+        aisance: [],
       },
       { type: 'statut.maj', statut: 'acquis', manque: [{ code: 'nimporte' }] },
       { type: 'erreur', code: 'autre', detail: 'x' },
