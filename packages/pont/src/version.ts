@@ -3,4 +3,4 @@
  * fiche la déclare dans `pont`, et la construction l'écrit en tête de `pont.js` avec l'empreinte du
  * code ; `pnpm fiches:verifier` exige que les deux se répondent. À augmenter quand un message change.
  */
-export const VERSION_PONT = 1
+export const VERSION_PONT = 2

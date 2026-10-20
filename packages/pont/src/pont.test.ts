@@ -276,6 +276,17 @@ describe('messages reçus', () => {
     expect(surErreur).toHaveBeenCalledOnce()
     expect(surEtape).toHaveBeenCalledWith('ET3')
   })
+
+  it('transmet le rejet d’une erreur repérée', () => {
+    const { pont, depuisParent } = monter()
+    const surRejet = vi.fn()
+    pont.surRejet(surRejet)
+    void pont.demarrer({ manifeste: MANIFESTE })
+
+    depuisParent({ type: 'erreur.rejetee', question: 'R1', erreur: 'E2' })
+
+    expect(surRejet).toHaveBeenCalledWith({ question: 'R1', erreur: 'E2' })
+  })
 })
 
 describe('etat.init après le démarrage', () => {

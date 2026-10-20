@@ -41,6 +41,8 @@ export type CauseRefus = 'schema' | 'version'
 export interface PropositionErreur {
   readonly erreur: string
   readonly correction: string
+  /** La question dont la correction a repéré l'erreur : la fiche la retire de son bilan si elle est rejetée. */
+  readonly question: string
   readonly reponse: string
 }
 
@@ -265,7 +267,12 @@ export function useHoteFiche(
                       .filter(
                         (erreur) => !avant.some((proposition) => proposition.erreur === erreur),
                       )
-                      .map((erreur) => ({ erreur, correction: recue.id, reponse: reponseDonnee })),
+                      .map((erreur) => ({
+                        erreur,
+                        correction: recue.id,
+                        question: recue.question,
+                        reponse: reponseDonnee,
+                      })),
                   ])
                   rappelSeries.current?.()
                   return
@@ -367,7 +374,10 @@ export function useHoteFiche(
     )
   }
 
-  /** Confirmer une erreur de l'IA l'ouvre ; la rejeter garde la décision dans l'historique. */
+  /**
+   * Confirmer une erreur de l'IA l'ouvre ; la rejeter garde la décision dans l'historique, et la fiche
+   * la retire de son bilan, qui sinon la cocherait d'office.
+   */
   const trancherErreur = (proposition: PropositionErreur, decision: 'confirmee' | 'rejetee') => {
     setPropositions((avant) => avant.filter((autre) => autre !== proposition))
     const { donnees: courantes } = dernieres.current
@@ -389,6 +399,13 @@ export function useHoteFiche(
         surReponse: (reponse) => {
           const recalcule = statutDeReponse(route, reponse)
           if (recalcule !== null) appliquerStatut(recalcule)
+          if (decision === 'rejetee') {
+            vers({
+              type: 'erreur.rejetee',
+              question: proposition.question,
+              erreur: proposition.erreur,
+            })
+          }
         },
         // Le serveur a refusé : la décision reste à prendre, la proposition revient.
         surRefus: () => {

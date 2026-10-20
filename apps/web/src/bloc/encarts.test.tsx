@@ -328,7 +328,7 @@ describe('erreur critique repérée par l’IA', () => {
 
   it('confirmer passe le bloc à « À reprendre »', async () => {
     const utilisateur = userEvent.setup()
-    const { encart, magasin } = await avecErreurIa()
+    const { encart, magasin, recu } = await avecErreurIa()
 
     await utilisateur.click(within(encart).getByRole('button', { name: 'C’est bien une erreur' }))
 
@@ -341,13 +341,22 @@ describe('erreur critique repérée par l’IA', () => {
         .lire()
         .faits.some((fait) => fait.type === 'erreur_ia_tranchee' && fait.decision === 'confirmee'),
     ).toBe(true)
+    expect(recu).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'erreur.rejetee' }), '*')
   })
 
-  it('rejeter laisse le statut calculé et garde la décision', async () => {
+  it('rejeter laisse le statut calculé, garde la décision et le dit à la fiche', async () => {
     const utilisateur = userEvent.setup()
-    const { encart, magasin } = await avecErreurIa()
+    const { encart, magasin, recu } = await avecErreurIa()
 
     await utilisateur.click(within(encart).getByRole('button', { name: 'Ce n’en est pas une' }))
+
+    // La fiche retire l'erreur de son bilan, qui sinon la cocherait d'office.
+    await waitFor(() => {
+      expect(recu).toHaveBeenCalledWith(
+        { type: 'erreur.rejetee', question: QUESTIONS[0], erreur: 'E1' },
+        '*',
+      )
+    })
 
     expect(screen.queryByRole('region', { name: /Erreur critique/ })).not.toBeInTheDocument()
     expect(screen.queryByText('À reprendre')).not.toBeInTheDocument()
