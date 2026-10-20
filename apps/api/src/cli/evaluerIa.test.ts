@@ -118,6 +118,57 @@ describe('evaluer', () => {
     expect(texte).toContain('### juste : Amine solide, IA pas_encore (rendu partiel), écart 3')
   })
 
+  it('compte les erreurs critiques retenues à tort et manquées, sur les cas où Amine a dit les siennes', async () => {
+    const [premiere, deuxieme] = MANIFESTE.erreurs_critiques
+    const jeu = JeuDeTest.parse({
+      manifeste: 'x.json',
+      cas: [
+        {
+          id: 'sain',
+          question: 'R1',
+          reponse: 'a',
+          confiance: 'sur',
+          niveauAmine: 'solide',
+          erreursAmine: [],
+        },
+        {
+          id: 'fautif',
+          question: 'R1',
+          reponse: 'b',
+          confiance: 'sur',
+          niveauAmine: 'pas_encore',
+          erreursAmine: [premiere?.id, deuxieme?.id],
+        },
+        { id: 'libre', question: 'R1', reponse: 'c', confiance: 'sur', niveauAmine: 'solide' },
+      ],
+    })
+    const correcteur = creerFaux(() =>
+      JSON.stringify({
+        message: 'Tu confonds deux choses ici, et je te le dis clairement. '.repeat(4),
+        niveau: 'partiel',
+        erreurs_critiques: [premiere?.id],
+        source: 'deduit',
+        ref: '',
+        certitude: 'sur',
+      }),
+    )
+
+    const evaluation = await evaluer({ jeu, manifeste: MANIFESTE, correcteur, tarifs: TARIFS })
+    const texte = rapport(evaluation, {
+      date: '2026-10-20',
+      modele: 'faux',
+      empreinteConsigne: 'abc',
+      jeu: 'erreurs.json',
+    })
+
+    expect(evaluation.fauxPositifs).toEqual([`sain : ${String(premiere?.id)}`])
+    expect(evaluation.erreursManquees).toEqual([`fautif : ${String(deuxieme?.id)}`])
+    expect(evaluation.erreursRetenues).toHaveLength(3)
+    expect(texte).toContain(
+      `- Erreurs critiques retenues à tort (cas où Amine a dit ses erreurs) : sain : ${String(premiere?.id)}`,
+    )
+  })
+
   it('signale une question inconnue du manifeste', async () => {
     const jeu = JeuDeTest.parse({
       manifeste: 'x.json',

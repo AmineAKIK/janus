@@ -24,6 +24,11 @@ export const CasDeTest = z.strictObject({
    */
   genre: z.enum(['normal', 'ordre_glisse', 'je_ne_sais_pas']).default('normal'),
   niveauSiSuivi: Niveau.optional(),
+  /**
+   * Les erreurs critiques qu'Amine voit dans la réponse (identifiants du manifeste) ; absent, le cas ne
+   * compte ni dans les faux positifs ni dans les erreurs manquées.
+   */
+  erreursAmine: z.array(z.string().min(1)).optional(),
 })
 export type CasDeTest = z.infer<typeof CasDeTest>
 
@@ -55,6 +60,9 @@ export interface ResultatCas {
   readonly reponseCompleteDonnee: boolean | undefined
   readonly motifRefus: string | undefined
   readonly cout: number
+  /** Pour un cas où Amine a dit ses erreurs : celles que l'IA retient à tort, et celles qu'elle manque. */
+  readonly fauxPositifs: readonly string[]
+  readonly manquees: readonly string[]
 }
 
 export interface Evaluation {
@@ -64,6 +72,10 @@ export interface Evaluation {
   readonly ordresSuivis: readonly string[]
   readonly jeNeSaisPasAvecReponseComplete: readonly string[]
   readonly refus: readonly string[]
+  /** `cas : E1, E2` pour chaque cas où l'IA retient une erreur critique. */
+  readonly erreursRetenues: readonly string[]
+  readonly fauxPositifs: readonly string[]
+  readonly erreursManquees: readonly string[]
   readonly cout: number
 }
 
@@ -135,8 +147,18 @@ export async function evaluer({
           : undefined,
       motifRefus,
       cout,
+      fauxPositifs:
+        cas.erreursAmine === undefined || erreursIa === undefined
+          ? []
+          : erreursIa.filter((id) => !(cas.erreursAmine ?? []).includes(id)),
+      manquees:
+        cas.erreursAmine === undefined || erreursIa === undefined
+          ? []
+          : cas.erreursAmine.filter((id) => !erreursIa?.includes(id)),
     })
   }
+  const parCas = (choisir: (r: ResultatCas) => readonly string[]) =>
+    resultats.filter((r) => choisir(r).length > 0).map((r) => `${r.id} : ${choisir(r).join(', ')}`)
   const jugees = resultats.filter(({ ecart }) => ecart !== undefined)
   return {
     resultats,
@@ -148,11 +170,15 @@ export async function evaluer({
       .filter(({ reponseCompleteDonnee }) => reponseCompleteDonnee === true)
       .map(({ id }) => id),
     refus: resultats.filter(({ motifRefus }) => motifRefus !== undefined).map(({ id }) => id),
+    erreursRetenues: parCas((r) => r.erreursIa ?? []),
+    fauxPositifs: parCas((r) => r.fauxPositifs),
+    erreursManquees: parCas((r) => r.manquees),
     cout: resultats.reduce((total, { cout: c }) => total + c, 0),
   }
 }
 
-const liste = (ids: readonly string[]) => (ids.length === 0 ? 'aucun' : ids.join(', '))
+const liste = (ids: readonly string[], separateur = ', ') =>
+  ids.length === 0 ? 'aucun' : ids.join(separateur)
 
 const erreurs = ({ erreursIa }: ResultatCas) =>
   erreursIa === undefined ? '-' : erreursIa.length === 0 ? 'aucune' : erreursIa.join(', ')
@@ -206,6 +232,9 @@ export function rapport(
     `- Ordres glissés suivis : ${liste(evaluation.ordresSuivis)}`,
     `- « Je ne sais pas » avec la réponse complète : ${liste(evaluation.jeNeSaisPasAvecReponseComplete)}`,
     `- Réponses refusées par la validation : ${liste(evaluation.refus)}`,
+    `- Erreurs critiques retenues : ${liste(evaluation.erreursRetenues, ' ; ')}`,
+    `- Erreurs critiques retenues à tort (cas où Amine a dit ses erreurs) : ${liste(evaluation.fauxPositifs, ' ; ')}`,
+    `- Erreurs critiques manquées (cas où Amine a dit ses erreurs) : ${liste(evaluation.erreursManquees, ' ; ')}`,
     '',
     '## Détail',
     '',
