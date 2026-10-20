@@ -1,0 +1,504 @@
+{
+  "schema": 2,
+  "bloc": "B01",
+  "version": 18,
+  "type": "systemes",
+  "titre": "L’information en bits",
+  "titre_court": "Information en bits",
+  "objectif": "Faire 5 conversions à la main, au moins deux dans chaque sens, dont 0, 128 et 255 ; expliquer pourquoi un octet donne 256 valeurs mais un maximum de 255 et dire ce que deviennent ces deux nombres pour un autre nombre de bits ; lire un même octet comme un nombre, une lettre (avec un extrait de la table ASCII donné) et une intensité de couleur ; écrire en binaire les trois octets de rgb(255, 136, 0) et dire ce que code chacun ; écrire et relire une couleur en hexadécimal, comme #ff8800 ; expliquer pourquoi un « é » s’affiche « Ã© » ; calculer la taille d’une photo non compressée et dire en 4 phrases comment elle devient un fichier ; lire un programme de quelques octets avec le jeu d’instructions d’un processeur et dire pourquoi le binaire n’est pas un langage de programmation. Aisance : une série de 10 conversions justes, à 30 s, puis 20 s, puis 10 s chacune, un palier par jour.",
+  "prerequis": [],
+  "pont": 1,
+  "contexte_ia": "Bloc B01 du module « Écosystème et outils du développeur » (DWWM), premier bloc de la partie La machine. Le modèle du bloc : des bits, lus par un programme, avec un codage, donnent un sens. Un bit est un état à deux valeurs, noté 0 ou 1 (dans la fiche, une lampe éteinte ou allumée ; dans la machine, une tension haute ou basse, un point aimanté) ; 8 bits font un octet. Un codage (on dit aussi une convention de lecture) est la règle, fixée d'avance, qui dit comment lire des bits : une suite de bits n'a pas de sens sans lui, et relue avec un autre codage, la même suite prend un autre sens. Quatre codages sont enseignés et pratiqués. 1) Le système binaire (base 2), pour des entiers positifs : poids 128, 64, 32, 16, 8, 4, 2, 1, le plus lourd à gauche, chacun double de celui à sa droite ; valeur = somme des poids des bits à 1 (01000011 vaut 67, pas 3, le nombre de bits à 1). Écrire un nombre : partir de 128 ; un poids rentre s'il est plus petit que ce qui reste, ou égal ; s'il rentre, écrire 1 et le retirer, sinon écrire 0 ; toujours 8 chiffres. Repères : 0 = 00000000, 128 = 10000000, 255 = 11111111. Avec n bits, 2 puissance n valeurs, de 0 à 2 puissance n moins 1, parce qu'on compte à partir de 0 et que 0 est une valeur ; chaque bit ajouté double le nombre de valeurs (3 bits : 8 et 7 ; un octet : 256 et 255 ; 10 bits : 1 024 et 1 023 ; 12 bits : 4 096 et 4 095). Le nombre de bits qu'il faut pour un nombre de valeurs : la première puissance de 2 qui l'atteint (100 valeurs : 7 bits ; 1 000 valeurs : 10 bits). Les poids doublent pour que chaque nombre ait une seule écriture. 2) Les codages de caractères. La table ASCII (de 1963, reprise par les codages d'aujourd'hui) : A = 65 à Z = 90, a = 97 à z = 122, l'espace = 32 ; une minuscule vaut sa majuscule plus 32, un seul bit de différence. Chaque question qui fait lire une lettre redonne son extrait de table. Le « é » affiché « Ã© » : UTF-8 écrit « é » avec deux octets, 195 et 169 ; une page lue avec la table Latin-1 affiche ces deux octets séparément, Ã (195) puis © (169) ; les octets sont justes, c'est le codage choisi pour les lire qui est faux ; on l'évite en enregistrant la page en UTF-8 et en l'annonçant avec <meta charset=\"utf-8\">. Les numéros 195 et 169 et le détail d'UTF-8 ne sont pas exigés. 3) RGB : trois octets par couleur, rouge, vert, bleu, dans cet ordre, chacun de 0 (éteint) à 255 (à fond) ; rgb(255, 136, 0) = 11111111 10001000 00000000, un orange : rouge à fond, vert à 136 sur 255, bleu éteint. Les lumières s'ajoutent : rouge et vert donnent du jaune, les trois à fond du blanc, les trois éteintes du noir. Le nom exact d'une couleur obtenue n'est pas exigé : une réponse au niveau des lumières suffit. L'hexadécimal (base 16) écrit chaque moitié de 4 bits d'un octet avec un chiffre, 0 à 9 puis a (10) à f (15) : un octet tient en deux chiffres, de 00 à ff ; pour relire, le chiffre de gauche compte 16 fois (c8 = 12 × 16 + 8 = 200) ; #ff8800 = rgb(255, 136, 0) ; majuscules et minuscules sont justes (#FF8800). Chaque question qui convertit en hexadécimal redonne la table des 16 chiffres, comme pour ASCII : ce qui est à retenir, c'est la structure (deux chiffres par octet, 00 éteint, ff à fond, #rrggbb), pas les lettres. La forme courte #f80 et l'opacité (#ff880080) sont seulement nommées : ne pas les exiger. Une photo : une grille de pixels ; sans compression, 3 octets par pixel, un par lumière, rangés à la suite, pixel après pixel, ligne après ligne ; un en-tête au début du fichier donne la largeur et la hauteur, pour savoir où couper les lignes ; relus avec une autre largeur, les mêmes octets donnent une image qui glisse. Taille des pixels = largeur × hauteur × 3 octets ; 1 ko = 1 000 octets, 1 Mo = 1 000 000, 1 Go = 1 000 Mo, 1 To = 1 000 Go. Le compte de Windows par 1 024 est seulement nommé. La compression (JPEG) est nommée, pas enseignée : ne pas l'exiger. 4) Le jeu d'instructions d'un processeur : la table qui dit ce que fait chaque instruction ; les octets d'un programme prêt à s'exécuter, lus avec ce jeu d'instructions, forment le code machine, aussi appelé langage machine. La fiche utilise un processeur imaginaire à trois instructions de deux octets chacune : 1 n range n dans le registre ; 2 n ajoute n au registre (au-delà de 255, il repart de 0) ; 3 0 affiche le registre ; un autre premier octet l'arrête. Chaque question sur ce processeur redonne sa table. Un autre processeur, avec une autre table, fait autre chose des mêmes octets. Les vrais jeux d'instructions (x86, ARM) sont nommés, pas enseignés : ne jamais demander ce que fait un vrai octet de code machine. Le binaire n'est pas un langage de programmation : c'est une façon d'écrire les nombres, comme le décimal ; ce qui fait du code machine un langage, c'est le jeu d'instructions, pas le binaire. Un langage de programmation (PHP, JavaScript) a des mots et une grammaire ; le texte d'un programme est rangé en octets avec un codage de caractères comme UTF-8, puis traduit en code machine, ou exécuté par un interpréteur, un programme lui-même en code machine, comme pour PHP. Pièges à repérer : E1, confondre le nombre de valeurs (2 puissance n) et le plus grand nombre (2 puissance n moins 1) : ne pas valider 255 comme nombre de valeurs d'un octet ni 256 comme son maximum, même avec une explication ; E2, croire qu'une suite de bits a un sens toute seule, sans le codage qui la lit ; E3, confondre le binaire, une façon d'écrire les nombres, et un langage de programmation ; E4, inverser le sens des poids (01010101 lu 170, 99 écrit 11000110). Une erreur de calcul isolée, sans inversion des poids, n'est pas E4. Pour une explication, examiner : l'idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d'application, le terme exact (bit, octet, poids, système binaire, codage, table ASCII, RGB, hexadécimal, en-tête, jeu d'instructions, code machine), la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Chaque attendu vient de la fiche : les étapes 3 à 11 et 14 (sources S1 à S10) ; ce qui est marqué « déduit » s'obtient en appliquant une règle de la fiche à un autre cas.",
+  "sources": [
+    {
+      "id": "S1",
+      "titre": "Étape 3 de la fiche, Compter avec des lampes"
+    },
+    {
+      "id": "S2",
+      "titre": "Étape 4 de la fiche, Bits, octets et poids"
+    },
+    {
+      "id": "S3",
+      "titre": "Étape 5 de la fiche, Lire un nombre"
+    },
+    {
+      "id": "S4",
+      "titre": "Étape 6 de la fiche, Écrire un nombre"
+    },
+    {
+      "id": "S5",
+      "titre": "Étape 7 de la fiche, Lire une lettre"
+    },
+    {
+      "id": "S6",
+      "titre": "Étape 8 de la fiche, Lire une couleur"
+    },
+    {
+      "id": "S7",
+      "titre": "Étape 9 de la fiche, Une couleur en hexadécimal"
+    },
+    {
+      "id": "S8",
+      "titre": "Étape 10 de la fiche, Une photo devient un fichier"
+    },
+    {
+      "id": "S9",
+      "titre": "Étape 11 de la fiche, Une instruction"
+    },
+    {
+      "id": "S10",
+      "titre": "Étape 14 de la fiche, Le fichier, enfin"
+    }
+  ],
+  "etapes": [
+    {
+      "id": "ET1",
+      "titre": "Où tu es",
+      "type": "carte"
+    },
+    {
+      "id": "ET2",
+      "titre": "Un fichier, deux programmes",
+      "type": "perception"
+    },
+    {
+      "id": "ET3",
+      "titre": "Compter avec des lampes",
+      "type": "pretest"
+    },
+    {
+      "id": "ET4",
+      "titre": "Bits, octets et poids",
+      "type": "explication"
+    },
+    {
+      "id": "ET5",
+      "titre": "Lire un nombre",
+      "type": "explication"
+    },
+    {
+      "id": "ET6",
+      "titre": "Écrire un nombre",
+      "type": "explication"
+    },
+    {
+      "id": "ET7",
+      "titre": "Lire une lettre",
+      "type": "explication"
+    },
+    {
+      "id": "ET8",
+      "titre": "Lire une couleur",
+      "type": "explication"
+    },
+    {
+      "id": "ET9",
+      "titre": "Une couleur en hexadécimal",
+      "type": "explication"
+    },
+    {
+      "id": "ET10",
+      "titre": "Une photo devient un fichier",
+      "type": "explication"
+    },
+    {
+      "id": "ET11",
+      "titre": "Une instruction",
+      "type": "explication"
+    },
+    {
+      "id": "ET12",
+      "titre": "Entraînement",
+      "type": "pratique"
+    },
+    {
+      "id": "ET13",
+      "titre": "Vitesse",
+      "type": "aisance"
+    },
+    {
+      "id": "ET14",
+      "titre": "Le fichier, enfin",
+      "type": "ensemble"
+    },
+    {
+      "id": "ET15",
+      "titre": "Restitution",
+      "type": "restitution"
+    },
+    {
+      "id": "ET16",
+      "titre": "Consolidation",
+      "type": "consolidation"
+    },
+    {
+      "id": "ET17",
+      "titre": "Bilan",
+      "type": "bilan"
+    }
+  ],
+  "erreurs_critiques": [
+    {
+      "id": "E1",
+      "libelle": "Confondre le nombre de valeurs (256 pour un octet) et le plus grand nombre (255)",
+      "etape": "ET4"
+    },
+    {
+      "id": "E2",
+      "libelle": "Croire qu’une suite de bits a un sens toute seule, sans le codage qui la lit",
+      "etape": "ET7"
+    },
+    {
+      "id": "E3",
+      "libelle": "Confondre le binaire, une façon d’écrire les nombres, et un langage de programmation",
+      "etape": "ET11"
+    },
+    {
+      "id": "E4",
+      "libelle": "Inverser le sens des poids : le plus lourd, 128, est à gauche",
+      "etape": "ET5"
+    }
+  ],
+  "restitution": [
+    {
+      "id": "R21",
+      "question": "Un octet peut prendre 256 valeurs, mais le plus grand nombre qu’il écrit est 255. Explique pourquoi. Puis dis ce que deviennent ces deux nombres avec 7 bits.",
+      "attendu": "Chaque bit ajouté double le nombre de valeurs : avec 8 bits, 2 puissance 8 = 256 valeurs. On compte à partir de 0, qui est une valeur : les 256 valeurs vont de 0 à 255, le plus grand nombre est donc 256 − 1 = 255. Avec 7 bits : 2 puissance 7 = 128 valeurs, et un plus grand nombre de 127. D’après les étapes 3 et 4.",
+      "erreurs": ["E1"]
+    },
+    {
+      "id": "R29",
+      "question": "Écris en binaire, avec 8 chiffres : 128, 99 et 0. Puis donne la valeur de 01010101, de 11110000 et de 11111111.",
+      "attendu": "128 = 10000000 ; 99 = 64 + 32 + 2 + 1 = 01100011 ; 0 = 00000000 ; 01010101 = 64 + 16 + 4 + 1 = 85 ; 11110000 = 128 + 64 + 32 + 16 = 240 ; 11111111 = 255. Chaque conversion juste compte : une réponse à moitié juste est notée à moitié juste. Avec les poids inversés, on trouverait 99 = 11000110 et 01010101 = 170 : c’est l’erreur E4. D’après les étapes 5 et 6.",
+      "erreurs": ["E4"]
+    },
+    {
+      "id": "R28",
+      "question": "Voici un octet : 01000011. Extrait de la table ASCII : A = 65, B = 66, C = 67, D = 68, a = 97, b = 98, c = 99. Lis cet octet comme un nombre, puis comme une lettre, puis comme l’intensité du rouge d’un pixel en RGB. Qu’est-ce qui décide de la bonne lecture ?",
+      "attendu": "Comme un nombre : 64 + 2 + 1 = 67. Comme une lettre : 67, c’est C dans la table. Comme l’intensité du rouge : 67 sur 255, un rouge faible, environ un quart. Les bits ne décident pas : c’est le codage avec lequel le programme les lit (binaire, ASCII, RGB). D’après les étapes 5, 7, 8 et 14.",
+      "erreurs": ["E2"]
+    },
+    {
+      "id": "R27",
+      "question": "Écris en binaire les trois octets de rgb(255, 136, 0), et dis ce que règle chacun. Puis écris cette couleur en hexadécimal, comme dans le CSS. Table des 16 chiffres : 0 à 9 valent 0 à 9, puis a = 10, b = 11, c = 12, d = 13, e = 14, f = 15 ; un chiffre par moitié de 4 bits, et pour relire, le chiffre de gauche compte 16 fois.",
+      "attendu": "11111111 : le rouge, à fond ; 10001000 : le vert, à 136 sur 255, un peu plus de la moitié ; 00000000 : le bleu, éteint. En hexadécimal, chaque moitié de 4 bits devient un chiffre : 1111 1111 = ff, 1000 1000 = 88, 0000 0000 = 00, soit #ff8800 (#FF8800 est juste aussi). D’après les étapes 8 et 9.",
+      "erreurs": ["E4"]
+    },
+    {
+      "id": "R25",
+      "question": "Explique en 4 phrases comment une photo devient un fichier, sans compression. Puis calcule la place que prennent les pixels d’une photo de 2 000 × 1 000 pixels, en octets puis en Mo.",
+      "attendu": "1. Une photo est une grille de pixels, de petits carrés de couleur. 2. Chaque pixel est rangé avec trois octets, un par lumière : rouge, vert, bleu. 3. Les octets sont rangés à la suite, pixel après pixel, ligne après ligne. 4. Un en-tête, au début du fichier, donne la largeur et la hauteur, pour que le programme sache où couper les lignes. Taille : 2 000 × 1 000 = 2 000 000 pixels, × 3 = 6 000 000 octets, soit 6 Mo. D’après l’étape 10.",
+      "erreurs": []
+    },
+    {
+      "id": "R26",
+      "question": "Un processeur imaginaire a trois instructions, de deux octets chacune : 1 suivi d’un nombre range ce nombre dans le registre ; 2 suivi d’un nombre l’ajoute au registre ; 3 suivi de 0 affiche le registre. Qu’affiche le programme 00000001 00000110 00000010 00000100 00000011 00000000 ? Puis dis pourquoi le binaire n’est pas un langage de programmation.",
+      "attendu": "Les octets valent 1, 6, 2, 4, 3, 0. 1 6 range 6 ; 2 4 ajoute 4, le registre vaut 10 ; 3 0 affiche 10. Le binaire est une façon d’écrire des nombres avec deux chiffres, comme le décimal en utilise dix. Ce qui fait de ces octets des instructions, c’est le jeu d’instructions du processeur : un autre processeur en ferait autre chose. Un langage de programmation, comme PHP, a des mots et une grammaire pour écrire un programme sous forme de texte. D’après l’étape 11.",
+      "erreurs": ["E3"]
+    }
+  ],
+  "consolidation": [
+    {
+      "id": "C21",
+      "question": "Écris 172 en binaire, avec 8 chiffres. Puis donne la valeur de 00110011.",
+      "attendu": "172 = 128 + 32 + 8 + 4 = 10101100. 00110011 = 32 + 16 + 2 + 1 = 51. Avec les poids inversés, on trouverait 172 = 00110101 et 00110011 = 204 : c’est l’erreur E4. D’après les étapes 5 et 6.",
+      "erreurs": ["E4"]
+    },
+    {
+      "id": "C22",
+      "question": "Avec 10 bits, combien de valeurs différentes, et quel est le plus grand nombre ? Explique d’où vient la différence de 1 entre les deux.",
+      "attendu": "2 puissance 10 = 1 024 valeurs ; le plus grand nombre est 1 023. On compte à partir de 0, qui est une valeur : les 1 024 valeurs vont de 0 à 1 023. Déduit des étapes 3 et 4.",
+      "erreurs": ["E1"]
+    },
+    {
+      "id": "C23",
+      "question": "Sur une page web, « è » s’affiche « Ã¨ ». Que s’est-il passé, et comment l’éviter ?",
+      "attendu": "La page est écrite en UTF-8, qui range « è » sur deux octets ; le navigateur les a lus avec un autre codage, comme Latin-1, qui donne un caractère à chaque octet : Ã puis ¨. Les octets sont justes, c’est le codage choisi pour les lire qui est faux. On l’évite en enregistrant la page en UTF-8 et en l’annonçant en tête de la page avec <meta charset=\"utf-8\">. Déduit de l’étape 7.",
+      "erreurs": ["E2"]
+    },
+    {
+      "id": "C26",
+      "question": "Que vaut #33cc99 en rgb ? Puis écris rgb(255, 64, 0) en hexadécimal. Table des 16 chiffres : 0 à 9 valent 0 à 9, puis a = 10, b = 11, c = 12, d = 13, e = 14, f = 15 ; un chiffre par moitié de 4 bits, et pour relire, le chiffre de gauche compte 16 fois.",
+      "attendu": "33 = 3 × 16 + 3 = 51 ; cc = 12 × 16 + 12 = 204 ; 99 = 9 × 16 + 9 = 153 : rgb(51, 204, 153). 255 = ff ; 64 = 0100 0000 = 40 ; 0 = 00 : #ff4000 (les majuscules sont justes aussi). D’après l’étape 9.",
+      "erreurs": []
+    },
+    {
+      "id": "C25",
+      "question": "Le processeur imaginaire à trois instructions (1 suivi d’un nombre le range dans le registre, 2 suivi d’un nombre l’ajoute au registre, 3 suivi de 0 affiche le registre) reçoit les octets 1 7 2 1 3 0. Qu’affiche-t-il ? Un collègue te dit : « Le code machine, c’est du binaire, donc le binaire est un langage. » Que lui réponds-tu ?",
+      "attendu": "1 7 range 7 ; 2 1 ajoute 1, le registre vaut 8 ; 3 0 affiche 8. Au collègue : le code machine est écrit en binaire, comme tout ce que la machine range, mais ce qui en fait un langage, c’est le jeu d’instructions du processeur, pas le binaire. Le binaire est seulement une façon d’écrire des nombres : une photo aussi est écrite en binaire, et ce n’est pas un langage. D’après l’étape 11.",
+      "erreurs": ["E3"]
+    }
+  ],
+  "rappel": [
+    {
+      "id": "Q21",
+      "question": "Que vaut 10110100 ?",
+      "attendu": "128 + 32 + 16 + 4 = 180. Lu à l’envers, on trouverait 45 : c’est l’erreur E4. D’après l’étape 5.",
+      "erreurs": ["E4"]
+    },
+    {
+      "id": "Q22",
+      "question": "Écris 37 en binaire, avec 8 chiffres.",
+      "attendu": "37 = 32 + 4 + 1 = 00100101. Écrit à l’envers, 10100100 : c’est l’erreur E4. D’après l’étape 6.",
+      "erreurs": ["E4"]
+    },
+    {
+      "id": "Q23",
+      "question": "Avec 5 bits, on forme 32 valeurs. Pourquoi le plus grand nombre n’est-il pas 32 ?",
+      "attendu": "On compte à partir de 0, et 0 est une des 32 valeurs : elles vont de 0 à 31. Le plus grand nombre est donc 32 − 1 = 31. D’après l’étape 4.",
+      "erreurs": ["E1"]
+    },
+    {
+      "id": "Q24",
+      "question": "Un fichier contient trois octets : 72, 105, 33. Un collègue y lit le texte « Hi! » (extrait de la table ASCII : H = 72, i = 105, ! = 33), un autre la couleur d’un pixel. Lequel a raison ?",
+      "attendu": "Les deux. Lus avec la table ASCII, ces octets donnent « Hi! » ; lus en RGB, ce sont les trois lumières d’un pixel, rgb(72, 105, 33). C’est le codage qui décide du sens, pas les bits. Le nom de la couleur n’est pas exigé. D’après les étapes 7, 8 et 14.",
+      "erreurs": ["E2"]
+    },
+    {
+      "id": "Q25",
+      "question": "Vrai ou faux : « Programmer, c’est écrire en binaire. » Explique.",
+      "attendu": "Faux. Programmer, c’est écrire un programme dans un langage, comme PHP ou JavaScript, avec ses mots et sa grammaire. Le binaire est une façon d’écrire les nombres. Le texte du programme est rangé en octets, comme tout texte, puis traduit en code machine ou exécuté par un interpréteur. D’après l’étape 11.",
+      "erreurs": ["E3"]
+    },
+    {
+      "id": "Q29",
+      "question": "Que vaut #00ff80 en rgb ? Table des 16 chiffres : 0 à 9 valent 0 à 9, puis a = 10, b = 11, c = 12, d = 13, e = 14, f = 15 ; un chiffre par moitié de 4 bits, et pour relire, le chiffre de gauche compte 16 fois.",
+      "attendu": "00 = 0 ; ff = 15 × 16 + 15 = 255 ; 80 = 8 × 16 + 0 = 128 : rgb(0, 255, 128). D’après l’étape 9.",
+      "erreurs": []
+    },
+    {
+      "id": "Q27",
+      "question": "Sans compression, les pixels d’une icône de 64 × 64 pixels prennent 12 288 octets. D’où vient ce nombre ?",
+      "attendu": "L’icône a 64 × 64 = 4 096 pixels, et chaque pixel prend 3 octets, un par lumière : rouge, vert et bleu. 4 096 × 3 = 12 288 octets. D’après l’étape 10.",
+      "erreurs": []
+    },
+    {
+      "id": "Q28",
+      "question": "Pourquoi le bit tout à gauche d’un octet pèse-t-il 128 ?",
+      "attendu": "Les poids doublent d’un bit à l’autre, en partant de la droite : 1, 2, 4, 8, 16, 32, 64, 128. Le huitième bit, tout à gauche, pèse donc 128, soit 2 puissance 7. D’après l’étape 4.",
+      "erreurs": ["E4"]
+    }
+  ],
+  "differees": [
+    {
+      "id": "DE21",
+      "type": "explication",
+      "consigne": "Avec 12 bits, combien de valeurs différentes, et quel est le plus grand nombre ? Explique pourquoi ces deux nombres diffèrent de 1.",
+      "attendu": "Chaque bit ajouté double le nombre de valeurs : 2 puissance 12 = 4 096 valeurs. Le plus grand nombre est 4 095, car on compte à partir de 0, qui est une valeur. Déduit de l’étape 4.",
+      "erreurs": ["E1"]
+    },
+    {
+      "id": "DE22",
+      "type": "explication",
+      "consigne": "Un collègue dit : « Un octet va jusqu’à 256, puisqu’il a 256 valeurs. » Explique-lui son erreur, avec l’exemple de 3 bits.",
+      "attendu": "Les 256 valeurs vont de 0 à 255 : 0 est une valeur, donc le plus grand nombre est 256 − 1 = 255. Avec 3 bits : 8 valeurs, de 000 à 111, soit de 0 à 7 ; 8 ne s’écrit pas avec 3 bits. D’après les étapes 3 et 4.",
+      "erreurs": ["E1"]
+    },
+    {
+      "id": "DE23",
+      "type": "explication",
+      "consigne": "Un programme affiche l’octet 01000101 comme le nombre 69, un autre comme la lettre E. Lequel se trompe ? Explique.",
+      "attendu": "Aucun : 01000101 vaut 64 + 4 + 1 = 69 en binaire, et 69 est E dans la table ASCII. Les deux programmes lisent les mêmes bits avec deux codages différents ; c’est le codage qui donne le sens, pas les bits. D’après les étapes 7 et 14.",
+      "erreurs": ["E2"]
+    },
+    {
+      "id": "DE24",
+      "type": "explication",
+      "consigne": "Tu ouvres un fichier de musique avec le Bloc-notes : il affiche des signes sans suite. Le fichier est-il abîmé ? Explique.",
+      "attendu": "Non. Le Bloc-notes lit les octets du fichier avec sa table de caractères, alors qu’ils ont été écrits avec le codage d’un format de musique. Lus avec la mauvaise règle, ils donnent des signes sans suite ; un lecteur de musique, qui connaît le bon codage, en ferait du son. Déduit des étapes 10 et 14.",
+      "erreurs": ["E2"]
+    },
+    {
+      "id": "DE25",
+      "type": "explication",
+      "consigne": "Un ami te dit : « J’apprends le PHP, mais un jour il faudra que j’apprenne le binaire, le vrai langage de l’ordinateur. » Que lui réponds-tu ?",
+      "attendu": "Le binaire n’est pas un langage : c’est une façon d’écrire les nombres avec deux chiffres. Le PHP, lui, est un langage de programmation. Son texte est rangé en octets avec un codage de caractères, puis l’interpréteur PHP, un programme en code machine, l’exécute. Ce que le processeur exécute, c’est du code machine, lu avec son jeu d’instructions. D’après l’étape 11.",
+      "erreurs": ["E3"]
+    },
+    {
+      "id": "DE26",
+      "type": "explication",
+      "consigne": "Un processeur imaginaire a trois instructions, de deux octets chacune : 1 suivi d’un nombre range ce nombre dans le registre ; 2 suivi d’un nombre l’ajoute au registre ; 3 suivi de 0 affiche le registre. Qu’est-ce qui fait des octets 1 6 3 0 des instructions, plutôt que des nombres ou des lettres ?",
+      "attendu": "Rien dans les octets eux-mêmes : c’est le jeu d’instructions du processeur qui les lit comme des instructions (1 6 range 6, puis 3 0 l’affiche). Lus comme des nombres ou avec la table ASCII, les mêmes octets auraient un autre sens. Un autre processeur, avec une autre table, en ferait autre chose. D’après l’étape 11.",
+      "erreurs": ["E3"]
+    },
+    {
+      "id": "DE27",
+      "type": "explication",
+      "consigne": "Écris 180 en binaire, en expliquant chaque étape. Pourquoi commencer par 128 ?",
+      "attendu": "128 rentre dans 180 : 1, il reste 52. 64 ne rentre pas : 0. 32 rentre : 1, il reste 20. 16 rentre : 1, il reste 4. 8 ne rentre pas : 0. 4 rentre : 1, il reste 0. 2 et 1 ne rentrent pas : 0 et 0. Donc 10110100. On commence par 128 parce que c’est le plus gros poids, celui du bit de gauche, et que tous les poids plus petits, ensemble, ne font que 127 : si 128 rentre, aucun autre ne peut le remplacer, et les bits s’écrivent dans l’ordre, de gauche à droite. Une des deux raisons suffit. D’après l’étape 6.",
+      "erreurs": ["E4"]
+    },
+    {
+      "id": "DE28",
+      "type": "explication",
+      "consigne": "Dans 11000001, il y a trois chiffres 1. Pourquoi ne valent-ils pas la même chose ? Dis ce que vaut l’octet.",
+      "attendu": "Chaque place a son poids : 1 tout à droite, puis le double à chaque place vers la gauche, jusqu’à 128 tout à gauche. Un 1 apporte le poids de sa place : le 1 de gauche vaut 128, le suivant 64, celui de droite 1. L’octet vaut la somme des poids de ses bits à 1 : 128 + 64 + 1 = 193. D’après les étapes 4 et 5.",
+      "erreurs": ["E4"]
+    },
+    {
+      "id": "DT26",
+      "type": "transfert",
+      "forme": "choisir_methode",
+      "consigne": "Trois suites d’octets, trois situations. Pour chacune, dis avec quel codage la lire, puis lis-la. a) Dans un fichier texte : 72 105 (extrait de la table ASCII : H = 72, i = 105). b) Dans une feuille CSS : #c03060 (table des 16 chiffres : 0 à 9, puis a = 10, b = 11, c = 12, d = 13, e = 14, f = 15 ; le chiffre de gauche compte 16 fois). c) Pour le processeur imaginaire à trois instructions (1 suivi d’un nombre le range dans le registre, 2 suivi d’un nombre l’ajoute, 3 suivi de 0 affiche le registre) : 1 9 3 0.",
+      "attendu": "a) La table ASCII : « Hi ». b) RGB, écrit en hexadécimal : c0 = 192, 30 = 48, 60 = 96, soit rgb(192, 48, 96). c) Le jeu d’instructions du processeur : il range 9, puis l’affiche. C’est la situation, le programme qui lit, qui dit quel codage appliquer. Déduit des étapes 7, 9, 11 et 14.",
+      "erreurs": ["E2"]
+    },
+    {
+      "id": "DT22",
+      "type": "transfert",
+      "forme": "adapter_condition",
+      "consigne": "Certains écrans règlent chaque lumière d’un pixel avec 10 bits au lieu de 8. Combien de valeurs d’intensité pour une lumière, quelle est la plus forte, et combien de bits pour un pixel ?",
+      "attendu": "2 puissance 10 = 1 024 valeurs, de 0 à 1 023 : la plus forte est 1 023. Trois lumières de 10 bits : 30 bits par pixel. Déduit des étapes 4 et 8.",
+      "erreurs": ["E1"]
+    },
+    {
+      "id": "DT23",
+      "type": "transfert",
+      "forme": "trouver_erreur",
+      "consigne": "Un camarade lit l’octet 00001011 et trouve 208. Trouve son erreur, et donne la bonne valeur.",
+      "attendu": "Il a lu les poids à l’envers, avec 128 à droite : 128 + 64 + 16 = 208. Le poids 128 est à gauche : 00001011 = 8 + 2 + 1 = 11. D’après l’étape 5.",
+      "erreurs": ["E4"]
+    },
+    {
+      "id": "DT24",
+      "type": "transfert",
+      "forme": "hors_champ",
+      "consigne": "Un programme affiche l’octet 11111111 comme le nombre −1. Le système binaire de ce bloc peut-il donner −1 ? Explique ce qui se passe.",
+      "attendu": "Non : avec le système binaire du bloc, fait pour les entiers positifs, 11111111 vaut 255. Si un programme affiche −1, c’est qu’il lit ces bits avec un autre codage, fait pour les nombres négatifs, que le bloc n’enseigne pas. La réponse attend cette limite, pas la méthode de ce codage. Déduit des étapes 5 et 14.",
+      "erreurs": ["E2"]
+    },
+    {
+      "id": "DT25",
+      "type": "transfert",
+      "forme": "adapter_condition",
+      "consigne": "Une image en niveaux de gris range un seul octet par pixel, au lieu de trois. Sans compression, quelle place prennent les pixels d’une image de 800 × 600 ?",
+      "attendu": "800 × 600 = 480 000 pixels, × 1 octet = 480 000 octets, soit 480 ko. Déduit de l’étape 10.",
+      "erreurs": []
+    }
+  ],
+  "pratique": [
+    {
+      "id": "PR7",
+      "titre": "Tout, mélangé",
+      "items": [
+        {
+          "id": "PR7-1"
+        },
+        {
+          "id": "PR7-2"
+        },
+        {
+          "id": "PR7-3"
+        },
+        {
+          "id": "PR7-4"
+        },
+        {
+          "id": "PR7-5"
+        },
+        {
+          "id": "PR7-6"
+        }
+      ],
+      "reussite": 6
+    },
+    {
+      "id": "PR8",
+      "titre": "En chiffres seulement",
+      "items": [
+        {
+          "id": "PR8-1"
+        },
+        {
+          "id": "PR8-2"
+        },
+        {
+          "id": "PR8-3"
+        },
+        {
+          "id": "PR8-4"
+        },
+        {
+          "id": "PR8-5"
+        },
+        {
+          "id": "PR8-6"
+        },
+        {
+          "id": "PR8-7"
+        }
+      ],
+      "reussite": 7
+    }
+  ],
+  "aisance": {
+    "libelle": "Une série de 10 conversions justes, à 30 s, puis 20 s, puis 10 s chacune, un palier par jour",
+    "duree_max_s": 30,
+    "reussites_requises": 3,
+    "sur_jours_differents": 3
+  },
+  "cartes": [
+    {
+      "id": "K21",
+      "recto": "Qu’est-ce qu’un bit ?",
+      "verso": "Un chiffre binaire : 0 ou 1. Dans la machine, un état à deux valeurs, comme une tension haute ou basse. D’après l’étape 4."
+    },
+    {
+      "id": "K22",
+      "recto": "Qu’est-ce qu’un octet ?",
+      "verso": "8 bits à la suite. Il a 256 valeurs, de 0 à 255. D’après l’étape 4."
+    },
+    {
+      "id": "K23",
+      "recto": "Avec n bits, combien de valeurs, et quel est le plus grand nombre ?",
+      "verso": "2 puissance n valeurs ; le plus grand nombre est 2 puissance n moins 1, car on compte à partir de 0. D’après l’étape 4."
+    },
+    {
+      "id": "K24",
+      "recto": "Quels sont les poids d’un octet, de gauche à droite ?",
+      "verso": "128, 64, 32, 16, 8, 4, 2, 1 : chacun double de celui à sa droite. D’après l’étape 4."
+    },
+    {
+      "id": "K25",
+      "recto": "Qu’est-ce que le système binaire ?",
+      "verso": "Une façon d’écrire les nombres avec deux chiffres, 0 et 1, où les poids doublent : la base 2. Ce n’est pas un langage. D’après l’étape 4."
+    },
+    {
+      "id": "K26",
+      "recto": "Qu’est-ce qu’un codage ?",
+      "verso": "La règle qui dit comment lire des bits. Sans lui, une suite de bits n’a pas de sens ; avec un autre, elle en prend un autre. D’après les étapes 7 et 14."
+    },
+    {
+      "id": "K27",
+      "recto": "Dans la table ASCII, que valent A et a ?",
+      "verso": "A = 65, a = 97 : une minuscule vaut sa majuscule plus 32. D’après l’étape 7."
+    },
+    {
+      "id": "K28",
+      "recto": "Que règlent les trois octets de rgb(…, …, …) ?",
+      "verso": "Les trois lumières d’un point de l’écran : rouge, vert, bleu, dans cet ordre, chacune de 0 (éteinte) à 255 (à fond). D’après l’étape 8."
+    },
+    {
+      "id": "K29",
+      "recto": "Comment s’écrit un octet en hexadécimal ?",
+      "verso": "Avec deux chiffres, un par moitié de 4 bits, de 00 (éteint) à ff (à fond) : la table donne les chiffres, c’est la structure qui est à retenir. Une couleur CSS s’écrit #rrggbb, deux chiffres par octet : #ff8800 = rgb(255, 136, 0). D’après l’étape 9."
+    },
+    {
+      "id": "K30",
+      "recto": "Qu’est-ce que le jeu d’instructions d’un processeur ?",
+      "verso": "La table qui dit ce que fait chaque instruction. Les octets d’un programme, lus avec elle, forment le code machine. D’après l’étape 11."
+    },
+    {
+      "id": "K31",
+      "recto": "Sans compression, combien d’octets prend un pixel ?",
+      "verso": "3 octets : un par lumière, rouge, vert et bleu. D’après l’étape 10."
+    },
+    {
+      "id": "K32",
+      "recto": "Que valent 1 ko, 1 Mo, 1 Go et 1 To ?",
+      "verso": "1 000 octets, 1 000 ko, 1 000 Mo, 1 000 Go. D’après l’étape 10."
+    }
+  ]
+}
