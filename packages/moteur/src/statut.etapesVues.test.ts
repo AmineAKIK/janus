@@ -31,4 +31,16 @@ describe('les étapes vues', () => {
     const tot = f.etape(DEBUT, 'ET1')
     expect(etapesVues([tard, tot])).toEqual(['ET1', 'ET2'])
   })
+
+  it('repart de zéro quand la fiche est recommencée', () => {
+    const f = fabrique()
+    const faits = [
+      f.etape(DEBUT, 'ET1'),
+      f.etape(apres(DEBUT, 0, 1), 'ET2'),
+      f.recommencement(apres(DEBUT, 0, 2)),
+      f.etape(apres(DEBUT, 0, 3), 'ET3'),
+    ]
+    expect(etapesVues(faits)).toEqual(['ET3'])
+    expect(etapesVues(faits.slice(0, 3))).toEqual([])
+  })
 })

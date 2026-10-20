@@ -955,6 +955,7 @@ export function lirePreuves(etat: EtatBloc, fait: Fait): void {
   etat.faits += 1
   if (fait.type === 'correction') etat.corrections.set(fait.id, fait)
   if (fait.type === 'etape_vue') etat.etapesVues.add(fait.etape)
+  if (fait.type === 'fiche_recommencee') etat.etapesVues.clear()
   etat.restitution.avancer(fait)
   etat.consolidation.avancer(fait)
   etat.pratique.avancer(fait)

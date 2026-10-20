@@ -3,6 +3,7 @@ import type { Statut, StatutBloc } from '@janus/contrats'
 import { calculerBloc, instantEnMs, statutDuBloc } from '@janus/moteur'
 import { maintenantDuBloc, sousVerrouDuBloc } from '../../base/axeTemps.ts'
 import type { Base } from '../../base/base.ts'
+import { empreinteJson } from '../../base/empreinte.ts'
 import { lireFaits } from '../../base/faits.ts'
 import { ConflitEtatPage, ContenuDifferent, ErreurProtocole, introuvable } from '../../erreurs.ts'
 import type { Horloge } from '../../horloge.ts'
@@ -49,10 +50,10 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
     if (trouve === undefined) throw introuvable(`Le bloc « ${code} »`)
     const manifeste = Manifeste.parse(trouve.manifeste)
     const reglages = Reglages.parse(await depot.reglagesDe(base.db, userId))
-    return { bloc: trouve.bloc, manifeste, reglages }
+    return { bloc: trouve.bloc, versionEnService: trouve.versionDemandee, manifeste, reglages }
   }
 
-  return {
+  const service = {
     /**
      * Enregistre un message de la page. Le verrou du bloc fait passer les écritures d'un même bloc
      * l'une après l'autre ; le même identifiant avec le même contenu est un doublon, sans effet.
@@ -227,7 +228,12 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
     },
 
     /** Écrit l'état d'une page si l'onglet a lu la bonne version, sinon rend l'état actuel (409). */
-    async sauverEtat(userId: string, code: string, demande: { version: number; etat: unknown }) {
+    async sauverEtat(
+      userId: string,
+      code: string,
+      demande: { version: number; etat: unknown; recommencer?: true | undefined },
+    ): Promise<{ version: number; statut?: StatutBloc }> {
+      if (demande.recommencer === true) return recommencerFiche(userId, code, demande)
       const bloc = await depot.blocParCode(base.db, code)
       if (bloc === undefined) throw introuvable(`Le bloc « ${code} »`)
       const maintenant = await maintenantDuBloc(base.db, horloge, userId, bloc.id)
@@ -239,25 +245,75 @@ export function creerServiceEvenements({ base, depot, horloge }: DependancesServ
         maintenant,
       })
       if (version !== undefined) return { version }
-      const actuel = await depot.etatActuel(base.db, userId, bloc.id)
-      // Rejeu après une réponse perdue : l'écriture a eu lieu, l'état est celui qu'on envoie.
-      if (
-        actuel !== undefined &&
-        actuel.version === demande.version + 1 &&
-        memeContenu(actuel.etat, demande.etat)
-      ) {
-        return { version: actuel.version }
-      }
-      if (actuel === undefined) {
-        // Version lue > 0 mais aucun état : l'onglet vient d'ailleurs, il repart de zéro.
-        throw new ConflitEtatPage({ version: 0, etat: {}, modifie_le: maintenant })
-      }
-      throw new ConflitEtatPage({
-        version: actuel.version,
-        etat: actuel.etat,
-        modifie_le: actuel.modifieLe,
-      })
+      return conflitOuRejeu(userId, bloc.id, demande, maintenant)
     },
+  }
+  return service
+
+  /**
+   * Recommencer la fiche : l'état vide et le fait `fiche_recommencee`, dans une même transaction,
+   * puis le statut recalculé (les étapes vues repartent de zéro). Un rejeu ne double pas le fait.
+   */
+  async function recommencerFiche(
+    userId: string,
+    code: string,
+    demande: { version: number; etat: unknown },
+  ): Promise<{ version: number; statut?: StatutBloc }> {
+    const { bloc, versionEnService, manifeste, reglages } = await contexteDuBloc(userId, code)
+    if (versionEnService === undefined) throw introuvable(`Le bloc « ${code} »`)
+    const ecrit = await base.enTransaction(async (tx) => {
+      const maintenant = await sousVerrouDuBloc(tx, horloge, userId, bloc.id)
+      const version = await depot.ecrireEtat(tx, {
+        userId,
+        blocId: bloc.id,
+        version: demande.version,
+        etat: demande.etat,
+        maintenant,
+      })
+      if (version === undefined) return { maintenant }
+      await depot.ajouterEvenement(tx, {
+        id: identifiant(),
+        userId,
+        blocId: bloc.id,
+        ficheVersionId: versionEnService,
+        type: 'fiche_recommencee',
+        donnees: {},
+        empreinte: empreinteJson({ type: 'fiche_recommencee', bloc: code }),
+        aide: null,
+        dateServeur: maintenant,
+      })
+      const resultat = await recalculer(tx, { userId, bloc, manifeste, reglages, maintenant })
+      return { maintenant, version, statut: statutDuBloc(resultat) }
+    })
+    if (ecrit.version !== undefined) return { version: ecrit.version, statut: ecrit.statut }
+    return conflitOuRejeu(userId, bloc.id, demande, ecrit.maintenant)
+  }
+
+  /** L'écriture n'a pas eu lieu : un rejeu de la même écriture réussit, sinon l'état actuel (409). */
+  async function conflitOuRejeu(
+    userId: string,
+    blocId: string,
+    demande: { version: number; etat: unknown },
+    maintenant: string,
+  ): Promise<{ version: number }> {
+    const actuel = await depot.etatActuel(base.db, userId, blocId)
+    // Rejeu après une réponse perdue : l'écriture a eu lieu, l'état est celui qu'on envoie.
+    if (
+      actuel !== undefined &&
+      actuel.version === demande.version + 1 &&
+      memeContenu(actuel.etat, demande.etat)
+    ) {
+      return { version: actuel.version }
+    }
+    if (actuel === undefined) {
+      // Version lue > 0 mais aucun état : l'onglet vient d'ailleurs, il repart de zéro.
+      throw new ConflitEtatPage({ version: 0, etat: {}, modifie_le: maintenant })
+    }
+    throw new ConflitEtatPage({
+      version: actuel.version,
+      etat: actuel.etat,
+      modifie_le: actuel.modifieLe,
+    })
   }
 }
 export type ServiceEvenements = ReturnType<typeof creerServiceEvenements>

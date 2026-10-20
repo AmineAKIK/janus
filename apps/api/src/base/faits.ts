@@ -11,6 +11,7 @@ type TypeDeFait = Fait['type']
 export const TYPES_DES_EVENEMENTS: readonly TypeDeFait[] = [
   'bloc_ouvert',
   'etape_vue',
+  'fiche_recommencee',
   'pratique_resultat',
   'atelier_resultat',
   'aisance_resultat',

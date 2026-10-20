@@ -159,8 +159,17 @@ describe('recommencer la fiche', () => {
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
+    // L'historique reste ; seul s'y ajoute le fait de la fiche recommencée.
     const apres = magasin.lire()
-    expect({ ...apres, etatsPage: avant.etatsPage }).toEqual(avant)
+    const ajoutes = apres.faits.slice(avant.faits.length)
+    expect(ajoutes).toMatchObject([{ bloc: 'B03', type: 'fiche_recommencee' }])
+    expect({
+      ...apres,
+      etatsPage: avant.etatsPage,
+      faits: avant.faits,
+      idsRecus: avant.idsRecus,
+    }).toEqual(avant)
+    expect(apres.faits.slice(0, avant.faits.length)).toEqual(avant.faits)
   })
 })
 

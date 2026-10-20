@@ -93,6 +93,7 @@ export function fabrique(bloc: string = MANIFESTE.bloc) {
     aisance: (date: string, dureeS: number, reussi = true): Fait =>
       fait(date, { type: 'aisance_resultat', reussi, dureeS }),
     etape: (date: string, etape: string): Fait => fait(date, { type: 'etape_vue', etape }),
+    recommencement: (date: string): Fait => fait(date, { type: 'fiche_recommencee' }),
     ouverture: (date: string): Fait => fait(date, { type: 'bloc_ouvert', horsPrerequis: false }),
     /** Une vérification (ou un retest, ou un entretien) : explication solide, tâche, transfert au niveau donné. */
     verification: (
