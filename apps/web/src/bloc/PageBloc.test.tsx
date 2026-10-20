@@ -7,9 +7,19 @@ import { creerRouteur } from '../routes/arbre.tsx'
 import { creerContexteTest } from '../routes/contexteTest.tsx'
 import { marquerOuvert } from './ouvertures.ts'
 
-async function afficher(options: { stockageIndisponible?: boolean; bloc?: string } = {}) {
-  const { bloc = 'B03', ...reglages } = options
+async function afficher(
+  options: {
+    stockageIndisponible?: boolean
+    bloc?: string
+    /** L'état de la page déjà enregistré pour ce bloc, avant l'ouverture. */
+    etatPage?: Record<string, string | Record<string, boolean>>
+  } = {},
+) {
+  const { bloc = 'B03', etatPage, ...reglages } = options
   const banc = creerContexteTest(reglages)
+  if (etatPage !== undefined) {
+    banc.magasin.ecrire((etat) => ({ ...etat, etatsPage: { ...etat.etatsPage, [bloc]: etatPage } }))
+  }
   const routeur = creerRouteur(
     createMemoryHistory({ initialEntries: [`/blocs/${bloc}`] }),
     banc.contexte,
@@ -122,6 +132,35 @@ describe('conflit d’état', () => {
         screen.queryByText('Ce bloc a été modifié sur un autre appareil.'),
       ).not.toBeInTheDocument()
     })
+  })
+})
+
+describe('recommencer la fiche', () => {
+  it('« Annuler » ne touche à rien ; « Recommencer » vide l’état de la page et garde l’historique', async () => {
+    const utilisateur = userEvent.setup()
+    const { magasin } = await afficher({ etatPage: { etape: 'ET9', envoyees: { R1: true } } })
+    const avant = magasin.lire()
+    await utilisateur.click(screen.getByRole('button', { name: 'Recommencer la fiche' }))
+    const dialogue = await screen.findByRole('dialog', { name: 'Recommencer la fiche ?' })
+    expect(within(dialogue).getByText(/Ton historique ne change pas/)).toBeVisible()
+
+    await utilisateur.click(within(dialogue).getByRole('button', { name: 'Annuler' }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(magasin.lire().etatsPage['B03']).toEqual({ etape: 'ET9', envoyees: { R1: true } })
+
+    await utilisateur.click(screen.getByRole('button', { name: 'Recommencer la fiche' }))
+    await utilisateur.click(
+      within(await screen.findByRole('dialog')).getByRole('button', { name: 'Recommencer' }),
+    )
+
+    await waitFor(() => {
+      expect(magasin.lire().etatsPage['B03']).toEqual({})
+    })
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    })
+    const apres = magasin.lire()
+    expect({ ...apres, etatsPage: avant.etatsPage }).toEqual(avant)
   })
 })
 

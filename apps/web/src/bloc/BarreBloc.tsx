@@ -1,13 +1,16 @@
 import type { Statut } from '@janus/contrats'
-import { ArrowLeft, BadgeStatut } from '@janus/ui'
+import { ArrowLeft, BadgeStatut, RotateCcw } from '@janus/ui'
 import { Link } from '@tanstack/react-router'
 import styles from './Bloc.module.css'
 import { IndicateurEnregistrement } from './IndicateurEnregistrement.tsx'
 import type { EtatIndicateur } from '../envoi/indicateur.ts'
-import { TEXTES_BLOC } from './textes.ts'
+import { TEXTES_BLOC, TEXTES_RECOMMENCER } from './textes.ts'
 import { TitrePage } from '../gabarit/TitrePage.tsx'
 
-/** La barre du haut : retour aux blocs, code, titre, statut calculé et état d'enregistrement. */
+/**
+ * La barre du haut : retour aux blocs, code, titre, statut calculé, état d'enregistrement et, quand la
+ * page le propose, « Recommencer » (la fiche repart à vide, l'historique reste).
+ */
 export function BarreBloc({
   code,
   titre,
@@ -15,6 +18,7 @@ export function BarreBloc({
   statut,
   etatEnvoi,
   gardees,
+  surRecommencer,
 }: {
   readonly code: string
   readonly titre: string
@@ -22,6 +26,7 @@ export function BarreBloc({
   readonly statut: Statut
   readonly etatEnvoi: EtatIndicateur
   readonly gardees: number
+  readonly surRecommencer?: (() => void) | undefined
 }) {
   return (
     <div className={styles['barre']}>
@@ -40,6 +45,17 @@ export function BarreBloc({
       </TitrePage>
       <BadgeStatut statut={statut} className={styles['statut'] ?? ''} />
       <IndicateurEnregistrement etat={etatEnvoi} gardees={gardees} />
+      {surRecommencer !== undefined && (
+        <button
+          type="button"
+          aria-label={TEXTES_RECOMMENCER.bouton}
+          title={TEXTES_RECOMMENCER.bouton}
+          className={styles['recommencer']}
+          onClick={surRecommencer}
+        >
+          <RotateCcw aria-hidden="true" className={styles['fleche']} />
+        </button>
+      )}
     </div>
   )
 }

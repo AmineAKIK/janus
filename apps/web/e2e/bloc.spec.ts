@@ -50,6 +50,26 @@ test.describe('page d’un bloc', () => {
     await expect(etape(page, 'Pratique guidée')).toHaveAttribute('aria-current', 'step')
   })
 
+  test('« Recommencer » remet la fiche à sa première étape, même après rechargement', async ({
+    page,
+  }) => {
+    await page.goto('./#/blocs/B03')
+    await attendreFiche(page, 'B03')
+    await allerEtape(page, 'Pratique guidée')
+    // La fiche groupe ses sauvegardes.
+    await page.waitForTimeout(2500)
+
+    await page.getByRole('button', { name: 'Recommencer la fiche' }).click()
+    const dialogue = page.getByRole('dialog', { name: 'Recommencer la fiche ?' })
+    await dialogue.getByRole('button', { name: 'Recommencer' }).click()
+
+    await expect(dialogue).toHaveCount(0)
+    await attendreFiche(page, 'B03')
+    await expect(etape(page, 'Carte du bloc')).toHaveAttribute('aria-current', 'step')
+    await page.reload()
+    await expect(etape(page, 'Carte du bloc')).toHaveAttribute('aria-current', 'step')
+  })
+
   test('le retour ramène à la liste des blocs, bloc choisi', async ({ page }) => {
     await page.goto('./#/blocs/B03')
 

@@ -400,6 +400,27 @@ export function useHoteFiche(
     )
   }
 
+  /**
+   * Recommencer la fiche : son état repart à vide (première étape, champs vides). Seul l'état de la
+   * page change ; les faits du bloc (réponses envoyées, erreurs critiques, statut) restent. L'écriture
+   * prend la place d'un état encore en attente (même clé) ; `surFait` vient après la réponse.
+   */
+  const recommencer = (surFait: () => void, surRefus: () => void) => {
+    const { donnees: courantes } = dernieres.current
+    const id = nouvelId(Date.parse(instantReel()))
+    dernieres.current.etat = {}
+    void boite.ajouter(
+      {
+        id,
+        route: 'PUT /blocs/:id/etat-page',
+        params: { id: courantes.bloc },
+        corps: { version: courantes.etatPage?.version ?? 0, etat: {} },
+        cle: `etat:${courantes.bloc}`,
+      },
+      { surReponse: surFait, surRefus, surConflit: surRefus },
+    )
+  }
+
   return {
     phase,
     propositions,
@@ -410,6 +431,7 @@ export function useHoteFiche(
     reponsesApresRetourCours: corrections.filter(({ retourCours }) => retourCours),
     trancherCorrection,
     trancherErreur,
+    recommencer,
     conflit,
     refus,
     allerEtape: (etape: string) => {
