@@ -35,6 +35,24 @@ describe('lignesDuJournal', () => {
     expect(seance?.detail).toContain('Étape ET1 vue')
   })
 
+  it('séance : une fiche recommencée se lit dans le résumé et le détail', () => {
+    const f = fabrique()
+    const [seance] = du(
+      'seance',
+      lignesDuJournal(
+        [
+          f.etape(DEBUT, 'ET1'),
+          f.recommencement(apres(DEBUT, 0, 1)),
+          f.etape(apres(DEBUT, 0, 2), 'ET1'),
+        ],
+        CONTEXTE,
+      ),
+    )
+
+    expect(seance?.resume).toBe('fiche recommencée · 2 étapes vues')
+    expect(seance?.detail).toEqual(['Étape ET1 vue', 'Fiche recommencée', 'Étape ET1 vue'])
+  })
+
   it('séance : le jour est celui de la bascule réglée, pas celui d’UTC', () => {
     const f = fabrique()
     const avantMinuit = lignesDuJournal(
