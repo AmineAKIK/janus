@@ -91,7 +91,7 @@ describe('evaluer', () => {
         ? JSON.stringify({
             message: 'Tu confonds deux choses ici, et je te le dis clairement. '.repeat(4),
             niveau: 'partiel',
-            erreurs_critiques: [erreur?.id],
+            erreurs_critiques: [{ id: erreur?.id, citation: 'Que contient une fiche' }],
             source: 'deduit',
             ref: '',
             certitude: 'sur',
@@ -103,6 +103,7 @@ describe('evaluer', () => {
     const texte = rapport(evaluation, {
       date: '2026-10-14',
       modele: 'faux',
+      versionConsigne: 'v2',
       empreinteConsigne: 'abc',
       jeu: 'exemple.json',
     })
@@ -126,7 +127,7 @@ describe('evaluer', () => {
         {
           id: 'sain',
           question: 'R1',
-          reponse: 'a',
+          reponse: 'je confonds',
           confiance: 'sur',
           niveauAmine: 'solide',
           erreursAmine: [],
@@ -134,19 +135,25 @@ describe('evaluer', () => {
         {
           id: 'fautif',
           question: 'R1',
-          reponse: 'b',
+          reponse: 'je confonds aussi',
           confiance: 'sur',
           niveauAmine: 'pas_encore',
           erreursAmine: [premiere?.id, deuxieme?.id],
         },
-        { id: 'libre', question: 'R1', reponse: 'c', confiance: 'sur', niveauAmine: 'solide' },
+        {
+          id: 'libre',
+          question: 'R1',
+          reponse: 'confonds',
+          confiance: 'sur',
+          niveauAmine: 'solide',
+        },
       ],
     })
     const correcteur = creerFaux(() =>
       JSON.stringify({
         message: 'Tu confonds deux choses ici, et je te le dis clairement. '.repeat(4),
         niveau: 'partiel',
-        erreurs_critiques: [premiere?.id],
+        erreurs_critiques: [{ id: premiere?.id, citation: 'confonds' }],
         source: 'deduit',
         ref: '',
         certitude: 'sur',
@@ -157,6 +164,7 @@ describe('evaluer', () => {
     const texte = rapport(evaluation, {
       date: '2026-10-20',
       modele: 'faux',
+      versionConsigne: 'v2',
       empreinteConsigne: 'abc',
       jeu: 'erreurs.json',
     })
@@ -164,6 +172,7 @@ describe('evaluer', () => {
     expect(evaluation.fauxPositifs).toEqual([`sain : ${String(premiere?.id)}`])
     expect(evaluation.erreursManquees).toEqual([`fautif : ${String(deuxieme?.id)}`])
     expect(evaluation.erreursRetenues).toHaveLength(3)
+    expect(evaluation.erreursSansCitation).toEqual([])
     expect(texte).toContain(
       `- Erreurs critiques retenues à tort (cas où Amine a dit ses erreurs) : sain : ${String(premiere?.id)}`,
     )
@@ -193,6 +202,7 @@ describe('rapport', () => {
     const texte = rapport(evaluation, {
       date: '2026-10-08',
       modele: 'faux',
+      versionConsigne: 'v2',
       empreinteConsigne: 'abc',
       jeu: 'exemple.json',
     })
@@ -211,6 +221,7 @@ describe('rapport', () => {
     const texte = rapport(evaluation, {
       date: '2026-10-14',
       modele: 'faux',
+      versionConsigne: 'v2',
       empreinteConsigne: 'abc',
       jeu: 'exemple.json',
     })

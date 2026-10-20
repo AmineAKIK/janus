@@ -330,11 +330,14 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('POST /corrections contre Postgr
   })
 
   it('écarte les erreurs critiques que le manifeste ne connaît pas', async () => {
-    scenario = () =>
+    scenario = (requete) =>
       JSON.stringify({
         message: 'Voici un retour détaillé sur ta réponse, qui reprend tes mots justes. '.repeat(3),
         niveau: 'fragile',
-        erreurs_critiques: ['E1', 'E99'],
+        erreurs_critiques: [
+          { id: 'E1', citation: requete.reponse },
+          { id: 'E99', citation: requete.reponse },
+        ],
         source: 'deduit',
         ref: '',
         certitude: 'sur',
@@ -347,11 +350,11 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('POST /corrections contre Postgr
   })
 
   it('plafonne le niveau quand le correcteur signale une erreur critique du bloc (règle 10 de la consigne)', async () => {
-    scenario = () =>
+    scenario = (requete) =>
       JSON.stringify({
         message: 'Voici un retour détaillé sur ta réponse, qui reprend tes mots justes. '.repeat(3),
         niveau: 'partiel',
-        erreurs_critiques: ['E1'],
+        erreurs_critiques: [{ id: 'E1', citation: requete.reponse }],
         source: 'deduit',
         ref: '',
         certitude: 'sur',
@@ -363,6 +366,26 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('POST /corrections contre Postgr
 
     expect(sur.json<{ niveau: string }>().niveau).toBe('pas_encore')
     expect(hesitant.json<{ niveau: string }>().niveau).toBe('fragile')
+  })
+
+  it('écarte une erreur critique dont la citation n’est pas dans la réponse, sans plafonner le niveau', async () => {
+    scenario = () =>
+      JSON.stringify({
+        message: 'Voici un retour détaillé sur ta réponse, qui reprend tes mots justes. '.repeat(3),
+        niveau: 'solide',
+        erreurs_critiques: [{ id: 'E1', citation: 'une phrase que la réponse ne contient pas' }],
+        source: 'deduit',
+        ref: '',
+        certitude: 'sur',
+      })
+
+    const reponse = await corriger(demande({ confiance: 'sur' }))
+    scenario = undefined
+
+    expect(reponse.json<{ niveau: string; erreurs_critiques: string[] }>()).toMatchObject({
+      niveau: 'solide',
+      erreurs_critiques: [],
+    })
   })
 
   describe('quand le JSON est invalide', () => {

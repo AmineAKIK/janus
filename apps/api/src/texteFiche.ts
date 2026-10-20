@@ -311,7 +311,7 @@ function varianteDuCours(lire: (nom: string) => string | undefined): string[] {
 /**
  * Ce que le gabarit fait sur toute fiche et que le texte des étapes ne dit pas, avec ce que l'appli
  * fait des réponses (correction, statut). À tenir à jour avec `contenu/dwwm/gabarit/fiche.html`, la
- * consigne du correcteur (`prompts/correction/v1.md`) et le moteur : les libellés cités entre
+ * consigne du correcteur (`prompts/correction/v2.md`) et le moteur : les libellés cités entre
  * guillemets sont ceux de la page.
  */
 export const CE_QUE_FAIT_LE_GABARIT: readonly string[] = [

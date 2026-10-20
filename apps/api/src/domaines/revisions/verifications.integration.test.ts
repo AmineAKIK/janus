@@ -313,11 +313,11 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('vérifications contre PostgreSQ
     })
 
     it('propose une erreur à confirmer quand la correction en relève une', async () => {
-      scenario = () =>
+      scenario = (requete) =>
         JSON.stringify({
           message: MESSAGE_LONG,
           niveau: 'partiel',
-          erreurs_critiques: ['E1'],
+          erreurs_critiques: [{ id: 'E1', citation: requete.reponse }],
           source: 'deduit',
           ref: '',
           certitude: 'sur',

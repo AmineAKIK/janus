@@ -165,16 +165,17 @@ describe('creerClaude', () => {
       ],
     })
     expect(schema.properties.ref.enum).toEqual(['', 'S1', 'S2'])
-    expect(schema.properties.erreurs_critiques.items).toEqual({
+    expect(schema.properties.erreurs_critiques.items.properties.id).toEqual({
       type: 'string',
       enum: ['E1', 'E2'],
     })
+    expect(schema.properties.erreurs_critiques.items.required).toEqual(['id', 'citation'])
   })
 
   it('laisse la liste des erreurs libre quand le bloc n’en déclare aucune (un enum vide est invalide)', () => {
     const schema = schemaSortie({ sources: [], erreursCritiques: [] })
     expect(schema.properties.ref.enum).toEqual([''])
-    expect(schema.properties.erreurs_critiques.items).toEqual({ type: 'string' })
+    expect(schema.properties.erreurs_critiques.items.properties.id).toEqual({ type: 'string' })
   })
 
   it('additionne les jetons hors cache, lus et écrits dans le cache ; zéro quand le fournisseur ne le dit pas', async () => {

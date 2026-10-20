@@ -21,8 +21,8 @@ const VERSION_API = '2023-06-01'
 /**
  * Le JSON que le correcteur doit rendre, imposé au modèle (sortie structurée) : les mêmes champs
  * que `validerSortie`, qui reste juge du message (longueur, mots de statut) et du couple
- * source/ref. `ref` et `erreurs_critiques` sont bornés aux identifiants du bloc : le modèle ne peut
- * plus en inventer. L'API n'accepte ni longueur minimale ni maximale dans le schéma.
+ * source/ref. `ref` et l'identifiant de chaque erreur critique sont bornés à ceux du bloc : le modèle ne
+ * peut plus en inventer. La citation de chaque erreur, elle, est vérifiée par `validerSortie`. L'API n'accepte ni longueur minimale ni maximale dans le schéma.
  */
 export function schemaSortie(requete: Pick<RequeteCorrection, 'sources' | 'erreursCritiques'>) {
   const erreurs = requete.erreursCritiques.map(({ id }) => id)
@@ -31,10 +31,18 @@ export function schemaSortie(requete: Pick<RequeteCorrection, 'sources' | 'erreu
     properties: {
       message: { type: 'string' },
       niveau: { type: 'string', enum: Niveau.options },
-      // Un `enum` vide est invalide : sans erreur critique, la liste reste libre et `validerSortie` écarte ce qui est inconnu.
+      // Un `enum` vide est invalide : sans erreur critique, l'identifiant reste libre et `validerSortie` écarte ce qui est inconnu.
       erreurs_critiques: {
         type: 'array',
-        items: erreurs.length === 0 ? { type: 'string' } : { type: 'string', enum: erreurs },
+        items: {
+          type: 'object',
+          properties: {
+            id: erreurs.length === 0 ? { type: 'string' } : { type: 'string', enum: erreurs },
+            citation: { type: 'string' },
+          },
+          required: ['id', 'citation'],
+          additionalProperties: false,
+        },
       },
       source: { type: 'string', enum: Source.options },
       ref: { type: 'string', enum: ['', ...requete.sources.map(({ id }) => id)] },
