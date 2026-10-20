@@ -2,7 +2,7 @@ import { Fait } from '@janus/contrats'
 import { and, inArray } from 'drizzle-orm'
 import * as t from './schema/index.ts'
 import { instantIso } from './instant.ts'
-import { deLUtilisateurSurLesBlocs } from './requetes.ts'
+import { deLUtilisateurSurLesBlocs, niveauRetenu } from './requetes.ts'
 import type { Db, Tx } from './transaction.ts'
 
 type TypeDeFait = Fait['type']
@@ -80,7 +80,7 @@ export async function lireFaits(
             serie: t.corrections.serie,
             question: t.corrections.questionId,
             tour: t.corrections.tour,
-            niveau: t.corrections.niveau,
+            niveau: niveauRetenu,
             compte: t.corrections.compte,
             raisonNonCompte: t.corrections.raisonNonCompte,
             confiance: t.corrections.confiance,

@@ -4,6 +4,7 @@ import {
   appelsDuCorrecteurDepuis,
   avisDAmine,
   empreinteDeLEvenement,
+  niveauRetenu,
   reglagesDe,
   serieDuJour,
   versionEnService,
@@ -26,6 +27,8 @@ export interface LigneCorrection {
   readonly recopiee: boolean
   readonly message: string
   readonly niveau: string
+  /** Le niveau du correcteur avant la règle « erreur critique → niveau » (voir `niveauRetenu`). */
+  readonly niveauRendu?: string | null
   readonly erreursIds: unknown
   readonly source: string
   readonly ref: string
@@ -85,7 +88,7 @@ const colonnesCorrection = {
   supportRetourCours: t.corrections.supportRetourCours,
   recopiee: t.corrections.recopiee,
   message: t.corrections.message,
-  niveau: t.corrections.niveau,
+  niveau: niveauRetenu,
   erreursIds: t.corrections.erreursIds,
   source: t.corrections.source,
   ref: t.corrections.ref,

@@ -398,6 +398,7 @@ export function creerServiceCorrection({
           recopiee,
           message: sortie.message,
           niveau: sortie.niveau,
+          niveauRendu: sortie.niveauRendu,
           erreursIds: sortie.erreurs,
           source: sortie.source,
           ref: sortie.ref,
