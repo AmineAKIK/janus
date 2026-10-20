@@ -1,4 +1,4 @@
-import { and, desc, eq, gt, inArray } from 'drizzle-orm'
+import { and, desc, eq, gt, inArray, sql } from 'drizzle-orm'
 import type { AnyPgColumn, PgTable } from 'drizzle-orm/pg-core'
 import { deLaFormation } from './formationActive.ts'
 import * as t from './schema/index.ts'
@@ -127,3 +127,21 @@ export async function ajouterSiAbsent<T extends PgTable & { readonly id: AnyPgCo
     .returning({ id: table.id })
   return ajoutees.length > 0
 }
+
+/**
+ * Le niveau qui compte pour une correction : celui que le correcteur a rendu quand Amine a rejeté
+ * chacune des erreurs critiques qu'il y avait repérées (la dernière décision sur chacune est
+ * « rejetee »), sinon le niveau enregistré, plafonné par la règle « erreur critique → niveau ».
+ * Les colonnes sont nommées avec leur table : dans la sous-requête, un `id` seul serait celui de la décision.
+ */
+export const niveauRetenu = sql<string>`CASE WHEN "corrections"."niveau_rendu" IS NOT NULL
+  AND jsonb_array_length("corrections"."erreurs_ids") > 0
+  AND NOT EXISTS (
+    SELECT 1 FROM jsonb_array_elements_text("corrections"."erreurs_ids") AS repere(id)
+    WHERE (
+      SELECT d.decision FROM "decisions_erreurs" d
+      WHERE d.correction_id = "corrections"."id" AND d.erreur_id = repere.id
+      ORDER BY d.date_serveur DESC, d.id DESC LIMIT 1
+    ) IS DISTINCT FROM 'rejetee'
+  )
+  THEN "corrections"."niveau_rendu" ELSE "corrections"."niveau" END`

@@ -98,6 +98,11 @@ export const corrections = pgTable(
     recopiee: boolean('recopiee').notNull(),
     message: text('message').notNull(),
     niveau: text('niveau').notNull(),
+    /**
+     * Le niveau tel que le correcteur l'a rendu, avant la règle « erreur critique → niveau » ; nul quand
+     * on ne le sait pas. Une fois toutes ses erreurs repérées rejetées par Amine, c'est lui qui compte.
+     */
+    niveauRendu: text('niveau_rendu'),
     erreursIds: jsonb('erreurs_ids').notNull(),
     source: text('source').notNull(),
     ref: text('ref').notNull(),
@@ -141,6 +146,10 @@ export const corrections = pgTable(
     check(
       'corrections_niveau',
       parmi(table.niveau, ['solide', 'partiel', 'fragile', 'pas_encore']),
+    ),
+    check(
+      'corrections_niveau_rendu',
+      sql`${table.niveauRendu} IS NULL OR ${table.niveauRendu} IN ('solide', 'partiel', 'fragile', 'pas_encore')`,
     ),
     check('corrections_source', parmi(table.source, ['support', 'deduit', 'ajoute'])),
     check('corrections_certitude', parmi(table.certitude, ['sur', 'non_verifie'])),

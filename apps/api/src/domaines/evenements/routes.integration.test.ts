@@ -5,6 +5,7 @@ import { ConflitEtatPage, nouvelId, Reglages } from '@janus/contrats'
 import { VERSION_MOTEUR } from '@janus/moteur'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { baseDepuisPool } from '../../base/base.ts'
+import { lireFaits } from '../../base/faits.ts'
 import * as t from '../../base/schema/index.ts'
 import { creerBaseDeTest, URL_SERVEUR_TEST } from '../../base/testeurBase.ts'
 import { recalculerLesPerimes } from '../../recalcul.ts'
@@ -506,6 +507,66 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
           expect(confirmee.json<{ erreurs_ouvertes: string[] }>().erreurs_ouvertes).toContain('E1')
           expect(doublon.statusCode).toBe(200)
           expect(autre.statusCode).toBe(422)
+        })
+
+        it('rejeter toutes les erreurs repérées rend à la réponse le niveau du correcteur', async () => {
+          const [ligne] = await bases.pool
+            .query<{ user_id: string; bloc_id: string }>(
+              "SELECT u.id AS user_id, b.id AS bloc_id FROM users u, blocs b WHERE b.code = 'D01'",
+            )
+            .then(({ rows }) => rows)
+          const userId = ligne?.user_id ?? ''
+          const blocId = ligne?.bloc_id ?? ''
+          const plafonnee = identifiant()
+          await bases.db.insert(t.corrections).values({
+            id: plafonnee,
+            userId,
+            blocId,
+            questionId: 'R2',
+            serie: 'restitution',
+            tentative: 1,
+            tour: 1,
+            confiance: 'sur',
+            reponse: 'réponse',
+            supportColle: false,
+            supportRetourCours: false,
+            recopiee: false,
+            message: 'message',
+            niveau: 'pas_encore',
+            niveauRendu: 'solide',
+            erreursIds: ['E2', 'E3'],
+            source: 'support',
+            ref: 'ref',
+            certitude: 'sur',
+            compte: true,
+            raisonNonCompte: null,
+            conteste: false,
+            modele: 'modele',
+            parametres: {},
+            jetonsEntree: 0,
+            jetonsSortie: 0,
+            coutMillioniemes: 0,
+            consigneEmpreinte: 'f'.repeat(64),
+            dateServeur: '2026-10-01T11:00:00.000Z',
+          })
+          const niveau = async () => {
+            const faits = await lireFaits(
+              bases.db,
+              userId,
+              [{ id: blocId, code: 'D01' }],
+              ['correction'],
+            )
+            return faits.find(({ id }) => id === plafonnee)
+          }
+          const rejeter = (erreur: string) =>
+            trancher({ id: identifiant(), erreur, correction: plafonnee, decision: 'rejetee' })
+
+          expect(await niveau()).toMatchObject({ niveau: 'pas_encore' })
+          expect((await rejeter('E2')).statusCode).toBe(200)
+          // Une erreur repérée reste à trancher : le niveau plafonné compte encore.
+          expect(await niveau()).toMatchObject({ niveau: 'pas_encore' })
+          expect((await rejeter('E3')).statusCode).toBe(200)
+          expect(await niveau()).toMatchObject({ niveau: 'solide' })
         })
       })
     })
