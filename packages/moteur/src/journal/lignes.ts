@@ -80,6 +80,7 @@ type FaitDe<T extends Fait['type']> = Extract<Fait, { type: T }>
 const TYPES_SEANCE = [
   'bloc_ouvert',
   'etape_vue',
+  'fiche_recommencee',
   'pratique_resultat',
   'atelier_resultat',
   'aisance_resultat',
@@ -110,6 +111,7 @@ export function ligneSeance(faits: readonly FaitSeance[]): Pick<LigneJournal, 'r
   if (ouvert?.type === 'bloc_ouvert') {
     parties.push(ouvert.horsPrerequis ? 'ouvert sans les prérequis' : 'bloc ouvert')
   }
+  if (faits.some((fait) => fait.type === 'fiche_recommencee')) parties.push('fiche recommencée')
   if (etapes > 0) parties.push(pluriel(etapes, 'étape vue', 'étapes vues'))
   if (pratique.length > 0) {
     const reussis = pratique.filter(({ reussi }) => reussi).length
@@ -129,6 +131,8 @@ export function ligneSeance(faits: readonly FaitSeance[]): Pick<LigneJournal, 'r
         return fait.raison === undefined ? 'Bloc ouvert' : `Bloc ouvert · Raison : ${fait.raison}`
       case 'etape_vue':
         return `Étape ${fait.etape} vue`
+      case 'fiche_recommencee':
+        return 'Fiche recommencée'
       case 'pratique_resultat':
         return `${fait.item} · ${fait.reussi ? 'réussi' : 'raté'} · aide ${String(fait.aide)}`
       case 'atelier_resultat':

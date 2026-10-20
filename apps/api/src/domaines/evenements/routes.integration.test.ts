@@ -367,6 +367,29 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
         expect(reponse.json<{ version: number }>().version).toBe(0)
       })
 
+      it('recommencer : vide l’état, garde un fait, rend les étapes vues à zéro ; le rejeu ne le double pas', async () => {
+        await envoyer({ ...commun(), type: 'etape.vue', etape: 'ET1' })
+        expect((await sauver('D01', { version: 0, etat: { etape: 'ET2' } })).statusCode).toBe(200)
+        const avant = await compter('fiche_recommencee')
+
+        const reponse = await sauver('D01', { version: 1, etat: {}, recommencer: true })
+        const rejeu = await sauver('D01', { version: 1, etat: {}, recommencer: true })
+        const perime = await sauver('D01', {
+          version: 1,
+          etat: { etape: 'ET3' },
+          recommencer: true,
+        })
+
+        expect(reponse.statusCode).toBe(200)
+        expect(reponse.json()).toMatchObject({
+          version: 2,
+          statut: { avancement: { etapes_vues: [] } },
+        })
+        expect(rejeu.json()).toEqual({ version: 2 })
+        expect(perime.statusCode).toBe(409)
+        expect(await compter('fiche_recommencee')).toBe(avant + 1)
+      })
+
       describe('POST /blocs/:id/forcer', () => {
         const forcer = (corps: Record<string, unknown>) =>
           s.app.inject({

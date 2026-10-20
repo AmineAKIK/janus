@@ -55,8 +55,17 @@ export const ROUTES_BLOCS = {
       /** La version de l'état que l'onglet a lue (0 s'il n'y en avait pas). */
       version: z.number().int().min(0),
       etat: EtatPage,
+      /**
+       * La fiche est recommencée : l'état envoyé est vide, et le serveur garde le fait
+       * `fiche_recommencee` (les étapes déjà vues ne sont plus cochées ; preuves, erreurs et statut
+       * restent). La réponse rend alors le statut recalculé.
+       */
+      recommencer: z.literal(true).optional(),
     }),
-    reponse: z.strictObject({ version: z.number().int().min(1) }),
+    reponse: z.strictObject({
+      version: z.number().int().min(1),
+      statut: StatutBloc.optional(),
+    }),
     succes: 200,
   },
   'POST /blocs/:id/erreurs': {

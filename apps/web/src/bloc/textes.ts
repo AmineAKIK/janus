@@ -36,7 +36,7 @@ export const TEXTES_RECOMMENCER = {
   bouton: 'Recommencer la fiche',
   titre: 'Recommencer la fiche ?',
   corps:
-    'La fiche repart de la première étape, avec tous ses champs vides. Ton historique ne change pas : ton statut, tes résultats et les erreurs critiques ouvertes restent.',
+    'La fiche repart de la première étape, avec tous ses champs vides, et les étapes déjà vues ne sont plus cochées. Ton historique ne change pas : ton statut, tes résultats et les erreurs critiques ouvertes restent.',
   confirmer: 'Recommencer',
   fermer: 'Fermer',
 } as const

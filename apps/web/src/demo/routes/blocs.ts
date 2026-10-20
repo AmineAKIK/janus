@@ -1,4 +1,4 @@
-import { ErreurApi, memeContenu, ROUTES } from '@janus/contrats'
+import { ErreurApi, memeContenu, nouvelId, ROUTES } from '@janus/contrats'
 import type { Fait, MessagePage } from '@janus/contrats'
 import { statutDuBloc } from '@janus/moteur'
 import { MANIFESTES_GRAINE } from '../graine.ts'
@@ -100,7 +100,7 @@ export const ROUTES_BLOCS_DEMO = [
     }
   }),
 
-  definir(ROUTES['PUT /blocs/:id/etat-page'], ({ magasin, params, corps }) => {
+  definir(ROUTES['PUT /blocs/:id/etat-page'], ({ magasin, horloge, params, corps }) => {
     verifierBloc(params.id)
     // La démo n'a qu'un onglet : l'état n'a qu'une version, 0 tant qu'il n'existe pas, 1 ensuite.
     const existant = magasin.lire().etatsPage[params.id]
@@ -121,7 +121,15 @@ export const ROUTES_BLOCS_DEMO = [
       ...etat,
       etatsPage: { ...etat.etatsPage, [params.id]: corps.etat },
     }))
-    return { version: 1 }
+    if (corps.recommencer !== true) return { version: 1 }
+    // Comme l'API : la fiche recommencée laisse un fait, et la réponse rend le statut recalculé.
+    const maintenant = horloge.maintenant()
+    const id = nouvelId(Date.parse(maintenant))
+    enregistrer(magasin, id, [{ id, bloc: params.id, date: maintenant, type: 'fiche_recommencee' }])
+    return {
+      version: 1,
+      statut: statutDuBloc(resultatDuBloc(magasin.lire(), params.id, maintenant)),
+    }
   }),
 
   definir(ROUTES['POST /blocs/:id/erreurs'], ({ magasin, horloge, params, corps }) => {

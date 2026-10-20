@@ -71,6 +71,12 @@ export function statutDeReponse(
     const { statut, manque, avancement } = ROUTES['POST /blocs/:id/erreurs'].reponse.parse(reponse)
     return { statut, manque, avancement }
   }
+  if (route === 'PUT /blocs/:id/etat-page') {
+    const { statut } = ROUTES['PUT /blocs/:id/etat-page'].reponse.parse(reponse)
+    return statut === undefined
+      ? null
+      : { statut: statut.statut, manque: statut.manque, avancement: statut.avancement }
+  }
   if (route === 'POST /corrections/:id/trancher') {
     const { statut, manque, avancement } =
       ROUTES['POST /corrections/:id/trancher'].reponse.parse(reponse)
