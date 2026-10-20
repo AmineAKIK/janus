@@ -57,6 +57,7 @@ const MESSAGES_APPLI = [
   { type: 'erreur', code: 'plafond_atteint', detail: 'Plafond atteint.', message_id: ID },
   { type: 'erreur', code: 'correction_indisponible', detail: 'Indisponible.' },
   { type: 'etape.aller', etape: 'ET2' },
+  { type: 'erreur.rejetee', question: 'R1', erreur: 'E2' },
 ]
 
 /** Des entrées invalides de chaque sorte : le même verdict des deux côtés. */
@@ -149,6 +150,7 @@ describe('parité avec packages/contrats', () => {
       { type: 'erreur', code: 'autre', detail: 'x' },
       { type: 'erreur', code: 'plafond_atteint', detail: 'x', message_id: 'pas-un-uuid' },
       { type: 'etape.aller' },
+      { type: 'erreur.rejetee', question: 'R1' },
       { type: 'restitution.correction', ...CORRECTION, niveau: 'moyen' },
       { type: 'inconnu' },
     ]

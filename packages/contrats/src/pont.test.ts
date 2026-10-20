@@ -29,6 +29,7 @@ const TYPES_APPLI = [
   'statut.maj',
   'erreur',
   'etape.aller',
+  'erreur.rejetee',
 ] as const
 
 function sans(exemple: Record<string, unknown>, champ: string): Record<string, unknown> {
@@ -279,6 +280,12 @@ describe('les messages de l’appli vers la page', () => {
   it('etape.aller : une étape non vide', () => {
     expect(MessageAppli.safeParse({ type: 'etape.aller', etape: '' }).success).toBe(false)
     expect(MessageAppli.safeParse({ type: 'etape.aller' }).success).toBe(false)
+  })
+
+  it('erreur.rejetee : une question et une erreur', () => {
+    const base = EXEMPLES_APPLI['erreur.rejetee']
+    expect(MessageAppli.safeParse(sans(base, 'question')).success).toBe(false)
+    expect(MessageAppli.safeParse({ ...base, erreur: '' }).success).toBe(false)
   })
 })
 

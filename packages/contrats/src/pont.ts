@@ -231,5 +231,12 @@ export const MessageAppli = z.discriminatedUnion('type', [
     /** L'étape à afficher (fil d'étapes de l'appli). */
     etape: Identifiant,
   }),
+  z.strictObject({
+    type: z.literal('erreur.rejetee'),
+    /** La question dont la correction avait repéré l'erreur. */
+    question: Identifiant,
+    /** L'erreur critique qu'Amine a rejetée : le bilan ne la coche plus d'office pour cette question. */
+    erreur: Identifiant,
+  }),
 ])
 export type MessageAppli = z.infer<typeof MessageAppli>

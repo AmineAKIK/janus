@@ -100,4 +100,5 @@ export const EXEMPLES_APPLI = {
     message_id: '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2b',
   },
   'etape.aller': { type: 'etape.aller', etape: 'ET7' },
+  'erreur.rejetee': { type: 'erreur.rejetee', question: 'R1', erreur: 'E2' },
 } satisfies Record<MessageAppli['type'], Record<string, unknown>>

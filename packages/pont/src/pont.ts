@@ -82,6 +82,8 @@ export interface Pont {
   surStatut: (rappel: (statut: Statut) => void) => () => void
   surErreur: (rappel: (erreur: ErreurAppli) => void) => () => void
   surEtape: (rappel: (etape: string) => void) => () => void
+  /** Amine a rejeté une erreur critique que la correction d'une question avait repérée. */
+  surRejet: (rappel: (rejet: { question: string; erreur: string }) => void) => () => void
   /** Un `etat.init` reçu après le démarrage : les séries ouvertes ont changé (la consolidation s'ouvre). */
   surInit: (rappel: (init: Init) => void) => () => void
 }
@@ -111,6 +113,7 @@ export function creerPont(options: OptionsPont = {}): Pont {
   const rappelsStatut = new Set<(statut: Statut) => void>()
   const rappelsErreur = new Set<(erreur: ErreurAppli) => void>()
   const rappelsEtape = new Set<(etape: string) => void>()
+  const rappelsRejet = new Set<(rejet: { question: string; erreur: string }) => void>()
   const rappelsInit = new Set<(init: Init) => void>()
 
   // --- Envoi -------------------------------------------------------------------------------------
@@ -179,6 +182,11 @@ export function creerPont(options: OptionsPont = {}): Pont {
       case 'etape.aller':
         rappelsEtape.forEach((rappel) => {
           rappel(message.etape)
+        })
+        break
+      case 'erreur.rejetee':
+        rappelsRejet.forEach((rappel) => {
+          rappel({ question: message.question, erreur: message.erreur })
         })
         break
     }
@@ -319,6 +327,7 @@ export function creerPont(options: OptionsPont = {}): Pont {
     surStatut: abonnement(rappelsStatut),
     surErreur: abonnement(rappelsErreur),
     surEtape: abonnement(rappelsEtape),
+    surRejet: abonnement(rappelsRejet),
     surInit: abonnement(rappelsInit),
   }
 }

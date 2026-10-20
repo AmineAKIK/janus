@@ -184,5 +184,10 @@ export const MessageAppli = z.discriminatedUnion('type', [
     message_id: z.optional(idUuid()),
   }),
   z.strictObject({ type: z.literal('etape.aller'), etape: identifiant() }),
+  z.strictObject({
+    type: z.literal('erreur.rejetee'),
+    question: identifiant(),
+    erreur: identifiant(),
+  }),
 ])
 export type MessageAppli = z.infer<typeof MessageAppli>

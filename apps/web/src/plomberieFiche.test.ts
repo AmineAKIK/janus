@@ -28,6 +28,7 @@ function pontSimule(
   const sauvees: Record<string, unknown>[] = []
   const statuts = new Set<Rappel>()
   const erreurs = new Set<Rappel>()
+  const rejets = new Set<Rappel>()
   const pont = {
     demarrer: () =>
       Promise.resolve({
@@ -56,6 +57,10 @@ function pontSimule(
     },
     surEtape: () => () => undefined,
     surInit: () => () => undefined,
+    surRejet: (rappel: Rappel) => {
+      rejets.add(rappel)
+      return () => rejets.delete(rappel)
+    },
   }
   const direStatut = (statut: unknown) => {
     for (const rappel of statuts) rappel(statut)
@@ -65,7 +70,11 @@ function pontSimule(
     for (const rappel of erreurs)
       rappel({ code: 'message_refuse', detail, message_id: 'message-' + String(envois.length) })
   }
-  return { pont, envois, demandes, sauvees, direStatut, refuserDernier }
+  /** Amine rejette, dans l'appli, une erreur que la correction d'une question avait repérée. */
+  const rejeter = (question: string, erreur: string) => {
+    for (const rappel of rejets) rappel({ question, erreur })
+  }
+  return { pont, envois, demandes, sauvees, direStatut, refuserDernier, rejeter }
 }
 
 /** Met la page de la fiche dans le document du test, puis lance sa plomberie. */
@@ -195,6 +204,46 @@ describe('le bilan de la fiche', () => {
     expect(deuxieme).toBeDisabled()
     fireEvent.click(bouton)
     expect(envois).toContainEqual({ type: 'bilan.erreurs', donnees: { ids: ['E2'] } })
+  })
+
+  it('une erreur repérée qu’Amine rejette n’est plus cochée d’office', async () => {
+    const { pont, envois, sauvees, rejeter } = pontSimule(
+      auBilan({ erreurs: { R2: ['E2'] }, aCocher: ['E2'], bilan: { ids: [] } }),
+    )
+    monter(GABARIT, pont)
+    await screen.findByRole('button', { name: 'Envoyer le bilan' })
+
+    rejeter('R2', 'E2')
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('checkbox')[1]).not.toBeChecked()
+    })
+    expect(screen.getAllByRole('checkbox')[1]).toBeEnabled()
+    expect(screen.queryByText(/Repérée dans tes réponses/)).not.toBeInTheDocument()
+    expect(sauvees.at(-1)).toMatchObject({ aCocher: [], erreurs: { R2: [] } })
+    // Le dernier bilan ne cochait rien : il n'y a plus rien à envoyer.
+    expect(screen.getByRole('button', { name: 'Bilan envoyé' })).toBeDisabled()
+    expect(envois).not.toContainEqual(expect.objectContaining({ type: 'bilan.erreurs' }))
+  })
+
+  it('une erreur rejetée pour une question reste cochée si un outil ou une autre réponse l’a repérée', async () => {
+    const { pont, sauvees, rejeter } = pontSimule(
+      auBilan({
+        erreurs: { R2: ['E2'], 'outil:PR1-1': ['E2'] },
+        aCocher: ['E2'],
+        bilan: { ids: [] },
+      }),
+    )
+    monter(GABARIT, pont)
+    await screen.findByRole('button', { name: 'Envoyer le bilan' })
+
+    rejeter('R2', 'E2')
+
+    await waitFor(() => {
+      expect(sauvees.at(-1)).toMatchObject({ aCocher: ['E2'], erreurs: { R2: [] } })
+    })
+    expect(screen.getAllByRole('checkbox')[1]).toBeChecked()
+    expect(screen.getAllByRole('checkbox')[1]).toBeDisabled()
   })
 
   it('refusé, il garde les cases cochées et peut repartir', async () => {

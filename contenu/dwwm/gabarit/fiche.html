@@ -1124,7 +1124,7 @@
         "titre_court": "À REMPLACER",
         "objectif": "À REMPLACER : ce que tu sauras faire à la fin, vérifiable en une phrase.",
         "prerequis": [],
-        "pont": 1,
+        "pont": 2,
         "contexte_ia": "À REMPLACER : ce que le correcteur doit savoir du bloc (1 500 mots au plus) : notions, vocabulaire, pièges.",
         "sources": [
           {
@@ -1701,6 +1701,19 @@
         etat.erreurs = { ...(etat.erreurs ?? {}), [cle]: [...new Set([...deja, ...ids])] }
         etat.aCocher = [...new Set([...(etat.aCocher ?? []), ...ids])]
         enregistrer()
+      }
+      /**
+       * Amine a rejeté une erreur que le correcteur avait repérée dans la réponse à une question : le
+       * bilan ne la coche plus d'office, sauf si une autre réponse ou un outil l'a aussi repérée.
+       */
+      function retirerReperee(question, erreur) {
+        const deja = etat.erreurs?.[question] ?? []
+        if (!deja.includes(erreur)) return false
+        etat.erreurs = { ...etat.erreurs, [question]: deja.filter((id) => id !== erreur) }
+        if (!Object.values(etat.erreurs).some((ids) => ids.includes(erreur)))
+          etat.aCocher = (etat.aCocher ?? []).filter((id) => id !== erreur)
+        enregistrer()
+        return true
       }
       /**
        * Un outil qui reconnaît une erreur critique dans une réponse (des bits lus à l'envers, un départ
@@ -3356,6 +3369,15 @@
         })
         pont.surEtape((id) => {
           if (etapes.some((e) => e.id === id)) aller(id)
+        })
+        pont.surRejet(({ question, erreur }) => {
+          if (!retirerReperee(question, erreur)) return
+          // Le bilan affiché redessine ses cases ; ailleurs, seul ce qui attend le bilan change.
+          if (etapes.find((e) => e.id === etat.etape)?.type === 'bilan') afficher()
+          else {
+            majPied()
+            majQuand()
+          }
         })
         const depart = await pont.demarrer({
           manifeste: { bloc: manifeste.bloc, version: manifeste.version },
