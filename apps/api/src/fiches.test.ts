@@ -237,8 +237,14 @@ describe('vérification des fiches du dépôt', () => {
       await poser(
         'X00.html',
         fiche
-          .replace('<p data-erreur="E1">', '<p data-erreur="E1" data-justifier="Explique.">')
-          .replace('<p data-erreur="E2">', '<p data-erreur="E2" data-justifier="Explique.">'),
+          .replace(
+            '<p data-erreur="E1">',
+            '<p data-erreur="E1" data-justifier="Explique." data-fiche="Parce que.">',
+          )
+          .replace(
+            '<p data-erreur="E2">',
+            '<p data-erreur="E2" data-justifier="Explique." data-fiche="Parce que.">',
+          ),
       )
 
       expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
@@ -251,7 +257,33 @@ describe('vérification des fiches du dépôt', () => {
     it('accepte un tiers d’items avec explication, arrondi au-dessus', async () => {
       await poser(
         'X00.html',
-        fiche.replace('<p data-erreur="E1">', '<p data-erreur="E1" data-justifier="Explique.">'),
+        fiche.replace(
+          '<p data-erreur="E1">',
+          '<p data-erreur="E1" data-justifier="Explique." data-fiche="Parce que.">',
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+
+    it('refuse une explication sans texte à comparer, accepte data-solution', async () => {
+      await poser(
+        'X00.html',
+        fiche.replace('<p data-erreur="E1">', '<p data-erreur="E1" data-justifier="Pourquoi ?">'),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'pratique : l’item PR1-1 demande une explication (data-justifier) sans texte à comparer (data-fiche)',
+        ),
+      ])
+
+      await poser(
+        'X00.html',
+        fiche.replace(
+          '<p data-erreur="E1">',
+          '<p data-erreur="E1" data-justifier="Pourquoi ?" data-solution="Parce que.">',
+        ),
       )
 
       expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
