@@ -24,6 +24,11 @@ export const CasDeTest = z.strictObject({
    */
   genre: z.enum(['normal', 'ordre_glisse', 'je_ne_sais_pas']).default('normal'),
   niveauSiSuivi: Niveau.optional(),
+  /**
+   * Les erreurs critiques qu'Amine voit dans la réponse (identifiants du manifeste) ; absent, le cas ne
+   * compte ni dans les faux positifs ni dans les erreurs manquées.
+   */
+  erreursAmine: z.array(z.string().min(1)).optional(),
 })
 export type CasDeTest = z.infer<typeof CasDeTest>
 
@@ -48,6 +53,8 @@ export interface ResultatCas {
   /** Rendus avec le niveau : le message pour l'apprenant, les erreurs critiques repérées, la certitude. */
   readonly message: string | undefined
   readonly erreursIa: readonly string[] | undefined
+  /** Les erreurs que le correcteur a rendues mais dont la citation n'est pas dans la réponse : écartées. */
+  readonly erreursSansCitation: readonly string[]
   readonly certitude: Certitude | undefined
   readonly ecart: number | undefined
   readonly ordreSuivi: boolean | undefined
@@ -55,6 +62,9 @@ export interface ResultatCas {
   readonly reponseCompleteDonnee: boolean | undefined
   readonly motifRefus: string | undefined
   readonly cout: number
+  /** Pour un cas où Amine a dit ses erreurs : celles que l'IA retient à tort, et celles qu'elle manque. */
+  readonly fauxPositifs: readonly string[]
+  readonly manquees: readonly string[]
 }
 
 export interface Evaluation {
@@ -64,6 +74,11 @@ export interface Evaluation {
   readonly ordresSuivis: readonly string[]
   readonly jeNeSaisPasAvecReponseComplete: readonly string[]
   readonly refus: readonly string[]
+  /** `cas : E1, E2` pour chaque cas où l'IA retient une erreur critique. */
+  readonly erreursRetenues: readonly string[]
+  readonly erreursSansCitation: readonly string[]
+  readonly fauxPositifs: readonly string[]
+  readonly erreursManquees: readonly string[]
   readonly cout: number
 }
 
@@ -72,6 +87,18 @@ export interface OptionsEvaluation {
   readonly manifeste: Manifeste
   readonly correcteur: Correcteur
   readonly tarifs: Tarifs
+}
+
+/** Les erreurs que l'IA retient à tort et celles qu'elle manque, quand Amine a dit les siennes. */
+function comparerErreurs(
+  amine: readonly string[] | undefined,
+  ia: readonly string[] | undefined,
+): { fauxPositifs: readonly string[]; manquees: readonly string[] } {
+  if (amine === undefined || ia === undefined) return { fauxPositifs: [], manquees: [] }
+  return {
+    fauxPositifs: ia.filter((id) => !amine.includes(id)),
+    manquees: amine.filter((id) => !ia.includes(id)),
+  }
 }
 
 /** Passe chaque cas au correcteur (un essai, sans relance) et compare à ce qu'Amine a jugé. */
@@ -95,18 +122,20 @@ export async function evaluer({
     let niveauRendu: Niveau | undefined
     let message: string | undefined
     let erreursIa: readonly string[] | undefined
+    let erreursSansCitation: readonly string[] = []
     let certitude: Certitude | undefined
     let motifRefus: string | undefined
     let cout = 0
     try {
       const brut = await correcteur.corriger(requete)
       cout = coutMillioniemes(brut, tarifs)
-      const validation = validerSortie(brut.texte, manifeste, cas.confiance)
+      const validation = validerSortie(brut.texte, manifeste, cas.confiance, cas.reponse)
       if (validation.valide) {
         niveauIa = validation.sortie.niveau
         niveauRendu = validation.sortie.niveauRendu
         message = validation.sortie.message
         erreursIa = validation.sortie.erreurs
+        erreursSansCitation = validation.sortie.erreursSansCitation
         certitude = validation.sortie.certitude
       } else {
         motifRefus = validation.motif
@@ -122,6 +151,7 @@ export async function evaluer({
       niveauRendu,
       message,
       erreursIa,
+      erreursSansCitation,
       certitude,
       ecart:
         niveauIa === undefined ? undefined : Math.abs(RANGS[niveauIa] - RANGS[cas.niveauAmine]),
@@ -135,8 +165,11 @@ export async function evaluer({
           : undefined,
       motifRefus,
       cout,
+      ...comparerErreurs(cas.erreursAmine, erreursIa),
     })
   }
+  const parCas = (choisir: (r: ResultatCas) => readonly string[]) =>
+    resultats.filter((r) => choisir(r).length > 0).map((r) => `${r.id} : ${choisir(r).join(', ')}`)
   const jugees = resultats.filter(({ ecart }) => ecart !== undefined)
   return {
     resultats,
@@ -148,11 +181,16 @@ export async function evaluer({
       .filter(({ reponseCompleteDonnee }) => reponseCompleteDonnee === true)
       .map(({ id }) => id),
     refus: resultats.filter(({ motifRefus }) => motifRefus !== undefined).map(({ id }) => id),
+    erreursRetenues: parCas((r) => r.erreursIa ?? []),
+    erreursSansCitation: parCas((r) => r.erreursSansCitation),
+    fauxPositifs: parCas((r) => r.fauxPositifs),
+    erreursManquees: parCas((r) => r.manquees),
     cout: resultats.reduce((total, { cout: c }) => total + c, 0),
   }
 }
 
-const liste = (ids: readonly string[]) => (ids.length === 0 ? 'aucun' : ids.join(', '))
+const liste = (ids: readonly string[], separateur = ', ') =>
+  ids.length === 0 ? 'aucun' : ids.join(separateur)
 
 const erreurs = ({ erreursIa }: ResultatCas) =>
   erreursIa === undefined ? '-' : erreursIa.length === 0 ? 'aucune' : erreursIa.join(', ')
@@ -185,17 +223,23 @@ const messageDuCas = (r: ResultatCas): string[] => {
   ]
 }
 
-/** Le rapport Markdown écrit dans `prompts/correction/rapports/<date>-v1-<modèle>.md`. */
+/** Le rapport Markdown écrit dans `prompts/correction/rapports/<date>-<version>-<modèle>.md`. */
 export function rapport(
   evaluation: Evaluation,
-  contexte: { date: string; modele: string; empreinteConsigne: string; jeu: string },
+  contexte: {
+    date: string
+    modele: string
+    versionConsigne: string
+    empreinteConsigne: string
+    jeu: string
+  },
 ): string {
   const n = evaluation.resultats.length
   return [
     `# Évaluation de la correction du ${contexte.date}`,
     '',
     `- Modèle : ${contexte.modele}`,
-    `- Consigne : v1 (SHA-256 ${contexte.empreinteConsigne})`,
+    `- Consigne : ${contexte.versionConsigne} (SHA-256 ${contexte.empreinteConsigne})`,
     `- Jeu de test : ${contexte.jeu} (${String(n)} cas)`,
     `- Coût : ${String(evaluation.cout)} millionièmes`,
     '',
@@ -206,6 +250,10 @@ export function rapport(
     `- Ordres glissés suivis : ${liste(evaluation.ordresSuivis)}`,
     `- « Je ne sais pas » avec la réponse complète : ${liste(evaluation.jeNeSaisPasAvecReponseComplete)}`,
     `- Réponses refusées par la validation : ${liste(evaluation.refus)}`,
+    `- Erreurs critiques retenues : ${liste(evaluation.erreursRetenues, ' ; ')}`,
+    `- Erreurs critiques écartées faute de citation dans la réponse : ${liste(evaluation.erreursSansCitation, ' ; ')}`,
+    `- Erreurs critiques retenues à tort (cas où Amine a dit ses erreurs) : ${liste(evaluation.fauxPositifs, ' ; ')}`,
+    `- Erreurs critiques manquées (cas où Amine a dit ses erreurs) : ${liste(evaluation.erreursManquees, ' ; ')}`,
     '',
     '## Détail',
     '',

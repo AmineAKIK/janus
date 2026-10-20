@@ -1,11 +1,20 @@
 import { Manifeste } from '@janus/contrats'
 import demo from '@janus/contrats/fixtures/manifeste-demo.json'
 import { describe, expect, it } from 'vitest'
-import { MESSAGE_MAX, MESSAGE_MIN, moisDe, tireeAuSort, validerSortie } from './policy.ts'
+import {
+  citationTrouvee,
+  MESSAGE_MAX,
+  MESSAGE_MIN,
+  moisDe,
+  tireeAuSort,
+  validerSortie,
+} from './policy.ts'
 
 const MANIFESTE = Manifeste.parse(demo)
 const [source] = MANIFESTE.sources
 const [erreur] = MANIFESTE.erreurs_critiques
+const REPONSE = 'Oui, 01000001 c’est la lettre A, c’est écrit dans les bits.'
+const CITATION = 'c’est la lettre A'
 const MESSAGE = `${'Tu as bien compris que la fiche résume un seul bloc de cours. '.repeat(3)}Reprends maintenant l’exemple du cours pour voir comment l’appliquer.`
 
 const sortie = (surcharge: Record<string, unknown> = {}) =>
@@ -19,13 +28,13 @@ const sortie = (surcharge: Record<string, unknown> = {}) =>
     ...surcharge,
   })
 const motif = (texte: string) => {
-  const validation = validerSortie(texte, MANIFESTE, 'hesitant')
+  const validation = validerSortie(texte, MANIFESTE, 'hesitant', REPONSE)
   return validation.valide ? undefined : validation.motif
 }
 
 describe('validerSortie', () => {
   it('accepte un JSON aux champs exacts', () => {
-    const validation = validerSortie(sortie(), MANIFESTE, 'sur')
+    const validation = validerSortie(sortie(), MANIFESTE, 'sur', REPONSE)
 
     expect(validation).toEqual({
       valide: true,
@@ -34,6 +43,7 @@ describe('validerSortie', () => {
         niveau: 'solide',
         niveauRendu: 'solide',
         erreurs: [],
+        erreursSansCitation: [],
         source: 'deduit',
         ref: '',
         certitude: 'sur',
@@ -81,6 +91,7 @@ describe('validerSortie', () => {
       sortie({ message: `${MESSAGE} Bravo${insecable}!${fine}Encore.` }),
       MANIFESTE,
       'hesitant',
+      REPONSE,
     )
 
     expect(validation.valide && validation.sortie.message.endsWith('Bravo ! Encore.')).toBe(true)
@@ -92,23 +103,50 @@ describe('validerSortie', () => {
     expect(motif(sortie({ source: 'support', ref: source?.id }))).toBeUndefined()
   })
 
+  it('refuse une erreur critique rendue sans citation (forme de la consigne v1)', () => {
+    expect(motif(sortie({ erreurs_critiques: [erreur?.id] }))).toBe(
+      'JSON absent ou aux champs inattendus',
+    )
+  })
+
   it('écarte les erreurs critiques inconnues et les doublons', () => {
+    const cite = (id: string | undefined) => ({ id, citation: CITATION })
     const validation = validerSortie(
-      sortie({ erreurs_critiques: [erreur?.id, 'E99', erreur?.id] }),
+      sortie({ erreurs_critiques: [cite(erreur?.id), cite('E99'), cite(erreur?.id)] }),
       MANIFESTE,
       'hesitant',
+      REPONSE,
     )
 
     expect(validation.valide && validation.sortie.erreurs).toEqual([erreur?.id])
   })
 
+  it('écarte une erreur critique dont la citation n’est pas dans la réponse, et la garde à part', () => {
+    const validation = validerSortie(
+      sortie({
+        niveau: 'solide',
+        erreurs_critiques: [{ id: erreur?.id, citation: 'les bits ont un sens tout seuls' }],
+      }),
+      MANIFESTE,
+      'sur',
+      'Non : 01000001 vaut 65, c’est le codage ASCII qui en fait un A.',
+    )
+
+    expect(validation.valide && validation.sortie).toMatchObject({
+      niveau: 'solide',
+      erreurs: [],
+      erreursSansCitation: [erreur?.id],
+    })
+  })
+
   describe('la règle « erreur critique → niveau » (consigne, règle 10)', () => {
     const niveaux = (texte: string, confiance: 'sur' | 'hesitant' | 'hasard') => {
-      const validation = validerSortie(texte, MANIFESTE, confiance)
+      const validation = validerSortie(texte, MANIFESTE, confiance, REPONSE)
       if (!validation.valide) throw new Error(validation.motif)
       return { niveau: validation.sortie.niveau, rendu: validation.sortie.niveauRendu }
     }
-    const avecErreur = (niveau: string) => sortie({ niveau, erreurs_critiques: [erreur?.id] })
+    const avecErreur = (niveau: string) =>
+      sortie({ niveau, erreurs_critiques: [{ id: erreur?.id, citation: CITATION }] })
 
     it('plafonne à fragile quand une erreur critique du bloc est signalée', () => {
       expect(niveaux(avecErreur('solide'), 'hesitant')).toEqual({
@@ -144,12 +182,26 @@ describe('validerSortie', () => {
     })
 
     it('ne compte pas une erreur inconnue du bloc, ni l’absence d’erreur', () => {
-      expect(niveaux(sortie({ erreurs_critiques: ['E99'] }), 'sur')).toEqual({
+      expect(
+        niveaux(sortie({ erreurs_critiques: [{ id: 'E99', citation: CITATION }] }), 'sur'),
+      ).toEqual({
         niveau: 'solide',
         rendu: 'solide',
       })
       expect(niveaux(sortie(), 'sur')).toEqual({ niveau: 'solide', rendu: 'solide' })
     })
+  })
+})
+
+describe('citationTrouvee', () => {
+  it('retrouve la citation malgré la casse, les apostrophes, les espaces et les guillemets autour', () => {
+    expect(citationTrouvee("« C'est la  lettre a… »", REPONSE)).toBe(true)
+    expect(citationTrouvee('"écrit dans les bits."', REPONSE)).toBe(true)
+  })
+
+  it('refuse une citation absente de la réponse, ou vide', () => {
+    expect(citationTrouvee('c’est un nombre', REPONSE)).toBe(false)
+    expect(citationTrouvee(' … ', REPONSE)).toBe(false)
   })
 })
 
