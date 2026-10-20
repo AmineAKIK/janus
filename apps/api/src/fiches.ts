@@ -147,7 +147,9 @@ function templatesDesItems(html: string): ReadonlyMap<string, string> {
  * Leçons du B01 (AGENTS.md) : on n'explique que ce que l'écran ne montre pas, au plus un tiers des
  * items demandent une explication en prose (`data-justifier`) ; et chaque erreur critique a un item
  * de pratique qui la révèle (`data-erreur="E…"` sur l'option ou l'outil qui la repère), sinon elle
- * n'est vue qu'aux questions, trop tard pour la corriger en s'entraînant.
+ * n'est vue qu'aux questions, trop tard pour la corriger en s'entraînant. Une explication demandée
+ * porte le texte à comparer (`data-fiche`, ou `data-solution` quand la solution dit le pourquoi) :
+ * sans lui, le gabarit montre le résultat, et l'apprenant compare un pourquoi à un calcul.
  */
 function verifierPratique(
   manifeste: Manifeste,
@@ -162,6 +164,17 @@ function verifierPratique(
     signaler(
       `pratique : ${String(avecExplication.length)} items sur ${String(ids.length)} demandent une explication (data-justifier : ${avecExplication.join(', ')}), au plus un tiers (${String(plafond)}) : ce que l’écran montre déjà ne se demande pas.`,
     )
+  }
+  for (const [, genre, id, corps] of sansScriptsNiCommentaires(html).matchAll(
+    /<template\b[^>]*\bdata-(item|variante)\s*=\s*["']([^"']*)["'][^>]*>([\s\S]*?)<\/template\s*>/gi,
+  )) {
+    for (const [balise] of (corps ?? '').matchAll(/<[a-z][^>]*\bdata-justifier\s*=[^>]*>/gi)) {
+      if (!/\bdata-(?:fiche|solution)\s*=/i.test(balise)) {
+        signaler(
+          `pratique : ${genre === 'variante' ? 'la variante de ' : 'l’item '}${String(id)} demande une explication (data-justifier) sans texte à comparer (data-fiche) : l’apprenant comparerait son pourquoi au seul résultat.`,
+        )
+      }
+    }
   }
   for (const erreur of manifeste.erreurs_critiques) {
     const motif = new RegExp(`\\bdata-erreur\\s*=\\s*["']${erreur.id}["']`, 'i')
