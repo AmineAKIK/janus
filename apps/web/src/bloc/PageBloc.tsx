@@ -1,5 +1,5 @@
 import { ROUTES } from '@janus/contrats'
-import { BandeauAlerte, Bouton } from '@janus/ui'
+import { BandeauAlerte, Bouton, DialogueConfirmation } from '@janus/ui'
 import { useEffect, useRef, useState } from 'react'
 import { estIntrouvable, useLecture } from '../api/requetes.tsx'
 import { adresse } from '../routes/navigation.ts'
@@ -22,7 +22,12 @@ import type { EtapeAffichee } from './FilEtapes.tsx'
 import { IframeFiche } from './HoteFiche.tsx'
 import type { SerieVerrou } from './verrou.ts'
 import { etapesVerrouillees, questionsRestantes } from './verrou.ts'
-import { PROBLEMES_POIGNEE_DE_MAIN, TEXTES_BLOC, textesRefus } from './textes.ts'
+import {
+  PROBLEMES_POIGNEE_DE_MAIN,
+  TEXTES_BLOC,
+  TEXTES_RECOMMENCER,
+  textesRefus,
+} from './textes.ts'
 import { useHoteFiche } from './useHoteFiche.ts'
 import type { CorrectionSuivie, DonneesFiche } from './useHoteFiche.ts'
 
@@ -83,6 +88,8 @@ function FicheOuverte({
     (typeof sauvee === 'string' && etapes.some(({ id }) => id === sauvee) ? sauvee : null)
   const [revoir, setRevoir] = useState<string | null>(null)
   const [changerNiveau, setChangerNiveau] = useState<CorrectionSuivie | null>(null)
+  /** Le dialogue « Recommencer la fiche » : fermé, ouvert, ou en train d'écrire l'état vide. */
+  const [recommencer, setRecommencer] = useState<'ferme' | 'ouvert' | 'en_cours'>('ferme')
   const toutesQuestions = [...questions.restitution, ...questions.consolidation]
   const nomErreur = (id: string) =>
     (erreursCritiques.find((erreur) => erreur.id === id)?.libelle ?? id).replace(/\.$/, '')
@@ -160,6 +167,13 @@ function FicheOuverte({
           statut={hote.statut.statut}
           etatEnvoi={envoi.etat}
           gardees={envoi.gardees}
+          surRecommencer={
+            refusee.length === 0
+              ? () => {
+                  setRecommencer('ouvert')
+                }
+              : undefined
+          }
         />
         <FilEtapes
           etapes={etapes}
@@ -183,6 +197,27 @@ function FicheOuverte({
             setRevoir(null)
           }}
         />
+      )}
+      {recommencer !== 'ferme' && (
+        <DialogueConfirmation
+          titre={TEXTES_RECOMMENCER.titre}
+          libelleConfirmer={TEXTES_RECOMMENCER.confirmer}
+          libelleFermer={TEXTES_RECOMMENCER.fermer}
+          enCours={recommencer === 'en_cours'}
+          surAnnuler={() => {
+            // L'état vide est parti : on attend la réponse pour recharger la fiche.
+            if (recommencer === 'ouvert') setRecommencer('ferme')
+          }}
+          surConfirmer={() => {
+            if (recommencer !== 'ouvert') return
+            setRecommencer('en_cours')
+            hote.recommencer(relire, () => {
+              setRecommencer('ferme')
+            })
+          }}
+        >
+          <p>{TEXTES_RECOMMENCER.corps}</p>
+        </DialogueConfirmation>
       )}
       {changerNiveau !== null && (
         <DialogueChangerNiveau

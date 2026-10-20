@@ -32,6 +32,15 @@ export const TEXTES_REVOIR_COURS = {
   fermer: 'Fermer',
 } as const
 
+export const TEXTES_RECOMMENCER = {
+  bouton: 'Recommencer la fiche',
+  titre: 'Recommencer la fiche ?',
+  corps:
+    'La fiche repart de la première étape, avec tous ses champs vides. Ton historique ne change pas : ton statut, tes résultats et les erreurs critiques ouvertes restent.',
+  confirmer: 'Recommencer',
+  fermer: 'Fermer',
+} as const
+
 export const textesRefus = (nombre: number) =>
   `Cette fiche ne peut pas s’ouvrir : son manifeste est incomplet (${nombre === 1 ? '1 problème' : `${String(nombre)} problèmes`}).`
 
