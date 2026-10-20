@@ -10609,6 +10609,22 @@ if (age &lt; 12) {
        * réponse finale. On ne quitte pas une restitution ou une consolidation à moitié faite.
        */
       function resteAFaire(etape) {
+        // La pratique : chaque item réussi, avec ou sans aide (sans aide, il ne compte qu'un autre
+        // jour, et l'apprenant resterait bloqué jusque-là). Une solution vue n'est pas réussie.
+        if (etape.type === 'pratique') {
+          const items = manifeste.pratique.flatMap((exercice) => exercice.items)
+          const reussis = items.filter((item) => etat.pratique[item.id]?.reussi).length
+          if (reussis === items.length) return ''
+          return (
+            'Réussis les ' +
+            items.length +
+            ' items avant de passer à la suite\u00a0: ' +
+            reussis +
+            ' sur\u00a0' +
+            items.length +
+            ' pour l’instant.'
+          )
+        }
         if (etape.type !== 'restitution' && etape.type !== 'consolidation') return ''
         if (!serieOuverte[etape.type]) return ''
         const total = questions(etape.type).length
@@ -11286,6 +11302,7 @@ if (age &lt; 12) {
             )
           })
           boite.dataset.fait = fait?.reussi ? 'oui' : 'non'
+          majPied()
           // La solution a été montrée et l'item n'est pas refait : on le dit, à la place du résultat.
           const aRefaire = Boolean(fait?.solutionVue) && !fait.reussi
           etatItem.textContent = fait

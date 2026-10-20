@@ -49,6 +49,8 @@ export const Fait = z.discriminatedUnion('type', [
     raison: Texte.optional(),
   }),
   z.strictObject({ ...commun, type: z.literal('etape_vue'), etape: Identifiant }),
+  /** La fiche recommencée : son état repart à vide, les étapes déjà vues ne sont plus cochées. */
+  z.strictObject({ ...commun, type: z.literal('fiche_recommencee') }),
   z.strictObject({
     ...commun,
     type: z.literal('pratique_resultat'),

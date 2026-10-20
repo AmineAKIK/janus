@@ -421,9 +421,10 @@ export function useHoteFiche(
   }
 
   /**
-   * Recommencer la fiche : son état repart à vide (première étape, champs vides). Seul l'état de la
-   * page change ; les faits du bloc (réponses envoyées, erreurs critiques, statut) restent. L'écriture
-   * prend la place d'un état encore en attente (même clé) ; `surFait` vient après la réponse.
+   * Recommencer la fiche : son état repart à vide (première étape, champs vides), et les étapes vues
+   * ne sont plus cochées (le serveur garde le fait `fiche_recommencee`). Les preuves, les erreurs
+   * critiques et le statut restent. L'écriture prend la place d'un état encore en attente (même
+   * clé) ; `surFait` vient après la réponse, avec le statut recalculé.
    */
   const recommencer = (surFait: () => void, surRefus: () => void) => {
     const { donnees: courantes } = dernieres.current
@@ -434,10 +435,19 @@ export function useHoteFiche(
         id,
         route: 'PUT /blocs/:id/etat-page',
         params: { id: courantes.bloc },
-        corps: { version: courantes.etatPage?.version ?? 0, etat: {} },
+        corps: { version: courantes.etatPage?.version ?? 0, etat: {}, recommencer: true },
         cle: `etat:${courantes.bloc}`,
       },
-      { surReponse: surFait, surRefus, surConflit: surRefus },
+      {
+        surReponse: (reponse) => {
+          const recalcule = statutDeReponse('PUT /blocs/:id/etat-page', reponse)
+          if (recalcule !== null) appliquerStatut(recalcule)
+          setEtapesVues([])
+          surFait()
+        },
+        surRefus,
+        surConflit: surRefus,
+      },
     )
   }
 

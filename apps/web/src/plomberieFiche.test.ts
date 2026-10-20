@@ -805,6 +805,34 @@ describe('la pratique', () => {
     )
   })
 
+  it('garde « Étape suivante » inactif tant que chaque item n’est pas réussi, aide permise', async () => {
+    const { pont } = pontSimule(auPratique())
+    monter(avecOutil, pont)
+    await screen.findByText('Outil de la fiche')
+
+    const suite = () => screen.getByRole('button', { name: 'Étape suivante' })
+    expect(suite()).toBeDisabled()
+    expect(
+      screen.getByText('Réussis les 3 items avant de passer à la suite : 0 sur 3 pour l’instant.'),
+    ).toBeInTheDocument()
+    verifier({ juste: true, aide: 2 })
+    expect(suite()).toBeDisabled()
+    expect(screen.getByText(/: 1 sur 3 pour l’instant\./)).toBeInTheDocument()
+  })
+
+  it('rend « Étape suivante » actif une fois chaque item réussi, même avec de l’aide', async () => {
+    const suite = () => screen.getByRole('button', { name: 'Étape suivante' })
+    const reussi = { reussi: true, aide: 0, essais: 1 }
+    const { pont: finie } = pontSimule(
+      auPratique({
+        pratique: { 'PR1-1': reussi, 'PR1-2': { ...reussi, aide: 3 }, 'PR1-3': reussi },
+      }),
+    )
+    monter(avecOutil, finie)
+    await screen.findByText('Outil de la fiche')
+    expect(suite()).toBeEnabled()
+  })
+
   it('rappelle l’objectif, replié, à l’entrée de la pratique', async () => {
     const { pont } = pontSimule(auPratique())
     monter(avecOutil, pont)
