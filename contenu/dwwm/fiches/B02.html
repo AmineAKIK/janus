@@ -4855,12 +4855,12 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 4,
+        "version": 5,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 expressions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
         "prerequis": ["B01"],
-        "pont": 2,
+        "pont": 3,
         "contexte_ia": "Bloc B02 du module « Écosystème et outils du développeur » (DWWM), deuxième bloc de la partie La machine. Le modèle du bloc : des données, comparées, donnent des faits qui valent VRAI ou FAUX ; combinés par NON, ET et OU, dans l’ordre de calcul fixé (parenthèses, comparaisons, NON, ET, OU), ils donnent une condition, une seule valeur ; dans une chaîne SI / SINON SI / SINON, la première condition VRAIE, de haut en bas, choisit la seule branche exécutée, et SINON prend les cas où aucune ne l’est. Notations à accepter comme équivalentes : VRAI et FAUX, 1 et 0, true et false ; ET et &&, OU et ||, NON et ! ; en pseudo-code, = compare et ≥, ≤, ≠ s’écrivent ainsi ; en JavaScript, = range une valeur dans une variable (affectation), === compare (égalité stricte), et >=, <=, !== remplacent ≥, ≤, ≠. Le OU logique est inclusif (VRAI OU VRAI = VRAI) ; le ou exclusif s’écrit (A OU B) ET NON (A ET B). Les valeurs limites d’une comparaison sur des entiers : la dernière valeur qui la rend FAUSSE et la première qui la rend VRAIE (17 et 18 pour âge ≥ 18, 18 et 19 pour âge > 18). Quand le « ou » d’une phrase ne permet pas de trancher, la bonne réponse est de demander à l’auteur de la règle. La fiche n’enseigne ni l’opérateur XOR, ni les lois de De Morgan, ni le SI imbriqué, ni ==, ni switch : ne pénalise pas leur absence, et accepte une réponse juste qui les emploie. Pièges à repérer : E1, traiter OU comme exclusif (VRAI OU VRAI jugé FAUX) ; E2, calculer le OU avant le ET (A ET B OU C lu A ET (B OU C)) ; E3, croire que plusieurs branches d’une chaîne s’exécutent, ou que les lignes qui suivent la première VRAIE sont encore testées ; E4, confondre = (affectation), === (égalité stricte) et && (le ET). Une erreur de calcul isolée sur une comparaison n’est pas E2. Pour une explication, examiner : l’idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d’application, le terme exact (condition, valeur booléenne, opérateur logique, table de vérité, OU inclusif, OU exclusif, priorité des opérateurs, structure conditionnelle, branche, valeur limite, affectation, égalité stricte), la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Chaque attendu vient de la fiche : les étapes 3 à 9 et 12 (sources S1 à S8) ; ce qui est marqué « D’après » y est écrit ; ce qui est marqué « Déduit » s’obtient en appliquant une règle de la fiche à un autre cas. L’ordre de calcul et les signes de JavaScript sont redonnés avec chaque question qui s’en sert, comme la table hexadécimale en B01 : ce qui est à retenir, c’est le geste (repérer l’opération qui passe en premier, transcrire une condition), pas la liste.",
         "sources": [
           {
@@ -5462,7 +5462,7 @@ if (age &lt; 12) {
 
     <!-- La bibliothèque du pont est insérée ici au build (packages/pont/scripts/injecter.ts). -->
     <script id="pont">
-      /*! janus-pont v2 e0d9206ca70269418697adcf2f98163d5cbe866bffa46e19e46bd41c3f6dc392 */
+      /*! janus-pont v3 3ae1382c22a0ba99b63129ba69547baa5c870f991757920bd3d265009fc6d4e5 */
       ;(function () {
         function e() {
           return Date.now()
@@ -7031,10 +7031,10 @@ if (age &lt; 12) {
         function Kt(e, t) {
           return new Ue({ check: `less_than`, ...x(t), value: e, inclusive: !0 })
         }
-        function qt(e, t) {
+        function z(e, t) {
           return new We({ check: `greater_than`, ...x(t), value: e, inclusive: !0 })
         }
-        function z(e, t) {
+        function qt(e, t) {
           return new Ke({ check: `max_length`, ...x(t), maximum: e })
         }
         function Jt(e, t) {
@@ -7246,9 +7246,9 @@ if (age &lt; 12) {
           In = 2e5,
           Y = () => V().check(Zt(), Jt(1)),
           Ln = () => V().check(Yt(/^[A-Z]{1,3}\d{2,3}$/)),
-          Rn = () => V().check(z(Pn)),
+          Rn = () => V().check(qt(Pn)),
           X = () => nn({ version: `v7` }),
-          Z = (e) => cn().check(qt(e)),
+          Z = (e) => cn().check(z(e)),
           zn = K([
             `non_commence`,
             `en_cours`,
@@ -7295,7 +7295,7 @@ if (age &lt; 12) {
           Q = { id: X(), bloc: Ln(), version: Z(1), t: Nn({ offset: !0 }) },
           Jn = K([`restitution`, `consolidation`]),
           Yn = an({ protocol: /^https$/ }).check(
-            z(2e3),
+            qt(2e3),
             An(
               (e) => {
                 if (!URL.canParse(e)) return !0
@@ -7325,13 +7325,13 @@ if (age &lt; 12) {
               predictions_justes: Z(0),
               aide: Gn,
             }),
-            G({ ...Q, type: q(`aisance.resultat`), reussi: U(), duree_s: H().check(qt(0)) }),
+            G({ ...Q, type: q(`aisance.resultat`), reussi: U(), duree_s: H().check(z(0)) }),
             G({
               ...Q,
               type: q(`restitution.demande`),
               serie: Jn,
               question: Y(),
-              reponse: V().check(Jt(1), z(Pn)),
+              reponse: V().check(Jt(1), qt(Pn)),
               confiance: Vn,
               relance: Rn(),
               support: G({ colle: U(), retour_cours: U() }),
@@ -7339,7 +7339,7 @@ if (age &lt; 12) {
             G({ ...Q, type: q(`bilan.erreurs`), ids: W(Y()) }),
             G({ ...Q, type: q(`etat.sauver`), etat: qn }),
             G({ ...Q, type: q(`lien.ouvrir`), url: Yn }),
-            G({ ...Q, type: q(`page.taille`), hauteur: cn().check(qt(1), Kt(In)) }),
+            G({ ...Q, type: q(`page.taille`), hauteur: cn().check(z(1), Kt(In)) }),
             G({ ...Q, type: q(`page.haut`) }),
             G({ ...Q, type: q(`correction.accord`), correction: X(), accord: U() }),
           ]),
@@ -7366,6 +7366,7 @@ if (age &lt; 12) {
               etat: En(qn),
               statut: zn,
               serie_ouverte: G({ restitution: U(), consolidation: U() }),
+              aisance: W(G({ le: Nn(), duree_s: H().check(z(0)) })),
               theme: J(K([`clair`, `sombre`, `systeme`])),
             }),
             G({ type: q(`restitution.correction`), ...Zn }),
@@ -10420,6 +10421,12 @@ if (age &lt; 12) {
       let majQuand = () => {}
       /** Le dernier bilan envoyé depuis cette page : son identifiant, pour reconnaître un refus. */
       let bilanEnvoye = null
+      /**
+       * Les séries d'aisance réussies que l'appli connaît (`etat.init`), `{ le, duree_s }` de la plus
+       * ancienne à la plus récente : elles reviennent à l'outil dans `fiche:rendu` (`detail.aisance`),
+       * pour qu'il relise ses niveaux même quand l'état de la page a été vidé. Vide hors de l'appli.
+       */
+      let aisanceServeur = []
 
       function enregistrer() {
         pont.sauver(etat)
@@ -12180,7 +12187,9 @@ if (age &lt; 12) {
         // Point d'accroche des fiches : le HTML libre de l'étape est en place, son script peut l'animer.
         // Les traces gardées (fiche:trace) lui reviennent avec.
         document.dispatchEvent(
-          new CustomEvent('fiche:rendu', { detail: { etape, traces: { ...(etat.traces ?? {}) } } }),
+          new CustomEvent('fiche:rendu', {
+            detail: { etape, traces: { ...(etat.traces ?? {}) }, aisance: [...aisanceServeur] },
+          }),
         )
       }
 
@@ -12232,11 +12241,13 @@ if (age &lt; 12) {
         $('mode').textContent = mode === 'appli' ? 'Dans l’appli' : 'Mode autonome'
         if (depart.init) {
           serieOuverte = depart.init.serie_ouverte
+          aisanceServeur = depart.init.aisance ?? []
           dernierStatut ??= { statut: depart.init.statut, manque: null }
           $('statut').textContent =
             'Statut\u00a0: ' + (LIBELLES_STATUT[depart.init.statut] ?? depart.init.statut)
         }
         pont.surInit((init) => {
+          aisanceServeur = init.aisance ?? []
           const consolidationChangee =
             serieOuverte.consolidation !== init.serie_ouverte.consolidation
           serieOuverte = init.serie_ouverte

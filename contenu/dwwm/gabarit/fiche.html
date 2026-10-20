@@ -1124,7 +1124,7 @@
         "titre_court": "À REMPLACER",
         "objectif": "À REMPLACER : ce que tu sauras faire à la fin, vérifiable en une phrase.",
         "prerequis": [],
-        "pont": 2,
+        "pont": 3,
         "contexte_ia": "À REMPLACER : ce que le correcteur doit savoir du bloc (1 500 mots au plus) : notions, vocabulaire, pièges.",
         "sources": [
           {
@@ -1578,6 +1578,12 @@
       let majQuand = () => {}
       /** Le dernier bilan envoyé depuis cette page : son identifiant, pour reconnaître un refus. */
       let bilanEnvoye = null
+      /**
+       * Les séries d'aisance réussies que l'appli connaît (`etat.init`), `{ le, duree_s }` de la plus
+       * ancienne à la plus récente : elles reviennent à l'outil dans `fiche:rendu` (`detail.aisance`),
+       * pour qu'il relise ses niveaux même quand l'état de la page a été vidé. Vide hors de l'appli.
+       */
+      let aisanceServeur = []
 
       function enregistrer() {
         pont.sauver(etat)
@@ -3338,7 +3344,9 @@
         // Point d'accroche des fiches : le HTML libre de l'étape est en place, son script peut l'animer.
         // Les traces gardées (fiche:trace) lui reviennent avec.
         document.dispatchEvent(
-          new CustomEvent('fiche:rendu', { detail: { etape, traces: { ...(etat.traces ?? {}) } } }),
+          new CustomEvent('fiche:rendu', {
+            detail: { etape, traces: { ...(etat.traces ?? {}) }, aisance: [...aisanceServeur] },
+          }),
         )
       }
 
@@ -3390,11 +3398,13 @@
         $('mode').textContent = mode === 'appli' ? 'Dans l’appli' : 'Mode autonome'
         if (depart.init) {
           serieOuverte = depart.init.serie_ouverte
+          aisanceServeur = depart.init.aisance ?? []
           dernierStatut ??= { statut: depart.init.statut, manque: null }
           $('statut').textContent =
             'Statut\u00a0: ' + (LIBELLES_STATUT[depart.init.statut] ?? depart.init.statut)
         }
         pont.surInit((init) => {
+          aisanceServeur = init.aisance ?? []
           const consolidationChangee =
             serieOuverte.consolidation !== init.serie_ouverte.consolidation
           serieOuverte = init.serie_ouverte

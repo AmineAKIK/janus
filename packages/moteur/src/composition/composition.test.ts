@@ -3,7 +3,7 @@ import { apres, DEBUT, fabrique, jusquaProvisoire, MANIFESTE, REGLAGES } from '.
 import { calculerBloc } from '../statut.ts'
 import type { ResultatBloc } from '../statut.ts'
 import type { BlocImporte } from './bloc.ts'
-import { cinqPreuvesDuBloc, statutDuBloc } from './bloc.ts'
+import { aisanceReussies, cinqPreuvesDuBloc, statutDuBloc } from './bloc.ts'
 import { composerExport, composerJournal, ligneDuJournal } from './journal.ts'
 import { composerTableau, PERIODE_PAR_DEFAUT } from './tableau.ts'
 
@@ -340,5 +340,18 @@ describe('le journal', () => {
     const trouvee = ligneDuJournal(ligne?.id ?? '', { blocs: BLOCS, faits, reglages: REGLAGES })
     expect(trouvee?.bloc).toBe(MANIFESTE.bloc)
     expect(ligneDuJournal('absente', { blocs: BLOCS, faits, reglages: REGLAGES })).toBeUndefined()
+  })
+})
+
+describe('aisanceReussies', () => {
+  it('garde les séries réussies, de la plus ancienne à la plus récente', () => {
+    const g = fabrique()
+    const tard = g.aisance(apres(DEBUT, 2), 18.2)
+    const ratee = g.aisance(apres(DEBUT, 1, 1), 40, false)
+    const tot = g.aisance(apres(DEBUT, 1), 27.5)
+    expect(aisanceReussies([tard, ratee, tot, g.etape(DEBUT, 'ET1')])).toEqual([
+      { le: tot.date, duree_s: 27.5 },
+      { le: tard.date, duree_s: 18.2 },
+    ])
   })
 })

@@ -1,5 +1,6 @@
 import { StatutBloc } from '@janus/contrats'
-import type { CinqPreuves, Manifeste, Reglages } from '@janus/contrats'
+import type { CinqPreuves, Fait, Manifeste, Reglages } from '@janus/contrats'
+import { instantEnMs } from '../temps.ts'
 import { preuvesDuBloc } from '../cartes.ts'
 import type { ResultatBloc } from '../statut.ts'
 
@@ -56,4 +57,20 @@ export function cinqPreuvesDuBloc(resultat: ResultatBloc, reglages: Reglages): C
           },
     aisance: preuves.aisance,
   }
+}
+
+/**
+ * Les séries d'aisance réussies, de la plus ancienne à la plus récente : la page y relit ses niveaux
+ * (un recommencement vide son état, pas ces faits).
+ */
+export function aisanceReussies(
+  faits: readonly Fait[],
+): { readonly le: string; readonly duree_s: number }[] {
+  return faits
+    .flatMap((fait) =>
+      fait.type === 'aisance_resultat' && fait.reussi
+        ? [{ le: fait.date, duree_s: fait.dureeS }]
+        : [],
+    )
+    .sort((a, b) => instantEnMs(a.le) - instantEnMs(b.le))
 }

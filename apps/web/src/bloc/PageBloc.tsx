@@ -425,6 +425,7 @@ export function PageBloc({
           avancement: detail.avancement,
           serieOuverte: detail.serie_ouverte,
           etatPage: detail.etat_page,
+          aisanceReussies: detail.aisance_reussies,
         }}
         titre={detail.manifeste.titre}
         moduleId={detail.module}

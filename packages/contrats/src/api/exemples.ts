@@ -177,6 +177,7 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
       },
       fiche_url: 'https://fiches.example.org/D01/3/index.html',
       etat_page: { version: 2, etat: { etape: 'ET3' } },
+      aisance_reussies: [{ le: INSTANT, duree_s: 24.5 }],
     },
     invalides: [
       { partie: 'params', valeur: { id: 'bloc' } },

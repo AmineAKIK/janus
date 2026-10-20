@@ -85,6 +85,7 @@ export const EXEMPLES_APPLI = {
     etat: { etape: 'ET3' },
     statut: 'en_cours',
     serie_ouverte: { restitution: true, consolidation: false },
+    aisance: [{ le: '2026-06-01T10:00:00Z', duree_s: 24.5 }],
     theme: 'sombre',
   },
   'restitution.correction': { type: 'restitution.correction', ...EXEMPLE_CORRECTION },

@@ -10,6 +10,7 @@ import {
 } from '@janus/contrats'
 import {
   accesBloc,
+  aisanceReussies,
   calculerBloc,
   cinqPreuvesDuBloc,
   instantEnMs,
@@ -296,6 +297,7 @@ export function creerServiceLecture({ base, depot, horloge, fichesUrl }: Dependa
         fiche_url: `${racine}/${version.chemin}`,
         etat_page:
           page === undefined ? null : { version: page.version, etat: EtatPage.parse(page.etat) },
+        aisance_reussies: aisanceReussies(faits),
       }
     },
 
