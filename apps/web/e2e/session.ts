@@ -1,5 +1,7 @@
+import { mkdirSync, writeFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { expect } from '@playwright/test'
-import type { FrameLocator, Locator, Page } from '@playwright/test'
+import type { FrameLocator, Locator, Page, test } from '@playwright/test'
 
 /** Ouvre une session de démonstration par l'écran de connexion, comme le ferait Amine. */
 export async function ouvrirSession(page: Page): Promise<void> {
@@ -123,4 +125,43 @@ export async function cliquerEtape(page: Page, nom: string): Promise<void> {
       .getByRole('navigation', { name: 'Étapes de la fiche' })
       .getByRole('button', { name: nom, exact: true }),
   )
+}
+
+/**
+ * Quand un test de la suite échoue, écrit `diagnostic.txt` à côté de sa trace : la console du
+ * navigateur et le texte de la fiche. Le rapport de Playwright ne dit ni l'un ni l'autre (son arbre
+ * d'accessibilité s'arrête à l'iframe), et c'est ce qu'il faut lire quand la fiche n'a pas réagi.
+ */
+export function diagnostiquerLesEchecs(suite: typeof test): void {
+  const journaux = new WeakMap<Page, string[]>()
+  suite.beforeEach(({ page }) => {
+    const lignes: string[] = []
+    page.on('console', (message) => {
+      lignes.push(`[console ${message.type()}] ${message.text()}`)
+    })
+    page.on('pageerror', (erreur) => {
+      lignes.push(`[pageerror] ${erreur.message}`)
+    })
+    journaux.set(page, lignes)
+  })
+  suite.afterEach(async ({ page }, info) => {
+    if (info.status === info.expectedStatus) return
+    const fiche = await page
+      .frameLocator('iframe')
+      .locator('body')
+      .innerText({ timeout: 2000 })
+      .catch((erreur: unknown) => `(fiche illisible : ${String(erreur)})`)
+    mkdirSync(info.outputDir, { recursive: true })
+    writeFileSync(
+      join(info.outputDir, 'diagnostic.txt'),
+      [
+        '== Console du navigateur',
+        ...(journaux.get(page) ?? []),
+        '',
+        '== Texte de la fiche',
+        fiche,
+        '',
+      ].join('\n'),
+    )
+  })
 }
