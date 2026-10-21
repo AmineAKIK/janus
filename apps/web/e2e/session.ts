@@ -143,7 +143,33 @@ export function diagnostiquerLesEchecs(suite: typeof test): void {
       lignes.push(`[pageerror] ${erreur.message}`)
     })
     // Les appels refusés ou perdus : un 409 ou un 401 dans la file d'envoi ne se voit pas ailleurs.
-    page.on('response', (reponse) => {
+    page.on('load', () => {
+      lignes.push(`[page chargée] ${page.url()}`)
+    })
+    page.on('response', async (reponse) => {
+      const requete = reponse.request()
+      // L'état d'une page : la version lue, envoyée et rendue, qui dit d'où vient un 409.
+      if (requete.method() === 'PUT' && requete.url().endsWith('/etat-page')) {
+        const envoyee = (requete.postDataJSON() as { version?: number } | null)?.version
+        const rendue = await reponse
+          .json()
+          .then((corps: { version?: number }) => String(corps.version))
+          .catch(() => '?')
+        lignes.push(
+          `[état ${String(reponse.status())}] ${requete.url()} : version envoyée ${String(envoyee)}, serveur ${rendue}`,
+        )
+        return
+      }
+      if (requete.method() === 'GET' && /\/api\/blocs\/[^/]+$/u.test(requete.url())) {
+        const lue = await reponse
+          .json()
+          .then((corps: { etat_page?: { version?: number } | null }) =>
+            String(corps.etat_page?.version ?? 0),
+          )
+          .catch(() => '?')
+        lignes.push(`[lecture ${String(reponse.status())}] ${requete.url()} : version ${lue}`)
+        return
+      }
       if (reponse.status() >= 400) {
         lignes.push(
           `[réponse ${String(reponse.status())}] ${reponse.request().method()} ${reponse.url()}`,
