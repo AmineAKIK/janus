@@ -423,10 +423,23 @@ describe('une série de questions', () => {
     expect(screen.getByText('Ma réponse à R1.')).toBeInTheDocument()
     expect(screen.getByText('Juste, mais collée.')).toBeInTheDocument()
     expect(screen.getByText('Ne compte pas · Avec support')).toBeInTheDocument()
+    // Un complément ne compte jamais : il ne refermerait pas l'erreur, la carte ne le propose pas.
+    expect(screen.queryByRole('button', { name: 'Compléter ma réponse' })).toBeNull()
 
     // Commencée, la reprise ne montre plus que la question, sans sa correction.
     fireEvent.click(screen.getByRole('button', { name: 'Commencer' }))
     expect(screen.queryByText('Juste, mais collée.')).toBeNull()
+  })
+
+  it('une réponse nouvelle remplace les erreurs repérées sur sa question', async () => {
+    const { pont, sauvees } = pontSimule(
+      { ...aLEtape('ET4'), erreurs: { R1: ['E1'], 'outil:PR1-1': ['E1'] }, aCocher: ['E1'] },
+      correction,
+    )
+    monter(GABARIT, pont)
+    fireEvent.click(await screen.findByRole('button', { name: 'Commencer' }))
+    await repondreATout()
+    expect(sauvees.at(-1)).toMatchObject({ erreurs: { R1: [], 'outil:PR1-1': ['E1'] } })
   })
 
   it('la série finie, une réponse qui n’est pas solide se complète une fois, sans compter', async () => {

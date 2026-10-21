@@ -4855,7 +4855,7 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 7,
+        "version": 8,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 expressions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
@@ -11478,7 +11478,13 @@ if (age &lt; 12) {
             bulleCorrection(gardee.relance.correction),
             ...accordSur(gardee.relance.correction),
           )
-        else if (gardee.premiere.niveau !== 'solide' && serieOuverte[serie]) {
+        else if (
+          gardee.premiere.niveau !== 'solide' &&
+          serieOuverte[serie] &&
+          !aRefaire(serie).includes(question)
+        ) {
+          // Une question à reprendre ne se complète pas : un complément (second tour) ne compte
+          // jamais, il ne refermerait pas l'erreur. Seule une réponse nouvelle le peut.
           const completer = creer(
             'div',
             { className: 'actions' },
@@ -11812,6 +11818,9 @@ if (age &lt; 12) {
               relance: relance ? premiere.message : '',
               support: { colle, retour_cours: etat.retourCours },
             })
+            // Une réponse nouvelle remplace ce que la précédente avait fait repérer sur cette
+            // question ; un complément s'y ajoute.
+            if (!relance) etat.erreurs = { ...(etat.erreurs ?? {}), [question.id]: [] }
             noterReperees(question.id, correction.erreurs_critiques)
             figer()
             bouton.hidden = true

@@ -2635,7 +2635,13 @@
             bulleCorrection(gardee.relance.correction),
             ...accordSur(gardee.relance.correction),
           )
-        else if (gardee.premiere.niveau !== 'solide' && serieOuverte[serie]) {
+        else if (
+          gardee.premiere.niveau !== 'solide' &&
+          serieOuverte[serie] &&
+          !aRefaire(serie).includes(question)
+        ) {
+          // Une question à reprendre ne se complète pas : un complément (second tour) ne compte
+          // jamais, il ne refermerait pas l'erreur. Seule une réponse nouvelle le peut.
           const completer = creer(
             'div',
             { className: 'actions' },
@@ -2969,6 +2975,9 @@
               relance: relance ? premiere.message : '',
               support: { colle, retour_cours: etat.retourCours },
             })
+            // Une réponse nouvelle remplace ce que la précédente avait fait repérer sur cette
+            // question ; un complément s'y ajoute.
+            if (!relance) etat.erreurs = { ...(etat.erreurs ?? {}), [question.id]: [] }
             noterReperees(question.id, correction.erreurs_critiques)
             figer()
             bouton.hidden = true
