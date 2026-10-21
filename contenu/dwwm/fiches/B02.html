@@ -4855,7 +4855,7 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 10,
+        "version": 11,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 expressions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
@@ -11573,6 +11573,15 @@ if (age &lt; 12) {
                 ' de nouveau à une question marquée «\u00a0À reprendre\u00a0»\u00a0: une réponse solide la referme.',
             }),
           )
+        else if (serie === 'consolidation' && refaire.length > 0)
+          section.append(
+            creer('p', {
+              textContent:
+                'Consolidation à refaire\u00a0: ' +
+                direConsolidationARefaire(consolidationARefaire()) +
+                ' Réponds de nouveau à chaque question, sans rouvrir le cours.',
+            }),
+          )
         else if (finie)
           section.append(
             creer('p', {
@@ -11920,12 +11929,35 @@ if (age &lt; 12) {
       }
 
       /**
-       * Les questions de restitution déjà répondues qui touchent une erreur critique ouverte. Une erreur
-       * ouverte rouvre la restitution, et une réponse solide à une question qui la touche la referme.
-       * Seulement dans l'appli : hors de l'appli, rien ne referme une erreur.
+       * La consolidation est à refaire quand toutes ses réponses sont envoyées mais que l'appli en
+       * attend encore une série qui compte : des réponses qui ne comptent pas (retour au cours,
+       * recopiées, non vérifiées), ou un seuil non atteint. Rend le manque qui le dit, ou null.
+       */
+      function consolidationARefaire() {
+        if (reponsesFinies('consolidation') !== manifeste.consolidation.length) return null
+        if (!Array.isArray(dernierStatut?.manque)) return null
+        return (
+          dernierStatut.manque.find(
+            (m) => m.code === 'consolidation_a_faire' || m.code === 'consolidation_insuffisante',
+          ) ?? null
+        )
+      }
+      /** Pourquoi la consolidation est à refaire, d'après le manque. */
+      const direConsolidationARefaire = (manque) =>
+        manque.code === 'consolidation_insuffisante'
+          ? 'tes réponses n’ont pas atteint le seuil.'
+          : 'tes réponses n’ont pas compté pour le statut (chacune dit pourquoi sous sa correction).'
+      /**
+       * Les questions d'une série déjà répondues qui se reposent : en restitution, celles qui touchent
+       * une erreur critique ouverte (une erreur ouverte rouvre la restitution, et une réponse solide à
+       * une question qui la touche la referme) ; en consolidation, toutes, quand la série faite n'a pas
+       * compté. Seulement dans l'appli : hors de l'appli, rien ne referme une erreur.
        */
       function aRefaire(serie) {
-        if (mode !== 'appli' || serie !== 'restitution' || !serieOuverte.restitution) return []
+        if (mode !== 'appli' || !serieOuverte[serie]) return []
+        if (serie === 'consolidation')
+          return consolidationARefaire() === null ? [] : questions(serie)
+        if (serie !== 'restitution') return []
         const ouvertes = erreursOuvertes()
         return questions(serie).filter(
           (q) => etat.envoyees[q.id] && (q.erreurs ?? []).some((e) => ouvertes.includes(e)),
@@ -11973,18 +12005,25 @@ if (age &lt; 12) {
         }
         const lignes = [ligneRestitution]
         const totalConsolidation = manifeste.consolidation.length
+        // La ligne de la consolidation change quand le statut dit que la série faite n'a pas compté.
+        let direConsolidation = () => {}
         if (totalConsolidation > 0) {
           const finies = reponsesFinies('consolidation')
-          lignes.push(
-            serieOuverte.consolidation || finies > 0
-              ? ligne(
-                  finies === totalConsolidation,
-                  finies === totalConsolidation
-                    ? 'Consolidation faite.'
-                    : 'Consolidation\u00a0: ' + finies + ' sur\u00a0' + totalConsolidation + '.',
-                )
-              : ligne(false, 'Consolidation\u00a0: pas encore ouverte.'),
-          )
+          const ligneConsolidation = ligne(false, '')
+          direConsolidation = () => {
+            const manque = consolidationARefaire()
+            const faite = finies === totalConsolidation && manque === null
+            ligneConsolidation.dataset.fait = faite ? 'oui' : 'non'
+            ligneConsolidation.textContent = !(serieOuverte.consolidation || finies > 0)
+              ? 'Consolidation\u00a0: pas encore ouverte.'
+              : finies !== totalConsolidation
+                ? 'Consolidation\u00a0: ' + finies + ' sur\u00a0' + totalConsolidation + '.'
+                : manque === null
+                  ? 'Consolidation faite.'
+                  : 'Consolidation à refaire\u00a0: ' + direConsolidationARefaire(manque)
+          }
+          direConsolidation()
+          lignes.push(ligneConsolidation)
         }
         const items = manifeste.pratique.flatMap((exercice) => exercice.items)
         if (items.length > 0) {
@@ -12152,6 +12191,7 @@ if (age &lt; 12) {
           }
           majCases()
           majRestitution()
+          direConsolidation()
           direBouton()
         }
         const section = creer(
@@ -12246,11 +12286,20 @@ if (age &lt; 12) {
           return
         }
         pont.surStatut(({ statut, manque }) => {
+          const consolidationAvant = aRefaire('consolidation').length > 0
           dernierStatut = { statut, manque }
           $('statut').textContent = 'Statut\u00a0: ' + (LIBELLES_STATUT[statut] ?? statut)
           if (bilanEnvoye !== null && bilanEnvoye.statut === null) bilanEnvoye.statut = statut
           majBilan()
           majQuand()
+          // La consolidation affichée se repose, ou cesse de se reposer, d'après ce statut : elle se
+          // redessine, sauf pendant une série (une réponse en cours d'écriture serait effacée).
+          if (
+            aRefaire('consolidation').length > 0 !== consolidationAvant &&
+            etapes.find((e) => e.id === etat.etape)?.type === 'consolidation' &&
+            serieEnCours() === undefined
+          )
+            afficher()
         })
         pont.surErreur((erreur) => {
           $('statut').textContent = 'Erreur\u00a0: ' + erreur.detail
@@ -12293,11 +12342,13 @@ if (age &lt; 12) {
         }
         pont.surInit((init) => {
           aisanceServeur = init.aisance ?? []
-          const consolidationChangee =
-            serieOuverte.consolidation !== init.serie_ouverte.consolidation
+          const serieChangee =
+            serieOuverte.consolidation !== init.serie_ouverte.consolidation ||
+            serieOuverte.restitution !== init.serie_ouverte.restitution
           serieOuverte = init.serie_ouverte
-          // Redessiner efface une réponse en cours d'écriture : seulement quand la consolidation s'ouvre.
-          if (consolidationChangee) afficher()
+          // Redessiner efface une réponse en cours d'écriture : seulement quand une série s'ouvre ou
+          // se ferme (rien ne s'y écrit à ce moment-là).
+          if (serieChangee) afficher()
           else {
             majPied()
             majBilan()
