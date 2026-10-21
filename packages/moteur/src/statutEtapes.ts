@@ -441,7 +441,8 @@ export class SuiviAisance {
 
   avancer(fait: Fait): void {
     const cible = this.#cible
-    if (cible === undefined || this.#date !== null) return
+    if (cible === undefined) return
+    // Plus de palier : la cible est atteinte, les séries suivantes sont de l'entraînement.
     const palier = cible.paliers_s[this.#paliers]
     if (palier === undefined) return
     if (fait.type !== 'aisance_resultat' || !fait.reussi || fait.dureeS > palier) return

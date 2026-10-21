@@ -44,6 +44,17 @@ describe('aisanceDesBlocs', () => {
       // Autre bloc.
       essai('B03', '2026-10-13T11:00:00Z', true, 10),
     ]
+    const complets: Fait[] = [
+      ...faits,
+      // Palier 3 (30 s) validé : la cible est atteinte.
+      essai('B02', '2026-10-15T11:00:00Z', true, 28),
+      // Après la cible, une série ne change plus rien.
+      essai('B02', '2026-10-16T11:00:00Z', true, 12),
+    ]
+    expect(aisanceDesBlocs([avecCible], complets, REGLAGES)[0]?.cible).toMatchObject({
+      paliersReussis: 3,
+      meilleurS: 12,
+    })
     const [ligne] = aisanceDesBlocs([avecCible], faits, REGLAGES)
     expect(ligne).toEqual({
       bloc: 'B02',
