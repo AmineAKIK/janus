@@ -649,6 +649,82 @@ describe('le cours pendant une série', () => {
   })
 })
 
+describe('une consolidation faite qui ne compte pas', () => {
+  const restitution = Object.fromEntries(
+    ['R1', 'R2', 'R3', 'R4', 'R5'].map((id) => [id, { reponse: 'Réponse.', confiance: 'sur' }]),
+  )
+  const consolidation = Object.fromEntries(
+    ['C1', 'C2', 'C3'].map((id) => [id, { reponse: 'Ma réponse.', confiance: 'sur' }]),
+  )
+  const corrigees = Object.fromEntries(
+    ['C1', 'C2', 'C3'].map((id) => [
+      id,
+      {
+        premiere: {
+          id: 'c-' + id,
+          niveau: 'solide',
+          message: 'Bien, mais avec le cours.',
+          compte: false,
+          raison_non_compte: 'avec_support',
+        },
+        relance: null,
+      },
+    ]),
+  )
+  const faite = {
+    ...aLEtape('ET5'),
+    envoyees: { ...restitution, ...consolidation },
+    corrigees,
+  }
+  const ouvertes = { restitution: false, consolidation: true }
+  const aFaire = { statut: 'vu', manque: [{ code: 'consolidation_a_faire' }] }
+
+  it('se repose quand le statut dit qu’elle est à faire, avec les dernières réponses relues', async () => {
+    const { pont, direStatut } = pontSimule(faite, undefined, ouvertes)
+    monter(GABARIT, pont)
+    await screen.findByText(/Consolidation terminée/)
+    expect(screen.queryByRole('button', { name: 'Commencer' })).toBeNull()
+
+    direStatut(aFaire)
+    expect(await screen.findByText(/Consolidation à refaire/)).toHaveTextContent(
+      'tes réponses n’ont pas compté pour le statut',
+    )
+    expect(
+      screen.getByRole('heading', { name: 'Tes dernières réponses à reprendre' }),
+    ).toBeVisible()
+    expect(screen.getAllByText('Ne compte pas · Avec support')).toHaveLength(3)
+    expect(screen.queryByRole('button', { name: 'Compléter ma réponse' })).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Commencer' }))
+    expect(screen.getAllByRole('textbox')).toHaveLength(1)
+  })
+
+  it('reste faite quand le statut n’attend plus rien d’elle', async () => {
+    const { pont, direStatut } = pontSimule(faite, undefined, ouvertes)
+    monter(GABARIT, pont)
+    await screen.findByText(/Consolidation terminée/)
+    direStatut({ statut: 'vu', manque: [{ code: 'pratique_aide' }] })
+    expect(screen.queryByText(/Consolidation à refaire/)).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Commencer' })).toBeNull()
+  })
+
+  it('le bilan le dit, au lieu de « Consolidation faite »', async () => {
+    const { pont, direStatut } = pontSimule(
+      { ...faite, etape: 'ET6', bilan: { ids: [] } },
+      undefined,
+      ouvertes,
+    )
+    monter(GABARIT, pont)
+    expect(await screen.findByText('Consolidation faite.')).toBeInTheDocument()
+    direStatut({
+      statut: 'vu',
+      manque: [{ code: 'consolidation_insuffisante', points: 2, requis: 4 }],
+    })
+    expect(
+      screen.getByText('Consolidation à refaire : tes réponses n’ont pas atteint le seuil.'),
+    ).toHaveAttribute('data-fait', 'non')
+  })
+})
+
 describe('les traces de la fiche', () => {
   it('garde ce qu’un outil émet sur fiche:trace et le lui rend dans fiche:rendu', async () => {
     const { pont, sauvees } = pontSimule(aLEtape('ET2'))
