@@ -259,10 +259,17 @@ export async function jouerLaRestitution(
     await item.locator('textarea').fill(reponse(question))
     await item.getByLabel('Sûr').check()
     await item.getByRole('button', { name: 'Envoyer', exact: true }).click()
-    // La dernière réponse redessine la série avec ses corrections : « Envoyée. » n'y est plus. En
-    // reprise, la série se referme dès qu'une réponse solide a refermé l'erreur, avant la dernière question.
+    // La question suivante n'arrive qu'avec la correction de celle-ci ; la dernière réponse redessine la
+    // série avec ses corrections. En reprise, la série se referme dès qu'une réponse solide a refermé
+    // l'erreur, avant la dernière question : on attend la suite, une autre question ou la fin, pas
+    // « Envoyée. » (la zone envoyée met un instant à se figer : elle ne compte pas comme suivante).
     const terminee = fiche.getByText(/^Restitution terminée/)
-    await expect(item.getByText(/^Envoyée\./).or(terminee)).toBeVisible({ timeout: 15_000 })
+    const suivante = active.filter({ hasNotText: libelle })
+    await expect
+      .poll(async () => (await terminee.isVisible()) || (await suivante.count()) === 1, {
+        timeout: 15_000,
+      })
+      .toBe(true)
     if (await terminee.isVisible()) break
   }
   await expect(fiche.getByText(/^Restitution terminée/)).toBeVisible({ timeout: 15_000 })
@@ -296,8 +303,15 @@ export async function recommencerLaFiche(page: Page, bloc: string) {
   await dialogue.getByRole('button', { name: 'Recommencer' }).click()
   await expect(dialogue).toHaveCount(0)
   await attendreFiche(page, bloc)
-  // Le serveur a reçu l'état vide : la fiche repart de zéro, et la version de l'état le dit.
-  await attendreEtatSauve(page.request, bloc, (etat) => Object.keys(etat).length === 0)
+  // Le serveur a reçu l'état vide. La fiche rechargée sauve aussitôt son état de départ (première
+  // étape, rien d'envoyé) : on attend un état sans réponses ni bilan, pas un état vide.
+  await attendreEtatSauve(
+    page.request,
+    bloc,
+    (etat) =>
+      etat['bilan'] === undefined &&
+      Object.keys((etat['envoyees'] as Record<string, unknown> | undefined) ?? {}).length === 0,
+  )
 }
 
 // --- Les vérifications -----------------------------------------------------
