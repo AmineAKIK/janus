@@ -6,6 +6,7 @@ import {
   MessagePage,
   TAILLE_MAX_ETAT_OCTETS,
   TAILLE_MAX_REPONSE,
+  CLES_DU_SERVEUR,
 } from './pont.ts'
 
 const TYPES_PAGE = [
@@ -174,6 +175,18 @@ describe('les messages de la page vers l’appli', () => {
     expect(
       MessagePage.safeParse({ ...base, etat: rempli(TAILLE_MAX_ETAT_OCTETS + 1) }).success,
     ).toBe(false)
+  })
+
+  it('etat.sauver : ne porte pas ce que le serveur calcule', () => {
+    const base = EXEMPLES_PAGE['etat.sauver']
+    for (const cle of CLES_DU_SERVEUR) {
+      expect(MessagePage.safeParse({ ...base, etat: { etape: 'ET1', [cle]: true } }).success).toBe(
+        false,
+      )
+    }
+    expect(MessagePage.safeParse({ ...base, etat: { etape: 'ET1', envoyees: {} } }).success).toBe(
+      true,
+    )
   })
 
   it('etat.sauver : compte les octets, pas les caractères', () => {

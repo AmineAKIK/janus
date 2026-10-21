@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest'
 import type { Niveau, Statut } from '@janus/contrats'
 import { apres, DEBUT, fabrique, MANIFESTE, REGLAGES } from './fabrique.ts'
 import type { Fait, ReponseVerification } from './faits.ts'
+import { seriesOuvertes } from './series.ts'
 import { calculerBloc } from './statut.ts'
+import { jourDe } from './temps.ts'
 
 const NIVEAUX: readonly Niveau[] = ['solide', 'partiel', 'fragile', 'pas_encore']
 const SERIES = ['restitution', 'consolidation', 'rappel'] as const
@@ -164,6 +166,48 @@ describe('propriétés du calcul de statut', () => {
         const resultat = calcul([...faits, f.cochee(derniere, 'E1')])
         expect(resultat.erreursOuvertes).toContain('E1')
         expect(resultat.statutCalcule).toBe('a_reprendre')
+      }),
+    )
+  })
+
+  // Leçon du B01 (PR #275, #276, #281) : un bloc s'est retrouvé sans issue, à attendre une série que
+  // rien ne rouvrait. Ces propriétés disent qu'un bloc non acquis a toujours un manque, que ce
+  // manque est faisable maintenant ou porte la date où il le devient, et qu'une attente finit.
+  it('un bloc non acquis a toujours un manque, faisable maintenant ou daté', () => {
+    fc.assert(
+      fc.property(faitsAleatoires, fc.integer({ min: 0, max: 400 }), (faits, jours) => {
+        const maintenant = apres(DEBUT, jours)
+        const resultat = calcul(faits, maintenant)
+        const aujourdhui = jourDe(maintenant, REGLAGES.fuseau, REGLAGES.heureBascule)
+        if (resultat.statutCalcule !== 'acquis' && resultat.statutCalcule !== 'maitrise') {
+          expect(resultat.manque.length).toBeGreaterThan(0)
+        }
+        for (const manque of resultat.manque) {
+          if (manque.code.endsWith('_a_venir')) {
+            expect(manque.apres).toBeDefined()
+            expect(aujourdhui < (manque.apres ?? '')).toBe(true)
+          }
+          if (manque.code === 'verification_a_faire' || manque.code === 'retest_a_faire') {
+            expect(manque.apres).toBeDefined()
+            expect((manque.apres ?? '') <= aujourdhui).toBe(true)
+          }
+          // Un statut forcé par Amine ferme la restitution : il tient lieu de preuve.
+          if (
+            resultat.force === null &&
+            (manque.code === 'restitution_incomplete' || manque.code === 'erreur_ouverte')
+          ) {
+            expect(seriesOuvertes(resultat).restitution).toBe(true)
+          }
+        }
+      }),
+    )
+  })
+
+  it('une attente finit toujours : assez tard, plus rien n’est « à venir »', () => {
+    fc.assert(
+      fc.property(faitsAleatoires, (faits) => {
+        const resultat = calcul(faits, apres(DEBUT, 2000))
+        expect(resultat.manque.some((manque) => manque.code.endsWith('_a_venir'))).toBe(false)
       }),
     )
   })
