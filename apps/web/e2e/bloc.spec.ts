@@ -3,12 +3,14 @@ import {
   allerEtape,
   attendreFiche,
   cliquerHorsFiche,
+  diagnostiquerLesEchecs,
   etape,
   ouvrirSession,
   serieEnregistree,
 } from './session.ts'
 
 test.describe('page d’un bloc', () => {
+  diagnostiquerLesEchecs(test)
   test.beforeEach(async ({ page }) => {
     await ouvrirSession(page)
   })
