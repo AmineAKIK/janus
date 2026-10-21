@@ -82,6 +82,16 @@ jobs:
       - run: pnpm --filter @janus/web exec playwright install --with-deps chromium
       # `playwright test` lance `vite preview` tout seul (webServer de la config).
       - run: pnpm --filter @janus/web e2e
+      # Un test qui échoue laisse l'état de la page (error-context.md) : on le lit dans le journal,
+      # sans télécharger l'artefact.
+      - name: Montrer l'état de la page des tests échoués
+        if: failure()
+        run: |
+          for contexte in apps/web/captures/traces/*/error-context.md; do
+            [ -f "$contexte" ] || continue
+            echo "== $contexte"
+            cat "$contexte"
+          done
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         id: artefact
         if: always()

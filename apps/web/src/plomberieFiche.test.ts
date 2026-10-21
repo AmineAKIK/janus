@@ -728,14 +728,15 @@ describe('une consolidation faite qui ne compte pas', () => {
     expect(screen.queryByRole('button', { name: 'Commencer' })).toBeNull()
   })
 
-  it('le bilan le dit, au lieu de « Consolidation faite »', async () => {
-    const { pont, direStatut } = pontSimule(
+  it('le bilan le dit, au lieu de « Consolidation faite », et mène à la consolidation', async () => {
+    const { pont, direStatut, envois } = pontSimule(
       { ...faite, etape: 'ET6', bilan: { ids: [] } },
       undefined,
       ouvertes,
     )
     monter(GABARIT, pont)
     expect(await screen.findByText('Consolidation faite.')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Aller à la consolidation' })).toBeNull()
     direStatut({
       statut: 'vu',
       manque: [{ code: 'consolidation_insuffisante', points: 2, requis: 4 }],
@@ -743,6 +744,18 @@ describe('une consolidation faite qui ne compte pas', () => {
     expect(
       screen.getByText('Consolidation à refaire : tes réponses n’ont pas atteint le seuil.'),
     ).toHaveAttribute('data-fait', 'non')
+    fireEvent.click(screen.getByRole('button', { name: 'Aller à la consolidation' }))
+    expect(envois).toContainEqual({ type: 'etape.vue', donnees: { etape: 'ET5' } })
+  })
+
+  it('le bilan mène aussi à une consolidation ouverte pas encore finie', async () => {
+    const { pont } = pontSimule(
+      { ...aLEtape('ET6'), envoyees: restitution, bilan: { ids: [] } },
+      undefined,
+      ouvertes,
+    )
+    monter(GABARIT, pont)
+    expect(await screen.findByRole('button', { name: 'Aller à la consolidation' })).toBeVisible()
   })
 })
 

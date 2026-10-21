@@ -19,7 +19,10 @@ install -m 0644 deploy/vps/compose.yml /etc/janus/compose.yml
 cles=$(node -e "
 const c = require('node:crypto'); const e = c.createECDH('prime256v1'); e.generateKeys()
 const b = (x) => x.toString('base64url')
-console.log('VAPID_PUBLIC_KEY=' + b(e.getPublicKey())); console.log('VAPID_PRIVATE_KEY=' + b(e.getPrivateKey()))")
+// getPrivateKey() rend le nombre sans ses zéros de tête : une fois sur 256, 31 octets, et web-push
+// refuse la clé. On la complète à 32 octets.
+const privee = e.getPrivateKey(); const sur32 = Buffer.concat([Buffer.alloc(32 - privee.length), privee])
+console.log('VAPID_PUBLIC_KEY=' + b(e.getPublicKey())); console.log('VAPID_PRIVATE_KEY=' + b(sur32))")
 {
   echo POSTGRES_PASSWORD=essai0postgres
   echo JANUS_APP_MOT_DE_PASSE=essai0application
