@@ -4986,7 +4986,7 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 28,
+        "version": 29,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
@@ -12212,6 +12212,23 @@
           versRestitution.hidden = restitutionFaite && aRefermer === 0
         }
         majRestitution()
+        // Vers la consolidation : quand elle est ouverte et attend des réponses, ou à refaire.
+        const consolidation = etapes.find((e) => e.type === 'consolidation')
+        const versConsolidation = creer('button', {
+          type: 'button',
+          className: 'bouton secondaire',
+          textContent: 'Aller à la consolidation',
+          onclick: () => aller(consolidation.id),
+        })
+        if (consolidation) versRestitution.after(versConsolidation)
+        const majVersConsolidation = () => {
+          versConsolidation.hidden = !(
+            serieOuverte.consolidation &&
+            (reponsesFinies('consolidation') < totalConsolidation ||
+              consolidationARefaire() !== null)
+          )
+        }
+        majVersConsolidation()
         erreurs.addEventListener('change', direBouton)
         const direStatut = () => {
           if (bilanEnvoye === null) return
@@ -12268,6 +12285,7 @@
           majCases()
           majRestitution()
           direConsolidation()
+          majVersConsolidation()
           direBouton()
         }
         const section = creer(
