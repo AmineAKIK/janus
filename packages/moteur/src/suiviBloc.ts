@@ -24,7 +24,6 @@ import { instantEnMs } from './temps.ts'
  * (comme `calculerBloc`, sans tri quand l'ordre ne change pas) :
  * - un fait qui se range avant le dernier, ou qui reprend l'identifiant d'un fait déjà là avec une date plus
  *   tôt (le premier dans l'ordre l'emporte) : les faits sont retriés ;
- * - un tranchage qui change ce que la consolidation lit d'une correction déjà là : les séries sont à refaire ;
  * - un tranchage qui change si une correction déjà là ferme des erreurs : les erreurs sont à refaire, ainsi
  *   que les vérifications qui les accompagnent.
  * Ailleurs, la date d'« acquis provisoirement » est la seule autre chose qui fasse relire les faits : les
@@ -68,7 +67,7 @@ export class SuiviBloc {
 
   /** Ce que rendrait `calculerBloc` pour les faits ajoutés jusque-là. */
   resultat(maintenant: string): ResultatBloc {
-    return assembler(etapesDe(this.#etat, maintenant), this.#manifeste, this.#reglages, maintenant)
+    return assembler(etapesDe(this.#etat), this.#manifeste, this.#reglages, maintenant)
   }
 
   /** Un fait qui vient après tous les autres. */
@@ -82,10 +81,6 @@ export class SuiviBloc {
       const avant = lectureTranchee(etat.tranchages, cible)
       etat.tranchages.set(fait.correction, fait)
       const apres = lectureTranchee(etat.tranchages, cible)
-      if (avant.consolidation !== apres.consolidation) {
-        this.#recommencer()
-        return
-      }
       reponseARevoir = avant.ferme === apres.ferme ? undefined : cible
     }
     lirePreuves(etat, fait)

@@ -90,7 +90,6 @@ type DonneesFait = Sans<Fait, 'id' | 'bloc' | 'date'>
 
 const ids = (liste: readonly { readonly id: string }[]) => liste.map(({ id }) => id)
 const RESTITUTION = ids(MODELE.restitution)
-const CONSOLIDATION = ids(MODELE.consolidation)
 const ITEMS = ids(MODELE.pratique.flatMap(({ items }) => items))
 const EXERCICE = MODELE.pratique[0]?.id ?? ''
 
@@ -109,7 +108,7 @@ function journal(bloc: string) {
   }
   const corrections = (
     date: string,
-    serie: 'restitution' | 'consolidation',
+    serie: 'restitution',
     questions: readonly string[],
     niveaux: readonly Niveau[] = [],
   ) => {
@@ -154,9 +153,6 @@ function journal(bloc: string) {
     restitution: (date: string, niveaux?: readonly Niveau[]) => {
       corrections(date, 'restitution', RESTITUTION, niveaux)
     },
-    consolidation: (date: string) => {
-      corrections(date, 'consolidation', CONSOLIDATION)
-    },
     verification: (date: string) => {
       ajouter(date, {
         type: 'verification_terminee',
@@ -175,16 +171,15 @@ function journal(bloc: string) {
 type Journal = ReturnType<typeof journal>
 
 /**
- * Du premier clic à « acquis provisoirement » à l'instant donné : pratique, atelier, restitution,
- * puis consolidation une heure et demie plus tard. Le dernier fait tombe 2 minutes après `debut` + 120.
+ * Du premier clic à « acquis provisoirement » à l'instant donné : pratique, atelier, puis la
+ * restitution. Sa dernière réponse tombe à `provisoire`, 34 minutes après `debut`.
  */
 function jusquaProvisoire(j: Journal, provisoire: string, raison?: string): void {
-  const debut = plus(provisoire, -122 * MINUTE)
+  const debut = plus(provisoire, -(30 + RESTITUTION.length - 1) * MINUTE)
   j.ouvrir(plus(debut, -10 * MINUTE), raison !== undefined, raison)
   j.pratique(debut, 2)
   j.atelier(plus(debut, 5 * MINUTE))
   j.restitution(plus(debut, 30 * MINUTE))
-  j.consolidation(plus(debut, 120 * MINUTE))
 }
 
 /** Les faits de chaque bloc commencé, selon `maintenant` (le premier lancement). */
@@ -215,12 +210,11 @@ const HISTOIRES: Readonly<Record<string, (j: Journal, maintenant: string) => voi
       source: 'amine',
     })
   },
-  // Vu : la restitution est faite, la consolidation reste à faire.
+  // Vu : la restitution est faite, un item de pratique et l'atelier restent à faire.
   B05: (j, maintenant) => {
     const debut = ilYa(maintenant, 6)
     j.ouvrir(debut, false)
-    j.pratique(plus(debut, 10 * MINUTE), 2)
-    j.atelier(plus(debut, 15 * MINUTE))
+    j.pratique(plus(debut, 10 * MINUTE), 1)
     j.restitution(plus(debut, 30 * MINUTE))
   },
   // Acquis, bloc ouvert avant que B05 soit assez avancé.

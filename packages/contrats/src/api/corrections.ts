@@ -45,7 +45,8 @@ const DemandeCorrection = z
   .strictObject({
     /** Identifiant de la demande, tiré une fois par le client : un doublon est ignoré. */
     id: IdUuid,
-    serie: Serie,
+    /** La série de la réponse ; la consolidation n'existe plus que dans l'historique. */
+    serie: Serie.exclude(['consolidation']),
     /** Indicatif : le serveur numérote lui-même les tentatives (une relance garde la dernière). */
     tentative: z.number().int().min(1),
     ...champsReponse,
@@ -55,13 +56,13 @@ const DemandeCorrection = z
     version: z.number().int().min(1).optional(),
   })
   .superRefine((demande, contexte) => {
-    const connu = demande.serie === 'restitution' || demande.serie === 'consolidation'
+    const connu = demande.serie === 'restitution'
     for (const champ of ['bloc', 'version'] as const) {
       if (connu && demande[champ] === undefined) {
         contexte.addIssue({
           code: 'custom',
           path: [champ],
-          message: `Le champ ${champ} est exigé pour les séries restitution et consolidation.`,
+          message: `Le champ ${champ} est exigé pour la série restitution.`,
         })
       }
       if (!connu && demande[champ] !== undefined) {

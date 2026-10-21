@@ -77,11 +77,9 @@ export async function recalculerLesPerimes(base: Base, horloge: Horloge): Promis
   return perimes.length
 }
 
-/** L'instant à partir duquel une échéance est due : tel quel, ou le début du jour. */
+/** L'instant à partir duquel une échéance est due : le début de son jour. */
 function dueLe(echeance: Echeance, reglages: Reglages): string {
-  return echeance.genre === 'instant'
-    ? echeance.apres
-    : debutDuJour(echeance.apres, reglages.fuseau, reglages.heureBascule)
+  return debutDuJour(echeance.apres, reglages.fuseau, reglages.heureBascule)
 }
 
 /**

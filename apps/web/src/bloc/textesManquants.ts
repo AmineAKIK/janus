@@ -1,10 +1,6 @@
 import type { Manque, Statut } from '@janus/contrats'
 import { formaterInstant } from './instant.ts'
 
-/** Un nombre à la française : « 0,5 », jamais « 0.5 ». */
-const nombre = (valeur: number) =>
-  new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(valeur)
-
 /** « a », « a et b », « a, b et c ». */
 const enumerer = (elements: readonly string[]) =>
   elements.length < 2
@@ -36,14 +32,6 @@ export function texteManque(
       return manque.questions === undefined
         ? 'Envoie ta réponse à toutes les questions de restitution.'
         : `Envoie ta réponse ${manque.questions.length > 1 ? 'aux questions' : 'à la question'} ${enumerer(manque.questions.map(libelles.question ?? identifiant))} de la restitution.`
-    case 'consolidation_trop_tot':
-      return `La consolidation sera possible à partir de ${quand}.`
-    case 'consolidation_a_faire':
-      return 'Fais la consolidation, sans rouvrir le cours.'
-    case 'consolidation_cours_rouvert':
-      return 'Tu as rouvert le cours : la consolidation reste possible une fois le délai écoulé.'
-    case 'consolidation_insuffisante':
-      return `Atteins le seuil à la consolidation : ${nombre(manque.points ?? 0)} ${(manque.points ?? 0) < 2 ? 'point' : 'points'} sur ${nombre(manque.requis ?? 0)} requis.`
     case 'pratique_aide':
       return manque.exercices === undefined
         ? 'Réussis sans aide les exercices de la pratique.'
@@ -81,9 +69,6 @@ export const STATUT_SUIVANT: Readonly<Record<Statut, Statut | null>> = {
 }
 
 export const TEXTES_ENCARTS = {
-  consolidationTitre: (heure: string) => `Consolidation disponible à ${heure}`,
-  consolidationAide: (delai: string) =>
-    `Au moins ${delai} après la restitution. On te le rappellera sur Aujourd’hui.`,
   bilanStatut: 'Statut calculé',
   bilanPour: (statut: string) => `Pour passer à ${statut}`,
   bilanRien: 'Rien ne manque pour le moment.',

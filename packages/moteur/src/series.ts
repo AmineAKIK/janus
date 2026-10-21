@@ -17,18 +17,10 @@ export function auMoinsVu(etat: Pick<ResultatBloc, 'dates' | 'statut'>): boolean
 }
 
 /**
- * Les séries que la page propose, d'après les preuves et non d'après le statut affiché :
- * - la restitution tant qu'elle n'est pas faite, et de nouveau quand une erreur critique rouvre le bloc ;
- * - la consolidation une fois le bloc vu et le délai passé, tant que le bloc n'est pas « acquis ».
+ * Les séries que la page propose, d'après les preuves et non d'après le statut affiché : la
+ * restitution tant qu'elle n'est pas faite, et de nouveau quand une erreur critique rouvre le bloc.
  * Un statut forcé ne ferme donc jamais une série.
  */
-export function seriesOuvertes(
-  etat: Pick<ResultatBloc, 'dates' | 'statut' | 'statutCalcule' | 'manque'>,
-) {
-  const tropTot = etat.manque.some(({ code }) => code === 'consolidation_trop_tot')
-  const vu = auMoinsVu(etat)
-  return {
-    restitution: !vu || etat.statutCalcule === 'a_reprendre',
-    consolidation: vu && etat.dates.acquis === null && !tropTot,
-  }
+export function seriesOuvertes(etat: Pick<ResultatBloc, 'dates' | 'statut' | 'statutCalcule'>) {
+  return { restitution: !auMoinsVu(etat) || etat.statutCalcule === 'a_reprendre' }
 }

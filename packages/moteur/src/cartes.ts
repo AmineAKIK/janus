@@ -168,7 +168,7 @@ export type Preuve = { readonly date: string } | null
 
 /** Le panneau « Cinq preuves » : comprendre, faire seul, transférer, retenir, aisance. */
 export interface CinqPreuves {
-  /** Date de la série de consolidation réussie. */
+  /** Première explication solide d'une vérification valable. */
   readonly comprendre: Preuve
   /** Date où tous les exercices de pratique ont atteint leur règle à l'aide 0. */
   readonly faireSeul: Preuve
@@ -185,7 +185,7 @@ const preuve = (date: string | null): Preuve => (date === null ? null : { date }
 export function preuvesDuBloc(etat: ResultatBloc, reglages: Reglages): CinqPreuves {
   const { preuves } = etat
   return {
-    comprendre: preuve(preuves.consolidation),
+    comprendre: preuve(preuves.explication),
     faireSeul: preuve(preuves.pratique),
     transferer: preuve(preuves.transfert),
     retenir: { date: preuves.derniereReussite, prochaine: echeances(etat, reglages) },

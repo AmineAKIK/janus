@@ -82,7 +82,7 @@ export function SectionJournal() {
               bloc="B04 Boucles"
               avant="acquis_provisoirement"
               apres="acquis"
-              raison="Consolidation 5 sur 6, aucune erreur critique."
+              raison="Vérification réussie, aucune erreur critique."
             />
           </Etat>
           <Etat nom="statut forcé, titre long">

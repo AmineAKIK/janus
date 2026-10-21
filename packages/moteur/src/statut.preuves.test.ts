@@ -1,13 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  apres,
-  DEBUT,
-  fabrique,
-  jusquaProvisoire,
-  MANIFESTE,
-  PROVISOIRE,
-  REGLAGES,
-} from './fabrique.ts'
+import { apres, DEBUT, fabrique, jusquaProvisoire, MANIFESTE, REGLAGES } from './fabrique.ts'
 import { calculerBloc } from './statut.ts'
 import type { Fait } from './faits.ts'
 
@@ -20,7 +12,7 @@ function preuves(faits: readonly Fait[]) {
 describe('les dates des preuves', () => {
   it('ne donne aucune date sans fait, et dit que l’aisance est demandée', () => {
     expect(preuves([])).toEqual({
-      consolidation: null,
+      explication: null,
       pratique: null,
       atelier: null,
       transfert: null,
@@ -32,17 +24,24 @@ describe('les dates des preuves', () => {
     })
   })
 
-  it('date la série de consolidation réussie et la pratique', () => {
+  it('date la pratique ; l’explication et le transfert attendent une vérification', () => {
     const f = fabrique()
     const resultat = preuves(jusquaProvisoire(f))
-    expect(resultat.consolidation).toBe(PROVISOIRE)
     expect(resultat.pratique).toBe(apres(DEBUT, 0, 1))
+    expect(resultat.explication).toBeNull()
     expect(resultat.transfert).toBeNull()
   })
 
-  it('ne date pas la consolidation tant que la restitution n’est pas finie', () => {
+  it('date l’explication à la première vérification valable où elle est solide', () => {
     const f = fabrique()
-    expect(preuves(f.consolidation(apres(DEBUT, 0, 120))).consolidation).toBeNull()
+    const solide = apres(DEBUT, 5)
+    const faits = [
+      ...jusquaProvisoire(f),
+      f.verification(apres(DEBUT, 3), { explication: 'fragile' }),
+      f.verification(apres(DEBUT, 4), { explication: 'solide', valable: false }),
+      f.verification(solide),
+    ]
+    expect(preuves(faits).explication).toBe(solide)
   })
 
   it('ne date pas la pratique quand un exercice n’est pas atteint à l’aide 0', () => {

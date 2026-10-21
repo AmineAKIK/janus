@@ -37,7 +37,7 @@ function croissance(
 }
 
 const SEUIL = 3
-// Les réponses de restitution et de consolidation sont rarement tranchées après coup.
+// Les réponses de restitution sont rarement tranchées après coup.
 const sansTranchage = (taille: number) => blocLong(taille, { periodeTranchage: Infinity })
 
 describe('le statut après chaque fait ne relance pas le calcul sur tous les faits précédents', () => {
@@ -51,7 +51,7 @@ describe('le statut après chaque fait ne relance pas le calcul sur tous les fai
     expect(ratio).toBeLessThan(SEUIL)
   })
 
-  it('lignesDuJournal, quand aucune série de consolidation ne réussit : chaque série n’est jugée qu’une fois', () => {
+  it('lignesDuJournal, avec des réponses qui ne comptent pas', () => {
     const ratio = croissance(
       (taille) => blocLong(taille, { periodeTranchage: Infinity, niveau: 'pas_encore' }),
       (faits) =>

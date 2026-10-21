@@ -31,10 +31,6 @@ const raisonNonCompte = z.enum(['relance', 'avec_support', 'recopiee', 'non_veri
 const aide = z.literal([0, 1, 2, 3, 4])
 const codeManque = z.enum([
   'restitution_incomplete',
-  'consolidation_trop_tot',
-  'consolidation_a_faire',
-  'consolidation_cours_rouvert',
-  'consolidation_insuffisante',
   'pratique_aide',
   'atelier_manquant',
   'erreur_ouverte',
@@ -52,8 +48,6 @@ const manque = z.strictObject({
   exercices: z.optional(z.array(identifiant())),
   erreurs: z.optional(z.array(identifiant())),
   apres: z.optional(z.string()),
-  points: z.optional(z.number()),
-  requis: z.optional(z.number()),
 })
 
 const etatPage = z.record(z.string(), z.json()).check(
@@ -72,7 +66,7 @@ const communPage = {
   t: z.iso.datetime({ offset: true }),
 }
 
-const seriePage = z.enum(['restitution', 'consolidation'])
+const seriePage = z.enum(['restitution'])
 
 const TAILLE_MAX_LIEN = 2000
 
@@ -173,7 +167,7 @@ export const MessageAppli = z.discriminatedUnion('type', [
     version: entierMin(1),
     etat: z.nullable(etatPage),
     statut,
-    serie_ouverte: z.strictObject({ restitution: z.boolean(), consolidation: z.boolean() }),
+    serie_ouverte: z.strictObject({ restitution: z.boolean() }),
     aisance: z.array(z.strictObject({ le: z.iso.datetime(), duree_s: z.number().check(z.gte(0)) })),
     theme: z.optional(z.enum(['clair', 'sombre', 'systeme'])),
   }),

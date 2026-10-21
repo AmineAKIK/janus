@@ -21,7 +21,7 @@ export const DEFINITIONS_STATUT: Record<Statut, string> = {
   en_cours: 'Le bloc est ouvert, la restitution n’est pas encore faite.',
   vu: 'Toutes les questions de restitution sont envoyées. C’est un exercice d’apprentissage, pas une preuve.',
   acquis_provisoirement:
-    'La consolidation, faite plus tard sans rouvrir le cours, atteint le seuil de points.',
+    'La restitution est envoyée, la pratique réussie sans aide et l’atelier fait.',
   acquis:
     'Une vérification valable, faite quelques jours plus tard, est réussie : explication, tâche et transfert.',
   maitrise: 'Un retest valable, bien plus tard, est réussi.',

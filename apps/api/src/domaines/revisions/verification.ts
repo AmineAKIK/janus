@@ -227,7 +227,7 @@ export function construireResultat(o: {
   const prochaine =
     reprogrammee !== null
       ? { type, apres: reprogrammee }
-      : echeance !== null && echeance.type !== 'consolidation'
+      : echeance !== null
         ? { type: echeance.type, apres: echeance.apres }
         : null
   // La partie qui a fait proposer une erreur critique, le transfert d'abord.

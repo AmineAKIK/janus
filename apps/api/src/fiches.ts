@@ -358,7 +358,6 @@ function textesDesQuestions(manifeste: Manifeste): ReadonlyMap<string, string> {
     }
   }
   poser(manifeste.restitution, 'restitution', (q) => q.question)
-  poser(manifeste.consolidation, 'consolidation', (q) => q.question)
   poser(manifeste.rappel, 'rappel', (q) => q.question)
   poser(manifeste.differees, 'differees', (d) => d.consigne)
   return textes

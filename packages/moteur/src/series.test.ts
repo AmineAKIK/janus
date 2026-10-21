@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { apres, DEBUT, fabrique, jusquaProvisoire, MANIFESTE, REGLAGES } from './fabrique.ts'
+import { apres, DEBUT, fabrique, MANIFESTE, REGLAGES } from './fabrique.ts'
 import { auMoinsVu, seriesOuvertes } from './series.ts'
 import { calculerBloc } from './statut.ts'
 
@@ -11,33 +11,18 @@ describe('seriesOuvertes', () => {
     const etat = calcul([])
 
     expect(auMoinsVu(etat)).toBe(false)
-    expect(seriesOuvertes(etat)).toEqual({ restitution: true, consolidation: false })
+    expect(seriesOuvertes(etat)).toEqual({ restitution: true })
   })
 
-  it('vu depuis assez longtemps : la consolidation s’ouvre', () => {
-    const f = fabrique()
-    const etat = calcul([...f.restitution(DEBUT)], apres(DEBUT, 0, 200))
-
-    expect(auMoinsVu(etat)).toBe(true)
-    expect(seriesOuvertes(etat)).toEqual({ restitution: false, consolidation: true })
-  })
-
-  it('vu depuis trop peu de temps : la consolidation reste fermée', () => {
+  it('restitution faite : plus de série ouverte', () => {
     const f = fabrique()
     const etat = calcul([...f.restitution(DEBUT)], apres(DEBUT, 0, 10))
 
-    expect(seriesOuvertes(etat).consolidation).toBe(false)
+    expect(auMoinsVu(etat)).toBe(true)
+    expect(seriesOuvertes(etat)).toEqual({ restitution: false })
   })
 
-  it('une série faite trop tôt ferme la consolidation jusqu’au délai, puis la rouvre', () => {
-    const f = fabrique()
-    const faits = [...f.restitution(DEBUT), ...f.consolidation(apres(DEBUT, 0, 10))]
-
-    expect(seriesOuvertes(calcul(faits, apres(DEBUT, 0, 20))).consolidation).toBe(false)
-    expect(seriesOuvertes(calcul(faits, apres(DEBUT, 0, 200))).consolidation).toBe(true)
-  })
-
-  it('une erreur critique rouvre la restitution sans fermer la consolidation', () => {
+  it('une erreur critique rouvre la restitution', () => {
     const f = fabrique()
     const etat = calcul(
       [
@@ -48,7 +33,7 @@ describe('seriesOuvertes', () => {
     )
 
     expect(etat.statutCalcule).toBe('a_reprendre')
-    expect(seriesOuvertes(etat)).toEqual({ restitution: true, consolidation: true })
+    expect(seriesOuvertes(etat)).toEqual({ restitution: true })
   })
 
   it('un statut forcé ne ferme aucune série', () => {
@@ -59,7 +44,7 @@ describe('seriesOuvertes', () => {
     )
 
     expect(etat.statut).toBe('acquis')
-    expect(seriesOuvertes(etat)).toEqual({ restitution: false, consolidation: true })
+    expect(seriesOuvertes(etat)).toEqual({ restitution: false })
   })
 
   it('un bloc « à reprendre » ou forcé plus bas reste vu ; forcé à « vu », il l’est aussi', () => {
@@ -77,13 +62,5 @@ describe('seriesOuvertes', () => {
     expect(auMoinsVu(reprendre)).toBe(true)
     expect(auMoinsVu(forceBas)).toBe(true)
     expect(auMoinsVu(forceVu)).toBe(true)
-  })
-
-  it('acquis : plus de consolidation', () => {
-    const f = fabrique()
-    const etat = calcul([...jusquaProvisoire(f), f.verification(apres(DEBUT, 4))], apres(DEBUT, 5))
-
-    expect(etat.statutCalcule).toBe('acquis')
-    expect(seriesOuvertes(etat).consolidation).toBe(false)
   })
 })

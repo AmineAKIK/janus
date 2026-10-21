@@ -185,15 +185,10 @@ export interface LigneRegle {
 
 export function lignesRegles(reglages: Reglages): readonly LigneRegle[] {
   return [
-    { libelle: 'Consolidation', valeur: texteDuree(reglages.delaiConsolidationMinutes) },
     { libelle: 'Vérification', valeur: `${String(reglages.delaiVerificationJours)} j` },
     { libelle: 'Retest', valeur: `${String(reglages.delaiRetestJours)} j` },
     { libelle: 'Nouvelle tentative', valeur: `${String(reglages.delaiNouvelEssaiJours)} j` },
     { libelle: 'Échecs avant descente', valeur: texteEchecs(reglages.echecsAvantDescente) },
-    {
-      libelle: 'Seuil de consolidation',
-      valeur: `${String(Math.round(reglages.seuilConsolidation * 100))} %`,
-    },
     { libelle: 'Revue', valeur: `Tous les ${String(reglages.blocsEntreRevues)} blocs` },
   ]
 }

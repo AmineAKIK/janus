@@ -137,11 +137,15 @@ describe('les corrections', () => {
     Object.entries(base).filter(([cle]) => cle !== 'bloc' && cle !== 'version'),
   )
 
-  it('exigent le bloc et la version pour une restitution ou une consolidation', () => {
-    expect(corps.safeParse({ ...sansBloc, serie: 'consolidation' }).success).toBe(false)
+  it('exigent le bloc et la version pour une restitution', () => {
+    expect(corps.safeParse({ ...sansBloc, serie: 'restitution' }).success).toBe(false)
     expect(
-      corps.safeParse({ ...sansBloc, serie: 'consolidation', bloc: 'D01', version: 3 }).success,
+      corps.safeParse({ ...sansBloc, serie: 'restitution', bloc: 'D01', version: 3 }).success,
     ).toBe(true)
+  })
+
+  it('refusent la série consolidation, qui n’existe plus que dans l’historique', () => {
+    expect(corps.safeParse({ ...sansBloc, serie: 'consolidation' }).success).toBe(false)
   })
 
   it('n’acceptent ni bloc ni version pour un rappel ou une vérification', () => {

@@ -1,4 +1,4 @@
-import type { Manifeste, Tache, TypeVerification } from '@janus/contrats'
+import type { Tache, TypeVerification } from '@janus/contrats'
 
 /** Un report de vérification encore en vigueur : le bloc et le jour jusqu'où elle est reportée. */
 export interface Report {
@@ -20,10 +20,7 @@ export function estVerification(tache: Tache): tache is Tache & { type: TypeVeri
  * Où mène une tâche. Une vérification mène à la page qui l'ouvre (`POST /verifications`) puis la
  * remplace par la vérification : la file du jour reste une lecture.
  */
-export function lienDeLaTache(
-  tache: Tache,
-  manifeste: (bloc: string) => Manifeste | undefined,
-): string {
+export function lienDeLaTache(tache: Tache): string {
   switch (tache.type) {
     case 'reprendre_erreur':
       return tache.lien
@@ -35,10 +32,6 @@ export function lienDeLaTache(
     case 'retest':
     case 'entretien':
       return `/verifications/ouvrir/${tache.bloc}/${tache.type}`
-    case 'consolidation': {
-      const etape = manifeste(tache.bloc)?.etapes.find(({ type }) => type === 'consolidation')
-      return etape === undefined ? `/blocs/${tache.bloc}` : `/blocs/${tache.bloc}?etape=${etape.id}`
-    }
     case 'cartes':
       return '/revision'
     case 'bloc':

@@ -492,12 +492,7 @@ export function creerServiceRevisions({
         premiere_connexion: [...charge.etatsDesBlocs.values()].every(
           ({ faits }) => faits.length === 0,
         ),
-        taches: tachesDuJour(aFaire, { questionsRepondues, cartesRevues }, (tache) =>
-          lienDeLaTache(
-            tache,
-            (bloc) => contexte.blocs.find(({ manifeste }) => manifeste.bloc === bloc)?.manifeste,
-          ),
-        ),
+        taches: tachesDuJour(aFaire, { questionsRepondues, cartesRevues }, lienDeLaTache),
         module: moduleEnCours(plan, contexte),
       }
     },

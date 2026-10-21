@@ -51,7 +51,7 @@ test.describe('vérification sur l’API réelle', () => {
     request,
   }) => {
     await ouvrirSession(page)
-    await acquerirB01(page, request)
+    await acquerirB01(page)
     await avancer(request, 3 * JOUR_MS)
     // La session de la veille a expiré : on se reconnecte, puis Aujourd'hui annonce la vérification.
     await ouvrirSession(page)

@@ -128,11 +128,6 @@
       "type": "restitution"
     },
     {
-      "id": "ET16",
-      "titre": "Consolidation",
-      "type": "consolidation"
-    },
-    {
       "id": "ET17",
       "titre": "Bilan",
       "type": "bilan"
@@ -198,38 +193,6 @@
       "erreurs": ["E3"]
     }
   ],
-  "consolidation": [
-    {
-      "id": "C21",
-      "question": "Écris 172 en binaire, avec 8 chiffres. Puis donne la valeur de 00110011.",
-      "attendu": "172 = 128 + 32 + 8 + 4 = 10101100. 00110011 = 32 + 16 + 2 + 1 = 51. Avec les poids inversés, on trouverait 172 = 00110101 et 00110011 = 204 : c’est l’erreur E4. D’après les étapes 5 et 6.",
-      "erreurs": ["E4"]
-    },
-    {
-      "id": "C22",
-      "question": "Avec 10 bits, combien de valeurs différentes, et quel est le plus grand nombre ? Explique d’où vient la différence de 1 entre les deux.",
-      "attendu": "2 puissance 10 = 1 024 valeurs ; le plus grand nombre est 1 023. On compte à partir de 0, qui est une valeur : les 1 024 valeurs vont de 0 à 1 023. Déduit des étapes 3 et 4.",
-      "erreurs": ["E1"]
-    },
-    {
-      "id": "C23",
-      "question": "Sur une page web, « è » s’affiche « Ã¨ ». Que s’est-il passé, et comment l’éviter ?",
-      "attendu": "La page est écrite en UTF-8, qui range « è » sur deux octets ; le navigateur les a lus avec un autre codage, comme Latin-1, qui donne un caractère à chaque octet : Ã puis ¨. Les octets sont justes, c’est le codage choisi pour les lire qui est faux. On l’évite en enregistrant la page en UTF-8 et en l’annonçant en tête de la page avec <meta charset=\"utf-8\">. Déduit de l’étape 7.",
-      "erreurs": ["E2"]
-    },
-    {
-      "id": "C26",
-      "question": "Que vaut #33cc99 en rgb ? Puis écris rgb(255, 64, 0) en hexadécimal. Table des 16 chiffres : 0 à 9 valent 0 à 9, puis a = 10, b = 11, c = 12, d = 13, e = 14, f = 15 ; un chiffre par moitié de 4 bits, et pour relire, le chiffre de gauche compte 16 fois.",
-      "attendu": "33 = 3 × 16 + 3 = 51 ; cc = 12 × 16 + 12 = 204 ; 99 = 9 × 16 + 9 = 153 : rgb(51, 204, 153). 255 = ff ; 64 = 0100 0000 = 40 ; 0 = 00 : #ff4000 (les majuscules sont justes aussi). D’après l’étape 9.",
-      "erreurs": []
-    },
-    {
-      "id": "C25",
-      "question": "Le processeur imaginaire à trois instructions (1 suivi d’un nombre le range dans le registre, 2 suivi d’un nombre l’ajoute au registre, 3 suivi de 0 affiche le registre) reçoit les octets 1 7 2 1 3 0. Qu’affiche-t-il ? Un collègue te dit : « Le code machine, c’est du binaire, donc le binaire est un langage. » Que lui réponds-tu ?",
-      "attendu": "1 7 range 7 ; 2 1 ajoute 1, le registre vaut 8 ; 3 0 affiche 8. Au collègue : le code machine est écrit en binaire, comme tout ce que la machine range, mais ce qui en fait un langage, c’est le jeu d’instructions du processeur, pas le binaire. Le binaire est seulement une façon d’écrire des nombres : une photo aussi est écrite en binaire, et ce n’est pas un langage. D’après l’étape 11.",
-      "erreurs": ["E3"]
-    }
-  ],
   "rappel": [
     {
       "id": "Q21",
@@ -281,6 +244,41 @@
     }
   ],
   "differees": [
+    {
+      "id": "C21",
+      "type": "explication",
+      "consigne": "Écris 172 en binaire, avec 8 chiffres. Puis donne la valeur de 00110011.",
+      "attendu": "172 = 128 + 32 + 8 + 4 = 10101100. 00110011 = 32 + 16 + 2 + 1 = 51. Avec les poids inversés, on trouverait 172 = 00110101 et 00110011 = 204 : c’est l’erreur E4. D’après les étapes 5 et 6.",
+      "erreurs": ["E4"]
+    },
+    {
+      "id": "C22",
+      "type": "explication",
+      "consigne": "Avec 10 bits, combien de valeurs différentes, et quel est le plus grand nombre ? Explique d’où vient la différence de 1 entre les deux.",
+      "attendu": "2 puissance 10 = 1 024 valeurs ; le plus grand nombre est 1 023. On compte à partir de 0, qui est une valeur : les 1 024 valeurs vont de 0 à 1 023. Déduit des étapes 3 et 4.",
+      "erreurs": ["E1"]
+    },
+    {
+      "id": "C23",
+      "type": "explication",
+      "consigne": "Sur une page web, « è » s’affiche « Ã¨ ». Que s’est-il passé, et comment l’éviter ?",
+      "attendu": "La page est écrite en UTF-8, qui range « è » sur deux octets ; le navigateur les a lus avec un autre codage, comme Latin-1, qui donne un caractère à chaque octet : Ã puis ¨. Les octets sont justes, c’est le codage choisi pour les lire qui est faux. On l’évite en enregistrant la page en UTF-8 et en l’annonçant en tête de la page avec <meta charset=\"utf-8\">. Déduit de l’étape 7.",
+      "erreurs": ["E2"]
+    },
+    {
+      "id": "C26",
+      "type": "explication",
+      "consigne": "Que vaut #33cc99 en rgb ? Puis écris rgb(255, 64, 0) en hexadécimal. Table des 16 chiffres : 0 à 9 valent 0 à 9, puis a = 10, b = 11, c = 12, d = 13, e = 14, f = 15 ; un chiffre par moitié de 4 bits, et pour relire, le chiffre de gauche compte 16 fois.",
+      "attendu": "33 = 3 × 16 + 3 = 51 ; cc = 12 × 16 + 12 = 204 ; 99 = 9 × 16 + 9 = 153 : rgb(51, 204, 153). 255 = ff ; 64 = 0100 0000 = 40 ; 0 = 00 : #ff4000 (les majuscules sont justes aussi). D’après l’étape 9.",
+      "erreurs": []
+    },
+    {
+      "id": "C25",
+      "type": "explication",
+      "consigne": "Le processeur imaginaire à trois instructions (1 suivi d’un nombre le range dans le registre, 2 suivi d’un nombre l’ajoute au registre, 3 suivi de 0 affiche le registre) reçoit les octets 1 7 2 1 3 0. Qu’affiche-t-il ? Un collègue te dit : « Le code machine, c’est du binaire, donc le binaire est un langage. » Que lui réponds-tu ?",
+      "attendu": "1 7 range 7 ; 2 1 ajoute 1, le registre vaut 8 ; 3 0 affiche 8. Au collègue : le code machine est écrit en binaire, comme tout ce que la machine range, mais ce qui en fait un langage, c’est le jeu d’instructions du processeur, pas le binaire. Le binaire est seulement une façon d’écrire des nombres : une photo aussi est écrite en binaire, et ce n’est pas un langage. D’après l’étape 11.",
+      "erreurs": ["E3"]
+    },
     {
       "id": "DE21",
       "type": "explication",

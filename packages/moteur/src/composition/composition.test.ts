@@ -48,7 +48,6 @@ describe('le statut et les preuves d’un bloc rendus par l’API', () => {
     expect(sansFait.avancement).toEqual({
       etapes_vues: [],
       restitution: null,
-      consolidation: null,
       pratique: null,
       atelier: null,
       aisance: null,
@@ -63,12 +62,10 @@ describe('le statut et les preuves d’un bloc rendus par l’API', () => {
     const statut = statutDuBloc(resultat)
     expect(statut.avancement.etapes_vues).toEqual(['ET1', 'ET3'])
     expect(statut.avancement.restitution).toBe(resultat.dates.vu)
-    expect(statut.avancement.consolidation).toBe(resultat.preuves.consolidation)
     expect(statut.avancement.pratique).toBe(resultat.preuves.pratique)
     expect(statut.avancement.atelier).toBe(resultat.preuves.atelier)
     expect(statut.avancement.aisance).toBe(resultat.preuves.aisance)
     expect(statut.avancement.restitution).not.toBeNull()
-    expect(statut.avancement.consolidation).not.toBeNull()
   })
 
   it('rend ce qui manque à un bloc sans fait', () => {
@@ -87,13 +84,13 @@ describe('le statut et les preuves d’un bloc rendus par l’API', () => {
       ...base,
       manque: [
         { code: 'restitution_incomplete', questions: ['Q1'], exercices: ['E1'], erreurs: ['X1'] },
-        { code: 'consolidation_insuffisante', apres: '2026-06-02', points: 0.5, requis: 0.8 },
+        { code: 'verification_a_venir', apres: '2026-06-02' },
         { code: 'erreur_ouverte' },
       ],
     }
     expect(statutDuBloc(resultat).manque).toEqual([
       { code: 'restitution_incomplete', questions: ['Q1'], exercices: ['E1'], erreurs: ['X1'] },
-      { code: 'consolidation_insuffisante', apres: '2026-06-02', points: 0.5, requis: 0.8 },
+      { code: 'verification_a_venir', apres: '2026-06-02' },
       { code: 'erreur_ouverte' },
     ])
   })
@@ -121,7 +118,7 @@ describe('le statut et les preuves d’un bloc rendus par l’API', () => {
     const vide = cinqPreuvesDuBloc(calculerBloc([], MANIFESTE, REGLAGES, MAINTENANT), REGLAGES)
     expect(vide.retenir).toEqual({ date: null, prochaine: null })
     const fait = cinqPreuvesDuBloc(calculerBloc(faits, MANIFESTE, REGLAGES, MAINTENANT), REGLAGES)
-    expect(fait.comprendre).not.toBeNull()
+    expect(fait.faire_seul).not.toBeNull()
   })
 })
 

@@ -8,7 +8,6 @@ const ETAPES = [
   { id: 'ETE', type: 'ensemble' },
   { id: 'ET3', type: 'pratique' },
   { id: 'ET4', type: 'restitution' },
-  { id: 'ET5', type: 'consolidation' },
   { id: 'ET6', type: 'bilan' },
 ] as const
 
@@ -32,29 +31,23 @@ describe('questionsRestantes', () => {
 
     expect(questionsRestantes('restitution', QUESTIONS, ['R1'], manque)).toEqual(['R2', 'R3'])
   })
-
-  it('consolidation : compte les questions de la série non envoyées', () => {
-    expect(questionsRestantes('consolidation', ['C1', 'C2'], ['C1'], [])).toEqual(['C2'])
-    expect(questionsRestantes('consolidation', ['C1'], ['C1'], [])).toEqual([])
-  })
 })
 
 describe('etapesVerrouillees', () => {
-  const restantes = (restitution: number, consolidation = 0) => ({ restitution, consolidation })
+  const restantes = (restitution: number) => ({ restitution })
 
   it('verrouille les étapes de cours pendant une série pas finie, perception et ensemble compris', () => {
     const cours = new Set(['ET1', 'ETP', 'ET2', 'ETE', 'ET3'])
     expect(etapesVerrouillees(ETAPES, 'ET4', restantes(2))).toEqual(cours)
-    expect(etapesVerrouillees(ETAPES, 'ET5', restantes(0, 1))).toEqual(cours)
   })
 
   it('ne verrouille rien quand la série de l’étape courante est complète', () => {
-    expect(etapesVerrouillees(ETAPES, 'ET4', restantes(0, 3))).toEqual(new Set())
+    expect(etapesVerrouillees(ETAPES, 'ET4', restantes(0))).toEqual(new Set())
   })
 
-  it('ne verrouille rien hors restitution et consolidation', () => {
-    expect(etapesVerrouillees(ETAPES, 'ET2', restantes(3, 3))).toEqual(new Set())
-    expect(etapesVerrouillees(ETAPES, 'ET6', restantes(3, 3))).toEqual(new Set())
-    expect(etapesVerrouillees(ETAPES, null, restantes(3, 3))).toEqual(new Set())
+  it('ne verrouille rien hors restitution', () => {
+    expect(etapesVerrouillees(ETAPES, 'ET2', restantes(3))).toEqual(new Set())
+    expect(etapesVerrouillees(ETAPES, 'ET6', restantes(3))).toEqual(new Set())
+    expect(etapesVerrouillees(ETAPES, null, restantes(3))).toEqual(new Set())
   })
 })

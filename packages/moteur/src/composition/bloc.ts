@@ -20,7 +20,6 @@ export function statutDuBloc(resultat: ResultatBloc): StatutBloc {
     avancement: {
       etapes_vues: [...resultat.etapesVues],
       restitution: resultat.dates.vu,
-      consolidation: resultat.preuves.consolidation,
       pratique: resultat.preuves.pratique,
       atelier: resultat.preuves.atelier,
       aisance: resultat.preuves.aisance,
@@ -31,8 +30,6 @@ export function statutDuBloc(resultat: ResultatBloc): StatutBloc {
       ...(manque.exercices === undefined ? {} : { exercices: [...manque.exercices] }),
       ...(manque.erreurs === undefined ? {} : { erreurs: [...manque.erreurs] }),
       ...(manque.apres === undefined ? {} : { apres: manque.apres }),
-      ...(manque.points === undefined ? {} : { points: manque.points }),
-      ...(manque.requis === undefined ? {} : { requis: manque.requis }),
     })),
     erreurs_ouvertes: [...resultat.erreursOuvertes],
   })

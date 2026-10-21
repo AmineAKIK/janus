@@ -213,41 +213,6 @@ describe('validerManifeste, règles du cadrage (une règle, un test)', () => {
     expect(validerManifeste(m).ok).toBe(true)
   })
 
-  it('consolidation : au moins 3 questions', () => {
-    const m = copie()
-    liste(m, 'consolidation').pop()
-    expect(problemesDe(m)).toEqual([
-      {
-        chemin: 'consolidation',
-        message: 'La consolidation doit avoir au moins 3 questions (il y en a 2).',
-      },
-    ])
-  })
-
-  it('consolidation : pas le même identifiant qu’une question de restitution', () => {
-    const m = copie()
-    Object.assign(premier(m, 'consolidation'), { id: 'R1' })
-    expect(problemesDe(m)).toEqual([
-      {
-        chemin: 'consolidation[0].id',
-        message:
-          'La question de consolidation « R1 » reprend l’identifiant d’une question de restitution.',
-      },
-    ])
-  })
-
-  it('consolidation : pas le même texte qu’une question de restitution, casse et espaces ignorés', () => {
-    const m = copie()
-    const texte = demo.restitution[1]?.question ?? ''
-    Object.assign(liste(m, 'consolidation')[1] ?? {}, { question: `  ${texte.toUpperCase()}  ` })
-    expect(problemesDe(m)).toEqual([
-      {
-        chemin: 'consolidation[1].question',
-        message: 'Cette question de consolidation reprend le texte d’une question de restitution.',
-      },
-    ])
-  })
-
   it('rappel : au moins 6 questions', () => {
     const m = copie()
     liste(m, 'rappel').pop()

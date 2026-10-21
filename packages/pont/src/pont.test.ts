@@ -10,7 +10,7 @@ const INIT = {
   version: 4,
   etat: { etape: 'ET2' },
   statut: 'en_cours',
-  serie_ouverte: { restitution: true, consolidation: false },
+  serie_ouverte: { restitution: true },
   aisance: [],
 } as const
 const ATTENDUE: CorrectionRecue = {
@@ -302,14 +302,14 @@ describe('etat.init après le démarrage', () => {
       version: MANIFESTE.version,
       etat: null,
       statut: 'vu',
-      serie_ouverte: { restitution: false, consolidation: false },
+      serie_ouverte: { restitution: false },
       aisance: [],
     }
     depuisParent(init)
     await demarrage
     expect(surInit).not.toHaveBeenCalled()
 
-    const ouverte = { ...init, serie_ouverte: { restitution: false, consolidation: true } }
+    const ouverte = { ...init, serie_ouverte: { restitution: true } }
     depuisParent(ouverte)
 
     expect(surInit).toHaveBeenCalledWith(ouverte)

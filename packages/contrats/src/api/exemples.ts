@@ -11,12 +11,11 @@ const INSTANT = '2026-06-01T10:00:00Z'
 
 const statutBloc = {
   statut: 'vu',
-  manque: [{ code: 'consolidation_trop_tot', apres: '2026-06-01T11:30:00Z' }],
+  manque: [{ code: 'pratique_aide', exercices: ['PR1'] }],
   erreurs_ouvertes: [],
   avancement: {
     etapes_vues: ['ET1', 'ET2', 'ET3'],
     restitution: '2026-06-01T10:30:00Z',
-    consolidation: null,
     pratique: '2026-06-01T10:20:00Z',
     atelier: null,
     aisance: null,
@@ -165,7 +164,7 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
       version: 3,
       manifeste: demo,
       problemes: [],
-      serie_ouverte: { restitution: true, consolidation: false },
+      serie_ouverte: { restitution: true },
       force: null,
       acces: 'libre',
       preuves: {
@@ -315,11 +314,6 @@ export const EXEMPLES_ROUTES: Record<CleRoute, ExempleRoute> = {
         {
           tache: { type: 'verification', bloc: 'D01', apres: '2026-06-04' },
           lien: `/verifications/${ID}`,
-          faite: false,
-        },
-        {
-          tache: { type: 'consolidation', bloc: 'D02', apres: INSTANT },
-          lien: '/blocs/D02',
           faite: false,
         },
         { tache: { type: 'cartes', dues: 12, nouvelles: 3 }, lien: '/revision', faite: true },

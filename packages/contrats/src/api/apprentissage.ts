@@ -32,7 +32,6 @@ export const Tache = z.discriminatedUnion('type', [
     /** Le jour `AAAA-MM-JJ` à partir duquel c'est dû. */
     apres: Texte,
   }),
-  z.strictObject({ type: z.literal('consolidation'), bloc: CodeBloc, apres: InstantUtc }),
   z.strictObject({
     type: z.literal('cartes'),
     dues: z.number().int().min(0),

@@ -116,7 +116,7 @@ test.describe('page d’un bloc', () => {
     await expect(etape(page, 'Explication')).toHaveAttribute('aria-current', 'step')
   })
 
-  test('B03 de bout en bout : restitution, consolidation, bilan', async ({ page }) => {
+  test('B03 de bout en bout : pratique, atelier, restitution, bilan', async ({ page }) => {
     await page.goto('./#/blocs/B03')
     const fiche = await attendreFiche(page, 'B03')
     const fil = page.getByRole('navigation', { name: 'Étapes de la fiche' })
@@ -149,17 +149,7 @@ test.describe('page d’un bloc', () => {
     await expect(fiche.getByText('Envoyé : réussi, aide 0')).toBeVisible()
 
     await allerEtape(page, 'Restitution')
-    await repondre('Vu')
-    await allerEtape(page, 'Consolidation')
-    await expect(page.getByText(/Consolidation disponible à/)).toBeVisible()
-    await expect(page.getByText('Au moins 1 h après la restitution.')).toBeVisible()
-
-    await page.evaluate(() => window.__janusDemo?.avancer(61 * 60 * 1000))
-    await expect(page.getByText(/Consolidation disponible à/)).toHaveCount(0)
-
-    await allerEtape(page, 'Consolidation')
-    // La fiche se redessine quand l'appli lui renvoie le statut : on ne tape qu'après.
-    await expect(fiche.getByText('Statut : Vu')).toBeVisible()
+    // Pratique et atelier faits : la dernière réponse de la restitution rend le bloc acquis provisoirement.
     await repondre('Acquis provisoirement')
     await cliquerHorsFiche(fil.getByRole('button', { name: 'Bilan' }))
     await expect(page.getByText('Statut calculé')).toBeVisible()

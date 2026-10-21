@@ -46,8 +46,8 @@ export function enRetard(
 /**
  * La file de l'écran Aujourd'hui, toujours dans le même ordre : 1. erreurs critiques à reprendre ;
  * 2. questions de début de séance ; 3. vérifications et retests dus, d'abord ceux des prérequis du bloc
- * en cours (en retard, précédés de la reprise de ces prérequis) ; 4. série de consolidation en attente ;
- * 5. cartes ; 6. le bloc en cours ou le suivant. Le nouveau contenu passe toujours après le retard.
+ * en cours (en retard, précédés de la reprise de ces prérequis) ; 4. cartes ; 5. le bloc en cours ou
+ * le suivant. Le nouveau contenu passe toujours après le retard.
  */
 export function fileDuJour(entree: EntreeFile): { enRetard: boolean; taches: Tache[] } {
   const { blocs, maintenant, reglages } = entree
@@ -84,23 +84,12 @@ export function fileDuJour(entree: EntreeFile): { enRetard: boolean; taches: Tac
   })
   const prioritaire = (bloc: string) => (prerequis.includes(bloc) ? 0 : 1)
   const revisions = dues
-    .flatMap(({ bloc, echeance }) =>
-      echeance.type === 'consolidation'
-        ? []
-        : [
-            {
-              rang: prioritaire(bloc),
-              tache: { type: echeance.type, bloc, apres: echeance.apres },
-            },
-          ],
-    )
+    .map(({ bloc, echeance }) => ({
+      rang: prioritaire(bloc),
+      tache: { type: echeance.type, bloc, apres: echeance.apres },
+    }))
     .sort((a, b) => a.rang - b.rang)
     .map(({ tache }): Tache => tache)
-  const consolidations = dues.flatMap(({ bloc, echeance }): Tache[] =>
-    echeance.type === 'consolidation'
-      ? [{ type: 'consolidation', bloc, apres: echeance.apres }]
-      : [],
-  )
 
   const aReprendre = blocs
     .filter(
@@ -120,7 +109,6 @@ export function fileDuJour(entree: EntreeFile): { enRetard: boolean; taches: Tac
         ? [{ type: 'reprise', blocs: aReprendre } satisfies Tache]
         : []),
       ...revisions,
-      ...consolidations,
       ...(cartes > 0
         ? [
             {

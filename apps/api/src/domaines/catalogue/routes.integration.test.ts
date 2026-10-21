@@ -206,7 +206,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('routes du catalogue contre Post
         force: null,
         etat_page: null,
         fiche_url: `https://fiches.test/D01/${empreinteD01}.html`,
-        serie_ouverte: { restitution: true, consolidation: false },
+        serie_ouverte: { restitution: true },
         manifeste: { bloc: 'D01', version: 1 },
       })
     })

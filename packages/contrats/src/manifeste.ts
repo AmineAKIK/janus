@@ -24,7 +24,6 @@ export const TypeEtape = z.enum([
   /** Ajuster, en fin de bloc (règle C08) : après la pratique, le pari du début repris et corrigé, puis le schéma refait de mémoire. */
   'ensemble',
   'restitution',
-  'consolidation',
   'bilan',
 ])
 export type TypeEtape = z.infer<typeof TypeEtape>
@@ -99,7 +98,6 @@ export const Manifeste = z.strictObject({
     z.strictObject({ id: Identifiant, libelle: Texte, etape: Identifiant.optional() }),
   ),
   restitution: z.array(Question),
-  consolidation: z.array(Question),
   rappel: z.array(Question),
   differees: z.array(Differee),
   pratique: z.array(Pratique),

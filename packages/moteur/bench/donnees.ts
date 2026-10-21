@@ -95,19 +95,6 @@ export function jeuDeFaits(nBlocs: number, faitsParBloc: number, graine = 42): J
         erreursIa: [],
       })
     }
-    for (const [i, q] of manifeste.consolidation.entries()) {
-      ajout.push({
-        ...commun(t0 + (200 + i) * MIN),
-        type: 'correction',
-        serie: 'consolidation',
-        question: q.id,
-        tour: 1,
-        niveau: 'solide',
-        compte: true,
-        confiance: 'sur',
-        erreursIa: [],
-      })
-    }
     const reponses = [
       {
         type: 'explication' as const,
@@ -163,13 +150,8 @@ export function jeuDeFaits(nBlocs: number, faitsParBloc: number, graine = 42): J
           aide: choix([0, 0, 1, 2, 3, 4] as const),
         })
       } else if (r < 0.7) {
-        const serie = choix(['rappel', 'rappel', 'restitution', 'consolidation'] as const)
-        const questions =
-          serie === 'rappel'
-            ? manifeste.rappel
-            : serie === 'restitution'
-              ? manifeste.restitution
-              : manifeste.consolidation
+        const serie = choix(['rappel', 'rappel', 'restitution'] as const)
+        const questions = serie === 'rappel' ? manifeste.rappel : manifeste.restitution
         ajout.push({
           ...c,
           type: 'correction',

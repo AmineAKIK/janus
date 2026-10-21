@@ -7,9 +7,7 @@ import { calculerBloc } from './statut.ts'
 
 const NIVEAUX: readonly Niveau[] = ['solide', 'partiel', 'fragile', 'pas_encore']
 const SERIES = ['restitution', 'consolidation', 'rappel'] as const
-const QUESTIONS = [...MANIFESTE.restitution, ...MANIFESTE.consolidation, ...MANIFESTE.rappel].map(
-  (q) => q.id,
-)
+const QUESTIONS = [...MANIFESTE.restitution, ...MANIFESTE.rappel].map((q) => q.id)
 const REPONSES_DE_VERIFICATION: ReponseVerification[] = [
   { type: 'explication', question: 'DE1', tour: 1, niveau: 'solide', compte: true },
   { type: 'tache', question: 'DT1', tour: 1, reussi: true, compte: true },
@@ -142,7 +140,7 @@ describe('propriétés du calcul de statut', () => {
         fc.integer({ min: 0, max: 60 * 24 * 60 }),
         (faits, question, niveau, tour, minutes) => {
           const f = fabrique()
-          const relance = f.correction(apres(DEBUT, 0, minutes), 'consolidation', question, {
+          const relance = f.correction(apres(DEBUT, 0, minutes), 'restitution', question, {
             tour,
             niveau,
             compte: false,

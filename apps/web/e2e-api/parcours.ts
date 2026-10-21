@@ -1,8 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { expect } from '@playwright/test'
-import type { APIRequestContext, Page } from '@playwright/test'
+import type { Page } from '@playwright/test'
 import { attendreFiche, cliquerHorsFiche } from '../e2e/session.ts'
-import { avancer } from './banc.ts'
 
 export interface Question {
   readonly id: string
@@ -10,7 +9,6 @@ export interface Question {
 }
 interface Manifeste {
   readonly restitution: readonly Question[]
-  readonly consolidation: readonly Question[]
   readonly pratique: readonly { readonly id: string; readonly items: readonly { id: string }[] }[]
 }
 
@@ -21,7 +19,6 @@ export const MANIFESTE = JSON.parse(
   ),
 ) as Manifeste
 export const ORIGINE = 'http://localhost:4173'
-export const HEURE_MS = 3_600_000
 
 /** Ouvre B01 dans la fiche, sur l'étape demandée. */
 export async function ouvrirEtape(page: Page, etape: string) {
@@ -54,13 +51,11 @@ export async function repondreALaSerie(page: Page, etape: string, questions: rea
 }
 
 /**
- * Mène B01 à « acquis provisoirement » : restitution, consolidation une heure plus tard, puis les
- * résultats de la pratique et de l'atelier, que la fiche enverrait.
+ * Mène B01 à « acquis provisoirement » : la restitution, puis les résultats de la pratique et de
+ * l'atelier, que la fiche enverrait.
  */
-export async function acquerirB01(page: Page, request: APIRequestContext) {
+export async function acquerirB01(page: Page) {
   await repondreALaSerie(page, 'Restitution', MANIFESTE.restitution)
-  await avancer(request, HEURE_MS + 60_000)
-  await repondreALaSerie(page, 'Consolidation', MANIFESTE.consolidation)
   const detail = await page.request.get('/api/blocs/B01')
   const { version } = (await detail.json()) as { version: number }
   const message = (corps: Record<string, unknown>) =>

@@ -54,5 +54,5 @@ export function calculerBloc(
   maintenant: string,
 ): ResultatBloc {
   const etat = construireEtat(ordonner(faits, manifeste.bloc), manifeste, reglages)
-  return assembler(etapesDe(etat, maintenant), manifeste, reglages, maintenant)
+  return assembler(etapesDe(etat), manifeste, reglages, maintenant)
 }

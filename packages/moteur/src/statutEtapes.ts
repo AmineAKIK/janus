@@ -1,15 +1,7 @@
 import { reservesDuType } from '@janus/contrats'
-import type {
-  CodeManque,
-  Manifeste,
-  Reglages,
-  Statut,
-  TypeDifferee,
-  TypeEtape,
-} from '@janus/contrats'
+import type { CodeManque, Manifeste, Reglages, Statut, TypeDifferee } from '@janus/contrats'
 import type { Fait, ReponseVerification } from './faits.ts'
-import { points } from './points.ts'
-import { ajouterJours, instantEnIso, instantEnMs, jourDe, MS_PAR_MINUTE } from './temps.ts'
+import { ajouterJours, instantEnMs, jourDe } from './temps.ts'
 import type { Jour } from './temps.ts'
 
 // Les règles du statut d'un bloc, une par « suivi » : chaque suivi lit les faits un à un, dans l'ordre
@@ -19,16 +11,14 @@ import type { Jour } from './temps.ts'
 
 export type { CodeManque }
 
-/** Un manque et ses paramètres : questions ou exercices concernés, date possible, points obtenus et requis. */
+/** Un manque et ses paramètres : questions, exercices ou erreurs concernés, jour à partir duquel c'est possible. */
 export interface Manque {
   readonly code: CodeManque
   readonly questions?: readonly string[]
   readonly exercices?: readonly string[]
   readonly erreurs?: readonly string[]
-  /** Instant ISO (consolidation) ou jour `AAAA-MM-JJ` (vérification, retest) à partir duquel c'est possible. */
+  /** Le jour `AAAA-MM-JJ` (vérification, retest) à partir duquel c'est possible. */
   readonly apres?: string
-  readonly points?: number
-  readonly requis?: number
 }
 
 export interface ResultatBloc {
@@ -53,8 +43,8 @@ export interface ResultatBloc {
   readonly etapesVues: readonly string[]
   /** Les dates qui alimentent le panneau « Cinq preuves » ; la file du jour s'en sert aussi pour les échéances. */
   readonly preuves: {
-    /** Fin de la série de consolidation réussie. */
-    readonly consolidation: string | null
+    /** Première explication solide, au premier tour et qui compte, d'une vérification valable. */
+    readonly explication: string | null
     /** Fin du dernier exercice de pratique atteint à l'aide 0 ; `null` s'il n'y a pas d'exercice ou s'il en reste un. */
     readonly pratique: string | null
     /** Premier atelier réussi à l'aide 0 ; `null` s'il n'y a pas d'atelier ou s'il n'est pas encore réussi. */
@@ -76,17 +66,6 @@ export interface ResultatBloc {
 type FaitDe<T extends Fait['type']> = Extract<Fait, { type: T }>
 export type Correction = FaitDe<'correction'>
 export type TranchageCorrection = FaitDe<'correction_tranchee'>
-
-const ETAPES_DE_COURS: ReadonlySet<TypeEtape> = new Set([
-  'carte',
-  'perception',
-  'pretest',
-  'explication',
-  'ensemble',
-  'pratique',
-  'atelier',
-  'aisance',
-])
 
 function plusTardQue(a: string, b: string | null): string {
   return b !== null && instantEnMs(b) > instantEnMs(a) ? b : a
@@ -161,180 +140,6 @@ export class SuiviRestitution {
     const date = plusTard(reponses.flatMap(({ fait }) => (fait === undefined ? [] : [fait.date])))
     return manquantes.length > 0 || date === null ? { vu: false, manquantes } : { vu: true, date }
   }
-}
-
-// --- Consolidation ---------------------------------------------------------
-
-export type Verdict =
-  | { readonly ok: true; readonly date: string }
-  | {
-      readonly ok: false
-      readonly manque: Manque
-    }
-
-/**
- * Une réponse de consolidation qui compte. `coursAvant` est l'instant le plus tardif, parmi les faits
- * qui la précèdent, d'une réponse de restitution (premier tour) ou d'une étape qui rouvre le cours.
- */
-interface Comptee {
-  readonly correction: Correction
-  readonly coursAvant: number
-}
-
-function verdictSerie(
-  tranchages: Tranchages,
-  trio: readonly Comptee[],
-  reglages: Reglages,
-  restitutionFinie: string,
-): Verdict {
-  const premierMs = Math.min(...trio.map(({ correction }) => instantEnMs(correction.date)))
-  const derniereDate = trio.map(({ correction }) => correction.date).reduce(plusTardQue)
-  // Une série commencée avant la fin de la restitution ne compte pas : « vu » vient d'abord.
-  // Le délai court depuis la dernière réponse de restitution ou, si le cours a été rouvert depuis,
-  // depuis la dernière étape de cours.
-  const finDelai =
-    Math.max(instantEnMs(restitutionFinie), Math.min(...trio.map(({ coursAvant }) => coursAvant))) +
-    reglages.delaiConsolidationMinutes * MS_PAR_MINUTE
-  if (premierMs < finDelai) {
-    return {
-      ok: false,
-      manque: { code: 'consolidation_trop_tot', apres: instantEnIso(finDelai) },
-    }
-  }
-  const obtenus =
-    trio.reduce(
-      (total, { correction }) => total + points(niveauEffectif(tranchages, correction)),
-      0,
-    ) / trio.length
-  if (obtenus < reglages.seuilConsolidation) {
-    return {
-      ok: false,
-      manque: {
-        code: 'consolidation_insuffisante',
-        points: obtenus,
-        requis: reglages.seuilConsolidation,
-      },
-    }
-  }
-  return { ok: true, date: derniereDate }
-}
-
-/**
- * Les réponses qui comptent (premier tour, `compte` vrai) forment des séries de 3 questions différentes dans l'ordre :
- * une réponse qui ne compte pas est remplacée par la suivante, et une réponse à une question déjà dans la série en
- * cours ne compte pas pour la série (répéter la même question ne remplace pas les deux autres).
- * Une série valable suffit. Les séries se forment au fil des faits, sans jamais revenir sur une série finie ;
- * leur verdict ne se calcule qu'une fois la restitution finie, et une seule fois chacun.
- */
-export class SuiviConsolidation {
-  readonly #reglages: Reglages
-  readonly #tranchages: Tranchages
-  readonly #reserve: ReadonlySet<string>
-  /** Le type de chaque étape ; si un identifiant se répète, la première étape l'emporte. */
-  readonly #typeDeLEtape: ReadonlyMap<string, TypeEtape>
-  readonly #dePremierTour = estCorrectionDe('consolidation')
-  readonly #reponseDeRestitution = estCorrectionDe('restitution')
-  #coursAvant = Number.NEGATIVE_INFINITY
-  #comptees = 0
-  #courante: Comptee[] = []
-  /** Les séries finies dont le verdict n'est pas encore calculé. */
-  readonly #enAttente: Comptee[][] = []
-  #derniere: Verdict | undefined
-  #valable: Verdict | undefined
-
-  constructor(manifeste: Manifeste, reglages: Reglages, tranchages: Tranchages) {
-    this.#reglages = reglages
-    this.#tranchages = tranchages
-    this.#reserve = new Set(manifeste.consolidation.map((question) => question.id))
-    this.#typeDeLEtape = new Map(
-      manifeste.etapes.toReversed().map((etape): [string, TypeEtape] => [etape.id, etape.type]),
-    )
-  }
-
-  #ouvreLeCours(fait: Fait): boolean {
-    if (fait.type !== 'etape_vue') return false
-    const type = this.#typeDeLEtape.get(fait.etape)
-    return type !== undefined && ETAPES_DE_COURS.has(type)
-  }
-
-  avancer(fait: Fait): void {
-    if (
-      this.#dePremierTour(fait) &&
-      compteEffectif(this.#tranchages, fait) &&
-      this.#reserve.has(fait.question)
-    ) {
-      this.#comptees += 1
-      if (!this.#courante.some(({ correction }) => correction.question === fait.question)) {
-        this.#courante.push({ correction: fait, coursAvant: this.#coursAvant })
-        if (this.#courante.length === 3) {
-          this.#enAttente.push(this.#courante)
-          this.#courante = []
-        }
-      }
-    }
-    if (this.#reponseDeRestitution(fait) || this.#ouvreLeCours(fait)) {
-      this.#coursAvant = Math.max(this.#coursAvant, instantEnMs(fait.date))
-    }
-  }
-
-  /**
-   * La première série valable ; à défaut, le verdict de la dernière ; `undefined` s'il n'y a pas encore
-   * de série finie. `restitutionFinie` ne change pas d'un appel à l'autre : la restitution est vue une fois
-   * pour toutes dès que chaque question a eu sa première réponse.
-   */
-  verdict(restitutionFinie: string): Verdict | undefined {
-    if (this.#valable !== undefined) return this.#valable
-    for (const trio of this.#enAttente) {
-      this.#derniere = verdictSerie(this.#tranchages, trio, this.#reglages, restitutionFinie)
-      if (this.#derniere.ok) {
-        this.#valable = this.#derniere
-        break
-      }
-    }
-    this.#enAttente.length = 0
-    return this.#derniere
-  }
-
-  /**
-   * Le manque quand aucune série n'est finie : trop tôt tant que le délai court et qu'aucune réponse ne
-   * compte, sinon à faire. Le délai court depuis la fin de la restitution ou, si une réponse de
-   * restitution ou une étape de cours est venue depuis, depuis celle-ci : la même référence que pour
-   * juger une série, sinon la consolidation s'ouvrirait pour une série jugée ensuite trop tôt.
-   */
-  sansSerie(restitutionFinie: string, maintenant: string): Verdict {
-    const finDelai =
-      Math.max(instantEnMs(restitutionFinie), this.#coursAvant) +
-      this.#reglages.delaiConsolidationMinutes * MS_PAR_MINUTE
-    return this.#comptees === 0 && instantEnMs(maintenant) < finDelai
-      ? { ok: false, manque: { code: 'consolidation_trop_tot', apres: instantEnIso(finDelai) } }
-      : { ok: false, manque: { code: 'consolidation_a_faire' } }
-  }
-}
-
-/** Le verdict de la consolidation : elle ne se juge qu'une fois la restitution vue. */
-export function consolidationDe(
-  restitution: Restitution,
-  suivi: SuiviConsolidation,
-  maintenant: string,
-): Verdict {
-  if (!restitution.vu) {
-    return {
-      ok: false,
-      manque: { code: 'restitution_incomplete', questions: restitution.manquantes },
-    }
-  }
-  const verdict = suivi.verdict(restitution.date)
-  if (verdict === undefined) return suivi.sansSerie(restitution.date, maintenant)
-  // Une série faite trop tôt est perdue : le délai passé, une nouvelle série est à faire, et la
-  // consolidation se rouvre pour la permettre.
-  if (
-    !verdict.ok &&
-    verdict.manque.code === 'consolidation_trop_tot' &&
-    verdict.manque.apres !== undefined &&
-    instantEnMs(maintenant) >= instantEnMs(verdict.manque.apres)
-  )
-    return { ok: false, manque: { code: 'consolidation_a_faire' } }
-  return verdict
 }
 
 // --- Pratique, atelier, aisance --------------------------------------------
@@ -462,12 +267,7 @@ export class SuiviAisance {
 
 /** Les erreurs critiques de chaque question du manifeste ; si un identifiant se répète, la première question l'emporte. */
 function erreursParQuestion(manifeste: Manifeste): ReadonlyMap<string, readonly string[]> {
-  const toutes = [
-    ...manifeste.restitution,
-    ...manifeste.consolidation,
-    ...manifeste.rappel,
-    ...manifeste.differees,
-  ]
+  const toutes = [...manifeste.restitution, ...manifeste.rappel, ...manifeste.differees]
   return new Map(
     toutes.toReversed().map(({ id, erreurs }): [string, readonly string[]] => [id, erreurs]),
   )
@@ -482,7 +282,10 @@ function reponseReussie(reponse: ReponseVerification): boolean {
   )
 }
 
-/** Une réponse de restitution ou de consolidation du premier tour : seule elle peut fermer des erreurs. */
+/**
+ * Une réponse de restitution du premier tour : seule elle peut fermer des erreurs. Les réponses de
+ * consolidation enregistrées avant la fin de cette série le peuvent encore.
+ */
 function peutFermerDesErreurs(fait: Fait): fait is Correction {
   return (
     fait.type === 'correction' &&
@@ -501,7 +304,7 @@ interface EvenementErreur {
   /** Le rang du fait dans l'ordre des faits. */
   readonly rang: number
   readonly ouvre: boolean
-  /** Pour une fermeture par une réponse de restitution ou de consolidation : elle ne ferme que si cette réponse le fait. */
+  /** Pour une fermeture par une réponse de restitution : elle ne ferme que si cette réponse le fait. */
   readonly reponse: Correction | undefined
 }
 
@@ -514,7 +317,7 @@ interface EtatErreur {
 /**
  * Une erreur s'ouvre quand Amine la coche (l'IA seule n'ouvre rien) et se ferme quand il la décoche
  * ou qu'une réponse réussie, au premier tour et qui compte, touche la même erreur dans une série
- * de restitution ou de consolidation, ou dans une vérification retenue par `SuiviVerifications`
+ * de restitution, ou dans une vérification retenue par `SuiviVerifications`
  * (valable, du bon genre et à l'heure : les autres sont ignorées). Le suivi des vérifications
  * avance d'un fait avant celui-ci : `verificationsRetenues` est à jour quand le fait arrive.
  *
@@ -739,16 +542,24 @@ export class SuiviVerifications {
   }
 }
 
-/** Le premier transfert solide, au premier tour et qui compte, d'une vérification valable. */
-export class SuiviTransfert {
+/**
+ * La première réponse réussie d'un type (explication, transfert), au premier tour et qui compte, dans
+ * une vérification valable : la preuve « comprendre » ou « transférer » des Cinq preuves.
+ */
+export class SuiviPartie {
+  readonly #type: TypeDifferee
   date: string | null = null
+
+  constructor(type: TypeDifferee) {
+    this.#type = type
+  }
 
   avancer(fait: Fait): void {
     if (
       this.date === null &&
       fait.type === 'verification_terminee' &&
       fait.valable &&
-      fait.reponses.some((reponse) => reponse.type === 'transfert' && reponseReussie(reponse))
+      fait.reponses.some((reponse) => reponse.type === this.#type && reponseReussie(reponse))
     ) {
       this.date = fait.date
     }
@@ -767,18 +578,17 @@ export class SuiviForcage {
 
 // --- Assemblage ------------------------------------------------------------
 
-/** La date où le bloc devient « acquis provisoirement » : quand toutes ses conditions sont remplies, `null` sinon. */
+/**
+ * La date où le bloc devient « acquis provisoirement » : restitution faite, pratique à l'aide 0 et
+ * atelier réussi, `null` sinon. La compréhension se prouve à la vérification, trois jours plus tard.
+ */
 export function provisoireDe(
   restitution: Restitution,
-  consolidation: Verdict | undefined,
   pratique: ResultatPratique,
   atelier: { readonly ok: boolean; readonly date: string | null },
 ): string | null {
-  return restitution.vu &&
-    consolidation?.ok === true &&
-    pratique.incompletes.length === 0 &&
-    atelier.ok
-    ? [pratique.date, atelier.date].reduce<string>(plusTardQue, consolidation.date)
+  return restitution.vu && pratique.incompletes.length === 0 && atelier.ok
+    ? [pratique.date, atelier.date].reduce<string>(plusTardQue, restitution.date)
     : null
 }
 
@@ -818,7 +628,6 @@ export function statutCalculeDe(
 export interface Etapes {
   readonly vide: boolean
   readonly restitution: Restitution
-  readonly consolidation: Verdict
   readonly pratique: ResultatPratique
   readonly atelier: { readonly ok: boolean; readonly date: string | null }
   readonly aisance: { readonly ok: boolean; readonly date: string | null }
@@ -826,6 +635,7 @@ export interface Etapes {
   readonly verifications: SuiviVerifications | null
   readonly provisoire: string | null
   readonly erreursOuvertes: readonly string[]
+  readonly explication: string | null
   readonly transfert: string | null
   readonly force: ResultatBloc['force']
   readonly etapesVues: readonly string[]
@@ -841,7 +651,6 @@ export function assembler(
 ): ResultatBloc {
   const {
     restitution,
-    consolidation,
     pratique,
     atelier,
     aisance,
@@ -862,7 +671,9 @@ export function assembler(
     })
   }
 
-  manque.push(...(consolidation.ok ? [] : [consolidation.manque]))
+  if (!restitution.vu) {
+    manque.push({ code: 'restitution_incomplete', questions: [...restitution.manquantes] })
+  }
   if (restitution.vu && pratique.incompletes.length > 0) {
     manque.push({ code: 'pratique_aide', exercices: pratique.incompletes })
   }
@@ -922,7 +733,7 @@ export function assembler(
     descendu: reprise !== null && verifications?.palier !== 'acquis',
     etapesVues: [...etapes.etapesVues],
     preuves: {
-      consolidation: consolidation.ok ? consolidation.date : null,
+      explication: etapes.explication,
       pratique:
         manifeste.pratique.length > 0 && pratique.incompletes.length === 0 ? pratique.date : null,
       atelier: atelier.date,
@@ -947,11 +758,11 @@ export interface EtatBloc {
   /** Les corrections lues, par identifiant. */
   readonly corrections: Map<string, Correction>
   readonly restitution: SuiviRestitution
-  readonly consolidation: SuiviConsolidation
   readonly pratique: SuiviPratique
   readonly atelier: SuiviAtelier
   readonly aisance: SuiviAisance
-  readonly transfert: SuiviTransfert
+  readonly explication: SuiviPartie
+  readonly transfert: SuiviPartie
   readonly forcage: SuiviForcage
   /** Les étapes affichées, dans l'ordre de leur première vue. */
   readonly etapesVues: Set<string>
@@ -962,8 +773,8 @@ export interface EtatBloc {
   verifications: SuiviVerifications | null
   erreurs: SuiviErreurs
   /**
-   * La date de la dernière mise à reprendre : restitution, consolidation, pratique et atelier ne
-   * lisent que les faits qui la suivent, le bloc se reprouve. `null` tant qu'il n'y en a pas eu.
+   * La date de la dernière mise à reprendre : restitution, pratique et atelier ne lisent que les
+   * faits qui la suivent, le bloc se reprouve. `null` tant qu'il n'y en a pas eu.
    */
   reprise: string | null
 }
@@ -976,21 +787,19 @@ export function lirePreuves(etat: EtatBloc, fait: Fait): void {
   if (fait.type === 'fiche_recommencee') etat.etapesVues.clear()
   if (etat.reprise === null || instantEnMs(fait.date) > instantEnMs(etat.reprise)) {
     etat.restitution.avancer(fait)
-    etat.consolidation.avancer(fait)
     etat.pratique.avancer(fait)
     etat.atelier.avancer(fait)
   }
   etat.aisance.avancer(fait)
+  etat.explication.avancer(fait)
   etat.transfert.avancer(fait)
   etat.forcage.avancer(fait)
 }
 
 /** La date d'« acquis provisoirement » d'après les preuves lues jusque-là. */
 export function provisoireDeLEtat(etat: EtatBloc): string | null {
-  const restitution = etat.restitution.resultat()
   return provisoireDe(
-    restitution,
-    restitution.vu ? etat.consolidation.verdict(restitution.date) : undefined,
+    etat.restitution.resultat(),
     etat.pratique.resultat(),
     etat.atelier.resultat(),
   )
@@ -1039,11 +848,11 @@ export function construireEtat(
     tranchages,
     corrections: new Map(),
     restitution: new SuiviRestitution(manifeste),
-    consolidation: new SuiviConsolidation(manifeste, reglages, tranchages),
     pratique: new SuiviPratique(manifeste),
     atelier: new SuiviAtelier(manifeste),
     aisance: new SuiviAisance(manifeste.aisance, reglages),
-    transfert: new SuiviTransfert(),
+    explication: new SuiviPartie('explication'),
+    transfert: new SuiviPartie('transfert'),
     forcage: new SuiviForcage(),
     etapesVues: new Set<string>(),
     faits: 0,
@@ -1061,13 +870,11 @@ export function construireEtat(
 
 /** Ce que les règles lisent d'une correction tranchée : de quoi dire si un tranchage change quelque chose. */
 interface LectureTranchee {
-  /** Le compte et le niveau des réponses de consolidation du premier tour. */
-  readonly consolidation: string
-  /** Vrai si une réponse de restitution ou de consolidation du premier tour ferme les erreurs de sa question. */
+  /** Vrai si une réponse de restitution du premier tour ferme les erreurs de sa question. */
   readonly ferme: boolean
 }
 
-const RIEN_A_LIRE: LectureTranchee = { consolidation: '', ferme: false }
+const RIEN_A_LIRE: LectureTranchee = { ferme: false }
 
 /** Une correction tranchée telle que les règles la lisent ; `undefined` : la correction n'est pas (encore) là. */
 export function lectureTranchee(
@@ -1075,13 +882,7 @@ export function lectureTranchee(
   correction: Correction | undefined,
 ): LectureTranchee {
   if (correction === undefined || correction.tour !== 1) return RIEN_A_LIRE
-  return {
-    consolidation:
-      correction.serie === 'consolidation'
-        ? `${String(compteEffectif(tranchages, correction))}|${niveauEffectif(tranchages, correction)}`
-        : '',
-    ferme: peutFermerDesErreurs(correction) && fermeLesErreurs(tranchages, correction),
-  }
+  return { ferme: peutFermerDesErreurs(correction) && fermeLesErreurs(tranchages, correction) }
 }
 
 /** Le statut calculé d'après l'état, sans construire le `ResultatBloc` : ce qu'il faut pour suivre un bloc fait après fait. */
@@ -1098,19 +899,19 @@ export function statutCalculeDeLEtat(etat: EtatBloc): Statut {
   )
 }
 
-/** Ce que les suivis ont établi, `maintenant` ne servant qu'à dire ce qui manque. */
-export function etapesDe(etat: EtatBloc, maintenant: string): Etapes {
+/** Ce que les suivis ont établi sur le bloc. */
+export function etapesDe(etat: EtatBloc): Etapes {
   const restitution = etat.restitution.resultat()
   return {
     vide: etat.faits === 0,
     restitution,
-    consolidation: consolidationDe(restitution, etat.consolidation, maintenant),
     pratique: etat.pratique.resultat(),
     atelier: etat.atelier.resultat(),
     aisance: etat.aisance.resultat(),
     verifications: etat.verifications,
     provisoire: etat.provisoire,
     erreursOuvertes: etat.erreurs.ouvertes,
+    explication: etat.explication.date,
     transfert: etat.transfert.date,
     force: etat.forcage.force,
     etapesVues: [...etat.etapesVues],

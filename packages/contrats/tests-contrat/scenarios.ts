@@ -17,7 +17,6 @@ export type CreerBanc = () => Promise<BancContrat> | BancContrat
 
 /** Le bloc des scénarios : jamais commencé dans la graine, ses prérequis ne sont pas acquis. */
 const BLOC = 'B08'
-const HEURE_MS = 3_600_000
 const UTILISATEUR = 'amine'
 const MOT_DE_PASSE = 'demo-janus'
 
@@ -46,7 +45,7 @@ async function ouvrir(banc: BancContrat) {
 }
 
 /** Répond à chaque question d'une série avec le texte attendu du manifeste, puis rend le niveau de chacune. */
-async function repondre(banc: BancContrat, serie: 'restitution' | 'consolidation') {
+async function repondre(banc: BancContrat, serie: 'restitution') {
   const { manifeste, version } = await statutDuBloc(banc)
   const niveaux: string[] = []
   for (const question of manifeste[serie]) {
@@ -142,29 +141,14 @@ export function scenariosContrat(creer: CreerBanc): void {
       expect(detail.statut).toBe('vu')
     })
 
-    it('consolidation trop tôt : refusée, le bloc reste « vu » avec le manque correspondant', async () => {
+    it('restitution, pratique et atelier : « acquis provisoirement »', async () => {
       const banc = await creer()
       await connecter(banc)
       await ouvrir(banc)
       await repondre(banc, 'restitution')
 
-      await repondre(banc, 'consolidation')
-      const detail = await statutDuBloc(banc)
-
-      expect(detail.statut).toBe('vu')
-      expect(codesManque(detail)).toContain('consolidation_trop_tot')
-    })
-
-    it('consolidation réussie après 1 h : plus de manque de consolidation, puis « acquis provisoirement »', async () => {
-      const banc = await creer()
-      await connecter(banc)
-      await ouvrir(banc)
-      await repondre(banc, 'restitution')
-      await banc.avancer(HEURE_MS + 60_000)
-
-      await repondre(banc, 'consolidation')
-      const apresConsolidation = await statutDuBloc(banc)
-      const { manifeste, version } = apresConsolidation
+      const apresRestitution = await statutDuBloc(banc)
+      const { manifeste, version } = apresRestitution
       for (const item of manifeste.pratique.flatMap(({ id, items }) =>
         items.map((i) => ({ exercice: id, item: i.id })),
       )) {
@@ -173,9 +157,7 @@ export function scenariosContrat(creer: CreerBanc): void {
       await envoyerPage(banc, version, { type: 'atelier.resultat' })
       const final = await statutDuBloc(banc)
 
-      expect(codesManque(apresConsolidation).filter((c) => c.startsWith('consolidation_'))).toEqual(
-        [],
-      )
+      expect(codesManque(apresRestitution)).toEqual(['pratique_aide', 'atelier_manquant'])
       expect(final.statut).toBe('acquis_provisoirement')
     })
 

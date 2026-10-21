@@ -27,7 +27,7 @@ describe('tempsActif', () => {
       { date: '2026-10-13T10:02:00Z', bloc: 'B02', secondes: 20, etape: 'atelier' },
       { date: '2026-10-13T10:03:00Z', bloc: 'B02', secondes: 5, etape: 'aisance' },
       { date: '2026-10-14T10:00:00Z', bloc: 'B03', secondes: 7, etape: 'restitution' },
-      { date: '2026-10-14T10:01:00Z', bloc: 'B03', secondes: 8, etape: 'consolidation' },
+      { date: '2026-10-14T10:01:00Z', bloc: 'B03', secondes: 8, etape: 'restitution' },
       { date: '2026-10-14T10:02:00Z', bloc: 'B03', secondes: 9, etape: 'bilan' },
     ]
     expect(tempsActif(mesures, MAINTENANT, REGLAGES)).toEqual({

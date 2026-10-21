@@ -84,7 +84,7 @@ export const EXEMPLES_APPLI = {
     version: 3,
     etat: { etape: 'ET3' },
     statut: 'en_cours',
-    serie_ouverte: { restitution: true, consolidation: false },
+    serie_ouverte: { restitution: true },
     aisance: [{ le: '2026-06-01T10:00:00Z', duree_s: 24.5 }],
     theme: 'sombre',
   },
@@ -92,7 +92,7 @@ export const EXEMPLES_APPLI = {
   'statut.maj': {
     type: 'statut.maj',
     statut: 'vu',
-    manque: [{ code: 'consolidation_trop_tot', apres: '2026-06-01T11:30:00Z' }],
+    manque: [{ code: 'pratique_aide', exercices: ['PR1'] }],
   },
   erreur: {
     type: 'erreur',

@@ -8,13 +8,10 @@ test.describe('bloc complet sur l’API réelle', () => {
     await remettreAZero(request)
   })
 
-  test('restitution, consolidation une heure plus tard, pratique et atelier : le bloc est acquis provisoirement', async ({
-    page,
-    request,
-  }) => {
+  test('restitution, pratique et atelier : le bloc est acquis provisoirement', async ({ page }) => {
     await ouvrirSession(page)
 
-    await acquerirB01(page, request)
+    await acquerirB01(page)
 
     await page.goto('./#/blocs/B01')
     await page.reload()

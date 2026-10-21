@@ -59,12 +59,10 @@ export const Reglages = z.object({
     .refine(fuseauConnu, { error: 'Ce fuseau horaire n’existe pas.' })
     .default('Europe/Paris'),
   heureBascule: entierBorne('L’heure de bascule du jour', 0, 6, 4),
-  delaiConsolidationMinutes: entierBorne('Le délai de consolidation (en minutes)', 30, 1440, 60),
   delaiVerificationJours: entierBorne('Le délai de vérification (en jours)', 1, 14, 3),
   delaiRetestJours: entierBorne('Le délai de nouveau test (en jours)', 14, 90, 30),
   delaiNouvelEssaiJours: entierBorne('Le délai avant un nouvel essai (en jours)', 1, 7, 2),
   echecsAvantDescente: entierBorne('Le nombre d’échecs avant descente', 1, 5, 2),
-  seuilConsolidation: reelBorne('Le seuil de consolidation', 0.5, 1, 0.8),
   questionsDebut: entierBorne('Le nombre de questions de début de séance', 5, 10, 6),
   nouvellesCartesParJour: entierBorne('Le nombre de nouvelles cartes par jour', 0, 100, 20),
   retentionVisee: reelBorne('La rétention visée', 0.8, 0.97, 0.9),

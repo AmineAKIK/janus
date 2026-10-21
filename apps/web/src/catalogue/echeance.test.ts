@@ -72,16 +72,6 @@ describe('ligneEcheance, dans l’ordre des priorités', () => {
     )
   })
 
-  it('3. une consolidation en attente ou à faire', () => {
-    expect(
-      ligneEcheance(entree({ manque: [manque('consolidation_trop_tot', '2026-10-06T08:00:00Z')] }))
-        .date,
-    ).toBe('consolidation demain')
-    expect(ligneEcheance(entree({ manque: [manque('consolidation_a_faire')] })).date).toBe(
-      'consolidation à faire',
-    )
-  })
-
   it('4. une restitution à faire, pour un bloc en cours ou vu', () => {
     const restitution = [manque('restitution_incomplete')]
 
