@@ -168,12 +168,11 @@ export const ROUTES_SUIVI = {
             cible: z
               .strictObject({
                 libelle: Texte,
-                objectif_s: z.number().int().min(1),
+                /** Les paliers du manifeste, en secondes, dans l'ordre. */
+                paliers_s: z.array(z.number().int().min(1)).min(1),
                 meilleur_s: z.number().min(0).nullable(),
-                reussites: z.number().int().min(0),
-                reussites_requises: z.number().int().min(1),
-                jours: z.number().int().min(0),
-                jours_requis: z.number().int().min(1),
+                /** Les paliers validés, un par jour au plus. */
+                paliers_reussis: z.number().int().min(0),
               })
               .nullable(),
           }),

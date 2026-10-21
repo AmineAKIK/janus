@@ -8,7 +8,7 @@ const VIDE: CinqPreuves = {
   comprendre: null,
   faire_seul: null,
   transferer: null,
-  retenir: null,
+  retenir: { date: null, prochaine: null },
   aisance: null,
 }
 const textes = (preuves: CinqPreuves) =>
@@ -21,8 +21,22 @@ describe('lignesPreuves', () => {
       'Faire seul : Pas encore',
       'Transférer : Pas encore',
       'Retenir : Pas encore',
-      'Aisance : Pas encore',
+      'Aisance : Pas encore · dans la fiche, à l’étape d’aisance',
     ])
+  })
+
+  it('dit quand la vérification se présentera, et tait la consolidation, tant que Retenir n’est pas prouvé', () => {
+    const avec = (prochaine: CinqPreuves['retenir']['prochaine']) =>
+      textes({ ...VIDE, retenir: { date: null, prochaine } })[3]
+    expect(avec({ type: 'verification', apres: '2026-10-08' })).toBe(
+      'Retenir : Pas encore · vérification le 8 oct.',
+    )
+    expect(avec({ type: 'verification', apres: '2026-10-06' })).toBe(
+      'Retenir : Pas encore · vérification demain',
+    )
+    expect(avec({ type: 'consolidation', apres: '2026-10-05T10:00:00Z' })).toBe(
+      'Retenir : Pas encore',
+    )
   })
 
   it('date les preuves faites et annonce la prochaine échéance de « Retenir »', () => {

@@ -174,8 +174,8 @@ export interface CinqPreuves {
   readonly faireSeul: Preuve
   /** Date du premier transfert solide qui compte. */
   readonly transferer: Preuve
-  /** Date de la dernière vérification ou du dernier retest réussi, et la prochaine échéance. */
-  readonly retenir: { readonly date: string; readonly prochaine: Echeance | null } | null
+  /** Date de la dernière vérification ou du dernier retest réussi (`null` avant), et la prochaine échéance. */
+  readonly retenir: { readonly date: string | null; readonly prochaine: Echeance | null }
   /** Date où la cible est atteinte, ou `non_requis` si le manifeste n'en a pas. */
   readonly aisance: Preuve | 'non_requis'
 }
@@ -188,10 +188,7 @@ export function preuvesDuBloc(etat: ResultatBloc, reglages: Reglages): CinqPreuv
     comprendre: preuve(preuves.consolidation),
     faireSeul: preuve(preuves.pratique),
     transferer: preuve(preuves.transfert),
-    retenir:
-      preuves.derniereReussite === null
-        ? null
-        : { date: preuves.derniereReussite, prochaine: echeances(etat, reglages) },
+    retenir: { date: preuves.derniereReussite, prochaine: echeances(etat, reglages) },
     aisance: preuves.aisanceRequise ? preuve(preuves.aisance) : 'non_requis',
   }
 }

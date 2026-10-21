@@ -161,12 +161,9 @@ export function composerTableau(entree: EntreeTableau) {
             ? null
             : {
                 libelle: cible.libelle,
-                objectif_s: cible.objectifS,
+                paliers_s: [...cible.paliersS],
                 meilleur_s: cible.meilleurS,
-                reussites: cible.reussites,
-                reussites_requises: cible.reussitesRequises,
-                jours: cible.jours,
-                jours_requis: cible.joursRequis,
+                paliers_reussis: cible.paliersReussis,
               },
       })),
       revue: {

@@ -1,13 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import type { DonneesSuivi } from '../useSuivi.ts'
-import {
-  libelleSemaine,
-  texteAideMoyenne,
-  texteDuree,
-  texteMeilleur,
-  texteReussites,
-} from './textes.ts'
+import { libelleSemaine, texteAideMoyenne, texteDuree, texteMeilleur } from './textes.ts'
 import {
   ZoneAisance,
   ZoneAutonomie,
@@ -40,10 +34,9 @@ describe('textes des mesures', () => {
 
   it('écrit l’aide, le meilleur temps et les réussites', () => {
     expect(texteAideMoyenne(0.5)).toBe('Aide moyenne cette semaine : 0,5')
-    expect(texteMeilleur(45, 60)).toBe('45 s · objectif 60 s')
-    expect(texteMeilleur(null, 30)).toBe('aucun temps · objectif 30 s')
-    expect(texteReussites(1, 3, 2)).toBe('1 réussite sur 3, sur 2 jours distincts')
-    expect(texteReussites(2, 2, 1)).toBe('2 réussites sur 2, sur 1 jour distinct')
+    expect(texteMeilleur(45, [60, 45, 30], 1)).toBe('45 s · palier 2 sur 3, 45 s')
+    expect(texteMeilleur(null, [30], 0)).toBe('aucun temps · palier 1 sur 1, 30 s')
+    expect(texteMeilleur(22, [30, 20], 2)).toBe('22 s · 2 paliers réussis sur 2')
   })
 })
 
@@ -159,12 +152,9 @@ describe('Aisance', () => {
             titre_court: 'Bits',
             cible: {
               libelle: 'Dire les étapes',
-              objectif_s: 30,
+              paliers_s: [30, 20],
               meilleur_s: 25,
-              reussites: 1,
-              reussites_requises: 2,
-              jours: 1,
-              jours_requis: 2,
+              paliers_reussis: 1,
             },
           },
           { bloc: 'B02', titre_court: 'Logique', cible: null },
@@ -174,21 +164,16 @@ describe('Aisance', () => {
 
     const [premiere, seconde] = screen.getAllByRole('listitem').map((ligne) => within(ligne))
     expect(premiere?.getByRole('link')).toHaveAttribute('href', '#/blocs/B01')
-    expect(
-      premiere?.getByText('25 s · objectif 30 s · 1 réussite sur 2, sur 2 jours distincts'),
-    ).toBeVisible()
+    expect(premiere?.getByText('25 s · palier 2 sur 2, 20 s')).toBeVisible()
     expect(seconde?.getByText('non requis')).toBeInTheDocument()
   })
 
   it('range les blocs sans mesure dans un résumé repliable et n’écrit l’objectif commun qu’une fois', () => {
     const cible = (meilleur: number | null) => ({
       libelle: 'Dire les étapes',
-      objectif_s: 30,
+      paliers_s: [30, 30],
       meilleur_s: meilleur,
-      reussites: 0,
-      reussites_requises: 2,
-      jours: 0,
-      jours_requis: 2,
+      paliers_reussis: 0,
     })
     render(
       <ZoneAisance

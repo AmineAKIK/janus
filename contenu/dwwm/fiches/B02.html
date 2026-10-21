@@ -5249,9 +5249,7 @@ if (age &lt; 12) {
         ],
         "aisance": {
           "libelle": "Les tables NON, ET et OU, leurs 10 lignes dans le désordre, 10 justes sur 10 en 25 s au plus, trois jours différents",
-          "duree_max_s": 25,
-          "reussites_requises": 3,
-          "sur_jours_differents": 3
+          "paliers_s": [25, 25, 25]
         },
         "cartes": [
           {
@@ -9994,7 +9992,10 @@ if (age &lt; 12) {
             for (const b of [false, true])
               LIGNES_AISANCE.push({ op, a, b, v: op === 'ET' ? a && b : a || b })
         const N_AISANCE = LIGNES_AISANCE.length
-        const DUREE = 25
+        // La durée du palier courant, lue dans le manifeste (aisance.paliers_s), comme le moteur.
+        const PALIERS = JSON.parse(document.getElementById('bloc-manifest').textContent).aisance
+          .paliers_s
+        const DUREE = PALIERS[0]
         function aisance(n) {
           const reussis = Array.isArray(traces.vitesse)
             ? traces.vitesse.filter((x) => x && typeof x.jour === 'string')
