@@ -391,6 +391,44 @@ describe('une série de questions', () => {
     expect(screen.getByText('Gardée.')).toBeInTheDocument()
   })
 
+  it('une erreur restée ouverte : avant de reprendre, la dernière réponse se relit avec sa correction', async () => {
+    const envoyees = Object.fromEntries(
+      ['R1', 'R2', 'R3', 'R4', 'R5'].map((id) => [
+        id,
+        { reponse: 'Ma réponse à ' + id + '.', confiance: 'sur' },
+      ]),
+    )
+    const corrigees = {
+      R1: {
+        premiere: {
+          ...correction,
+          message: 'Juste, mais collée.',
+          compte: false,
+          raison_non_compte: 'avec_support',
+        },
+        relance: null,
+      },
+    }
+    const { pont, direStatut } = pontSimule(
+      { ...aLEtape('ET6'), envoyees, corrigees, bilan: { ids: ['E1'] } },
+      correction,
+    )
+    monter(GABARIT, pont)
+    direStatut({ statut: 'a_reprendre', manque: [{ code: 'erreur_ouverte', erreurs: ['E1'] }] })
+    fireEvent.click(await screen.findByRole('button', { name: 'Aller à la restitution' }))
+
+    expect(
+      await screen.findByRole('heading', { name: 'Tes dernières réponses à reprendre' }),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Ma réponse à R1.')).toBeInTheDocument()
+    expect(screen.getByText('Juste, mais collée.')).toBeInTheDocument()
+    expect(screen.getByText('Ne compte pas · Avec support')).toBeInTheDocument()
+
+    // Commencée, la reprise ne montre plus que la question, sans sa correction.
+    fireEvent.click(screen.getByRole('button', { name: 'Commencer' }))
+    expect(screen.queryByText('Juste, mais collée.')).toBeNull()
+  })
+
   it('la série finie, une réponse qui n’est pas solide se complète une fois, sans compter', async () => {
     const partielle = { ...correction, niveau: 'partiel', message: 'Il manque la raison.' }
     const { pont, demandes } = pontSimule(aLEtape('ET4'), partielle)
