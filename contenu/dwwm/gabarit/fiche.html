@@ -1709,6 +1709,17 @@
         enregistrer()
       }
       /**
+       * Une réponse nouvelle à une question remplace ce que la précédente avait fait repérer : ces
+       * erreurs ne sont plus cochées d'office, sauf si une autre réponse ou un outil les a aussi
+       * repérées. Sans cela, une erreur refermée par la nouvelle réponse resterait cochée et
+       * verrouillée dans le bilan, et l'envoyer la rouvrirait.
+       */
+      function remplacerReperees(question) {
+        etat.erreurs = { ...(etat.erreurs ?? {}), [question]: [] }
+        const encore = new Set(Object.values(etat.erreurs).flat())
+        etat.aCocher = (etat.aCocher ?? []).filter((id) => encore.has(id))
+      }
+      /**
        * Amine a rejeté une erreur que le correcteur avait repérée dans la réponse à une question : le
        * bilan ne la coche plus d'office, sauf si une autre réponse ou un outil l'a aussi repérée.
        */
@@ -2977,7 +2988,7 @@
             })
             // Une réponse nouvelle remplace ce que la précédente avait fait repérer sur cette
             // question ; un complément s'y ajoute.
-            if (!relance) etat.erreurs = { ...(etat.erreurs ?? {}), [question.id]: [] }
+            if (!relance) remplacerReperees(question.id)
             noterReperees(question.id, correction.erreurs_critiques)
             figer()
             bouton.hidden = true

@@ -439,7 +439,21 @@ describe('une série de questions', () => {
     monter(GABARIT, pont)
     fireEvent.click(await screen.findByRole('button', { name: 'Commencer' }))
     await repondreATout()
-    expect(sauvees.at(-1)).toMatchObject({ erreurs: { R1: [], 'outil:PR1-1': ['E1'] } })
+    expect(sauvees.at(-1)).toMatchObject({
+      erreurs: { R1: [], 'outil:PR1-1': ['E1'] },
+      aCocher: ['E1'],
+    })
+  })
+
+  it('une réponse nouvelle décoche l’erreur que seule la précédente avait fait repérer', async () => {
+    const { pont, sauvees } = pontSimule(
+      { ...aLEtape('ET4'), erreurs: { R1: ['E1'] }, aCocher: ['E1'] },
+      correction,
+    )
+    monter(GABARIT, pont)
+    fireEvent.click(await screen.findByRole('button', { name: 'Commencer' }))
+    await repondreATout()
+    expect(sauvees.at(-1)).toMatchObject({ erreurs: { R1: [] }, aCocher: [] })
   })
 
   it('la série finie, une réponse qui n’est pas solide se complète une fois, sans compter', async () => {
