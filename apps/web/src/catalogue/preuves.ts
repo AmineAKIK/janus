@@ -39,18 +39,6 @@ export function lignesPreuves(
   aujourdhui: string,
   enJour: (date: string) => string,
 ): readonly LignePreuve[] {
-  const simple = (cle: 'comprendre' | 'faire_seul' | 'transferer'): LignePreuve => {
-    const preuve = preuves[cle]
-    return preuve === null
-      ? { cle, libelle: LIBELLES[cle], etat: 'a_faire', texte: PAS_ENCORE }
-      : {
-          cle,
-          libelle: LIBELLES[cle],
-          etat: 'prouvee',
-          texte: prouvee(enJour(preuve.date), aujourdhui),
-        }
-  }
-
   const { retenir, aisance } = preuves
   // Tant que rien n'est prouvé, la ligne dit quand la vérification se présentera dans Aujourd'hui.
   const prochaine = retenir.prochaine
@@ -60,6 +48,25 @@ export function lignesPreuves(
     const mot = PROCHAINES[prochaine.type]
     suite =
       quand === 'aujourd’hui' || quand === 'demain' ? ` · ${mot} ${quand}` : ` · ${mot} le ${quand}`
+  }
+
+  // Comprendre et Transférer se prouvent à la vérification, comme Retenir : tant qu'elles manquent,
+  // leur ligne annonce la même échéance. Faire seul se prouve dans la fiche, à la pratique.
+  const simple = (cle: 'comprendre' | 'faire_seul' | 'transferer'): LignePreuve => {
+    const preuve = preuves[cle]
+    return preuve === null
+      ? {
+          cle,
+          libelle: LIBELLES[cle],
+          etat: 'a_faire',
+          texte: cle === 'faire_seul' ? PAS_ENCORE : PAS_ENCORE + suite,
+        }
+      : {
+          cle,
+          libelle: LIBELLES[cle],
+          etat: 'prouvee',
+          texte: prouvee(enJour(preuve.date), aujourdhui),
+        }
   }
   const ligneRetenir: LignePreuve =
     retenir.date === null
