@@ -120,11 +120,21 @@ export async function attendreEtatSauve(
   bloc: string,
   pret: (etat: Record<string, unknown>) => boolean,
 ) {
-  await expect
-    .poll(async () => pret((await detailDuBloc(request, bloc)).etat_page?.etat ?? {}), {
-      timeout: 15_000,
-    })
-    .toBe(true)
+  let vu: Detail['etat_page'] = null
+  try {
+    await expect
+      .poll(
+        async () => {
+          vu = (await detailDuBloc(request, bloc)).etat_page
+          return pret(vu?.etat ?? {})
+        },
+        { timeout: 15_000 },
+      )
+      .toBe(true)
+  } catch (cause) {
+    // Rouge, l'erreur dit ce que le serveur garde : sans lui, on devine.
+    throw new Error(`État de la page de ${bloc} au serveur : ${JSON.stringify(vu)}`, { cause })
+  }
 }
 
 let numero = 0

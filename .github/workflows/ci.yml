@@ -121,6 +121,15 @@ jobs:
           pnpm --filter @janus/web exec vitest run src/api/contratHttp.test.ts
           pnpm --filter @janus/web exec playwright install --with-deps chromium
           pnpm --filter @janus/web e2e:api
+      # Un parcours rouge garde sa trace : console de l'appli, texte de la fiche, journal du banc.
+      - if: failure()
+        run: cp banc.log apps/web/captures/traces-api/ 2>/dev/null || true
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: failure()
+        with:
+          name: traces-parcours
+          path: apps/web/captures/traces-api/
+          if-no-files-found: ignore
       - run: pnpm build
       # GitHub Pages reste en démo (build ci-dessus). Le VPS est en http, avec des chemins propres.
       - name: Build du VPS (http, historique par chemins)
