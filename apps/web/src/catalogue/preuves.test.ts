@@ -36,6 +36,16 @@ describe('lignesPreuves', () => {
     )
   })
 
+  it('annonce la même vérification pour Comprendre et Transférer, pas pour Faire seul', () => {
+    const lignes = textes({
+      ...VIDE,
+      retenir: { date: null, prochaine: { type: 'verification', apres: '2026-10-08' } },
+    })
+    expect(lignes[0]).toBe('Comprendre : Pas encore · vérification le 8 oct.')
+    expect(lignes[1]).toBe('Faire seul : Pas encore')
+    expect(lignes[2]).toBe('Transférer : Pas encore · vérification le 8 oct.')
+  })
+
   it('date les preuves faites et annonce la prochaine échéance de « Retenir »', () => {
     const lignes = textes({
       ...VIDE,
