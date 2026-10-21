@@ -18,7 +18,7 @@ if (fichier === undefined) {
 }
 
 const config = SchemaConfigCorrecteur.parse(process.env)
-const choix = correcteurDeLaConfig(config, { delaiMs: 30_000, jetonsSortieMax: 1000 })
+const choix = correcteurDeLaConfig(config, { delaiMs: 30_000, jetonsSortieMax: 4000 })
 if (option !== '--faux' && choix.correcteur === undefined) {
   process.stderr.write(
     `La clé du correcteur « ${config.CORRECTEUR} » est exigée (DEEPSEEK_API_KEY ou ANTHROPIC_API_KEY), ou ajoute --faux.\n`,

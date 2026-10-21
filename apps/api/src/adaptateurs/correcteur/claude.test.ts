@@ -88,7 +88,7 @@ describe('creerClaude', () => {
     expect(corps.system).toEqual([
       { type: 'text', text: CONSIGNE, cache_control: { type: 'ephemeral' } },
     ])
-    expect(corps.thinking).toEqual({ type: 'disabled' })
+    expect(corps.thinking).toEqual({ type: 'adaptive' })
     expect(corps.output_config).toEqual({
       format: { type: 'json_schema', schema: schemaSortie(REQUETE) },
     })
@@ -97,7 +97,7 @@ describe('creerClaude', () => {
     expect(brut).toEqual({
       texte: '{"niveau":"solide"}',
       modele: 'claude-haiku-5-5',
-      parametres: { thinking: 'disabled', max_tokens: 1000, format: 'json_schema' },
+      parametres: { thinking: 'adaptive', max_tokens: 1000, format: 'json_schema' },
       jetonsEntree: 900,
       jetonsEntreeCache: 600,
       jetonsEntreeCacheEcrits: 0,
@@ -139,12 +139,12 @@ describe('creerClaude', () => {
   it('impose les champs exacts de la sortie, avec les valeurs des contrats', () => {
     const schema = schemaSortie(REQUETE)
     expect(schema.required).toEqual([
-      'message',
       'niveau',
       'erreurs_critiques',
+      'certitude',
       'source',
       'ref',
-      'certitude',
+      'message',
     ])
     expect(Object.keys(schema.properties)).toEqual([...schema.required])
     expect(schema.additionalProperties).toBe(false)

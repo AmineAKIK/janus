@@ -469,7 +469,9 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('POST /corrections contre Postgr
         'SELECT consomme_millioniemes AS consomme FROM budget_ia',
       )
       const consommeAvant = rows[0]?.consomme ?? 0
-      const plafond = consommeAvant + 9_000
+      // Chaque demande réserve deux essais au plafond de sortie (4 000 jetons, réflexion comprise) :
+      // près de 10 000 millionièmes au tarif de test. Deux demandes passent, pas dix.
+      const plafond = consommeAvant + 25_000
       await reglages({ plafondIaMillioniemes: plafond })
 
       const reponses = await Promise.all(Array.from({ length: 10 }, () => corriger(demande())))
