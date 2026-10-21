@@ -36,6 +36,12 @@ describe('lignesPreuves', () => {
     )
   })
 
+  it('nomme l’étape d’aisance avec le titre que la fiche lui donne', () => {
+    expect(lignesPreuves(VIDE, AUJOURDHUI, enJour, 'Vitesse')[4]?.texte).toBe(
+      'Pas encore · dans la fiche, à l’étape «\u00a0Vitesse\u00a0»',
+    )
+  })
+
   it('annonce la même vérification pour Comprendre et Transférer, pas pour Faire seul', () => {
     const lignes = textes({
       ...VIDE,
