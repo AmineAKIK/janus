@@ -707,6 +707,27 @@ describe('une consolidation faite qui ne compte pas', () => {
     expect(screen.queryByRole('button', { name: 'Commencer' })).toBeNull()
   })
 
+  it('faite trop tôt, elle est fermée et dit quand elle se refait', async () => {
+    const { pont, direStatut } = pontSimule(faite, undefined, {
+      restitution: false,
+      consolidation: false,
+    })
+    monter(GABARIT, pont)
+    await screen.findByText(/Consolidation terminée/)
+    const apres = new Date()
+    apres.setHours(14, 35, 0, 0)
+    direStatut({
+      statut: 'vu',
+      manque: [{ code: 'consolidation_trop_tot', apres: apres.toISOString() }],
+    })
+    expect(
+      await screen.findByText(
+        'Consolidation à refaire : faite trop tôt après la restitution ou le cours, elle se refait à 14 h 35.',
+      ),
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Commencer' })).toBeNull()
+  })
+
   it('le bilan le dit, au lieu de « Consolidation faite »', async () => {
     const { pont, direStatut } = pontSimule(
       { ...faite, etape: 'ET6', bilan: { ids: [] } },

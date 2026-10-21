@@ -29,6 +29,14 @@ describe('seriesOuvertes', () => {
     expect(seriesOuvertes(etat).consolidation).toBe(false)
   })
 
+  it('une série faite trop tôt ferme la consolidation jusqu’au délai, puis la rouvre', () => {
+    const f = fabrique()
+    const faits = [...f.restitution(DEBUT), ...f.consolidation(apres(DEBUT, 0, 10))]
+
+    expect(seriesOuvertes(calcul(faits, apres(DEBUT, 0, 20))).consolidation).toBe(false)
+    expect(seriesOuvertes(calcul(faits, apres(DEBUT, 0, 200))).consolidation).toBe(true)
+  })
+
   it('une erreur critique rouvre la restitution sans fermer la consolidation', () => {
     const f = fabrique()
     const etat = calcul(

@@ -4855,7 +4855,7 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 11,
+        "version": 12,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 expressions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
@@ -11513,13 +11513,10 @@ if (age &lt; 12) {
       }
 
       /** Quand la consolidation s'ouvre, d'après le dernier statut de l'appli : l'heure, et le jour s'il change. */
-      function quandConsolidation() {
-        const apres = Array.isArray(dernierStatut?.manque)
-          ? dernierStatut.manque.find((m) => m.code === 'consolidation_trop_tot')?.apres
-          : undefined
+      /** « à 14 h 35 », précédé du jour s'il n'est pas aujourd'hui ; null si l'instant ne se lit pas. */
+      function heureDe(apres) {
         const date = apres ? new Date(apres) : null
-        if (!date || Number.isNaN(date.getTime()))
-          return 'La consolidation n’est pas encore ouverte\u00a0: elle s’ouvre un moment après ta restitution, reviens plus tard.'
+        if (!date || Number.isNaN(date.getTime())) return null
         const heure = date.getHours() + '\u00a0h\u00a0' + String(date.getMinutes()).padStart(2, '0')
         const jour =
           date.toDateString() === new Date().toDateString()
@@ -11527,7 +11524,16 @@ if (age &lt; 12) {
             : 'le ' +
               date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) +
               ' '
-        return 'La consolidation s’ouvre ' + jour + 'à ' + heure + '\u00a0: reviens à ce moment-là.'
+        return jour + 'à ' + heure
+      }
+      function quandConsolidation() {
+        const apres = Array.isArray(dernierStatut?.manque)
+          ? dernierStatut.manque.find((m) => m.code === 'consolidation_trop_tot')?.apres
+          : undefined
+        const moment = heureDe(apres)
+        if (moment === null)
+          return 'La consolidation n’est pas encore ouverte\u00a0: elle s’ouvre un moment après ta restitution, reviens plus tard.'
+        return 'La consolidation s’ouvre ' + moment + '\u00a0: reviens à ce moment-là.'
       }
 
       function afficherSerie(serie, titre) {
@@ -11536,12 +11542,16 @@ if (age &lt; 12) {
         const finie = reponsesFinies(serie) === total
         const envoyees = questions(serie).filter((q) => etat.envoyees[q.id])
         if (!serieOuverte[serie]) {
-          const dire = () =>
-            finie
+          const dire = () => {
+            const manque = serie === 'consolidation' ? consolidationARefaire() : null
+            if (manque !== null)
+              return 'Consolidation à refaire\u00a0: ' + direConsolidationARefaire(manque)
+            return finie
               ? titre + ' terminée\u00a0: tes ' + total + ' réponses sont envoyées.'
               : serie === 'consolidation'
                 ? quandConsolidation()
                 : 'Cette série n’est pas ouverte.'
+          }
           const avis = creer('p', { textContent: dire() })
           // L'heure d'ouverture vient du statut, qui arrive juste après le premier affichage.
           majQuand = () => {
@@ -11938,7 +11948,10 @@ if (age &lt; 12) {
         if (!Array.isArray(dernierStatut?.manque)) return null
         return (
           dernierStatut.manque.find(
-            (m) => m.code === 'consolidation_a_faire' || m.code === 'consolidation_insuffisante',
+            (m) =>
+              m.code === 'consolidation_a_faire' ||
+              m.code === 'consolidation_insuffisante' ||
+              m.code === 'consolidation_trop_tot',
           ) ?? null
         )
       }
@@ -11946,7 +11959,11 @@ if (age &lt; 12) {
       const direConsolidationARefaire = (manque) =>
         manque.code === 'consolidation_insuffisante'
           ? 'tes réponses n’ont pas atteint le seuil.'
-          : 'tes réponses n’ont pas compté pour le statut (chacune dit pourquoi sous sa correction).'
+          : manque.code === 'consolidation_trop_tot'
+            ? 'faite trop tôt après la restitution ou le cours, elle se refait ' +
+              (heureDe(manque.apres) ?? 'plus tard') +
+              '.'
+            : 'tes réponses n’ont pas compté pour le statut (chacune dit pourquoi sous sa correction).'
       /**
        * Les questions d'une série déjà répondues qui se reposent : en restitution, celles qui touchent
        * une erreur critique ouverte (une erreur ouverte rouvre la restitution, et une réponse solide à
