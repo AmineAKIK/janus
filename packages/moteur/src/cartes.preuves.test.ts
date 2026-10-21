@@ -1,14 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { preuvesDuBloc } from './cartes.ts'
-import {
-  apres,
-  DEBUT,
-  fabrique,
-  jusquaProvisoire,
-  MANIFESTE,
-  PROVISOIRE,
-  REGLAGES,
-} from './fabrique.ts'
+import { apres, DEBUT, fabrique, jusquaProvisoire, MANIFESTE, REGLAGES } from './fabrique.ts'
 import type { Fait } from './faits.ts'
 import { calculerBloc } from './statut.ts'
 
@@ -27,9 +19,9 @@ describe('preuvesDuBloc', () => {
     })
   })
 
-  it('date comprendre et faire seul avec la fin de la consolidation et de la pratique', () => {
+  it('date faire seul avec la pratique ; comprendre attend la vérification', () => {
     const resultat = preuves(jusquaProvisoire(fabrique()))
-    expect(resultat.comprendre).toEqual({ date: PROVISOIRE })
+    expect(resultat.comprendre).toBeNull()
     expect(resultat.faireSeul).toEqual({ date: apres(DEBUT, 0, 1) })
     expect(resultat.transferer).toBeNull()
     expect(resultat.retenir).toEqual({
@@ -42,6 +34,7 @@ describe('preuvesDuBloc', () => {
     const f = fabrique()
     const verification = apres(DEBUT, 4)
     const resultat = preuves([...jusquaProvisoire(f), f.verification(verification)])
+    expect(resultat.comprendre).toEqual({ date: verification })
     expect(resultat.transferer).toEqual({ date: verification })
     expect(resultat.retenir).toEqual({
       date: verification,

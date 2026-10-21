@@ -13,15 +13,11 @@ describe('blocsReportes', () => {
 })
 
 describe('lienDeLaTache', () => {
-  const sansManifeste = () => undefined
-
   it('mène chaque tâche à son écran', () => {
-    expect(lienDeLaTache({ type: 'questions_debut', nombre: 3 }, sansManifeste)).toBe('/questions')
-    expect(lienDeLaTache({ type: 'cartes', dues: 1, nouvelles: 2 }, sansManifeste)).toBe(
-      '/revision',
-    )
-    expect(lienDeLaTache({ type: 'bloc', bloc: 'B1' }, sansManifeste)).toBe('/blocs/B1')
-    expect(lienDeLaTache({ type: 'retest', bloc: 'B1', apres: '2026-10-01' }, sansManifeste)).toBe(
+    expect(lienDeLaTache({ type: 'questions_debut', nombre: 3 })).toBe('/questions')
+    expect(lienDeLaTache({ type: 'cartes', dues: 1, nouvelles: 2 })).toBe('/revision')
+    expect(lienDeLaTache({ type: 'bloc', bloc: 'B1' })).toBe('/blocs/B1')
+    expect(lienDeLaTache({ type: 'retest', bloc: 'B1', apres: '2026-10-01' })).toBe(
       '/verifications/ouvrir/B1/retest',
     )
   })

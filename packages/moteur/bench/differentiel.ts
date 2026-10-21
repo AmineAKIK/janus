@@ -38,12 +38,10 @@ function reglagesAleatoires(): Reglages {
   return SchemaReglages.parse({
     fuseau: choix(FUSEAUX),
     heureBascule: entier(0, 6),
-    delaiConsolidationMinutes: choix([30, 60, 120, 600]),
     delaiVerificationJours: entier(1, 4),
     delaiRetestJours: choix([14, 20, 30]),
     delaiNouvelEssaiJours: entier(1, 3),
     echecsAvantDescente: entier(1, 3),
-    seuilConsolidation: choix([0.5, 0.8, 1]),
     heuresSansPageAvantVerification: choix([0, 24]),
     joursAvantReutilisation: choix([1, 5, 60]),
     blocsEntreRevues: choix([3, 4]),
@@ -55,10 +53,8 @@ function manifesteAleatoire(bloc: string): Manifeste {
   const sansAisance = hasard() < 0.3
   const sansAtelier = hasard() < 0.3
   const { aisance, atelier, ...reste } = base
-  // Parfois des identifiants en double : étape de même id mais de type différent, question de
-  // consolidation qui reprend l'id d'une question de restitution avec d'autres erreurs.
+  // Parfois des identifiants en double : étape de même id mais de type différent.
   const doubles = hasard() < 0.25
-  const [premiereConsolidation, ...suiteConsolidation] = base.consolidation
   return {
     ...reste,
     ...(doubles
@@ -68,10 +64,6 @@ function manifesteAleatoire(bloc: string): Manifeste {
             ...base.etapes,
             { id: 'ET1', titre: 'Double', type: 'explication' as const },
           ],
-          consolidation:
-            premiereConsolidation === undefined
-              ? base.consolidation
-              : [{ ...premiereConsolidation, id: 'R1', erreurs: ['E3'] }, ...suiteConsolidation],
         }
       : {}),
     ...(sansAisance || aisance === undefined ? {} : { aisance }),
@@ -87,9 +79,7 @@ function faitsAleatoires(bloc: string, manifeste: Manifeste, n: number): Fait[] 
     { length: Math.max(3, Math.floor(n * 0.9)) },
     (_, i) => `${bloc}-f${String(i)}`,
   )
-  const questions = [...manifeste.restitution, ...manifeste.consolidation, ...manifeste.rappel].map(
-    (q) => q.id,
-  )
+  const questions = [...manifeste.restitution, ...manifeste.rappel].map((q) => q.id)
   const reponses = (reussi: boolean) =>
     (['explication', 'tache', 'transfert'] as const).map((type) =>
       type === 'tache'
@@ -145,7 +135,6 @@ function faitsAleatoires(bloc: string, manifeste: Manifeste, n: number): Fait[] 
         serie: choix([
           'restitution',
           'restitution',
-          'consolidation',
           'consolidation',
           'rappel',
           'verification',
@@ -231,18 +220,6 @@ function faitsDeParcours(bloc: string, manifeste: Manifeste): Fait[] {
       question: q.id,
       tour: 1,
       niveau: 'solide',
-      compte: true,
-      confiance: 'sur',
-      erreursIa: [],
-    })
-  }
-  for (const [i, q] of manifeste.consolidation.entries()) {
-    ajoute(t + 3 * 3_600_000 + i * 60_000, {
-      type: 'correction',
-      serie: 'consolidation',
-      question: q.id,
-      tour: 1,
-      niveau: hasard() < 0.8 ? 'solide' : 'fragile',
       compte: true,
       confiance: 'sur',
       erreursIa: [],

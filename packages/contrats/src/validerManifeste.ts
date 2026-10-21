@@ -32,7 +32,6 @@ function identifiants(manifeste: Manifeste): readonly Reperee[] {
     ...reperer(manifeste.etapes, 'etapes'),
     ...reperer(manifeste.erreurs_critiques, 'erreurs_critiques'),
     ...reperer(manifeste.restitution, 'restitution'),
-    ...reperer(manifeste.consolidation, 'consolidation'),
     ...reperer(manifeste.rappel, 'rappel'),
     ...reperer(manifeste.differees, 'differees'),
     ...reperer(manifeste.pratique, 'pratique'),
@@ -54,19 +53,8 @@ function verifierIdentifiantsUniques(manifeste: Manifeste, problemes: Probleme[]
       vus.set(id, chemin)
       continue
     }
-    // Une consolidation qui reprend une question de restitution a sa propre règle.
-    const memeQuestion =
-      (premier.startsWith('restitution') && chemin.startsWith('consolidation')) ||
-      (premier.startsWith('consolidation') && chemin.startsWith('restitution'))
-    if (!memeQuestion) {
-      ajouter(problemes, chemin, `L’identifiant « ${id} » est déjà utilisé (${premier}).`)
-    }
+    ajouter(problemes, chemin, `L’identifiant « ${id} » est déjà utilisé (${premier}).`)
   }
-}
-
-/** Texte comparé sans tenir compte de la casse ni des espaces en trop. */
-function normaliserTexte(texte: string): string {
-  return texte.trim().replace(/\s+/g, ' ').toLowerCase()
 }
 
 function verifierNombreDeQuestions(manifeste: Manifeste, problemes: Probleme[]): void {
@@ -78,13 +66,6 @@ function verifierNombreDeQuestions(manifeste: Manifeste, problemes: Probleme[]):
       `La restitution doit avoir 5 ou 6 questions (il y en a ${String(restitution)}).`,
     )
   }
-  if (manifeste.consolidation.length < 3) {
-    ajouter(
-      problemes,
-      'consolidation',
-      `La consolidation doit avoir au moins 3 questions (il y en a ${String(manifeste.consolidation.length)}).`,
-    )
-  }
   if (manifeste.rappel.length < 6) {
     ajouter(
       problemes,
@@ -92,27 +73,6 @@ function verifierNombreDeQuestions(manifeste: Manifeste, problemes: Probleme[]):
       `Le rappel doit avoir au moins 6 questions (il y en a ${String(manifeste.rappel.length)}).`,
     )
   }
-}
-
-function verifierConsolidationDistincte(manifeste: Manifeste, problemes: Probleme[]): void {
-  const identifiantsRestitution = new Set(manifeste.restitution.map((q) => q.id))
-  const textesRestitution = new Set(manifeste.restitution.map((q) => normaliserTexte(q.question)))
-  manifeste.consolidation.forEach((question, i) => {
-    if (identifiantsRestitution.has(question.id)) {
-      ajouter(
-        problemes,
-        `consolidation[${String(i)}].id`,
-        `La question de consolidation « ${question.id} » reprend l’identifiant d’une question de restitution.`,
-      )
-    }
-    if (textesRestitution.has(normaliserTexte(question.question))) {
-      ajouter(
-        problemes,
-        `consolidation[${String(i)}].question`,
-        'Cette question de consolidation reprend le texte d’une question de restitution.',
-      )
-    }
-  })
 }
 
 function verifierDifferees(manifeste: Manifeste, problemes: Probleme[]): void {
@@ -177,7 +137,6 @@ function verifierErreursCitees(manifeste: Manifeste, problemes: Probleme[]): voi
   }
   const questions: readonly (readonly [readonly Question[], string])[] = [
     [manifeste.restitution, 'restitution'],
-    [manifeste.consolidation, 'consolidation'],
     [manifeste.rappel, 'rappel'],
   ]
   for (const [liste, nom] of questions) verifier(liste, nom)
@@ -186,8 +145,7 @@ function verifierErreursCitees(manifeste: Manifeste, problemes: Probleme[]): voi
 
 /**
  * Une erreur cochée au bilan ne se referme que par une réponse réussie à une question qui la touche :
- * la restitution est déjà passée, la consolidation ne se joue qu'une fois ; seules les différées
- * reviennent (vérification, retest, entretien). Sans différée qui la touche, l'erreur resterait ouverte.
+ * la restitution est déjà passée ; seules les différées reviennent (vérification, retest). Sans différée qui la touche, l'erreur resterait ouverte.
  */
 function verifierErreursFermables(manifeste: Manifeste, problemes: Probleme[]): void {
   const touchees = new Set(manifeste.differees.flatMap((differee) => differee.erreurs))
@@ -259,7 +217,6 @@ export function validerManifeste(donnees: unknown): ResultatManifeste {
   const problemes: Probleme[] = []
   verifierIdentifiantsUniques(manifeste, problemes)
   verifierNombreDeQuestions(manifeste, problemes)
-  verifierConsolidationDistincte(manifeste, problemes)
   verifierDifferees(manifeste, problemes)
   verifierErreursCitees(manifeste, problemes)
   verifierErreursFermables(manifeste, problemes)

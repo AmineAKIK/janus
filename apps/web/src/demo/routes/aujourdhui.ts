@@ -32,12 +32,6 @@ function lienDeLaTache(tache: Tache): string {
     case 'retest':
     case 'entretien':
       return `/verifications/ouvrir/${tache.bloc}/${tache.type}`
-    case 'consolidation': {
-      const etape = MANIFESTES_GRAINE[tache.bloc]?.etapes.find(
-        ({ type }) => type === 'consolidation',
-      )
-      return etape === undefined ? `/blocs/${tache.bloc}` : `/blocs/${tache.bloc}?etape=${etape.id}`
-    }
     case 'cartes':
       return '/revision'
     case 'bloc':

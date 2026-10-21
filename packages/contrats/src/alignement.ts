@@ -34,7 +34,7 @@ export const Alignement = z.strictObject({
         montree: z.array(Identifiant).min(1),
         /** Les exercices de pratique, l'atelier ou l'étape d'aisance qui l'entraînent : liste vide si rien. */
         pratiquee: z.array(Identifiant),
-        /** Les questions (restitution, consolidation, rappel, différées) et les cartes qui l'interrogent. */
+        /** Les questions (restitution, rappel, différées) et les cartes qui l'interrogent. */
         questions: z.array(Identifiant).min(1),
       }),
     )
@@ -77,7 +77,6 @@ export type Alignement = z.infer<typeof Alignement>
 function interrogations(manifeste: Manifeste): ReadonlyMap<string, string> {
   const listes = {
     restitution: manifeste.restitution,
-    consolidation: manifeste.consolidation,
     rappel: manifeste.rappel,
     differees: manifeste.differees,
     cartes: manifeste.cartes,

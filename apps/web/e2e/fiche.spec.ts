@@ -67,19 +67,19 @@ test.describe('fiche de démonstration', () => {
   test('garde l’étape après rechargement', async ({ page }) => {
     await page.goto(FICHE)
     await expect(page.getByRole('status').first()).toHaveText('Mode autonome', { timeout: 5000 })
-    await page.getByRole('button', { name: 'Consolidation' }).click()
-    await expect(page.getByRole('heading', { name: 'Consolidation' })).toBeVisible()
+    await page.getByRole('button', { name: 'Bilan' }).click()
+    await expect(page.getByRole('heading', { name: 'Bilan' })).toBeVisible()
 
     await page.reload()
 
-    await expect(page.getByRole('button', { name: 'Consolidation' })).toHaveAttribute(
+    await expect(page.getByRole('button', { name: 'Bilan' })).toHaveAttribute(
       'aria-current',
       'step',
       { timeout: 5000 },
     )
   })
 
-  test('dans l’appli, le bloc vient de etat.init et la consolidation suit serie_ouverte', async ({
+  test('dans l’appli, le bloc vient de etat.init et la restitution suit serie_ouverte', async ({
     page,
   }) => {
     await page.goto('./')
@@ -101,7 +101,7 @@ test.describe('fiche de démonstration', () => {
               version: 5,
               etat: null,
               statut: 'vu',
-              serie_ouverte: { restitution: false, consolidation: true },
+              serie_ouverte: { restitution: false },
               aisance: [],
             },
             '*',
@@ -119,8 +119,8 @@ test.describe('fiche de démonstration', () => {
           .querySelector('iframe')
           ?.contentWindow?.postMessage({ type: 'etape.aller', etape: cible }, '*')
       }, etape)
-    await aller('ET8')
-    await expect(fiche.getByText('Quelle différence entre vu et acquis ?')).toBeVisible()
+    await aller('ET9')
+    await expect(fiche.getByRole('heading', { name: 'Bilan' })).toBeVisible()
     await aller('ET7')
     await expect(fiche.getByText('Cette série n’est pas ouverte.')).toBeVisible()
 

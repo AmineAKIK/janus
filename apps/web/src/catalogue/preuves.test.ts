@@ -25,7 +25,7 @@ describe('lignesPreuves', () => {
     ])
   })
 
-  it('dit quand la vérification se présentera, et tait la consolidation, tant que Retenir n’est pas prouvé', () => {
+  it('dit quand la vérification se présentera tant que Retenir n’est pas prouvé', () => {
     const avec = (prochaine: CinqPreuves['retenir']['prochaine']) =>
       textes({ ...VIDE, retenir: { date: null, prochaine } })[3]
     expect(avec({ type: 'verification', apres: '2026-10-08' })).toBe(
@@ -33,9 +33,6 @@ describe('lignesPreuves', () => {
     )
     expect(avec({ type: 'verification', apres: '2026-10-06' })).toBe(
       'Retenir : Pas encore · vérification demain',
-    )
-    expect(avec({ type: 'consolidation', apres: '2026-10-05T10:00:00Z' })).toBe(
-      'Retenir : Pas encore',
     )
   })
 

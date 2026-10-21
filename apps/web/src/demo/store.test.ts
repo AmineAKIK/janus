@@ -26,7 +26,7 @@ describe('étatVide', () => {
       sessionOuverte: false,
       faits: [],
     })
-    expect(etat.reglages.delaiConsolidationMinutes).toBe(60)
+    expect(etat.reglages.delaiVerificationJours).toBe(3)
   })
 })
 

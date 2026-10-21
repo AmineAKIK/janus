@@ -1,6 +1,6 @@
 import type { Manque, TypeEtape } from '@janus/contrats'
 
-export type SerieVerrou = 'restitution' | 'consolidation'
+export type SerieVerrou = 'restitution'
 
 /** Les étapes de cours : tout ce qui précède la restitution. */
 const ETAPES_DE_COURS: ReadonlySet<TypeEtape> = new Set([
@@ -21,8 +21,6 @@ export function questionsRestantes(
   envoyees: readonly string[],
   manque: readonly Manque[],
 ): readonly string[] {
-  const nonEnvoyees = questions.filter((question) => !envoyees.includes(question))
-  if (serie === 'consolidation') return nonEnvoyees
   // Le serveur sait ce qui reste de la restitution, même après un rechargement de la page.
   const incomplete = manque.find(({ code }) => code === 'restitution_incomplete')
   if (incomplete === undefined) return []
@@ -40,7 +38,7 @@ export function etapesVerrouillees(
   restantes: Readonly<Record<SerieVerrou, number>>,
 ): ReadonlySet<string> {
   const type = etapes.find(({ id }) => id === courante)?.type
-  if (type !== 'restitution' && type !== 'consolidation') return new Set()
+  if (type !== 'restitution') return new Set()
   if (restantes[type] === 0) return new Set()
   return new Set(etapes.filter((etape) => ETAPES_DE_COURS.has(etape.type)).map(({ id }) => id))
 }

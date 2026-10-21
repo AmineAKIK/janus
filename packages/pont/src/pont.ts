@@ -84,7 +84,7 @@ export interface Pont {
   surEtape: (rappel: (etape: string) => void) => () => void
   /** Amine a rejeté une erreur critique que la correction d'une question avait repérée. */
   surRejet: (rappel: (rejet: { question: string; erreur: string }) => void) => () => void
-  /** Un `etat.init` reçu après le démarrage : les séries ouvertes ont changé (la consolidation s'ouvre). */
+  /** Un `etat.init` reçu après le démarrage : la série ouverte a changé (la restitution se rouvre). */
   surInit: (rappel: (init: Init) => void) => () => void
 }
 

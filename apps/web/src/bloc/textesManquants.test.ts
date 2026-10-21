@@ -14,8 +14,6 @@ describe('texteManque', () => {
         exercices: ['EX1'],
         erreurs: ['E1'],
         apres: '2026-10-06T13:20:00.000Z',
-        points: 3,
-        requis: 4,
       },
       MAINTENANT,
     )
@@ -30,9 +28,6 @@ describe('texteManque', () => {
     ).toBe('Envoie ta réponse aux questions R2 et R3 de la restitution.')
     expect(texteManque({ code: 'erreur_ouverte', erreurs: ['E1'] }, MAINTENANT)).toContain('E1')
     expect(texteManque({ code: 'pratique_aide', exercices: ['EX1'] }, MAINTENANT)).toContain('EX1')
-    expect(
-      texteManque({ code: 'consolidation_insuffisante', points: 3, requis: 4 }, MAINTENANT),
-    ).toBe('Atteins le seuil à la consolidation : 3 points sur 4 requis.')
   })
 
   it('sait dire un manque sans détail', () => {
@@ -71,14 +66,6 @@ describe('les noms que l’apprenant lit dans la fiche', () => {
   })
 })
 
-describe('consolidation_insuffisante : les nombres à la française', () => {
-  it('écrit la virgule et accorde « point »', () => {
-    expect(
-      texteManque({ code: 'consolidation_insuffisante', points: 0.5, requis: 0.8 }, MAINTENANT),
-    ).toBe('Atteins le seuil à la consolidation : 0,5 point sur 0,8 requis.')
-  })
-})
-
 describe('STATUT_SUIVANT', () => {
   it('suit l’échelle des statuts, maîtrisé n’a pas de suivant', () => {
     expect(STATUT_SUIVANT.vu).toBe('acquis_provisoirement')
@@ -96,7 +83,7 @@ describe('formaterInstant', () => {
     expect(formaterInstant(lendemain, midi)).toBe('7\u00a0octobre à 9\u00a0h\u00a005')
   })
 
-  it('passe à la date quand la consolidation tombe après minuit', () => {
+  it('passe à la date quand la vérification tombe après minuit', () => {
     const tard = new Date(2026, 9, 6, 23, 30).toISOString()
     const apresMinuit = new Date(2026, 9, 7, 0, 30).toISOString()
 

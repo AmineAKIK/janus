@@ -19,7 +19,7 @@ export interface DonneesFiche {
   readonly manque: readonly Manque[]
   /** L'avancement du bloc d'après les faits enregistrés : ce que le fil d'étapes coche. */
   readonly avancement: Avancement
-  readonly serieOuverte: { readonly restitution: boolean; readonly consolidation: boolean }
+  readonly serieOuverte: { readonly restitution: boolean }
   /** L'état de page sauvegardé et sa version (0 s'il n'y en a pas). */
   readonly etatPage: { readonly version: number; readonly etat: EtatDePage } | null
   /** Les séries d'aisance réussies que le serveur garde : la page y relit ses niveaux. */
@@ -119,7 +119,6 @@ export function useHoteFiche(
   const [correctionsTranchees, setCorrectionsTranchees] = useState<readonly string[]>([])
   const [envoyees, setEnvoyees] = useState<Readonly<Record<SerieVerrou, readonly string[]>>>({
     restitution: [],
-    consolidation: [],
   })
 
   // La dernière valeur de chaque donnée, pour que l'écouteur n'ait pas à se réinstaller.
@@ -158,15 +157,13 @@ export function useHoteFiche(
   }, [vers])
 
   // Une série qui s'ouvre (ou se ferme) pendant que la page est ouverte : la page le sait aussitôt.
-  const { restitution: restitutionOuverte, consolidation: consolidationOuverte } =
-    donnees.serieOuverte
-  const seriesAvant = useRef(`${String(restitutionOuverte)}:${String(consolidationOuverte)}`)
+  const { restitution: restitutionOuverte } = donnees.serieOuverte
+  const serieAvant = useRef(restitutionOuverte)
   useEffect(() => {
-    const cle = `${String(restitutionOuverte)}:${String(consolidationOuverte)}`
-    if (seriesAvant.current === cle) return
-    seriesAvant.current = cle
+    if (serieAvant.current === restitutionOuverte) return
+    serieAvant.current = restitutionOuverte
     if (phase === 'prete') envoyerInit()
-  }, [restitutionOuverte, consolidationOuverte, phase, envoyerInit])
+  }, [restitutionOuverte, phase, envoyerInit])
 
   // Le serveur a recalculé le statut (après une correction, ou en relisant le bloc).
   const cleStatut = `${donnees.statut}:${JSON.stringify(donnees.manque)}:${JSON.stringify(donnees.avancement)}`

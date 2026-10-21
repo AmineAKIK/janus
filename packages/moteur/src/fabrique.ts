@@ -6,7 +6,7 @@ import { instantEnIso, instantEnMs } from './temps.ts'
 
 // Aides à l'écriture des tests et des cas d'acceptation : ce fichier n'est pas du code du moteur.
 
-/** Le manifeste de démonstration D01 : 5 restitution, 3 consolidation, 1 exercice de 3 items (2 à réussir), un atelier, une aisance. */
+/** Le manifeste de démonstration D01 : 5 restitution, 1 exercice de 3 items (2 à réussir), un atelier, une aisance. */
 export const MANIFESTE = Manifeste.parse(demo)
 /** Les réglages par défaut du cadrage. */
 export const REGLAGES = Reglages.parse({})
@@ -55,8 +55,12 @@ export function fabrique(bloc: string = MANIFESTE.bloc) {
       erreursIa: options.erreursIa ?? [],
     })
 
-  const reponses = (transfert: Niveau, tache: boolean): ReponseVerification[] => [
-    { type: 'explication', question: 'DE1', tour: 1, niveau: 'solide', compte: true },
+  const reponses = (
+    explication: Niveau,
+    tache: boolean,
+    transfert: Niveau,
+  ): ReponseVerification[] => [
+    { type: 'explication', question: 'DE1', tour: 1, niveau: explication, compte: true },
     { type: 'tache', question: 'DT1', tour: 1, reussi: tache, compte: true },
     { type: 'transfert', question: 'DR1', tour: 1, niveau: transfert, compte: true },
   ]
@@ -68,14 +72,6 @@ export function fabrique(bloc: string = MANIFESTE.bloc) {
     restitution: (date: string, niveau: Niveau = 'solide'): Fait[] =>
       MANIFESTE.restitution.map((q, i) =>
         correction(apres(date, 0, i), 'restitution', q.id, { niveau }),
-      ),
-    /** Les 3 questions de consolidation, une minute entre chacune. */
-    consolidation: (
-      date: string,
-      niveaux: readonly [Niveau, Niveau, Niveau] = ['solide', 'solide', 'solide'],
-    ): Fait[] =>
-      MANIFESTE.consolidation.map((q, i) =>
-        correction(apres(date, 0, i), 'consolidation', q.id, { niveau: niveaux[i] ?? 'solide' }),
       ),
     /** Deux items de l'exercice PR1 réussis, chacun avec l'aide donnée. */
     pratique: (date: string, aides: readonly [Aide, Aide] = [0, 0]): Fait[] =>
@@ -100,6 +96,7 @@ export function fabrique(bloc: string = MANIFESTE.bloc) {
       date: string,
       options: Partial<{
         verification: TypeVerification
+        explication: Niveau
         transfert: Niveau
         tache: boolean
         valable: boolean
@@ -111,7 +108,11 @@ export function fabrique(bloc: string = MANIFESTE.bloc) {
         verification: options.verification ?? 'verification',
         valable: options.valable ?? true,
         ...(options.raisonInvalide === undefined ? {} : { raisonInvalide: options.raisonInvalide }),
-        reponses: reponses(options.transfert ?? 'solide', options.tache ?? true),
+        reponses: reponses(
+          options.explication ?? 'solide',
+          options.tache ?? true,
+          options.transfert ?? 'solide',
+        ),
       }),
     cochee: (date: string, erreur: string): Fait =>
       fait(date, { type: 'erreur_cochee', erreur, source: 'amine' }),
@@ -126,11 +127,14 @@ export function fabrique(bloc: string = MANIFESTE.bloc) {
 /** Fabrique de faits, telle que `fabrique()` la rend. */
 export type Fabrique = ReturnType<typeof fabrique>
 
-/** Date d'« acquis provisoirement » de la chronologie type : la fin de la consolidation. */
-export const PROVISOIRE = apres(DEBUT, 0, 122)
+/** Date d'« acquis provisoirement » de la chronologie type : la dernière réponse de restitution. */
+export const PROVISOIRE = apres(DEBUT, 0, 34)
 
-/** Pratique (aides données, 0 et 0 par défaut), atelier et restitution faits ; la consolidation reste à écrire. */
-export function avantConsolidation(f: Fabrique, aides?: readonly [Aide, Aide]): Fait[] {
+/**
+ * Chronologie type d'un bloc de démonstration jusqu'à « acquis provisoirement » : pratique (aides
+ * données, 0 et 0 par défaut) et atelier à 12 h, restitution à 12 h 30, finie à 12 h 34.
+ */
+export function jusquaProvisoire(f: Fabrique, aides?: readonly [Aide, Aide]): Fait[] {
   return [
     ...f.pratique(DEBUT, aides),
     f.atelier(apres(DEBUT, 0, 5)),
@@ -139,15 +143,7 @@ export function avantConsolidation(f: Fabrique, aides?: readonly [Aide, Aide]): 
 }
 
 /**
- * Chronologie type d'un bloc de démonstration jusqu'à « acquis provisoirement » :
- * pratique et atelier à 12 h, restitution à 12 h 30, consolidation 1 h 30 plus tard.
- */
-export function jusquaProvisoire(f: Fabrique): Fait[] {
-  return [...avantConsolidation(f), ...f.consolidation(apres(DEBUT, 0, 120))]
-}
-
-/**
- * Un bloc long : beaucoup de réponses de restitution et de consolidation, des erreurs cochées et des étapes vues,
+ * Un bloc long : beaucoup de réponses de restitution et de rappel, des erreurs cochées et des étapes vues,
  * `pasMinutes` minutes entre deux faits. Une correction sur `periodeTranchage` est suivie de son tranchage ;
  * `Infinity` n'en met aucun.
  */
@@ -167,9 +163,9 @@ export function blocLong(
   const date = () => apres(DEBUT, 0, (minute += pasMinutes))
   while (faits.length < taille) {
     const rang = faits.length
-    const serie = rang % 3 === 0 ? 'restitution' : 'consolidation'
-    const questions = serie === 'restitution' ? MANIFESTE.restitution : MANIFESTE.consolidation
-    // Chaque question revient deux fois de suite : les séries de trois questions différentes se forment.
+    const serie = rang % 3 === 0 ? 'restitution' : 'rappel'
+    const questions = serie === 'restitution' ? MANIFESTE.restitution : MANIFESTE.rappel
+    // Chaque question revient deux fois de suite.
     const question = questions[Math.floor(rang / 3) % questions.length]?.id ?? 'R1'
     const correction = f.correction(date(), serie, question, {
       niveau: niveau ?? (rang % 5 === 0 ? 'partiel' : 'solide'),

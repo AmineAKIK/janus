@@ -20,10 +20,6 @@ export const IdUuid = z.uuid({ version: 'v7' })
 /** Les codes de ce qui manque pour le statut suivant, rendus par le moteur ; l'interface les traduit en phrases. */
 export const CodeManque = z.enum([
   'restitution_incomplete',
-  'consolidation_trop_tot',
-  'consolidation_a_faire',
-  'consolidation_cours_rouvert',
-  'consolidation_insuffisante',
   'pratique_aide',
   'atelier_manquant',
   'erreur_ouverte',
@@ -36,15 +32,13 @@ export const CodeManque = z.enum([
 ])
 export type CodeManque = z.infer<typeof CodeManque>
 
-/** Un manque et ses paramètres : questions, exercices ou erreurs concernés, date possible, points obtenus et requis. */
+/** Un manque et ses paramètres : questions, exercices ou erreurs concernés, jour à partir duquel c'est possible. */
 export const Manque = z.strictObject({
   code: CodeManque,
   questions: z.array(Identifiant).optional(),
   exercices: z.array(Identifiant).optional(),
   erreurs: z.array(Identifiant).optional(),
   apres: z.string().optional(),
-  points: z.number().optional(),
-  requis: z.number().optional(),
 })
 export type Manque = z.infer<typeof Manque>
 
@@ -80,7 +74,8 @@ export const champsReponse = {
   support: z.strictObject({ colle: z.boolean(), retour_cours: z.boolean() }),
 }
 
-const SeriePage = z.enum(['restitution', 'consolidation'])
+/** La seule série que la page pose elle-même : la restitution. */
+const SeriePage = z.enum(['restitution'])
 
 /** Hauteur maximale du contenu d'une page, en pixels CSS. */
 export const HAUTEUR_MAX_PAGE = 200_000
@@ -211,7 +206,7 @@ export const MessageAppli = z.discriminatedUnion('type', [
     /** L'état sauvegardé, `null` s'il n'y en a pas encore. */
     etat: EtatPage.nullable(),
     statut: Statut,
-    serie_ouverte: z.strictObject({ restitution: z.boolean(), consolidation: z.boolean() }),
+    serie_ouverte: z.strictObject({ restitution: z.boolean() }),
     /**
      * Les séries d'aisance réussies que le serveur garde, de la plus ancienne à la plus récente : la
      * date et la durée de la conversion la plus lente. La fiche y relit ses niveaux, même après un

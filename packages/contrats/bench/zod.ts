@@ -39,7 +39,6 @@ const gros: unknown = {
     type: 'explication',
   })),
   restitution: Array.from({ length: 10 }, (_, i) => question('R', i)),
-  consolidation: Array.from({ length: 10 }, (_, i) => question('C', i)),
   rappel: Array.from({ length: 10 }, (_, i) => question('RA', i)),
   differees: Array.from({ length: 12 }, (_, i) => ({
     id: `DE${String(i)}`,

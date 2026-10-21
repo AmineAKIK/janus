@@ -55,8 +55,8 @@ export const CinqPreuves = z.strictObject({
     date: InstantUtc.nullable(),
     prochaine: z
       .strictObject({
-        type: z.enum(['consolidation', 'verification', 'retest', 'entretien']),
-        /** Un jour « AAAA-MM-JJ », ou un instant pour la consolidation. */
+        type: z.enum(['verification', 'retest', 'entretien']),
+        /** Le jour « AAAA-MM-JJ » à partir duquel c'est dû. */
         apres: z.string(),
       })
       .nullable(),
@@ -75,7 +75,7 @@ const BlocDetail = z.strictObject({
   /** Les problèmes trouvés dans le manifeste importé : vide si la fiche peut s'ouvrir. */
   problemes: z.array(Texte),
   /** Les séries de questions que la page peut proposer en ce moment. */
-  serie_ouverte: z.strictObject({ restitution: z.boolean(), consolidation: z.boolean() }),
+  serie_ouverte: z.strictObject({ restitution: z.boolean() }),
   /** Le statut forcé par Amine, s'il y en a un. */
   force: z.strictObject({ statut: Statut, raison: Texte }).nullable(),
   acces: AccesBloc,

@@ -46,7 +46,7 @@ const CARACTERES_PAR_JETON = 3
 
 export interface DemandeCorrection {
   id: string
-  serie: 'restitution' | 'consolidation' | 'rappel' | 'verification'
+  serie: 'restitution' | 'rappel' | 'verification'
   tentative: number
   question: string
   reponse: string

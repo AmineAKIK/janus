@@ -17,6 +17,7 @@ export type Niveau = z.infer<typeof Niveau>
 export const Confiance = z.enum(['sur', 'hesitant', 'hasard'])
 export type Confiance = z.infer<typeof Confiance>
 
+/** `consolidation` ne se pose plus : la série reste lisible dans les faits enregistrés avant sa fin. */
 export const Serie = z.enum(['restitution', 'consolidation', 'rappel', 'verification'])
 export type Serie = z.infer<typeof Serie>
 

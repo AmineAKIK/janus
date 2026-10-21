@@ -16,7 +16,6 @@ describe('momentDeLEtape', () => {
       'entrainer',
       'prouver',
       'prouver',
-      'prouver',
     ])
   })
 

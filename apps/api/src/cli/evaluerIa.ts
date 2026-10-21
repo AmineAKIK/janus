@@ -12,7 +12,7 @@ import { validerSortie } from '../domaines/correction/composition.ts'
 
 export const CasDeTest = z.strictObject({
   id: z.string().min(1),
-  /** La question du manifeste à laquelle la réponse répond (restitution ou consolidation). */
+  /** La question du manifeste à laquelle la réponse répond (restitution ou rappel). */
   question: z.string().min(1),
   reponse: z.string(),
   confiance: z.enum(['sur', 'hesitant', 'hasard']),
@@ -35,7 +35,7 @@ export type CasDeTest = z.infer<typeof CasDeTest>
 export const JeuDeTest = z.strictObject({
   /** Le manifeste du bloc, relatif au fichier du jeu. */
   manifeste: z.string().min(1),
-  serie: z.enum(['restitution', 'consolidation']).default('restitution'),
+  serie: z.enum(['restitution', 'rappel']).default('restitution'),
   cas: z.array(CasDeTest).min(1),
 })
 export type JeuDeTest = z.infer<typeof JeuDeTest>

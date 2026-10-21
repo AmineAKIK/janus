@@ -13,14 +13,12 @@ const ETAPES = [
   { id: 'ET5', titre: 'Aisance', type: 'aisance' as const },
   { id: 'ETE', titre: 'L’ensemble', type: 'ensemble' as const },
   { id: 'ET6', titre: 'Restitution', type: 'restitution' as const },
-  { id: 'ET7', titre: 'Consolidation', type: 'consolidation' as const },
   { id: 'ET8', titre: 'Bilan', type: 'bilan' as const },
 ]
 
 const RIEN: Avancement = {
   etapes_vues: [],
   restitution: null,
-  consolidation: null,
   pratique: null,
   atelier: null,
   aisance: null,
@@ -45,11 +43,11 @@ describe('etapesFaites', () => {
     expect(
       etapesFaites(
         ETAPES,
-        { ...RIEN, pratique: DATE, aisance: DATE, restitution: DATE, consolidation: DATE },
+        { ...RIEN, pratique: DATE, aisance: DATE, restitution: DATE },
         [],
         false,
       ),
-    ).toEqual(new Set(['ET4', 'ET5', 'ET6', 'ET7']))
+    ).toEqual(new Set(['ET4', 'ET5', 'ET6']))
   })
 
   it('compte le bilan quand il a été envoyé', () => {

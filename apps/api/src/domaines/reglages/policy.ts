@@ -5,12 +5,10 @@ import type { ModificationReglages } from '@janus/contrats'
  * le serveur refuse donc de les écrire tant que le point à trancher ne l'est pas.
  */
 const REGLES_DE_LA_METHODE = [
-  'delaiConsolidationMinutes',
   'delaiVerificationJours',
   'delaiRetestJours',
   'delaiNouvelEssaiJours',
   'echecsAvantDescente',
-  'seuilConsolidation',
   'blocsEntreRevues',
 ] as const satisfies readonly (keyof ModificationReglages)[]
 

@@ -1,5 +1,5 @@
-// L'horloge de la démo : l'heure réelle plus un décalage réglable, pour tester la consolidation, la
-// vérification et le retest sans attendre. C'est le seul endroit de l'appli qui lit l'heure.
+// L'horloge de la démo : l'heure réelle plus un décalage réglable, pour tester la vérification et
+// le retest sans attendre. C'est le seul endroit de l'appli qui lit l'heure.
 
 export interface HorlogeDemo {
   /** L'heure de la démo, en millisecondes depuis 1970. */

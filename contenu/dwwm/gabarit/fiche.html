@@ -1154,11 +1154,6 @@
             "type": "restitution"
           },
           {
-            "id": "ET5",
-            "titre": "Consolidation",
-            "type": "consolidation"
-          },
-          {
             "id": "ET6",
             "titre": "Bilan",
             "type": "bilan"
@@ -1205,26 +1200,6 @@
             "id": "R5",
             "question": "À REMPLACER : question R5.",
             "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question R5).",
-            "erreurs": ["E1"]
-          }
-        ],
-        "consolidation": [
-          {
-            "id": "C1",
-            "question": "À REMPLACER : question C1.",
-            "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question C1).",
-            "erreurs": ["E1"]
-          },
-          {
-            "id": "C2",
-            "question": "À REMPLACER : question C2.",
-            "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question C2).",
-            "erreurs": ["E2"]
-          },
-          {
-            "id": "C3",
-            "question": "À REMPLACER : question C3.",
-            "attendu": "À REMPLACER : ce qu'une bonne réponse contient (question C3).",
             "erreurs": ["E1"]
           }
         ],
@@ -1367,28 +1342,14 @@
             "notion": "À REMPLACER : un savoir ou un savoir-faire de l'objectif, vérifiable",
             "montree": ["ET2"],
             "pratiquee": ["PR1"],
-            "questions": [
-              "R1",
-              "R2",
-              "R3",
-              "C1",
-              "C2",
-              "Q1",
-              "Q2",
-              "Q3",
-              "DE1",
-              "DE2",
-              "DR1",
-              "K1",
-              "K2"
-            ]
+            "questions": ["R1", "R2", "R3", "Q1", "Q2", "Q3", "DE1", "DE2", "DR1", "K1", "K2"]
           },
           {
             "id": "N2",
             "notion": "À REMPLACER : un autre savoir de l'objectif",
             "montree": ["ET2"],
             "pratiquee": [],
-            "questions": ["R4", "R5", "C3", "Q4", "Q5", "Q6", "DE3", "DR2", "DR3", "K3"]
+            "questions": ["R4", "R5", "Q4", "Q5", "Q6", "DE3", "DR2", "DR3", "K3"]
           }
         ],
         "relations": [
@@ -1437,7 +1398,7 @@
         { nom: 'Découvrir', types: ['carte', 'perception'] },
         { nom: 'Comprendre', types: ['pretest', 'explication'] },
         { nom: 'S’entraîner', types: ['pratique', 'atelier', 'aisance', 'ensemble'] },
-        { nom: 'Prouver', types: ['restitution', 'consolidation', 'bilan'] },
+        { nom: 'Prouver', types: ['restitution', 'bilan'] },
       ]
       const momentDe = (etape) => MOMENTS.find((moment) => moment.types.includes(etape.type))
       /** Les types d'étape que le gabarit sait dessiner : chacun a son moment. */
@@ -1511,9 +1472,7 @@
           })
       }
       function corrigerLocalement(demande) {
-        const question = [...manifeste.restitution, ...manifeste.consolidation].find(
-          (q) => q.id === demande.question,
-        )
+        const question = manifeste.restitution.find((q) => q.id === demande.question)
         const reponse = demande.reponse.trim()
         const message = (texte, niveau) => ({
           id: uuidV7(),
@@ -1564,7 +1523,7 @@
 
       // --- État de la page ---
       let mode = 'autonome'
-      let serieOuverte = { restitution: true, consolidation: true }
+      let serieOuverte = { restitution: true }
       let etat = { etape: etapes[0].id, envoyees: {}, retourCours: false, pratique: {} }
       const pont = window.JanusPont
       if (window.parent !== window) document.documentElement.dataset.integree = ''
@@ -1574,8 +1533,6 @@
       let majPied = () => {}
       /** Remet à jour le bilan affiché quand un statut arrive. */
       let majBilan = () => {}
-      /** Remet à jour l'heure d'ouverture de la consolidation affichée quand un statut arrive. */
-      let majQuand = () => {}
       /** Le dernier bilan envoyé depuis cette page : son identifiant, pour reconnaître un refus. */
       let bilanEnvoye = null
       /**
@@ -1769,12 +1726,11 @@
         return date.getFullYear() + '-' + deux(date.getMonth() + 1) + '-' + deux(date.getDate())
       }
 
-      const questions = (serie) =>
-        serie === 'restitution' ? manifeste.restitution : manifeste.consolidation
+      const questions = (serie) => (serie === 'restitution' ? manifeste.restitution : [])
       const reponsesFinies = (serie) => questions(serie).filter((q) => etat.envoyees[q.id]).length
       /**
        * Ce qui retient dans une étape : les questions d'une série ouverte qui n'ont pas encore leur
-       * réponse finale. On ne quitte pas une restitution ou une consolidation à moitié faite.
+       * réponse finale. On ne quitte pas une restitution à moitié faite.
        */
       function resteAFaire(etape) {
         // La pratique : chaque item réussi, avec ou sans aide (sans aide, il ne compte qu'un autre
@@ -1793,7 +1749,7 @@
             ' pour l’instant.'
           )
         }
-        if (etape.type !== 'restitution' && etape.type !== 'consolidation') return ''
+        if (etape.type !== 'restitution') return ''
         if (!serieOuverte[etape.type]) return ''
         const total = questions(etape.type).length
         const finies = reponsesFinies(etape.type)
@@ -1815,14 +1771,11 @@
           : []
       /** La série commencée (bouton « Commencer ») qui a encore des questions à poser, s'il y en a une. */
       const serieEnCours = () =>
-        ['restitution', 'consolidation'].find(
-          (serie) => etat.enCours?.[serie] && aPoserDans(serie).length > 0,
-        )
+        ['restitution'].find((serie) => etat.enCours?.[serie] && aPoserDans(serie).length > 0)
       /**
-       * Restitution et consolidation sans support : de « Commencer » à la dernière réponse, tout le reste
-       * de la fiche est masqué, sauf retour au cours. Le cours, mais aussi la carte, la pratique,
-       * l'atelier, l'aisance, le bilan (la liste des erreurs critiques soufflerait des réponses) et
-       * l'autre série, avec ses corrections.
+       * Restitution sans support : de « Commencer » à la dernière réponse, tout le reste de la fiche
+       * est masqué, sauf retour au cours. Le cours, mais aussi la carte, la pratique, l'atelier,
+       * l'aisance et le bilan (la liste des erreurs critiques soufflerait des réponses).
        */
       const coursMasque = () => serieEnCours() !== undefined && !etat.retourCours
       /** Une étape que la série en cours masque : toutes, sauf la série elle-même. */
@@ -1832,8 +1785,7 @@
         !serieOuverte.restitution || reponsesFinies('restitution') === manifeste.restitution.length
       /**
        * Une erreur critique repérée attend le bilan : la restitution est faite, et le bilan ne l'a pas
-       * encore reçue. Tant qu'il n'est pas envoyé, la consolidation ne commence pas et l'aisance
-       * s'arrête : sans cela, une erreur repérée qu'on ne coche jamais n'empêcherait rien (règle V01).
+       * encore reçue. Tant qu'il n'est pas envoyé, l'aisance s'arrête : sans cela, une erreur repérée qu'on ne coche jamais n'empêcherait rien (règle V01).
        */
       const bilanAttendu = () => restitutionTerminee() && (etat.aCocher ?? []).length > 0
       /** Ce qui attend le bilan : les erreurs repérées, nommées, et le chemin vers le bilan. */
@@ -2669,51 +2621,17 @@
         return carte
       }
 
-      /** Quand la consolidation s'ouvre, d'après le dernier statut de l'appli : l'heure, et le jour s'il change. */
-      /** « à 14 h 35 », précédé du jour s'il n'est pas aujourd'hui ; null si l'instant ne se lit pas. */
-      function heureDe(apres) {
-        const date = apres ? new Date(apres) : null
-        if (!date || Number.isNaN(date.getTime())) return null
-        const heure = date.getHours() + '\u00a0h\u00a0' + String(date.getMinutes()).padStart(2, '0')
-        const jour =
-          date.toDateString() === new Date().toDateString()
-            ? ''
-            : 'le ' +
-              date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) +
-              ' '
-        return jour + 'à ' + heure
-      }
-      function quandConsolidation() {
-        const apres = Array.isArray(dernierStatut?.manque)
-          ? dernierStatut.manque.find((m) => m.code === 'consolidation_trop_tot')?.apres
-          : undefined
-        const moment = heureDe(apres)
-        if (moment === null)
-          return 'La consolidation n’est pas encore ouverte\u00a0: elle s’ouvre un moment après ta restitution, reviens plus tard.'
-        return 'La consolidation s’ouvre ' + moment + '\u00a0: reviens à ce moment-là.'
-      }
-
       function afficherSerie(serie, titre) {
         const etape = etapes.find((e) => e.type === serie)
         const total = questions(serie).length
         const finie = reponsesFinies(serie) === total
         const envoyees = questions(serie).filter((q) => etat.envoyees[q.id])
         if (!serieOuverte[serie]) {
-          const dire = () => {
-            const manque = serie === 'consolidation' ? consolidationARefaire() : null
-            if (manque !== null)
-              return 'Consolidation à refaire\u00a0: ' + direConsolidationARefaire(manque)
-            return finie
+          const avis = creer('p', {
+            textContent: finie
               ? titre + ' terminée\u00a0: tes ' + total + ' réponses sont envoyées.'
-              : serie === 'consolidation'
-                ? quandConsolidation()
-                : 'Cette série n’est pas ouverte.'
-          }
-          const avis = creer('p', { textContent: dire() })
-          // L'heure d'ouverture vient du statut, qui arrive juste après le premier affichage.
-          majQuand = () => {
-            avis.textContent = dire()
-          }
+              : 'Cette série n’est pas ouverte.',
+          })
           return creer(
             'section',
             {},
@@ -2740,15 +2658,6 @@
                 ' de nouveau à une question marquée «\u00a0À reprendre\u00a0»\u00a0: une réponse solide la referme.',
             }),
           )
-        else if (serie === 'consolidation' && refaire.length > 0)
-          section.append(
-            creer('p', {
-              textContent:
-                'Consolidation à refaire\u00a0: ' +
-                direConsolidationARefaire(consolidationARefaire()) +
-                ' Réponds de nouveau à chaque question, sans rouvrir le cours.',
-            }),
-          )
         else if (finie)
           section.append(
             creer('p', {
@@ -2764,15 +2673,6 @@
         // Sans support : la série commence sur « Commencer », qui masque le cours jusqu'à la dernière
         // réponse. Une erreur rouverte se reprend de même, quand l'apprenant a revu le cours. Une erreur
         // repérée depuis la restitution passe d'abord par le bilan.
-        if (
-          aPoser.length > 0 &&
-          !etat.enCours?.[serie] &&
-          serie === 'consolidation' &&
-          bilanAttendu()
-        ) {
-          section.append(...attenteBilan('La consolidation'), ...pied)
-          return section
-        }
         if (aPoser.length > 0 && !etat.enCours?.[serie]) {
           // Avant de reprendre, la dernière réponse à chaque question à reprendre se relit avec sa
           // correction : sans elle, l'apprenant ne saurait pas pourquoi l'erreur reste ouverte.
@@ -2785,8 +2685,7 @@
           section.append(
             creer('p', {
               textContent:
-                (serie === 'restitution' ? 'La restitution' : 'La consolidation') +
-                ' se fait sans le cours : dès que tu commences, il est masqué jusqu’à ta dernière réponse, comme le reste de la fiche. Tes réponses sont corrigées à la fin de la série, pour qu’une correction ne souffle pas la question suivante.',
+                'La restitution se fait sans le cours : dès que tu commences, il est masqué jusqu’à ta dernière réponse, comme le reste de la fiche. Tes réponses sont corrigées à la fin de la série, pour qu’une correction ne souffle pas la question suivante.',
             }),
             creer(
               'div',
@@ -3096,41 +2995,13 @@
       }
 
       /**
-       * La consolidation est à refaire quand toutes ses réponses sont envoyées mais que l'appli en
-       * attend encore une série qui compte : des réponses qui ne comptent pas (retour au cours,
-       * recopiées, non vérifiées), ou un seuil non atteint. Rend le manque qui le dit, ou null.
-       */
-      function consolidationARefaire() {
-        if (reponsesFinies('consolidation') !== manifeste.consolidation.length) return null
-        if (!Array.isArray(dernierStatut?.manque)) return null
-        return (
-          dernierStatut.manque.find(
-            (m) =>
-              m.code === 'consolidation_a_faire' ||
-              m.code === 'consolidation_insuffisante' ||
-              m.code === 'consolidation_trop_tot',
-          ) ?? null
-        )
-      }
-      /** Pourquoi la consolidation est à refaire, d'après le manque. */
-      const direConsolidationARefaire = (manque) =>
-        manque.code === 'consolidation_insuffisante'
-          ? 'tes réponses n’ont pas atteint le seuil.'
-          : manque.code === 'consolidation_trop_tot'
-            ? 'faite trop tôt après la restitution ou le cours, elle se refait ' +
-              (heureDe(manque.apres) ?? 'plus tard') +
-              '.'
-            : 'tes réponses n’ont pas compté pour le statut (chacune dit pourquoi sous sa correction).'
-      /**
        * Les questions d'une série déjà répondues qui se reposent : en restitution, celles qui touchent
        * une erreur critique ouverte (une erreur ouverte rouvre la restitution, et une réponse solide à
-       * une question qui la touche la referme) ; en consolidation, toutes, quand la série faite n'a pas
-       * compté. Seulement dans l'appli : hors de l'appli, rien ne referme une erreur.
+       * une question qui la touche la referme). Seulement dans l'appli : hors de l'appli, rien ne
+       * referme une erreur.
        */
       function aRefaire(serie) {
         if (mode !== 'appli' || !serieOuverte[serie]) return []
-        if (serie === 'consolidation')
-          return consolidationARefaire() === null ? [] : questions(serie)
         if (serie !== 'restitution') return []
         const ouvertes = erreursOuvertes()
         return questions(serie).filter(
@@ -3178,27 +3049,6 @@
           return aRefermer
         }
         const lignes = [ligneRestitution]
-        const totalConsolidation = manifeste.consolidation.length
-        // La ligne de la consolidation change quand le statut dit que la série faite n'a pas compté.
-        let direConsolidation = () => {}
-        if (totalConsolidation > 0) {
-          const finies = reponsesFinies('consolidation')
-          const ligneConsolidation = ligne(false, '')
-          direConsolidation = () => {
-            const manque = consolidationARefaire()
-            const faite = finies === totalConsolidation && manque === null
-            ligneConsolidation.dataset.fait = faite ? 'oui' : 'non'
-            ligneConsolidation.textContent = !(serieOuverte.consolidation || finies > 0)
-              ? 'Consolidation\u00a0: pas encore ouverte.'
-              : finies !== totalConsolidation
-                ? 'Consolidation\u00a0: ' + finies + ' sur\u00a0' + totalConsolidation + '.'
-                : manque === null
-                  ? 'Consolidation faite.'
-                  : 'Consolidation à refaire\u00a0: ' + direConsolidationARefaire(manque)
-          }
-          direConsolidation()
-          lignes.push(ligneConsolidation)
-        }
         const items = manifeste.pratique.flatMap((exercice) => exercice.items)
         if (items.length > 0) {
           const reussis = items.filter((item) => etat.pratique[item.id]?.reussi)
@@ -3310,23 +3160,6 @@
           versRestitution.hidden = restitutionFaite && aRefermer === 0
         }
         majRestitution()
-        // Vers la consolidation : quand elle est ouverte et attend des réponses, ou à refaire.
-        const consolidation = etapes.find((e) => e.type === 'consolidation')
-        const versConsolidation = creer('button', {
-          type: 'button',
-          className: 'bouton secondaire',
-          textContent: 'Aller à la consolidation',
-          onclick: () => aller(consolidation.id),
-        })
-        if (consolidation) versRestitution.after(versConsolidation)
-        const majVersConsolidation = () => {
-          versConsolidation.hidden = !(
-            serieOuverte.consolidation &&
-            (reponsesFinies('consolidation') < totalConsolidation ||
-              consolidationARefaire() !== null)
-          )
-        }
-        majVersConsolidation()
         erreurs.addEventListener('change', direBouton)
         const direStatut = () => {
           if (bilanEnvoye === null) return
@@ -3382,8 +3215,6 @@
           }
           majCases()
           majRestitution()
-          direConsolidation()
-          majVersConsolidation()
           direBouton()
         }
         const section = creer(
@@ -3405,7 +3236,6 @@
         window.speechSynthesis?.cancel()
         majPied = () => {}
         majBilan = () => {}
-        majQuand = () => {}
         afficherEtapes()
         const etape = etapes.find((e) => e.id === etat.etape) ?? etapes[0]
         let vue
@@ -3416,9 +3246,7 @@
             creer('h2', { textContent: etape.titre }),
             creer('p', {
               textContent:
-                'Masqué\u00a0: ' +
-                (serieEnCours() === 'consolidation' ? 'la consolidation' : 'la restitution') +
-                ' se fait sans le cours. Cette étape s’ouvrira après ta dernière réponse.',
+                'Masqué\u00a0: la restitution se fait sans le cours. Cette étape s’ouvrira après ta dernière réponse.',
             }),
             creer('button', {
               type: 'button',
@@ -3453,7 +3281,6 @@
                   pratique: afficherPratique,
                   atelier: afficherAtelier,
                   restitution: () => afficherSerie('restitution', 'Restitution'),
-                  consolidation: () => afficherSerie('consolidation', 'Consolidation'),
                   bilan: afficherBilan,
                 }[etape.type])?.() ??
             creer('p', {
@@ -3478,20 +3305,10 @@
           return
         }
         pont.surStatut(({ statut, manque }) => {
-          const consolidationAvant = aRefaire('consolidation').length > 0
           dernierStatut = { statut, manque }
           $('statut').textContent = 'Statut\u00a0: ' + (LIBELLES_STATUT[statut] ?? statut)
           if (bilanEnvoye !== null && bilanEnvoye.statut === null) bilanEnvoye.statut = statut
           majBilan()
-          majQuand()
-          // La consolidation affichée se repose, ou cesse de se reposer, d'après ce statut : elle se
-          // redessine, sauf pendant une série (une réponse en cours d'écriture serait effacée).
-          if (
-            aRefaire('consolidation').length > 0 !== consolidationAvant &&
-            etapes.find((e) => e.id === etat.etape)?.type === 'consolidation' &&
-            serieEnCours() === undefined
-          )
-            afficher()
         })
         pont.surErreur((erreur) => {
           $('statut').textContent = 'Erreur\u00a0: ' + erreur.detail
@@ -3511,10 +3328,7 @@
           if (!retirerReperee(question, erreur)) return
           // Le bilan affiché redessine ses cases ; ailleurs, seul ce qui attend le bilan change.
           if (etapes.find((e) => e.id === etat.etape)?.type === 'bilan') afficher()
-          else {
-            majPied()
-            majQuand()
-          }
+          else majPied()
         })
         const depart = await pont.demarrer({
           manifeste: { bloc: manifeste.bloc, version: manifeste.version },
@@ -3534,9 +3348,7 @@
         }
         pont.surInit((init) => {
           aisanceServeur = init.aisance ?? []
-          const serieChangee =
-            serieOuverte.consolidation !== init.serie_ouverte.consolidation ||
-            serieOuverte.restitution !== init.serie_ouverte.restitution
+          const serieChangee = serieOuverte.restitution !== init.serie_ouverte.restitution
           serieOuverte = init.serie_ouverte
           // Redessiner efface une réponse en cours d'écriture : seulement quand une série s'ouvre ou
           // se ferme (rien ne s'y écrit à ce moment-là).

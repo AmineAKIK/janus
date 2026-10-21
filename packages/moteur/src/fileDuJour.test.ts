@@ -72,7 +72,6 @@ describe('fileDuJour', () => {
       { type: 'questions_debut', nombre: 6 },
       { type: 'verification', bloc: 'B01', apres: '2026-06-04' },
       { type: 'verification', bloc: 'B02', apres: '2026-06-04' },
-      { type: 'consolidation', bloc: 'B03', apres: apres(DEBUT, 9, 4 + 60) },
       { type: 'cartes', dues: 2, nouvelles: 1 },
       { type: 'bloc', bloc: 'B03' },
     ])
@@ -154,12 +153,7 @@ describe('fileDuJour', () => {
         entree(blocs, { derniereActivite: DEBUT, maintenant: apres(DEBUT, 20) }),
       )
       expect(resultat.enRetard).toBe(true)
-      expect(resultat.taches.map((t) => t.type)).toEqual([
-        'reprise',
-        'verification',
-        'consolidation',
-        'bloc',
-      ])
+      expect(resultat.taches.map((t) => t.type)).toEqual(['reprise', 'verification', 'bloc'])
       expect(resultat.taches[0]).toEqual({ type: 'reprise', blocs: ['B01'] })
     })
 

@@ -154,7 +154,7 @@ await client.query(
 INSERT INTO evenements (id, user_id, bloc_id, fiche_version_id, type, donnees, empreinte, aide, date_serveur)
 SELECT pg_temp.uuid7(ts, g), $1, bloc_id, version_id, type,
   CASE type
-    WHEN 'temps.actif' THEN jsonb_build_object('secondes', 60, 'etape', (ARRAY['carte', 'perception', 'pretest', 'explication', 'ensemble', 'pratique', 'atelier', 'aisance', 'restitution', 'consolidation'])[1 + floor(r2 * 10)::int])
+    WHEN 'temps.actif' THEN jsonb_build_object('secondes', 60, 'etape', (ARRAY['carte', 'perception', 'pretest', 'explication', 'ensemble', 'pratique', 'atelier', 'aisance', 'restitution', 'bilan'])[1 + floor(r2 * 10)::int])
     WHEN 'etape_vue' THEN jsonb_build_object('etape', 'ET' || (1 + floor(r2 * 9)::int))
     WHEN 'pratique_resultat' THEN jsonb_build_object('exercice', 'PR1', 'item', 'PR1-' || (1 + floor(r2 * 3)::int), 'reussi', r2 > 0.3, 'aide', aide)
     WHEN 'atelier_resultat' THEN jsonb_build_object('reussi', r2 > 0.3, 'aide', aide)

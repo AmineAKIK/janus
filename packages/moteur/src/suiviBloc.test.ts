@@ -44,7 +44,6 @@ describe('SuiviBloc : le statut après chaque fait est celui de calculerBloc sur
       ...f.pratique(DEBUT),
       f.atelier(apres(DEBUT, 0, 5)),
       ...f.restitution(apres(DEBUT, 0, 30)),
-      ...f.consolidation(apres(DEBUT, 0, 120)),
       f.cochee(apres(DEBUT, 1), 'E1'),
       f.decochee(apres(DEBUT, 2), 'E1'),
       f.verification(apres(DEBUT, 5)),
@@ -89,7 +88,6 @@ describe('SuiviBloc : le statut après chaque fait est celui de calculerBloc sur
         ...f.pratique(DEBUT),
         f.atelier(apres(DEBUT, 0, 5)),
         ...f.restitution(apres(DEBUT, 0, 30)).toReversed(),
-        ...f.consolidation(apres(DEBUT, 0, 120)).toReversed(),
       ]
       verifierChaquePrefixe(faits)
     })
@@ -109,7 +107,6 @@ describe('SuiviBloc : le statut après chaque fait est celui de calculerBloc sur
       const faits = [
         f.verification(apres(DEBUT, 5)),
         f.aisance(apres(DEBUT, 41), 20),
-        ...f.consolidation(apres(DEBUT, 0, 120)),
         f.verification(apres(DEBUT, 40), { verification: 'retest' }),
         ...f.restitution(apres(DEBUT, 0, 30)),
         f.aisance(apres(DEBUT, 42), 22),
@@ -121,11 +118,10 @@ describe('SuiviBloc : le statut après chaque fait est celui de calculerBloc sur
   })
 
   describe('les tranchages', () => {
-    const jusquaConsolidation = (f: ReturnType<typeof fabrique>) => [
+    const jusquaRestitution = (f: ReturnType<typeof fabrique>) => [
       ...f.pratique(DEBUT),
       f.atelier(apres(DEBUT, 0, 5)),
       ...f.restitution(apres(DEBUT, 0, 30)),
-      ...f.consolidation(apres(DEBUT, 0, 120)),
     ]
     const tranche = (
       f: ReturnType<typeof fabrique>,
@@ -141,23 +137,23 @@ describe('SuiviBloc : le statut après chaque fait est celui de calculerBloc sur
         ...(niveau === undefined ? {} : { niveau }),
       })
 
-    it('qui change une réponse de consolidation déjà là : les séries sont refaites', () => {
+    it('qui change une réponse de restitution déjà là : les séries sont refaites', () => {
       const f = fabrique()
-      const faits = jusquaConsolidation(f)
-      const consolidation = faits.filter(
-        (fait) => fait.type === 'correction' && fait.serie === 'consolidation',
+      const faits = jusquaRestitution(f)
+      const restitution = faits.filter(
+        (fait) => fait.type === 'correction' && fait.serie === 'restitution',
       )
       verifierChaquePrefixe([
         ...faits,
-        tranche(f, 200, consolidation[1], false),
-        tranche(f, 201, consolidation[1], true, 'fragile'),
-        tranche(f, 202, consolidation[1], true, 'solide'),
+        tranche(f, 200, restitution[1], false),
+        tranche(f, 201, restitution[1], true, 'fragile'),
+        tranche(f, 202, restitution[1], true, 'solide'),
       ])
     })
 
     it('qui change si une réponse de restitution ferme des erreurs : erreurs et vérifications sont refaites', () => {
       const f = fabrique()
-      const faits = jusquaConsolidation(f)
+      const faits = jusquaRestitution(f)
       const restitution = faits.filter(
         (fait) => fait.type === 'correction' && fait.serie === 'restitution',
       )
@@ -178,12 +174,12 @@ describe('SuiviBloc : le statut après chaque fait est celui de calculerBloc sur
       expect(rouverte.erreursOuvertes).toEqual(['E3'])
     })
 
-    it('une série de consolidation valable suffit : les séries suivantes n’y changent rien', () => {
+    it('une restitution envoyée suffit : les réponses suivantes n’y changent rien', () => {
       const f = fabrique()
       const faits = [
-        ...jusquaConsolidation(f),
-        ...f.consolidation(apres(DEBUT, 1), ['pas_encore', 'pas_encore', 'pas_encore']),
-        ...f.consolidation(apres(DEBUT, 2), ['pas_encore', 'pas_encore', 'pas_encore']),
+        ...jusquaRestitution(f),
+        ...f.restitution(apres(DEBUT, 1), 'pas_encore'),
+        ...f.restitution(apres(DEBUT, 2), 'pas_encore'),
       ]
       verifierChaquePrefixe(faits)
       expect(calculerBloc(faits, MANIFESTE, REGLAGES, MAINTENANT).statutCalcule).toBe(
@@ -193,7 +189,7 @@ describe('SuiviBloc : le statut après chaque fait est celui de calculerBloc sur
 
     it('qui ne change rien à ce que les règles lisent', () => {
       const f = fabrique()
-      const faits = jusquaConsolidation(f)
+      const faits = jusquaRestitution(f)
       const restitution = faits.filter(
         (fait) => fait.type === 'correction' && fait.serie === 'restitution',
       )
@@ -235,12 +231,12 @@ describe('SuiviBloc : le statut après chaque fait est celui de calculerBloc sur
 
     it('qui arrive avant sa correction, ou pour une correction qui n’existe pas', () => {
       const f = fabrique()
-      const faits = jusquaConsolidation(f)
-      const consolidation = faits.filter(
-        (fait) => fait.type === 'correction' && fait.serie === 'consolidation',
+      const faits = jusquaRestitution(f)
+      const restitution = faits.filter(
+        (fait) => fait.type === 'correction' && fait.serie === 'restitution',
       )
       const enAvance = [
-        tranche(f, 0, consolidation[0], false, 'pas_encore'),
+        tranche(f, 0, restitution[0], false, 'pas_encore'),
         tranche(f, 1, undefined, true),
         ...faits,
       ]
@@ -259,7 +255,6 @@ describe('SuiviBloc : le statut après chaque fait est celui de calculerBloc sur
           ...f.pratique(DEBUT),
           f.atelier(apres(DEBUT, 0, 5)),
           ...f.restitution(apres(DEBUT, 0, 30)),
-          ...f.consolidation(apres(DEBUT, 0, 120)),
           f.verification(apres(DEBUT, 1, 200)),
         ],
         reglages,
@@ -281,9 +276,7 @@ const NIVEAUX: readonly Niveau[] = [
 const ECARTS_JOURS = [0, 0, 0, 0, 1, 2, 3, 3, 4, 7, 20, 31, 33, 35, 36, 60, 100]
 const ECARTS_MINUTES = [0, 0, 1, 2, 5, 29, 30, 59, 60, 61, 119, 120, 121, 125, 600]
 const IDENTIFIANTS_PARCOURS = Array.from({ length: 16 }, (_, i) => `p${String(i + 1)}`)
-const QUESTIONS = [...MANIFESTE.restitution, ...MANIFESTE.consolidation, ...MANIFESTE.rappel].map(
-  (question) => question.id,
-)
+const QUESTIONS = [...MANIFESTE.restitution, ...MANIFESTE.rappel].map((question) => question.id)
 
 const reponses = (reussi: boolean, compte: boolean): ReponseVerification[] => [
   { type: 'explication', question: 'DE1', tour: 1, niveau: reussi ? 'solide' : 'fragile', compte },
@@ -349,7 +342,7 @@ const donneesDeBruit: fc.Arbitrary<Donnees> = fc.oneof(
       type: fc.constant('correction' as const),
       serie: fc.constantFrom(
         'restitution',
-        'consolidation',
+        'restitution',
         'consolidation',
         'rappel',
         'verification',
@@ -434,12 +427,10 @@ const reglagesAleatoires: fc.Arbitrary<Reglages> = fc
   .record({
     fuseau: fc.constantFrom('Europe/Paris', 'America/New_York', 'Asia/Kolkata', 'UTC'),
     heureBascule: fc.integer({ min: 0, max: 6 }),
-    delaiConsolidationMinutes: fc.constantFrom(30, 60, 120, 600),
     delaiVerificationJours: fc.integer({ min: 1, max: 5 }),
     delaiRetestJours: fc.constantFrom(14, 20, 30),
     delaiNouvelEssaiJours: fc.integer({ min: 1, max: 3 }),
     echecsAvantDescente: fc.integer({ min: 1, max: 3 }),
-    seuilConsolidation: fc.constantFrom(0.5, 0.8, 1),
   })
   .map((reglages) => SchemaReglages.parse(reglages))
 
@@ -449,10 +440,10 @@ function parcours(parametres: {
   readonly jRetest: number
   readonly echecVerification: boolean
   readonly echecsRetest: number
-  readonly consolidationFaible: boolean
+  readonly restitutionFaible: boolean
   readonly coupe: number
 }): Fait[] {
-  const { jVerification, jRetest, echecVerification, echecsRetest, consolidationFaible, coupe } =
+  const { jVerification, jRetest, echecVerification, echecsRetest, restitutionFaible, coupe } =
     parametres
   const faits: Fait[] = []
   const ajoute = (jours: number, minutes: number, donnees: Donnees) => {
@@ -466,12 +457,9 @@ function parcours(parametres: {
     )
   }
   for (const [i, q] of MANIFESTE.restitution.entries()) {
-    ajoute(0, 30 + i, correctionSolide('restitution', q.id))
-  }
-  for (const [i, q] of MANIFESTE.consolidation.entries()) {
-    ajoute(0, 130 + i, {
-      ...correctionSolide('consolidation', q.id),
-      ...(consolidationFaible ? { niveau: 'fragile' } : {}),
+    ajoute(0, 30 + i, {
+      ...correctionSolide(q.id),
+      ...(restitutionFaible ? { niveau: 'fragile' } : {}),
     })
   }
   for (let i = 1; i <= 2; i += 1) {
@@ -516,10 +504,10 @@ function parcours(parametres: {
   return faits.slice(0, coupe)
 }
 
-function correctionSolide(serie: 'restitution' | 'consolidation', question: string) {
+function correctionSolide(question: string) {
   return {
     type: 'correction' as const,
-    serie,
+    serie: 'restitution' as const,
     question,
     tour: 1,
     niveau: 'solide' as const,
@@ -544,7 +532,7 @@ const scenario = fc
     jRetest: fc.integer({ min: 10, max: 60 }),
     echecVerification: fc.boolean(),
     echecsRetest: fc.integer({ min: 0, max: 3 }),
-    consolidationFaible: fc.constantFrom(false, false, true),
+    restitutionFaible: fc.constantFrom(false, false, true),
     coupe: fc.integer({ min: 0, max: 22 }),
     bruit: fc.array(bruit, { maxLength: 22 }),
     ordre: fc.constantFrom(
@@ -613,8 +601,8 @@ describe('SuiviBloc : propriété, sur des jeux tordus (égalités de date, iden
       'a_reprendre',
       'descendu',
       'force',
-      'consolidation_trop_tot',
-      'consolidation_insuffisante',
+      'pratique_aide',
+      'restitution_incomplete',
       'verification_a_venir',
       'retest_a_faire',
       'aisance_non_atteinte',

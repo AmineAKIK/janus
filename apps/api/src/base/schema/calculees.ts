@@ -48,9 +48,9 @@ export const echeances = pgTable(
     blocId: uuid('bloc_id')
       .notNull()
       .references(() => blocs.id),
-    /** Ce qui est dû : `consolidation`, `verification`, `retest` ou `entretien`. */
+    /** Ce qui est dû : `verification`, `retest` ou `entretien`. */
     type: text('type').notNull(),
-    /** `instant` (consolidation) ou `jour` : comment le moteur l'a calculée. */
+    /** `jour` : comment le moteur l'a calculée (`instant` dans les anciennes lignes). */
     genre: text('genre').notNull(),
     dueLe: instant('due_le').notNull(),
     faiteLe: instant('faite_le'),

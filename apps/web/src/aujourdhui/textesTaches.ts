@@ -51,12 +51,6 @@ export function texteTache(tache: Tache, contexte: ContexteTexte): TexteTache {
           'Une question, une petite tâche et un transfert, sans revoir le cours avant. C’est ce qui prouve que ça tient dans le temps.',
         complement: 'sans indice',
       }
-    case 'consolidation':
-      return {
-        titre: `Consolidation de ${bloc(tache.bloc)}`,
-        texte: `Des questions sur ${bloc(tache.bloc)}, sans revoir le cours.`,
-        complement: 'sans indice',
-      }
     case 'cartes': {
       const total = tache.dues + tache.nouvelles
       if (total === 0) {

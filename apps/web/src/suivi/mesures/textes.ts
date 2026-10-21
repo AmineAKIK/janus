@@ -125,7 +125,6 @@ const LIBELLE_ETAPE: Readonly<Record<TypeEtape, string>> = {
   atelier: 'Atelier',
   aisance: 'Aisance',
   restitution: 'Restitution',
-  consolidation: 'Consolidation',
   bilan: 'Bilan',
 }
 

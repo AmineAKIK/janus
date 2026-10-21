@@ -268,11 +268,6 @@
             "type": "restitution"
           },
           {
-            "id": "ET8",
-            "titre": "Consolidation",
-            "type": "consolidation"
-          },
-          {
             "id": "ET9",
             "titre": "Bilan",
             "type": "bilan"
@@ -323,26 +318,6 @@
             "question": "Quand un bloc devient-il acquis ?",
             "attendu": "Réponse attendue : Quand un bloc devient-il acquis .",
             "erreurs": ["E1", "E2"]
-          }
-        ],
-        "consolidation": [
-          {
-            "id": "C1",
-            "question": "Quelle différence entre vu et acquis ?",
-            "attendu": "Réponse attendue : Quelle différence entre vu et acquis .",
-            "erreurs": ["E1"]
-          },
-          {
-            "id": "C2",
-            "question": "Pourquoi revenir plus tard sur un bloc ?",
-            "attendu": "Réponse attendue : Pourquoi revenir plus tard sur un bloc .",
-            "erreurs": ["E2"]
-          },
-          {
-            "id": "C3",
-            "question": "Que change une erreur critique ?",
-            "attendu": "Réponse attendue : Que change une erreur critique .",
-            "erreurs": []
           }
         ],
         "rappel": [
@@ -571,15 +546,7 @@
       'use strict'
       const manifeste = JSON.parse(document.getElementById('manifeste').textContent)
       const CLE_ETAT = 'janus.fiche-demo.etat'
-      const ETAPES_FICHE = [
-        'carte',
-        'explication',
-        'pratique',
-        'atelier',
-        'restitution',
-        'consolidation',
-        'bilan',
-      ]
+      const ETAPES_FICHE = ['carte', 'explication', 'pratique', 'atelier', 'restitution', 'bilan']
       const LIBELLES_STATUT = {
         non_commence: 'Non commencé',
         en_cours: 'En cours',
@@ -615,9 +582,7 @@
       }
       const mots = (texte) => texte.toLowerCase().match(/[a-zà-ÿ]+/g) ?? []
       function corrigerLocalement(demande) {
-        const question = [...manifeste.restitution, ...manifeste.consolidation].find(
-          (q) => q.id === demande.question,
-        )
+        const question = manifeste.restitution.find((q) => q.id === demande.question)
         const reponse = demande.reponse.trim()
         const base = {
           id: uuidV7(),
@@ -665,7 +630,7 @@
 
       // --- État de la page ---
       let mode = 'autonome'
-      let serieOuverte = { restitution: true, consolidation: true }
+      let serieOuverte = { restitution: true }
       let etat = { etape: etapes[0].id, envoyees: {}, retourCours: false, pratique: {} }
       const corrections = {}
       const pont = window.JanusPont
@@ -681,8 +646,7 @@
         afficher()
       }
 
-      const questions = (serie) =>
-        serie === 'restitution' ? manifeste.restitution : manifeste.consolidation
+      const questions = (serie) => (serie === 'restitution' ? manifeste.restitution : [])
       const restitutionTerminee = () => manifeste.restitution.every((q) => etat.envoyees[q.id])
       /** Restitution sans support : dès la première réponse, le cours est masqué jusqu'à la dernière, sauf retour au cours. */
       const coursMasque = () =>
@@ -868,12 +832,7 @@
             'section',
             {},
             creer('h2', { textContent: titre }),
-            creer('p', {
-              textContent:
-                serie === 'consolidation'
-                  ? 'La consolidation n’est pas encore ouverte : reviens plus tard.'
-                  : 'Cette série n’est pas ouverte.',
-            }),
+            creer('p', { textContent: 'Cette série n’est pas ouverte.' }),
           )
         const section = creer('section', {}, creer('h2', { textContent: titre }))
         for (const question of questions(serie)) section.append(afficherQuestion(serie, question))
@@ -1069,7 +1028,6 @@
               pratique: afficherPratique,
               atelier: afficherAtelier,
               restitution: () => afficherSerie('restitution', 'Restitution'),
-              consolidation: () => afficherSerie('consolidation', 'Consolidation'),
               bilan: afficherBilan,
             }[etape.type]?.() ??
             creer('p', { className: 'discret', textContent: 'Cette étape n’est pas dans la démo.' })
@@ -1102,11 +1060,10 @@
             'Statut : ' + (LIBELLES_STATUT[depart.init.statut] ?? depart.init.statut)
         }
         pont.surInit((init) => {
-          const consolidationChangee =
-            serieOuverte.consolidation !== init.serie_ouverte.consolidation
+          const serieChangee = serieOuverte.restitution !== init.serie_ouverte.restitution
           serieOuverte = init.serie_ouverte
-          // Redessiner efface les corrections affichées : seulement quand la consolidation s'ouvre.
-          if (consolidationChangee) afficher()
+          // Redessiner efface les corrections affichées : seulement quand la série s'ouvre ou se ferme.
+          if (serieChangee) afficher()
         })
         if (depart.etat && typeof depart.etat === 'object') etat = { ...etat, ...depart.etat }
         afficher()

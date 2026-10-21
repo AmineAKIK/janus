@@ -115,7 +115,7 @@ describe('tableau de bord de la démo, avec la graine', () => {
       '2026-10-05',
     ])
     expect(long.mesures.autonomie.aide_moyenne).toBe(0)
-    expect(long.mesures.calibration.lignes[0]).toEqual({ confiance: 'sur', justes: 39, faux: 3 })
+    expect(long.mesures.calibration.lignes[0]).toEqual({ confiance: 'sur', justes: 27, faux: 3 })
     expect(long.mesures.aisance).toHaveLength(20)
     expect(long.mesures.aisance[0]?.cible).toMatchObject({
       paliers_s: [30, 30],

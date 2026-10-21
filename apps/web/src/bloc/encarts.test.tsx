@@ -62,68 +62,6 @@ afterEach(() => {
   vi.restoreAllMocks()
 })
 
-describe('encart de consolidation', () => {
-  it('annonce l’heure quand la restitution est faite et la consolidation pas encore ouverte', async () => {
-    const { envoyer, message, repondreATout } = await afficher()
-    await repondreATout()
-
-    await envoyer(message('etape.vue', { etape: etape('consolidation') }))
-
-    const encart = (await screen.findByText(/Consolidation disponible à/)).parentElement
-    expect(encart).toHaveTextContent(/Consolidation disponible à .*\d h \d\d/)
-    expect(encart).toHaveTextContent('Au moins 1 h après la restitution.')
-    expect(encart).toHaveTextContent('On te le rappellera sur Aujourd’hui.')
-  })
-
-  it('suit le réglage du délai de consolidation', async () => {
-    const { envoyer, message, repondreATout, magasin, client } = await afficher()
-    magasin.ecrire((etat) => ({
-      ...etat,
-      reglages: { ...etat.reglages, delaiConsolidationMinutes: 90 },
-    }))
-    await act(async () => {
-      await client.invalidateQueries()
-    })
-    await repondreATout()
-
-    await envoyer(message('etape.vue', { etape: etape('consolidation') }))
-
-    expect(await screen.findByText(/Au moins 1 h 30 après la restitution/)).toBeVisible()
-  })
-
-  it('disparaît à l’heure dite sans recharger, et la page reçoit la série ouverte', async () => {
-    const { envoyer, message, repondreATout, horloge, client, recu } = await afficher()
-    await envoyer(message('page.prete', { schema: 2 }))
-    await repondreATout()
-    await envoyer(message('etape.vue', { etape: etape('consolidation') }))
-    expect(await screen.findByText(/Consolidation disponible à/)).toBeVisible()
-
-    await act(async () => {
-      horloge.avancer(61 * 60 * 1000)
-      await client.invalidateQueries()
-    })
-
-    await waitFor(() => {
-      expect(screen.queryByText(/Consolidation disponible à/)).not.toBeInTheDocument()
-    })
-    expect(recu).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: 'etat.init',
-        serie_ouverte: { restitution: false, consolidation: true },
-      }),
-      '*',
-    )
-  })
-
-  it('ne s’affiche pas pendant la restitution ni avant que la restitution soit finie', async () => {
-    const { envoyer, message } = await afficher()
-
-    await envoyer(message('etape.vue', { etape: etape('consolidation') }))
-
-    expect(screen.queryByText(/Consolidation disponible à/)).not.toBeInTheDocument()
-  })
-})
-
 describe('encart du bilan', () => {
   it('donne le statut calculé et ce qui manque pour le suivant', async () => {
     const { envoyer, message, repondreATout } = await afficher()
@@ -133,7 +71,7 @@ describe('encart du bilan', () => {
 
     expect(await screen.findByText('Pour passer à Acquis provisoirement')).toBeVisible()
     expect(screen.getByText(/Statut calculé/)).toBeVisible()
-    expect(screen.getByText(/La consolidation sera possible à partir de/)).toBeVisible()
+    expect(screen.getByText('Fais l’atelier.')).toBeVisible()
   })
 
   it('ne s’affiche qu’à l’étape du bilan', async () => {

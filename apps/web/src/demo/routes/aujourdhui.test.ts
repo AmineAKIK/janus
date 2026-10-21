@@ -16,17 +16,12 @@ describe('GET /aujourdhui de la démo', () => {
       'reprendre_erreur',
       'questions_debut',
       'verification',
-      'consolidation',
-      'consolidation',
       'cartes',
       'bloc',
     ])
     expect(taches[0]?.tache).toMatchObject({ type: 'reprendre_erreur', bloc: 'B04' })
     expect(taches[2]?.tache).toMatchObject({ type: 'verification', bloc: 'B02' })
-    // B04 a aussi fini sa restitution : le moteur lui garde une consolidation, même à reprendre.
-    expect(taches[3]?.tache).toMatchObject({ type: 'consolidation', bloc: 'B04' })
-    expect(taches[4]?.tache).toMatchObject({ type: 'consolidation', bloc: 'B05' })
-    expect(taches[6]?.tache).toMatchObject({ type: 'bloc', bloc: 'B03' })
+    expect(taches[4]?.tache).toMatchObject({ type: 'bloc', bloc: 'B03' })
   })
 
   it('donne à chaque tâche son lien et la marque non faite', async () => {
@@ -38,8 +33,6 @@ describe('GET /aujourdhui de la démo', () => {
       expect.stringMatching(/^\/blocs\/B04/),
       '/questions',
       '/verifications/ouvrir/B02/verification',
-      expect.stringMatching(/^\/blocs\/B04\?etape=/),
-      expect.stringMatching(/^\/blocs\/B05\?etape=/),
       '/revision',
       '/blocs/B03',
     ])

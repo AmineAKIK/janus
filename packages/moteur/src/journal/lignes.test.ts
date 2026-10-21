@@ -137,15 +137,13 @@ describe('lignesDuJournal', () => {
     )
   })
 
-  it('consolidation : une ligne distincte de la restitution, avec le changement de statut à part', () => {
+  it('restitution complète : une ligne, avec le changement de statut à part', () => {
     const f = fabrique()
     const lignes = lignesDuJournal(jusquaProvisoire(f), CONTEXTE)
 
-    const [consolidation] = du('consolidation', lignes)
-    expect(consolidation?.resume).toBe('3 sur 3 comptées')
     expect(du('restitution', lignes)).toHaveLength(1)
     expect(du('changement_statut', lignes).map(({ resume }) => resume)).toContain(
-      'Vu → Acquis provisoirement',
+      'En cours → Acquis provisoirement',
     )
   })
 

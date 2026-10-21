@@ -12,12 +12,10 @@ const { shape } = Reglages
 export const ModificationReglages = z.strictObject({
   fuseau: shape.fuseau.unwrap().optional(),
   heureBascule: shape.heureBascule.unwrap().optional(),
-  delaiConsolidationMinutes: shape.delaiConsolidationMinutes.unwrap().optional(),
   delaiVerificationJours: shape.delaiVerificationJours.unwrap().optional(),
   delaiRetestJours: shape.delaiRetestJours.unwrap().optional(),
   delaiNouvelEssaiJours: shape.delaiNouvelEssaiJours.unwrap().optional(),
   echecsAvantDescente: shape.echecsAvantDescente.unwrap().optional(),
-  seuilConsolidation: shape.seuilConsolidation.unwrap().optional(),
   questionsDebut: shape.questionsDebut.unwrap().optional(),
   nouvellesCartesParJour: shape.nouvellesCartesParJour.unwrap().optional(),
   retentionVisee: shape.retentionVisee.unwrap().optional(),

@@ -249,8 +249,6 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
     it('d’autres réglages donnent d’autres états, recalculés', async () => {
       await verifier()
       const autres = Reglages.parse({
-        delaiConsolidationMinutes: 1440,
-        seuilConsolidation: 1,
         delaiVerificationJours: 14,
         heureBascule: 0,
       })

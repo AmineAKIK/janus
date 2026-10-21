@@ -130,7 +130,7 @@ describe('les messages de la page vers l’appli', () => {
   it('restitution.demande : série, confiance, taille de la réponse et support', () => {
     const base = EXEMPLES_PAGE['restitution.demande']
     expect(MessagePage.safeParse({ ...base, serie: 'rappel' }).success).toBe(false)
-    expect(MessagePage.safeParse({ ...base, serie: 'consolidation' }).success).toBe(true)
+    expect(MessagePage.safeParse({ ...base, serie: 'consolidation' }).success).toBe(false)
     expect(MessagePage.safeParse({ ...base, confiance: 'certain' }).success).toBe(false)
     expect(MessagePage.safeParse({ ...base, reponse: '' }).success).toBe(false)
     expect(
@@ -213,9 +213,7 @@ describe('les messages de l’appli vers la page', () => {
     expect(MessageAppli.safeParse({ ...base, etat: null }).success).toBe(true)
     expect(MessageAppli.safeParse({ ...base, etat: 'x' }).success).toBe(false)
     expect(MessageAppli.safeParse({ ...base, statut: 'inconnu' }).success).toBe(false)
-    expect(MessageAppli.safeParse({ ...base, serie_ouverte: { restitution: true } }).success).toBe(
-      false,
-    )
+    expect(MessageAppli.safeParse({ ...base, serie_ouverte: {} }).success).toBe(false)
     expect(MessageAppli.safeParse({ ...base, bloc: 'b' }).success).toBe(false)
     expect(MessageAppli.safeParse({ ...base, version: 0 }).success).toBe(false)
     for (const champ of ['bloc', 'version', 'etat', 'statut', 'serie_ouverte']) {
@@ -294,7 +292,7 @@ describe('CodeManque', () => {
     expect(CodeManque.options).toContain('restitution_incomplete')
     expect(CodeManque.options).toContain('aisance_non_atteinte')
     expect(CodeManque.options).toContain('reprise_a_faire')
-    expect(CodeManque.options).toHaveLength(14)
+    expect(CodeManque.options).toHaveLength(10)
   })
 })
 

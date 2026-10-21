@@ -53,12 +53,10 @@ describe('textes des règles', () => {
   it('liste les sept règles protégées avec leur valeur par défaut', () => {
     const lignes = lignesRegles(Reglages.parse({}))
     expect(lignes.map(({ libelle, valeur }) => `${libelle} ${valeur}`)).toEqual([
-      'Consolidation 1 h',
       'Vérification 3 j',
       'Retest 30 j',
       'Nouvelle tentative 2 j',
       'Échecs avant descente Deux échecs pour descendre',
-      'Seuil de consolidation 80 %',
       'Revue Tous les 3 blocs',
     ])
   })

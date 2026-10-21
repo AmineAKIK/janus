@@ -5,8 +5,6 @@ import { estIntrouvable, useLecture } from '../api/requetes.tsx'
 import { adresse } from '../routes/navigation.ts'
 import { BarreBloc } from './BarreBloc.tsx'
 import { EncartBilan } from './EncartBilan.tsx'
-import { EncartConsolidation } from './EncartConsolidation.tsx'
-import { formaterDelai, formaterInstant } from './instant.ts'
 import { instantReel } from '../horloge.ts'
 import { DialogueRevoirCours } from './DialogueRevoirCours.tsx'
 import { DialogueChangerNiveau } from './DialogueChangerNiveau.tsx'
@@ -43,14 +41,12 @@ function FicheOuverte({
   exercices,
   relire,
   relireBloc,
-  delaiConsolidationMinutes,
   fuseau,
   etapeDemandee,
 }: {
   readonly relire: () => void
   /** Relit le bloc sans repartir de zéro : statut, ce qui manque, séries ouvertes. */
   readonly relireBloc: () => void
-  readonly delaiConsolidationMinutes: number
   /** Le fuseau des réglages : les heures affichées sont les siennes. */
   readonly fuseau: string | undefined
   /** L'étape désignée par le lien, si elle existe dans la fiche. */
@@ -90,11 +86,10 @@ function FicheOuverte({
   const [changerNiveau, setChangerNiveau] = useState<CorrectionSuivie | null>(null)
   /** Le dialogue « Recommencer la fiche » : fermé, ouvert, ou en train d'écrire l'état vide. */
   const [recommencer, setRecommencer] = useState<'ferme' | 'ouvert' | 'en_cours'>('ferme')
-  const toutesQuestions = [...questions.restitution, ...questions.consolidation]
   const nomErreur = (id: string) =>
     (erreursCritiques.find((erreur) => erreur.id === id)?.libelle ?? id).replace(/\.$/, '')
   const texteQuestion = (id: string) =>
-    toutesQuestions.find((question) => question.id === id)?.question ?? id
+    questions.restitution.find((question) => question.id === id)?.question ?? id
   // Le bilan nomme ce qui reste comme la fiche le montre : le titre d'un exercice, le rang d'une question.
   const libelles = {
     erreur: nomErreur,
@@ -114,35 +109,12 @@ function FicheOuverte({
       hote.envoyees.restitution,
       hote.statut.manque,
     ).length,
-    consolidation: questionsRestantes(
-      'consolidation',
-      questions.consolidation.map(({ id }) => id),
-      hote.envoyees.consolidation,
-      hote.statut.manque,
-    ).length,
   }
   const verrouillees = etapesVerrouillees(etapes, courante, restantes)
   const typeCourant = etapes.find(({ id }) => id === courante)?.type
   useEffect(() => {
     changerEtape(typeCourant)
   }, [changerEtape, typeCourant])
-  const consolidationAttendue =
-    hote.statut.manque.find(({ code }) => code === 'consolidation_trop_tot')?.apres ?? null
-  const montrerConsolidation =
-    typeCourant === 'consolidation' &&
-    !donnees.serieOuverte.consolidation &&
-    consolidationAttendue !== null
-
-  // À l'heure dite, l'appli relit le bloc : la série s'ouvre sans recharger la page.
-  useEffect(() => {
-    if (consolidationAttendue === null) return
-    const attente = Date.parse(consolidationAttendue) - Date.parse(instantReel())
-    const minuteur = setTimeout(relireBloc, Math.min(Math.max(attente, 0) + 1000, 2_147_000_000))
-    return () => {
-      clearTimeout(minuteur)
-    }
-  }, [consolidationAttendue, relireBloc])
-
   // Une erreur déjà ouverte n'a plus besoin d'être tranchée.
   const ouvertes = hote.statut.manque.find(({ code }) => code === 'erreur_ouverte')?.erreurs ?? []
   const enAttente = hote.propositions.filter(({ erreur }) => !ouvertes.includes(erreur))
@@ -261,12 +233,6 @@ function FicheOuverte({
                 reponse,
               }),
             )}
-          />
-        )}
-        {montrerConsolidation && (
-          <EncartConsolidation
-            heure={formaterInstant(consolidationAttendue, instantReel(), fuseau)}
-            delai={formaterDelai(delaiConsolidationMinutes)}
           />
         )}
         {typeCourant !== 'bilan' &&
@@ -414,7 +380,6 @@ export function PageBloc({
         relireBloc={() => {
           void lecture.refetch()
         }}
-        delaiConsolidationMinutes={reglages.data?.delaiConsolidationMinutes ?? 60}
         fuseau={reglages.data?.fuseau}
         etapeDemandee={etape}
         donnees={{
@@ -433,10 +398,7 @@ export function PageBloc({
         etapes={detail.manifeste.etapes}
         problemes={detail.problemes}
         erreursCritiques={detail.manifeste.erreurs_critiques}
-        questions={{
-          restitution: detail.manifeste.restitution,
-          consolidation: detail.manifeste.consolidation,
-        }}
+        questions={{ restitution: detail.manifeste.restitution }}
         exercices={detail.manifeste.pratique}
       />
     </GardeOuverture>

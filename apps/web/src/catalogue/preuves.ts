@@ -17,7 +17,6 @@ const LIBELLES = {
 } as const
 
 const PROCHAINES = {
-  consolidation: 'consolidation',
   verification: 'vérification',
   retest: 'retest',
   entretien: 'entretien',
@@ -53,11 +52,10 @@ export function lignesPreuves(
   }
 
   const { retenir, aisance } = preuves
-  // Tant que rien n'est prouvé, la ligne dit quand la vérification se présentera dans Aujourd'hui ;
-  // la consolidation, elle, se fait dans la fiche et n'est pas une échéance de Retenir.
+  // Tant que rien n'est prouvé, la ligne dit quand la vérification se présentera dans Aujourd'hui.
   const prochaine = retenir.prochaine
   let suite = ''
-  if (prochaine !== null && (retenir.date !== null || prochaine.type !== 'consolidation')) {
+  if (prochaine !== null) {
     const quand = formaterDate(enJour(prochaine.apres), aujourdhui)
     const mot = PROCHAINES[prochaine.type]
     suite =

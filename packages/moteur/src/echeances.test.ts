@@ -23,31 +23,9 @@ describe('echeances', () => {
     expect(echeances(etat(fabrique().pratique(DEBUT)), REGLAGES)).toBeNull()
   })
 
-  it('programme la consolidation une heure après la dernière restitution', () => {
+  it('ne programme rien tant que le bloc n’est que vu : la restitution ne suffit pas', () => {
     const f = fabrique()
-    const restitution = f.restitution(DEBUT)
-    const vu = apres(DEBUT, 0, 4)
-    expect(echeances(etat(restitution), REGLAGES)).toEqual({
-      type: 'consolidation',
-      genre: 'instant',
-      apres: apres(vu, 0, 60),
-    })
-  })
-
-  it('suit le délai de consolidation des réglages', () => {
-    const f = fabrique()
-    const reglages = { ...REGLAGES, delaiConsolidationMinutes: 90 }
-    const resultat = calculerBloc(f.restitution(DEBUT), MANIFESTE, reglages, apres(DEBUT, 1))
-    expect(echeances(resultat, reglages)?.apres).toBe(apres(DEBUT, 0, 4 + 90))
-  })
-
-  it('programme la consolidation tant que la série est insuffisante', () => {
-    const f = fabrique()
-    const faits = [
-      ...f.restitution(DEBUT),
-      ...f.consolidation(apres(DEBUT, 0, 120), ['fragile', 'fragile', 'fragile']),
-    ]
-    expect(echeances(etat(faits), REGLAGES)?.type).toBe('consolidation')
+    expect(echeances(etat(f.restitution(DEBUT)), REGLAGES)).toBeNull()
   })
 
   it('programme la vérification trois jours (en jours de jourDe) après « acquis provisoirement »', () => {
@@ -57,7 +35,7 @@ describe('echeances', () => {
       genre: 'jour',
       apres: '2026-06-04',
     })
-    expect(PROVISOIRE).toBe(apres(DEBUT, 0, 122))
+    expect(PROVISOIRE).toBe(apres(DEBUT, 0, 34))
   })
 
   it('programme le retest trente jours après « acquis »', () => {
@@ -166,13 +144,7 @@ describe('echeances', () => {
 })
 
 describe('estDue', () => {
-  const instant: Echeance = { type: 'consolidation', genre: 'instant', apres: apres(DEBUT, 0, 60) }
   const jour: Echeance = { type: 'verification', genre: 'jour', apres: '2026-06-04' }
-
-  it('compare un instant à l’instant', () => {
-    expect(estDue(instant, apres(DEBUT, 0, 59), REGLAGES)).toBe(false)
-    expect(estDue(instant, apres(DEBUT, 0, 60), REGLAGES)).toBe(true)
-  })
 
   it('compare un jour au jour de maintenant, avec la bascule de 4 h', () => {
     expect(estDue(jour, '2026-06-04T01:30:00Z', REGLAGES)).toBe(false)

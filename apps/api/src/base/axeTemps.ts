@@ -29,7 +29,7 @@ export function dureeRetiree({ debut, fin }: Pause): number {
 /**
  * Le temps de la formation à l'instant `maintenant` : l'instant réel moins ses pauses. Gelée, elle ne
  * dépasse pas le début de sa pause en cours. Les faits qu'on écrit portent ce temps, donc les délais
- * (consolidation, vérification, rappels) ne comptent jamais les jours de pause.
+ * (vérification, retest, rappels) ne comptent jamais les jours de pause.
  */
 export function tempsDeLaFormation(maintenant: string, pauses: readonly Pause[]): string {
   let borne = instantEnMs(maintenant)

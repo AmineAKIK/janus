@@ -1,14 +1,6 @@
 import type { Manifeste, Reglages, Statut } from '@janus/contrats'
 import type { Fait } from './faits.ts'
-import {
-  apres,
-  avantConsolidation,
-  DEBUT,
-  fabrique,
-  jusquaProvisoire,
-  MANIFESTE,
-  REGLAGES,
-} from './fabrique.ts'
+import { apres, DEBUT, fabrique, jusquaProvisoire, MANIFESTE, REGLAGES } from './fabrique.ts'
 import type { Fabrique } from './fabrique.ts'
 import type { CodeManque } from './statut.ts'
 
@@ -76,23 +68,6 @@ function cas(
   }
 }
 
-/** Deux consolidations qui comptent, puis une troisième qui ne compte pas pour la raison donnée. */
-function consolidationSansTroisieme(
-  f: Fabrique,
-  raison: 'avec_support' | 'recopiee' | 'non_verifiee',
-): Fait[] {
-  const [c1, c2, c3] = MANIFESTE.consolidation
-  return [
-    ...avantConsolidation(f),
-    f.correction(apres(DEBUT, 0, 120), 'consolidation', c1?.id ?? '', {}),
-    f.correction(apres(DEBUT, 0, 121), 'consolidation', c2?.id ?? '', {}),
-    f.correction(apres(DEBUT, 0, 122), 'consolidation', c3?.id ?? '', {
-      compte: false,
-      raisonNonCompte: raison,
-    }),
-  ]
-}
-
 /** Du début jusqu'à « acquis provisoirement », puis la vérification réussie à J+3 : « acquis ». */
 function jusquaAcquis(f: Fabrique): Fait[] {
   return [...jusquaProvisoire(f), f.verification(apres(DEBUT, 3))]
@@ -130,58 +105,15 @@ function construireCas(): CasAcceptation[] {
     )
   })()
 
-  const cas2 = ((): CasAcceptation => {
-    const f = fabrique()
-    // La restitution finit à 10 h 34 ; la consolidation commence 20 minutes plus tard.
-    return cas(
-      'Consolidation solide 20 minutes après la restitution',
-      [...avantConsolidation(f), ...f.consolidation(apres(DEBUT, 0, 54))],
-      apres(DEBUT, 0, 60),
-      { statut: 'vu', manque: ['consolidation_trop_tot'] },
-    )
-  })()
-
-  const cas3 = ((): CasAcceptation => {
-    const f = fabrique()
-    const [c1, c2, c3] = MANIFESTE.consolidation
-    return cas(
-      'Consolidation fragile au 1er tour, solide au 2e après un indice',
-      [
-        ...avantConsolidation(f),
-        ...f.consolidation(apres(DEBUT, 0, 120), ['fragile', 'fragile', 'fragile']),
-        ...[c1, c2, c3].map((q, i) =>
-          f.correction(apres(DEBUT, 0, 125 + i), 'consolidation', q?.id ?? '', {
-            tour: 2,
-            compte: false,
-            raisonNonCompte: 'relance',
-          }),
-        ),
-      ],
-      apres(DEBUT, 0, 180),
-      { statut: 'vu', manque: ['consolidation_insuffisante'] },
-    )
-  })()
-
   const cas4 = ((): CasAcceptation => {
     const f = fabrique()
     return cas(
       'Tous les exercices réussis, mais l’un seulement à l’aide 2',
-      [...avantConsolidation(f, [0, 2]), ...f.consolidation(apres(DEBUT, 0, 120))],
+      jusquaProvisoire(f, [0, 2]),
       apres(DEBUT, 0, 180),
       { statut: 'vu', manque: ['pratique_aide'] },
     )
   })()
-
-  const sansCompter = (
-    situation: string,
-    raison: 'avec_support' | 'recopiee' | 'non_verifiee',
-  ): CasAcceptation => {
-    const f = fabrique()
-    return cas(situation, consolidationSansTroisieme(f, raison), apres(DEBUT, 0, 180), {
-      statut: 'vu',
-      manque: ['consolidation_a_faire'],
-    })
-  }
 
   const cas8 = ((): CasAcceptation => {
     const f = fabrique()
@@ -278,7 +210,7 @@ function construireCas(): CasAcceptation[] {
     const avecErreur = [...base, f.cochee(apres(DEBUT, 1), 'E1')]
     return cas(
       'Erreur critique confirmée, puis question solide au 1er tour sur la même erreur',
-      [...avecErreur, f.correction(apres(DEBUT, 2), 'consolidation', 'C1', {})],
+      [...avecErreur, f.correction(apres(DEBUT, 2), 'restitution', 'R1', {})],
       apres(DEBUT, 3),
       { statut: 'acquis_provisoirement', erreursOuvertes: [] },
       [
@@ -287,24 +219,6 @@ function construireCas(): CasAcceptation[] {
           attendu: { statut: 'a_reprendre', erreursOuvertes: ['E1'] },
         },
       ],
-    )
-  })()
-
-  const cas17 = ((): CasAcceptation => {
-    const f = fabrique()
-    return cas(
-      'Contestation à laquelle l’IA se range',
-      [
-        ...avantConsolidation(f),
-        ...f.consolidation(apres(DEBUT, 0, 120), ['pas_encore', 'solide', 'solide']),
-        f.correction(apres(DEBUT, 0, 130), 'consolidation', 'C1', {
-          tour: 2,
-          compte: false,
-          raisonNonCompte: 'relance',
-        }),
-      ],
-      apres(DEBUT, 0, 180),
-      { statut: 'vu', manque: ['consolidation_insuffisante'] },
     )
   })()
 
@@ -322,25 +236,9 @@ function construireCas(): CasAcceptation[] {
     )
   })()
 
-  const cas19 = ((): CasAcceptation => {
-    const f = fabrique()
-    const [c1, c2] = f.consolidation(apres(DEBUT, 0, 120))
-    return cas(
-      'Même message reçu deux fois',
-      [...avantConsolidation(f), ...(c1 && c2 ? [c1, c2, c2] : [])],
-      apres(DEBUT, 0, 180),
-      { statut: 'vu', manque: ['consolidation_a_faire'] },
-    )
-  })()
-
   return [
     cas1,
-    cas2,
-    cas3,
     cas4,
-    sansCompter('Réponse collée, ou après retour au cours', 'avec_support'),
-    sansCompter('Réponse recopiée du cours', 'recopiee'),
-    sansCompter('Correction « non vérifiée »', 'non_verifiee'),
     cas8,
     cas9,
     cas10,
@@ -350,9 +248,7 @@ function construireCas(): CasAcceptation[] {
     cas14,
     cas15,
     cas16,
-    cas17,
     cas18,
-    cas19,
     {
       genre: 'jour',
       situation: 'Séance finie à 1 h du matin',

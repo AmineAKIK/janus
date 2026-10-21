@@ -518,7 +518,7 @@ export function routesVerificationsDemo({
         const prochaine =
           reprogrammee !== null
             ? { type: verification.type, apres: reprogrammee }
-            : echeance !== null && echeance.type !== 'consolidation'
+            : echeance !== null
               ? { type: echeance.type, apres: echeance.apres }
               : null
         const resultat: Resultat = {

@@ -55,7 +55,6 @@ async function apresRestitution(page: Page) {
   await allerEtape(page, 'Restitution')
   await repondreALaSerie(page)
   await serieEnregistree(page, 'Vu')
-  await allerEtape(page, 'Consolidation')
 }
 
 /** Écrans photographiés à chaque PR, en 4 captures chacun. */
@@ -233,16 +232,6 @@ export const ecrans: readonly Ecran[] = [
       await allerEtape(page, 'Restitution')
       await cliquerEtape(page, 'Explication')
       await expect(page.getByRole('dialog', { name: 'Revoir le cours maintenant ?' })).toBeVisible()
-    },
-  },
-  {
-    nom: 'bloc-consolidation',
-    chemin: './#/blocs/B03',
-    etat: 'Ordinateur et composants',
-    titre: 'Page de bloc',
-    scenario: async (page) => {
-      await apresRestitution(page)
-      await expect(page.getByText(/Consolidation disponible à/)).toBeVisible()
     },
   },
   {

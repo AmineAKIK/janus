@@ -4,12 +4,10 @@ import { Reglages } from './reglages.ts'
 const DEFAUTS = {
   fuseau: 'Europe/Paris',
   heureBascule: 4,
-  delaiConsolidationMinutes: 60,
   delaiVerificationJours: 3,
   delaiRetestJours: 30,
   delaiNouvelEssaiJours: 2,
   echecsAvantDescente: 2,
-  seuilConsolidation: 0.8,
   questionsDebut: 6,
   nouvellesCartesParJour: 20,
   retentionVisee: 0.9,
@@ -30,12 +28,10 @@ const DEFAUTS = {
 // [clé, plus petite valeur permise, plus grande valeur permise]
 const BORNES = [
   ['heureBascule', 0, 6],
-  ['delaiConsolidationMinutes', 30, 1440],
   ['delaiVerificationJours', 1, 14],
   ['delaiRetestJours', 14, 90],
   ['delaiNouvelEssaiJours', 1, 7],
   ['echecsAvantDescente', 1, 5],
-  ['seuilConsolidation', 0.5, 1],
   ['questionsDebut', 5, 10],
   ['nouvellesCartesParJour', 0, 100],
   ['retentionVisee', 0.8, 0.97],
@@ -146,9 +142,9 @@ describe('Reglages', () => {
   })
 
   it('écrit les bornes décimales avec une virgule', () => {
-    const resultat = Reglages.safeParse({ seuilConsolidation: 0.2 })
+    const resultat = Reglages.safeParse({ retentionVisee: 0.2 })
     expect(resultat.error?.issues[0]?.message).toBe(
-      'Le seuil de consolidation doit être un nombre entre 0,5 et 1.',
+      'La rétention visée doit être un nombre entre 0,8 et 0,97.',
     )
   })
 })

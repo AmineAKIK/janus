@@ -22,7 +22,6 @@ export const GROUPE_DE_L_ETAPE: Readonly<Record<TypeEtape, GroupeTemps>> = {
   atelier: 'pratique',
   aisance: 'pratique',
   restitution: 'restitution',
-  consolidation: 'restitution',
   bilan: 'restitution',
 }
 

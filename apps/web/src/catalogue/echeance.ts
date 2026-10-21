@@ -37,7 +37,7 @@ function datee(mot: string, manque: Manque, entree: EntreeEcheance): string {
   return date === 'aujourd’hui' || date === 'demain' ? `${mot} ${date}` : `${mot} le ${date}`
 }
 
-/** Ce que la carte d'un bloc annonce, par priorité : erreur, vérification ou retest, consolidation, restitution, étape, prérequis. */
+/** Ce que la carte d'un bloc annonce, par priorité : erreur, vérification ou retest, restitution, étape, prérequis. */
 export function ligneEcheance(entree: EntreeEcheance): LigneEcheance {
   const { manque, statut } = entree
   const premiereErreur = entree.erreursOuvertes[0]
@@ -51,23 +51,6 @@ export function ligneEcheance(entree: EntreeEcheance): LigneEcheance {
   }
   const retest = trouver(manque, 'retest_a_faire', 'retest_a_venir')
   if (retest !== undefined) return { ...AUCUNE, date: datee('retest', retest, entree) }
-
-  const consolidation = trouver(
-    manque,
-    'consolidation_trop_tot',
-    'consolidation_a_faire',
-    'consolidation_cours_rouvert',
-    'consolidation_insuffisante',
-  )
-  if (consolidation !== undefined) {
-    return {
-      ...AUCUNE,
-      date:
-        consolidation.code === 'consolidation_trop_tot'
-          ? datee('consolidation', consolidation, entree)
-          : 'consolidation à faire',
-    }
-  }
 
   const restitutionAFaire =
     (statut === 'en_cours' || statut === 'vu') &&

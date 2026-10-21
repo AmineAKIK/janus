@@ -27,8 +27,6 @@ function estFaite(
       return vues.has(id)
     case 'restitution':
       return avancement.restitution !== null
-    case 'consolidation':
-      return avancement.consolidation !== null
     case 'pratique':
       return avancement.pratique !== null
     case 'atelier':
@@ -42,7 +40,7 @@ function estFaite(
 
 /**
  * Les étapes faites : une étape à preuve quand le serveur date sa preuve (restitution envoyée,
- * pratique à l'aide 0, atelier, aisance, consolidation), une étape de cours quand elle a été
+ * pratique à l'aide 0, atelier, aisance), une étape de cours quand elle a été
  * affichée (par le serveur ou dans cet onglet), le bilan quand il a été envoyé.
  */
 export function etapesFaites(

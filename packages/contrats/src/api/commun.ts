@@ -51,8 +51,6 @@ export const Avancement = z.strictObject({
   etapes_vues: z.array(Identifiant),
   /** Toutes les questions de restitution envoyées au premier tour. */
   restitution: InstantUtc.nullable(),
-  /** Série de consolidation réussie. */
-  consolidation: InstantUtc.nullable(),
   /** Chaque exercice de pratique atteint à l'aide 0. */
   pratique: InstantUtc.nullable(),
   /** Atelier réussi à l'aide 0. */
