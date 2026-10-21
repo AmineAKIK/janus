@@ -111,6 +111,7 @@ describe('conflit d’état', () => {
   it('n’écrase pas, prévient, et « Recharger la fiche » relit le bloc', async () => {
     const utilisateur = userEvent.setup()
     const { envoyer, magasin } = await afficher()
+    await envoyer({ ...EXEMPLES_PAGE['page.prete'], bloc: 'B03', version: 1 })
     // Un autre appareil a sauvegardé l'état entre-temps.
     magasin.ecrire((etat) => ({ ...etat, etatsPage: { ...etat.etatsPage, B03: { etape: 'ET9' } } }))
 
@@ -170,6 +171,50 @@ describe('recommencer la fiche', () => {
       idsRecus: avant.idsRecus,
     }).toEqual(avant)
     expect(apres.faits.slice(0, avant.faits.length)).toEqual(avant.faits)
+  })
+
+  it('une sauvegarde de la fiche reçue après « Recommencer » ne rétablit pas l’ancien état', async () => {
+    const utilisateur = userEvent.setup()
+    const { magasin } = await afficher({ etatPage: { etape: 'ET9', envoyees: { R1: true } } })
+    /** Un message de la fiche affichée en ce moment (l'iframe change quand la fiche se recharge). */
+    const depuisLaFiche = async (data: unknown) => {
+      const iframe = screen.getByTitle(/^Fiche du bloc B03/)
+      if (!(iframe instanceof HTMLIFrameElement) || iframe.contentWindow === null) {
+        throw new Error('iframe absente')
+      }
+      const fenetre = iframe.contentWindow
+      vi.spyOn(fenetre, 'postMessage').mockImplementation(() => undefined)
+      await act(async () => {
+        window.dispatchEvent(new MessageEvent('message', { data, source: fenetre }))
+        await Promise.resolve()
+      })
+    }
+    const sauvegarde = (id: string, etat: Record<string, unknown>) => ({
+      ...EXEMPLES_PAGE['etat.sauver'],
+      id: `0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f${id}`,
+      bloc: 'B03',
+      version: 1,
+      etat,
+    })
+    await depuisLaFiche({ ...EXEMPLES_PAGE['page.prete'], bloc: 'B03', version: 1 })
+    await utilisateur.click(screen.getByRole('button', { name: 'Recommencer la fiche' }))
+    await utilisateur.click(
+      within(await screen.findByRole('dialog')).getByRole('button', { name: 'Recommencer' }),
+    )
+    // La fiche encore affichée groupe ses sauvegardes : la dernière arrive dans la foulée, avec l'ancien état.
+    await depuisLaFiche(sauvegarde('2001', { etape: 'ET9', envoyees: { R1: true } }))
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    })
+    expect(magasin.lire().etatsPage['B03']).toEqual({})
+
+    // Rechargée, la fiche repart de l'état vide : ses sauvegardes comptent de nouveau.
+    await depuisLaFiche({ ...EXEMPLES_PAGE['page.prete'], bloc: 'B03', version: 1 })
+    await depuisLaFiche(sauvegarde('2002', { etape: 'ET2' }))
+    await waitFor(() => {
+      expect(magasin.lire().etatsPage['B03']).toEqual({ etape: 'ET2' })
+    })
   })
 })
 

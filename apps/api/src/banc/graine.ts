@@ -1,12 +1,14 @@
-import { readFile } from 'node:fs/promises'
+import { readdir, readFile } from 'node:fs/promises'
 import { nouvelId, Reglages } from '@janus/contrats'
 import { catalogueGraine, MANIFESTES_GRAINE, PLAN_GRAINE } from '@janus/contrats/demo'
 import { instantEnMs } from '@janus/moteur'
 import { eq } from 'drizzle-orm'
 import type { Base } from '../base/base.ts'
 import * as t from '../base/schema/index.ts'
+import { DOSSIER_CONTENU } from '../contenu.ts'
 import { creerHacheur } from '../domaines/auth/composition.ts'
-import { monterImportation } from '../domaines/catalogue/composition.ts'
+import { extraireManifeste, monterImportation } from '../domaines/catalogue/composition.ts'
+import { lireLesFiches } from '../fiches.ts'
 import type { Horloge } from '../horloge.ts'
 
 /** Le compte de la démo : la suite de contrat s'y connecte comme elle le fait sur le faux serveur. */
@@ -31,9 +33,22 @@ function ficheDuBloc(modele: string, manifeste: unknown, pont: string): string {
   )
 }
 
+/** Le code du bloc d'une fiche du dépôt, lu dans son manifeste ; `undefined` si elle n'en a pas. */
+function codeDuBloc(html: string): string | undefined {
+  const texte = extraireManifeste(html)
+  if (texte === undefined) return undefined
+  const manifeste: unknown = JSON.parse(texte)
+  return typeof manifeste === 'object' && manifeste !== null && 'bloc' in manifeste
+    ? String(manifeste.bloc)
+    : undefined
+}
+
 /**
  * Remplit une base neuve comme la graine de la démo : la formation et ses 20 blocs, une fiche par
- * bloc, et le compte `amine`. Sans effet si le compte existe déjà.
+ * bloc, et le compte `amine`. Puis importe les fiches du dépôt (`contenu/<formation>/fiches/`) dont
+ * le bloc est dans la graine : leur version, plus haute, devient celle que l'appli sert, et les
+ * parcours de la CI jouent les vraies fiches, pas la fiche de démonstration. Sans effet si le compte
+ * existe déjà.
  */
 export async function planterLaGraine(base: Base, horloge: Horloge, dossierFiches: string) {
   const existant = await base.db
@@ -55,5 +70,16 @@ export async function planterLaGraine(base: Base, horloge: Horloge, dossierFiche
   const pont = await readFile(PONT, 'utf8')
   for (const { code } of PLAN_GRAINE) {
     await importation.importerFiche(ficheDuBloc(modele, MANIFESTES_GRAINE[code], pont))
+  }
+  const codes = new Set(PLAN_GRAINE.map(({ code }) => code))
+  const formations = (await readdir(DOSSIER_CONTENU, { withFileTypes: true }))
+    .filter((entree) => entree.isDirectory())
+    .map((entree) => entree.name)
+    .sort()
+  for (const formation of formations) {
+    for (const fiche of await lireLesFiches(DOSSIER_CONTENU, formation)) {
+      const code = codeDuBloc(fiche.html)
+      if (code !== undefined && codes.has(code)) await importation.importerFiche(fiche.html)
+    }
   }
 }

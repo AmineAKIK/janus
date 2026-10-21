@@ -55,6 +55,7 @@ describe('lireConfig', () => {
     })
 
     expect(lireConfig(sansVariables('CORRECTIONS_PAR_MINUTE')).CORRECTIONS_PAR_MINUTE).toBe(20)
+    expect(lireConfig(sansVariables('REQUETES_PAR_MINUTE')).REQUETES_PAR_MINUTE).toBe(300)
     expect(defaut).toMatchObject({
       DEEPSEEK_MODELE: 'deepseek-flash',
       DEEPSEEK_URL: 'https://api.deepseek.com',

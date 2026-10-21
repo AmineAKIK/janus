@@ -99,6 +99,14 @@ export function useHoteFiche(
 
   const [phase, setPhase] = useState<PhaseFiche>('attente')
   const [chargement, setChargement] = useState(0)
+  /**
+   * Les `etat.sauver` à laisser tomber : avant `page.prete` (la fiche ne sauve qu'après son init ; un
+   * message plus tôt vient d'une fiche qui n'est plus la nôtre), et après « Recommencer » tant que la
+   * fiche ne s'est pas rechargée. La fiche encore affichée groupe ses sauvegardes : la dernière peut
+   * arriver dans la foulée avec l'ancien état et prendrait la place de l'état vide dans la boîte
+   * d'envoi (même clé). La fiche se recharge après la réponse : un `page.prete` neuf rouvre la porte.
+   */
+  const sauvegardesIgnorees = useRef(true)
   const [statut, setStatut] = useState<ReponseStatut>({
     statut: donnees.statut,
     manque: donnees.manque,
@@ -183,6 +191,7 @@ export function useHoteFiche(
       const { donnees: courantes } = dernieres.current
       switch (message.type) {
         case 'page.prete':
+          sauvegardesIgnorees.current = false
           setPhase('prete')
           if (courantes.etatPage !== null)
             boite.fixerVersion(courantes.bloc, courantes.etatPage.version)
@@ -221,6 +230,7 @@ export function useHoteFiche(
           return
         }
         default: {
+          if (message.type === 'etat.sauver' && sauvegardesIgnorees.current) return
           if (message.type === 'etat.sauver') dernieres.current.etat = message.etat
           if (message.type === 'bilan.erreurs') setBilanFait(true)
           if (message.type === 'etape.vue') {
@@ -427,6 +437,7 @@ export function useHoteFiche(
     const { donnees: courantes } = dernieres.current
     const id = nouvelId(Date.parse(instantReel()))
     dernieres.current.etat = {}
+    sauvegardesIgnorees.current = true
     void boite.ajouter(
       {
         id,
@@ -442,7 +453,10 @@ export function useHoteFiche(
           setEtapesVues([])
           surFait()
         },
-        surRefus,
+        surRefus: () => {
+          sauvegardesIgnorees.current = false
+          surRefus()
+        },
         surConflit: surRefus,
       },
     )

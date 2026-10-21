@@ -272,6 +272,7 @@ describe('page d’un bloc', () => {
 
   it('sauvegarde l’état de la page sur le serveur', async () => {
     const { envoyer, transport } = await afficher()
+    await envoyer(prete)
 
     await envoyer(message('etat.sauver', { etat: { etape: 'ET4' } }))
 
