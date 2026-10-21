@@ -1,4 +1,4 @@
-import { EXEMPLES_PAGE } from '@janus/contrats'
+import { EXEMPLES_PAGE, nomRoute, ROUTES } from '@janus/contrats'
 import { createMemoryHistory } from '@tanstack/react-router'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -104,6 +104,74 @@ describe('indicateur d’enregistrement', () => {
     await afficher()
 
     expect(screen.getByText('✓ Enregistré')).toHaveAttribute('aria-live', 'polite')
+  })
+})
+
+describe('données gardées sur l’appareil', () => {
+  it('la fiche attend la relecture du bloc : elle ne s’ouvre pas sur un état gardé périmé', async () => {
+    const banc = creerContexteTest()
+    banc.magasin.ecrire((etat) => ({
+      ...etat,
+      etatsPage: { ...etat.etatsPage, B03: { etape: 'ET4' } },
+    }))
+    // Les données reprises au démarrage datent d'avant la dernière sauvegarde : aucun état encore.
+    const entree = { params: { id: 'B03' } }
+    const ancien = await banc.transport.appeler(ROUTES['GET /blocs/:id'], entree)
+    banc.client.setQueryData([nomRoute(ROUTES['GET /blocs/:id']), entree], {
+      ...ancien,
+      etat_page: null,
+    })
+    let ouvrir: () => void = () => undefined
+    const relue = new Promise<void>((resolve) => {
+      ouvrir = resolve
+    })
+    const appeler = banc.transport.appeler.bind(banc.transport)
+    vi.spyOn(banc.transport, 'appeler').mockImplementation(async (route, ...reste) => {
+      if (route === ROUTES['GET /blocs/:id']) await relue
+      return appeler(route, ...reste)
+    })
+    const routeur = creerRouteur(
+      createMemoryHistory({ initialEntries: ['/blocs/B03'] }),
+      banc.contexte,
+    )
+    await act(async () => {
+      render(banc.application(routeur))
+      await routeur.load()
+    })
+
+    expect(screen.queryByTitle(/^Fiche du bloc B03/)).not.toBeInTheDocument()
+
+    await act(async () => {
+      ouvrir()
+      await relue
+    })
+    const iframe = await screen.findByTitle(/^Fiche du bloc B03/)
+    if (!(iframe instanceof HTMLIFrameElement) || iframe.contentWindow === null) {
+      throw new Error('iframe absente')
+    }
+    const fenetre = iframe.contentWindow
+    vi.spyOn(fenetre, 'postMessage').mockImplementation(() => undefined)
+    const envoyer = async (data: unknown) => {
+      await act(async () => {
+        window.dispatchEvent(new MessageEvent('message', { data, source: fenetre }))
+        await Promise.resolve()
+      })
+    }
+    await envoyer({ ...EXEMPLES_PAGE['page.prete'], bloc: 'B03', version: 1 })
+    await envoyer({
+      ...EXEMPLES_PAGE['etat.sauver'],
+      id: '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f3001',
+      bloc: 'B03',
+      version: 1,
+      etat: { etape: 'ET5' },
+    })
+
+    await waitFor(() => {
+      expect(banc.magasin.lire().etatsPage['B03']).toEqual({ etape: 'ET5' })
+    })
+    expect(
+      screen.queryByText('Ce bloc a été modifié sur un autre appareil.'),
+    ).not.toBeInTheDocument()
   })
 })
 
