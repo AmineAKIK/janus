@@ -30,6 +30,7 @@ function pontSimule(
   const statuts = new Set<Rappel>()
   const erreurs = new Set<Rappel>()
   const rejets = new Set<Rappel>()
+  const inits = new Set<Rappel>()
   const pont = {
     demarrer: () =>
       Promise.resolve({
@@ -57,7 +58,10 @@ function pontSimule(
       return () => erreurs.delete(rappel)
     },
     surEtape: () => () => undefined,
-    surInit: () => () => undefined,
+    surInit: (rappel: Rappel) => {
+      inits.add(rappel)
+      return () => inits.delete(rappel)
+    },
     surRejet: (rappel: Rappel) => {
       rejets.add(rappel)
       return () => rejets.delete(rappel)
@@ -65,6 +69,11 @@ function pontSimule(
   }
   const direStatut = (statut: unknown) => {
     for (const rappel of statuts) rappel(statut)
+  }
+  /** L'appli renvoie un etat.init (le serveur a relu le bloc : une série s'ouvre ou se ferme). */
+  const direInit = (init: Record<string, unknown>) => {
+    for (const rappel of inits)
+      rappel({ statut: 'vu', serie_ouverte: serieOuverte, aisance, ...init })
   }
   /** L'appli refuse le dernier message envoyé. */
   const refuserDernier = (detail: string) => {
@@ -75,8 +84,30 @@ function pontSimule(
   const rejeter = (question: string, erreur: string) => {
     for (const rappel of rejets) rappel({ question, erreur })
   }
-  return { pont, envois, demandes, sauvees, direStatut, refuserDernier, rejeter }
+  return { pont, envois, demandes, sauvees, direStatut, direInit, refuserDernier, rejeter }
 }
+
+/**
+ * Ce que la page garde dans son état, et rien d'autre. Leçon du B01 (PR #265, #269, #270, #274,
+ * #275) : chaque fois que la page a déduit elle-même un état que le serveur calcule (série ouverte,
+ * niveaux d'aisance réussis, étapes vues, erreurs ouvertes, statut), les deux ont divergé. La page
+ * lit ces états dans etat.init et statut.maj ; elle ne les sauve pas.
+ */
+const CLES_DE_LA_PAGE = new Set([
+  'etape',
+  'ecrans',
+  'itemCourant',
+  'envoyees',
+  'corrigees',
+  'enCours',
+  'retourCours',
+  'pratique',
+  'atelier',
+  'bilan',
+  'aCocher',
+  'erreurs',
+  'traces',
+])
 
 /** Met la page de la fiche dans le document du test, puis lance sa plomberie. */
 function monter(fiche: string, pont: object) {
@@ -368,6 +399,60 @@ describe('une série de questions', () => {
     expect(screen.getAllByText('Bien vu.')).toHaveLength(5)
     expect(screen.getByText(/Restitution terminée/)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Compléter ma réponse' })).toBeNull()
+  })
+
+  it('un etat.init reçu pendant que la dernière correction est en attente ne la perd pas', async () => {
+    // Leçon du B01 (captures « bilan secours ») : l'appli ferme la restitution dès que la dernière
+    // réponse est enregistrée, souvent avant que sa correction n'arrive ; la page se redessine alors.
+    const simule = pontSimule(aLEtape('ET4'), correction, { restitution: true })
+    let rendreLaDerniere: (correction: Record<string, unknown>) => void = () => undefined
+    const demanderCorrection = simule.pont.demanderCorrection
+    simule.pont.demanderCorrection = (demande: Record<string, unknown>) =>
+      simule.demandes.length === 4
+        ? new Promise<unknown>((resoudre) => {
+            simule.demandes.push(demande)
+            rendreLaDerniere = resoudre
+          })
+        : demanderCorrection(demande)
+    monter(GABARIT, simule.pont)
+    fireEvent.click(await screen.findByRole('button', { name: 'Commencer' }))
+    for (let rang = 0; rang < 5; rang += 1) {
+      const zone = screen
+        .getAllByRole('textbox')
+        .find((champ) => champ instanceof HTMLTextAreaElement && !champ.disabled)
+      if (!(zone instanceof HTMLTextAreaElement)) throw new Error('Pas de question à répondre')
+      const question = zone.closest('.item')
+      if (!(question instanceof HTMLElement)) throw new Error('Une question sans sa carte')
+      fireEvent.input(zone, { target: { value: 'Une réponse.' } })
+      fireEvent.click(within(question).getByRole('radio', { name: 'Sûr' }))
+      fireEvent.click(within(question).getByRole('button', { name: 'Envoyer' }))
+      if (rang < 4) {
+        await waitFor(() => {
+          expect(zone).toBeDisabled()
+        })
+      }
+    }
+    expect(simule.demandes).toHaveLength(5)
+
+    simule.direInit({ serie_ouverte: { restitution: false } })
+    await screen.findByText('Cette série n’est pas ouverte.')
+    rendreLaDerniere({ ...correction, question: 'R5', ref: 'R5' })
+
+    await waitFor(() => {
+      expect(screen.getAllByText('Bien vu.')).toHaveLength(5)
+    })
+    expect(screen.getByText(/Restitution terminée/)).toBeInTheDocument()
+  })
+
+  it('ne sauve que l’état de la page : rien de ce que le serveur calcule', async () => {
+    const { pont, sauvees } = pontSimule(aLEtape('ET4'), correction)
+    monter(GABARIT, pont)
+    fireEvent.click(await screen.findByRole('button', { name: 'Commencer' }))
+    await repondreATout()
+
+    expect(sauvees.length).toBeGreaterThan(0)
+    const cles = new Set(sauvees.flatMap((etat) => Object.keys(etat)))
+    for (const cle of cles) expect(CLES_DE_LA_PAGE).toContain(cle)
   })
 
   it('garde les corrections dans l’état : la série reprise après un rechargement les cache, finie les montre', async () => {

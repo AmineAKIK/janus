@@ -43,8 +43,28 @@ export const Manque = z.strictObject({
 export type Manque = z.infer<typeof Manque>
 
 /** L'état d'une page : un objet JSON de 200 ko au plus. */
+/**
+ * Ce que le serveur calcule et que la page lit (etat.init, statut.maj), jamais ne sauve. Leçon du
+ * B01 : une page qui garde sa propre copie d'un de ces états finit par diverger du serveur.
+ */
+export const CLES_DU_SERVEUR = [
+  'statut',
+  'manque',
+  'serie_ouverte',
+  'serieOuverte',
+  'aisance',
+  'etapes_vues',
+  'etapesVues',
+  'erreurs_ouvertes',
+  'erreursOuvertes',
+  'preuves',
+] as const
+
 export const EtatPage = z
   .record(z.string(), z.json())
+  .refine((etat) => CLES_DU_SERVEUR.every((cle) => !(cle in etat)), {
+    error: 'L’état de la page ne porte pas ce que le serveur calcule (statut, séries, aisance…).',
+  })
   .refine(
     (etat) => new TextEncoder().encode(JSON.stringify(etat)).length <= TAILLE_MAX_ETAT_OCTETS,
     {
