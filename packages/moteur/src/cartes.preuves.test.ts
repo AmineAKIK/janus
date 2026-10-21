@@ -49,7 +49,7 @@ describe('preuvesDuBloc', () => {
     })
   })
 
-  it('date retenir avec le dernier retest réussi et la prochaine échéance d’entretien', () => {
+  it('date retenir avec le retest réussi, sans échéance ensuite', () => {
     const f = fabrique()
     const retest = apres(DEBUT, 40)
     const faits = [
@@ -60,10 +60,7 @@ describe('preuvesDuBloc', () => {
       f.aisance(apres(retest, 1), 30),
     ]
     const resultat = preuves(faits)
-    expect(resultat.retenir).toEqual({
-      date: retest,
-      prochaine: { type: 'entretien', genre: 'jour', apres: '2026-10-11' },
-    })
+    expect(resultat.retenir).toEqual({ date: retest, prochaine: null })
     expect(resultat.aisance).toEqual({ date: apres(retest, 1) })
   })
 

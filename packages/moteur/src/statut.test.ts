@@ -1008,14 +1008,56 @@ describe('la vérification, le retest et les échecs', () => {
     const f = fabrique()
     const base = jusquaProvisoire(f)
     const rate = (jour: number) => f.verification(apres(DEBUT, jour), { transfert: 'fragile' })
-    expect(calcul([...base, rate(3)], apres(DEBUT, 4)).echecsConsecutifs).toBe(1)
-    // Au provisoire, plusieurs échecs ne font pas descendre plus bas.
-    const deux = calcul([...base, rate(3), rate(5), rate(7)], apres(DEBUT, 8))
-    expect(deux.statut).toBe('acquis_provisoirement')
-    expect(deux.echecsConsecutifs).toBe(3)
+    const un = calcul([...base, rate(3)], apres(DEBUT, 4))
+    expect(un.statut).toBe('acquis_provisoirement')
+    expect(un.echecsConsecutifs).toBe(1)
     const reussi = calcul([...base, rate(3), f.verification(apres(DEBUT, 5))], apres(DEBUT, 6))
     expect(reussi.statut).toBe('acquis')
     expect(reussi.echecsConsecutifs).toBe(0)
+  })
+
+  it('deux vérifications ratées de suite mettent le bloc à reprendre : restitution et pratique à refaire', () => {
+    const f = fabrique()
+    const base = jusquaProvisoire(f)
+    const rate = (jour: number) => f.verification(apres(DEBUT, jour), { transfert: 'fragile' })
+    const deux = calcul([...base, rate(3), rate(5)], apres(DEBUT, 6))
+    expect(deux.statut).toBe('a_reprendre')
+    expect(deux.descendu).toBe(true)
+    expect(deux.dates.acquisProvisoirement).toBeNull()
+    expect(deux.dates.vu).toBeNull()
+    expect(deux.manque.map(({ code }) => code)).toEqual([
+      'reprise_a_faire',
+      'restitution_incomplete',
+    ])
+    // Une troisième vérification, sans avoir repris, ne compte pas.
+    expect(
+      calcul([...base, rate(3), rate(5), f.verification(apres(DEBUT, 7))], apres(DEBUT, 8)).statut,
+    ).toBe('a_reprendre')
+    // La restitution seule refaite : toujours à reprendre, il reste la pratique.
+    const restitue = calcul(
+      [...base, rate(3), rate(5), ...f.restitution(apres(DEBUT, 6))],
+      apres(DEBUT, 7),
+    )
+    expect(restitue.statut).toBe('a_reprendre')
+    expect(restitue.manque[0]).toMatchObject({ code: 'reprise_a_faire', questions: [] })
+    expect(restitue.manque[0]?.exercices?.length).toBeGreaterThan(0)
+    // Restitution et pratique refaites après la reprise : acquis provisoirement, puis la vérification repart.
+    const refaits = [
+      ...base,
+      rate(3),
+      rate(5),
+      ...f.restitution(apres(DEBUT, 6)),
+      ...f.consolidation(apres(DEBUT, 6, 120)),
+      ...f.pratique(apres(DEBUT, 7)),
+      f.atelier(apres(DEBUT, 7, 5)),
+    ]
+    const repris = calcul(refaits, apres(DEBUT, 8))
+    expect(repris.statut).toBe('acquis_provisoirement')
+    expect(repris.descendu).toBe(true)
+    expect(repris.echecsConsecutifs).toBe(0)
+    const reacquis = calcul([...refaits, f.verification(apres(DEBUT, 11))], apres(DEBUT, 12))
+    expect(reacquis.statut).toBe('acquis')
+    expect(reacquis.descendu).toBe(false)
   })
 
   it('un retest valable ignoré tant qu’il n’est pas à l’heure, et une vérification ne vaut pas retest', () => {
@@ -1069,11 +1111,10 @@ describe('la vérification, le retest et les échecs', () => {
     // Aisance atteinte avant le retest.
     const aisanceTot = [...base, f.aisance(apres(DEBUT, 10), 20), f.aisance(apres(DEBUT, 11), 20)]
     expect(calcul(aisanceTot, apres(DEBUT, 42)).dates.maitrise).toBe(apres(DEBUT, 34))
-    // Un deuxième retest réussi (entretien) ne décale pas la date.
-    const entretien = f.verification(apres(DEBUT, 120), { verification: 'entretien' })
-    expect(calcul([...aisanceTot, entretien], apres(DEBUT, 130)).dates.maitrise).toBe(
-      apres(DEBUT, 34),
-    )
+    // Le retest réussi clôt le parcours : une relance de plus ne change rien.
+    const encore = f.verification(apres(DEBUT, 120), { verification: 'retest' })
+    expect(calcul([...aisanceTot, encore], apres(DEBUT, 130)).dates.maitrise).toBe(apres(DEBUT, 34))
+    expect(calcul([...aisanceTot, encore], apres(DEBUT, 130)).manque).toEqual([])
   })
 
   it('un bloc sans cible d’aisance est maîtrisé dès le retest réussi', () => {
@@ -1089,20 +1130,18 @@ describe('la vérification, le retest et les échecs', () => {
     expect(resultat.dates.maitrise).toBe(apres(DEBUT, 34))
   })
 
-  it('deux échecs de retest au niveau acquis font redescendre à acquis provisoirement', () => {
+  it('deux échecs de retest au niveau acquis mettent le bloc à reprendre', () => {
     const f = fabrique()
     const rate = (jour: number) =>
       f.verification(apres(DEBUT, jour), { verification: 'retest', tache: false })
     const faits = [...jusquaProvisoire(f), f.verification(apres(DEBUT, 3)), rate(34), rate(36)]
     const resultat = calcul(faits, apres(DEBUT, 37))
-    expect(resultat.statut).toBe('acquis_provisoirement')
+    expect(resultat.statut).toBe('a_reprendre')
     expect(resultat.dates.acquis).toBeNull()
     expect(resultat.descendu).toBe(true)
-    // Une nouvelle vérification réussie le remonte à acquis.
-    const remonte = calcul([...faits, f.verification(apres(DEBUT, 40))], apres(DEBUT, 41))
-    expect(remonte.statut).toBe('acquis')
-    expect(remonte.dates.acquis).toBe(apres(DEBUT, 40))
-    expect(remonte.descendu).toBe(false)
+    // Une vérification sans reprise ne compte pas : le bloc n'est plus « acquis provisoirement ».
+    const sansReprise = calcul([...faits, f.verification(apres(DEBUT, 40))], apres(DEBUT, 41))
+    expect(sansReprise.statut).toBe('a_reprendre')
   })
 
   it('le nombre d’échecs avant descente est un réglage', () => {

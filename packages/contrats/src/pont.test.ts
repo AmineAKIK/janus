@@ -293,7 +293,8 @@ describe('CodeManque', () => {
   it('liste les codes que le moteur sait rendre', () => {
     expect(CodeManque.options).toContain('restitution_incomplete')
     expect(CodeManque.options).toContain('aisance_non_atteinte')
-    expect(CodeManque.options).toHaveLength(13)
+    expect(CodeManque.options).toContain('reprise_a_faire')
+    expect(CodeManque.options).toHaveLength(14)
   })
 })
 

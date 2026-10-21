@@ -178,13 +178,6 @@ export function texteEchecs(echecs: number): string {
   return `${nombre} échec${echecs > 1 ? 's' : ''} pour descendre`
 }
 
-export function texteEntretien(mois: readonly number[]): string {
-  const liste = mois.map(String)
-  const dernier = liste.pop()
-  if (dernier === undefined) return 'Aucun'
-  return `${liste.length > 0 ? `${liste.join(', ')} et ` : ''}${dernier} mois`
-}
-
 export interface LigneRegle {
   readonly libelle: string
   readonly valeur: string
@@ -195,7 +188,6 @@ export function lignesRegles(reglages: Reglages): readonly LigneRegle[] {
     { libelle: 'Consolidation', valeur: texteDuree(reglages.delaiConsolidationMinutes) },
     { libelle: 'Vérification', valeur: `${String(reglages.delaiVerificationJours)} j` },
     { libelle: 'Retest', valeur: `${String(reglages.delaiRetestJours)} j` },
-    { libelle: 'Entretien', valeur: texteEntretien(reglages.entretienMois) },
     { libelle: 'Nouvelle tentative', valeur: `${String(reglages.delaiNouvelEssaiJours)} j` },
     { libelle: 'Échecs avant descente', valeur: texteEchecs(reglages.echecsAvantDescente) },
     {

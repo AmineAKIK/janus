@@ -122,54 +122,20 @@ describe('echeances', () => {
     expect(echeances(resultat, reglages)?.apres).toBe('2026-06-12')
   })
 
-  describe('l’entretien', () => {
-    function maitrise(f: ReturnType<typeof fabrique>, entretiens: readonly number[] = []) {
+  describe('après le retest', () => {
+    function retestReussi(f: ReturnType<typeof fabrique>) {
       const retest = apres(DEBUT, 40)
       return [
         ...jusquaProvisoire(f),
         f.verification(apres(DEBUT, 4)),
         f.verification(retest, { verification: 'retest' }),
         ...[0, 1].map((jour) => f.aisance(apres(retest, jour), 30)),
-        ...entretiens.map((jour) =>
-          f.verification(apres(DEBUT, jour), { verification: 'entretien' }),
-        ),
       ]
     }
 
-    it('programme le premier entretien trois mois après le retest réussi', () => {
+    it('ne programme plus rien une fois le retest réussi : le parcours est clos', () => {
       const f = fabrique()
-      expect(echeances(etat(maitrise(f)), REGLAGES)).toEqual({
-        type: 'entretien',
-        genre: 'jour',
-        apres: '2026-10-11',
-      })
-    })
-
-    it('programme le suivant six mois après le premier entretien réussi, puis douze mois', () => {
-      const f = fabrique()
-      expect(echeances(etat(maitrise(f, [150])), REGLAGES)?.apres).toBe('2027-04-29')
-      expect(echeances(etat(maitrise(f, [150, 400])), REGLAGES)?.apres).toBe('2028-07-06')
-    })
-
-    it('garde douze mois tant que les entretiens réussissent', () => {
-      const f = fabrique()
-      const faits = maitrise(f, [150, 400, 800])
-      expect(echeances(etat(faits), REGLAGES)?.apres).toBe('2029-08-09')
-    })
-
-    it('programme un entretien raté deux jours après, sans quitter « maîtrisé »', () => {
-      const f = fabrique()
-      const faits = [
-        ...maitrise(f),
-        f.verification(apres(DEBUT, 135), { verification: 'entretien', tache: false }),
-      ]
-      const resultat = etat(faits)
-      expect(resultat.statut).toBe('maitrise')
-      expect(echeances(resultat, REGLAGES)).toEqual({
-        type: 'entretien',
-        genre: 'jour',
-        apres: '2026-10-16',
-      })
+      expect(echeances(etat(retestReussi(f)), REGLAGES)).toBeNull()
     })
 
     it('ne programme rien quand le retest est réussi mais que l’aisance manque', () => {
@@ -182,11 +148,19 @@ describe('echeances', () => {
       expect(echeances(etat(faits), REGLAGES)).toBeNull()
     })
 
-    it('ne programme rien sans mois d’entretien dans les réglages', () => {
+    it('programme un retest raté deux jours après, puis plus rien après deux échecs : le bloc est à reprendre', () => {
       const f = fabrique()
-      const reglages = { ...REGLAGES, entretienMois: [] }
-      const resultat = calculerBloc(maitrise(f), MANIFESTE, reglages, apres(DEBUT, 900))
-      expect(echeances(resultat, reglages)).toBeNull()
+      const rate = (jour: number) =>
+        f.verification(apres(DEBUT, jour), { verification: 'retest', tache: false })
+      const base = [...jusquaProvisoire(f), f.verification(apres(DEBUT, 4))]
+      expect(echeances(etat([...base, rate(40)]), REGLAGES)).toEqual({
+        type: 'retest',
+        genre: 'jour',
+        apres: '2026-07-13',
+      })
+      const repris = etat([...base, rate(40), rate(43)])
+      expect(repris.statut).toBe('a_reprendre')
+      expect(echeances(repris, REGLAGES)).toBeNull()
     })
   })
 })

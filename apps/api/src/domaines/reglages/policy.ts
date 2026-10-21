@@ -8,7 +8,6 @@ const REGLES_DE_LA_METHODE = [
   'delaiConsolidationMinutes',
   'delaiVerificationJours',
   'delaiRetestJours',
-  'entretienMois',
   'delaiNouvelEssaiJours',
   'echecsAvantDescente',
   'seuilConsolidation',

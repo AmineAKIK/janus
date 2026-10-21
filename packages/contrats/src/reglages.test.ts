@@ -7,7 +7,6 @@ const DEFAUTS = {
   delaiConsolidationMinutes: 60,
   delaiVerificationJours: 3,
   delaiRetestJours: 30,
-  entretienMois: [3, 6, 12],
   delaiNouvelEssaiJours: 2,
   echecsAvantDescente: 2,
   seuilConsolidation: 0.8,
@@ -74,7 +73,7 @@ describe('Reglages', () => {
 
   it('refuse un type incorrect pour les clés sans bornes', () => {
     expect(Reglages.safeParse({ fuseau: 3 }).success).toBe(false)
-    expect(Reglages.safeParse({ entretienMois: 'trois' }).success).toBe(false)
+    expect(Reglages.safeParse({ heureRappel: 3 }).success).toBe(false)
   })
 
   it('refuse un fuseau inconnu et accepte un fuseau réel', () => {
@@ -109,17 +108,6 @@ describe('Reglages', () => {
     for (let i = 0; i < 3; i += 1) {
       expect(Reglages.safeParse({ fuseau: 'Mars/Olympus' }).success).toBe(false)
     }
-  })
-
-  it.each([[[]], [[-1, 3]], [[3, 3]], [[12, 3]], [[2.5]], [[0, 6]]])(
-    'refuse les mois d’entretien %j',
-    (mois) => {
-      expect(Reglages.safeParse({ entretienMois: mois }).success).toBe(false)
-    },
-  )
-
-  it('accepte des mois d’entretien croissants', () => {
-    expect(Reglages.parse({ entretienMois: [2, 5, 18] }).entretienMois).toEqual([2, 5, 18])
   })
 
   it.each(['99:99', '7:30', '19h00', ''])('refuse l’heure de rappel « %s »', (heure) => {

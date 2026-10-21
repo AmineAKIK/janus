@@ -15,7 +15,6 @@ export const ModificationReglages = z.strictObject({
   delaiConsolidationMinutes: shape.delaiConsolidationMinutes.unwrap().optional(),
   delaiVerificationJours: shape.delaiVerificationJours.unwrap().optional(),
   delaiRetestJours: shape.delaiRetestJours.unwrap().optional(),
-  entretienMois: shape.entretienMois.unwrap().optional(),
   delaiNouvelEssaiJours: shape.delaiNouvelEssaiJours.unwrap().optional(),
   echecsAvantDescente: shape.echecsAvantDescente.unwrap().optional(),
   seuilConsolidation: shape.seuilConsolidation.unwrap().optional(),

@@ -41,7 +41,6 @@ function reglagesAleatoires(): Reglages {
     delaiConsolidationMinutes: choix([30, 60, 120, 600]),
     delaiVerificationJours: entier(1, 4),
     delaiRetestJours: choix([14, 20, 30]),
-    entretienMois: choix([[3, 6, 12], [1], [2, 4]]),
     delaiNouvelEssaiJours: entier(1, 3),
     echecsAvantDescente: entier(1, 3),
     seuilConsolidation: choix([0.5, 0.8, 1]),

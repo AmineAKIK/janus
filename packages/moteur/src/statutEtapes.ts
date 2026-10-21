@@ -9,14 +9,7 @@ import type {
 } from '@janus/contrats'
 import type { Fait, ReponseVerification } from './faits.ts'
 import { points } from './points.ts'
-import {
-  ajouterJours,
-  ajouterMois,
-  instantEnIso,
-  instantEnMs,
-  jourDe,
-  MS_PAR_MINUTE,
-} from './temps.ts'
+import { ajouterJours, instantEnIso, instantEnMs, jourDe, MS_PAR_MINUTE } from './temps.ts'
 import type { Jour } from './temps.ts'
 
 // Les règles du statut d'un bloc, une par « suivi » : chaque suivi lit les faits un à un, dans l'ordre
@@ -54,7 +47,7 @@ export interface ResultatBloc {
   /** Identifiants des erreurs critiques ouvertes, dans l'ordre où elles ont été ouvertes. */
   readonly erreursOuvertes: readonly string[]
   readonly echecsConsecutifs: number
-  /** Vrai quand le bloc est redescendu d'un cran après des échecs de vérification et n'a pas réussi depuis. */
+  /** Vrai quand le bloc a été mis à reprendre après des relances ratées et n'a pas retrouvé « acquis » depuis. */
   readonly descendu: boolean
   /** Les étapes de la fiche déjà affichées (`etape_vue`), dans l'ordre de leur première vue. */
   readonly etapesVues: readonly string[]
@@ -667,33 +660,27 @@ export function compositionReussie(
 }
 
 /**
- * Le premier jour où la vérification, le retest ou l'entretien attendu peut être fait ; `null` s'il
- * n'y a pas d'échéance d'entretien dans les réglages. Le premier retest vient `delaiRetestJours`
- * jours après « acquis », puis chaque entretien `entretienMois` mois (le dernier mois se répète)
- * après la dernière réussite.
+ * Le premier jour où la relance attendue peut être faite : la vérification `delaiVerificationJours`
+ * jours après « acquis provisoirement », le retest `delaiRetestJours` jours après « acquis ».
  */
 function echeanceAttendue(
-  attendu: 'verification' | 'retest' | 'entretien',
-  dates: { provisoire: string; dateAcquis: string; derniere: string },
+  attendu: 'verification' | 'retest',
+  dates: { provisoire: string; dateAcquis: string },
   reglages: Reglages,
-  reussites: number,
-): Jour | null {
+): Jour {
   const jour = (instant: string) => jourDe(instant, reglages.fuseau, reglages.heureBascule)
-  if (attendu === 'verification') {
-    return ajouterJours(jour(dates.provisoire), reglages.delaiVerificationJours)
-  }
-  if (attendu === 'retest') {
-    return ajouterJours(jour(dates.dateAcquis), reglages.delaiRetestJours)
-  }
-  const mois = reglages.entretienMois[Math.min(reussites, reglages.entretienMois.length) - 1]
-  return mois === undefined ? null : ajouterMois(jour(dates.derniere), mois)
+  return attendu === 'verification'
+    ? ajouterJours(jour(dates.provisoire), reglages.delaiVerificationJours)
+    : ajouterJours(jour(dates.dateAcquis), reglages.delaiRetestJours)
 }
 
 /**
- * Parcourt les vérifications valables, dans l'ordre. Une vérification faite avant son délai est
- * ignorée. Un échec compte ; `echecsAvantDescente` échecs de suite font descendre d'un cran
- * (maîtrisé vers acquis, acquis vers acquis provisoirement) et remettent le compteur à zéro ;
- * une réussite le remet à zéro. Il part de la date où le bloc est devenu « acquis provisoirement ».
+ * Parcourt les vérifications valables, dans l'ordre, à partir de la date où le bloc est devenu
+ * « acquis provisoirement ». Deux relances : la vérification, qui donne « acquis », puis le retest,
+ * qui clôt le parcours ; une relance d'un autre type, ou faite avant son délai, est ignorée. Un
+ * échec compte ; `echecsAvantDescente` échecs de suite mettent le bloc à reprendre (`reprise`) :
+ * restitution et pratique sont à refaire, et le suivi ne lit plus rien. Une réussite remet le
+ * compteur à zéro.
  */
 export class SuiviVerifications {
   readonly #provisoire: string
@@ -704,12 +691,11 @@ export class SuiviVerifications {
   echecs = 0
   derniereReussite: string | null = null
   dernierEchec: string | null = null
-  descendu = false
+  /** La date de la relance ratée qui a mis le bloc à reprendre ; `null` tant que ce n'est pas arrivé. */
+  reprise: string | null = null
   reussitesDeRetest: string[] = []
   /** Les identifiants des vérifications que les règles retiennent. */
   readonly retenues = new Set<string>()
-  /** La dernière réussite retenue : le point de départ de l'entretien suivant. */
-  #derniere: string
 
   readonly #parties: readonly TypeDifferee[]
 
@@ -718,51 +704,37 @@ export class SuiviVerifications {
     this.#reglages = reglages
     this.#parties = parties
     this.dateAcquis = provisoire
-    this.#derniere = provisoire
   }
 
   avancer(fait: Fait): void {
-    if (fait.type !== 'verification_terminee' || !fait.valable) return
+    if (fait.type !== 'verification_terminee' || !fait.valable || this.reprise !== null) return
     const reglages = this.#reglages
     const jour = (instant: string) => jourDe(instant, reglages.fuseau, reglages.heureBascule)
-    const attendu =
-      this.palier === 'provisoire' ? 'verification' : this.retest === null ? 'retest' : 'entretien'
+    if (this.retest !== null) return
+    const attendu = this.palier === 'provisoire' ? 'verification' : 'retest'
     if (fait.verification !== attendu) return
-    const verification = attendu === 'verification'
     const echeance = echeanceAttendue(
       attendu,
-      { provisoire: this.#provisoire, dateAcquis: this.dateAcquis, derniere: this.#derniere },
+      { provisoire: this.#provisoire, dateAcquis: this.dateAcquis },
       reglages,
-      this.reussitesDeRetest.length,
     )
-    if (echeance === null || jour(fait.date) < echeance) return
+    if (jour(fait.date) < echeance) return
     this.retenues.add(fait.id)
     if (compositionReussie(fait.reponses, this.#parties)) {
       this.echecs = 0
-      this.descendu = false
       this.derniereReussite = fait.date
-      this.#derniere = fait.date
       this.dernierEchec = null
-      if (verification) {
+      if (attendu === 'verification') {
         this.palier = 'acquis'
         this.dateAcquis = fait.date
       } else {
-        this.retest ??= fait.date
+        this.retest = fait.date
         this.reussitesDeRetest.push(fait.date)
       }
     } else {
       this.echecs += 1
       this.dernierEchec = fait.date
-      if (this.echecs >= reglages.echecsAvantDescente && !verification) {
-        this.echecs = 0
-        this.descendu = true
-        this.reussitesDeRetest = []
-        if (this.retest === null) {
-          this.palier = 'provisoire'
-        } else {
-          this.retest = null
-        }
-      }
+      if (this.echecs >= reglages.echecsAvantDescente) this.reprise = fait.date
     }
   }
 }
@@ -825,12 +797,15 @@ export function statutCalculeDe(
     readonly vu: boolean
     readonly verifications: Pick<SuiviVerifications, 'palier' | 'retest'> | null
     readonly aisanceAtteinte: boolean
+    /** Vrai après `echecsAvantDescente` relances ratées de suite, tant que restitution et pratique ne sont pas refaites. */
+    readonly enReprise: boolean
   },
   erreursOuvertes: number,
 ): Statut {
   let statutDesPreuves: Statut = 'non_commence'
   if (!etat.vide) statutDesPreuves = 'en_cours'
   if (etat.vu) statutDesPreuves = 'vu'
+  if (etat.enReprise && etat.verifications === null) statutDesPreuves = 'a_reprendre'
   if (etat.verifications !== null) statutDesPreuves = 'acquis_provisoirement'
   if (etat.verifications?.palier === 'acquis') statutDesPreuves = 'acquis'
   if (retestSiMaitrise(etat.verifications, etat.aisanceAtteinte) !== null) {
@@ -854,6 +829,8 @@ export interface Etapes {
   readonly transfert: string | null
   readonly force: ResultatBloc['force']
   readonly etapesVues: readonly string[]
+  /** La date de la dernière mise à reprendre, `null` s'il n'y en a jamais eu : les preuves d'avant ne comptent plus. */
+  readonly reprise: string | null
 }
 
 export function assembler(
@@ -872,9 +849,18 @@ export function assembler(
     provisoire,
     erreursOuvertes,
     force,
+    reprise,
   } = etapes
   const jour = (instant: string) => jourDe(instant, reglages.fuseau, reglages.heureBascule)
   const manque: Manque[] = []
+
+  if (reprise !== null && verifications === null) {
+    manque.push({
+      code: 'reprise_a_faire',
+      questions: restitution.vu ? [] : [...restitution.manquantes],
+      exercices: [...pratique.incompletes],
+    })
+  }
 
   manque.push(...(consolidation.ok ? [] : [consolidation.manque]))
   if (restitution.vu && pratique.incompletes.length > 0) {
@@ -915,6 +901,7 @@ export function assembler(
       vu: restitution.vu,
       verifications,
       aisanceAtteinte: aisance.ok,
+      enReprise: reprise !== null,
     },
     erreursOuvertes.length,
   )
@@ -932,7 +919,7 @@ export function assembler(
     manque,
     erreursOuvertes: [...erreursOuvertes],
     echecsConsecutifs: verifications?.echecs ?? 0,
-    descendu: verifications?.descendu ?? false,
+    descendu: reprise !== null && verifications?.palier !== 'acquis',
     etapesVues: [...etapes.etapesVues],
     preuves: {
       consolidation: consolidation.ok ? consolidation.date : null,
@@ -974,6 +961,11 @@ export interface EtatBloc {
   provisoire: string | null
   verifications: SuiviVerifications | null
   erreurs: SuiviErreurs
+  /**
+   * La date de la dernière mise à reprendre : restitution, consolidation, pratique et atelier ne
+   * lisent que les faits qui la suivent, le bloc se reprouve. `null` tant qu'il n'y en a pas eu.
+   */
+  reprise: string | null
 }
 
 /** Fait lire un fait à tous les suivis qui n'ont pas besoin de la date d'« acquis provisoirement ». */
@@ -982,10 +974,12 @@ export function lirePreuves(etat: EtatBloc, fait: Fait): void {
   if (fait.type === 'correction') etat.corrections.set(fait.id, fait)
   if (fait.type === 'etape_vue') etat.etapesVues.add(fait.etape)
   if (fait.type === 'fiche_recommencee') etat.etapesVues.clear()
-  etat.restitution.avancer(fait)
-  etat.consolidation.avancer(fait)
-  etat.pratique.avancer(fait)
-  etat.atelier.avancer(fait)
+  if (etat.reprise === null || instantEnMs(fait.date) > instantEnMs(etat.reprise)) {
+    etat.restitution.avancer(fait)
+    etat.consolidation.avancer(fait)
+    etat.pratique.avancer(fait)
+    etat.atelier.avancer(fait)
+  }
   etat.aisance.avancer(fait)
   etat.transfert.avancer(fait)
   etat.forcage.avancer(fait)
@@ -1036,6 +1030,7 @@ export function construireEtat(
   ordonnes: readonly Fait[],
   manifeste: Manifeste,
   reglages: Reglages,
+  reprise: string | null = null,
 ): EtatBloc {
   const tranchages = tranchagesDe(ordonnes)
   const etat: EtatBloc = {
@@ -1055,10 +1050,13 @@ export function construireEtat(
     provisoire: null,
     verifications: null,
     erreurs: new SuiviErreurs(manifeste, tranchages, new Set<string>()),
+    reprise,
   }
   for (const fait of ordonnes) lirePreuves(etat, fait)
   relireVerifications(etat, ordonnes, provisoireDeLEtat(etat))
-  return etat
+  // Une mise à reprendre : le bloc se reprouve avec les seuls faits qui la suivent.
+  const nouvelle = etat.verifications?.reprise ?? null
+  return nouvelle === null ? etat : construireEtat(ordonnes, manifeste, reglages, nouvelle)
 }
 
 /** Ce que les règles lisent d'une correction tranchée : de quoi dire si un tranchage change quelque chose. */
@@ -1094,6 +1092,7 @@ export function statutCalculeDeLEtat(etat: EtatBloc): Statut {
       vu: etat.restitution.resultat().vu,
       verifications: etat.verifications,
       aisanceAtteinte: etat.aisance.resultat().ok,
+      enReprise: etat.reprise !== null,
     },
     etat.erreurs.nombreOuvertes,
   )
@@ -1115,5 +1114,6 @@ export function etapesDe(etat: EtatBloc, maintenant: string): Etapes {
     transfert: etat.transfert.date,
     force: etat.forcage.force,
     etapesVues: [...etat.etapesVues],
+    reprise: etat.reprise,
   }
 }
