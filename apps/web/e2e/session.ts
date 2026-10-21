@@ -142,6 +142,19 @@ export function diagnostiquerLesEchecs(suite: typeof test): void {
     page.on('pageerror', (erreur) => {
       lignes.push(`[pageerror] ${erreur.message}`)
     })
+    // Les appels refusés ou perdus : un 409 ou un 401 dans la file d'envoi ne se voit pas ailleurs.
+    page.on('response', (reponse) => {
+      if (reponse.status() >= 400) {
+        lignes.push(
+          `[réponse ${String(reponse.status())}] ${reponse.request().method()} ${reponse.url()}`,
+        )
+      }
+    })
+    page.on('requestfailed', (requete) => {
+      lignes.push(
+        `[requête perdue] ${requete.method()} ${requete.url()} : ${requete.failure()?.errorText ?? ''}`,
+      )
+    })
     journaux.set(page, lignes)
   })
   suite.afterEach(async ({ page }, info) => {
