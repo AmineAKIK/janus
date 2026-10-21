@@ -13,7 +13,6 @@ export const TEXTES_VERIFICATION = {
   introTitre: 'Vérifier ce qui tient dans le temps',
   introAnonyme:
     'Le bloc restera anonyme jusqu’au résultat. Les corrections seront révélées à la fin.',
-  introResume: '1 vérification · 3 parties · sans aide',
   introConsigne: 'Réponds de mémoire, sans ouvrir tes notes.',
   commencer: 'Commencer',
   revuTitre: 'Ce bloc a été revu récemment',
@@ -23,7 +22,6 @@ export const TEXTES_VERIFICATION = {
   reporterTitre: 'Reporter la vérification ?',
   reporterMessage: 'La vérification est reportée à demain.',
   annuler: 'Annuler',
-  faireQuandMeme: 'La faire quand même',
   confiance: 'Ton niveau de confiance',
   reponseLibre: 'Réponse libre',
   aideExplication: 'Je reformule le concept avec mes propres mots.',
@@ -41,7 +39,6 @@ export const TEXTES_VERIFICATION = {
   declaree: 'Déclarée par toi',
   collage: 'Tu as collé du texte. Cette réponse ne comptera pas comme preuve.',
   obligatoire: 'Ce champ est obligatoire.',
-  correctionEnCours: 'Le tuteur corrige tes 2 réponses…',
   correctionAttente: 'Les corrections apparaîtront ensemble quand l’analyse sera terminée.',
   indisponible: 'Correction indisponible pour l’instant. Tes réponses sont gardées.',
   reessayer: 'Réessayer',
@@ -49,7 +46,6 @@ export const TEXTES_VERIFICATION = {
   nonValidee: 'Vérification non validée',
   aExaminer: 'Résultat à examiner',
   statutInchange: 'Statut inchangé',
-  preuveTient: 'La preuve tient dans les trois parties.',
   aConfirmer: 'À confirmer',
   extrait: 'Extrait de ta réponse',
   confirmer: 'Confirmer l’erreur',
@@ -73,6 +69,25 @@ export const texteEnTete = (type: TypeVerification) =>
 
 export const texteRevuLe = (quand: 'hier' | 'aujourdhui') =>
   `Tu as ouvert ce bloc ${quand === 'hier' ? 'hier' : 'aujourd’hui'}. Cette vérification ne compterait pas.`
+
+const EN_LETTRES = ['zéro', 'une', 'deux', 'trois', 'quatre', 'cinq', 'six'] as const
+const enLettres = (n: number) => EN_LETTRES[n] ?? String(n)
+
+/** « 1 vérification · 2 parties · sans aide » : le nombre de parties vient du tirage. */
+export const texteIntroResume = (parties: number) =>
+  `1 vérification · ${String(parties)} ${parties === 1 ? 'partie' : 'parties'} · sans aide`
+
+/** « La preuve tient dans les deux parties. » */
+export const textePreuveTient = (parties: number) =>
+  parties === 1
+    ? 'La preuve tient dans cette partie.'
+    : `La preuve tient dans les ${enLettres(parties)} parties.`
+
+/** « Le tuteur corrige tes 2 réponses… » : les parties corrigées par le tuteur, la tâche exclue. */
+export const texteCorrectionEnCours = (reponses: number) =>
+  reponses === 1
+    ? 'Le tuteur corrige ta réponse…'
+    : `Le tuteur corrige tes ${String(reponses)} réponses…`
 
 export const texteEssai = (essai: number) => `Essai ${String(essai)} sur 2`
 

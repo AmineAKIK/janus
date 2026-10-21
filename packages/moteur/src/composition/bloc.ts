@@ -45,16 +45,13 @@ export function cinqPreuvesDuBloc(resultat: ResultatBloc, reglages: Reglages): C
     comprendre: preuves.comprendre,
     faire_seul: preuves.faireSeul,
     transferer: preuves.transferer,
-    retenir:
-      preuves.retenir === null
-        ? null
-        : {
-            date: preuves.retenir.date,
-            prochaine:
-              preuves.retenir.prochaine === null
-                ? null
-                : { type: preuves.retenir.prochaine.type, apres: preuves.retenir.prochaine.apres },
-          },
+    retenir: {
+      date: preuves.retenir.date,
+      prochaine:
+        preuves.retenir.prochaine === null
+          ? null
+          : { type: preuves.retenir.prochaine.type, apres: preuves.retenir.prochaine.apres },
+    },
     aisance: preuves.aisance,
   }
 }

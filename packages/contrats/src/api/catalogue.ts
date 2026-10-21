@@ -47,19 +47,20 @@ export const CinqPreuves = z.strictObject({
   comprendre: PreuveDatee,
   faire_seul: PreuveDatee,
   transferer: PreuveDatee,
-  /** La dernière vérification ou le dernier retest réussi, et la prochaine échéance. */
-  retenir: z
-    .strictObject({
-      date: InstantUtc,
-      prochaine: z
-        .strictObject({
-          type: z.enum(['consolidation', 'verification', 'retest', 'entretien']),
-          /** Un jour « AAAA-MM-JJ », ou un instant pour la consolidation. */
-          apres: z.string(),
-        })
-        .nullable(),
-    })
-    .nullable(),
+  /**
+   * La dernière vérification ou le dernier retest réussi (`date` à `null` tant qu'il n'y en a pas), et
+   * la prochaine échéance du bloc : celle qui prouvera ou reprouvera Retenir.
+   */
+  retenir: z.strictObject({
+    date: InstantUtc.nullable(),
+    prochaine: z
+      .strictObject({
+        type: z.enum(['consolidation', 'verification', 'retest', 'entretien']),
+        /** Un jour « AAAA-MM-JJ », ou un instant pour la consolidation. */
+        apres: z.string(),
+      })
+      .nullable(),
+  }),
   aisance: z.union([PreuveDatee, z.literal('non_requis')]),
 })
 export type CinqPreuves = z.infer<typeof CinqPreuves>

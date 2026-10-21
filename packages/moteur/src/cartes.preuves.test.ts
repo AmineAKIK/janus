@@ -22,7 +22,7 @@ describe('preuvesDuBloc', () => {
       comprendre: null,
       faireSeul: null,
       transferer: null,
-      retenir: null,
+      retenir: { date: null, prochaine: null },
       aisance: null,
     })
   })
@@ -32,7 +32,10 @@ describe('preuvesDuBloc', () => {
     expect(resultat.comprendre).toEqual({ date: PROVISOIRE })
     expect(resultat.faireSeul).toEqual({ date: apres(DEBUT, 0, 1) })
     expect(resultat.transferer).toBeNull()
-    expect(resultat.retenir).toBeNull()
+    expect(resultat.retenir).toEqual({
+      date: null,
+      prochaine: { type: 'verification', genre: 'jour', apres: '2026-06-04' },
+    })
   })
 
   it('date transférer, et retenir avec la prochaine échéance, après une vérification réussie', () => {

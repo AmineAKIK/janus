@@ -12,6 +12,7 @@ import {
   textePasseA,
   texteProchaineEcheance,
   texteSiConfirmee,
+  textePreuveTient,
 } from './textes.ts'
 import type { ResultatVerification } from './textes.ts'
 import { aller } from '../routes/navigation.ts'
@@ -134,7 +135,7 @@ export function Resultat({
       {issue === 'reussie' && (
         <>
           <p className="texte-corps-16">{textePasseA(bloc.code, statut)}</p>
-          <p className="texte-corps-16">{T.preuveTient}</p>
+          <p className="texte-corps-16">{textePreuveTient(resultat.parties.length)}</p>
         </>
       )}
       {issue === 'ratee' && (
