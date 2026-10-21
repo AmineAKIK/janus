@@ -24,6 +24,10 @@ async function ficheRemplie(): Promise<string> {
         '  <svg viewBox="0 0 10 10"><text>8</text></svg><img src="data:," alt="Huit lampes">',
         '  <div data-widget="octet" data-cible="150"></div>',
         '  <ul><li>128</li><li>64</li></ul>',
+        '  <p>Un octet : 2<sup>8</sup> = 256 valeurs.</p>',
+        '  <div class="schema-bloc"><span class="boite-fixe">Les bits<small>01000001</small></span',
+        '  ><span class="fleche">lus avec un codage →</span',
+        '  ><span class="boite-fixe">Un sens<small>A</small></span></div>',
         '  <details><summary>Un coup de pouce</summary><p>150 − 128 = 22</p></details>',
         '</div>',
       ].join('\n'),
@@ -64,6 +68,8 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
     expect(texte).toContain('#### Les poids')
     expect(texte).toContain('Un octet a 8 bits & 256 valeurs.')
     expect(texte).toContain('- 128\n- 64')
+    expect(texte).toContain('Un octet : 2^8 = 256 valeurs.')
+    expect(texte).toContain('Les bits (01000001)\nlus avec un codage →\nUn sens (A)')
     expect(texte).toContain('Un coup de pouce')
     expect(texte).toContain('150 − 128 = 22')
   })
