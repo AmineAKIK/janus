@@ -4855,7 +4855,7 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 6,
+        "version": 7,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 expressions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
@@ -11581,6 +11581,14 @@ if (age &lt; 12) {
           return section
         }
         if (aPoser.length > 0 && !etat.enCours?.[serie]) {
+          // Avant de reprendre, la dernière réponse à chaque question à reprendre se relit avec sa
+          // correction : sans elle, l'apprenant ne saurait pas pourquoi l'erreur reste ouverte.
+          const reprises = refaire.filter((question) => etat.corrigees?.[question.id])
+          if (reprises.length > 0)
+            section.append(
+              creer('h3', { textContent: 'Tes dernières réponses à reprendre' }),
+              ...reprises.map((question) => carteEnvoyee(question, serie)),
+            )
           section.append(
             creer('p', {
               textContent:
