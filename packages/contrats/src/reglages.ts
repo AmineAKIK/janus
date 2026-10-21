@@ -52,17 +52,6 @@ function fuseauConnu(nom: string): boolean {
 
 const HEURE_RAPPEL = /^([01]\d|2[0-3]):[0-5]\d$/
 
-/** Les mois de retest d'entretien : des entiers positifs, strictement croissants, de 1 à 120. */
-const EntretienMois = z
-  .array(
-    z.number().int({ error: 'Les mois d’entretien doivent être des entiers.' }).min(1).max(120),
-  )
-  .min(1, { error: 'Il faut au moins un mois d’entretien.' })
-  .max(12)
-  .refine((mois) => mois.every((valeur, rang) => rang === 0 || valeur > (mois[rang - 1] ?? 0)), {
-    error: 'Les mois d’entretien doivent être croissants.',
-  })
-
 /** Réglages modifiables, avec les valeurs par défaut du cadrage. `Reglages.parse({})` les rend toutes. */
 export const Reglages = z.object({
   fuseau: z
@@ -73,7 +62,6 @@ export const Reglages = z.object({
   delaiConsolidationMinutes: entierBorne('Le délai de consolidation (en minutes)', 30, 1440, 60),
   delaiVerificationJours: entierBorne('Le délai de vérification (en jours)', 1, 14, 3),
   delaiRetestJours: entierBorne('Le délai de nouveau test (en jours)', 14, 90, 30),
-  entretienMois: EntretienMois.default([3, 6, 12]),
   delaiNouvelEssaiJours: entierBorne('Le délai avant un nouvel essai (en jours)', 1, 7, 2),
   echecsAvantDescente: entierBorne('Le nombre d’échecs avant descente', 1, 5, 2),
   seuilConsolidation: reelBorne('Le seuil de consolidation', 0.5, 1, 0.8),

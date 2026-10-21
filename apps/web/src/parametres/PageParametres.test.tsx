@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { creerRouteur } from '../routes/arbre.tsx'
 import { creerContexteTest } from '../routes/contexteTest.tsx'
-import { lignesRegles, texteDuree, texteEchecs, texteEntretien } from './textes.ts'
+import { lignesRegles, texteDuree, texteEchecs } from './textes.ts'
 import { Reglages } from '@janus/contrats'
 
 function simulerBureau(actif: boolean) {
@@ -42,23 +42,20 @@ afterEach(() => {
 })
 
 describe('textes des règles', () => {
-  it('écrit les durées, échecs et mois d’entretien à la française', () => {
+  it('écrit les durées et les échecs à la française', () => {
     expect(texteDuree(60)).toBe('1 h')
     expect(texteDuree(2880)).toBe('2 j')
     expect(texteDuree(90)).toBe('90 min')
     expect(texteEchecs(2)).toBe('Deux échecs pour descendre')
     expect(texteEchecs(1)).toBe('Un échec pour descendre')
-    expect(texteEntretien([3, 6, 12])).toBe('3, 6 et 12 mois')
-    expect(texteEntretien([6])).toBe('6 mois')
   })
 
-  it('liste les huit règles protégées avec leur valeur par défaut', () => {
+  it('liste les sept règles protégées avec leur valeur par défaut', () => {
     const lignes = lignesRegles(Reglages.parse({}))
     expect(lignes.map(({ libelle, valeur }) => `${libelle} ${valeur}`)).toEqual([
       'Consolidation 1 h',
       'Vérification 3 j',
       'Retest 30 j',
-      'Entretien 3, 6 et 12 mois',
       'Nouvelle tentative 2 j',
       'Échecs avant descente Deux échecs pour descendre',
       'Seuil de consolidation 80 %',
@@ -225,7 +222,7 @@ describe('Règles de la méthode', () => {
     await afficher('/parametres/regles')
 
     expect(await screen.findByText('Règle protégée')).toBeVisible()
-    expect(screen.getByText('3, 6 et 12 mois')).toBeVisible()
+    expect(screen.getByText('30 j')).toBeVisible()
     expect(screen.queryByRole('textbox')).toBeNull()
   })
 })

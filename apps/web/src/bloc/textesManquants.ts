@@ -62,6 +62,8 @@ export function texteManque(
       return `Le retest sera possible à partir de ${quand}.`
     case 'retest_a_faire':
       return 'Passe le retest.'
+    case 'reprise_a_faire':
+      return 'Deux relances ratées de suite : refais la restitution et la pratique, sans aide.'
     case 'aisance_non_atteinte':
       return 'Atteins l’aisance sur les exercices chronométrés.'
   }

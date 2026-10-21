@@ -437,7 +437,6 @@ const reglagesAleatoires: fc.Arbitrary<Reglages> = fc
     delaiConsolidationMinutes: fc.constantFrom(30, 60, 120, 600),
     delaiVerificationJours: fc.integer({ min: 1, max: 5 }),
     delaiRetestJours: fc.constantFrom(14, 20, 30),
-    entretienMois: fc.constantFrom([3, 6, 12], [1], [2, 4]),
     delaiNouvelEssaiJours: fc.integer({ min: 1, max: 3 }),
     echecsAvantDescente: fc.integer({ min: 1, max: 3 }),
     seuilConsolidation: fc.constantFrom(0.5, 0.8, 1),

@@ -111,11 +111,11 @@ function jusquaMaitrise(f: Fabrique): Fait[] {
   ]
 }
 
-/** Maîtrisé, puis un entretien raté (transfert fragile) à J+130. */
-function jusquaEntretienRate(f: Fabrique): Fait[] {
+/** Acquis, puis un retest raté (transfert fragile) à J+34. */
+function jusquaRetestRate(f: Fabrique): Fait[] {
   return [
-    ...jusquaMaitrise(f),
-    f.verification(apres(DEBUT, 130), { verification: 'entretien', transfert: 'fragile' }),
+    ...jusquaAcquisAvecAisance(f),
+    f.verification(apres(DEBUT, 34), { verification: 'retest', transfert: 'fragile' }),
   ]
 }
 
@@ -239,23 +239,23 @@ function construireCas(): CasAcceptation[] {
   const cas13 = ((): CasAcceptation => {
     const f = fabrique()
     return cas(
-      'Maîtrisé, un retest raté sans erreur critique',
-      jusquaEntretienRate(f),
-      apres(DEBUT, 130, 60),
-      { statut: 'maitrise', echecsConsecutifs: 1 },
+      'Acquis, un retest raté sans erreur critique',
+      jusquaRetestRate(f),
+      apres(DEBUT, 34, 60),
+      { statut: 'acquis', manque: ['retest_a_venir'], echecsConsecutifs: 1 },
     )
   })()
 
   const cas14 = ((): CasAcceptation => {
     const f = fabrique()
     return cas(
-      'Maîtrisé, deux retests ratés de suite',
+      'Acquis, deux retests ratés de suite : à reprendre',
       [
-        ...jusquaEntretienRate(f),
-        f.verification(apres(DEBUT, 132), { verification: 'entretien', tache: false }),
+        ...jusquaRetestRate(f),
+        f.verification(apres(DEBUT, 36), { verification: 'retest', tache: false }),
       ],
-      apres(DEBUT, 132, 60),
-      { statut: 'acquis' },
+      apres(DEBUT, 36, 60),
+      { statut: 'a_reprendre', manque: ['reprise_a_faire'], echecsConsecutifs: 0 },
     )
   })()
 

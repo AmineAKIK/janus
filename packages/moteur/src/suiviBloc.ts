@@ -29,6 +29,8 @@ import { instantEnMs } from './temps.ts'
  *   que les vérifications qui les accompagnent.
  * Ailleurs, la date d'« acquis provisoirement » est la seule autre chose qui fasse relire les faits : les
  * vérifications et les erreurs en dépendent, et elle est connue une fois pour toutes dès qu'elle l'est.
+ * Une mise à reprendre (`echecsAvantDescente` relances ratées) relit aussi tout : les preuves repartent
+ * des faits qui la suivent.
  */
 export class SuiviBloc {
   readonly #manifeste: Manifeste
@@ -93,6 +95,10 @@ export class SuiviBloc {
     } else {
       lireVerifications(etat, fait)
       if (reponseARevoir !== undefined) etat.erreurs.revoir(reponseARevoir)
+    }
+    // Une relance ratée de trop : le bloc est à reprendre, les preuves repartent d'après elle.
+    if (etat.verifications?.reprise !== null && etat.verifications?.reprise !== undefined) {
+      this.#recommencer()
     }
   }
 

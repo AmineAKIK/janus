@@ -31,6 +31,7 @@ export const CodeManque = z.enum([
   'verification_a_faire',
   'retest_a_venir',
   'retest_a_faire',
+  'reprise_a_faire',
   'aisance_non_atteinte',
 ])
 export type CodeManque = z.infer<typeof CodeManque>

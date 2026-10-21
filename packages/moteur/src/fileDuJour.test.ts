@@ -99,21 +99,19 @@ describe('fileDuJour', () => {
     expect(types(entree(blocs, { maintenant: apres(DEBUT, 1) }))).toEqual([])
   })
 
-  it('propose les retests et les entretiens avec leur type', () => {
+  it('propose le retest avec son type, puis plus rien une fois réussi', () => {
     const retest = bloc('B01', [], (f) => [...jusquaProvisoire(f), f.verification(apres(DEBUT, 4))])
     expect(fileDuJour(entree([retest], { maintenant: apres(DEBUT, 60) })).taches).toEqual([
       { type: 'retest', bloc: 'B01', apres: '2026-07-05' },
     ])
-    const entretien = bloc('B01', [], (f) => [
+    const clos = bloc('B01', [], (f) => [
       ...jusquaProvisoire(f),
       f.verification(apres(DEBUT, 4)),
       f.verification(apres(DEBUT, 40), { verification: 'retest' }),
       f.aisance(apres(DEBUT, 41), 30),
       f.aisance(apres(DEBUT, 42), 30),
     ])
-    expect(fileDuJour(entree([entretien], { maintenant: apres(DEBUT, 200) })).taches).toEqual([
-      { type: 'entretien', bloc: 'B01', apres: '2026-10-11' },
-    ])
+    expect(fileDuJour(entree([clos], { maintenant: apres(DEBUT, 200) })).taches).toEqual([])
   })
 
   it('mène une erreur critique vers l’étape du bloc quand le manifeste en donne une', () => {

@@ -42,6 +42,7 @@ const codeManque = z.enum([
   'verification_a_faire',
   'retest_a_venir',
   'retest_a_faire',
+  'reprise_a_faire',
   'aisance_non_atteinte',
 ])
 

@@ -1,13 +1,6 @@
 import type { Reglages } from '@janus/contrats'
 import type { ResultatBloc } from './statut.ts'
-import {
-  ajouterJours,
-  ajouterMois,
-  instantEnIso,
-  instantEnMs,
-  jourDe,
-  MS_PAR_MINUTE,
-} from './temps.ts'
+import { ajouterJours, instantEnIso, instantEnMs, jourDe, MS_PAR_MINUTE } from './temps.ts'
 import type { Jour } from './temps.ts'
 
 export type TypeEcheance = 'consolidation' | 'verification' | 'retest' | 'entretien'
@@ -25,15 +18,13 @@ export type Echeance =
  * La prochaine échéance d'un bloc, ou `null` s'il n'y en a pas.
  * - consolidation : dernière restitution + `delaiConsolidationMinutes` ;
  * - vérification : « acquis provisoirement » + `delaiVerificationJours` jours ;
- * - retest : « acquis » + `delaiRetestJours` jours ;
- * - entretien, une fois maîtrisé : `entretienMois[n]` mois après le dernier retest ou entretien réussi
- *   (le dernier mois de la liste se répète tant que les entretiens réussissent) ;
+ * - retest : « acquis » + `delaiRetestJours` jours ; le retest réussi clôt le parcours ;
  * - après un échec (le dernier événement retenu), nouvel essai `delaiNouvelEssaiJours` jours plus tard.
  * Les jours sont ceux de `jourDe`.
  */
 export function echeances(etat: ResultatBloc, reglages: Reglages): Echeance | null {
   const jour = (instant: string) => jourDe(instant, reglages.fuseau, reglages.heureBascule)
-  const { vu, acquisProvisoirement, acquis, maitrise } = etat.dates
+  const { vu, acquisProvisoirement, acquis } = etat.dates
   const apresEchec = (normal: Jour): Jour =>
     etat.preuves.dernierEchec === null
       ? normal
@@ -64,15 +55,7 @@ export function echeances(etat: ResultatBloc, reglages: Reglages): Echeance | nu
   if (acquis !== null && etat.manque.some(({ code }) => code.startsWith('retest_'))) {
     return enJour('retest', ajouterJours(jour(acquis), reglages.delaiRetestJours))
   }
-  const dernier = etat.preuves.reussitesDeRetest.at(-1)
-  if (maitrise !== null && dernier !== undefined) {
-    const mois =
-      reglages.entretienMois[
-        Math.min(etat.preuves.reussitesDeRetest.length, reglages.entretienMois.length) - 1
-      ]
-    if (mois === undefined) return null
-    return enJour('entretien', ajouterMois(jour(dernier), mois))
-  }
+  // Le retest réussi clôt le parcours : plus rien n'est dû.
   return null
 }
 

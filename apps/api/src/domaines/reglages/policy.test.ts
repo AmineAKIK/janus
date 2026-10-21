@@ -24,9 +24,9 @@ describe('versionDeIfMatch', () => {
 
 describe('règles de la méthode', () => {
   it('reconnaît les règles protégées, pas les autres réglages', () => {
-    expect(reglesTouchees({ delaiRetestJours: 10, entretienMois: [3] })).toEqual([
+    expect(reglesTouchees({ delaiRetestJours: 10, echecsAvantDescente: 3 })).toEqual([
       'delaiRetestJours',
-      'entretienMois',
+      'echecsAvantDescente',
     ])
     expect(reglesTouchees({ questionsDebut: 3, fuseau: 'Europe/Paris' })).toEqual([])
   })

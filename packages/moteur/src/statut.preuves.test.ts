@@ -92,39 +92,37 @@ describe('les dates des preuves', () => {
     expect(resultat.derniereReussite).toBeNull()
   })
 
-  it('compte les réussites de retest et efface l’échec après une réussite', () => {
+  it('compte la réussite de retest et efface l’échec après une réussite', () => {
     const f = fabrique()
     const v = apres(DEBUT, 4)
     const r1 = apres(v, 31)
-    const r2 = apres(r1, 95)
     const faits = [
       ...jusquaProvisoire(f),
       f.verification(apres(DEBUT, 3), { transfert: 'fragile' }),
       f.verification(v),
       f.verification(r1, { verification: 'retest', tache: false }),
       f.verification(apres(r1, 2), { verification: 'retest' }),
-      f.verification(r2, { verification: 'entretien' }),
     ]
     const resultat = preuves(faits)
-    expect(resultat.reussitesDeRetest).toEqual([apres(r1, 2), r2])
-    expect(resultat.derniereReussite).toBe(r2)
+    expect(resultat.reussitesDeRetest).toEqual([apres(r1, 2)])
+    expect(resultat.derniereReussite).toBe(apres(r1, 2))
     expect(resultat.dernierEchec).toBeNull()
   })
 
-  it('remet à zéro les réussites de retest quand le bloc descend', () => {
+  it('oublie les preuves de relance quand le bloc est mis à reprendre', () => {
     const f = fabrique()
     const v = apres(DEBUT, 4)
     const r1 = apres(v, 31)
     const faits = [
       ...jusquaProvisoire(f),
       f.verification(v),
-      f.verification(r1, { verification: 'retest' }),
-      f.verification(apres(r1, 93), { verification: 'entretien', tache: false }),
-      f.verification(apres(r1, 96), { verification: 'entretien', tache: false }),
+      f.verification(r1, { verification: 'retest', tache: false }),
+      f.verification(apres(r1, 3), { verification: 'retest', tache: false }),
     ]
     const resultat = preuves(faits)
     expect(resultat.reussitesDeRetest).toEqual([])
-    expect(resultat.dernierEchec).toBe(apres(r1, 96))
+    expect(resultat.derniereReussite).toBeNull()
+    expect(resultat.dernierEchec).toBeNull()
   })
 
   it('date la cible d’aisance, ou dit qu’elle n’est pas demandée', () => {
@@ -139,44 +137,18 @@ describe('les dates des preuves', () => {
   })
 })
 
-describe('l’ordre et les échéances des retests et des entretiens', () => {
+describe('l’ordre des relances', () => {
   const base = (f: ReturnType<typeof fabrique>) => [
     ...jusquaProvisoire(f),
     f.verification(apres(DEBUT, 4)),
   ]
 
-  it('ne retient pas un entretien comme premier retest', () => {
+  it('ne retient pas une relance d’un autre type comme retest', () => {
     const f = fabrique()
     const faits = [...base(f), f.verification(apres(DEBUT, 35), { verification: 'entretien' })]
     const resultat = calculerBloc(faits, MANIFESTE, REGLAGES, MAINTENANT)
     expect(resultat.statutCalcule).toBe('acquis')
     expect(resultat.preuves.reussitesDeRetest).toEqual([])
-  })
-
-  it('ne retient pas un entretien avant son échéance de trois mois', () => {
-    const f = fabrique()
-    const faits = [
-      ...base(f),
-      f.verification(apres(DEBUT, 40), { verification: 'retest' }),
-      f.verification(apres(DEBUT, 60), { verification: 'entretien' }),
-    ]
-    expect(preuves(faits).reussitesDeRetest).toEqual([apres(DEBUT, 40)])
-  })
-
-  it('retient les entretiens à leurs échéances de trois, puis six mois', () => {
-    const f = fabrique()
-    const faits = [
-      ...base(f),
-      f.verification(apres(DEBUT, 40), { verification: 'retest' }),
-      f.verification(apres(DEBUT, 135), { verification: 'entretien' }),
-      f.verification(apres(DEBUT, 200), { verification: 'entretien' }),
-      f.verification(apres(DEBUT, 320), { verification: 'entretien' }),
-    ]
-    expect(preuves(faits).reussitesDeRetest).toEqual([
-      apres(DEBUT, 40),
-      apres(DEBUT, 135),
-      apres(DEBUT, 320),
-    ])
   })
 
   it('ne retient pas un second retest après le premier', () => {
@@ -187,17 +159,5 @@ describe('l’ordre et les échéances des retests et des entretiens', () => {
       f.verification(apres(DEBUT, 135), { verification: 'retest' }),
     ]
     expect(preuves(faits).reussitesDeRetest).toEqual([apres(DEBUT, 40)])
-  })
-
-  it('ne retient aucun entretien sans mois d’entretien dans les réglages', () => {
-    const f = fabrique()
-    const faits = [
-      ...base(f),
-      f.verification(apres(DEBUT, 40), { verification: 'retest' }),
-      f.verification(apres(DEBUT, 400), { verification: 'entretien' }),
-    ]
-    const reglages = { ...REGLAGES, entretienMois: [] }
-    const resultat = calculerBloc(faits, MANIFESTE, reglages, MAINTENANT)
-    expect(resultat.preuves.reussitesDeRetest).toEqual([apres(DEBUT, 40)])
   })
 })
