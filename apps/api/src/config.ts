@@ -59,6 +59,8 @@ export const SchemaConfig = z.object({
   VAPID_SUJET: z.string().min(1),
   /** Facultative : l'adresse (DSN) d'un Sentry ou d'un GlitchTip. Sans elle, aucune erreur n'est envoyée. */
   SENTRY_DSN: z.preprocess((valeur) => (valeur === '' ? undefined : valeur), z.url().optional()),
+  /** Requêtes par minute et par adresse, toutes routes confondues : le plafond général. */
+  REQUETES_PAR_MINUTE: z.coerce.number().int().positive().default(300),
   /** Demandes de correction par minute et par adresse (le plafond horaire en base borne le coût). */
   CORRECTIONS_PAR_MINUTE: z.coerce.number().int().positive().default(20),
   /** Connexions par minute et par adresse, tous noms confondus : borne le hachage d'un flot de faux noms. */

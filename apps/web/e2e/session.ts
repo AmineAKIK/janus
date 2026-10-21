@@ -135,14 +135,73 @@ export async function cliquerEtape(page: Page, nom: string): Promise<void> {
 export function diagnostiquerLesEchecs(suite: typeof test): void {
   const journaux = new WeakMap<Page, string[]>()
   suite.beforeEach(({ page }) => {
-    const lignes: string[] = []
+    const debut = Date.now()
+    const brutes: string[] = []
+    // Chaque ligne porte son instant (ms depuis le début du test) : l'ordre des appels se relit.
+    const lignes = {
+      push: (ligne: string) => brutes.push(`${String(Date.now() - debut).padStart(6)} ${ligne}`),
+    }
+    page.on('request', (requete) => {
+      if (requete.method() === 'PUT' && requete.url().endsWith('/etat-page')) {
+        const corps = requete.postDataJSON() as {
+          version?: number
+          recommencer?: boolean
+          etat?: { etape?: string }
+        } | null
+        lignes.push(
+          `[état parti] version ${String(corps?.version)}, étape ${String(corps?.etat?.etape)}${corps?.recommencer === true ? ', recommencer' : ''}`,
+        )
+      }
+    })
     page.on('console', (message) => {
       lignes.push(`[console ${message.type()}] ${message.text()}`)
     })
     page.on('pageerror', (erreur) => {
       lignes.push(`[pageerror] ${erreur.message}`)
     })
-    journaux.set(page, lignes)
+    // Les appels refusés ou perdus : un 409 ou un 401 dans la file d'envoi ne se voit pas ailleurs.
+    page.on('framenavigated', (cadre) => {
+      if (cadre === page.mainFrame()) lignes.push(`[adresse] ${cadre.url()}`)
+    })
+    page.on('load', () => {
+      lignes.push(`[page chargée] ${page.url()}`)
+    })
+    page.on('response', async (reponse) => {
+      const requete = reponse.request()
+      // L'état d'une page : la version lue, envoyée et rendue, qui dit d'où vient un 409.
+      if (requete.method() === 'PUT' && requete.url().endsWith('/etat-page')) {
+        const envoyee = (requete.postDataJSON() as { version?: number } | null)?.version
+        const rendue = await reponse
+          .json()
+          .then((corps: { version?: number }) => String(corps.version))
+          .catch(() => '?')
+        lignes.push(
+          `[état ${String(reponse.status())}] ${requete.url()} : version envoyée ${String(envoyee)}, serveur ${rendue}`,
+        )
+        return
+      }
+      if (requete.method() === 'GET' && /\/api\/blocs\/[^/]+$/u.test(requete.url())) {
+        const lue = await reponse
+          .json()
+          .then((corps: { etat_page?: { version?: number } | null }) =>
+            String(corps.etat_page?.version ?? 0),
+          )
+          .catch(() => '?')
+        lignes.push(`[lecture ${String(reponse.status())}] ${requete.url()} : version ${lue}`)
+        return
+      }
+      if (reponse.status() >= 400) {
+        lignes.push(
+          `[réponse ${String(reponse.status())}] ${reponse.request().method()} ${reponse.url()}`,
+        )
+      }
+    })
+    page.on('requestfailed', (requete) => {
+      lignes.push(
+        `[requête perdue] ${requete.method()} ${requete.url()} : ${requete.failure()?.errorText ?? ''}`,
+      )
+    })
+    journaux.set(page, brutes)
   })
   suite.afterEach(async ({ page }, info) => {
     if (info.status === info.expectedStatus) return

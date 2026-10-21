@@ -15,7 +15,7 @@ import { pasDeCache } from './pasDeCache.ts'
 import { session } from './session.ts'
 import { exigerDeclarationIdentifiant, identifiantEcriture, validation } from './validation.ts'
 
-/** Le plafond général de requêtes, par adresse et par minute. */
+/** Le plafond général de requêtes, par adresse et par minute, sauf réglage (`REQUETES_PAR_MINUTE`). */
 export const REQUETES_PAR_MINUTE = 300
 
 /** Un point de passage pour un middleware d'un plugin tiers, qui ne sait pas appeler l'observateur. */
@@ -52,7 +52,7 @@ export async function declarerMiddlewares(
   // 5. Limite de débit générale.
   await app.register(rateLimit, {
     global: true,
-    max: REQUETES_PAR_MINUTE,
+    max: dependances.config.REQUETES_PAR_MINUTE,
     timeWindow: '1 minute',
     keyGenerator: (requete) => requete.ip,
   })

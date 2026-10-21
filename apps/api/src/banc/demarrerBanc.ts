@@ -9,7 +9,6 @@ import { creerFaux } from '../adaptateurs/correcteur/faux.ts'
 import { creerBase } from '../base/base.ts'
 import { lireConfig } from '../config.ts'
 import { creerHacheur } from '../domaines/auth/composition.ts'
-import { horlogeFausse } from '../testeur.ts'
 import { creerServeur } from '../serveur.ts'
 import { planterLaGraine } from './graine.ts'
 
@@ -56,14 +55,30 @@ const config = lireConfig({
   VAPID_PRIVATE_KEY: 'banc',
   VAPID_SUJET: 'mailto:banc@example.test',
   NIVEAU_JOURNAL: 'warn',
-  // Les parcours enchaînent connexions et corrections bien plus vite qu'un usage réel.
+  // Les parcours enchaînent requêtes, connexions et corrections bien plus vite qu'un usage réel.
+  REQUETES_PAR_MINUTE: '100000',
   CORRECTIONS_PAR_MINUTE: '1000',
   CONNEXIONS_PAR_ADRESSE_PAR_MINUTE: '1000',
   ...process.env,
 })
 const base = creerBase(config.DATABASE_URL)
 const proprietaire = creerBase(config.DATABASE_URL_PROPRIETAIRE)
-const horloge = horlogeFausse(DEBUT)
+/**
+ * L'horloge du banc : elle part de `DEBUT`, avance avec le temps réel et saute quand un parcours la
+ * fait avancer. Figée, deux faits d'une même action (une erreur cochée et la réponse qui la referme,
+ * « Recommencer » et les étapes vues) tomberaient à la même milliseconde et se trieraient au hasard.
+ */
+function horlogeDuBanc(debut: string) {
+  let decalage = Date.parse(debut) - Date.now()
+  return {
+    maintenant: () => new Date(Date.now() + decalage).toISOString(),
+    chrono: () => performance.now(),
+    avancer: (ms: number) => {
+      decalage += ms
+    },
+  }
+}
+const horloge = horlogeDuBanc(DEBUT)
 const dossierFiches = await mkdtemp(join(tmpdir(), 'janus-banc-'))
 await planterLaGraine(proprietaire, horloge, dossierFiches)
 

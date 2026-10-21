@@ -358,7 +358,10 @@ export function PageBloc({
       </div>
     )
   }
-  if (lecture.data === undefined) {
+  // Le bloc rouvert attend sa relecture : l'état de la page et sa version viennent du serveur, pas
+  // des données gardées sur l'appareil (un état d'avant, et chaque sauvegarde suivante serait refusée,
+  // 409). Hors ligne, la relecture échoue vite et la fiche s'ouvre sur ce qui est gardé.
+  if (lecture.data === undefined || (lecture.isFetching && !lecture.isFetchedAfterMount)) {
     return (
       <p className={styles['squelette']} role="status">
         {TEXTES_BLOC.chargement}
