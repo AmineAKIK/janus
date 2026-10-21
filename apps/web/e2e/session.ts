@@ -135,7 +135,24 @@ export async function cliquerEtape(page: Page, nom: string): Promise<void> {
 export function diagnostiquerLesEchecs(suite: typeof test): void {
   const journaux = new WeakMap<Page, string[]>()
   suite.beforeEach(({ page }) => {
-    const lignes: string[] = []
+    const debut = Date.now()
+    const brutes: string[] = []
+    // Chaque ligne porte son instant (ms depuis le début du test) : l'ordre des appels se relit.
+    const lignes = {
+      push: (ligne: string) => brutes.push(`${String(Date.now() - debut).padStart(6)} ${ligne}`),
+    }
+    page.on('request', (requete) => {
+      if (requete.method() === 'PUT' && requete.url().endsWith('/etat-page')) {
+        const corps = requete.postDataJSON() as {
+          version?: number
+          recommencer?: boolean
+          etat?: { etape?: string }
+        } | null
+        lignes.push(
+          `[état parti] version ${String(corps?.version)}, étape ${String(corps?.etat?.etape)}${corps?.recommencer === true ? ', recommencer' : ''}`,
+        )
+      }
+    })
     page.on('console', (message) => {
       lignes.push(`[console ${message.type()}] ${message.text()}`)
     })
@@ -143,6 +160,9 @@ export function diagnostiquerLesEchecs(suite: typeof test): void {
       lignes.push(`[pageerror] ${erreur.message}`)
     })
     // Les appels refusés ou perdus : un 409 ou un 401 dans la file d'envoi ne se voit pas ailleurs.
+    page.on('framenavigated', (cadre) => {
+      if (cadre === page.mainFrame()) lignes.push(`[adresse] ${cadre.url()}`)
+    })
     page.on('load', () => {
       lignes.push(`[page chargée] ${page.url()}`)
     })
@@ -181,7 +201,7 @@ export function diagnostiquerLesEchecs(suite: typeof test): void {
         `[requête perdue] ${requete.method()} ${requete.url()} : ${requete.failure()?.errorText ?? ''}`,
       )
     })
-    journaux.set(page, lignes)
+    journaux.set(page, brutes)
   })
   suite.afterEach(async ({ page }, info) => {
     if (info.status === info.expectedStatus) return
