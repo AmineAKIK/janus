@@ -182,6 +182,42 @@ describe('la consolidation', () => {
     })
   })
 
+  it('une réponse de restitution reprise relance le délai avant même la première série', () => {
+    const f = fabrique()
+    const base = [...f.pratique(DEBUT), f.atelier(DEBUT), ...f.restitution(DEBUT)]
+    const reprise = f.correction(
+      apres(DEBUT, 1),
+      'restitution',
+      MANIFESTE.restitution[0]?.id ?? 'R1',
+    )
+    // Hier la restitution, aujourd'hui une question reprise : la consolidation attend une heure de plus.
+    expect(calcul([...base, reprise], apres(DEBUT, 1, 20)).manque).toContainEqual({
+      code: 'consolidation_trop_tot',
+      apres: apres(DEBUT, 1, 60),
+    })
+    expect(calcul([...base, reprise], apres(DEBUT, 1, 61)).manque).toContainEqual({
+      code: 'consolidation_a_faire',
+    })
+  })
+
+  it('une série faite trop tôt est perdue : le délai passé, une nouvelle est à faire, et elle compte', () => {
+    const f = fabrique()
+    const base = [...f.pratique(DEBUT), f.atelier(DEBUT), ...f.restitution(apres(DEBUT, 0, 30))]
+    const tropTot = f.consolidation(apres(DEBUT, 0, 60))
+    expect(calcul([...base, ...tropTot], apres(DEBUT, 0, 70)).manque).toContainEqual({
+      code: 'consolidation_trop_tot',
+      apres: apres(DEBUT, 0, 94),
+    })
+    expect(calcul([...base, ...tropTot], apres(DEBUT, 0, 95)).manque).toContainEqual({
+      code: 'consolidation_a_faire',
+    })
+    const refaite = calcul(
+      [...base, ...tropTot, ...f.consolidation(apres(DEBUT, 0, 100))],
+      apres(DEBUT, 0, 110),
+    )
+    expect(refaite.statut).toBe('acquis_provisoirement')
+  })
+
   it('respecte le délai réglé : 90 minutes', () => {
     const f = fabrique()
     const faits = [...jusquaProvisoire(f)]
@@ -205,7 +241,7 @@ describe('la consolidation', () => {
       // 1 h après la restitution mais 30 minutes après le cours : trop tôt, le délai court depuis le cours.
       const tropTot = calcul(
         [...base, ...f.consolidation(apres(DEBUT, 0, 90))],
-        apres(DEBUT, 0, 200),
+        apres(DEBUT, 0, 100),
       )
       const apresDelai = calcul(
         [...base, ...f.consolidation(apres(DEBUT, 0, 120))],
@@ -239,7 +275,7 @@ describe('la consolidation', () => {
         f.etape(apres(DEBUT, 0, 60), etape),
         ...f.consolidation(apres(DEBUT, 0, 90)),
       ]
-      const resultat = calculerBloc(faits, manifeste, REGLAGES, apres(DEBUT, 0, 200))
+      const resultat = calculerBloc(faits, manifeste, REGLAGES, apres(DEBUT, 0, 100))
       expect(resultat.statut).toBe('vu')
       expect(resultat.manque).toContainEqual({
         code: 'consolidation_trop_tot',
@@ -434,9 +470,13 @@ describe('la consolidation', () => {
       f.atelier(DEBUT),
       ...f.restitution(apres(DEBUT, 1)),
     ]
+    expect(calcul(faits, apres(DEBUT, 1, 30)).manque.map((m) => m.code)).toContain(
+      'consolidation_trop_tot',
+    )
+    // Le délai passé, cette série reste perdue : une autre est à faire.
     const resultat = calcul(faits, apres(DEBUT, 2))
     expect(resultat.statut).toBe('vu')
-    expect(resultat.manque.map((m) => m.code)).toContain('consolidation_trop_tot')
+    expect(resultat.manque.map((m) => m.code)).toContain('consolidation_a_faire')
   })
 
   it('une consolidation de relances seulement ne compte pas du tout', () => {

@@ -302,10 +302,16 @@ export class SuiviConsolidation {
     return this.#derniere
   }
 
-  /** Le manque quand aucune série n'est finie : trop tôt tant que le délai court et qu'aucune réponse ne compte, sinon à faire. */
+  /**
+   * Le manque quand aucune série n'est finie : trop tôt tant que le délai court et qu'aucune réponse ne
+   * compte, sinon à faire. Le délai court depuis la fin de la restitution ou, si une réponse de
+   * restitution ou une étape de cours est venue depuis, depuis celle-ci : la même référence que pour
+   * juger une série, sinon la consolidation s'ouvrirait pour une série jugée ensuite trop tôt.
+   */
   sansSerie(restitutionFinie: string, maintenant: string): Verdict {
     const finDelai =
-      instantEnMs(restitutionFinie) + this.#reglages.delaiConsolidationMinutes * MS_PAR_MINUTE
+      Math.max(instantEnMs(restitutionFinie), this.#coursAvant) +
+      this.#reglages.delaiConsolidationMinutes * MS_PAR_MINUTE
     return this.#comptees === 0 && instantEnMs(maintenant) < finDelai
       ? { ok: false, manque: { code: 'consolidation_trop_tot', apres: instantEnIso(finDelai) } }
       : { ok: false, manque: { code: 'consolidation_a_faire' } }
@@ -324,7 +330,18 @@ export function consolidationDe(
       manque: { code: 'restitution_incomplete', questions: restitution.manquantes },
     }
   }
-  return suivi.verdict(restitution.date) ?? suivi.sansSerie(restitution.date, maintenant)
+  const verdict = suivi.verdict(restitution.date)
+  if (verdict === undefined) return suivi.sansSerie(restitution.date, maintenant)
+  // Une série faite trop tôt est perdue : le délai passé, une nouvelle série est à faire, et la
+  // consolidation se rouvre pour la permettre.
+  if (
+    !verdict.ok &&
+    verdict.manque.code === 'consolidation_trop_tot' &&
+    verdict.manque.apres !== undefined &&
+    instantEnMs(maintenant) >= instantEnMs(verdict.manque.apres)
+  )
+    return { ok: false, manque: { code: 'consolidation_a_faire' } }
+  return verdict
 }
 
 // --- Pratique, atelier, aisance --------------------------------------------
