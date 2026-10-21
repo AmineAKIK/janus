@@ -1060,10 +1060,12 @@
             'Statut : ' + (LIBELLES_STATUT[depart.init.statut] ?? depart.init.statut)
         }
         pont.surInit((init) => {
-          const serieChangee = serieOuverte.restitution !== init.serie_ouverte.restitution
+          const rouverte = !serieOuverte.restitution && init.serie_ouverte.restitution
           serieOuverte = init.serie_ouverte
-          // Redessiner efface les corrections affichées : seulement quand la série s'ouvre ou se ferme.
-          if (serieChangee) afficher()
+          // Redessiner efface les corrections affichées : seulement quand la série se rouvre. Sa
+          // fermeture suit la dernière réponse, dont la correction doit rester lisible : la page se
+          // redessine elle-même un instant plus tard.
+          if (rouverte) afficher()
         })
         if (depart.etat && typeof depart.etat === 'object') etat = { ...etat, ...depart.etat }
         afficher()

@@ -67,12 +67,12 @@ test.describe('fiche de démonstration', () => {
   test('garde l’étape après rechargement', async ({ page }) => {
     await page.goto(FICHE)
     await expect(page.getByRole('status').first()).toHaveText('Mode autonome', { timeout: 5000 })
-    await page.getByRole('button', { name: 'Bilan' }).click()
+    await page.getByRole('button', { name: 'Bilan', exact: true }).click()
     await expect(page.getByRole('heading', { name: 'Bilan' })).toBeVisible()
 
     await page.reload()
 
-    await expect(page.getByRole('button', { name: 'Bilan' })).toHaveAttribute(
+    await expect(page.getByRole('button', { name: 'Bilan', exact: true })).toHaveAttribute(
       'aria-current',
       'step',
       { timeout: 5000 },
