@@ -15,8 +15,8 @@ export async function libererLesReservations(base: Base): Promise<void> {
   await creerDepotCorrection().libererLesReservations(base.db)
 }
 
-/** Assez pour un message de 1500 caractères et le JSON autour. */
-const JETONS_SORTIE_MAX = 1000
+/** Assez pour la réflexion du modèle, puis un message de 1500 caractères et le JSON autour. */
+const JETONS_SORTIE_MAX = 4000
 const DELAI_CORRECTEUR_MS = 30_000
 
 /**

@@ -44,7 +44,7 @@ export const SchemaConfig = z.object({
   DEEPSEEK_PRIX_SORTIE: z.coerce.number().int().min(0).default(1_200_000),
   /** Facultative (vide ou absente) : sans elle, la correction par Claude est indisponible. */
   ANTHROPIC_API_KEY: CleFacultative,
-  /** Le modèle Claude de correction : Haiku 5.5, le moins cher, réflexion désactivée. */
+  /** Le modèle Claude de correction : Haiku 5.5, le moins cher, réflexion adaptative. */
   CLAUDE_MODELE: z.string().min(1).default('claude-haiku-5-5'),
   CLAUDE_URL: z.url().default('https://api.anthropic.com'),
   /**

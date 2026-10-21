@@ -103,7 +103,7 @@ describe('evaluer', () => {
     const texte = rapport(evaluation, {
       date: '2026-10-14',
       modele: 'faux',
-      versionConsigne: 'v2',
+      versionConsigne: 'v3',
       empreinteConsigne: 'abc',
       jeu: 'exemple.json',
     })
@@ -164,7 +164,7 @@ describe('evaluer', () => {
     const texte = rapport(evaluation, {
       date: '2026-10-20',
       modele: 'faux',
-      versionConsigne: 'v2',
+      versionConsigne: 'v3',
       empreinteConsigne: 'abc',
       jeu: 'erreurs.json',
     })
@@ -202,7 +202,7 @@ describe('rapport', () => {
     const texte = rapport(evaluation, {
       date: '2026-10-08',
       modele: 'faux',
-      versionConsigne: 'v2',
+      versionConsigne: 'v3',
       empreinteConsigne: 'abc',
       jeu: 'exemple.json',
     })
@@ -221,7 +221,7 @@ describe('rapport', () => {
     const texte = rapport(evaluation, {
       date: '2026-10-14',
       modele: 'faux',
-      versionConsigne: 'v2',
+      versionConsigne: 'v3',
       empreinteConsigne: 'abc',
       jeu: 'exemple.json',
     })

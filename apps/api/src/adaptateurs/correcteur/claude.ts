@@ -28,8 +28,8 @@ export function schemaSortie(requete: Pick<RequeteCorrection, 'sources' | 'erreu
   const erreurs = requete.erreursCritiques.map(({ id }) => id)
   return {
     type: 'object',
+    // Le niveau d'abord, le message en dernier : le modèle tranche avant d'écrire pour l'apprenant.
     properties: {
-      message: { type: 'string' },
       niveau: { type: 'string', enum: Niveau.options },
       // Un `enum` vide est invalide : sans erreur critique, l'identifiant reste libre et `validerSortie` écarte ce qui est inconnu.
       erreurs_critiques: {
@@ -44,11 +44,12 @@ export function schemaSortie(requete: Pick<RequeteCorrection, 'sources' | 'erreu
           additionalProperties: false,
         },
       },
+      certitude: { type: 'string', enum: Certitude.options },
       source: { type: 'string', enum: Source.options },
       ref: { type: 'string', enum: ['', ...requete.sources.map(({ id }) => id)] },
-      certitude: { type: 'string', enum: Certitude.options },
+      message: { type: 'string' },
     },
-    required: ['message', 'niveau', 'erreurs_critiques', 'source', 'ref', 'certitude'],
+    required: ['niveau', 'erreurs_critiques', 'certitude', 'source', 'ref', 'message'],
     additionalProperties: false,
   } as const
 }
@@ -68,7 +69,7 @@ const Reponse = z.object({
 const CACHE = { type: 'ephemeral' } as const
 
 /**
- * L'API Messages de Claude : la consigne en `system`, la réflexion désactivée, le JSON imposé par un
+ * L'API Messages de Claude : la consigne en `system`, la réflexion adaptative (le modèle raisonne avant de juger), le JSON imposé par un
  * schéma. Pas de température : Haiku 5.5 n'en accepte pas d'autre que la sienne. La consigne et le
  * contexte du bloc, identiques d'une réponse à l'autre du même bloc, sont marqués mémorisables : lus
  * depuis le cache, ils coûtent un dixième de l'entrée. Comme `input_tokens` ne compte pas les jetons
@@ -109,7 +110,7 @@ export function creerClaude(
             max_tokens: reglages.jetonsSortieMax,
             system: [{ type: 'text', text: consigne, cache_control: CACHE }],
             messages,
-            thinking: { type: 'disabled' },
+            thinking: { type: 'adaptive' },
             output_config: { format: { type: 'json_schema', schema: schemaSortie(requete) } },
           }),
           signal: AbortSignal.timeout(reglages.delaiMs),
@@ -135,7 +136,7 @@ export function creerClaude(
         texte,
         modele: reglages.modele,
         parametres: {
-          thinking: 'disabled',
+          thinking: 'adaptive',
           max_tokens: reglages.jetonsSortieMax,
           format: 'json_schema',
         },
