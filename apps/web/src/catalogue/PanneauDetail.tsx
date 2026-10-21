@@ -131,7 +131,12 @@ export function PanneauDetail({
           {TEXTES_DETAIL.explicationPreuves}
         </p>
         <ul className={styles['lignesPreuves']}>
-          {lignesPreuves(detail.preuves, aujourdhui, enJour).map((ligne) => (
+          {lignesPreuves(
+            detail.preuves,
+            aujourdhui,
+            enJour,
+            detail.manifeste.etapes.find((etape) => etape.type === 'aisance')?.titre,
+          ).map((ligne) => (
             <li key={ligne.cle} className={styles['preuve']} data-etat={ligne.etat}>
               <span className="texte-petit-14">{ligne.libelle}</span>
               <span className={`${styles['etatPreuve'] ?? ''} texte-legende-12`}>

@@ -23,7 +23,11 @@ const PROCHAINES = {
 } as const
 
 const PAS_ENCORE = 'Pas encore'
-const DANS_LA_FICHE = 'dans la fiche, à l’étape d’aisance'
+/** L'aisance se prouve dans la fiche : la ligne nomme l'étape avec le titre que la fiche lui donne. */
+const dansLaFiche = (etape: string | undefined) =>
+  etape === undefined
+    ? 'dans la fiche, à l’étape d’aisance'
+    : `dans la fiche, à l’étape «\u00a0${etape}\u00a0»`
 
 function prouvee(date: string, aujourdhui: string): string {
   const texte = formaterDate(date, aujourdhui)
@@ -32,12 +36,14 @@ function prouvee(date: string, aujourdhui: string): string {
 
 /**
  * Les cinq lignes du panneau « Cinq preuves ». `enJour` convertit une date du serveur (jour ou
- * instant) en jour « AAAA-MM-JJ » dans le fuseau d'Amine.
+ * instant) en jour « AAAA-MM-JJ » dans le fuseau d'Amine ; `etapeAisance` est le titre de l'étape
+ * d'aisance dans la fiche, s'il y en a une.
  */
 export function lignesPreuves(
   preuves: CinqPreuves,
   aujourdhui: string,
   enJour: (date: string) => string,
+  etapeAisance?: string,
 ): readonly LignePreuve[] {
   const { retenir, aisance } = preuves
   // Tant que rien n'est prouvé, la ligne dit quand la vérification se présentera dans Aujourd'hui.
@@ -91,7 +97,7 @@ export function lignesPreuves(
       cle: 'aisance',
       libelle: LIBELLES.aisance,
       etat: 'a_faire',
-      texte: `${PAS_ENCORE} · ${DANS_LA_FICHE}`,
+      texte: `${PAS_ENCORE} · ${dansLaFiche(etapeAisance)}`,
     }
   } else {
     ligneAisance = {
