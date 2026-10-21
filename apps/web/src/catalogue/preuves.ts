@@ -24,6 +24,7 @@ const PROCHAINES = {
 } as const
 
 const PAS_ENCORE = 'Pas encore'
+const DANS_LA_FICHE = 'dans la fiche, à l’étape d’aisance'
 
 function prouvee(date: string, aujourdhui: string): string {
   const texte = formaterDate(date, aujourdhui)
@@ -52,27 +53,25 @@ export function lignesPreuves(
   }
 
   const { retenir, aisance } = preuves
-  let ligneRetenir: LignePreuve
-  if (retenir === null) {
-    ligneRetenir = { cle: 'retenir', libelle: LIBELLES.retenir, etat: 'a_faire', texte: PAS_ENCORE }
-  } else {
-    const base = prouvee(enJour(retenir.date), aujourdhui)
-    let suite = ''
-    if (retenir.prochaine !== null) {
-      const quand = formaterDate(enJour(retenir.prochaine.apres), aujourdhui)
-      const mot = PROCHAINES[retenir.prochaine.type]
-      suite =
-        quand === 'aujourd’hui' || quand === 'demain'
-          ? ` · ${mot} ${quand}`
-          : ` · ${mot} le ${quand}`
-    }
-    ligneRetenir = {
-      cle: 'retenir',
-      libelle: LIBELLES.retenir,
-      etat: 'prouvee',
-      texte: base + suite,
-    }
+  // Tant que rien n'est prouvé, la ligne dit quand la vérification se présentera dans Aujourd'hui ;
+  // la consolidation, elle, se fait dans la fiche et n'est pas une échéance de Retenir.
+  const prochaine = retenir.prochaine
+  let suite = ''
+  if (prochaine !== null && (retenir.date !== null || prochaine.type !== 'consolidation')) {
+    const quand = formaterDate(enJour(prochaine.apres), aujourdhui)
+    const mot = PROCHAINES[prochaine.type]
+    suite =
+      quand === 'aujourd’hui' || quand === 'demain' ? ` · ${mot} ${quand}` : ` · ${mot} le ${quand}`
   }
+  const ligneRetenir: LignePreuve =
+    retenir.date === null
+      ? { cle: 'retenir', libelle: LIBELLES.retenir, etat: 'a_faire', texte: PAS_ENCORE + suite }
+      : {
+          cle: 'retenir',
+          libelle: LIBELLES.retenir,
+          etat: 'prouvee',
+          texte: prouvee(enJour(retenir.date), aujourdhui) + suite,
+        }
 
   let ligneAisance: LignePreuve
   if (aisance === 'non_requis') {
@@ -83,7 +82,12 @@ export function lignesPreuves(
       texte: 'Non requis',
     }
   } else if (aisance === null) {
-    ligneAisance = { cle: 'aisance', libelle: LIBELLES.aisance, etat: 'a_faire', texte: PAS_ENCORE }
+    ligneAisance = {
+      cle: 'aisance',
+      libelle: LIBELLES.aisance,
+      etat: 'a_faire',
+      texte: `${PAS_ENCORE} · ${DANS_LA_FICHE}`,
+    }
   } else {
     ligneAisance = {
       cle: 'aisance',

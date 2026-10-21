@@ -13,7 +13,14 @@ import type { Aujourdhui } from '../seance/etapeSuivante.ts'
 import seance from '../seance/Seance.module.css'
 import { PartieConstat, PartieTache, PartieTexte } from './Parties.tsx'
 import { Resultat } from './Resultat.tsx'
-import { LIBELLES_PARTIE, TEXTES_VERIFICATION as T, texteEnTete, texteRevuLe } from './textes.ts'
+import {
+  LIBELLES_PARTIE,
+  TEXTES_VERIFICATION as T,
+  texteCorrectionEnCours,
+  texteEnTete,
+  texteIntroResume,
+  texteRevuLe,
+} from './textes.ts'
 import styles from './Verification.module.css'
 import { useVerification } from './useVerification.ts'
 
@@ -45,7 +52,6 @@ export function PageVerification({ id }: { readonly id: string }) {
   const boite = useBoiteEnvoi()
   const [quitter, setQuitter] = useState(false)
   const [lance, setLance] = useState(false)
-  const [quandMeme, setQuandMeme] = useState(false)
   const [reportDemande, setReportDemande] = useState(false)
   const { phase, vue, parties, courante, resultat } = verification
 
@@ -84,7 +90,7 @@ export function PageVerification({ id }: { readonly id: string }) {
     contenu = (
       <section className={seance['colonne']} aria-busy="true">
         <h2 className="texte-sous-titre-18" role="status">
-          {T.correctionEnCours}
+          {texteCorrectionEnCours(lecture.length)}
         </h2>
         <p className="texte-corps-16">{T.correctionAttente}</p>
         {lecture.map(({ id: partie, type }) => (
@@ -96,7 +102,7 @@ export function PageVerification({ id }: { readonly id: string }) {
         ))}
       </section>
     )
-  } else if (!verification.commencee && !lance && !quandMeme) {
+  } else if (!verification.commencee && !lance) {
     if (vue.revu_recemment !== null) {
       contenu = (
         <section className={seance['colonne']}>
@@ -113,15 +119,6 @@ export function PageVerification({ id }: { readonly id: string }) {
             >
               {T.reporter}
             </Bouton>
-            <Bouton
-              type="button"
-              variante="secondaire"
-              onClick={() => {
-                setQuandMeme(true)
-              }}
-            >
-              {T.faireQuandMeme}
-            </Bouton>
           </div>
         </section>
       )
@@ -130,7 +127,7 @@ export function PageVerification({ id }: { readonly id: string }) {
         <section className={seance['colonne']}>
           <h2 className="texte-sous-titre-18">{T.introTitre}</h2>
           <p className="texte-corps-16">{T.introAnonyme}</p>
-          <p className="texte-petit-14">{T.introResume}</p>
+          <p className="texte-petit-14">{texteIntroResume(parties.length)}</p>
           <p className="texte-corps-16">{T.introConsigne}</p>
           <div className={styles['actions']}>
             <Bouton

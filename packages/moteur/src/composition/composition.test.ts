@@ -19,7 +19,7 @@ const f = fabrique()
 const faits = jusquaProvisoire(f)
 const aujourdhui = { jour: '2026-06-01', taches: [] }
 
-const retenir = (preuves: ReturnType<typeof cinqPreuvesDuBloc>) => preuves.retenir?.prochaine
+const retenir = (preuves: ReturnType<typeof cinqPreuvesDuBloc>) => preuves.retenir.prochaine
 
 const entreeTableau = {
   modules: MODULES,
@@ -114,12 +114,12 @@ describe('le statut et les preuves d’un bloc rendus par l’API', () => {
       ),
       REGLAGES,
     )
-    expect(revu.retenir).not.toBeNull()
+    expect(revu.retenir.date).not.toBeNull()
   })
 
   it('rend les cinq preuves, sans date de rétention avant la première', () => {
     const vide = cinqPreuvesDuBloc(calculerBloc([], MANIFESTE, REGLAGES, MAINTENANT), REGLAGES)
-    expect(vide.retenir).toBeNull()
+    expect(vide.retenir).toEqual({ date: null, prochaine: null })
     const fait = cinqPreuvesDuBloc(calculerBloc(faits, MANIFESTE, REGLAGES, MAINTENANT), REGLAGES)
     expect(fait.comprendre).not.toBeNull()
   })

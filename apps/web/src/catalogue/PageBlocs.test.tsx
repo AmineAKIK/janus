@@ -142,7 +142,7 @@ describe('Blocs d’un module', () => {
       expect(within(panneau).getByText(/Objectif/)).toBeVisible()
       expect(within(panneau).getByText(/Prérequis/)).toBeVisible()
       expect(within(panneau).getByRole('heading', { level: 3, name: 'Cinq preuves' })).toBeVisible()
-      expect(within(panneau).getAllByText('Pas encore')).toHaveLength(5)
+      expect(within(panneau).getAllByText(/^Pas encore/)).toHaveLength(5)
       expect(within(panneau).getByRole('button', { name: 'Ouvrir le bloc' })).toBeVisible()
     })
 
