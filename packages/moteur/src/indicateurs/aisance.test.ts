@@ -12,9 +12,7 @@ const avecCible = {
   titre_court: 'Les boucles',
   aisance: {
     libelle: 'Écrire une boucle',
-    duree_max_s: 60,
-    reussites_requises: 3,
-    sur_jours_differents: 2,
+    paliers_s: [60, 45, 30],
   },
 }
 const sansCible = { ...structuredClone(MANIFESTE), bloc: 'B03', titre_court: 'Les fonctions' }
@@ -31,14 +29,18 @@ const essai = (bloc: string, date: string, reussi: boolean, dureeS: number): Fai
 })
 
 describe('aisanceDesBlocs', () => {
-  it('compte les réussites sous l’objectif et les jours différents', () => {
+  it('valide les paliers dans l’ordre, un par jour au plus', () => {
     const faits: Fait[] = [
-      essai('B02', '2026-10-12T10:00:00Z', true, 45),
-      essai('B02', '2026-10-12T15:00:00Z', true, 58),
-      // Réussi mais trop lent : compte pour le meilleur temps seulement.
-      essai('B02', '2026-10-13T10:00:00Z', true, 75),
+      // Palier 1 (60 s) validé.
+      essai('B02', '2026-10-12T10:00:00Z', true, 58),
+      // Le même jour : entraînement, même sous le palier 2.
+      essai('B02', '2026-10-12T15:00:00Z', true, 40),
+      // Le lendemain, trop lent pour le palier 2 (45 s).
+      essai('B02', '2026-10-13T10:00:00Z', true, 50),
+      // Puis validé : palier 2. Le meilleur temps, lui, compte toute réussite.
+      essai('B02', '2026-10-13T11:00:00Z', true, 44),
       // Raté : ne compte pas.
-      essai('B02', '2026-10-13T11:00:00Z', false, 20),
+      essai('B02', '2026-10-14T11:00:00Z', false, 20),
       // Autre bloc.
       essai('B03', '2026-10-13T11:00:00Z', true, 10),
     ]
@@ -48,12 +50,9 @@ describe('aisanceDesBlocs', () => {
       titre: 'Les boucles',
       cible: {
         libelle: 'Écrire une boucle',
-        objectifS: 60,
-        meilleurS: 45,
-        reussites: 2,
-        reussitesRequises: 3,
-        jours: 1,
-        joursRequis: 2,
+        paliersS: [60, 45, 30],
+        meilleurS: 40,
+        paliersReussis: 2,
       },
     })
   })
@@ -62,14 +61,14 @@ describe('aisanceDesBlocs', () => {
     const faits = [
       // 03:30 à Paris : encore la veille.
       essai('B02', '2026-10-13T01:30:00Z', true, 50),
-      essai('B02', '2026-10-13T10:00:00Z', true, 50),
+      essai('B02', '2026-10-13T10:00:00Z', true, 44),
     ]
-    expect(aisanceDesBlocs([avecCible], faits, REGLAGES)[0]?.cible?.jours).toBe(2)
+    expect(aisanceDesBlocs([avecCible], faits, REGLAGES)[0]?.cible?.paliersReussis).toBe(2)
   })
 
   it('marque « non requis » un bloc sans cible et reste vide sans essai', () => {
     const lignes = aisanceDesBlocs([sansCible, avecCible], [], REGLAGES)
     expect(lignes[0]).toEqual({ bloc: 'B03', titre: 'Les fonctions', cible: null })
-    expect(lignes[1]?.cible).toMatchObject({ meilleurS: null, reussites: 0, jours: 0 })
+    expect(lignes[1]?.cible).toMatchObject({ meilleurS: null, paliersReussis: 0 })
   })
 })

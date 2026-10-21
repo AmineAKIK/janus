@@ -1,19 +1,15 @@
 import type { Manifeste, Reglages } from '@janus/contrats'
 import type { Fait } from '../faits.ts'
-import { jourDe } from '../temps.ts'
+import { SuiviAisance } from '../statutEtapes.ts'
 
 export interface CibleAisance {
   readonly libelle: string
-  /** L'objectif, en secondes. */
-  readonly objectifS: number
+  /** Les paliers, en secondes, dans l'ordre du manifeste. */
+  readonly paliersS: readonly number[]
   /** Le meilleur temps d'une réussite, en secondes ; `null` sans réussite. */
   readonly meilleurS: number | null
-  /** Les réussites sous l'objectif. */
-  readonly reussites: number
-  readonly reussitesRequises: number
-  /** Les jours différents où il y en a eu. */
-  readonly jours: number
-  readonly joursRequis: number
+  /** Les paliers validés, un par jour au plus, dans l'ordre des faits. */
+  readonly paliersReussis: number
 }
 
 export interface LigneAisance {
@@ -34,20 +30,17 @@ export function aisanceDesBlocs(
     const reussies = faits.flatMap((fait) =>
       fait.type === 'aisance_resultat' && fait.bloc === bloc && fait.reussi ? [fait] : [],
     )
-    const sousObjectif = reussies.filter(({ dureeS }) => dureeS <= aisance.duree_max_s)
+    const suivi = new SuiviAisance(aisance, reglages)
+    for (const fait of reussies.toSorted((a, b) => a.date.localeCompare(b.date)))
+      suivi.avancer(fait)
     return {
       bloc,
       titre,
       cible: {
         libelle: aisance.libelle,
-        objectifS: aisance.duree_max_s,
+        paliersS: aisance.paliers_s,
         meilleurS: reussies.length === 0 ? null : Math.min(...reussies.map(({ dureeS }) => dureeS)),
-        reussites: sousObjectif.length,
-        reussitesRequises: aisance.reussites_requises,
-        jours: new Set(
-          sousObjectif.map(({ date }) => jourDe(date, reglages.fuseau, reglages.heureBascule)),
-        ).size,
-        joursRequis: aisance.sur_jours_differents,
+        paliersReussis: suivi.paliers,
       },
     }
   })

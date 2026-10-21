@@ -22,7 +22,6 @@ import {
   texteErreursSures,
   texteMeilleur,
   textePhraseAutonomie,
-  texteReussites,
 } from './textes.ts'
 import { adresse } from '../../routes/navigation.ts'
 
@@ -188,8 +187,7 @@ export function ZoneAisance({ donnees }: { readonly donnees: Mesures['aisance'] 
               {objectifCommun === undefined && <span>{cible.libelle}</span>}
               <br />
               <span className={styles['complement']}>
-                {texteMeilleur(cible.meilleur_s, cible.objectif_s)} ·{' '}
-                {texteReussites(cible.reussites, cible.reussites_requises, cible.jours_requis)}
+                {texteMeilleur(cible.meilleur_s, cible.paliers_s, cible.paliers_reussis)}
               </span>
             </li>
           ))}
@@ -203,7 +201,9 @@ export function ZoneAisance({ donnees }: { readonly donnees: Mesures['aisance'] 
               <li key={bloc}>
                 <LienBloc bloc={bloc} titre={titre} />{' '}
                 <span className={styles['complement']}>
-                  {cible === null ? T.nonRequis : texteMeilleur(cible.meilleur_s, cible.objectif_s)}
+                  {cible === null
+                    ? T.nonRequis
+                    : texteMeilleur(cible.meilleur_s, cible.paliers_s, cible.paliers_reussis)}
                 </span>
               </li>
             ))}
