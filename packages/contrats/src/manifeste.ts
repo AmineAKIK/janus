@@ -104,12 +104,15 @@ export const Manifeste = z.strictObject({
   differees: z.array(Differee),
   pratique: z.array(Pratique),
   atelier: z.strictObject({ id: Identifiant, reussite_aide_max: z.literal(0) }).optional(),
+  /**
+   * La cible d'aisance : des paliers, une durée maximale en secondes par série réussie, dans l'ordre.
+   * Une série réussie dans le temps du palier courant le valide ; un palier par jour au plus ; la
+   * cible est atteinte au dernier palier. B01 : `[30, 20, 10]` ; une cible sans progression : `[25, 25, 25]`.
+   */
   aisance: z
     .strictObject({
       libelle: Texte,
-      duree_max_s: Entier.min(1),
-      reussites_requises: Entier.min(1),
-      sur_jours_differents: Entier.min(1),
+      paliers_s: z.array(Entier.min(1)).min(1),
     })
     .optional(),
   cartes: z.array(z.strictObject({ id: Identifiant, recto: Texte, verso: Texte })),

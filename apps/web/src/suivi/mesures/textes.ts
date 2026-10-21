@@ -83,14 +83,25 @@ export const texteAideMoyenne = (aide: number) =>
 
 export const texteErreursSures = (n: number) => `Erreurs en étant sûr : ${String(n)} cette semaine`
 
-export const texteMeilleur = (meilleurS: number | null, objectifS: number) =>
-  `${meilleurS === null ? TEXTES_MESURES.aucunTemps : `${nombreFrancais(meilleurS, 0)} s`} · objectif ${String(objectifS)} s`
+/** « 25 s · palier 2 sur 3, 20 s » : le meilleur temps, puis le palier courant et sa limite. */
+export const texteMeilleur = (
+  meilleurS: number | null,
+  paliersS: readonly number[],
+  paliersReussis: number,
+) => {
+  const meilleur =
+    meilleurS === null ? TEXTES_MESURES.aucunTemps : `${nombreFrancais(meilleurS, 0)} s`
+  const total = paliersS.length
+  const courant = paliersS[paliersReussis]
+  const palier =
+    courant === undefined
+      ? `${String(total)} ${total === 1 ? 'palier réussi' : 'paliers réussis'} sur ${String(total)}`
+      : `palier ${String(paliersReussis + 1)} sur ${String(total)}, ${String(courant)} s`
+  return `${meilleur} · ${palier}`
+}
 
 /** Le résumé repliable des blocs dont on n'a encore rien mesuré. */
 export const texteSansMesure = (n: number) => nombre(n, 'bloc sans mesure', 'blocs sans mesure')
-
-export const texteReussites = (reussites: number, requises: number, jours: number) =>
-  `${nombre(reussites, 'réussite', 'réussites')} sur ${String(requises)}, sur ${nombre(jours, 'jour distinct', 'jours distincts')}`
 
 /** « 45 s », « 12 min », « 1 h 05 » : un temps actif en secondes. */
 export function texteDuree(secondes: number): string {

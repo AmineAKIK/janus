@@ -422,31 +422,40 @@ export class SuiviAtelier {
   }
 }
 
-/** L'atteinte de la cible d'aisance : assez de réussites assez rapides, sur assez de jours différents. */
+/**
+ * L'atteinte de la cible d'aisance : les paliers du manifeste, dans l'ordre. Une série réussie dans
+ * le temps du palier courant le valide, un palier par jour au plus ; les autres séries sont de
+ * l'entraînement. La cible est atteinte quand le dernier palier est validé.
+ */
 export class SuiviAisance {
   readonly #cible: Manifeste['aisance']
-  readonly #reglages: Reglages
-  readonly #jours = new Set<string>()
-  #essais = 0
+  readonly #reglages: Pick<Reglages, 'fuseau' | 'heureBascule'>
+  #paliers = 0
+  #dernierJour: string | null = null
   #date: string | null = null
 
-  constructor(manifeste: Manifeste, reglages: Reglages) {
-    this.#cible = manifeste.aisance
+  constructor(cible: Manifeste['aisance'], reglages: Pick<Reglages, 'fuseau' | 'heureBascule'>) {
+    this.#cible = cible
     this.#reglages = reglages
   }
 
   avancer(fait: Fait): void {
     const cible = this.#cible
-    if (cible === undefined || this.#date !== null) return
-    if (fait.type !== 'aisance_resultat' || !fait.reussi || fait.dureeS > cible.duree_max_s) return
-    this.#essais += 1
-    this.#jours.add(jourDe(fait.date, this.#reglages.fuseau, this.#reglages.heureBascule))
-    if (
-      this.#essais >= cible.reussites_requises &&
-      this.#jours.size >= cible.sur_jours_differents
-    ) {
-      this.#date = fait.date
-    }
+    if (cible === undefined) return
+    // Plus de palier : la cible est atteinte, les séries suivantes sont de l'entraînement.
+    const palier = cible.paliers_s[this.#paliers]
+    if (palier === undefined) return
+    if (fait.type !== 'aisance_resultat' || !fait.reussi || fait.dureeS > palier) return
+    const jour = jourDe(fait.date, this.#reglages.fuseau, this.#reglages.heureBascule)
+    if (jour === this.#dernierJour) return
+    this.#dernierJour = jour
+    this.#paliers += 1
+    if (this.#paliers >= cible.paliers_s.length) this.#date = fait.date
+  }
+
+  /** Les paliers validés jusqu'ici. */
+  get paliers(): number {
+    return this.#paliers
   }
 
   resultat(): { readonly ok: boolean; readonly date: string | null } {
@@ -1038,7 +1047,7 @@ export function construireEtat(
     consolidation: new SuiviConsolidation(manifeste, reglages, tranchages),
     pratique: new SuiviPratique(manifeste),
     atelier: new SuiviAtelier(manifeste),
-    aisance: new SuiviAisance(manifeste, reglages),
+    aisance: new SuiviAisance(manifeste.aisance, reglages),
     transfert: new SuiviTransfert(),
     forcage: new SuiviForcage(),
     etapesVues: new Set<string>(),

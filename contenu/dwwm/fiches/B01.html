@@ -4986,7 +4986,7 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 29,
+        "version": 30,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
@@ -5420,9 +5420,7 @@
         ],
         "aisance": {
           "libelle": "Une série de 10 conversions justes, à 30 s, puis 20 s, puis 10 s chacune, un palier par jour",
-          "duree_max_s": 30,
-          "reussites_requises": 3,
-          "sur_jours_differents": 3
+          "paliers_s": [30, 20, 10]
         },
         "cartes": [
           {
@@ -10018,7 +10016,9 @@
          * différent du précédent. Chaque série finie part au pont (aisance.resultat) : réussie si ses
          * 10 conversions sont justes dans le temps du niveau, avec la durée de la plus lente.
          */
-        const NIVEAUX = [30, 20, 10]
+        // Les paliers du manifeste (aisance.paliers_s) : la même règle que le moteur, un palier par jour.
+        const NIVEAUX = JSON.parse(document.getElementById('bloc-manifest').textContent).aisance
+          .paliers_s
         /**
          * Les niveaux relus dans les séries réussies du serveur, avec la même règle : une série réussie
          * dans le temps du niveau suivant, un autre jour que le niveau d'avant.
@@ -10046,7 +10046,7 @@
           const zone = el('div', { class: 'zone-vitesse' })
           const lancer = el('button', { type: 'button', class: 'bouton' })
           const aujourdhui = () => reussis.some((x) => x.jour === jourCle())
-          const limite = () => NIVEAUX[Math.min(reussis.length, 2)]
+          const limite = () => NIVEAUX[Math.min(reussis.length, NIVEAUX.length - 1)]
           function majInfo() {
             liste.replaceChildren(
               ...NIVEAUX.map((s, k) => {
@@ -10068,9 +10068,13 @@
                 )
               }),
             )
-            if (reussis.length >= 3)
+            if (reussis.length >= NIVEAUX.length)
               info.textContent = fr(
-                'Les trois niveaux sont réussis. Tu peux continuer à t’entraîner, à 10 secondes par conversion.',
+                'Les ' +
+                  NIVEAUX.length +
+                  ' niveaux sont réussis. Tu peux continuer à t’entraîner, à ' +
+                  limite() +
+                  ' secondes par conversion.',
               )
             else if (aujourdhui())
               info.textContent = fr(

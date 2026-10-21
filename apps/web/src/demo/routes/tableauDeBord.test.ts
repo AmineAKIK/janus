@@ -117,7 +117,10 @@ describe('tableau de bord de la démo, avec la graine', () => {
     expect(long.mesures.autonomie.aide_moyenne).toBe(0)
     expect(long.mesures.calibration.lignes[0]).toEqual({ confiance: 'sur', justes: 39, faux: 3 })
     expect(long.mesures.aisance).toHaveLength(20)
-    expect(long.mesures.aisance[0]?.cible).toMatchObject({ objectif_s: 30, reussites: 0 })
+    expect(long.mesures.aisance[0]?.cible).toMatchObject({
+      paliers_s: [30, 30],
+      paliers_reussis: 0,
+    })
 
     const lignesCourtes = court.mesures.calibration.lignes
     expect(lignesCourtes[0]?.justes).toBeLessThan(39)

@@ -4855,7 +4855,7 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 13,
+        "version": 14,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 expressions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
@@ -5249,9 +5249,7 @@ if (age &lt; 12) {
         ],
         "aisance": {
           "libelle": "Les tables NON, ET et OU, leurs 10 lignes dans le désordre, 10 justes sur 10 en 25 s au plus, trois jours différents",
-          "duree_max_s": 25,
-          "reussites_requises": 3,
-          "sur_jours_differents": 3
+          "paliers_s": [25, 25, 25]
         },
         "cartes": [
           {
@@ -9993,7 +9991,10 @@ if (age &lt; 12) {
             for (const b of [false, true])
               LIGNES_AISANCE.push({ op, a, b, v: op === 'ET' ? a && b : a || b })
         const N_AISANCE = LIGNES_AISANCE.length
-        const DUREE = 25
+        // La durée du palier courant, lue dans le manifeste (aisance.paliers_s), comme le moteur.
+        const PALIERS = JSON.parse(document.getElementById('bloc-manifest').textContent).aisance
+          .paliers_s
+        const DUREE = PALIERS[0]
         function aisance(n) {
           const reussis = Array.isArray(traces.vitesse)
             ? traces.vitesse.filter((x) => x && typeof x.jour === 'string')
