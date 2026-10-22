@@ -326,7 +326,7 @@ function varianteDuCours(lire: (nom: string) => string | undefined): string[] {
  * guillemets sont ceux de la page.
  */
 export const CE_QUE_FAIT_LE_GABARIT: readonly string[] = [
-  'Le fil groupe les étapes en quatre moments : Découvrir (carte, perception), Comprendre (pré-test, explication), S’entraîner (pratique, atelier, aisance, ensemble), Prouver (restitution, bilan).',
+  'Le fil groupe les étapes en quatre moments : Découvrir (perception, puis carte, qui vient après le pari), Comprendre (pré-test, explication), S’entraîner (pratique, atelier, aisance, ensemble), Prouver (restitution, bilan).',
   'Une étape à plusieurs écrans les montre un par un, avec Retour et Suivant ; chaque écran a « Écouter », qui le lit à voix haute.',
   'Pré-test, la tentative avant l’explication : chaque exercice d’essai (`data-essai`) prend une réponse, ou « Je ne sais pas », sans rien dire de juste ou de faux (« Noté : … La correction vient à la fin de l’étape. ») ; la première réponse part à l’appli. Quand chaque essai a sa réponse, « Tes essais » montre chaque réponse, juste ou pas, ce qui était attendu et le retour de la fiche ; « Étape suivante » attend jusque-là.',
   'La carte montre son texte, puis l’objectif replié sous « Ce qui sera vérifié » ; le même objectif replié ouvre la pratique.',

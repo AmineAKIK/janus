@@ -353,6 +353,38 @@ describe('vérification des fiches du dépôt', () => {
     })
   })
 
+  describe('l’ordre du cycle', () => {
+    /** Le gabarit avec une perception (ET0), placée avant ou après sa carte (ET1). */
+    const avecPerception = (avantLaCarte: boolean) =>
+      avecManifeste(fiche, (m) => {
+        const perception = {
+          id: 'ET0',
+          titre: 'Un fichier, deux programmes',
+          type: 'perception' as const,
+        }
+        const [carte, ...suite] = m.etapes
+        if (carte === undefined) throw new Error('Le gabarit n’a pas d’étape.')
+        m.etapes = avantLaCarte ? [perception, carte, ...suite] : [carte, perception, ...suite]
+      }).replace(
+        '<template data-etape="ET2">',
+        '<template data-etape="ET0"><p>Ouvre le fichier avec deux programmes.</p></template><template data-etape="ET2">',
+      )
+
+    it('refuse une carte placée avant la perception', async () => {
+      await poser('X00.html', avecPerception(false))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('la carte ET1 vient avant la perception ET0'),
+      ])
+    })
+
+    it('accepte la perception d’abord, puis la carte', async () => {
+      await poser('X00.html', avecPerception(true))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+  })
+
   describe('ce que la fiche enseigne et ce qu’elle interroge', () => {
     it('refuse une fiche sans tableau d’alignement', async () => {
       await poser('X00.html', fiche.replace(TABLEAU, ''))

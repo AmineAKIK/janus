@@ -1971,6 +1971,58 @@
       <div id="contenu"></div>
     </main>
 
+    <!-- ET2, perception : un même fichier ouvert par deux programmes, puis le pari, sans note. -->
+    <template data-etape="ET2">
+      <p class="accroche">
+        Voici un tout petit fichier, <span class="mono">fichier.dat</span>. Son contenu complet
+        tient en 96 chiffres, des 0 et des 1.
+      </p>
+      <div
+        class="octets"
+        role="img"
+        aria-label="Les 12 octets de fichier.dat : 01001100 01101001 01110011 00101101 01101101 01101111 01101001 00100000 01100010 01101001 01100101 01101110"
+      >
+        <span>01001100</span><span>01101001</span><span>01110011</span><span>00101101</span
+        ><span>01101101</span><span>01101111</span><span>01101001</span><span>00100000</span
+        ><span>01100010</span><span>01101001</span><span>01100101</span><span>01101110</span>
+      </div>
+      <p>Ouvre-le avec deux programmes différents.</p>
+      <div data-widget="fichier" class="fenetres">
+        <div class="fenetre">
+          <p class="fenetre-barre">Visionneuse d’images · fichier.dat</p>
+          <div class="fenetre-corps" data-vue="visionneuse">
+            <button class="bouton secondaire" type="button" data-ouvrir="visionneuse">
+              Ouvrir avec la visionneuse
+            </button>
+          </div>
+        </div>
+        <div class="fenetre">
+          <p class="fenetre-barre">Bloc-notes · fichier.dat</p>
+          <div class="fenetre-corps" data-vue="bloc-notes">
+            <button class="bouton secondaire" type="button" data-ouvrir="bloc-notes">
+              Ouvrir avec le Bloc-notes
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        data-widget="pari"
+        class="ex"
+        data-apres="Ce pari n’est pas noté. Garde ta réponse en tête : tu vas apprendre à faire ces deux lectures toi-même, à la main."
+      >
+        <p class="q">
+          Les deux programmes ont lu exactement les mêmes 96 chiffres. À ton avis, pourquoi deux
+          résultats si différents ?
+        </p>
+        <ul class="options">
+          <li data-option="abime">Le fichier est abîmé : une des deux fenêtres le lit mal.</li>
+          <li data-option="regle">Chaque fenêtre lit la même suite avec sa propre règle.</li>
+          <li data-option="deux">
+            Le fichier contient deux parties : une pour l’image, une pour le texte.
+          </li>
+        </ul>
+      </div>
+    </template>
     <!-- ET1, carte : ce que le bloc apprend, où il se place, à quoi il sert. -->
     <template data-etape="ET1">
       <p class="accroche">
@@ -2035,59 +2087,6 @@
         Il te suffit de savoir additionner, soustraire, multiplier, et lire 345 comme 3 centaines, 4
         dizaines et 5 unités.
       </p>
-    </template>
-
-    <!-- ET2, perception : un même fichier ouvert par deux programmes, puis le pari, sans note. -->
-    <template data-etape="ET2">
-      <p class="accroche">
-        Voici un tout petit fichier, <span class="mono">fichier.dat</span>. Son contenu complet
-        tient en 96 chiffres, des 0 et des 1.
-      </p>
-      <div
-        class="octets"
-        role="img"
-        aria-label="Les 12 octets de fichier.dat : 01001100 01101001 01110011 00101101 01101101 01101111 01101001 00100000 01100010 01101001 01100101 01101110"
-      >
-        <span>01001100</span><span>01101001</span><span>01110011</span><span>00101101</span
-        ><span>01101101</span><span>01101111</span><span>01101001</span><span>00100000</span
-        ><span>01100010</span><span>01101001</span><span>01100101</span><span>01101110</span>
-      </div>
-      <p>Ouvre-le avec deux programmes différents.</p>
-      <div data-widget="fichier" class="fenetres">
-        <div class="fenetre">
-          <p class="fenetre-barre">Visionneuse d’images · fichier.dat</p>
-          <div class="fenetre-corps" data-vue="visionneuse">
-            <button class="bouton secondaire" type="button" data-ouvrir="visionneuse">
-              Ouvrir avec la visionneuse
-            </button>
-          </div>
-        </div>
-        <div class="fenetre">
-          <p class="fenetre-barre">Bloc-notes · fichier.dat</p>
-          <div class="fenetre-corps" data-vue="bloc-notes">
-            <button class="bouton secondaire" type="button" data-ouvrir="bloc-notes">
-              Ouvrir avec le Bloc-notes
-            </button>
-          </div>
-        </div>
-      </div>
-      <div
-        data-widget="pari"
-        class="ex"
-        data-apres="Ce pari n’est pas noté. Garde ta réponse en tête : tu vas apprendre à faire ces deux lectures toi-même, à la main."
-      >
-        <p class="q">
-          Les deux programmes ont lu exactement les mêmes 96 chiffres. À ton avis, pourquoi deux
-          résultats si différents ?
-        </p>
-        <ul class="options">
-          <li data-option="abime">Le fichier est abîmé : une des deux fenêtres le lit mal.</li>
-          <li data-option="regle">Chaque fenêtre lit la même suite avec sa propre règle.</li>
-          <li data-option="deux">
-            Le fichier contient deux parties : une pour l’image, une pour le texte.
-          </li>
-        </ul>
-      </div>
     </template>
 
     <!-- ET3, tentative : le compteur à lampes, et ce que l'apprenant y trouve avant toute explication. -->
@@ -3978,12 +3977,12 @@
       </div>
       <div data-ecran="Le binaire n’est pas un langage">
         <p class="accroche">
-          À l’étape 1, tu as lu que tout, dans la machine, est écrit en binaire : c’est vrai, tout
-          est rangé en 0 et en 1. Mais « en binaire » dit seulement comment c’est écrit, pas ce que
-          c’est. Le code machine s’appelle aussi langage machine. Ce qui en fait un langage, c’est
-          le jeu d’instructions du processeur, pas le binaire qui sert à l’écrire. Tu viens de le
-          voir avec l’autre processeur : les mêmes octets font tout autre chose avec une autre
-          table.
+          Sur la carte du bloc, tu as lu que tout, dans la machine, est écrit en binaire : c’est
+          vrai, tout est rangé en 0 et en 1. Mais « en binaire » dit seulement comment c’est écrit,
+          pas ce que c’est. Le code machine s’appelle aussi langage machine. Ce qui en fait un
+          langage, c’est le jeu d’instructions du processeur, pas le binaire qui sert à l’écrire. Tu
+          viens de le voir avec l’autre processeur : les mêmes octets font tout autre chose avec une
+          autre table.
         </p>
         <p>Le binaire et un langage de programmation, côte à côte :</p>
         <div
@@ -5285,7 +5284,7 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 36,
+        "version": 37,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
@@ -5337,14 +5336,14 @@
         ],
         "etapes": [
           {
-            "id": "ET1",
-            "titre": "Où tu es",
-            "type": "carte"
-          },
-          {
             "id": "ET2",
             "titre": "Un fichier, deux programmes",
             "type": "perception"
+          },
+          {
+            "id": "ET1",
+            "titre": "Où tu es",
+            "type": "carte"
           },
           {
             "id": "ET3",
@@ -10773,7 +10772,7 @@
        * (afficherLibre).
        */
       const MOMENTS = [
-        { nom: 'Découvrir', types: ['carte', 'perception'] },
+        { nom: 'Découvrir', types: ['perception', 'carte'] },
         { nom: 'Comprendre', types: ['pretest', 'explication'] },
         { nom: 'S’entraîner', types: ['pratique', 'atelier', 'aisance', 'ensemble'] },
         { nom: 'Prouver', types: ['restitution', 'bilan'] },
