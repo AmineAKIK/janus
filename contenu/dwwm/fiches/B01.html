@@ -3054,6 +3054,16 @@
             </li>
           </ul>
         </div>
+        <figure
+          class="chaine-fixe"
+          data-lecture="Le « é », écrit en UTF-8, donne deux octets, 195 et 169. Lus avec Latin-1, un caractère par octet, ils donnent Ã puis ©."
+        >
+          <span class="boite-fixe">« é »<small>un caractère</small></span>
+          <span class="fleche">écrit en UTF-8</span>
+          <span class="boite-fixe">195 169<small>deux octets</small></span>
+          <span class="fleche">lus avec Latin-1</span>
+          <span class="boite-fixe">Ã ©<small>un caractère par octet</small></span>
+        </figure>
       </div>
       <div data-ecran="Éviter « Ã© »">
         <p class="accroche">
@@ -4063,39 +4073,13 @@
       <div class="outil" data-widget="aisance"></div>
     </template>
 
-    <!-- ET14, ensemble : le pari repris, le schéma de mémoire, puis le fichier du début lu de quatre façons. -->
+    <!-- ET14, ensemble : le schéma de mémoire, le pari repris, puis le fichier du début lu de quatre façons. -->
     <template data-etape="ET14">
-      <div data-ecran="Ton pari">
-        <p class="accroche">
-          Tu as vu les quatre lectures. Reviens maintenant au fichier du début, et à ton pari.
-        </p>
-        <div class="ex" data-widget="choix" data-id="f1" data-reponse="regle" data-melanger="non">
-          <p class="q">
-            Alors, pourquoi les deux fenêtres du début donnaient-elles deux résultats si
-            différents ?
-          </p>
-          <p class="discret" data-widget="rappel-pari" hidden></p>
-          <ul class="options">
-            <li
-              data-erreur="E2"
-              data-option="abime"
-              data-retour="Rien n’est abîmé : chaque fenêtre lit la même suite sans erreur, avec sa propre règle. Ce qui change, c’est la règle de lecture, pas ce qui est rangé."
-            >
-              Le fichier est abîmé : une des deux fenêtres le lit mal.
-            </li>
-            <li data-option="regle">Chaque fenêtre lit la même suite avec sa propre règle.</li>
-            <li
-              data-erreur="E2"
-              data-option="deux"
-              data-retour="Il n’y a qu’une suite. Tu as déjà lu le même 76 comme la lettre L, puis comme le rouge d’un pixel : une seule suite, deux règles."
-            >
-              Le fichier contient deux parties : une pour l’image, une pour le texte.
-            </li>
-          </ul>
-        </div>
-      </div>
       <div data-ecran="Le schéma, de mémoire">
-        <p class="accroche">Refais maintenant le schéma de mémoire.</p>
+        <p class="accroche">
+          Tu as vu les quatre lectures. Avant de revenir au point de départ, refais le schéma de
+          mémoire.
+        </p>
         <div class="ex" data-widget="schema" data-id="f2">
           <p class="q">Complète le schéma de mémoire, avec tes mots : un ou deux mots par case.</p>
           <div class="chaine">
@@ -4143,9 +4127,36 @@
           </div>
         </div>
       </div>
+      <div data-ecran="Ton pari">
+        <p class="accroche">Reviens maintenant au fichier du début, et à ton pari.</p>
+        <div class="ex" data-widget="choix" data-id="f1" data-reponse="regle" data-melanger="non">
+          <p class="q">
+            Alors, pourquoi les deux fenêtres du début donnaient-elles deux résultats si
+            différents ?
+          </p>
+          <p class="discret" data-widget="rappel-pari" hidden></p>
+          <ul class="options">
+            <li
+              data-erreur="E2"
+              data-option="abime"
+              data-retour="Rien n’est abîmé : chaque programme lit les 12 octets sans erreur, avec son propre codage. Ce qui change, c’est le codage, pas les octets."
+            >
+              Le fichier est abîmé : une des deux fenêtres le lit mal.
+            </li>
+            <li data-option="regle">Chaque fenêtre lit la même suite avec sa propre règle.</li>
+            <li
+              data-erreur="E2"
+              data-option="deux"
+              data-retour="Il n’y a qu’une suite de 12 octets. Tu as déjà lu l’octet 76 comme la lettre L avec la table ASCII, puis comme le rouge d’un pixel avec le codage RGB."
+            >
+              Le fichier contient deux parties : une pour l’image, une pour le texte.
+            </li>
+          </ul>
+        </div>
+      </div>
       <div data-ecran="Quatre lectures">
         <p class="accroche">
-          Vérifie ton pari et ton schéma sur le fichier du début : ouvre-le de quatre façons. Chaque
+          Vérifie ton schéma et ton pari sur le fichier du début : ouvre-le de quatre façons. Chaque
           lecture suit le codage que tu as appris à appliquer à la main.
         </p>
         <div class="outil" data-widget="vues"></div>
@@ -5206,6 +5217,14 @@
           Chaque série finie envoie un seul résultat à l’appli : réussie si ses 10 conversions sont
           justes dans le temps du niveau, avec la durée de la conversion la plus lente.
         </li>
+        <li>
+          Des poids lus ou rangés à l’envers (E4) partent au bilan, en vitesse comme dans le cours
+          et en pratique : la page émet fiche:erreur avec l’endroit (l’item, l’exercice du cours, sa
+          variante « l7:variante », ou « vitesse »), et le gabarit la coche d’office au bilan
+          suivant. La tentative de l’étape 3 n’en émet pas. Si la restitution est faite, le bilan
+          attend : le retour ajoute « C’est une erreur critique : envoie ton bilan avant de
+          continuer. », et une série de vitesse s’arrête sans envoyer de résultat.
+        </li>
       </ul>
       <h3>Les outils du cours</h3>
       <ul>
@@ -5413,9 +5432,9 @@
             "erreurs": ["E1"]
           },
           {
-            "id": "R29",
-            "question": "Écris en binaire, avec 8 chiffres : 128, 99 et 0. Puis donne la valeur de 01010101, de 11110000 et de 11111111.",
-            "attendu": "128 = 10000000 ; 99 = 64 + 32 + 2 + 1 = 01100011 ; 0 = 00000000 ; 01010101 = 64 + 16 + 4 + 1 = 85 ; 11110000 = 128 + 64 + 32 + 16 = 240 ; 11111111 = 255. Chaque conversion juste compte : une réponse à moitié juste est notée à moitié juste. Avec les poids inversés, on trouverait 99 = 11000110 et 01010101 = 170 : c’est l’erreur E4. D’après les étapes 5 et 6.",
+            "id": "R35",
+            "question": "Que vaut l’octet 01010101 ? Puis dis ce qui fait qu’un bit à 1 compte plus ou moins selon sa place.",
+            "attendu": "01010101 = 64 + 16 + 4 + 1 = 85. Chaque bit à 1 compte pour son poids, et le poids dépend de la place : 128 tout à gauche, puis la moitié à chaque place vers la droite, jusqu’à 1 tout à droite. Un nombre vaut la somme des poids de ses bits à 1. Avec les poids inversés, on trouverait 170 : c’est l’erreur E4. D’après les étapes 4 et 5.",
             "erreurs": ["E4"]
           },
           {
@@ -5426,8 +5445,8 @@
           },
           {
             "id": "R32",
-            "question": "Écris en binaire, avec 8 chiffres, les trois octets de rgb(144, 48, 224), et dis ce que règle chacun.",
-            "attendu": "10010000 : le rouge, à 144 sur 255, un peu plus de la moitié ; 00110000 : le vert, à 48 sur 255, faible ; 11100000 : le bleu, à 224 sur 255, presque à fond. Avec les poids inversés, on trouverait 00001001 pour 144 : c’est l’erreur E4. Déduit des étapes 6 et 8.",
+            "question": "En RGB, les trois octets d’un pixel règlent, dans l’ordre, le rouge, le vert et le bleu, chacun de 0 (éteint) à 255 (à fond). Écris en binaire, avec 8 chiffres, les trois octets de rgb(144, 48, 224). Puis dis, pour chaque lumière, si elle est faible, à mi-chemin ou presque à fond.",
+            "attendu": "10010000 : le rouge, à 144 sur 255, un peu plus qu’à mi-chemin ; 00110000 : le vert, à 48 sur 255, faible ; 11100000 : le bleu, à 224 sur 255, presque à fond. Le nom de la couleur obtenue n’est pas exigé. Avec les poids inversés, on trouverait 00001001 pour 144 : c’est l’erreur E4. Déduit des étapes 6 et 8.",
             "erreurs": ["E4"]
           },
           {
@@ -5784,14 +5803,14 @@
             "notion": "Lire un octet comme un nombre, à la main, en additionnant les poids de ses bits à 1",
             "montree": ["ET5"],
             "pratiquee": ["PR7", "ET13"],
-            "questions": ["R29", "C21", "Q21"]
+            "questions": ["R35", "C21", "Q21"]
           },
           {
             "id": "N5",
             "notion": "Écrire un nombre de 0 à 255 en binaire, à la main, en partant du poids 128 : 1 quand le poids rentre dans ce qui reste, 0 sinon, toujours 8 chiffres",
             "montree": ["ET6"],
             "pratiquee": ["PR7", "PR8", "ET13"],
-            "questions": ["R29", "C21", "Q22", "DE27"]
+            "questions": ["R32", "C21", "Q22", "DE27"]
           },
           {
             "id": "N6",
@@ -5858,7 +5877,7 @@
             "vers": "N4",
             "type": "composition",
             "montree": "ET5",
-            "questions": ["R29", "DE28"]
+            "questions": ["R35", "DE28"]
           },
           {
             "id": "L3",
@@ -8222,6 +8241,7 @@
             }
           if (r === valeur(envers(bits)) && bits !== envers(bits))
             return {
+              e: 'E4',
               m: 'Tu as lu les poids à l’envers. Le poids 128 est tout à gauche, le poids 1 tout à droite.',
             }
           if (bits[7] === '1' && r === j - 1)
@@ -8233,6 +8253,7 @@
           if (b === j) return null
           if (envers(b) === j)
             return {
+              e: 'E4',
               m: 'Tes bits sont rangés à l’envers : le bit de poids 128 se place tout à gauche.',
             }
           return {
@@ -8764,6 +8785,29 @@
             }),
           )
         }
+        /**
+         * Une erreur critique reconnue (ici E4, les poids lus ou rangés à l'envers) part au bilan :
+         * `fiche:erreur`, avec l'item ou l'exercice où elle a eu lieu (sa variante du cours :
+         * « l7:variante »). La tentative de l'étape 3 n'en signale pas : elle vient avant les
+         * règles. Rend faux si le gabarit attend d'abord le bilan.
+         */
+        function signalerErreur(ex, erreur) {
+          if (!erreur || 'essai' in ex.dataset) return true
+          const ou =
+            ex.closest('.item')?.dataset.item ??
+            (ex.dataset.variante
+              ? ex.parentElement?.closest('[data-id]')?.dataset.id?.concat(':variante')
+              : ex.closest('[data-id]')?.dataset.id)
+          if (!ou) return true
+          return ex.dispatchEvent(
+            new CustomEvent('fiche:erreur', {
+              bubbles: true,
+              cancelable: true,
+              detail: { erreur, ou },
+            }),
+          )
+        }
+        const ATTENDRE_BILAN = ' C’est une erreur critique : envoie ton bilan avant de continuer.'
         function retourDe(ex) {
           let r = $(':scope > .retour', ex)
           if (!r) {
@@ -8957,7 +9001,10 @@
           }
           ex.dataset.fautes = String(fautes + 1)
           signaler(ex, false, cran)
-          const m = res.d && res.d.m ? res.d.m : (ex.dataset.sinon ?? 'Pas encore. Réessaie.')
+          const libre = signalerErreur(ex, res.d?.e)
+          const m =
+            (res.d && res.d.m ? res.d.m : (ex.dataset.sinon ?? 'Pas encore. Réessaie.')) +
+            (libre ? '' : ATTENDRE_BILAN)
           if (c.marque) {
             dire(ex, 'faux', m)
             // Dans un item, la bonne réponse marquée est une solution vue : l'item se refait sur sa variante.
@@ -9267,6 +9314,7 @@
               let diag
               if (r.join() === inv.join())
                 diag = {
+                  e: 'E4',
                   m: 'Ce sont les poids lus à l’envers. Le poids 128 est sous le bit de gauche.',
                 }
               else if (r.some((x) => !POIDS.includes(x)))
@@ -9512,7 +9560,11 @@
                 .filter((x) => x.d)
               if (!erreurs.length) return repondre(ex, c, { ok: true, v: lus.join(' ') })
               const x = erreurs[0]
-              repondre(ex, c, { ok: false, d: { m: nom(x.i) + ' : ' + x.d.m }, v: lus.join(' ') })
+              repondre(ex, c, {
+                ok: false,
+                d: { e: x.d.e, m: nom(x.i) + ' : ' + x.d.m },
+                v: lus.join(' '),
+              })
             })
             return c
           },
@@ -10468,6 +10520,17 @@
                   if (!ok) diag = diagEcrire(x, brut)
                 }
               }
+              // Une erreur critique reconnue (E4) part au bilan, comme dans le cours et en pratique.
+              const bloque = Boolean(
+                diag?.e &&
+                !n.dispatchEvent(
+                  new CustomEvent('fiche:erreur', {
+                    bubbles: true,
+                    cancelable: true,
+                    detail: { erreur: diag.e, ou: 'vitesse' },
+                  }),
+                ),
+              )
               if (ok && t <= s) {
                 justes += 1
                 entete.textContent = fr(texteEntete())
@@ -10480,10 +10543,30 @@
                     ' Réponse : ' +
                     attendu +
                     '.' +
-                    (diag ? ' ' + diag.m : ''),
+                    (diag ? ' ' + diag.m : '') +
+                    (bloque ? ATTENDRE_BILAN : ''),
                 )
               }
               k += 1
+              if (bloque) {
+                // Le bilan attend : la série s'arrête sans résultat, l'aisance reprend après l'envoi.
+                const fermer = el('button', {
+                  type: 'button',
+                  class: 'bouton secondaire',
+                  text: 'Fermer la série',
+                })
+                fermer.addEventListener('click', () => {
+                  zone.replaceChildren(
+                    el('p', {
+                      class: 'discret',
+                      text: 'Envoie ton bilan, puis reviens ici pour une nouvelle série.',
+                    }),
+                  )
+                })
+                bloc.append(el('div', { class: 'saisie' }, fermer))
+                setTimeout(() => fermer.focus(), 0)
+                return
+              }
               if (k === 10) {
                 const reussie = justes === 10
                 window.JanusPont?.envoyer('aisance.resultat', {

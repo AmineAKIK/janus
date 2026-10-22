@@ -2805,7 +2805,7 @@
         >
           <p class="q">
             La condition : âge ≥ 18 ET NON banni OU invité. Ce soir : âge = 16, banni = FAUX, invité
-            = VRAI.
+            = VRAI. Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.
           </p>
         </div>
       </div>
@@ -2825,7 +2825,8 @@
         >
           <p class="q">
             Une boutique fait une réduction SI prix &lt; 20 OU membre ET NON soldé. Avec prix = 15,
-            membre = VRAI et soldé = VRAI, la réduction s’applique-t-elle ?
+            membre = VRAI et soldé = VRAI, la réduction s’applique-t-elle ? Ordre de calcul :
+            parenthèses, comparaisons, NON, ET, OU.
           </p>
         </div>
       </div>
@@ -2841,7 +2842,7 @@
         >
           <p class="q">
             Un parking est payant SI (heure &lt; 9 OU heure ≥ 17) ET NON férié. Calcule-le pour
-            heure = 18 et férié = FAUX.
+            heure = 18 et férié = FAUX. Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.
           </p>
         </div>
       </div>
@@ -2929,7 +2930,8 @@
         <div class="ex" data-widget="choix" data-id="t6" data-reponse="oui" data-melanger="non">
           <p class="q">
             Avant de lire la condition : sans parenthèses, nouveau OU commande &gt; 50 ET NON soldé,
-            un nouveau client aurait-il le code sur un article soldé ?
+            un nouveau client aurait-il le code sur un article soldé ? Ordre de calcul :
+            parenthèses, comparaisons, NON, ET, OU.
           </p>
           <ul class="options">
             <li data-option="oui">Oui</li>
@@ -2985,9 +2987,9 @@
               data-option="exclusif"
               class="mono"
               data-erreur="E1"
-              data-retour="Cette forme est le OU exclusif : un dimanche férié serait payant. Rien dans la phrase ne l’interdit : c’est le OU inclusif, qui accepte les deux."
+              data-retour="Avec « mais pas les deux », un dimanche férié serait payant. Rien dans la phrase ne l’interdit : c’est le OU inclusif, qui accepte les deux. L’écran suivant montre comment écrire un « ou » qui refuse les deux."
             >
-              (dimanche OU férié) ET NON (dimanche ET férié)
+              dimanche OU férié, mais pas les deux
             </li>
           </ul>
         </div>
@@ -3700,7 +3702,8 @@
         <div class="ex" data-widget="choix" data-id="j5" data-reponse="let">
           <p class="q">
             Avant de lire la suite : Paul a 70 ans, et il est étudiant. Comment ranges-tu ces deux
-            données dans les variables age et etudiant ?
+            données dans les variables age et etudiant ? En JavaScript, = range une valeur, ===
+            compare, et VRAI s’écrit true.
           </p>
           <ul class="options">
             <li data-option="let" class="mono">let age = 70, puis let etudiant = true</li>
@@ -3747,6 +3750,7 @@ let etudiant = true</code></pre>
         <div class="ex" data-widget="choix" data-id="j4" data-reponse="elseif" data-melanger="non">
           <p class="q">
             Avant de lire la suite : comment s’écrit la ligne 2, SINON SI étudiant OU âge &lt; 26 ?
+            En JavaScript, ET s’écrit &amp;&amp; et OU s’écrit ||.
           </p>
           <ul class="options">
             <li data-option="elseif" class="mono">else if (etudiant || age &lt; 26)</li>
@@ -3769,7 +3773,10 @@ let etudiant = true</code></pre>
         <pre><code>} else if (etudiant || age &lt; 26) {
   console.log('7 €')</code></pre>
         <div class="ex" data-widget="choix" data-id="j7" data-reponse="sup">
-          <p class="q">Avant de lire la suite : comment s’écrit la ligne 3, SINON SI âge ≥ 65 ?</p>
+          <p class="q">
+            Avant de lire la suite : comment s’écrit la ligne 3, SINON SI âge ≥ 65 ? En JavaScript,
+            ≥ s’écrit &gt;=, et &gt; garde son signe.
+          </p>
           <ul class="options">
             <li data-option="sup" class="mono">else if (age &gt;= 65)</li>
             <li
@@ -3964,47 +3971,9 @@ if (age &lt; 12) {
 
     <!-- ET12, ensemble : le schéma de mémoire, le pari repris et corrigé, ce qui suit. -->
     <template data-etape="ET12">
-      <div data-ecran="Ton pari">
-        <p class="accroche">
-          Tu as vu toutes les pièces. Reviens maintenant au guichet du début, et à ton pari.
-        </p>
-        <pre
-          class="pseudo"
-          data-pseudo="guichet"
-        ><code><span class="l" data-l="1"><b>SI</b> âge &lt; 12 :</span>
-<span class="l br" data-l="1">  afficher « 5 € »</span>
-<span class="l" data-l="2"><b>SINON SI</b> étudiant <b>OU</b> âge &lt; 26 :</span>
-<span class="l br" data-l="2">  afficher « 7 € »</span>
-<span class="l" data-l="3"><b>SINON SI</b> âge ≥ 65 :</span>
-<span class="l br" data-l="3">  afficher « 8 € »</span>
-<span class="l" data-l="4"><b>SINON</b> :</span>
-<span class="l br" data-l="4">  afficher « 10 € »</span></code></pre>
-        <div class="ex" data-widget="choix" data-id="f2" data-reponse="sept" data-melanger="non">
-          <p class="q">Paul a 70 ans, et il est étudiant. Qu’affiche le guichet ?</p>
-          <p class="discret" data-widget="rappel-pari" hidden></p>
-          <ul class="options">
-            <li data-option="sept">7 €</li>
-            <li
-              data-option="huit"
-              data-erreur="E3"
-              data-retour="La ligne âge ≥ 65 n’est jamais testée pour Paul : il est étudiant, donc la ligne 2 donne déjà 7 €, et le guichet s’arrête là."
-            >
-              8 €
-            </li>
-            <li
-              data-option="deux"
-              data-erreur="E3"
-              data-retour="Le guichet n’affiche qu’un prix : il s’arrête à la première condition VRAIE, et les conditions qui suivent ne sont même pas testées."
-            >
-              7 €, puis 8 €
-            </li>
-          </ul>
-        </div>
-      </div>
       <div data-ecran="Le schéma, de mémoire">
         <p class="accroche">
-          Le guichet t’a montré tout le chemin, de Paul au prix affiché. Refais maintenant le schéma
-          du bloc, de mémoire.
+          Tu as vu toutes les pièces. Avant de revenir au guichet, refais le schéma de mémoire.
         </p>
         <div class="ex" data-widget="schema" data-id="f1">
           <p class="q">Complète le schéma avec les mots du cours : un ou deux mots par case.</p>
@@ -4038,6 +4007,41 @@ if (age &lt; 12) {
               >ce qui s’exécute</span
             >
           </div>
+        </div>
+      </div>
+      <div data-ecran="Ton pari">
+        <p class="accroche">Reviens maintenant au guichet du début, et à ton pari.</p>
+        <pre
+          class="pseudo"
+          data-pseudo="guichet"
+        ><code><span class="l" data-l="1"><b>SI</b> âge &lt; 12 :</span>
+<span class="l br" data-l="1">  afficher « 5 € »</span>
+<span class="l" data-l="2"><b>SINON SI</b> étudiant <b>OU</b> âge &lt; 26 :</span>
+<span class="l br" data-l="2">  afficher « 7 € »</span>
+<span class="l" data-l="3"><b>SINON SI</b> âge ≥ 65 :</span>
+<span class="l br" data-l="3">  afficher « 8 € »</span>
+<span class="l" data-l="4"><b>SINON</b> :</span>
+<span class="l br" data-l="4">  afficher « 10 € »</span></code></pre>
+        <div class="ex" data-widget="choix" data-id="f2" data-reponse="sept" data-melanger="non">
+          <p class="q">Paul a 70 ans, et il est étudiant. Qu’affiche le guichet ?</p>
+          <p class="discret" data-widget="rappel-pari" hidden></p>
+          <ul class="options">
+            <li data-option="sept">7 €</li>
+            <li
+              data-option="huit"
+              data-erreur="E3"
+              data-retour="La ligne âge ≥ 65 n’est jamais testée pour Paul : il est étudiant, donc la ligne 2 donne déjà 7 €, et le guichet s’arrête là."
+            >
+              8 €
+            </li>
+            <li
+              data-option="deux"
+              data-erreur="E3"
+              data-retour="Le guichet n’affiche qu’un prix : il s’arrête à la première condition VRAIE, et les conditions qui suivent ne sont même pas testées."
+            >
+              7 €, puis 8 €
+            </li>
+          </ul>
         </div>
       </div>
       <div data-ecran="Si le cinéma change d’avis">
@@ -4532,8 +4536,8 @@ if (age &lt; 12) {
       >
         <p class="q">
           Ce code doit afficher « ouvert » seulement avec le code 1234. Il affiche « ouvert » même
-          quand code vaut 0. Pourquoi ? Dans un if, JavaScript compte tout nombre autre que 0 comme
-          VRAI.
+          quand code vaut 0. Pourquoi ? En JavaScript, = range une valeur, === compare, et
+          &amp;&amp; est le ET. Dans un if, JavaScript compte tout nombre autre que 0 comme VRAI.
         </p>
         <pre><code>if (code = 1234) {
   console.log('ouvert')
@@ -4568,7 +4572,8 @@ if (age &lt; 12) {
       >
         <p class="q">
           Ce code doit afficher « bloqué » au troisième essai raté. Il affiche « bloqué » dès le
-          premier. Pourquoi ? Dans un if, JavaScript compte tout nombre autre que 0 comme VRAI.
+          premier. Pourquoi ? En JavaScript, = range une valeur, === compare, et &amp;&amp; est le
+          ET. Dans un if, JavaScript compte tout nombre autre que 0 comme VRAI.
         </p>
         <pre><code>if (essais = 3) {
   console.log('bloqué')
@@ -5301,7 +5306,7 @@ if (age &lt; 12) {
           },
           {
             "id": "B02-Q13",
-            "question": "En JavaScript, tu tapes let total = 0, puis total = 5, puis total === 0. Que contient total à la fin, et que répond la console à la dernière ligne ?",
+            "question": "En JavaScript, let crée une variable, = range une valeur et === compare. Tu tapes let total = 0, puis total = 5, puis total === 0. Que contient total à la fin, et que répond la console à la dernière ligne ?",
             "attendu": "total contient 5 : total = 5 est une affectation, elle range 5 à la place de 0, car une variable ne garde qu’une valeur à la fois. total === 0 compare sans rien changer : 5 n’est pas 0, la console répond false. Prendre total = 5 pour une comparaison, c’est l’erreur E4. Déduit de l’étape 9.",
             "erreurs": ["E4"]
           },
@@ -5325,7 +5330,7 @@ if (age &lt; 12) {
           },
           {
             "id": "B02-Q12",
-            "question": "Dans la console, tu tapes let prix = 12, puis Entrée, puis prix >= 10, puis Entrée. Que répond la console à chaque ligne ? Tu tapes ensuite prix = 8, puis de nouveau prix >= 10 : que répond-elle à cette dernière ligne ?",
+            "question": "En JavaScript, let crée une variable, = range une valeur et ≥ s’écrit >=. Dans la console, tu tapes let prix = 12, puis Entrée, puis prix >= 10, puis Entrée. Que répond la console à chaque ligne ? Tu tapes ensuite prix = 8, puis de nouveau prix >= 10 : que répond-elle à cette dernière ligne ?",
             "attendu": "À let prix = 12, elle répond undefined, qui n’est pas une erreur ; à prix >= 10, elle répond true. Après prix = 8, prix >= 10 répond false : l’affectation a remplacé 12 par 8, une variable ne garde qu’une valeur à la fois, et la comparaison se recalcule avec la valeur du moment, 8 >= 10. Ce que la console répond à prix = 8 n’est pas demandé. Déduit des étapes 4 et 9.",
             "erreurs": []
           }
@@ -5538,8 +5543,8 @@ if (age &lt; 12) {
             "verso": "Une valeur où une condition change : la dernière où elle est FAUSSE et la première où elle est VRAIE, 17 et 18 pour âge ≥ 18, 18 et 19 pour âge > 18. Déduit des étapes 4 et 8."
           },
           {
-            "id": "B02-K12",
-            "recto": "Pourquoi if (age = 18) s’exécute-t-il toujours ?",
+            "id": "B02-K14",
+            "recto": "En JavaScript, = range une valeur et === compare ; dans un if, tout nombre autre que 0 compte comme VRAI. Pourquoi if (age = 18) s’exécute-t-il toujours ?",
             "verso": "= range 18 dans age au lieu de comparer, et 18 compte comme VRAI. Pour comparer, c’est === : if (age === 18). D’après l’étape 9."
           },
           {
@@ -5629,7 +5634,7 @@ if (age &lt; 12) {
               "B02-Q12",
               "B02-DE11",
               "B02-DT8",
-              "B02-K12",
+              "B02-K14",
               "B02-K10"
             ]
           }
@@ -5689,7 +5694,7 @@ if (age &lt; 12) {
             "vers": "N7",
             "type": "opposition",
             "montree": "ET9",
-            "questions": ["B02-DE11", "B02-C7", "B02-K12"]
+            "questions": ["B02-DE11", "B02-C7", "B02-K14"]
           },
           {
             "id": "L8",
