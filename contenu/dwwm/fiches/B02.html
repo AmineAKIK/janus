@@ -853,6 +853,43 @@
         flex-direction: column;
         gap: var(--espacement-8);
       }
+      /* Le schéma refait de mémoire (JanusGabarit.schema) : boîtes et flèches, l'une sous l'autre. */
+      .schema-libre {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-8);
+      }
+      .schema-chaine {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-4);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .schema-chaine input[type='text'] {
+        width: 100%;
+        max-width: 24rem;
+      }
+      .schema-boite input[type='text'] {
+        font-family: inherit;
+        font-weight: 600;
+      }
+      .schema-fleche {
+        display: flex;
+        align-items: center;
+        gap: var(--espacement-8);
+        padding-inline-start: var(--espacement-20);
+      }
+      .schema-fleche::before {
+        content: '↓';
+        color: var(--couleur-texte-secondaire);
+      }
+      .schema-fleche input[type='text'] {
+        max-width: 20rem;
+        font-family: inherit;
+        font-style: italic;
+      }
       /* L'échelle d'aide (JanusGabarit.echelle) : le bouton, puis les crans ouverts. */
       .pouce {
         display: flex;
@@ -1399,27 +1436,6 @@
         font-size: 0.8125rem;
         font-weight: 400;
       }
-      .boite {
-        padding: var(--espacement-4);
-      }
-      .boite input[type='text'],
-      .lecture input[type='text'] {
-        width: 10rem;
-        max-width: 100%;
-        font-family: var(--police-texte);
-      }
-      .boite input::placeholder {
-        color: var(--couleur-texte-discret);
-        font-size: 0.875rem;
-      }
-      .boite input.juste,
-      .lecture input.juste {
-        border-color: var(--couleur-succes);
-      }
-      .boite input.fausse,
-      .lecture input.fausse {
-        border-color: var(--couleur-erreur);
-      }
       .fleche {
         color: var(--couleur-texte-secondaire);
         font-size: 0.875rem;
@@ -1635,22 +1651,6 @@
       }
       .schema-bloc .boite-fixe.eteinte small {
         color: var(--couleur-texte-discret);
-      }
-      .ordre-calcul {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: var(--espacement-8);
-      }
-      .ordre-calcul .boite input[type='text'] {
-        width: 5.5rem;
-      }
-      /* Une case dans une flèche : le texte de la flèche reste autour. */
-      .fleche .boite {
-        display: inline-block;
-      }
-      .fleche .boite input[type='text'] {
-        width: 6rem;
       }
 
       /* Le guichet : les clients, puis le prix affiché. */
@@ -3776,9 +3776,11 @@
         </p>
         <p>
           Une différence avec l’ordre de l’étape 6 : en JavaScript, ! passe avant les comparaisons.
-          <code>!age &gt;= 18</code> calcule d’abord !age, puis compare ce résultat à 18 : la
-          condition vaut false pour tous les âges, même 30. Pour nier une comparaison, garde les
-          parenthèses : <code>!(age &gt;= 18)</code>.
+          <code>!age &gt;= 18</code> calcule d’abord !age, puis compare ce résultat à 18. Or !age ne
+          donne pas un âge, mais true ou false : pour 30, false. Comparé à un nombre, false compte
+          comme 0 et true comme 1, tous deux plus petits que 18 : la condition vaut false pour tous
+          les âges, même 30. Pour nier une comparaison, garde les parenthèses :
+          <code>!(age &gt;= 18)</code>.
         </p>
       </div>
       <div data-ecran="Variable et égalité">
@@ -4123,36 +4125,23 @@ if (age &lt; 12) {
           Tu as vu toutes les pièces. Avant de revenir au guichet, refais le schéma de mémoire.
         </p>
         <div class="ex" data-widget="schema" data-id="f1">
-          <p class="q">Complète le schéma avec les mots du cours : un ou deux mots par case.</p>
-          <div class="chaine">
-            <span class="boite" data-case="les données" data-mots="donnee|valeur|variable"
-              >ce que le programme reçoit</span
+          <p class="q">
+            Refais de mémoire le schéma du bloc, avec tes mots : écris ses boîtes, et sur chaque
+            flèche ce qu’elle fait. Ajoute autant de boîtes qu’il en faut.
+          </p>
+          <div class="modele" hidden>
+            <div
+              class="chaine"
+              data-lecture="Le schéma du cours. Les données, comparées, donnent des faits, VRAI ou FAUX. Combinés par NON, ET, OU, dans l’ordre de calcul, ils donnent une condition, une seule valeur. La première condition VRAIE choisit une seule branche."
             >
-            <span class="fleche">comparées, donnent</span>
-            <span
-              class="boite"
-              data-case="des faits, VRAI ou FAUX"
-              data-mots="fait|vrai|faux|booleen|true"
-              >ce qu’on en tire</span
-            >
-            <span class="fleche">combinés par NON, ET, OU, dans l’ordre de calcul, donnent</span>
-            <span class="boite" data-case="une condition, une seule valeur" data-mots="condition"
-              >ce qu’on obtient</span
-            >
-            <span class="fleche"
-              >la première
-              <span
-                class="boite"
-                data-case="VRAIE"
-                data-mots="vrai|true"
-                data-libelle="Laquelle choisit la branche : la première…"
-                >laquelle ?</span
-              >
-              choisit</span
-            >
-            <span class="boite" data-case="une seule branche" data-mots="branche"
-              >ce qui s’exécute</span
-            >
+              <span class="boite">les données</span>
+              <span class="fleche">comparées, donnent</span>
+              <span class="boite">des faits, VRAI ou FAUX</span>
+              <span class="fleche">combinés par NON, ET, OU, dans l’ordre de calcul, donnent</span>
+              <span class="boite">une condition, une seule valeur</span>
+              <span class="fleche">la première VRAIE choisit</span>
+              <span class="boite">une seule branche</span>
+            </div>
           </div>
         </div>
       </div>
@@ -5151,13 +5140,11 @@ if (age &lt; 12) {
           accents.
         </li>
         <li>
-          Schéma de mémoire (étape 12) : le schéma de l’étape 4, boîtes et flèches en place. Chaque
-          case est juste si elle contient le terme du cours (données, fait ou VRAI ou FAUX,
-          condition, VRAIE dans la flèche de la chaîne, branche), sans tenir compte des accents. La
-          flèche des faits à la condition est écrite en entier, « combinés par NON, ET, OU, dans
-          l’ordre de calcul » : l’ordre de calcul ne se demande pas de mémoire ; les cases fausses
-          sont bordées de rouge, et le retour dit combien sont justes et que chacune attend un mot
-          du cours.
+          Schéma de mémoire (étape 12) : le schéma de l’étape 4, redessiné sans charpente.
+          L’apprenant écrit chaque boîte, et sur chaque flèche ce qu’elle fait ; il ajoute ou retire
+          des boîtes. L’IA le juge sur le schéma du cours, sans que ça compte pour le statut ; pas
+          Solide, il se reprend une fois, d’après la correction ; puis le schéma du cours paraît,
+          pour comparer.
         </li>
       </ul>
       <h3>Les erreurs critiques et le prétest</h3>
@@ -5229,25 +5216,24 @@ if (age &lt; 12) {
           Sans aide » ; le nombre de lignes de l’étape 5, pour six conditions ; l’ordre et les
           valeurs limites de l’étape 8, sur la chaîne d’un forfait de données ; le JavaScript de
           l’étape 9, sur la force du vent, la première branche écrite. La trace de l’étape 8 se
-          refait sur deux clients tirés autour des seuils, aux prix différents, et le schéma de
-          l’étape 12 sur le même schéma, vide. Pendant qu’il refait, l’exercice et sa solution sont
-          cachés : seul l’autre cas reste à l’écran. Une fois l’autre cas réussi, l’apprenant
-          explique en une ou deux phrases pourquoi c’est juste, puis compare avec la solution de la
-          fiche ; la suite de l’écran paraît dès la réussite. Si c’est la solution de l’autre cas
-          qui est vue, rien n’a été réussi sans regarder : l’apprenant explique d’abord cette
-          solution avec ses mots, et la suite paraît une fois l’explication jugée par l’IA. À la
-          visite suivante, une solution vue qui n’a été ni refaite ni expliquée fait encore attendre
-          la suite de l’écran. Un choix a la même échelle (celle du gabarit) : chaque option fausse
-          est retirée, avec son retour, qui oriente ; tant que plusieurs options restent, « Un coup
-          de pouce » donne ensuite l’indice écrit dans la fiche, un par réponse fausse possible
-          avant la dernière option (dans le cours, deux pour les choix à quatre options de l’étape
-          8, la première ligne VRAIE pour Sarah et pour Jean, et de l’étape 9, ce qu’affiche la
-          console ; en pratique, PR1-4, PR1-5, PR1-7 et PR1-8). Le retour d’une option fausse nomme
-          la règle en cause sans désigner la bonne option : « La ligne 3 n’est testée que si la
-          ligne 2 est FAUSSE. Que vaut la ligne 2 pour Sarah ? ». Quand une seule option reste, même
-          pour un choix VRAI ou FAUX, elle est marquée : c’est une solution vue, et faute d’autre
-          cas l’apprenant explique avec ses mots pourquoi elle est la bonne ; l’IA juge son
-          explication, et la suite paraît ensuite.
+          refait sur deux clients tirés autour des seuils, aux prix différents. Pendant qu’il
+          refait, l’exercice et sa solution sont cachés : seul l’autre cas reste à l’écran. Une fois
+          l’autre cas réussi, l’apprenant explique en une ou deux phrases pourquoi c’est juste, et
+          l’IA juge son explication ; la suite de l’écran paraît dès la réussite. Si c’est la
+          solution de l’autre cas qui est vue, rien n’a été réussi sans regarder : l’apprenant
+          explique d’abord cette solution avec ses mots, et la suite paraît une fois l’explication
+          jugée par l’IA. À la visite suivante, une solution vue qui n’a été ni refaite ni expliquée
+          fait encore attendre la suite de l’écran. Un choix a la même échelle (celle du gabarit) :
+          chaque option fausse est retirée, avec son retour, qui oriente ; tant que plusieurs
+          options restent, « Un coup de pouce » donne ensuite l’indice écrit dans la fiche, un par
+          réponse fausse possible avant la dernière option (dans le cours, deux pour les choix à
+          quatre options de l’étape 8, la première ligne VRAIE pour Sarah et pour Jean, et de
+          l’étape 9, ce qu’affiche la console ; en pratique, PR1-4, PR1-5, PR1-7 et PR1-8). Le
+          retour d’une option fausse nomme la règle en cause sans désigner la bonne option : « La
+          ligne 3 n’est testée que si la ligne 2 est FAUSSE. Que vaut la ligne 2 pour Sarah ? ».
+          Quand une seule option reste, même pour un choix VRAI ou FAUX, elle est marquée : c’est
+          une solution vue, et faute d’autre cas l’apprenant explique avec ses mots pourquoi elle
+          est la bonne ; l’IA juge son explication, et la suite paraît ensuite.
         </li>
         <li>
           Dans la pratique, après une solution vue, l’item se refait sur sa variante, puis
@@ -5284,7 +5270,7 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 24,
+        "version": 26,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 expressions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
@@ -8670,7 +8656,7 @@ if (age &lt; 12) {
 
         /**
          * Après une solution montrée, l'apprenant refait sans regarder puis explique (règle F03) : il
-         * écrit son explication, puis la compare avec la solution de la fiche.
+         * écrit son explication, et l'IA la juge.
          */
         /** La clé de l'explication d'un exercice, pour la trace du gabarit (`explique:<cle>`). */
         function cleExplication(ex) {
@@ -10154,84 +10140,56 @@ if (age &lt; 12) {
             return c
           },
 
-          /** Le schéma du bloc, de mémoire : un ou deux mots par case, reconnus sans les accents. */
+          /** Le schéma du bloc, refait de mémoire et jugé par l'IA. */
           schema(ex) {
-            // L'autre essai, après une solution vue : le même schéma, vide, à refaire sans regarder.
-            const modele = ex.cloneNode(true)
-            modele.removeAttribute('data-id')
-            const champs = []
-            for (const caseVide of $$('[data-case]', ex)) {
-              const consigne = caseVide.textContent.trim()
-              const input = el('input', {
-                type: 'text',
-                autocomplete: 'off',
-                spellcheck: 'false',
-                'aria-label': caseVide.dataset.libelle || consigne,
-                placeholder: consigne,
-              })
-              caseVide.replaceChildren(input)
-              champs.push({
-                input,
-                mots: caseVide.dataset.mots.split('|'),
-                montre: caseVide.dataset.case,
-              })
-            }
-            const verifie = (ch) => {
-              const v = sansAccent(ch.input.value)
-              const mots = ' ' + v.replace(/[^a-z0-9]+/g, ' ') + ' '
-              return v.trim().length > 1 && ch.mots.some((a) => mots.includes(' ' + sansAccent(a)))
-            }
-            const bouton = boutonVerifier()
-            ex.append(el('div', { class: 'saisie' }, bouton))
-            const peindre = () =>
-              champs.map((ch) => {
-                const ok = verifie(ch)
-                ch.input.classList.toggle('juste', ok)
-                ch.input.classList.toggle('fausse', !ok)
-                return ok
-              })
+            // Le schéma refait de mémoire, jugé par l'IA (règle C08) : l'éditeur et le modèle caché
+            // sont ceux du gabarit. Solide, il est réussi ; sinon, après deux essais, le modèle paraît.
+            const schema = window.JanusGabarit.schema(ex)
+            const cle = 'ex:' + ex.dataset.id
             const c = {
-              variante: () => modele.cloneNode(true),
-              solution: () =>
-                'les données, comparées, donnent des faits, VRAI ou FAUX ; combinés par NON, ET, OU, ils donnent une condition, une seule valeur ; la première VRAIE de la chaîne choisit une seule branche',
-              remplir(etat, v) {
-                const vs = v && etat !== 'vu' ? String(v).split('|') : null
-                champs.forEach((ch, i) => {
-                  ch.input.value = vs ? vs[i] || '' : ch.montre
-                })
-                peindre()
+              sansEchelle: true,
+              solution: () => schema.attendu,
+              remplir() {
+                schema.montrer()
               },
               bloquer() {
-                champs.forEach((ch) => {
-                  ch.input.disabled = true
-                })
-                bouton.disabled = true
+                schema.bloquer()
               },
             }
-            bouton.addEventListener('click', () => {
+            ex.addEventListener('fiche:trace', (e) => {
+              const trace = e.detail?.valeur
+              if (e.detail?.cle !== 'explique:' + cle || typeof trace?.fin !== 'string') return
               if (fini(ex)) return
-              if (champs.some((ch) => !ch.input.value.trim()))
-                return void dire(ex, '', 'Remplis toutes les cases, un ou deux mots dans chacune.')
-              const bons = peindre().filter(Boolean).length
-              const v = champs.map((ch) => ch.input.value.replace(/\|/g, ' ')).join('|')
-              if (bons === champs.length)
-                return repondre(ex, c, {
-                  ok: true,
-                  v,
-                  m: 'Juste. Les données donnent des faits, les faits une condition, et la première condition VRAIE choisit la branche.',
-                })
-              repondre(ex, c, {
-                ok: false,
-                d: {
-                  m:
-                    bons +
-                    ' cases justes sur ' +
-                    champs.length +
-                    '. Les cases en rouge sont à revoir : chacune attend un mot du cours.',
-                },
-                v,
-              })
+              const derniere = trace.essais?.[trace.essais.length - 1]?.correction
+              const solide = derniere?.niveau === 'solide'
+              const etat = trace.fin === 'simulee' || solide ? 'ok' : 'vu'
+              tracer(cle, { e: etat, v: null })
+              appliquer(
+                ex,
+                c,
+                etat,
+                null,
+                solide
+                  ? 'Ton schéma est Solide. Voici celui du cours, pour comparer.'
+                  : 'Voici le schéma du cours\u00a0: compare-le au tien, boîte par boîte, flèche par flèche.',
+              )
             })
+            queueMicrotask(() =>
+              ex.dispatchEvent(
+                new CustomEvent('fiche:expliquer', {
+                  bubbles: true,
+                  detail: {
+                    cle,
+                    solution: schema.attendu,
+                    consigne: 'Ton schéma, de mémoire\u00a0:',
+                    question: schema.question,
+                    saisie: schema.saisie,
+                    essais: 2,
+                    envoyer: 'Faire juger mon schéma',
+                  },
+                }),
+              ),
+            )
             return c
           },
         }
@@ -11066,8 +11024,12 @@ if (age &lt; 12) {
        * explications qui ne le sont pas, la page émet `fiche:explication-ratee` sur l'exercice : l'outil
        * montre la solution, et l'item se refait sur sa variante. Une explication que le manifeste ne
        * déclare pas (après une solution vue) se juge sur la solution de la page, une fois, et ne compte
-       * jamais. Sans correcteur, l'explication attend qu'on la renvoie : la page ne juge rien à la place
-       * de l'IA. Hors de l'appli, la correction est simulée et ne retient rien. La trace
+       * jamais ; l'outil peut lui permettre plus d'un essai (`essais`), jusqu'à une correction Solide.
+       * Un outil qui a sa propre saisie (un schéma refait de mémoire) la donne dans `saisie` :
+       * `{ element, lire, manque }`, l'élément à poser à la place du champ, son texte pour le
+       * correcteur, et ce qui manque avant l'envoi (vide : rien) ; `envoyer` nomme le bouton, et
+       * `question`, la question pour le correcteur quand la consigne de l'écran ne suffit pas. Sans
+       * correcteur, l'explication attend qu'on la renvoie : la page ne juge rien à la place de l'IA. Hors de l'appli, la correction est simulée et ne retient rien. La trace
        * `explique:<cle>` garde les essais et leur correction ; elle est émise quand l'explication est
        * finie, pour l'outil qui attend la suite.
        */
@@ -11081,11 +11043,25 @@ if (age &lt; 12) {
       const itemReussi = (item) => Boolean(etat.pratique[item]?.reussi) && explicationFaite(item)
       // Sur #contenu, qui porte tous les exercices de la page.
       $('contenu').addEventListener('fiche:expliquer', (evenement) => {
-        const { cle, solution, consigne } = evenement.detail ?? {}
+        const {
+          cle,
+          solution,
+          consigne,
+          question,
+          saisie,
+          essais: permis,
+          envoyer,
+        } = evenement.detail ?? {}
         const exercice = evenement.target
         if (!(exercice instanceof HTMLElement) || typeof cle !== 'string' || cle === '') return
         if (exercice.querySelector(':scope > .expliquer')) return
         const declaree = explicationDeclaree(cle)
+        // Une explication déclarée a deux essais ; une autre, un seul, sauf si l'outil en permet plus.
+        const maximum = declaree
+          ? ESSAIS_D_EXPLICATION
+          : Number.isInteger(permis) && permis > 0
+            ? permis
+            : 1
         // La page montre la consigne de l'outil ; le correcteur lit la question du manifeste, qui se
         // comprend sans l'écran.
         const intitule =
@@ -11119,11 +11095,15 @@ if (age &lt; 12) {
         }
         const formulaire = (rang) => {
           const id = 'explique-' + cle.replace(/[^\w-]/g, '_') + '-' + rang
-          const champ = creer('textarea', {
-            id,
-            rows: 3,
-            value: rang === 0 && typeof ancienne?.texte === 'string' ? ancienne.texte : '',
-          })
+          // L'outil peut donner sa saisie (un schéma à refaire) : la page la lit en texte.
+          const champ = saisie
+            ? saisie.element
+            : creer('textarea', {
+                id,
+                rows: 3,
+                value: rang === 0 && typeof ancienne?.texte === 'string' ? ancienne.texte : '',
+              })
+          const lireChamp = () => (saisie ? saisie.lire() : champ.value)
           let colle = false
           champ.addEventListener('paste', () => {
             colle = true
@@ -11146,15 +11126,20 @@ if (age &lt; 12) {
           const bouton = creer('button', {
             type: 'button',
             className: 'bouton secondaire petit',
-            textContent: 'Envoyer mon explication',
+            textContent:
+              typeof envoyer === 'string' && envoyer !== '' ? envoyer : 'Envoyer mon explication',
           })
           const bloc = creer(
             'div',
             { className: 'expliquer-essai' },
-            creer('label', {
-              htmlFor: id,
+            creer(saisie ? 'p' : 'label', {
+              ...(saisie ? {} : { htmlFor: id }),
               textContent:
-                rang === 0 ? intitule : 'Reprends ton explication, d’après la correction\u00a0:',
+                rang === 0
+                  ? intitule
+                  : saisie
+                    ? 'Reprends-le, d’après la correction\u00a0:'
+                    : 'Reprends ton explication, d’après la correction\u00a0:',
             }),
             champ,
             confiance,
@@ -11163,7 +11148,9 @@ if (age &lt; 12) {
           )
           bouton.addEventListener('click', async () => {
             const choisie = confiance.querySelector('input:checked')
-            if (champ.value.trim() === '')
+            const manque = saisie ? saisie.manque() : ''
+            if (manque) return void (message.textContent = manque)
+            if (lireChamp().trim() === '')
               return void (message.textContent = 'Écris d’abord ton explication.')
             if (!choisie)
               return void (message.textContent = 'Choisis ta confiance avant d’envoyer.')
@@ -11173,24 +11160,32 @@ if (age &lt; 12) {
               const correction = await pont.demanderCorrection({
                 serie: 'explication',
                 question: cle,
-                reponse: champ.value,
+                reponse: lireChamp(),
                 confiance: choisie.value,
                 relance: '',
                 support: { colle, retour_cours: etat.retourCours },
                 ...(declaree
                   ? {}
-                  : { libre: { question: intitule, attendu: String(solution ?? '') } }),
+                  : {
+                      libre: {
+                        question:
+                          typeof question === 'string' && question !== '' ? question : intitule,
+                        attendu: String(solution ?? ''),
+                      },
+                    }),
               })
               noterReperees('explique:' + cle, correction.erreurs_critiques)
-              essais.push({ texte: champ.value, correction: resumeCorrection(correction) })
+              essais.push({ texte: lireChamp(), correction: resumeCorrection(correction) })
               const fin =
                 mode === 'autonome'
                   ? 'simulee'
                   : !declaree
-                    ? 'jugee'
+                    ? correction.niveau === 'solide' || essais.length >= maximum
+                      ? 'jugee'
+                      : null
                     : correction.niveau === 'solide' && correction.compte
                       ? 'solide'
-                      : essais.length >= ESSAIS_D_EXPLICATION
+                      : essais.length >= maximum
                         ? 'ratee'
                         : null
               if (fin === null) {
@@ -11656,8 +11651,129 @@ if (age &lt; 12) {
           maj,
         }
       }
+      /**
+       * Le schéma du bloc refait de mémoire (règle C08), le même pour toutes les fiches : l'apprenant
+       * écrit les boîtes et, sur chaque flèche, ce qu'elle fait ; il ajoute ou retire des boîtes, rien
+       * n'est donné. Le schéma du cours est dans l'exercice, caché (`.modele`) : des `.boite` et des
+       * `.fleche` dans une `.chaine`, et peut-être des `.lecture` (ce que donne chaque règle) ; avec
+       * des lectures, un champ demande de les écrire aussi. Rend la saisie que `fiche:expliquer` pose
+       * à la place de son champ (`element`, `lire`, `manque`), l'attendu pour le correcteur, la
+       * question qui se comprend sans l'écran, `montrer()` qui dévoile le modèle et `bloquer()`.
+       */
+      function schema(ex) {
+        const modele = ex.querySelector(':scope > .modele')
+        const morceaux = modele ? [...modele.querySelectorAll(':scope .chaine > *')] : []
+        const enTexte = (noeud) => noeud.textContent.replace(/\s+/g, ' ').trim()
+        const ecrire = (boites, fleches) =>
+          boites
+            .map(
+              (boite, i) =>
+                '[' + boite + ']' + (i < fleches.length ? ' —' + fleches[i] + '→ ' : ''),
+            )
+            .join('')
+        const boitesModele = morceaux.filter((m) => m.classList.contains('boite')).map(enTexte)
+        const flechesModele = morceaux.filter((m) => m.classList.contains('fleche')).map(enTexte)
+        const lectures = modele ? [...modele.querySelectorAll('.lecture')].map(enTexte) : []
+        const attendu =
+          ecrire(boitesModele, flechesModele) +
+          (lectures.length ? '. Les règles\u00a0: ' + lectures.join('\u00a0; ') : '') +
+          '.'
+        const question =
+          'Refais de mémoire le schéma du bloc, avec tes mots\u00a0: ses boîtes, et sur chaque flèche ce qu’elle fait. L’apprenant l’écrit [boîte] —flèche→ [boîte], dans l’ordre' +
+          (lectures.length ? ', puis les règles qu’il connaît et ce que chacune donne' : '') +
+          '. Le schéma est juste s’il dit les mêmes relations, dans le même ordre, avec des mots équivalents\u00a0; une boîte ou une flèche qui manque, en trop ou à la mauvaise place est une erreur.'
+        const chaine = creer('ol', { className: 'schema-chaine' })
+        const boutonAjouter = creer('button', {
+          type: 'button',
+          className: 'bouton secondaire petit',
+          textContent: 'Ajouter une flèche et une boîte',
+        })
+        const boutonRetirer = creer('button', {
+          type: 'button',
+          className: 'bouton secondaire petit',
+          textContent: 'Retirer la dernière boîte',
+        })
+        const regles = lectures.length
+          ? creer('textarea', { rows: 3, id: 'schema-regles-' + (ex.dataset.id ?? '') })
+          : null
+        const element = creer(
+          'div',
+          { className: 'schema-libre' },
+          chaine,
+          creer('div', { className: 'actions' }, boutonAjouter, boutonRetirer),
+          ...(regles
+            ? [
+                creer('label', {
+                  htmlFor: regles.id,
+                  textContent: 'Les règles que tu connais, et ce que chacune donne\u00a0:',
+                }),
+                regles,
+              ]
+            : []),
+        )
+        const champs = () => [...chaine.querySelectorAll('input')]
+        function ajouter(type) {
+          const rang = chaine.querySelectorAll('.schema-' + type).length + 1
+          const entree = creer('input', {
+            type: 'text',
+            autocomplete: 'off',
+            spellcheck: false,
+          })
+          entree.setAttribute(
+            'aria-label',
+            type === 'boite' ? 'Boîte ' + rang : 'Flèche ' + rang + '\u00a0: ce qu’elle fait',
+          )
+          entree.placeholder = type === 'boite' ? 'Boîte ' + rang : 'ce que fait la flèche'
+          chaine.append(creer('li', { className: 'schema-' + type }, entree))
+          return entree
+        }
+        function majBoutons() {
+          boutonRetirer.disabled = chaine.querySelectorAll('.schema-boite').length <= 2
+        }
+        ajouter('boite')
+        ajouter('fleche')
+        ajouter('boite')
+        majBoutons()
+        boutonAjouter.addEventListener('click', () => {
+          ajouter('fleche')
+          ajouter('boite').focus()
+          majBoutons()
+        })
+        boutonRetirer.addEventListener('click', () => {
+          if (chaine.querySelectorAll('.schema-boite').length <= 2) return
+          chaine.lastElementChild?.remove()
+          chaine.lastElementChild?.remove()
+          majBoutons()
+        })
+        const valeurs = (type) =>
+          [...chaine.querySelectorAll('.schema-' + type + ' input')].map((i) => i.value.trim())
+        return {
+          saisie: {
+            element,
+            lire: () =>
+              ecrire(valeurs('boite'), valeurs('fleche')) +
+              (regles && regles.value.trim() ? '. Les règles\u00a0: ' + regles.value.trim() : ''),
+            manque: () =>
+              champs().some((i) => i.value.trim() === '')
+                ? 'Écris chaque boîte et chaque flèche, ou retire celles qui sont en trop.'
+                : '',
+          },
+          attendu,
+          question,
+          montrer() {
+            if (!modele) return
+            // Le modèle vient en dernier, après le schéma de l'apprenant et sa correction.
+            ex.append(modele)
+            modele.hidden = false
+          },
+          bloquer() {
+            for (const champ of element.querySelectorAll('input, textarea, button'))
+              champ.disabled = true
+          },
+        }
+      }
       // Ce que le gabarit prête aux outils des fiches.
-      window.JanusGabarit = Object.freeze({ echelle })
+      window.JanusGabarit = Object.freeze({ echelle, schema })
 
       /**
        * Le pied d'une étape : le bouton vers l'étape d'après. Tant qu'une série ouverte n'a pas toutes

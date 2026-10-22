@@ -108,10 +108,16 @@ function essaisEnTexte(html: string): string {
   )
 }
 
+/** Le schéma du cours, caché dans l'exercice qui le fait refaire de mémoire (`JanusGabarit.schema`), se tait. */
+const sansModele = (html: string) =>
+  remplacerElements(html, (_nom, attributs) =>
+    /\bclass\s*=\s*["']modele["']/i.test(attributs) ? '' : undefined,
+  )
+
 /** Le HTML d'une étape en texte simple : un paragraphe par ligne, les écrans en titres, les outils nommés. */
 function enTexte(html: string): string {
   return decoder(
-    essaisEnTexte(imagesEnTexte(sansCommentairesScriptsNiStyles(html)))
+    essaisEnTexte(imagesEnTexte(sansModele(sansCommentairesScriptsNiStyles(html))))
       .replace(/\s+/g, ' ')
       .replace(
         /<div\b[^>]*\bdata-widget\s*=\s*["']([^"']+)["'][^>]*>/gi,
@@ -126,7 +132,7 @@ function enTexte(html: string): string {
       // Deux cases collées d'une grille (le numéro et son signe) restent deux mots : 48 0, pas 480.
       .replace(/(<\/(?:span|b)>)(?=<(?:span|b)\b)/gi, '$1 ')
       .replace(
-        /<span\b[^>]*\bclass\s*=\s*["'][^"']*\b(?:boite-fixe|fleche)\b[^"']*["'][^>]*>/gi,
+        /<span\b[^>]*\bclass\s*=\s*["'][^"']*\b(?:boite-fixe|boite|fleche)\b[^"']*["'][^>]*>/gi,
         '\n',
       )
       .replace(/<small\b[^>]*>/gi, ' (')
@@ -290,6 +296,24 @@ function cachesDuTemplate(contenu: string): string[] {
         `- Schéma de mémoire, une fois toutes les cases justes, si l’apprenant a ouvert l’étape détaillée d’un élément : il explique le schéma sans le regarder, puis la page montre, pour comparer : « ${explication} »`,
       )
     else if (explication !== undefined) lignes.push(`- Après la réponse : ${explication}`)
+    if (lire('class') === 'modele') {
+      // L'élément entier : retiré de ce qui le suit, la différence est ce qu'il contient.
+      const reste = sansScripts.slice(balise.index)
+      let premier = true
+      const apres = remplacerElements(reste, () => {
+        if (!premier) return undefined
+        premier = false
+        return ''
+      })
+      // Son contenu, sans sa balise ouvrante ni sa fermante : enTexte tait le modèle entier.
+      const modele = reste
+        .slice(0, reste.length - apres.length)
+        .replace(/^<[^>]*>/, '')
+        .replace(/<\/[a-z0-9-]+>$/i, '')
+      lignes.push(
+        `- Schéma du cours, montré une fois le schéma refait de mémoire jugé par l’IA : ${enTexte(modele).replaceAll('\n', ' ')}`,
+      )
+    }
     const succes = lire('data-succes')
     if (succes !== undefined) lignes.push(`- Réussite : ${succes}`)
     const apres = lire('data-apres')
@@ -367,7 +391,8 @@ export const CE_QUE_FAIT_LE_GABARIT: readonly string[] = [
   'La série finie, une réponse qui n’est pas Solide peut se compléter une fois, après sa correction (« Compléter ma réponse », « Ce complément ne compte pas pour le statut ») ; seule la première réponse compte pour le statut. Une correction tirée au sort demande « D’accord avec ce niveau ? ». Le Suivi de l’appli compare la confiance déclarée aux résultats.',
   'Une explication demandée (après une réussite, ou après une solution vue) s’écrit avec sa confiance et part à la correction de l’appli, qui la juge comme une réponse de restitution et l’affiche aussitôt : niveau et message. En pratique, l’item demandé par le manifeste (`explication`) n’est réussi qu’avec une explication Solide qui compte (« Explication attendue », « l’item compte quand ton explication est Solide ») ; elle se reprend une fois d’après sa correction (« Reprends ton explication, d’après la correction ») ; la deuxième qui n’est pas Solide montre la solution, et l’item se refait sur un autre cas. Après une solution vue, l’explication se juge sur la solution et ne compte jamais (« Ne compte pas · Avec support »). Sans correction possible, elle attend : « Correction impossible : … Ton explication attend : renvoie-la. »',
   'Le statut du bloc suit les preuves : « En cours » dès la première trace, « Vu » quand chaque question de la restitution a sa première réponse, puis « Acquis provisoirement » (restitution, pratique et atelier faits), « Acquis » (vérifications réussies) et « Maîtrisé » (acquis, retesté avec succès, et la cible d’aisance atteinte). Une erreur critique ouverte le met « À reprendre », quel que soit le reste.',
-  'Ce que la fiche note sans le corriger (un pari, la reprise du pari, le schéma refait de mémoire), un outil le confie au gabarit (événement `fiche:trace`) : il part à l’appli dans l’état de la page, que l’appli garde, et revient à l’outil à la visite suivante.',
+  'Ce que la fiche note sans le corriger (un pari, la reprise du pari), un outil le confie au gabarit (événement `fiche:trace`) : il part à l’appli dans l’état de la page, que l’appli garde, et revient à l’outil à la visite suivante.',
+  'Le schéma du bloc se refait de mémoire, sans charpente : l’apprenant écrit ses boîtes et, sur chaque flèche, ce qu’elle fait (« Ajouter une flèche et une boîte », « Retirer la dernière boîte »), choisit sa confiance, puis « Faire juger mon schéma ». La correction de l’appli le juge sur le schéma du cours, l’affiche aussitôt, et ne compte pas pour le statut ; s’il n’est pas Solide, il se reprend une fois (« Reprends-le, d’après la correction »). Puis le schéma du cours paraît, pour comparer.',
   'Bilan, une fois la restitution finie : ce qui est fait (restitution, items réussis dont ceux sans aide), puis toutes les erreurs critiques du bloc, à cocher. Une erreur déjà ouverte, ou repérée depuis le dernier bilan (« Repérée dans tes réponses ») par le correcteur dans une réponse ou par un outil de la fiche (événement `fiche:erreur`, par exemple des bits lus à l’envers en pratique ou en aisance), est cochée d’office et ne se décoche pas : « Une erreur cochée, ou repérée dans tes réponses, reste cochée : seule une réponse solide à une question qui la touche la referme. » Une erreur repérée par le correcteur, puis rejetée dans l’appli (« Ce n’en est pas une »), n’est plus cochée d’office, sauf si une autre réponse ou un outil l’a aussi repérée.',
   'La restitution faite, une erreur repérée attend le bilan : l’aisance s’arrête tant qu’il n’est pas envoyé (« Une erreur critique a été repérée dans tes réponses : … reprend une fois ton bilan envoyé », avec « Aller au bilan »).',
   'Une erreur critique cochée met le bloc « À reprendre », quoi qu’il ait réussi ailleurs : rien ne la compense. Elle rouvre la restitution, où les questions qui la touchent reviennent sous « À reprendre », et elle ne se ferme que par une réponse Solide, qui compte, à une question qui touche la même erreur (restitution ou vérification). Décocher ne ferme rien.',
