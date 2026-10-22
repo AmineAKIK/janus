@@ -2367,6 +2367,15 @@
           y en a 8 : 0, 1, 2, 3, 4, 5, 6 et 7. Le 0 est une valeur comme les autres, c’est lui qu’on
           oublie le plus souvent.
         </p>
+        <p data-si-essai="c3b:faux">
+          Avec 2 lampes, tu avais compté <span data-essai-rappel="c3b">autre chose</span> valeurs.
+          Il y en a 4 : 0, 1, 2 et 3.
+        </p>
+        <p data-si-essai="c3c:faux">
+          Avec 4 lampes, tu avais compté <span data-essai-rappel="c3c">autre chose</span> valeurs.
+          Il y en a 16, de 0 à 15. Si tu as trouvé 15, c’est le plus grand nombre, pas le nombre de
+          valeurs : le 0 en est une.
+        </p>
         <p data-si-essai="c1:faux">
           Pour le plus grand nombre avec 3 lampes, tu avais répondu
           <span data-essai-rappel="c1">autre chose</span>. C’est 7 : il y a 8 valeurs, la première
@@ -2470,6 +2479,15 @@
             façon d’écrire les nombres s’appelle le <strong>système binaire</strong>, ou base 2.
           </li>
         </ul>
+        <p data-si-essai="c7c:faux">
+          Pour la 3e lampe, tu avais noté <span data-essai-rappel="c7c">autre chose</span>. Elle
+          s’allume pour la première fois à 4 : le double de la précédente, pas la suivante.
+        </p>
+        <p data-si-essai="c7d:faux">
+          Pour la 4e lampe, tu avais noté <span data-essai-rappel="c7d">autre chose</span>. Elle
+          s’allume pour la première fois à 8, le double de 4. Les poids ne vont pas de 1 en 1, ils
+          doublent.
+        </p>
         <p data-si-essai="c7e:faux">
           La 4e, la 2e et la 1re lampe allumées : tu avais répondu
           <span data-essai-rappel="c7e">autre chose</span>. Avec les poids, 8 + 2 + 1 = 11. Le
@@ -5288,9 +5306,9 @@
           les deux ouvertes.
         </li>
         <li>
-          Le compteur à lampes : de 1 à 8 lampes, +1 à chaque clic ; au-delà du plus grand nombre,
-          il repasse à 0 et le dit. Avec 8 lampes, « Aller à 250 » permet de vérifier la fin du
-          compte.
+          Le compteur à lampes : de 1 à 4 lampes, +1 à chaque clic ; au-delà du plus grand nombre,
+          il repasse à 0 et le dit. Il s’arrête à 4 lampes : les questions sur 5 et 8 lampes se
+          prédisent, rien ne permet de les vérifier avant la fin de la série.
         </li>
         <li>
           Le mélangeur : trois curseurs de 0 à 255, la couleur obtenue, son écriture rgb() et
@@ -10081,7 +10099,7 @@
           n.textContent = fr('Au début, tu avais répondu : « ' + option.textContent.trim() + ' »')
         }
 
-        /** Le compteur à lampes : de 1 à 8 lampes, +1, remise à 0, et « Aller à 250 » avec 8 lampes. */
+        /** Le compteur à lampes : de 1 à 4 lampes, +1, remise à 0. Au-delà, l'apprenant prédit (étape 3). */
         function compteur(n) {
           let nb = 3
           let v = 0
@@ -10098,13 +10116,8 @@
             class: 'bouton secondaire',
             text: 'Remettre à 0',
           })
-          const deuxCentCinquante = el('button', {
-            type: 'button',
-            class: 'bouton secondaire',
-            text: 'Aller à 250',
-          })
           const message = el('p', { class: 'message-outil', 'aria-live': 'polite' })
-          for (let k = 1; k <= 8; k++) {
+          for (let k = 1; k <= 4; k++) {
             const b = el('button', {
               type: 'button',
               class: 'bouton secondaire petit',
@@ -10126,7 +10139,6 @@
               ),
             )
             afficheur.textContent = String(v)
-            deuxCentCinquante.hidden = nb !== 8
             message.textContent = fr(texte)
           }
           plus.addEventListener('click', () => {
@@ -10146,15 +10158,11 @@
             v = 0
             peindre('')
           })
-          deuxCentCinquante.addEventListener('click', () => {
-            v = 250
-            peindre('')
-          })
           n.append(
             tailles,
             lampes,
             el('div', { class: 'rangee' }, el('span', { text: 'Compteur :' }), afficheur),
-            el('div', { class: 'rangee' }, plus, zero, deuxCentCinquante),
+            el('div', { class: 'rangee' }, plus, zero),
             message,
           )
           peindre('')
