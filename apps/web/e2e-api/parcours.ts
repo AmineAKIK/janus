@@ -31,6 +31,8 @@ export interface Manifeste {
   readonly erreurs_critiques: readonly { readonly id: string; readonly libelle: string }[]
   readonly restitution: readonly Question[]
   readonly pratique: readonly { readonly id: string; readonly items: readonly { id: string }[] }[]
+  /** Les explications que l'IA juge : l'item qui en déclare une ne compte qu'avec elle Solide. */
+  readonly explication?: readonly Question[]
   readonly atelier?: { readonly id: string }
   readonly aisance?: { readonly paliers_s: readonly number[] }
   readonly differees: readonly Differee[]
@@ -161,7 +163,10 @@ export async function envoyerMessage(
   expect(reponse.ok(), `${String(corps['type'])} : ${await reponse.text()}`).toBe(true)
 }
 
-/** La pratique réussie sans aide, item par item, et l'atelier s'il y en a un. */
+/**
+ * La pratique réussie sans aide, item par item, et l'atelier s'il y en a un. Un item qui déclare une
+ * explication l'envoie aussi, comme la fiche après la réussite, et le correcteur simulé la juge Solide.
+ */
 export async function reussirLaPratique(request: APIRequestContext, manifeste: Manifeste) {
   for (const exercice of manifeste.pratique) {
     for (const item of exercice.items) {
@@ -174,6 +179,25 @@ export async function reussirLaPratique(request: APIRequestContext, manifeste: M
         essais: 1,
       })
     }
+  }
+  for (const explication of manifeste.explication ?? []) {
+    if (explication.id !== explication.item) continue
+    const reponse = await request.post('/api/corrections', {
+      headers: { Origin: ORIGINE },
+      data: {
+        id: nouvelId(),
+        serie: 'explication',
+        tentative: 1,
+        question: explication.id,
+        reponse: reponseSolide(explication.attendu),
+        confiance: 'sur',
+        relance: '',
+        support: { colle: false, retour_cours: false },
+        bloc: manifeste.bloc,
+        version: manifeste.version,
+      },
+    })
+    expect(reponse.ok(), `explication ${explication.id} : ${await reponse.text()}`).toBe(true)
   }
   if (manifeste.atelier !== undefined) {
     await envoyerMessage(request, manifeste, {
