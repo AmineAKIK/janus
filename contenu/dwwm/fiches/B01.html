@@ -2263,6 +2263,7 @@
             </div>
           </div>
         </div>
+        <p>Ce nombre, propre à chaque lampe, s’appelle son <strong>poids</strong>.</p>
       </div>
       <div data-ecran="Sans le compteur">
         <p class="accroche">
@@ -2292,20 +2293,6 @@
         >
           <p class="q">Et le plus grand nombre que le compteur afficherait avec 8 lampes ?</p>
         </div>
-        <div
-          class="ex"
-          data-essai
-          data-widget="nombre"
-          data-id="c7e"
-          data-reponse="11"
-          data-diag="somme"
-          data-explication="8 + 2 + 1 = 11. Le compteur affiche toujours la somme des nombres de ses lampes allumées."
-        >
-          <p class="q">
-            Imagine la 4e, la 2e et la 1re lampe allumées, les autres éteintes. Avec les nombres que
-            tu as notés, quel nombre afficherait le compteur ?
-          </p>
-        </div>
         <div class="groupe">
           <p class="q">À quel nombre s’allumerait pour la première fois la 5e lampe ? Et la 8e ?</p>
           <div class="mini">
@@ -2330,6 +2317,20 @@
               <p class="q">8e lampe</p>
             </div>
           </div>
+        </div>
+        <div
+          class="ex"
+          data-essai
+          data-widget="nombre"
+          data-id="c7e"
+          data-reponse="19"
+          data-diag="somme"
+          data-explication="16 + 2 + 1 = 19. Le compteur affiche toujours la somme des nombres de ses lampes allumées."
+        >
+          <p class="q">
+            Imagine la 5e, la 2e et la 1re lampe allumées, les autres éteintes. Avec les nombres que
+            tu as notés et trouvés, quel nombre afficherait le compteur ?
+          </p>
         </div>
       </div>
     </template>
@@ -2357,7 +2358,8 @@
       <div data-ecran="Combien de valeurs">
         <ul>
           <li>
-            Chaque bit ajouté double le nombre de valeurs. Avec <em>n</em> bits, il y a 2<sup
+            Chaque bit ajouté double le nombre de valeurs : à 0, le nouveau bit laisse toutes les
+            valeurs d’avant ; à 1, il les donne une seconde fois. Avec <em>n</em> bits, il y a 2<sup
               >n</sup
             >
             valeurs : <em>n</em> fois le chiffre 2, multipliés entre eux, 2 × 2 × … × 2. Avec un
@@ -2391,8 +2393,7 @@
         </p>
         <p data-si-essai="c4:faux">
           Tu avais répondu <span data-essai-rappel="c4">autre chose</span> quand on ajoute une
-          lampe. Reprends tes comptes : 2, 4, 8, 16. La nouvelle lampe éteinte, on retrouve toutes
-          les valeurs d’avant ; allumée, on les retrouve une seconde fois. Le nombre double.
+          lampe. Reprends tes comptes : 2, 4, 8, 16. Chaque fois, le nombre double.
         </p>
         <p data-si-essai="c5:faux">
           Pour 8 lampes, tu avais répondu <span data-essai-rappel="c5">autre chose</span> valeurs.
@@ -2497,8 +2498,8 @@
           doublent.
         </p>
         <p data-si-essai="c7e:faux">
-          La 4e, la 2e et la 1re lampe allumées : tu avais répondu
-          <span data-essai-rappel="c7e">autre chose</span>. Avec les poids, 8 + 2 + 1 = 11. Le
+          La 5e, la 2e et la 1re lampe allumées : tu avais répondu
+          <span data-essai-rappel="c7e">autre chose</span>. Avec les poids, 16 + 2 + 1 = 19. Le
           compteur n’affiche rien d’autre que cette somme.
         </p>
         <p data-si-essai="c8a:faux">
@@ -3032,7 +3033,7 @@
           data-aide1="Où les deux octets diffèrent-ils ?"
           data-aide2="Compare-les chiffre par chiffre : un seul bit change. Quel poids a sa place ?"
           data-aide3="Le bit qui change est le 3e en partant de la gauche."
-          data-sinon="Compare les deux octets chiffre par chiffre : un seul est différent. Quel poids a sa place ?"
+          data-sinon="Pas encore : ce n’est pas le poids du bit qui change."
           data-solution="01000001 et 01100001 ne diffèrent que par le 3e bit en partant de la gauche, de poids 32 : 97 − 65 = 32"
         >
           <p class="q">
@@ -3048,7 +3049,7 @@
           data-aide1="Que faut-il ajouter à une majuscule pour avoir sa minuscule ?"
           data-aide2="Une minuscule, c’est sa majuscule plus le poids que tu viens de trouver."
           data-aide3="Ce poids est 32. Ajoute-le à 66."
-          data-sinon="Une minuscule, c’est sa majuscule plus le poids que tu viens de trouver."
+          data-sinon="Pas encore : ce n’est pas le numéro de b."
           data-solution="b = B + 32 = 66 + 32 = 98"
           data-explication="Une minuscule, c’est sa majuscule plus 32 : un seul bit à allumer."
         >
@@ -3493,8 +3494,7 @@
       <div data-ecran="Relire">
         <p class="accroche">
           Pour relire deux chiffres hexadécimaux : celui de gauche compte 16 fois, celui de droite
-          une fois. Pourquoi 16 fois ? Le chiffre de gauche écrit la moitié gauche de l’octet, dont
-          les poids, 128, 64, 32 et 16, valent 16 fois ceux de la moitié droite, 8, 4, 2 et 1.
+          une fois.
         </p>
         <div
           class="outil"
@@ -3522,10 +3522,40 @@
         </div>
         <div
           class="ex"
+          data-widget="choix"
+          data-id="hx16"
+          data-reponse="poids"
+          data-explication="Le chiffre de gauche écrit la moitié gauche de l’octet. Ses poids, 128, 64, 32 et 16, valent 16 fois ceux de la moitié droite, 8, 4, 2 et 1 : c’est pour ça qu’il compte 16 fois."
+        >
+          <p class="q">
+            Pourquoi le chiffre de gauche compte-t-il 16 fois ? Pense aux poids des 8 bits de
+            l’octet.
+          </p>
+          <ul class="options">
+            <li
+              data-option="table"
+              data-retour="La table a bien 16 chiffres, mais elle sert aux deux moitiés. Regarde plutôt les poids des bits que chaque chiffre écrit."
+            >
+              Parce que la table a 16 chiffres.
+            </li>
+            <li data-option="poids">
+              Il écrit la moitié gauche, dont les poids, 128, 64, 32 et 16, valent 16 fois ceux de
+              la moitié droite.
+            </li>
+            <li
+              data-option="convention"
+              data-retour="Les lettres a à f sont une convention, pas ce 16. Compare les poids de la moitié gauche à ceux de la moitié droite."
+            >
+              C’est une convention, comme les lettres a à f.
+            </li>
+          </ul>
+        </div>
+        <div
+          class="ex"
           data-widget="nombre"
           data-id="rl1"
           data-reponse="128"
-          data-sinon="Pas encore. Le chiffre de gauche compte 16 fois : calcule 8 × 16."
+          data-sinon="Pas encore : ce n’est pas ce que vaut ce 8."
           data-aide1="Que faut-il calculer pour le chiffre de gauche ?"
           data-aide2="Le chiffre de gauche compte 16 fois : multiplie 8 par 16."
           data-aide3="8 × 16, c’est 8 × 10 + 8 × 6."
@@ -3689,7 +3719,7 @@
           data-aide1="Que faut-il compter, et comment le calculer ?"
           data-aide2="Le nombre de pixels, c’est la largeur × la hauteur."
           data-aide3="4 000 × 3 000 : calcule 4 × 3, puis ajoute les six zéros."
-          data-sinon="Le nombre de pixels, c’est la largeur × la hauteur."
+          data-sinon="Pas encore : ce n’est pas le nombre de pixels de cette photo."
           data-solution="4 000 × 3 000 = 12 000 000 pixels"
         >
           <p class="q">D’abord, combien de pixels en tout ?</p>
@@ -3863,7 +3893,7 @@
           class="ex"
           data-widget="nombre"
           data-id="pp1"
-          data-sinon="L’instruction 1 range dans le registre le nombre qui la suit."
+          data-sinon="Pas encore : ce n’est pas ce que contient le registre après ces deux octets."
           data-reponse="5"
           data-aide1="Que fait l’instruction 1 ?"
           data-aide2="Cherche 1 dans la table : il range dans le registre le nombre qui le suit."
@@ -3878,7 +3908,7 @@
           class="ex"
           data-widget="nombre"
           data-id="pp2"
-          data-sinon="L’instruction 2 ajoute le nombre qui la suit à ce que contient déjà le registre, 5."
+          data-sinon="Pas encore : ce n’est pas ce que contient le registre après 2 et 3."
           data-reponse="8"
           data-aide1="Que fait l’instruction 2 ?"
           data-aide2="Cherche 2 dans la table : il ajoute au registre le nombre qui le suit."
@@ -3891,7 +3921,7 @@
           class="ex"
           data-widget="nombre"
           data-id="pp3"
-          data-sinon="L’instruction 3 affiche ce que contient le registre."
+          data-sinon="Pas encore : ce n’est pas ce qu’affiche l’écran."
           data-reponse="8"
           data-aide1="Que fait l’instruction 3 ?"
           data-aide2="Cherche 3 dans la table : il affiche ce que contient le registre."
@@ -4170,7 +4200,7 @@
           <div class="modele" hidden>
             <div
               class="chaine"
-              data-lecture="Le schéma du cours. Des bits, lus par un programme, avec un codage, donnent un sens. Binaire donne un nombre, ASCII une lettre, RGB une couleur, le jeu d’instructions une instruction."
+              data-lecture="Le schéma du cours. Des bits, lus par un programme, avec un codage, donnent un sens. Le binaire est un codage : il donne un nombre. ASCII ou UTF-8 donne une lettre, RGB une couleur, le jeu d’instructions une instruction."
             >
               <span class="boite">des bits</span>
               <span class="fleche">lus par</span>
@@ -4181,10 +4211,10 @@
               <span class="boite">un sens</span>
             </div>
             <div class="lectures">
-              <p class="lecture">binaire : un nombre</p>
-              <p class="lecture">ASCII ou UTF-8 : une lettre</p>
-              <p class="lecture">RGB : une couleur</p>
-              <p class="lecture">jeu d’instructions du processeur : une instruction</p>
+              <p class="lecture">le binaire, lui aussi un codage, donne un nombre</p>
+              <p class="lecture">ASCII ou UTF-8 donne une lettre</p>
+              <p class="lecture">RGB donne une couleur</p>
+              <p class="lecture">le jeu d’instructions du processeur donne une instruction</p>
             </div>
           </div>
         </div>
@@ -4232,6 +4262,11 @@
           <p>
             Relue avec un autre codage, la même suite prend un autre sens, souvent absurde : une
             photo dans le Bloc-notes, un « é » devenu « Ã© ».
+          </p>
+          <p>
+            Le système binaire est lui aussi un codage, comme ASCII, UTF-8, RGB ou le jeu
+            d’instructions. Lu en binaire, un octet donne un nombre ; avec la table ASCII, une
+            lettre ; avec RGB, une lumière ; avec le jeu d’instructions, une instruction.
           </p>
         </div>
       </div>
@@ -5177,7 +5212,8 @@
           avec les poids de l’octet entier (« 240 15 » pour ff), rouge et bleu échangés dans une
           couleur CSS, octets additionnés au lieu d’être lus deux par deux par le processeur,
           majuscule ou minuscule de la table ASCII. Sinon, le retour écrit dans la fiche pour cet
-          exercice (data-sinon), qui redit la méthode sur ses nombres.
+          exercice (data-sinon), qui dit seulement que ce n’est pas encore ça : l’indice vient avec
+          « Un coup de pouce », un cran après l’autre.
         </li>
         <li>
           Les retours calculés des erreurs critiques, mot pour mot. E4, à la lecture : « Tu as lu
@@ -5341,8 +5377,9 @@
         </li>
         <li>
           Le compteur à lampes : de 1 à 4 lampes, +1 à chaque clic ; au-delà du plus grand nombre,
-          il repasse à 0 et le dit. Il s’arrête à 4 lampes : les questions sur 5 et 8 lampes se
-          prédisent, rien ne permet de les vérifier avant la fin de la série.
+          il repasse à 0 et le dit. Il s’arrête à 4 lampes : les questions sur 5 et 8 lampes, et la
+          somme qui allume la 5e, se prédisent ; rien ne permet de les vérifier avant la fin de la
+          série.
         </li>
         <li>
           Le mélangeur : trois curseurs de 0 à 255, la couleur obtenue, son écriture rgb() et
@@ -5371,7 +5408,7 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 41,
+        "version": 42,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
@@ -5653,9 +5690,9 @@
             "erreurs": ["E3"]
           },
           {
-            "id": "Q29",
-            "question": "Que vaut #00ff80 en rgb ? Table des 16 chiffres : 0 à 9 valent 0 à 9, puis a = 10, b = 11, c = 12, d = 13, e = 14, f = 15 ; un chiffre par moitié de 4 bits, et pour relire, le chiffre de gauche compte 16 fois.",
-            "attendu": "00 = 0 ; ff = 15 × 16 + 15 = 255 ; 80 = 8 × 16 + 0 = 128 : rgb(0, 255, 128). D’après l’étape 9.",
+            "id": "Q31",
+            "question": "Que vaut #00ff80 en rgb ? Puis explique pourquoi, en relisant un octet, le chiffre de gauche compte 16 fois. Table des 16 chiffres : 0 à 9 valent 0 à 9, puis a = 10, b = 11, c = 12, d = 13, e = 14, f = 15 ; un chiffre par moitié de 4 bits.",
+            "attendu": "00 = 0 ; ff = 15 × 16 + 15 = 255 ; 80 = 8 × 16 + 0 = 128 : rgb(0, 255, 128). Le chiffre de gauche écrit la moitié gauche de l’octet, dont les poids, 128, 64, 32 et 16, valent 16 fois ceux de la moitié droite, 8, 4, 2 et 1. D’après l’étape 9.",
             "erreurs": []
           },
           {
@@ -5997,7 +6034,7 @@
             "notion": "Écrire et relire une couleur en hexadécimal, comme #ff8800 : un chiffre de 0 à f par moitié de 4 bits, deux chiffres par octet, le chiffre de gauche comptant 16 fois",
             "montree": ["ET9"],
             "pratiquee": ["PR8"],
-            "questions": ["C26", "Q29", "K29"]
+            "questions": ["C26", "Q31", "K29"]
           },
           {
             "id": "N10",
