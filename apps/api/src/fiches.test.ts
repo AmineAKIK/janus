@@ -41,6 +41,7 @@ type Manifeste = {
   restitution: { id: string; question: string; attendu: string }[]
   rappel: { id: string; question: string; attendu: string; erreurs: string[] }[]
   differees: { id: string; consigne: string; attendu: string }[]
+  etapes: { id: string; titre: string; type: string }[]
 }
 
 type Alignement = { notions: { id: string; questions: string[] }[] }
