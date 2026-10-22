@@ -100,7 +100,10 @@ function enTexte(html: string): string {
       .replace(/<sup\b[^>]*>/gi, '^')
       // Deux cases collées d'une grille (le numéro et son signe) restent deux mots : 48 0, pas 480.
       .replace(/(<\/(?:span|b)>)(?=<(?:span|b)\b)/gi, '$1 ')
-      .replace(/<span\b[^>]*\bclass\s*=\s*["'][^"']*\b(?:boite-fixe|fleche)\b[^"']*["'][^>]*>/gi, '\n')
+      .replace(
+        /<span\b[^>]*\bclass\s*=\s*["'][^"']*\b(?:boite-fixe|fleche)\b[^"']*["'][^>]*>/gi,
+        '\n',
+      )
       .replace(/<small\b[^>]*>/gi, ' (')
       .replace(/<\/small>/gi, ')')
       .replace(
