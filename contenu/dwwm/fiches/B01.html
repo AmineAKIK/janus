@@ -2979,8 +2979,9 @@
           <p>
             La console du navigateur connaît les numéros des caractères. Pour les caractères de
             cette table, ce sont les numéros ASCII. Ouvre-la avec la touche F12, onglet Console,
-            puis tape <code>'L'.charCodeAt(0)</code> : elle répond 76. Tape
-            <code>String.fromCharCode(105)</code> : elle répond <code>'i'</code>.
+            puis tape <code>'L'.charCodeAt(0)</code> : elle répond 76. Tape
+            <code>String.fromCharCode(105)</code> : elle répond <code>'i'</code>. Sur téléphone, il
+            n’y a pas de console : passe cet encadré, il sert seulement à vérifier.
           </p>
         </div>
       </div>
@@ -3062,12 +3063,11 @@
           navigateur sait alors avec quel codage lire.
         </p>
         <p class="discret">
-          Dans la console, <code>'é'.charCodeAt(0)</code> répond 233 : c’est le numéro de « é », pas
-          ses octets. Pour voir ses octets en UTF-8, tape
-          <code>new TextEncoder().encode('é')</code> : elle affiche 195 et 169.
+          Sur ordinateur, dans la console, <code>new TextEncoder().encode('é')</code> affiche les
+          deux octets de « é » en UTF-8 : 195 et 169.
         </p>
         <p>
-          Pourquoi pas un seul octet, 233 ? UTF-8 garde un octet, comme ASCII, pour les 128 premiers
+          Pourquoi deux octets ? UTF-8 garde un octet, comme ASCII, pour les 128 premiers
           caractères. Au-delà, il en prend deux ou plus, et certains de leurs bits servent seulement
           à dire combien d’octets forment le caractère. Le détail est pour plus tard.
         </p>

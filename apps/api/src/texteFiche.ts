@@ -523,6 +523,8 @@ function etapeEnTexte(
     case 'bilan':
       return [
         'Ce que tu as fait, puis les erreurs critiques du bloc. Celles que la page a repérées dans tes réponses y sont déjà cochées ; tu coches aussi celles que tu sais avoir faites et dois encore revoir. Une erreur cochée met le bloc « À reprendre » jusqu’à ce qu’une réponse solide, à une question qui la touche, la referme.',
+        // La page les affiche, à cocher : l'apprenant sait ce qu'il cherche.
+        ...manifeste.erreurs_critiques.map(({ libelle }) => `- [ ] ${libelle}`),
       ]
     default:
       return []

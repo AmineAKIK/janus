@@ -71,6 +71,12 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
     expect(texte).toContain('- 128\n- 64')
     expect(texte).toContain('Un octet : 2^8 = 256 valeurs.')
     expect(texte).toContain('- 65 A')
+  })
+
+  it('montre au bilan les erreurs critiques à cocher, comme la page', () => {
+    expect(texte).toContain(
+      '- [ ] À REMPLACER : confusion centrale 1\n- [ ] À REMPLACER : confusion centrale 2',
+    )
     expect(texte).toContain('Les bits (01000001)\nlus avec un codage →\nUn sens (A)')
     expect(texte).toContain('Un coup de pouce')
     expect(texte).toContain('150 − 128 = 22')
