@@ -5200,24 +5200,25 @@ if (age &lt; 12) {
           qui passe en premier ici : une parenthèse, une comparaison, un NON, un ET ou un OU ? »,
           puis l’ordre de calcul, puis « L’opération à calculer maintenant : « membre ET FAUX »,
           avec membre = VRAI. Que donne-t-elle ? » : l’opération et ses données, sans sa valeur. Une
-          valeur VRAI ou FAUX choisie à tort ne retire pas son bouton : les deux restent, sinon il
-          ne resterait que la bonne, donnée. Table de vérité : « Sur chaque ligne, que demande
-          l’opérateur pour donner VRAI ? », puis la règle de ET, OU et NON avec l’ordre des
-          opérations, puis le calcul d’une ligne à revoir. Tracer : « Pour chaque cas, quelle est la
-          première ligne VRAIE, en partant du haut ? », puis la règle de la première VRAIE avec la
-          ligne en cause écrite avec les valeurs du cas, puis le calcul des lignes justes au-dessus
-          de la première réponse fausse et le premier pas de celle-ci, sans sa valeur ni ce que la
-          chaîne affiche. Remettre dans l’ordre : « Laquelle de ces conditions est remplie par le
-          moins de valeurs ? », puis la règle de la plus exigeante en haut, puis laquelle et un cas
-          à tester sur son ordre. Valeurs limites : « Pour quelles valeurs la chaîne change-t-elle
-          de sortie ? », puis les seuils et la règle des deux valeurs, puis les deux valeurs du
-          premier seuil. JavaScript : « Que doit tester la deuxième ligne, et que doit-elle
-          afficher ? » (ou « Combien de branches faut-il… ? »), puis l’indice sur le seuil ou
-          l’ordre des branches, puis le modèle de la ligne 1 à reprendre, sans écrire la ligne
-          demandée. Nombre de lignes d’une table de vérité : « Avec une condition, 2 lignes ; avec
-          deux, 4 ; avec trois, 8. Que fait chaque condition de plus ? », puis la règle du
-          doublement, puis « Écris un 2 par condition et multiplie-les : 2 × 2 × … ». Sans cran, la
-          solution vient après deux réponses fausses. La tentative de l’étape 3 n’a pas de cran.
+          valeur VRAI ou FAUX choisie à tort laisserait la bonne, donnée : la page montre la
+          solution, une solution vue, comme l’option qui reste d’un choix. Table de vérité : « Sur
+          chaque ligne, que demande l’opérateur pour donner VRAI ? », puis la règle de ET, OU et NON
+          avec l’ordre des opérations, puis le calcul d’une ligne à revoir. Tracer : « Pour chaque
+          cas, quelle est la première ligne VRAIE, en partant du haut ? », puis la règle de la
+          première VRAIE avec la ligne en cause écrite avec les valeurs du cas, puis le calcul des
+          lignes justes au-dessus de la première réponse fausse et le premier pas de celle-ci, sans
+          sa valeur ni ce que la chaîne affiche. Remettre dans l’ordre : « Laquelle de ces
+          conditions est remplie par le moins de valeurs ? », puis la règle de la plus exigeante en
+          haut, puis laquelle et un cas à tester sur son ordre. Valeurs limites : « Pour quelles
+          valeurs la chaîne change-t-elle de sortie ? », puis les seuils et la règle des deux
+          valeurs, puis les deux valeurs du premier seuil. JavaScript : « Que doit tester la
+          deuxième ligne, et que doit-elle afficher ? » (ou « Combien de branches faut-il… ? »),
+          puis l’indice sur le seuil ou l’ordre des branches, puis le modèle de la ligne 1 à
+          reprendre, sans écrire la ligne demandée. Nombre de lignes d’une table de vérité : « Avec
+          une condition, 2 lignes ; avec deux, 4 ; avec trois, 8. Que fait chaque condition de
+          plus ? », puis la règle du doublement, puis « Écris un 2 par condition et multiplie-les :
+          2 × 2 × … ». Sans cran, la solution vient après deux réponses fausses. La tentative de
+          l’étape 3 n’a pas de cran.
         </li>
         <li>
           La solution est écrite avec sa raison : pour un calcul, chaque opération et ce qu’elle
@@ -8779,6 +8780,9 @@ if (age &lt; 12) {
           const m =
             (res.d && res.d.m ? res.d.m : (ex.dataset.sinon ?? 'Pas encore. Réessaie.')) +
             (libre ? '' : ' C’est une erreur critique : envoie ton bilan avant de continuer.')
+          // Une valeur VRAI ou FAUX écartée laisse la bonne, donnée : c'est une solution vue, comme
+          // l'option qui reste d'un choix (règle F04).
+          if (res.vu) return montrerSolution(ex, c, m)
           if (c.marque) {
             dire(ex, 'faux', m)
             // Tant que plusieurs options restent, l'échelle aide (règle F03). L'option qui reste ne se
@@ -9229,12 +9233,15 @@ if (age &lt; 12) {
             function choisirValeur(v) {
               if (!choisi || fini(ex)) return
               const n = choisi
-              // Une valeur fausse ne retire pas son bouton : sinon il ne resterait que la bonne, donnée,
-              // que l'apprenant « réussirait » sans l'avoir trouvée (règle F04).
+              // Une valeur fausse laisse la bonne, donnée : l'apprenant la « réussirait » sans l'avoir
+              // trouvée. C'est une solution vue, qui se refait sur un autre cas (règle F04).
               if (v !== calcul(n, vals).v) {
                 const e1 = n.t === 'ou' && valeurDe(n.g, vals) && valeurDe(n.d, vals)
+                choisi = null
+                choixValeur.hidden = true
                 return repondre(ex, c, {
                   ok: false,
+                  vu: true,
                   d: { m: erreurValeur(n, vals), e: e1 ? 'E1' : undefined },
                 })
               }

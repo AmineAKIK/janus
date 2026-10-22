@@ -8623,6 +8623,26 @@
           )
         }
         /** Les pas de la méthode « on part de 128 » pour écrire `n` en binaire. */
+        /**
+         * Le début de l'écriture de `n` en binaire : les trois premiers pas au plus, arrêtés avant
+         * celui où il ne reste plus rien. Après lui, tous les bits sont à 0, et le cran donnerait
+         * l'octet entier (règle F04). `suite` : le texte continue une phrase, sans majuscule.
+         */
+        function debutEcrire(n, suite = false) {
+          let reste = n
+          const k = POIDS.slice(0, 3).findIndex((w) => {
+            if (w <= reste) reste -= w
+            return reste === 0
+          })
+          const pas = pasEcrire(n).slice(0, k === -1 ? 3 : k)
+          return pas.length
+            ? pas.join('. ') + '. Continue avec les poids suivants.'
+            : (suite ? 'commence' : 'Commence') +
+                ' par 128 : rentre-t-il dans ' +
+                n +
+                ' ? Écris son bit, calcule ce qui reste, puis passe à 64.'
+        }
+
         function pasEcrire(n) {
           let reste = n
           return POIDS.map((w) => {
@@ -8699,22 +8719,10 @@
             ]
           if (type === 'octet' || (type === 'nombre' && d.diag === 'ecrire')) {
             const n = Number(d.reponse)
-            // Les trois premiers pas au plus, arrêtés avant celui où il ne reste plus rien : après
-            // lui, tous les bits sont à 0, et le cran donnerait l'octet entier (règle F04).
-            let reste = n
-            const k = POIDS.slice(0, 3).findIndex((w) => {
-              if (w <= reste) reste -= w
-              return reste === 0
-            })
-            const pas = pasEcrire(n).slice(0, k === -1 ? 3 : k)
             return [
               'Quel est le plus grand poids qui rentre dans ' + n + ' ?',
               'Pars de 128. Si le poids rentre dans ce qui reste, écris 1 et retire-le ; sinon, écris 0. Puis passe au poids suivant.',
-              pas.length
-                ? pas.join('. ') + '. Continue avec les poids suivants.'
-                : 'Commence par 128 : rentre-t-il dans ' +
-                  n +
-                  ' ? Écris son bit, calcule ce qui reste, puis passe à 64.',
+              debutEcrire(n),
             ]
           }
           if (type === 'octets') {
@@ -8723,12 +8731,14 @@
             return [
               'Combien de chiffres pour chaque octet, et dans quel ordre les écrire ?',
               'Écris chaque nombre en binaire, l’un après l’autre, sur 8 chiffres : pars de 128, écris 1 quand le poids rentre dans ce qui reste.',
+              // Le début du premier octet seulement : l'octet entier serait déjà une partie de la
+              // réponse (règle F04).
               (noms[0] || 'Le premier') +
-                ' : ' +
+                ', ' +
                 reps[0] +
-                ' s’écrit ' +
-                binaire(reps[0]) +
-                '. Fais de même pour les autres.',
+                ' : ' +
+                debutEcrire(reps[0], true) +
+                ' Puis fais de même pour les autres.',
             ]
           }
           if (type === 'nombre' && (d.diag === 'valeurs' || d.diag === 'max') && d.n) {
@@ -8858,13 +8868,12 @@
             return [
               'Combien de chiffres hexadécimaux par octet, et dans quel ordre ?',
               'Écris chaque octet en binaire, coupe-le en deux moitiés, puis écris chaque moitié avec son chiffre. Deux chiffres par octet, dans l’ordre rouge, vert, bleu.',
+              // Le début du rouge en binaire seulement, comme pour un octet seul (règle F04).
               'Le rouge, ' +
                 r +
-                ', s’écrit ' +
-                moities(r) +
-                ', soit ' +
-                hex2(r) +
-                '. Fais de même pour le vert et le bleu.',
+                ' : ' +
+                debutEcrire(r, true) +
+                ' Puis coupe-le en deux moitiés, et fais de même pour le vert et le bleu.',
             ]
           }
           if (type === 'texte' && d.diag === 'hexa') {
