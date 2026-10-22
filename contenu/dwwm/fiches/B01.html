@@ -2634,6 +2634,9 @@
           data-reponse="76"
           data-bits="01001100"
           data-diag="lire"
+          data-aide1="Que fais-tu des trois poids que tu viens de trouver ?"
+          data-aide2="Chaque bit à 1 compte pour son poids : l’octet vaut la somme des poids."
+          data-aide3="Commence par 64 + 8, puis ajoute le dernier."
           data-explication="Le premier octet du fichier vaut 76."
         >
           <p class="q">Additionne-les. Que vaut l’octet ?</p>
@@ -3690,6 +3693,7 @@
           data-id="s2"
           data-reponse="36000000"
           data-diag="pixels"
+          data-pixels-connus
           data-largeur="4000"
           data-hauteur="3000"
         >
@@ -3704,6 +3708,7 @@
           data-id="s3"
           data-reponse="2400000"
           data-diag="pixels"
+          data-pixels-connus
           data-largeur="1000"
           data-hauteur="800"
         >
@@ -5215,11 +5220,15 @@
           détaillée, puis « Voir la solution ». Chaque cran demande une nouvelle réponse fausse
           avant le suivant. Les crans sont écrits dans la fiche (data-aide1 à data-aide3) ou, à
           défaut, calculés à partir des nombres de l’exercice : par exemple, pour lire 10010110,
-          « Quel poids a chaque bit à 1 ? », puis « Écris les poids sous les bits… », puis « Les
-          bits à 1 ont les poids 128, 16, 4, 2. Additionne-les. ». Le troisième cran ne donne jamais
-          toute la réponse : il fait le premier morceau et laisse le reste, ou laisse le dernier
-          calcul, ou la recherche dans la table. Sans cran, la solution vient après deux réponses
-          fausses.
+          « Quel poids a chaque bit à 1 ? », puis « Écris les poids sous les bits… », puis « Le
+          premier bit à 1 de cet octet, en partant de la gauche, a le poids 128. Trouve le poids de
+          chacun des autres bits à 1, puis additionne. ». Le troisième cran ne donne jamais toute la
+          réponse : il fait un pas de plus et laisse le reste (le premier poids d’une lecture, les
+          premiers pas d’une écriture arrêtés avant que le reste ne tombe à 0, la moitié de gauche
+          d’un octet hexadécimal, à moitié, les instructions d’un programme sans les nombres
+          qu’elles reçoivent), ou laisse le dernier calcul (les nombres d’une photo sans leurs
+          zéros, à multiplier), ou la recherche dans la table. Sans cran, la solution vient après
+          deux réponses fausses.
         </li>
         <li>
           La solution est écrite avec sa raison : « 128 + 16 + 4 + 2 = 150 », « 77 = 64 + 8 + 4 + 1,
@@ -5233,11 +5242,14 @@
           de bits, de 2 à 12, un autre nombre de valeurs à écrire en bits, une autre couleur à
           écrire en trois octets, un autre octet hexadécimal, une autre couleur CSS, une autre
           moitié de 4 bits, un autre programme, une autre taille de photo), et la suite paraît une
-          fois ce nouvel exercice fini. Réussi, il demande d’expliquer pourquoi c’est juste, en une
-          ou deux phrases, puis de comparer avec la solution de la fiche. Sans autre cas possible
-          (un choix, les caractères de « Lis- », la différence entre majuscule et minuscule), la
-          page demande d’expliquer la solution avec ses mots, et la suite paraît une fois
-          l’explication comparée avec celle de la fiche.
+          fois ce nouvel exercice réussi. Réussi, il demande d’expliquer pourquoi c’est juste, en
+          une ou deux phrases, jugées par l’IA. Si c’est la solution de ce nouvel exercice qui est
+          vue, rien n’a été réussi sans regarder : la page demande d’abord d’expliquer cette
+          solution avec ses mots, et la suite paraît une fois l’explication jugée par l’IA. À la
+          visite suivante, une solution vue qui n’a été ni refaite ni expliquée fait encore attendre
+          la suite de l’écran. Sans autre cas possible (un choix, les caractères de « Lis- », la
+          différence entre majuscule et minuscule), la page demande d’expliquer la solution avec ses
+          mots, et la suite paraît une fois l’explication jugée par l’IA.
         </li>
         <li>
           Un choix a la même échelle (celle du gabarit) : chaque option fausse est retirée, avec son
@@ -5375,7 +5387,7 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 39,
+        "version": 40,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
@@ -8465,8 +8477,7 @@
                   m: 'Tu as compté les lampes allumées. Additionne plutôt les nombres notés pour chacune.',
                 }
               : null,
-          bitsmin: (rep, r, ex) => {
-            const v = Number(ex.dataset.valeurs)
+          bitsmin: (rep, r) => {
             if (r === rep - 1)
               return {
                 m:
@@ -8482,14 +8493,8 @@
               return {
                 m:
                   'Avec ' +
-                  rep +
-                  ' bits, on a déjà 2 puissance ' +
-                  rep +
-                  ' = ' +
-                  milliers(2 ** rep) +
-                  ' valeurs, assez pour ' +
-                  milliers(v) +
-                  '.',
+                  r +
+                  ' bits, il y a assez de valeurs, mais peut-être trop : essaie avec un bit de moins.',
               }
             return null
           },
@@ -8686,30 +8691,82 @@
          * oriente, un indice sur la notion, l'étape détaillée (règle F03). Les crans écrits dans la
          * fiche (`data-aide1` à `data-aide3`) passent avant.
          */
-        function poidsMoitie(bits4, sujet) {
-          const p = [8, 4, 2, 1].filter((w, i) => bits4[i] === '1')
-          if (!p.length) return sujet + ' n’a aucun bit à 1.'
-          return sujet + ' a ses bits à 1 aux poids ' + p.join(', ') + '.'
+        /**
+         * Le troisième cran d'une lecture avec les poids : un pas de plus, pas toute la lecture
+         * (règle F04). Le poids du premier bit à 1 est donné ; ceux des autres et la somme restent
+         * à faire. `poids` : 128 à 1 pour un octet, 8 à 1 pour une moitié.
+         */
+        function premierPoids(bits, poids, sujet) {
+          const p = poids.filter((w, i) => bits[i] === '1')
+          const ecrire =
+            poids.length === 8 ? 'en doublant depuis 1, de droite à gauche' : '8, 4, 2, 1'
+          if (!p.length) return sujet + ' n’a aucun bit à 1 : combien ajoute un bit à 0 ?'
+          if (p.length === 1)
+            return (
+              sujet +
+              ' n’a qu’un bit à 1. Écris les poids sous ses bits, ' +
+              ecrire +
+              ' : le poids de ce bit est sa valeur.'
+            )
+          return (
+            'Le premier bit à 1 de ' +
+            sujet.charAt(0).toLowerCase() +
+            sujet.slice(1) +
+            ', en partant de la gauche, a le poids ' +
+            p[0] +
+            '. Trouve le poids de chacun des autres bits à 1, puis additionne.'
+          )
         }
+        /** Un nombre sans ses zéros de droite, et combien il en avait : 1 600 donne 16 et 2. */
+        function sansZeros(n) {
+          let x = n
+          let z = 0
+          while (x >= 10 && x % 10 === 0) {
+            x /= 10
+            z += 1
+          }
+          return [x, z]
+        }
+        const ZEROS = [
+          '',
+          'le zéro',
+          'les deux zéros',
+          'les trois zéros',
+          'les quatre zéros',
+          'les cinq zéros',
+          'les six zéros',
+          'les sept zéros',
+          'les huit zéros',
+          'les neuf zéros',
+          'les dix zéros',
+        ]
         function cransCalcules(ex) {
           const d = ex.dataset
           const type = d.widget
-          if (type === 'nombre' && d.diag === 'lire') {
-            const p = POIDS.filter((w, i) => d.bits[i] === '1')
+          if (type === 'nombre' && d.diag === 'lire')
             return [
               'Quel poids a chaque bit à 1 ?',
               'Écris les poids sous les bits : 128 tout à gauche, puis 64, 32, 16, 8, 4, 2, et 1 tout à droite. Garde ceux des bits à 1.',
-              p.length
-                ? 'Les bits à 1 ont les poids ' + p.join(', ') + '. Additionne-les.'
-                : 'Aucun bit n’est à 1 : aucun poids ne compte.',
+              premierPoids(d.bits, POIDS, 'Cet octet'),
             ]
-          }
           if (type === 'octet' || (type === 'nombre' && d.diag === 'ecrire')) {
             const n = Number(d.reponse)
+            // Les trois premiers pas au plus, arrêtés avant celui où il ne reste plus rien : après
+            // lui, tous les bits sont à 0, et le cran donnerait l'octet entier (règle F04).
+            let reste = n
+            const k = POIDS.slice(0, 3).findIndex((w) => {
+              if (w <= reste) reste -= w
+              return reste === 0
+            })
+            const pas = pasEcrire(n).slice(0, k === -1 ? 3 : k)
             return [
               'Quel est le plus grand poids qui rentre dans ' + n + ' ?',
               'Pars de 128. Si le poids rentre dans ce qui reste, écris 1 et retire-le ; sinon, écris 0. Puis passe au poids suivant.',
-              pasEcrire(n).slice(0, 3).join('. ') + '. Continue avec les poids suivants.',
+              pas.length
+                ? pas.join('. ') + '. Continue avec les poids suivants.'
+                : 'Commence par 128 : rentre-t-il dans ' +
+                  n +
+                  ' ? Écris son bit, calcule ce qui reste, puis passe à 64.',
             ]
           }
           if (type === 'octets') {
@@ -8766,11 +8823,7 @@
               'Avec n bits, il y a 2 puissance n valeurs. Cherche le premier n pour lequel 2 puissance n atteint ' +
                 milliers(v) +
                 '.',
-              '2 puissance ' +
-                (Number(d.reponse) - 1) +
-                ' = ' +
-                milliers(2 ** (Number(d.reponse) - 1)) +
-                ', c’est moins que ' +
+              'Écris les puissances de 2 en doublant : 2, 4, 8, 16, 32, 64… en comptant les bits à chaque fois. Arrête-toi au premier nombre qui atteint ' +
                 milliers(v) +
                 '.',
             ]
@@ -8797,28 +8850,59 @@
           if (type === 'nombre' && d.diag === 'pixels') {
             const w = Number(d.largeur)
             const h = Number(d.hauteur)
+            // Le troisième cran laisse la multiplication à faire : les nombres sans leurs zéros,
+            // puis les zéros à remettre (règle F04).
+            const [a, za] = sansZeros(w)
+            const [b, zb] = sansZeros(h)
+            const [p, zp] = sansZeros(w * h)
             return [
               'Combien de pixels en tout ? Combien d’octets par pixel ?',
               'Les pixels : largeur × hauteur. Chacun prend 3 octets, un par lumière.',
-              milliers(w) +
-                ' × ' +
-                milliers(h) +
-                ' = ' +
-                milliers(w * h) +
-                ' pixels. Combien d’octets ?',
+              'pixelsConnus' in d
+                ? 'Tu as les pixels : ' +
+                  milliers(w * h) +
+                  '. Chacun prend 3 octets : calcule ' +
+                  milliers(p) +
+                  ' × 3' +
+                  (zp ? ', puis remets ' + ZEROS[zp] + '.' : '.')
+                : 'Multiplie ' +
+                  milliers(a) +
+                  ' × ' +
+                  milliers(b) +
+                  (za + zb ? ', puis ajoute ' + ZEROS[za + zb] : '') +
+                  ' : ce sont les pixels. Ensuite, 3 octets chacun.',
             ]
           }
           if (type === 'nombre' && d.diag === 'programme') {
+            // Le troisième cran lit les instructions, pas les nombres qu'elles reçoivent (règle F04).
             const o = octetsDe(ex)
-            const premier = executer(o).pas[0]
+            const RANG = ['premier', 'troisième', 'cinquième', 'septième']
+            const FAIT = {
+              1: 'dans la table, il range l’octet qui le suit dans le registre',
+              2: 'dans la table, il ajoute l’octet qui le suit au registre',
+            }
+            const k = o.findIndex((x, i) => i % 2 === 0 && x === 2)
+            const paires = []
+            for (let i = 0; i <= (k === -1 ? 0 : k); i += 2)
+              if (FAIT[o[i]])
+                paires.push(
+                  'Le ' +
+                    RANG[i / 2] +
+                    ' octet, ' +
+                    binaire(o[i]) +
+                    ', vaut ' +
+                    o[i] +
+                    ' : ' +
+                    FAIT[o[i]] +
+                    '.',
+                )
             return [
               'Que dit le premier octet de chaque paire ?',
               'Lis deux octets à la fois. Le premier, cherché dans la table, dit quoi faire ; le second donne le nombre. Suis le registre.',
-              'Les octets valent ' +
-                o.join(' ') +
-                '. ' +
-                premier.m +
-                ' Continue avec la paire suivante.',
+              paires.join(' ') +
+                (paires.length > 1
+                  ? ' Que valent les octets qui les suivent ?'
+                  : ' Que vaut l’octet qui le suit ?'),
             ]
           }
           if (type === 'texte' && d.diag === 'css') {
@@ -8840,31 +8924,27 @@
             return [
               'Coupe l’octet au milieu : que vaut chaque moitié ?',
               'Calcule chaque moitié avec les poids 8, 4, 2 et 1, puis écris son chiffre : de 10 à 15, a à f.',
-              moities(n) +
+              // La moitié de gauche seulement, et à moitié (règle F04).
+              'Commence par la moitié de gauche, ' +
+                binaire(n).slice(0, 4) +
                 '. ' +
-                poidsMoitie(binaire(n).slice(0, 4), 'La moitié de gauche') +
-                ' ' +
-                poidsMoitie(binaire(n).slice(4), 'Celle de droite') +
-                ' Additionne, puis écris chaque chiffre.',
+                premierPoids(binaire(n).slice(0, 4), [8, 4, 2, 1], 'Cette moitié') +
+                ' Écris son chiffre, puis fais de même à droite.',
             ]
           }
           if (type === 'texte' && d.moitie)
             return [
               'Que vaut cette moitié avec les poids 8, 4, 2 et 1 ?',
               'De 0 à 9, le chiffre hexadécimal est le même ; de 10 à 15, on écrit a, b, c, d, e, f.',
-              poidsMoitie(d.moitie, 'Cette moitié') +
-                ' Additionne-les, puis cherche le chiffre dans la table.',
+              premierPoids(d.moitie, [8, 4, 2, 1], 'Cette moitié') +
+                ' Puis cherche le chiffre dans la table.',
             ]
-          if (type === 'texte' && d.bits) {
-            const p = POIDS.filter((w, i) => d.bits[i] === '1')
+          if (type === 'texte' && d.bits)
             return [
               'Quel nombre écrit cet octet ?',
               'Calcule son nombre avec les poids, puis cherche ce numéro dans la table.',
-              'Ses bits à 1 ont les poids ' +
-                p.join(', ') +
-                '. Additionne-les, puis cherche ce numéro dans la table.',
+              premierPoids(d.bits, POIDS, 'Cet octet') + ' Puis cherche ce numéro dans la table.',
             ]
-          }
           return []
         }
 
@@ -8996,7 +9076,9 @@
         /** La clé de l'explication d'un exercice, pour la trace du gabarit (`explique:<cle>`). */
         function cleExplication(ex) {
           const item = ex.closest('.item')
-          const base = item ? item.dataset.item : 'ex:' + (ex.dataset.id ?? 'x')
+          // Une variante du cours n'a pas d'identifiant : elle prend celui de l'exercice qu'elle refait.
+          const id = ex.dataset.id ?? ex.parentElement?.closest('.ex[data-id]')?.dataset.id
+          const base = item ? item.dataset.item : 'ex:' + (id ?? 'x')
           return (
             base +
             (ex.dataset.variante || (item && montre[item.dataset.item] === 'variante')
@@ -9057,7 +9139,27 @@
             )
           devoiler(ex.closest('.ecran, [data-ecran]'))
           const parent = ex.parentElement?.closest('.ex')
-          if (parent) libererReprise(parent)
+          if (parent) libererApresVariante(parent, ex, c, etat)
+        }
+
+        /**
+         * La variante du cours finie : réussie, elle libère la suite de l'écran, et la trace de
+         * l'exercice le dit pour la visite suivante. Si c'est sa solution qui a été vue, rien n'a été
+         * réussi sans regarder (règle F04) : l'apprenant explique d'abord cette solution, comme après
+         * une solution vue sans autre cas, puis la suite paraît.
+         */
+        function libererApresVariante(parent, ex, c, etat) {
+          if (parent.dataset.reprise !== 'oui') return
+          if (etat === 'vu')
+            return expliquer(
+              ex,
+              c.solution(),
+              fr('Pour continuer, explique cette solution avec tes mots, en une ou deux phrases :'),
+              () => libererReprise(parent),
+            )
+          if (parent.dataset.id)
+            tracer('ex:' + parent.dataset.id, { e: 'vu', v: null, refait: true })
+          libererReprise(parent)
         }
 
         /**
@@ -9885,12 +9987,6 @@
                 bouton.disabled = true
               },
             }
-            ex.dataset.aide1 =
-              'Avec quelle instruction le programme montre-t-il un nombre à l’écran ?'
-            ex.dataset.aide2 =
-              'Range un premier nombre avec l’instruction 1, ajoute un second nombre avec l’instruction 2 pour arriver à 12, puis affiche avec l’instruction 3.'
-            ex.dataset.aide3 =
-              'Par exemple, 1 puis 5 range 5 dans le registre. Que faut-il ajouter avec l’instruction 2 pour arriver à 12 ?'
             bouton.addEventListener('click', () => {
               if (champs.some((x) => x.value.trim() === ''))
                 return void dire(ex, '', 'Remplis les six cases : deux octets par instruction.')
@@ -10023,7 +10119,7 @@
           if ('essai' in ex.dataset) return monterEssai(ex, c)
           if (!c.sansEchelle) {
             c.echelle = window.JanusGabarit.echelle(ex, {
-              crans: cransCalcules(ex),
+              crans: cransCalcules(ex).map(fr),
               fini: () => fini(ex),
               surSolution: () => montrerSolution(ex, c),
             })
@@ -10032,8 +10128,19 @@
           if (dansItem(ex) || ex.dataset.variante) return
           const garde = traces['ex:' + ex.dataset.id]
           if (garde && typeof garde === 'object' && garde.e) {
+            // Une solution vue, ni refaite ni expliquée à la visite d'avant : la suite de l'écran
+            // attend encore (règle F04).
+            const cle = 'explique:ex:' + ex.dataset.id
+            const reprise =
+              garde.e === 'vu' &&
+              avecReprise(ex) &&
+              !garde.refait &&
+              !traces[cle] &&
+              !traces[cle + ':variante']
+            if (reprise) ex.dataset.reprise = 'oui'
             appliquer(ex, c, garde.e, garde.v)
-            if (garde.e === 'vu') proposerVariante(ex, c)
+            if (reprise) apresSolution(ex, c)
+            else if (garde.e === 'vu') proposerVariante(ex, c)
           }
         }
 
