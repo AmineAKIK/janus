@@ -853,6 +853,31 @@
         flex-direction: column;
         gap: var(--espacement-8);
       }
+      /* L'échelle d'aide (JanusGabarit.echelle) : le bouton, puis les crans ouverts. */
+      .pouce {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--espacement-8);
+      }
+      .crans {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-8);
+        margin: 0;
+        padding-inline-start: var(--espacement-20);
+      }
+      section .crans > li + li {
+        margin-top: 0;
+      }
+      /* Un seul cran ouvert : pas de « 1. » qui annonce une liste. */
+      .crans:has(li:only-child) {
+        padding-inline-start: 0;
+        list-style: none;
+      }
+      .crans:empty {
+        display: none;
+      }
       /* La tentative (data-essai) : sa correction, toute la série à la fin (règle M01). */
       .essais-bilan,
       .essais-bilan > ol {
@@ -2031,6 +2056,70 @@
         element.append(...enfants)
         return element
       }
+
+      /**
+       * L'échelle d'aide d'un exercice (règles F03 et F04), la même pour toutes les fiches : rien avant
+       * une réponse fausse ; après chacune, un cran de plus s'ouvre à la demande (une question qui
+       * oriente, un indice, l'étape détaillée), puis « Voir la solution ». Les crans se lisent dans
+       * `data-aide1` à `data-aide3` de l'exercice, sinon dans `crans` (des textes, ou des fonctions
+       * qui rendent le texte à l'ouverture) ; sans cran, la solution attend deux réponses fausses.
+       * `fini()` dit que l'exercice est fini, `surSolution()` montre la solution. Rend la zone à poser
+       * dans l'exercice, `tentative()` à appeler à chaque réponse fausse, `cran()` (4 : solution vue)
+       * et `maj()`.
+       */
+      function echelle(ex, { crans = [], fini = () => false, surSolution = () => {} } = {}) {
+        const ecrits = [ex.dataset.aide1, ex.dataset.aide2, ex.dataset.aide3].filter(Boolean)
+        const textes = ecrits.length > 0 ? ecrits : crans
+        let cran = 0
+        let depuis = 0
+        let total = 0
+        let vue = false
+        const liste = creer('ol', { className: 'crans' })
+        const bouton = creer('button', { type: 'button', className: 'bouton secondaire petit' })
+        const zone = creer('div', { className: 'pouce' }, bouton, liste)
+        function maj() {
+          const reste = cran < textes.length
+          bouton.textContent = reste
+            ? cran === 0
+              ? 'Un coup de pouce'
+              : 'Un autre coup de pouce'
+            : 'Voir la solution'
+          const seuil = !reste && textes.length === 0 ? 2 : 1
+          // Une fois l'exercice fini, le bouton s'en va ; les crans déjà ouverts restent lisibles.
+          zone.hidden = total === 0 || (fini() && liste.children.length === 0)
+          bouton.hidden = vue || fini()
+          bouton.disabled = depuis < seuil
+        }
+        bouton.addEventListener('click', () => {
+          if (fini() || vue) return
+          if (cran < textes.length) {
+            const texte = textes[cran]
+            liste.append(
+              creer('li', { textContent: typeof texte === 'function' ? texte() : String(texte) }),
+            )
+            cran += 1
+            depuis = 0
+            maj()
+            return
+          }
+          vue = true
+          maj()
+          surSolution()
+        })
+        maj()
+        return {
+          zone,
+          tentative() {
+            depuis += 1
+            total += 1
+            maj()
+          },
+          cran: () => (vue ? 4 : cran),
+          maj,
+        }
+      }
+      // Ce que le gabarit prête aux outils des fiches.
+      window.JanusGabarit = Object.freeze({ echelle })
 
       /**
        * Le pied d'une étape : le bouton vers l'étape d'après. Tant qu'une série ouverte n'a pas toutes

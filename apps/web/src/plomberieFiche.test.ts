@@ -1434,3 +1434,96 @@ describe('une erreur critique repérée par un outil', () => {
     expect(await screen.findByText('Outil d’aisance')).toBeInTheDocument()
   })
 })
+
+describe('l’échelle d’aide, la même pour toutes les fiches', () => {
+  type Echelle = { zone: HTMLElement; tentative: () => void; cran: () => number; maj: () => void }
+  /** L'échelle du gabarit, posée sur un exercice de la page. */
+  const echelleDe = (
+    ex: HTMLElement,
+    options: { crans?: unknown[]; fini?: () => boolean; surSolution?: () => void },
+  ): Echelle => {
+    const gabarit: unknown = Reflect.get(window, 'JanusGabarit')
+    const fabrique: unknown =
+      typeof gabarit === 'object' && gabarit !== null ? Reflect.get(gabarit, 'echelle') : undefined
+    if (typeof fabrique !== 'function') throw new Error('Le gabarit n’expose pas son échelle')
+    const echelle: unknown = Reflect.apply(fabrique, undefined, [ex, options])
+    if (!estEchelle(echelle)) throw new Error('L’échelle du gabarit n’a pas la forme attendue')
+    ex.append(echelle.zone)
+    return echelle
+  }
+  const estEchelle = (valeur: unknown): valeur is Echelle =>
+    typeof valeur === 'object' &&
+    valeur !== null &&
+    Reflect.get(valeur, 'zone') instanceof HTMLElement &&
+    ['tentative', 'cran', 'maj'].every((nom) => typeof Reflect.get(valeur, nom) === 'function')
+  const pose = async () => {
+    const { pont } = pontSimule(aLEtape('ET2'))
+    monter(GABARIT, pont)
+    await screen.findByRole('heading', { name: 'Explication' })
+    const ex = document.createElement('div')
+    document.body.append(ex)
+    return ex
+  }
+
+  it('n’ouvre rien avant une réponse fausse, puis un cran à la fois, la solution en dernier', async () => {
+    const ex = await pose()
+    Object.assign(ex.dataset, {
+      aide1: 'Que compte-t-on ?',
+      aide2: 'Le 0 compte.',
+      aide3: 'Compte de 0 à 7.',
+    })
+    let solution = 0
+    const echelle = echelleDe(ex, { crans: ['Calculé'], surSolution: () => (solution += 1) })
+
+    expect(echelle.zone).not.toBeVisible()
+    echelle.tentative()
+    const bouton = within(echelle.zone).getByRole('button', { name: 'Un coup de pouce' })
+    fireEvent.click(bouton)
+    expect(within(echelle.zone).getByText('Que compte-t-on ?')).toBeInTheDocument()
+    expect(within(echelle.zone).queryByText('Calculé')).toBeNull()
+    // Pas de cran suivant sans une autre réponse fausse (règle F04).
+    expect(
+      within(echelle.zone).getByRole('button', { name: 'Un autre coup de pouce' }),
+    ).toBeDisabled()
+    echelle.tentative()
+    fireEvent.click(within(echelle.zone).getByRole('button', { name: 'Un autre coup de pouce' }))
+    echelle.tentative()
+    fireEvent.click(within(echelle.zone).getByRole('button', { name: 'Un autre coup de pouce' }))
+    expect(echelle.cran()).toBe(3)
+    echelle.tentative()
+    fireEvent.click(within(echelle.zone).getByRole('button', { name: 'Voir la solution' }))
+    expect(solution).toBe(1)
+    expect(echelle.cran()).toBe(4)
+  })
+
+  it('prend les crans de l’outil quand la fiche n’en écrit pas, et rend un cran calculé à l’ouverture', async () => {
+    const ex = await pose()
+    let appels = 0
+    const echelle = echelleDe(ex, {
+      crans: [
+        () => {
+          appels += 1
+          return 'Il reste 22.'
+        },
+      ],
+    })
+    echelle.tentative()
+    expect(appels).toBe(0)
+    fireEvent.click(within(echelle.zone).getByRole('button', { name: 'Un coup de pouce' }))
+    expect(within(echelle.zone).getByText('Il reste 22.')).toBeInTheDocument()
+  })
+
+  it('sans cran, la solution attend deux réponses fausses ; l’exercice fini, le bouton s’en va', async () => {
+    const ex = await pose()
+    let fini = false
+    const echelle = echelleDe(ex, { fini: () => fini })
+    echelle.tentative()
+    const bouton = within(echelle.zone).getByRole('button', { name: 'Voir la solution' })
+    expect(bouton).toBeDisabled()
+    echelle.tentative()
+    expect(bouton).toBeEnabled()
+    fini = true
+    echelle.maj()
+    expect(echelle.zone).not.toBeVisible()
+  })
+})

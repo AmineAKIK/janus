@@ -386,6 +386,45 @@ describe('vérification des fiches du dépôt', () => {
     })
   })
 
+  describe('l’échelle d’aide d’un choix en pratique', () => {
+    /** L'item PR1-1 du gabarit changé en choix, avec les attributs donnés. */
+    const avecChoix = (attributs: string) =>
+      fiche.replace(
+        '<p data-erreur="E1">À REMPLACER : item PR1-1 (E1).</p>',
+        `<div class="ex" data-widget="choix" data-reponse="a" ${attributs}><p class="q">Laquelle ?</p><ul class="options"><li data-option="a">A</li><li data-option="b" data-erreur="E1">B</li><li data-option="c">C</li></ul></div>`,
+      )
+
+    it('refuse un choix sans coup de pouce écrit', async () => {
+      await poser('X00.html', avecChoix(''))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'l’item PR1-1 a un choix sans ses coups de pouce (data-aide1 manque)',
+        ),
+      ])
+    })
+
+    it('demande autant de crans que de réponses fausses possibles avant la dernière option', async () => {
+      await poser(
+        'X00.html',
+        avecChoix('data-aide1="Que demande-t-on ?"').replace(
+          '<li data-option="c">C</li>',
+          '<li data-option="c">C</li><li data-option="d">D</li>',
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('(data-aide2 manque)'),
+      ])
+    })
+
+    it('accepte un choix à trois options qui a son coup de pouce, le seul qu’on atteint', async () => {
+      await poser('X00.html', avecChoix('data-aide1="Que demande-t-on ?"'))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+  })
+
   describe('une explication qui part des essais', () => {
     /** L'explication ET2 du gabarit, avec un paragraphe qui renvoie à un essai. */
     const avecRenvoi = (attributs: string) =>
