@@ -852,6 +852,20 @@
         flex-direction: column;
         gap: var(--espacement-8);
       }
+      /* La tentative (data-essai) : sa correction, toute la série à la fin (règle M01). */
+      .essais-bilan,
+      .essais-bilan > ol {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-12);
+      }
+      .essais-bilan > ol {
+        margin: 0;
+        padding-inline-start: var(--espacement-20);
+      }
+      .essais-bilan p {
+        margin: 0;
+      }
       .objectif-liste {
         display: flex;
         flex-direction: column;
@@ -1533,6 +1547,8 @@
       let majPied = () => {}
       /** Remet à jour le bilan affiché quand un statut arrive. */
       let majBilan = () => {}
+      /** La tentative de l'étape `pretest` affichée : ses essais notés se figent, la série finie se corrige. */
+      let majEssais = () => {}
       /** Le dernier bilan envoyé depuis cette page : son identifiant, pour reconnaître un refus. */
       let bilanEnvoye = null
       /**
@@ -1652,6 +1668,137 @@
           if (trace.avis === 'meme' || trace.avis === 'manque') choisir(trace.avis)
         }
       })
+      /*
+       * La tentative avant l'explication (règles C03 et M01) : dans une étape `pretest`, chaque exercice
+       * `data-essai` (avec son `data-id`) émet `fiche:essai`, avec `detail: { cle, reponse, juste,
+       * attendu, retour }`. La page garde la première réponse (trace `essai:<cle>`), l'envoie une fois à
+       * l'appli (`pretest.reponse`), ne dit ni juste ni faux, et corrige toute la série à la fin de
+       * l'étape, sous « Tes essais ». « Je ne sais pas » est une réponse : la page émet
+       * `fiche:essai-passe` sur l'exercice, et l'outil y répond par `fiche:essai`, sa réponse attendue
+       * avec ; sans outil qui réponde, la page lit l'attendu dans les attributs de l'exercice.
+       */
+      document.addEventListener('fiche:essai', (evenement) => {
+        const { cle, reponse, juste, attendu, retour } = evenement.detail ?? {}
+        if (typeof cle !== 'string' || cle === '' || etat.traces?.['essai:' + cle]) return
+        noterEssai(cle, {
+          reponse: typeof reponse === 'string' && reponse.trim() !== '' ? reponse.trim() : null,
+          juste: juste === true,
+          attendu: typeof attendu === 'string' ? attendu : '',
+          retour: typeof retour === 'string' ? retour : '',
+        })
+      })
+      function noterEssai(cle, essai) {
+        etat.traces = { ...(etat.traces ?? {}), ['essai:' + cle]: { ...essai, le: aujourdhui() } }
+        pont.envoyer('pretest.reponse', {
+          question: cle,
+          reponse: (essai.reponse ?? 'Je ne sais pas').slice(0, 2000),
+        })
+        enregistrer()
+        majEssais()
+      }
+      /** Ce qu'un exercice attend, quand aucun outil ne le dit : l'option juste, la solution, la réponse. */
+      function attenduEcrit(ex) {
+        const juste = ex.dataset.reponse
+        const option = juste
+          ? Array.from(ex.querySelectorAll('[data-option]')).find((o) => o.dataset.option === juste)
+          : undefined
+        return (option?.textContent ?? ex.dataset.solution ?? juste ?? '')
+          .replace(/\s+/g, ' ')
+          .trim()
+      }
+      /** Une réponse citée : sans point final, et sans doubler des guillemets qu'elle porte déjà. */
+      function entreGuillemets(texte) {
+        const t = texte.replace(/[.;\s]+$/, '')
+        return /^«.*»$/.test(t) ? t : '« ' + t + ' »'
+      }
+      /** L'énoncé d'un essai, avec la question de son groupe quand il en fait partie (« 1 lampe »). */
+      function enonceEssai(ex) {
+        const propre = ex.querySelector('.q')?.textContent ?? ''
+        const groupe = ex.closest('.groupe')?.querySelector(':scope > .q')?.textContent
+        return ((groupe ? groupe + ' ' : '') + propre).replace(/\s+/g, ' ').trim()
+      }
+      function essaisDe(section) {
+        const exercices = Array.from(section.querySelectorAll('[data-essai][data-id]'))
+        const essais = exercices.map((ex) => etat.traces?.['essai:' + ex.dataset.id])
+        exercices.forEach((ex, k) => {
+          const essai = essais[k]
+          const passer = ex.querySelector(':scope > .essai-passe')
+          if (!essai) {
+            if (passer) return
+            const bouton = creer('button', {
+              type: 'button',
+              className: 'bouton secondaire petit',
+              textContent: 'Je ne sais pas',
+              onclick: () => {
+                const cle = ex.dataset.id
+                ex.dispatchEvent(new CustomEvent('fiche:essai-passe'))
+                if (!etat.traces?.['essai:' + cle])
+                  noterEssai(cle, {
+                    reponse: null,
+                    juste: false,
+                    attendu: attenduEcrit(ex),
+                    retour: ex.dataset.sinon ?? ex.dataset.explication ?? '',
+                  })
+              },
+            })
+            ex.append(creer('div', { className: 'actions essai-passe' }, bouton))
+            return
+          }
+          passer?.remove()
+          for (const champ of ex.querySelectorAll('input, button, select, textarea'))
+            champ.disabled = true
+          const note =
+            ex.querySelector(':scope > .essai-note') ??
+            ex.appendChild(creer('p', { className: 'discret essai-note', 'aria-live': 'polite' }))
+          note.textContent =
+            (essai.reponse === null
+              ? 'Noté : tu ne sais pas encore.'
+              : 'Noté : ' + entreGuillemets(essai.reponse) + '.') +
+            ' La correction vient à la fin de l’étape.'
+        })
+        const ecrans = section.querySelectorAll('.ecran')
+        const bilan =
+          section.querySelector('.essais-bilan') ??
+          (ecrans[ecrans.length - 1] ?? section).appendChild(
+            creer('div', { className: 'essais-bilan', hidden: true }),
+          )
+        const fini = exercices.length > 0 && essais.every(Boolean)
+        bilan.hidden = !fini
+        if (fini)
+          bilan.replaceChildren(
+            creer('h3', { textContent: 'Tes essais' }),
+            creer('p', {
+              textContent:
+                'Voici ce que tu as répondu, et ce qui était attendu. L’étape suivante explique pourquoi.',
+            }),
+            creer(
+              'ol',
+              {},
+              ...exercices.map((ex, k) => {
+                const essai = essais[k]
+                const fin = (texte) => String(texte).replace(/[.;\s]+$/, '') + '.'
+                return creer(
+                  'li',
+                  {},
+                  creer('p', {}, creer('strong', { textContent: enonceEssai(ex) })),
+                  creer('p', {
+                    textContent:
+                      essai.reponse === null
+                        ? 'Tu ne savais pas.'
+                        : 'Ta réponse : ' + fin(essai.reponse) + (essai.juste ? ' Juste.' : ''),
+                  }),
+                  ...(essai.juste || essai.attendu === ''
+                    ? []
+                    : [creer('p', { textContent: 'Attendu : ' + fin(essai.attendu) })]),
+                  ...(essai.retour
+                    ? [creer('p', { className: 'discret', textContent: essai.retour })]
+                    : []),
+                )
+              }),
+            ),
+          )
+        majPied()
+      }
       /**
        * Une erreur critique repérée, par le correcteur dans une réponse ou par un outil : elle reste
        * connue après un rechargement, et le bilan suivant la coche d'office (`aCocher`) sans que
@@ -1747,6 +1894,17 @@
             ' sur\u00a0' +
             items.length +
             ' pour l’instant.'
+          )
+        }
+        if (etape.type === 'pretest') {
+          const restants = Array.from(
+            $('contenu').querySelectorAll('[data-essai][data-id]'),
+          ).filter((ex) => !etat.traces?.['essai:' + ex.dataset.id]).length
+          if (restants === 0) return ''
+          return (
+            'Réponds à chaque essai avant de passer à la suite, « Je ne sais pas » compris\u00a0: ' +
+            (restants > 1 ? 'il en reste ' + restants : 'il en reste un') +
+            '.'
           )
         }
         if (etape.type !== 'restitution') return ''
@@ -2159,6 +2317,7 @@
       function afficherLibre(etape) {
         const modele = document.querySelector('template[data-etape="' + etape.id + '"]')
         const section = creer('section', {}, creer('h2', { textContent: etape.titre }))
+        if (etape.type === 'pretest') majEssais = () => essaisDe(section)
         if (!modele) {
           section.append(
             creer('p', { className: 'discret', textContent: 'Rien à lire dans cette étape.' }),
@@ -2204,7 +2363,15 @@
           precedent.disabled = k === 0
           avancer.textContent =
             k < ecrans.length - 1 ? 'Suivant' : suivante ? 'Étape suivante' : 'Terminé'
-          avancer.disabled = k === ecrans.length - 1 && !suivante
+          majPied()
+        }
+        // Le dernier écran mène à l'étape suivante quand rien ne reste à faire (la tentative finie).
+        const raison = creer('p', { className: 'discret', hidden: true })
+        majPied = () => {
+          const reste = courant === ecrans.length - 1 ? resteAFaire(etape) : ''
+          avancer.disabled = courant === ecrans.length - 1 && (!suivante || reste !== '')
+          raison.textContent = reste
+          raison.hidden = reste === ''
         }
         precedent.addEventListener('click', () => {
           montrer(courant - 1)
@@ -2214,7 +2381,7 @@
           if (courant < ecrans.length - 1) {
             montrer(courant + 1)
             remonter(section)
-          } else if (suivante) aller(suivante.id)
+          } else if (suivante && resteAFaire(etape) === '') aller(suivante.id)
         })
         for (const e of ecrans) e.classList.add('ecran')
         section.append(
@@ -2222,6 +2389,7 @@
           progres,
           ...ecrans,
           creer('div', { className: 'ecran-nav' }, precedent, avancer),
+          raison,
         )
         activerLiens(section)
         montrer(courant)
@@ -3236,6 +3404,7 @@
         window.speechSynthesis?.cancel()
         majPied = () => {}
         majBilan = () => {}
+        majEssais = () => {}
         afficherEtapes()
         const etape = etapes.find((e) => e.id === etat.etape) ?? etapes[0]
         let vue
@@ -3295,6 +3464,8 @@
             detail: { etape, traces: { ...(etat.traces ?? {}) }, aisance: [...aisanceServeur] },
           }),
         )
+        // Les outils montés, les essais déjà notés se figent et la série finie montre sa correction.
+        majEssais()
       }
 
       async function demarrer() {
