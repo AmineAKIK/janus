@@ -95,6 +95,17 @@ function enTexte(html: string): string {
       .replace(/<div\b[^>]*\bdata-ecran\s*=\s*["']([^"']+)["'][^>]*>/gi, '\n#### $1\n')
       .replace(/<li\b[^>]*>/gi, '\n- ')
       .replace(/<br\s*\/?>/gi, '\n')
+      // Un exposant garde sa marque (2^8, pas 28) ; une boîte de schéma et sa flèche prennent chacune leur ligne,
+      // la précision d'une boîte entre parenthèses.
+      .replace(/<sup\b[^>]*>/gi, '^')
+      // Deux cases collées d'une grille (le numéro et son signe) restent deux mots : 48 0, pas 480.
+      .replace(/(<\/(?:span|b)>)(?=<(?:span|b)\b)/gi, '$1 ')
+      .replace(
+        /<span\b[^>]*\bclass\s*=\s*["'][^"']*\b(?:boite-fixe|fleche)\b[^"']*["'][^>]*>/gi,
+        '\n',
+      )
+      .replace(/<small\b[^>]*>/gi, ' (')
+      .replace(/<\/small>/gi, ')')
       .replace(
         /<\/?(?:p|div|ul|ol|li|h[1-6]|table|tr|details|summary|section|figure|figcaption|blockquote|pre)\b[^>]*>/gi,
         '\n',
@@ -512,6 +523,8 @@ function etapeEnTexte(
     case 'bilan':
       return [
         'Ce que tu as fait, puis les erreurs critiques du bloc. Celles que la page a repérées dans tes réponses y sont déjà cochées ; tu coches aussi celles que tu sais avoir faites et dois encore revoir. Une erreur cochée met le bloc « À reprendre » jusqu’à ce qu’une réponse solide, à une question qui la touche, la referme.',
+        // La page les affiche, à cocher : l'apprenant sait ce qu'il cherche.
+        ...manifeste.erreurs_critiques.map(({ libelle }) => `- [ ] ${libelle}`),
       ]
     default:
       return []
