@@ -132,6 +132,42 @@ function verifierTemplates(
   }
 }
 
+const ETATS_D_ESSAI: ReadonlySet<string> = new Set(['juste', 'faux', 'passe', 'absent'])
+
+/**
+ * Une explication qui part des essais (règle C03) renvoie à un essai de la fiche : `data-si-essai`
+ * (« c2:faux|passe ») et `data-essai-rappel` (« c2 »). Un renvoi à un essai absent, ou à un état
+ * que la page ne connaît pas, cacherait le paragraphe pour toujours : la vérification le dit.
+ */
+function verifierRenvoisAuxEssais(html: string, signaler: (message: string) => void): void {
+  const page = sansScriptsNiCommentaires(html)
+  const essais = new Set<string>()
+  for (const [, attributs] of page.matchAll(
+    /<[a-z][\w-]*\b([^>]*\bdata-essai\b(?![-=])[^>]*)>/gi,
+  )) {
+    const id = /\bdata-id\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
+    if (id !== undefined) essais.add(id)
+  }
+  for (const [, nom = '', valeur = ''] of page.matchAll(
+    /\b(data-si-essai|data-essai-rappel)\s*=\s*["']([^"']*)["']/gi,
+  )) {
+    const [cle = '', etats] = nom === 'data-si-essai' ? valeur.split(':') : [valeur]
+    if (!essais.has(cle)) {
+      signaler(`${nom}="${valeur}" renvoie à l’essai ${cle}, qui n’est pas dans la fiche.`)
+      continue
+    }
+    if (etats === undefined) {
+      if (nom === 'data-si-essai')
+        signaler(`${nom}="${valeur}" : l’état manque (juste, faux, passe ou absent après « : »).`)
+      continue
+    }
+    for (const inconnu of etats.split('|').filter((e) => !ETATS_D_ESSAI.has(e)))
+      signaler(
+        `${nom}="${valeur}" : l’état « ${inconnu} » n’existe pas (juste, faux, passe ou absent).`,
+      )
+  }
+}
+
 /** Le texte de chaque `<template data-item="…">`, hors scripts et commentaires, par identifiant. */
 function templatesDesItems(html: string): ReadonlyMap<string, string> {
   const items = new Map<string, string>()
@@ -612,6 +648,7 @@ export async function verifierLesFiches({
       verifierRestitution(resultat.manifeste, signaler)
       verifierOrdreDuCycle(resultat.manifeste, signaler)
       verifierAdressesExternes(fiche.html, signaler)
+      verifierRenvoisAuxEssais(fiche.html, signaler)
       verifierRenvoisAuxCours(resultat.manifeste, fiche.html, signaler)
       verifierAlignement(resultat.manifeste, fiche.html, signaler)
 

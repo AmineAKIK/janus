@@ -385,6 +385,48 @@ describe('vérification des fiches du dépôt', () => {
     })
   })
 
+  describe('une explication qui part des essais', () => {
+    /** L'explication ET2 du gabarit, avec un paragraphe qui renvoie à un essai. */
+    const avecRenvoi = (attributs: string) =>
+      fiche.replace(
+        '<template data-etape="ET2">',
+        `<template data-etape="ET2"><div data-essai data-id="c1"><p class="q">Combien ?</p></div><p ${attributs}>Tu avais répondu autre chose.</p>`,
+      )
+
+    it('refuse un renvoi à un essai qui n’existe pas', async () => {
+      await poser('X00.html', avecRenvoi('data-si-essai="c9:faux"'))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('data-si-essai="c9:faux" renvoie à l’essai c9'),
+      ])
+    })
+
+    it('refuse un état d’essai inconnu', async () => {
+      await poser('X00.html', avecRenvoi('data-si-essai="c1:rate"'))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('data-si-essai="c1:rate" : l’état « rate »'),
+      ])
+    })
+
+    it('refuse un rappel de réponse sans essai', async () => {
+      await poser('X00.html', avecRenvoi('data-essai-rappel="c2"'))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('data-essai-rappel="c2" renvoie à l’essai c2'),
+      ])
+    })
+
+    it('accepte les renvois aux essais de la fiche', async () => {
+      await poser(
+        'X00.html',
+        avecRenvoi('data-si-essai="c1:faux|passe"><span data-essai-rappel="c1">ta réponse</span'),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+  })
+
   describe('ce que la fiche enseigne et ce qu’elle interroge', () => {
     it('refuse une fiche sans tableau d’alignement', async () => {
       await poser('X00.html', fiche.replace(TABLEAU, ''))

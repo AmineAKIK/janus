@@ -83,10 +83,35 @@ function sansCommentairesScriptsNiStyles(html: string): string {
   return html.replace(/<!--[\s\S]*?-->/g, '').replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, '')
 }
 
+const ETATS_EN_MOTS: Readonly<Record<string, string>> = {
+  juste: 'juste',
+  faux: 'faux',
+  passe: 'passé',
+  absent: 'pas encore fait',
+}
+
+/**
+ * Un encadré qui dépend d'un essai (`data-si-essai`) le dit en tête ; la réponse qu'il cite
+ * (`data-essai-rappel`) se lit à sa place : le texte montre tous les encadrés, la page un seul.
+ */
+function essaisEnTexte(html: string): string {
+  return remplacerElements(html, (_nom, attributs) => {
+    const cle = /\bdata-essai-rappel\s*=\s*["']([^"']*)["']/i.exec(attributs)?.[1]
+    return cle === undefined ? undefined : `[la réponse à l’essai ${cle}]`
+  }).replace(
+    /(<[a-z][a-z0-9-]*\b[^>]*\bdata-si-essai\s*=\s*["']([^"':]*):([^"']*)["'][^>]*>)/gi,
+    (_balise, ouvrante: string, cle: string, etats: string) =>
+      `${ouvrante}[seulement si l’essai ${cle} est ${etats
+        .split('|')
+        .map((etat) => ETATS_EN_MOTS[etat] ?? etat)
+        .join(' ou ')}] `,
+  )
+}
+
 /** Le HTML d'une étape en texte simple : un paragraphe par ligne, les écrans en titres, les outils nommés. */
 function enTexte(html: string): string {
   return decoder(
-    imagesEnTexte(sansCommentairesScriptsNiStyles(html))
+    essaisEnTexte(imagesEnTexte(sansCommentairesScriptsNiStyles(html)))
       .replace(/\s+/g, ' ')
       .replace(
         /<div\b[^>]*\bdata-widget\s*=\s*["']([^"']+)["'][^>]*>/gi,
@@ -328,7 +353,7 @@ function varianteDuCours(lire: (nom: string) => string | undefined): string[] {
 export const CE_QUE_FAIT_LE_GABARIT: readonly string[] = [
   'Le fil groupe les étapes en quatre moments : Découvrir (perception, puis carte, qui vient après le pari), Comprendre (pré-test, explication), S’entraîner (pratique, atelier, aisance, ensemble), Prouver (restitution, bilan).',
   'Une étape à plusieurs écrans les montre un par un, avec Retour et Suivant ; chaque écran a « Écouter », qui le lit à voix haute.',
-  'Pré-test, la tentative avant l’explication : chaque exercice d’essai (`data-essai`) prend une réponse, ou « Je ne sais pas », sans rien dire de juste ou de faux (« Noté : … La correction vient à la fin de l’étape. ») ; la première réponse part à l’appli. Quand chaque essai a sa réponse, « Tes essais » montre chaque réponse, juste ou pas, ce qui était attendu et le retour de la fiche ; « Étape suivante » attend jusque-là.',
+  'Pré-test, la tentative avant l’explication : chaque exercice d’essai (`data-essai`) prend une réponse, ou « Je ne sais pas », sans rien dire de juste ou de faux (« Noté : … La correction vient à la fin de l’étape. ») ; la première réponse part à l’appli. Quand chaque essai a sa réponse, « Tes essais » montre chaque réponse, juste ou pas, ce qui était attendu et le retour de la fiche, sauf après « Je ne sais pas » ; « Étape suivante » attend jusque-là. L’explication qui suit peut montrer un encadré selon la réponse à un essai (`data-si-essai`), et y citer cette réponse (`data-essai-rappel`).',
   'La carte montre son texte, puis l’objectif replié sous « Ce qui sera vérifié » ; le même objectif replié ouvre la pratique.',
   'Pratique : un item à la fois. Quand l’outil de l’item vérifie la réponse, c’est lui qui dit si l’item est réussi ; sinon l’apprenant déclare « J’ai réussi » ou « Pas réussi ». Sous « J’ai eu besoin d’aide », il déclare le cran utilisé : 1 une question qui oriente, 2 un indice, 3 l’étape détaillée, 4 la solution complète. Chaque résultat part à l’appli avec son aide (« Envoyé : réussi, aide 1 »).',
   'Quand l’outil a montré la solution, l’item n’est pas réussi : il affiche « Solution vue » et « Tu as vu la solution. Refais-la sans la regarder. », puis se redessine, et l’outil propose sa variante. La solution compte comme vue dès qu’elle s’affiche, même si l’apprenant quitte l’item. Le même jour, chaque résultat de l’item part avec l’aide 4 ; un autre jour, il repart sans aide.',

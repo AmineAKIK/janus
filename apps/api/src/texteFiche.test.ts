@@ -30,6 +30,7 @@ async function ficheRemplie(): Promise<string> {
         '  ><span class="fleche">lus avec un codage →</span',
         '  ><span class="boite-fixe">Un sens<small>A</small></span></div>',
         '  <details><summary>Un coup de pouce</summary><p>150 − 128 = 22</p></details>',
+        '  <p data-si-essai="c2:faux|passe">Tu avais compté <span data-essai-rappel="c2">autre chose</span> valeurs.</p>',
         '</div>',
       ].join('\n'),
     )
@@ -71,6 +72,12 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
     expect(texte).toContain('- 128\n- 64')
     expect(texte).toContain('Un octet : 2^8 = 256 valeurs.')
     expect(texte).toContain('- 65 A')
+  })
+
+  it('dit quand un encadré dépend d’un essai, et où il cite la réponse', () => {
+    expect(texte).toContain(
+      '[seulement si l’essai c2 est faux ou passé] Tu avais compté [la réponse à l’essai c2] valeurs.',
+    )
   })
 
   it('montre au bilan les erreurs critiques à cocher, comme la page', () => {

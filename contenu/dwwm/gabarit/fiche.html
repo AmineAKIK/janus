@@ -347,7 +347,8 @@
         min-width: 0;
       }
       .ecran[hidden],
-      .bouton[hidden] {
+      .bouton[hidden],
+      [data-si-essai][hidden] {
         display: none;
       }
       h2 {
@@ -865,6 +866,14 @@
       }
       .essais-bilan p {
         margin: 0;
+      }
+      /* Ce que l'explication répond à un essai de l'apprenant (data-si-essai) : repérable d'un coup d'œil. */
+      [data-si-essai] {
+        margin: 0;
+        padding: var(--espacement-8) var(--espacement-12);
+        border-inline-start: 3px solid var(--couleur-accent);
+        border-radius: var(--rayon-champ);
+        background: var(--couleur-surface-douce);
       }
       .objectif-liste {
         display: flex;
@@ -1695,6 +1704,31 @@
         })
         enregistrer()
         majEssais()
+        rappelerEssais($('contenu'))
+      }
+      /**
+       * Une explication qui part des essais (règle C03) : `data-essai-rappel="c2"` affiche la réponse
+       * notée à l'essai c2 (son texte reste tant qu'il n'y en a pas) ; `data-si-essai="c2:faux"` ne
+       * montre l'élément que si l'essai c2 est dans cet état : `juste`, `faux`, `passe` (« Je ne sais
+       * pas ») ou `absent` (pas encore fait), plusieurs séparés par `|`.
+       */
+      function rappelerEssais(racine) {
+        for (const el of racine.querySelectorAll('[data-essai-rappel]')) {
+          const essai = etat.traces?.['essai:' + el.dataset.essaiRappel]
+          if (essai?.reponse) el.textContent = entreGuillemets(essai.reponse)
+        }
+        for (const el of racine.querySelectorAll('[data-si-essai]')) {
+          const [cle, etats = ''] = el.dataset.siEssai.split(':')
+          const essai = etat.traces?.['essai:' + cle]
+          const etatEssai = !essai
+            ? 'absent'
+            : essai.reponse === null
+              ? 'passe'
+              : essai.juste
+                ? 'juste'
+                : 'faux'
+          el.hidden = !etats.split('|').includes(etatEssai)
+        }
       }
       /** Ce qu'un exercice attend, quand aucun outil ne le dit : l'option juste, la solution, la réponse. */
       function attenduEcrit(ex) {
@@ -1737,7 +1771,7 @@
                     reponse: null,
                     juste: false,
                     attendu: attenduEcrit(ex),
-                    retour: ex.dataset.sinon ?? ex.dataset.explication ?? '',
+                    retour: ex.dataset.explication ?? '',
                   })
               },
             })
@@ -1769,7 +1803,7 @@
             creer('h3', { textContent: 'Tes essais' }),
             creer('p', {
               textContent:
-                'Voici ce que tu as répondu, et ce qui était attendu. L’étape suivante explique pourquoi.',
+                'Voici ce que tu as répondu, et ce qui était attendu. L’étape suivante explique pourquoi, à partir de tes réponses.',
             }),
             creer(
               'ol',
@@ -1781,18 +1815,26 @@
                   'li',
                   {},
                   creer('p', {}, creer('strong', { textContent: enonceEssai(ex) })),
-                  creer('p', {
-                    textContent:
-                      essai.reponse === null
-                        ? 'Tu ne savais pas.'
-                        : 'Ta réponse : ' + fin(essai.reponse) + (essai.juste ? ' Juste.' : ''),
-                  }),
-                  ...(essai.juste || essai.attendu === ''
-                    ? []
-                    : [creer('p', { textContent: 'Attendu : ' + fin(essai.attendu) })]),
-                  ...(essai.retour
-                    ? [creer('p', { className: 'discret', textContent: essai.retour })]
-                    : []),
+                  // Sans réponse, pas de solution à garder sans l'avoir comprise (règle F04) :
+                  // l'étape suivante l'explique, à partir des réponses de la série.
+                  ...(essai.reponse === null
+                    ? [
+                        creer('p', {
+                          textContent: 'Tu ne savais pas : l’étape suivante te l’apprend.',
+                        }),
+                      ]
+                    : [
+                        creer('p', {
+                          textContent:
+                            'Ta réponse : ' + fin(essai.reponse) + (essai.juste ? ' Juste.' : ''),
+                        }),
+                        ...(essai.juste || essai.attendu === ''
+                          ? []
+                          : [creer('p', { textContent: 'Attendu : ' + fin(essai.attendu) })]),
+                        ...(essai.retour
+                          ? [creer('p', { className: 'discret', textContent: essai.retour })]
+                          : []),
+                      ]),
                 )
               }),
             ),
@@ -3464,8 +3506,10 @@
             detail: { etape, traces: { ...(etat.traces ?? {}) }, aisance: [...aisanceServeur] },
           }),
         )
-        // Les outils montés, les essais déjà notés se figent et la série finie montre sa correction.
+        // Les outils montés, les essais déjà notés se figent et la série finie montre sa correction ;
+        // une explication montre ce qui répond aux essais de l'apprenant.
         majEssais()
+        rappelerEssais($('contenu'))
       }
 
       async function demarrer() {
