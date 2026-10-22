@@ -136,7 +136,7 @@ function enTexte(html: string): string {
         '\n',
       )
       .replace(/<small\b[^>]*>/gi, ' (')
-      .replace(/<\/small>/gi, ')')
+      .replace(/<\/small\s*>/gi, ')')
       .replace(
         /<\/?(?:p|div|ul|ol|li|h[1-6]|table|tr|details|summary|section|figure|figcaption|blockquote|pre)\b[^>]*>/gi,
         '\n',
