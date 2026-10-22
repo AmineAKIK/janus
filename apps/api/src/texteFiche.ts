@@ -98,6 +98,8 @@ function enTexte(html: string): string {
       // Un exposant garde sa marque (2^8, pas 28) ; une boîte de schéma et sa flèche prennent chacune leur ligne,
       // la précision d'une boîte entre parenthèses.
       .replace(/<sup\b[^>]*>/gi, '^')
+      // Deux cases collées d'une grille (le numéro et son signe) restent deux mots : 48 0, pas 480.
+      .replace(/(<\/(?:span|b)>)(?=<(?:span|b)\b)/gi, '$1 ')
       .replace(/<span\b[^>]*\bclass\s*=\s*["'][^"']*\b(?:boite-fixe|fleche)\b[^"']*["'][^>]*>/gi, '\n')
       .replace(/<small\b[^>]*>/gi, ' (')
       .replace(/<\/small>/gi, ')')
