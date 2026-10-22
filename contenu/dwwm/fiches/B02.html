@@ -2018,6 +2018,47 @@
       <div id="contenu"></div>
     </main>
 
+    <!-- ET2, perception : le guichet du cinéma décide pour cinq clients, puis le pari, sans note. -->
+    <template data-etape="ET2">
+      <p class="accroche">
+        Un cinéma calcule le prix de chaque place avec ces quatre lignes. Le guichet les lit de haut
+        en bas.
+      </p>
+      <pre
+        class="pseudo"
+        data-pseudo="guichet"
+      ><code><span class="l" data-l="1"><b>SI</b> âge &lt; 12 :</span>
+<span class="l br" data-l="1">  afficher « 5 € »</span>
+<span class="l" data-l="2"><b>SINON SI</b> étudiant <b>OU</b> âge &lt; 26 :</span>
+<span class="l br" data-l="2">  afficher « 7 € »</span>
+<span class="l" data-l="3"><b>SINON SI</b> âge ≥ 65 :</span>
+<span class="l br" data-l="3">  afficher « 8 € »</span>
+<span class="l" data-l="4"><b>SINON</b> :</span>
+<span class="l br" data-l="4">  afficher « 10 € »</span></code></pre>
+      <p class="discret">
+        En mots : moins de 12 ans, 5 € ; sinon, étudiant ou moins de 26 ans, 7 € ; sinon, 65 ans ou
+        plus, 8 € ; sinon, 10 €. Le signe &lt; veut dire « plus petit que », ≥ veut dire « plus
+        grand ou égal à ».
+      </p>
+      <p>Fais passer les clients au guichet, un par un, et regarde ce qui s’allume.</p>
+      <div class="outil" data-widget="guichet"></div>
+      <div
+        data-widget="pari"
+        class="ex"
+        hidden
+        data-apres="Garde ta réponse en tête. Tu vas apprendre les règles qui permettent de le dire à coup sûr."
+      >
+        <p class="q">
+          Paul a 70 ans, et il est étudiant : il suit des cours à l’université. À ton avis, que va
+          afficher le guichet ?
+        </p>
+        <ul class="options">
+          <li data-option="sept">7 €</li>
+          <li data-option="huit">8 €</li>
+          <li data-option="deux">7 €, puis 8 €</li>
+        </ul>
+      </div>
+    </template>
     <!-- ET1, carte : ce que le bloc apprend, où il se place, à quoi il sert. -->
     <template data-etape="ET1">
       <p class="accroche">
@@ -2081,48 +2122,6 @@
         Il te suffit d’avoir fait le bloc L’information en bits, et de savoir comparer deux nombres.
         Pour l’étape Dans la console, il te faut un ordinateur avec un navigateur.
       </p>
-    </template>
-
-    <!-- ET2, perception : le guichet du cinéma décide pour cinq clients, puis le pari, sans note. -->
-    <template data-etape="ET2">
-      <p class="accroche">
-        Un cinéma calcule le prix de chaque place avec ces quatre lignes. Le guichet les lit de haut
-        en bas.
-      </p>
-      <pre
-        class="pseudo"
-        data-pseudo="guichet"
-      ><code><span class="l" data-l="1"><b>SI</b> âge &lt; 12 :</span>
-<span class="l br" data-l="1">  afficher « 5 € »</span>
-<span class="l" data-l="2"><b>SINON SI</b> étudiant <b>OU</b> âge &lt; 26 :</span>
-<span class="l br" data-l="2">  afficher « 7 € »</span>
-<span class="l" data-l="3"><b>SINON SI</b> âge ≥ 65 :</span>
-<span class="l br" data-l="3">  afficher « 8 € »</span>
-<span class="l" data-l="4"><b>SINON</b> :</span>
-<span class="l br" data-l="4">  afficher « 10 € »</span></code></pre>
-      <p class="discret">
-        En mots : moins de 12 ans, 5 € ; sinon, étudiant ou moins de 26 ans, 7 € ; sinon, 65 ans ou
-        plus, 8 € ; sinon, 10 €. Le signe &lt; veut dire « plus petit que », ≥ veut dire « plus
-        grand ou égal à ».
-      </p>
-      <p>Fais passer les clients au guichet, un par un, et regarde ce qui s’allume.</p>
-      <div class="outil" data-widget="guichet"></div>
-      <div
-        data-widget="pari"
-        class="ex"
-        hidden
-        data-apres="Garde ta réponse en tête. Tu vas apprendre les règles qui permettent de le dire à coup sûr."
-      >
-        <p class="q">
-          Paul a 70 ans, et il est étudiant : il suit des cours à l’université. À ton avis, que va
-          afficher le guichet ?
-        </p>
-        <ul class="options">
-          <li data-option="sept">7 €</li>
-          <li data-option="huit">8 €</li>
-          <li data-option="deux">7 €, puis 8 €</li>
-        </ul>
-      </div>
     </template>
 
     <!-- ET3, tentative : quatre décisions à l'intuition, avant toute règle. -->
@@ -5222,7 +5221,7 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 20,
+        "version": 21,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 expressions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
@@ -5265,14 +5264,14 @@ if (age &lt; 12) {
         ],
         "etapes": [
           {
-            "id": "ET1",
-            "titre": "Où tu es",
-            "type": "carte"
-          },
-          {
             "id": "ET2",
             "titre": "Le guichet du cinéma",
             "type": "perception"
+          },
+          {
+            "id": "ET1",
+            "titre": "Où tu es",
+            "type": "carte"
           },
           {
             "id": "ET3",
@@ -10729,7 +10728,7 @@ if (age &lt; 12) {
        * (afficherLibre).
        */
       const MOMENTS = [
-        { nom: 'Découvrir', types: ['carte', 'perception'] },
+        { nom: 'Découvrir', types: ['perception', 'carte'] },
         { nom: 'Comprendre', types: ['pretest', 'explication'] },
         { nom: 'S’entraîner', types: ['pratique', 'atelier', 'aisance', 'ensemble'] },
         { nom: 'Prouver', types: ['restitution', 'bilan'] },

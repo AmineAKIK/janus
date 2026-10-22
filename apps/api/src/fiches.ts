@@ -250,6 +250,23 @@ function sousQuestions(question: string): number {
  * l'apprenant répond à la première et oublie les autres, et le correcteur note un manque qui n'en
  * est pas un.
  */
+/**
+ * Le cycle commence par percevoir (règles C01 et C02) : une carte placée avant la perception dit ce
+ * que le pari demande de deviner (son objectif, ce que l'apprenant saura faire). B01 et B02 l'ont
+ * fait sans que rien ne le refuse, alors qu'AGENTS.md donnait déjà l'ordre.
+ */
+function verifierOrdreDuCycle(manifeste: Manifeste, signaler: (message: string) => void): void {
+  const perception = manifeste.etapes.findIndex((etape) => etape.type === 'perception')
+  if (perception === -1) return
+  for (const etape of manifeste.etapes.slice(0, perception)) {
+    if (etape.type === 'carte') {
+      signaler(
+        `la carte ${etape.id} vient avant la perception ${manifeste.etapes[perception]?.id ?? ''} : le bloc s’ouvre sur la perception et son pari, la carte vient après (règles C01 et C02).`,
+      )
+    }
+  }
+}
+
 function verifierRestitution(manifeste: Manifeste, signaler: (message: string) => void): void {
   for (const question of manifeste.restitution) {
     const n = sousQuestions(question.question)
@@ -629,6 +646,7 @@ export async function verifierLesFiches({
       verifierPratique(resultat.manifeste, fiche.html, signaler)
       verifierErreursCritiques(resultat.manifeste, signaler)
       verifierRestitution(resultat.manifeste, signaler)
+      verifierOrdreDuCycle(resultat.manifeste, signaler)
       verifierAdressesExternes(fiche.html, signaler)
       verifierRenvoisAuxEssais(fiche.html, signaler)
       verifierRenvoisAuxCours(resultat.manifeste, fiche.html, signaler)
