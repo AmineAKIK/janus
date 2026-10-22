@@ -76,6 +76,7 @@ B02-K10 : RECOPIÉE (ET9, Ouvrir la console ; ET12, Les mots du bloc) : dans un 
 NON DÉDUCTIBLES : aucun.
 
 RECOPIÉS :
+
 - B02-K1 : définition du booléen écrite telle quelle (ET4 ; ET12, Les mots du bloc).
 - B02-K2 : table de ET écrite telle quelle (ET5, ET).
 - B02-K3 : table de OU écrite telle quelle (ET5, OU).
