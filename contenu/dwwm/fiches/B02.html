@@ -347,7 +347,8 @@
         min-width: 0;
       }
       .ecran[hidden],
-      .bouton[hidden] {
+      .bouton[hidden],
+      [data-si-essai][hidden] {
         display: none;
       }
       h2 {
@@ -865,6 +866,14 @@
       }
       .essais-bilan p {
         margin: 0;
+      }
+      /* Ce que l'explication répond à un essai de l'apprenant (data-si-essai) : repérable d'un coup d'œil. */
+      [data-si-essai] {
+        margin: 0;
+        padding: var(--espacement-8) var(--espacement-12);
+        border-inline-start: 3px solid var(--couleur-accent);
+        border-radius: var(--rayon-champ);
+        background: var(--couleur-surface-douce);
       }
       .objectif-liste {
         display: flex;
@@ -2133,7 +2142,6 @@
           data-faits="badge|code"
           data-expr="badge ET code"
           data-titre="La porte s’ouvre"
-          data-sinon="Relis la règle : il faut le badge, et aussi le bon code."
         >
           <p class="q">
             La porte d’un local s’ouvre avec le badge ET le bon code. Pour chaque cas, dis si la
@@ -2141,7 +2149,7 @@
           </p>
         </div>
       </div>
-      <div data-ecran="Deux « ou »">
+      <div data-ecran="Une attraction, un menu">
         <div
           class="ex"
           data-essai
@@ -2194,7 +2202,7 @@
           </ul>
         </div>
       </div>
-      <div data-ecran="Une règle, deux lectures">
+      <div data-ecran="Une borne de musée">
         <div
           class="ex"
           data-essai
@@ -2205,25 +2213,24 @@
           data-succes="C’est tout le problème : sans ordre de calcul, cette règle a deux lectures. La logique tranche par une convention, que tu vas voir. Avec elle, Léo entre gratuitement."
         >
           <p class="q">
-            La borne d’un musée suit cette règle, écrite sans parenthèses : gratuit si moins de 18
-            ans ET habite la ville OU enseignant. Léo a 30 ans, il est enseignant, et il habite une
-            autre ville. Avec cette phrase seule, sans règle qui dise dans quel ordre la lire,
-            peut-on trancher : la borne le laisse-t-elle entrer gratuitement ?
+            La borne d’un musée suit cette règle : gratuit si moins de 18 ans ET habite la ville OU
+            enseignant. Léo a 30 ans, il est enseignant, et il habite une autre ville. La borne le
+            laisse-t-elle entrer gratuitement ?
           </p>
           <ul class="options">
             <li
               data-option="oui"
               data-retour="C’est la lecture (moins de 18 ans ET habite la ville) OU enseignant, celle que choisit la règle de calcul que tu vas voir. Mais la phrase seule peut aussi se lire moins de 18 ans ET (habite la ville OU enseignant), et Léo paierait. Sans cette règle, qu’est-ce qui permettrait de trancher ?"
             >
-              Oui : il entre gratuitement.
+              Oui.
             </li>
             <li
               data-option="non"
               data-retour="C’est la lecture moins de 18 ans ET (habite la ville OU enseignant). Mais la phrase seule peut aussi se lire (moins de 18 ans ET habite la ville) OU enseignant, et Léo entrerait. Sans règle, qu’est-ce qui permettrait de trancher ?"
             >
-              Oui : il paie.
+              Non : il paie.
             </li>
-            <li data-option="doute">Non : il faut savoir dans quel ordre lire la règle.</li>
+            <li data-option="doute">On ne peut pas trancher avec cette phrase.</li>
           </ul>
         </div>
       </div>
@@ -2262,6 +2269,54 @@
               data-retour="Il n’affiche qu’un seul mot. Lequel trouve-t-il en premier, de haut en bas ?"
             >
               « tiède », puis « chaud »
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div data-ecran="Un tarif jeune">
+        <div
+          class="ex"
+          data-essai
+          data-widget="choix"
+          data-id="p6"
+          data-reponse="non"
+          data-melanger="non"
+          data-explication="Nora a 26 ans pile : elle n’a plus moins de 26 ans. Le seuil, 26, est exclu."
+        >
+          <p class="q">
+            Un cinéma réserve son tarif jeune aux moins de 26 ans. Nora fête ses 26 ans aujourd’hui.
+            A-t-elle le tarif jeune ?
+          </p>
+          <ul class="options">
+            <li
+              data-option="oui"
+              data-retour="Moins de 26 ans, c’est 25 ans au plus. À 26 ans pile, Nora n’en fait plus partie."
+            >
+              Oui.
+            </li>
+            <li data-option="non">Non.</li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-essai
+          data-widget="choix"
+          data-id="p7"
+          data-reponse="oui"
+          data-melanger="non"
+          data-explication="« Jusqu’à 26 ans » compte le seuil : à 26 ans pile, Nora en fait partie."
+        >
+          <p class="q">
+            Un autre cinéma écrit : tarif jeune jusqu’à 26 ans, compris. Nora, 26 ans, a-t-elle le
+            tarif jeune ?
+          </p>
+          <ul class="options">
+            <li data-option="oui">Oui.</li>
+            <li
+              data-option="non"
+              data-retour="« Compris » veut dire que 26 en fait partie : Nora, 26 ans pile, y a droit."
+            >
+              Non.
             </li>
           </ul>
         </div>
@@ -2400,6 +2455,16 @@
           C’est là que se cachent les erreurs. Écrire &gt; à la place de ≥, c’est se tromper pour
           une seule valeur : celle du seuil, qu’on oublie souvent de tester.
         </p>
+        <p data-si-essai="p6:faux">
+          Pour Nora, 26 ans pile, et le tarif des moins de 26 ans, tu avais répondu
+          <span data-essai-rappel="p6">autre chose</span>. « Moins de 26 ans » s’écrit âge &lt; 26,
+          et 26 &lt; 26 est FAUX : le seuil n’en fait pas partie.
+        </p>
+        <p data-si-essai="p7:faux">
+          Pour le tarif jusqu’à 26 ans compris, tu avais répondu
+          <span data-essai-rappel="p7">autre chose</span>. Il s’écrit âge ≤ 26, et 26 ≤ 26 est VRAI.
+          Entre &lt; 26 et ≤ 26, une seule valeur change : 26, la valeur limite.
+        </p>
         <div class="groupe">
           <p class="q">Il est midi : heure = 12. Que vaut chaque comparaison ?</p>
           <div class="mini">
@@ -2524,6 +2589,10 @@
           A ET B est VRAI seulement si A est VRAI et B est VRAI. Il suffit d’un FAUX pour que tout
           soit FAUX.
         </p>
+        <p data-si-essai="p1:faux|passe">
+          À l’étape 3, la porte du local te demandait le badge ET le bon code. Elle ne s’ouvre que
+          dans un seul des quatre cas : badge et code à la fois. Un seul des deux ne suffit pas.
+        </p>
         <p>
           Image : deux interrupteurs l’un après l’autre, sur le même fil. Fermé, un interrupteur
           laisse passer le courant : il vaut VRAI. La lampe ne s’allume que si les deux sont fermés.
@@ -2572,6 +2641,11 @@
         <p class="accroche">
           A OU B est VRAI dès qu’au moins un des deux est VRAI. Il n’est FAUX que si les deux sont
           FAUX.
+        </p>
+        <p data-si-essai="p2:faux">
+          Pour Sami, 1,30 m et venu avec son père, tu avais répondu
+          <span data-essai-rappel="p2">autre chose</span>. Ce OU accepte les deux conditions à la
+          fois : Sami en remplit deux, il monte.
         </p>
         <p>
           Image : deux interrupteurs côte à côte, sur deux fils qui mènent à la même lampe. Un seul
@@ -2721,6 +2795,15 @@
           À l’étape 3, la borne du musée lisait « moins de 18 ans ET habite la ville OU
           enseignant ». Deux lectures étaient possibles. Une machine ne peut pas hésiter : une règle
           fixe l’ordre de calcul.
+        </p>
+        <p data-si-essai="p4:juste">
+          Tu l’avais vu pour Léo : sans ordre de calcul, la phrase a deux lectures. Voici la
+          convention qui tranche.
+        </p>
+        <p data-si-essai="p4:faux">
+          Pour Léo, tu avais répondu <span data-essai-rappel="p4">autre chose</span>. Tu as choisi
+          une lecture sans le savoir : l’autre donnait la réponse inverse. La convention ci-dessous
+          tranche, et avec elle Léo entre gratuitement.
         </p>
         <p>
           Une condition se compose de faits, reliés par NON, ET, OU. La calculer, c’est faire une
@@ -3013,6 +3096,11 @@
         <p class="accroche">
           Au restaurant, « fromage ou dessert » interdit les deux. Ce « ou »-là s’appelle le OU
           <strong>exclusif</strong> : il est VRAI quand un seul des deux est VRAI.
+        </p>
+        <p data-si-essai="p3:faux">
+          Pour le menu, tu avais répondu <span data-essai-rappel="p3">autre chose</span>. C’est
+          juste pour le OU de la logique, celui de l’attraction, qui accepte les deux. Le menu en
+          emploie un autre : le OU exclusif.
         </p>
         <div
           class="defile"
@@ -3417,6 +3505,11 @@
 <span class="l br" data-l="2">  afficher « chaud »</span>
 <span class="l" data-l="3"><b>SINON</b> :</span>
 <span class="l br" data-l="3">  afficher « froid »</span></code></pre>
+        <p data-si-essai="p5:faux">
+          Tu avais répondu <span data-essai-rappel="p5">autre chose</span>. Le thermostat lit les
+          lignes de haut en bas et s’arrête à la première condition VRAIE : 30 ≥ 15 l’est déjà. Il
+          n’affiche qu’un mot, « tiède ».
+        </p>
         <div class="ex" data-widget="choix" data-id="b4" data-reponse="chaud" data-melanger="non">
           <p class="q">
             Avant de lire la suite : quelle ligne faut-il tester en premier pour que le thermostat
@@ -8617,9 +8710,10 @@ if (age &lt; 12) {
                 reponse: reponse === undefined || reponse === null ? null : String(reponse),
                 juste: Boolean(res.ok),
                 attendu: typeof c.solution === 'function' ? sansPoint(c.solution()) : '',
+                // Après coup, un indice pour réessayer n'a plus d'objet : ce qui cause l'erreur, ou pourquoi.
                 retour: res.ok
                   ? (ex.dataset.explication ?? '')
-                  : res.d?.m || ex.dataset.sinon || ex.dataset.explication || '',
+                  : res.d?.m || ex.dataset.explication || '',
               },
             }),
           )
@@ -10921,6 +11015,31 @@ if (age &lt; 12) {
         })
         enregistrer()
         majEssais()
+        rappelerEssais($('contenu'))
+      }
+      /**
+       * Une explication qui part des essais (règle C03) : `data-essai-rappel="c2"` affiche la réponse
+       * notée à l'essai c2 (son texte reste tant qu'il n'y en a pas) ; `data-si-essai="c2:faux"` ne
+       * montre l'élément que si l'essai c2 est dans cet état : `juste`, `faux`, `passe` (« Je ne sais
+       * pas ») ou `absent` (pas encore fait), plusieurs séparés par `|`.
+       */
+      function rappelerEssais(racine) {
+        for (const el of racine.querySelectorAll('[data-essai-rappel]')) {
+          const essai = etat.traces?.['essai:' + el.dataset.essaiRappel]
+          if (essai?.reponse) el.textContent = entreGuillemets(essai.reponse)
+        }
+        for (const el of racine.querySelectorAll('[data-si-essai]')) {
+          const [cle, etats = ''] = el.dataset.siEssai.split(':')
+          const essai = etat.traces?.['essai:' + cle]
+          const etatEssai = !essai
+            ? 'absent'
+            : essai.reponse === null
+              ? 'passe'
+              : essai.juste
+                ? 'juste'
+                : 'faux'
+          el.hidden = !etats.split('|').includes(etatEssai)
+        }
       }
       /** Ce qu'un exercice attend, quand aucun outil ne le dit : l'option juste, la solution, la réponse. */
       function attenduEcrit(ex) {
@@ -10963,7 +11082,7 @@ if (age &lt; 12) {
                     reponse: null,
                     juste: false,
                     attendu: attenduEcrit(ex),
-                    retour: ex.dataset.sinon ?? ex.dataset.explication ?? '',
+                    retour: ex.dataset.explication ?? '',
                   })
               },
             })
@@ -10995,7 +11114,7 @@ if (age &lt; 12) {
             creer('h3', { textContent: 'Tes essais' }),
             creer('p', {
               textContent:
-                'Voici ce que tu as répondu, et ce qui était attendu. L’étape suivante explique pourquoi.',
+                'Voici ce que tu as répondu, et ce qui était attendu. L’étape suivante explique pourquoi, à partir de tes réponses.',
             }),
             creer(
               'ol',
@@ -11007,18 +11126,26 @@ if (age &lt; 12) {
                   'li',
                   {},
                   creer('p', {}, creer('strong', { textContent: enonceEssai(ex) })),
-                  creer('p', {
-                    textContent:
-                      essai.reponse === null
-                        ? 'Tu ne savais pas.'
-                        : 'Ta réponse : ' + fin(essai.reponse) + (essai.juste ? ' Juste.' : ''),
-                  }),
-                  ...(essai.juste || essai.attendu === ''
-                    ? []
-                    : [creer('p', { textContent: 'Attendu : ' + fin(essai.attendu) })]),
-                  ...(essai.retour
-                    ? [creer('p', { className: 'discret', textContent: essai.retour })]
-                    : []),
+                  // Sans réponse, pas de solution à garder sans l'avoir comprise (règle F04) :
+                  // l'étape suivante l'explique, à partir des réponses de la série.
+                  ...(essai.reponse === null
+                    ? [
+                        creer('p', {
+                          textContent: 'Tu ne savais pas : l’étape suivante te l’apprend.',
+                        }),
+                      ]
+                    : [
+                        creer('p', {
+                          textContent:
+                            'Ta réponse : ' + fin(essai.reponse) + (essai.juste ? ' Juste.' : ''),
+                        }),
+                        ...(essai.juste || essai.attendu === ''
+                          ? []
+                          : [creer('p', { textContent: 'Attendu : ' + fin(essai.attendu) })]),
+                        ...(essai.retour
+                          ? [creer('p', { className: 'discret', textContent: essai.retour })]
+                          : []),
+                      ]),
                 )
               }),
             ),
@@ -12690,8 +12817,10 @@ if (age &lt; 12) {
             detail: { etape, traces: { ...(etat.traces ?? {}) }, aisance: [...aisanceServeur] },
           }),
         )
-        // Les outils montés, les essais déjà notés se figent et la série finie montre sa correction.
+        // Les outils montés, les essais déjà notés se figent et la série finie montre sa correction ;
+        // une explication montre ce qui répond aux essais de l'apprenant.
         majEssais()
+        rappelerEssais($('contenu'))
       }
 
       async function demarrer() {

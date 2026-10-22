@@ -347,7 +347,8 @@
         min-width: 0;
       }
       .ecran[hidden],
-      .bouton[hidden] {
+      .bouton[hidden],
+      [data-si-essai][hidden] {
         display: none;
       }
       h2 {
@@ -865,6 +866,14 @@
       }
       .essais-bilan p {
         margin: 0;
+      }
+      /* Ce que l'explication répond à un essai de l'apprenant (data-si-essai) : repérable d'un coup d'œil. */
+      [data-si-essai] {
+        margin: 0;
+        padding: var(--espacement-8) var(--espacement-12);
+        border-inline-start: 3px solid var(--couleur-accent);
+        border-radius: var(--rayon-champ);
+        background: var(--couleur-surface-douce);
       }
       .objectif-liste {
         display: flex;
@@ -2110,7 +2119,6 @@
           data-essai
           data-widget="nombre"
           data-id="c1"
-          data-sinon="Clique sur +1 jusqu’à ce que le compteur repasse à 0. Le plus grand nombre est celui affiché juste avant."
           data-reponse="7"
           data-diag="max"
           data-n="3"
@@ -2125,7 +2133,6 @@
           data-essai
           data-widget="nombre"
           data-id="c2"
-          data-sinon="Compte tous les nombres que tu as vus, du 0 jusqu’au plus grand : 0, 1, 2…"
           data-reponse="8"
           data-diag="valeurs"
           data-n="3"
@@ -2149,7 +2156,6 @@
               data-essai
               data-widget="nombre"
               data-id="c3a"
-              data-sinon="Avec 1 lampe, compte les nombres affichés avant le retour à 0, 0 compris."
               data-reponse="2"
               data-diag="valeurs"
               data-n="1"
@@ -2161,7 +2167,6 @@
               data-essai
               data-widget="nombre"
               data-id="c3b"
-              data-sinon="Avec 2 lampes, compte les nombres affichés avant le retour à 0, 0 compris."
               data-reponse="4"
               data-diag="valeurs"
               data-n="2"
@@ -2173,7 +2178,6 @@
               data-essai
               data-widget="nombre"
               data-id="c3c"
-              data-sinon="Avec 4 lampes, compte les nombres affichés avant le retour à 0, 0 compris."
               data-reponse="16"
               data-diag="valeurs"
               data-n="4"
@@ -2200,29 +2204,6 @@
             </li>
           </ul>
         </div>
-        <div
-          class="ex"
-          data-essai
-          data-widget="nombre"
-          data-id="c5"
-          data-reponse="256"
-          data-diag="valeurs"
-          data-n="8"
-        >
-          <p class="q">Sans le compteur : avec 8 lampes, combien de valeurs possibles ?</p>
-        </div>
-        <div
-          class="ex"
-          data-essai
-          data-widget="nombre"
-          data-id="c6"
-          data-reponse="255"
-          data-diag="max"
-          data-n="8"
-          data-explication="Vérifie : passe à 8 lampes, clique sur « Aller à 250 », puis avance."
-        >
-          <p class="q">Et le plus grand nombre que le compteur peut afficher avec 8 lampes ?</p>
-        </div>
       </div>
       <div data-ecran="Ce que vaut chaque lampe">
         <div class="outil" data-widget="compteur"><p class="outil-titre">Compteur à lampes</p></div>
@@ -2238,7 +2219,6 @@
               data-widget="nombre"
               data-id="c7a"
               data-reponse="1"
-              data-sinon="Repars de 0 avec 4 lampes et clique sur +1 une fois. Regarde le compteur quand la lampe de droite s’allume."
               data-solution="La lampe de droite s’allume dès 1"
             >
               <p class="q">1re lampe</p>
@@ -2249,7 +2229,6 @@
               data-widget="nombre"
               data-id="c7b"
               data-reponse="2"
-              data-sinon="Repars de 0 et avance une fois à la fois. Note le nombre affiché quand la 2e lampe s’allume pour la première fois."
               data-solution="La 2e lampe s’allume pour la première fois à 2"
             >
               <p class="q">2e lampe</p>
@@ -2260,7 +2239,6 @@
               data-widget="nombre"
               data-id="c7c"
               data-reponse="4"
-              data-sinon="Repars de 0 et avance une fois à la fois. Note le nombre affiché quand la 3e lampe s’allume pour la première fois."
               data-solution="La 3e lampe s’allume pour la première fois à 4"
             >
               <p class="q">3e lampe</p>
@@ -2271,12 +2249,40 @@
               data-widget="nombre"
               data-id="c7d"
               data-reponse="8"
-              data-sinon="Repars de 0 et avance une fois à la fois. Note le nombre affiché quand la 4e lampe s’allume pour la première fois."
               data-solution="La 4e lampe s’allume pour la première fois à 8"
             >
               <p class="q">4e lampe</p>
             </div>
           </div>
+        </div>
+      </div>
+      <div data-ecran="Sans le compteur">
+        <p class="accroche">
+          Ici, pas de compteur, et ne reviens pas le chercher : réponds avec ce que tu as observé.
+          Une réponse fausse ici n’a rien de grave, l’étape suivante part de tes réponses.
+        </p>
+        <div
+          class="ex"
+          data-essai
+          data-widget="nombre"
+          data-id="c5"
+          data-reponse="256"
+          data-diag="valeurs"
+          data-n="8"
+        >
+          <p class="q">Avec 8 lampes, combien de valeurs possibles ?</p>
+        </div>
+        <div
+          class="ex"
+          data-essai
+          data-widget="nombre"
+          data-id="c6"
+          data-reponse="255"
+          data-diag="max"
+          data-n="8"
+          data-explication="Avec 8 lampes, le compteur va de 0 à 255 : 256 valeurs, et 0 est l’une d’elles."
+        >
+          <p class="q">Et le plus grand nombre que le compteur afficherait avec 8 lampes ?</p>
         </div>
         <div
           class="ex"
@@ -2289,13 +2295,11 @@
         >
           <p class="q">
             Imagine la 4e, la 2e et la 1re lampe allumées, les autres éteintes. Avec les nombres que
-            tu viens de noter, quel nombre affiche le compteur ? Vérifie ensuite avec le compteur.
+            tu as notés, quel nombre afficherait le compteur ?
           </p>
         </div>
         <div class="groupe">
-          <p class="q">
-            Sans compter : à quel nombre s’allumerait pour la première fois la 5e lampe ? Et la 8e ?
-          </p>
+          <p class="q">À quel nombre s’allumerait pour la première fois la 5e lampe ? Et la 8e ?</p>
           <div class="mini">
             <div
               class="ex"
@@ -2303,7 +2307,6 @@
               data-widget="nombre"
               data-id="c8a"
               data-reponse="16"
-              data-sinon="Regarde les nombres notés : 1, 2, 4, 8. Que fait chacun par rapport au précédent ?"
               data-solution="Chaque nombre double le précédent : 1, 2, 4, 8, puis 16 pour la 5e lampe"
             >
               <p class="q">5e lampe</p>
@@ -2314,24 +2317,22 @@
               data-widget="nombre"
               data-id="c8b"
               data-reponse="128"
-              data-sinon="Continue à doubler depuis 16 : une fois pour la 6e lampe, encore pour la 7e, puis pour la 8e."
               data-solution="En doublant depuis 16 : 32 pour la 6e lampe, 64 pour la 7e, 128 pour la 8e"
             >
               <p class="q">8e lampe</p>
             </div>
           </div>
         </div>
-        <p>
-          Le nombre propre à chaque lampe s’appelle son <strong>poids</strong>. Le compteur affiche
-          la somme des poids des lampes allumées.
-        </p>
       </div>
     </template>
 
     <!-- ET4, explication : bit, octet, nombre de valeurs, poids ; ce que l'apprenant vient de trouver. -->
     <template data-etape="ET4">
       <div data-ecran="Bit et octet">
-        <p class="accroche">Ce que tu viens de trouver avec le compteur a des noms.</p>
+        <p class="accroche">
+          Ce que tu as cherché avec le compteur a des noms. Les encadrés reprennent tes essais, là
+          où ta réponse s’écartait.
+        </p>
         <ul>
           <li>
             Chaque lampe du compteur est un bit. Huit bits à la suite forment un
@@ -2361,6 +2362,29 @@
             − 1 : 255 pour un octet, 15 pour 4 bits.
           </li>
         </ul>
+        <p data-si-essai="c2:faux">
+          Avec 3 lampes, tu avais compté <span data-essai-rappel="c2">autre chose</span> valeurs. Il
+          y en a 8 : 0, 1, 2, 3, 4, 5, 6 et 7. Le 0 est une valeur comme les autres, c’est lui qu’on
+          oublie le plus souvent.
+        </p>
+        <p data-si-essai="c1:faux">
+          Pour le plus grand nombre avec 3 lampes, tu avais répondu
+          <span data-essai-rappel="c1">autre chose</span>. C’est 7 : il y a 8 valeurs, la première
+          est 0, la dernière est donc 8 − 1.
+        </p>
+        <p data-si-essai="c4:faux">
+          Tu avais répondu <span data-essai-rappel="c4">autre chose</span> quand on ajoute une
+          lampe. Reprends tes comptes : 2, 4, 8, 16. La nouvelle lampe éteinte, on retrouve toutes
+          les valeurs d’avant ; allumée, on les retrouve une seconde fois. Le nombre double.
+        </p>
+        <p data-si-essai="c5:faux">
+          Pour 8 lampes, tu avais répondu <span data-essai-rappel="c5">autre chose</span> valeurs.
+          En doublant 8 fois depuis 1 : 2, 4, 8, 16, 32, 64, 128, 256.
+        </p>
+        <p data-si-essai="c6:faux">
+          Tu avais donné <span data-essai-rappel="c6">autre chose</span> comme plus grand nombre sur
+          8 lampes. C’est 256 − 1 = 255 : le 0 prend l’une des 256 valeurs.
+        </p>
         <p>Les puissances de 2 à connaître. Par convention, 2<sup>0</sup> vaut 1.</p>
         <ul class="puissances">
           <li>2<sup>0</sup> = 1</li>
@@ -2446,6 +2470,19 @@
             façon d’écrire les nombres s’appelle le <strong>système binaire</strong>, ou base 2.
           </li>
         </ul>
+        <p data-si-essai="c7e:faux">
+          La 4e, la 2e et la 1re lampe allumées : tu avais répondu
+          <span data-essai-rappel="c7e">autre chose</span>. Avec les poids, 8 + 2 + 1 = 11. Le
+          compteur n’affiche rien d’autre que cette somme.
+        </p>
+        <p data-si-essai="c8a:faux">
+          Pour la 5e lampe, tu avais répondu <span data-essai-rappel="c8a">autre chose</span>.
+          Chaque poids double le précédent : après 8 vient 16.
+        </p>
+        <p data-si-essai="c8b:faux">
+          Pour la 8e lampe, tu avais répondu <span data-essai-rappel="c8b">autre chose</span>. En
+          doublant depuis 16 : 32, 64, puis 128. C’est le poids du bit de gauche d’un octet.
+        </p>
         <p>
           Les poids des bits sont les puissances de 2 : 1 = 2<sup>0</sup> pour le bit de droite,
           jusqu’à 128 = 2<sup>7</sup> pour le bit de gauche d’un octet.
@@ -8997,6 +9034,17 @@
          * sans verdict et corrige toute la série à la fin. L'outil ne dit rien ; l'exercice est fini, la
          * suite de l'écran paraît. « Je ne sais pas » (fiche:essai-passe) est une réponse vide.
          */
+        /**
+         * L'attendu d'un essai, en mots de l'essai : sa solution écrite, sinon le nombre seul. La
+         * solution du cours (« 2 puissance 3 = 8 valeurs ») parle de ce que l'étape suivante enseigne.
+         */
+        function attenduDeLEssai(ex, c) {
+          if (ex.dataset.solution) return sansPoint(ex.dataset.solution)
+          if (ex.dataset.widget === 'nombre' && ex.dataset.reponse)
+            return milliers(Number(ex.dataset.reponse))
+          return typeof c.solution === 'function' ? sansPoint(c.solution()) : ''
+        }
+
         function essayer(ex, c, res) {
           ex.dataset.fini = 'oui'
           c.bloquer?.()
@@ -9008,10 +9056,11 @@
                 cle: ex.dataset.id,
                 reponse: reponse === undefined || reponse === null ? null : String(reponse),
                 juste: Boolean(res.ok),
-                attendu: typeof c.solution === 'function' ? sansPoint(c.solution()) : '',
+                attendu: attenduDeLEssai(ex, c),
+                // Après coup, un indice pour réessayer n'a plus d'objet : ce qui cause l'erreur, ou pourquoi.
                 retour: res.ok
                   ? (ex.dataset.explication ?? '')
-                  : res.d?.m || ex.dataset.sinon || ex.dataset.explication || '',
+                  : res.d?.m || ex.dataset.explication || '',
               },
             }),
           )
@@ -11059,6 +11108,31 @@
         })
         enregistrer()
         majEssais()
+        rappelerEssais($('contenu'))
+      }
+      /**
+       * Une explication qui part des essais (règle C03) : `data-essai-rappel="c2"` affiche la réponse
+       * notée à l'essai c2 (son texte reste tant qu'il n'y en a pas) ; `data-si-essai="c2:faux"` ne
+       * montre l'élément que si l'essai c2 est dans cet état : `juste`, `faux`, `passe` (« Je ne sais
+       * pas ») ou `absent` (pas encore fait), plusieurs séparés par `|`.
+       */
+      function rappelerEssais(racine) {
+        for (const el of racine.querySelectorAll('[data-essai-rappel]')) {
+          const essai = etat.traces?.['essai:' + el.dataset.essaiRappel]
+          if (essai?.reponse) el.textContent = entreGuillemets(essai.reponse)
+        }
+        for (const el of racine.querySelectorAll('[data-si-essai]')) {
+          const [cle, etats = ''] = el.dataset.siEssai.split(':')
+          const essai = etat.traces?.['essai:' + cle]
+          const etatEssai = !essai
+            ? 'absent'
+            : essai.reponse === null
+              ? 'passe'
+              : essai.juste
+                ? 'juste'
+                : 'faux'
+          el.hidden = !etats.split('|').includes(etatEssai)
+        }
       }
       /** Ce qu'un exercice attend, quand aucun outil ne le dit : l'option juste, la solution, la réponse. */
       function attenduEcrit(ex) {
@@ -11101,7 +11175,7 @@
                     reponse: null,
                     juste: false,
                     attendu: attenduEcrit(ex),
-                    retour: ex.dataset.sinon ?? ex.dataset.explication ?? '',
+                    retour: ex.dataset.explication ?? '',
                   })
               },
             })
@@ -11133,7 +11207,7 @@
             creer('h3', { textContent: 'Tes essais' }),
             creer('p', {
               textContent:
-                'Voici ce que tu as répondu, et ce qui était attendu. L’étape suivante explique pourquoi.',
+                'Voici ce que tu as répondu, et ce qui était attendu. L’étape suivante explique pourquoi, à partir de tes réponses.',
             }),
             creer(
               'ol',
@@ -11145,18 +11219,26 @@
                   'li',
                   {},
                   creer('p', {}, creer('strong', { textContent: enonceEssai(ex) })),
-                  creer('p', {
-                    textContent:
-                      essai.reponse === null
-                        ? 'Tu ne savais pas.'
-                        : 'Ta réponse : ' + fin(essai.reponse) + (essai.juste ? ' Juste.' : ''),
-                  }),
-                  ...(essai.juste || essai.attendu === ''
-                    ? []
-                    : [creer('p', { textContent: 'Attendu : ' + fin(essai.attendu) })]),
-                  ...(essai.retour
-                    ? [creer('p', { className: 'discret', textContent: essai.retour })]
-                    : []),
+                  // Sans réponse, pas de solution à garder sans l'avoir comprise (règle F04) :
+                  // l'étape suivante l'explique, à partir des réponses de la série.
+                  ...(essai.reponse === null
+                    ? [
+                        creer('p', {
+                          textContent: 'Tu ne savais pas : l’étape suivante te l’apprend.',
+                        }),
+                      ]
+                    : [
+                        creer('p', {
+                          textContent:
+                            'Ta réponse : ' + fin(essai.reponse) + (essai.juste ? ' Juste.' : ''),
+                        }),
+                        ...(essai.juste || essai.attendu === ''
+                          ? []
+                          : [creer('p', { textContent: 'Attendu : ' + fin(essai.attendu) })]),
+                        ...(essai.retour
+                          ? [creer('p', { className: 'discret', textContent: essai.retour })]
+                          : []),
+                      ]),
                 )
               }),
             ),
@@ -12828,8 +12910,10 @@
             detail: { etape, traces: { ...(etat.traces ?? {}) }, aisance: [...aisanceServeur] },
           }),
         )
-        // Les outils montés, les essais déjà notés se figent et la série finie montre sa correction.
+        // Les outils montés, les essais déjà notés se figent et la série finie montre sa correction ;
+        // une explication montre ce qui répond aux essais de l'apprenant.
         majEssais()
+        rappelerEssais($('contenu'))
       }
 
       async function demarrer() {

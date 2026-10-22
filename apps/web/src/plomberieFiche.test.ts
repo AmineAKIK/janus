@@ -729,7 +729,7 @@ describe('la tentative avant l’explication (pré-test)', () => {
   ).replace(
     '<template data-etape="ET2">',
     '<template data-etape="ET2"><div data-ecran="Le compteur"><div class="ex" data-essai data-id="c1" data-reponse="7"><p class="q">Le plus grand nombre avec 3 lampes ?</p><input aria-label="Ta réponse" /></div></div>' +
-      '<div data-ecran="Une lampe de plus"><div class="ex" data-essai data-id="c2" data-reponse="double" data-sinon="Compare 8 et 16."><p class="q">Que devient le nombre de valeurs ?</p><ul class="options"><li data-option="deux">Il augmente de 2.</li><li data-option="double">Il double.</li></ul></div></div></template><template data-etape="ET0">',
+      '<div data-ecran="Une lampe de plus"><div class="ex" data-essai data-id="c2" data-reponse="double" data-explication="Compare 8 et 16."><p class="q">Que devient le nombre de valeurs ?</p><ul class="options"><li data-option="deux">Il augmente de 2.</li><li data-option="double">Il double.</li></ul></div></div></template><template data-etape="ET0">',
   )
   const essai = (cle: string, detail: Record<string, unknown>) => {
     const ex = document.querySelector('[data-id="' + cle + '"]')
@@ -784,9 +784,11 @@ describe('la tentative avant l’explication (pré-test)', () => {
     const bilan = screen.getByRole('heading', { name: 'Tes essais' }).parentElement
     if (!(bilan instanceof HTMLElement)) throw new Error('Pas de bilan des essais')
     expect(within(bilan).getByText('Ta réponse : 7. Juste.')).toBeInTheDocument()
-    expect(within(bilan).getByText('Tu ne savais pas.')).toBeInTheDocument()
-    expect(within(bilan).getByText('Attendu : Il double.')).toBeInTheDocument()
-    expect(within(bilan).getByText('Compare 8 et 16.')).toBeInTheDocument()
+    // Sans réponse, la solution ne se donne pas à garder : l'étape suivante l'explique.
+    expect(
+      within(bilan).getByText('Tu ne savais pas : l’étape suivante te l’apprend.'),
+    ).toBeInTheDocument()
+    expect(within(bilan).queryByText(/Il double|Compare 8 et 16/)).toBeNull()
   })
 
   it('garde « Étape suivante » inactif tant qu’un essai attend sa réponse', async () => {
@@ -826,6 +828,34 @@ describe('la tentative avant l’explication (pré-test)', () => {
     expect(screen.getByText('Attendu : 7.')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Je ne sais pas' })).toBeNull()
     expect(envois.filter((e) => e.type === 'pretest.reponse')).toEqual([])
+  })
+
+  it('l’explication qui suit part des réponses de l’apprenant', async () => {
+    const avecExplication = avecPretest
+      .replace(
+        '"id": "ET3",\n            "titre": "Pratique"',
+        '"id": "ET5",\n            "titre": "Pourquoi",\n            "type": "explication"\n          },\n          {\n            "id": "ET3",\n            "titre": "Pratique"',
+      )
+      .replace(
+        '<template data-etape="ET0">',
+        '<template data-etape="ET5"><p data-si-essai="c1:faux">Tu as répondu <span data-essai-rappel="c1">autre chose</span> : c’est le nombre de valeurs, pas le plus grand.</p><p data-si-essai="c1:juste">Tu avais trouvé 7.</p><p data-si-essai="c2:passe|absent">Une lampe de plus double le nombre de valeurs.</p></template><template data-etape="ET0">',
+      )
+    expect(avecExplication).toContain('data-etape="ET5"')
+    const traces = {
+      'essai:c1': { reponse: '8', juste: false, attendu: '7', retour: '', le: '2026-10-20' },
+      'essai:c2': { reponse: null, juste: false, attendu: '', retour: '', le: '2026-10-20' },
+    }
+    const { pont } = pontSimule({ ...aLEtape('ET5'), traces })
+    monter(avecExplication, pont)
+    await screen.findByRole('heading', { name: 'Pourquoi' })
+
+    const rappel = document.querySelector('[data-si-essai="c1:faux"]')
+    expect(rappel).toBeVisible()
+    expect(rappel?.textContent).toBe(
+      'Tu as répondu « 8 » : c’est le nombre de valeurs, pas le plus grand.',
+    )
+    expect(screen.getByText('Tu avais trouvé 7.')).not.toBeVisible()
+    expect(screen.getByText('Une lampe de plus double le nombre de valeurs.')).toBeVisible()
   })
 })
 
