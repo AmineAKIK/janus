@@ -1963,8 +1963,7 @@
         Une photo, un message, une page web, une application : dans un ordinateur, tout est rangé
         avec deux signes seulement, 0 et 1. Les circuits de la machine, et tous les programmes
         qu’elle exécute, ne manipulent que ces 0 et ces 1. On dit qu’ils sont écrits en
-        <strong>binaire</strong>, avec deux signes. Le mot ne nomme qu’une écriture : ce que ces 0
-        et ces 1 veulent dire dépend de la façon de les lire, et c’est tout le sujet de ce bloc.
+        <strong>binaire</strong>, avec deux signes.
       </p>
       <p>
         Comme développeur web, tu les croiseras souvent : quand tu écris une couleur comme
@@ -2068,8 +2067,8 @@
           résultats si différents ?
         </p>
         <ul class="options">
-          <li data-option="abime">Le fichier est abîmé : un des deux programmes le lit mal.</li>
-          <li data-option="regle">Chaque programme lit les mêmes chiffres avec sa propre règle.</li>
+          <li data-option="abime">Le fichier est abîmé : une des deux fenêtres le lit mal.</li>
+          <li data-option="regle">Chaque fenêtre lit la même suite avec sa propre règle.</li>
           <li data-option="deux">
             Le fichier contient deux parties : une pour l’image, une pour le texte.
           </li>
@@ -2790,29 +2789,20 @@
           eux-mêmes sont une convention : rien n’oblige A à valoir 65, sinon que tout le monde suit
           la même table.
         </p>
-        <figure
-          class="chaine-fixe"
-          role="img"
-          aria-label="Des bits, 01001100, lus par un programme, le Bloc-notes, avec un codage, la table ASCII, donnent un sens : la lettre L."
+        <p>
+          Pas à pas, avec le premier octet du fichier : réponds à chaque question avant de passer à
+          la suivante.
+        </p>
+        <div
+          class="ex"
+          data-widget="nombre"
+          data-id="t4"
+          data-reponse="76"
+          data-bits="01001100"
+          data-diag="lire"
         >
-          <span class="boite-fixe">des bits<small>01001100</small></span>
-          <span class="fleche">lus par</span>
-          <span class="boite-fixe">un programme<small>le Bloc-notes</small></span>
-          <span class="fleche">avec</span>
-          <span class="boite-fixe">un codage<small>la table ASCII</small></span>
-          <span class="fleche">donnent</span>
-          <span class="boite-fixe">un sens<small>la lettre L</small></span>
-        </figure>
-        <p>
-          La chaîne a sa limite : un codage ne donne pas un sens à n’importe quels bits. Dans la
-          table ASCII, les numéros 0 à 31 ne donnent aucun signe à l’écran : ce sont des codes
-          invisibles, qui commandent par exemple le retour à la ligne.
-        </p>
-        <p>
-          Pour lire un octet comme une lettre : calcule son nombre, puis cherche ce numéro dans la
-          table. Le nombre est déjà une lecture, avec le codage binaire ; la table en fait une
-          autre, qui donne un caractère à chaque numéro.
-        </p>
+          <p class="q">D’abord, que vaut <span class="mono">01001100</span> ?</p>
+        </div>
         <div
           class="outil"
           data-lecture="Un extrait de la table ASCII : pour chaque numéro, le signe qu’il code. L’espace entre deux mots porte le numéro 32. Les chiffres vont de 48, pour le 0, à 57, pour le 9. Les majuscules vont de 65, pour A, à 90, pour Z. Les minuscules vont de 97, pour a, à 122, pour z."
@@ -2900,6 +2890,42 @@
           </ul>
           <p class="discret">␣ : l’espace entre deux mots, numéro 32.</p>
         </div>
+        <div class="ex" data-widget="choix" data-id="t5" data-reponse="L">
+          <p class="q">Avec la table ASCII, quel caractère écrit 76 ?</p>
+          <ul class="options">
+            <li data-option="L">L</li>
+            <li
+              data-option="l"
+              data-retour="Le l minuscule a le numéro 108. 76 est entre 65 et 90, dans les majuscules."
+            >
+              l
+            </li>
+            <li data-option="K" data-retour="K a le numéro 75, un de moins que 76.">K</li>
+          </ul>
+        </div>
+        <figure
+          class="chaine-fixe"
+          role="img"
+          aria-label="Des bits, 01001100, lus par un programme, le Bloc-notes, avec un codage, la table ASCII, donnent un sens : la lettre L."
+        >
+          <span class="boite-fixe">des bits<small>01001100</small></span>
+          <span class="fleche">lus par</span>
+          <span class="boite-fixe">un programme<small>le Bloc-notes</small></span>
+          <span class="fleche">avec</span>
+          <span class="boite-fixe">un codage<small>la table ASCII</small></span>
+          <span class="fleche">donnent</span>
+          <span class="boite-fixe">un sens<small>la lettre L</small></span>
+        </figure>
+        <p>
+          La chaîne a sa limite : un codage ne donne pas un sens à n’importe quels bits. Dans la
+          table ASCII, les numéros 0 à 31 ne donnent aucun signe à l’écran : ce sont des codes
+          invisibles, qui commandent par exemple le retour à la ligne.
+        </p>
+        <p>
+          Pour lire un octet comme une lettre : calcule son nombre, puis cherche ce numéro dans la
+          table. Le nombre est déjà une lecture, avec le codage binaire ; la table en fait une
+          autre, qui donne un caractère à chaque numéro.
+        </p>
         <div
           class="ex"
           data-widget="texte"
@@ -3138,6 +3164,21 @@
             </li>
           </ul>
         </div>
+        <div class="ex" data-widget="choix" data-id="k8" data-reponse="uns">
+          <p class="q">Le rouge est à fond, 255. Quel est son octet ?</p>
+          <ul class="options">
+            <li data-option="uns"><span class="mono">11111111</span></li>
+            <li
+              data-option="cent"
+              data-retour="10000000 vaut 128 : seul le poids 128 est à 1. 255 est la somme de tous les poids."
+            >
+              <span class="mono">10000000</span>
+            </li>
+            <li data-option="zero" data-retour="00000000 vaut 0 : le rouge serait éteint.">
+              <span class="mono">00000000</span>
+            </li>
+          </ul>
+        </div>
         <p>Le rouge, à fond : 255 s’écrit <span class="mono">11111111</span>, tous les bits à 1.</p>
         <div class="ex" data-widget="octet" data-id="k5" data-reponse="136" data-poids>
           <p class="q">
@@ -3145,9 +3186,27 @@
             mettre son bit à 1 ou à 0.
           </p>
         </div>
+        <p>Le vert est à 136 sur 255, un peu plus de la moitié de l’échelle.</p>
+        <div class="ex" data-widget="choix" data-id="k9" data-reponse="zero">
+          <p class="q">Le troisième nombre, 0, règle le bleu. Quel est son octet ?</p>
+          <ul class="options">
+            <li data-option="zero"><span class="mono">00000000</span></li>
+            <li
+              data-option="un"
+              data-retour="00000001 vaut 1 : le bit de poids 1 est à 1. 0 n’a aucun bit à 1."
+            >
+              <span class="mono">00000001</span>
+            </li>
+            <li
+              data-option="uns"
+              data-retour="11111111 vaut 255 : le bleu serait à fond. Ici, il est éteint."
+            >
+              <span class="mono">11111111</span>
+            </li>
+          </ul>
+        </div>
         <p>
-          Le vert est à 136 sur 255, un peu plus de la moitié de l’échelle. Le troisième nombre, 0,
-          règle le bleu, éteint : <span class="mono">00000000</span>. Ensemble, les trois octets
+          Le bleu, éteint : <span class="mono">00000000</span>. Ensemble, les trois octets
           <span class="mono">11111111 10001000 00000000</span> donnent cet orange.
         </p>
         <p>
@@ -3592,11 +3651,13 @@
         <p class="accroche">
           On compte les octets par milliers : 1 kilooctet (ko, souvent écrit Ko) vaut 1 000 octets,
           1 mégaoctet (Mo) 1 000 000, 1 gigaoctet (Go) 1 000 Mo, 1 téraoctet (To) 1 000 Go. La photo
-          de 36 000 000 octets prend donc 36 Mo.
+          de 36 000 000 octets prend donc 36 Mo. Compter 1 ko pour 1 000 octets est une convention,
+          celle du système international.
         </p>
         <p>
-          Attention : Windows compte par 1 024, soit 2<sup>10</sup>, au lieu de 1 000, et l’écart
-          grandit à chaque unité. Un disque vendu 1 To y affiche environ 931 Go.
+          Attention : Windows suit une autre convention. Il compte par 1 024, soit 2<sup>10</sup>,
+          au lieu de 1 000, et l’écart grandit à chaque unité. Un disque vendu 1 To y affiche
+          environ 931 Go.
         </p>
       </div>
       <div data-ecran="Une photo compressée">
@@ -3893,9 +3954,12 @@
       </div>
       <div data-ecran="Le binaire n’est pas un langage">
         <p class="accroche">
-          Le code machine s’appelle aussi langage machine. Ce qui en fait un langage, c’est le jeu
-          d’instructions du processeur, pas le binaire qui sert à l’écrire. Tu viens de le voir avec
-          l’autre processeur : les mêmes octets font tout autre chose avec une autre table.
+          À l’étape 1, tu as lu que tout, dans la machine, est écrit en binaire : c’est vrai, tout
+          est rangé en 0 et en 1. Mais « en binaire » dit seulement comment c’est écrit, pas ce que
+          c’est. Le code machine s’appelle aussi langage machine. Ce qui en fait un langage, c’est
+          le jeu d’instructions du processeur, pas le binaire qui sert à l’écrire. Tu viens de le
+          voir avec l’autre processeur : les mêmes octets font tout autre chose avec une autre
+          table.
         </p>
         <p>Le binaire et un langage de programmation, côte à côte :</p>
         <div
@@ -3944,7 +4008,7 @@
               data-option="rien"
               data-retour="Tout est rangé en bits, oui. Mais être rangé en bits n’en fait pas un langage : une photo aussi est rangée en bits. Ce qui fait un langage, ce sont des mots et des règles pour écrire un programme."
             >
-              Rien : tous les langages finissent en bits.
+              Rien : le binaire est la langue que tous les langages finissent par parler.
             </li>
             <li data-option="facon">
               Le binaire est une façon d’écrire des nombres, pas un langage. Ce que le processeur
@@ -3974,9 +4038,9 @@
             <li
               data-erreur="E3"
               data-option="binaire"
-              data-retour="Tout est rangé en bits, oui. Mais ces bits sont du texte, lus avec un codage de caractères. Le langage, c’est PHP, avec ses mots et ses règles."
+              data-retour="Le fichier est bien rangé en bits, comme tout fichier : c’est son écriture. Mais ces bits sont du texte, lus avec un codage de caractères, et le binaire n’est pas une langue. Le langage, c’est PHP, avec ses mots et ses règles."
             >
-              du binaire, puisque tout est en bits.
+              un programme en binaire, la langue même de la machine.
             </li>
           </ul>
         </div>
@@ -3999,13 +4063,39 @@
       <div class="outil" data-widget="aisance"></div>
     </template>
 
-    <!-- ET14, ensemble : le schéma de mémoire, le pari repris, puis le fichier du début lu de quatre façons. -->
+    <!-- ET14, ensemble : le pari repris, le schéma de mémoire, puis le fichier du début lu de quatre façons. -->
     <template data-etape="ET14">
-      <div data-ecran="Le schéma, de mémoire">
+      <div data-ecran="Ton pari">
         <p class="accroche">
-          Tu as vu les quatre lectures. Avant de revenir au point de départ, refais le schéma de
-          mémoire.
+          Tu as vu les quatre lectures. Reviens maintenant au fichier du début, et à ton pari.
         </p>
+        <div class="ex" data-widget="choix" data-id="f1" data-reponse="regle" data-melanger="non">
+          <p class="q">
+            Alors, pourquoi les deux fenêtres du début donnaient-elles deux résultats si
+            différents ?
+          </p>
+          <p class="discret" data-widget="rappel-pari" hidden></p>
+          <ul class="options">
+            <li
+              data-erreur="E2"
+              data-option="abime"
+              data-retour="Rien n’est abîmé : chaque fenêtre lit la même suite sans erreur, avec sa propre règle. Ce qui change, c’est la règle de lecture, pas ce qui est rangé."
+            >
+              Le fichier est abîmé : une des deux fenêtres le lit mal.
+            </li>
+            <li data-option="regle">Chaque fenêtre lit la même suite avec sa propre règle.</li>
+            <li
+              data-erreur="E2"
+              data-option="deux"
+              data-retour="Il n’y a qu’une suite. Tu as déjà lu le même 76 comme la lettre L, puis comme le rouge d’un pixel : une seule suite, deux règles."
+            >
+              Le fichier contient deux parties : une pour l’image, une pour le texte.
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div data-ecran="Le schéma, de mémoire">
+        <p class="accroche">Refais maintenant le schéma de mémoire.</p>
         <div class="ex" data-widget="schema" data-id="f2">
           <p class="q">Complète le schéma de mémoire, avec tes mots : un ou deux mots par case.</p>
           <div class="chaine">
@@ -4053,38 +4143,9 @@
           </div>
         </div>
       </div>
-      <div data-ecran="Ton pari">
-        <p class="accroche">Reviens maintenant au fichier du début, et à ton pari.</p>
-        <div class="ex" data-widget="choix" data-id="f1" data-reponse="regle" data-melanger="non">
-          <p class="q">
-            Alors, pourquoi la visionneuse et le Bloc-notes donnaient-ils deux résultats si
-            différents ?
-          </p>
-          <p class="discret" data-widget="rappel-pari" hidden></p>
-          <ul class="options">
-            <li
-              data-erreur="E2"
-              data-option="abime"
-              data-retour="Rien n’est abîmé : chaque programme lit les 12 octets sans erreur, avec son propre codage. Ce qui change, c’est le codage, pas les octets."
-            >
-              Le fichier est abîmé : un des deux programmes le lit mal.
-            </li>
-            <li data-option="regle">
-              Chaque programme lit les mêmes chiffres avec sa propre règle.
-            </li>
-            <li
-              data-erreur="E2"
-              data-option="deux"
-              data-retour="Il n’y a qu’une suite de 12 octets. Tu as déjà lu l’octet 76 comme la lettre L avec la table ASCII, puis comme le rouge d’un pixel avec le codage RGB."
-            >
-              Le fichier contient deux parties : une pour l’image, une pour le texte.
-            </li>
-          </ul>
-        </div>
-      </div>
       <div data-ecran="Quatre lectures">
         <p class="accroche">
-          Vérifie ton schéma et ton pari sur le fichier du début : ouvre-le de quatre façons. Chaque
+          Vérifie ton pari et ton schéma sur le fichier du début : ouvre-le de quatre façons. Chaque
           lecture suit le codage que tu as appris à appliquer à la main.
         </p>
         <div class="outil" data-widget="vues"></div>
@@ -5056,14 +5117,14 @@
           Dans le cours, après une solution vue, la suite de l’écran attend. Quand l’exercice a un
           autre cas possible, « Je refais sans regarder, sur un autre cas » propose un nouvel
           exercice du même genre, tiré au hasard (un autre octet à lire ou à écrire, un autre nombre
-          de bits, de 2 à 12, un autre octet hexadécimal, une autre couleur CSS, une autre moitié de
-          4 bits, un autre programme, une autre taille de photo), et la suite paraît une fois ce
-          nouvel exercice fini. Réussi, il demande d’expliquer pourquoi c’est juste, en une ou deux
-          phrases, puis de comparer avec la solution de la fiche. Sans autre cas possible (un choix,
-          les caractères de « Lis- », la différence entre majuscule et minuscule, les trois octets
-          d’une couleur, le nombre de bits pour un nombre de valeurs), la page demande d’expliquer
-          la solution avec ses mots, et la suite paraît une fois l’explication comparée avec celle
-          de la fiche.
+          de bits, de 2 à 12, un autre nombre de valeurs à écrire en bits, une autre couleur à
+          écrire en trois octets, un autre octet hexadécimal, une autre couleur CSS, une autre
+          moitié de 4 bits, un autre programme, une autre taille de photo), et la suite paraît une
+          fois ce nouvel exercice fini. Réussi, il demande d’expliquer pourquoi c’est juste, en une
+          ou deux phrases, puis de comparer avec la solution de la fiche. Sans autre cas possible
+          (un choix, les caractères de « Lis- », la différence entre majuscule et minuscule), la
+          page demande d’expliquer la solution avec ses mots, et la suite paraît une fois
+          l’explication comparée avec celle de la fiche.
         </li>
         <li>
           Un choix du cours n’a pas de crans : le retour de l’option fausse sert d’indice, et la
@@ -5370,8 +5431,8 @@
             "erreurs": ["E4"]
           },
           {
-            "id": "R33",
-            "question": "Explique en 4 phrases comment une photo devient un fichier, sans compression. Puis calcule la place que prennent les pixels d’une photo de 2 000 × 1 000 pixels.",
+            "id": "R34",
+            "question": "Explique en 4 phrases comment une photo devient un fichier, sans compression. Puis calcule la place que prennent les pixels d’une photo de 2 000 × 1 000 pixels ; 1 ko vaut 1 000 octets, 1 Mo vaut 1 000 000 octets.",
             "attendu": "1. Une photo est une grille de pixels, de petits carrés de couleur. 2. Chaque pixel est rangé avec trois octets, un par lumière : rouge, vert, bleu. 3. Les octets sont rangés à la suite, pixel après pixel, ligne après ligne. 4. Un en-tête, au début du fichier, donne la largeur et la hauteur, pour que le programme sache où couper les lignes. Taille : 2 000 × 1 000 = 2 000 000 pixels, × 3 = 6 000 000 octets, soit 6 Mo ; l’une ou l’autre unité suffit. Déduit de l’étape 10.",
             "erreurs": []
           },
@@ -5483,10 +5544,10 @@
             "erreurs": ["E1"]
           },
           {
-            "id": "DE23",
+            "id": "DE30",
             "type": "explication",
-            "consigne": "Un programme affiche l’octet 01000101 comme le nombre 69, un autre comme la lettre E. Lequel se trompe ? Explique.",
-            "attendu": "Aucun : 01000101 vaut 64 + 4 + 1 = 69 en binaire, et 69 est E dans la table ASCII. Les deux programmes lisent les mêmes bits avec deux codages différents ; c’est le codage qui donne le sens, pas les bits. D’après les étapes 7 et 14.",
+            "consigne": "Un programme affiche l’octet 01000101 comme le nombre 69, un autre comme la lettre E. Extrait de la table ASCII : D = 68, E = 69, F = 70. Lequel se trompe ? Explique.",
+            "attendu": "Aucun : 01000101 vaut 64 + 4 + 1 = 69 en binaire, et 69 est E dans la table ASCII. Les deux programmes lisent les mêmes bits avec deux codages différents ; c’est le codage qui donne le sens, pas les bits. Déduit des étapes 5, 7 et 14.",
             "erreurs": ["E2"]
           },
           {
@@ -5557,10 +5618,10 @@
             "erreurs": ["E2"]
           },
           {
-            "id": "DT27",
+            "id": "DT28",
             "type": "transfert",
             "forme": "adapter_condition",
-            "consigne": "Une image en niveaux de gris n’a pas de couleur : chaque pixel n’est qu’un gris, du noir au blanc, rangé dans un seul octet au lieu de trois. Sans compression, quelle place prennent les pixels d’une image de 800 × 600 ?",
+            "consigne": "Une image en niveaux de gris n’a pas de couleur : chaque pixel n’est qu’un gris, du noir au blanc, rangé dans un seul octet au lieu de trois. Sans compression, quelle place prennent les pixels d’une image de 800 × 600 ? 1 ko vaut 1 000 octets.",
             "attendu": "800 × 600 = 480 000 pixels, × 1 octet = 480 000 octets, soit 480 ko. Déduit de l’étape 10.",
             "erreurs": []
           }
@@ -5681,9 +5742,9 @@
             "verso": "3 octets : un par lumière, rouge, vert et bleu. D’après l’étape 10."
           },
           {
-            "id": "K32",
-            "recto": "Que valent 1 ko, 1 Mo, 1 Go et 1 To ?",
-            "verso": "1 000 octets, 1 000 ko, 1 000 Mo, 1 000 Go. D’après l’étape 10."
+            "id": "K34",
+            "recto": "Comment calcules-tu la place que prennent les pixels d’une photo, sans compression ?",
+            "verso": "Compte ses pixels, largeur × hauteur, puis multiplie par 3 octets, un par lumière : rouge, vert, bleu. D’après l’étape 10."
           }
         ]
       }
@@ -5765,7 +5826,7 @@
             "notion": "Calculer la place que prennent les pixels d’une photo sans compression, largeur × hauteur × 3 octets, et dire en 4 phrases comment elle devient un fichier : des pixels, trois octets par pixel, rangés à la suite, un en-tête qui dit où couper les lignes",
             "montree": ["ET10"],
             "pratiquee": ["PR8"],
-            "questions": ["R33", "Q27", "DT27", "K31", "K32"]
+            "questions": ["R34", "Q27", "DT28", "K31", "K34"]
           },
           {
             "id": "N11",
@@ -5829,7 +5890,7 @@
             "vers": "N10",
             "type": "composition",
             "montree": "ET10",
-            "questions": ["R33"]
+            "questions": ["R34"]
           },
           {
             "id": "L7",
@@ -5851,7 +5912,7 @@
         "ensemble": {
           "montree": "ET2",
           "rappelee": "ET14",
-          "questions": ["R31", "DT26", "DE23", "DE24", "DT24", "Q24"]
+          "questions": ["R31", "DT26", "DE30", "DE24", "DT24", "Q24"]
         },
         "hors_objectif": [
           "Les nombres négatifs : nommés comme limite du système binaire du bloc dans « À explorer plus tard » (étape 14) ; DT24 demande seulement de dire cette limite, jamais une méthode",
@@ -9154,6 +9215,18 @@
                   'Que vaut ' + hex2(n) + ', de 0 à 255 ?',
                 )
               }
+            if (d.diag === 'bitsmin')
+              c.variante = () => {
+                const cas = [50, 200, 500, 700, 2000, 3000, 5000].filter(
+                  (v) => v !== Number(d.valeurs),
+                )
+                const v = cas[auHasard(0, cas.length - 1)]
+                return nouvelEx(
+                  'nombre',
+                  { reponse: Math.ceil(Math.log2(v)), diag: 'bitsmin', valeurs: v },
+                  'Pour ' + milliers(v) + ' valeurs, combien faut-il de bits ?',
+                )
+              }
             bouton.addEventListener('click', () => {
               const r = entier(input.value)
               if (input.value.trim() === '')
@@ -9402,6 +9475,22 @@
                 bouton.disabled = true
               },
             }
+            if (noms.join(',') === 'Rouge,Vert,Bleu')
+              c.variante = () => {
+                let v
+                do v = [auHasard(0, 255), auHasard(0, 255), auHasard(0, 255)]
+                while (v.join() === reps.join())
+                return nouvelEx(
+                  'octets',
+                  {
+                    reponse: v.join(','),
+                    noms: noms.join(','),
+                    pastille: rgb(...v),
+                    ...(texte ? { saisie: 'texte' } : {}),
+                  },
+                  'Écris en binaire les trois octets de ' + rgb(...v) + '.',
+                )
+              }
             bouton.addEventListener('click', () => {
               const lus = []
               for (let i = 0; i < reps.length; i++) {

@@ -2220,7 +2220,7 @@
           data-id="p5"
           data-reponse="tiede"
           data-melanger="non"
-          data-explication="Le thermostat affiche « tiède » : 30 ≥ 15 est déjà vrai à la première ligne, et il s’arrête là. La ligne « chaud » n’est jamais atteinte : ses lignes sont dans le mauvais ordre."
+          data-explication="Le thermostat affiche « tiède » : 30 ≥ 15 est déjà vrai à la première ligne, et il s’arrête là. La ligne « chaud » n’est jamais atteinte. L’étape 8 dit pourquoi, et comment le corriger."
         >
           <p class="q">
             Un thermostat suit ces lignes, de haut en bas. Il fait 30 °C. Qu’affiche-t-il ?
@@ -2620,6 +2620,25 @@
           chaque condition de plus double le nombre de lignes. Une table qui donne la valeur d’une
           condition pour chaque cas s’appelle une <strong>table de vérité</strong>.
         </p>
+        <div
+          class="ex"
+          data-widget="nombre"
+          data-id="o3"
+          data-reponse="16"
+          data-sinon="Avec deux conditions, la table a 4 lignes ; avec trois, 8. Que fait chaque condition de plus au nombre de lignes ?"
+          data-solution="2 × 2 × 2 × 2 = 16 lignes, de 0000 à 1111"
+          data-variante-enonce="Combien de lignes faut-il à la table de vérité d’une condition qui mélange six conditions ?"
+          data-variante-reponse="64"
+          data-variante-sinon="Avec deux conditions, la table a 4 lignes ; avec trois, 8. Que fait chaque condition de plus au nombre de lignes ?"
+          data-variante-solution="2 × 2 × 2 × 2 × 2 × 2 = 64 lignes"
+        >
+          <p class="q">
+            Combien de lignes faut-il à la table de vérité d’une condition qui mélange quatre
+            conditions ?
+          </p>
+        </div>
+      </div>
+      <div data-ecran="ET et OU, à toi">
         <div class="cadre a-retenir">
           <p>
             Pour les retenir : ET n’est VRAI que dans un seul cas, quand les deux sont VRAI. OU
@@ -2662,19 +2681,6 @@
             </li>
             <li data-option="non">Non : VRAI ET FAUX donne FAUX.</li>
           </ul>
-        </div>
-        <div
-          class="ex"
-          data-widget="nombre"
-          data-id="o3"
-          data-reponse="16"
-          data-sinon="Avec deux conditions, la table a 4 lignes ; avec trois, 8. Que fait chaque condition de plus au nombre de lignes ?"
-          data-solution="2 × 2 × 2 × 2 = 16 lignes, de 0000 à 1111"
-        >
-          <p class="q">
-            Combien de lignes faut-il à la table de vérité d’une condition qui mélange quatre
-            conditions ?
-          </p>
         </div>
       </div>
     </template>
@@ -2731,12 +2737,6 @@
           Pour Léo, 30 ans, enseignant, d’une autre ville : (FAUX ET FAUX) OU VRAI, soit FAUX OU
           VRAI, donc VRAI. Léo entre gratuitement.
         </p>
-        <p>
-          NON porte sur ce qui le suit : un fait, une comparaison ou une parenthèse. Comme les
-          comparaisons passent avant lui, NON âge ≥ 18 se lit NON (âge ≥ 18). Écris quand même les
-          parenthèses : en JavaScript, l’ordre n’est pas le même (étape 9), et la règle se relit
-          sans hésiter.
-        </p>
       </div>
       <div data-ecran="Les parenthèses">
         <p class="accroche">
@@ -2764,7 +2764,12 @@
         </div>
         <p>
           Quand tu écris une condition, mets des parenthèses dès que ET et OU se mélangent, même si
-          l’ordre de calcul te convient : la règle se relit sans hésiter.
+          l’ordre de calcul te convient : la règle se relit sans hésiter.
+        </p>
+        <p>
+          NON porte sur ce qui le suit : un fait, une comparaison ou une parenthèse. Comme les
+          comparaisons passent avant lui, NON âge ≥ 18 se lit NON (âge ≥ 18). Écris quand même ces
+          parenthèses : en JavaScript, l’ordre n’est pas le même (étape 9).
         </p>
         <div class="ex" data-widget="choix" data-id="r1" data-reponse="vrai" data-melanger="non">
           <p class="q">Que vaut VRAI OU VRAI ET FAUX ?</p>
@@ -2980,7 +2985,7 @@
               data-option="exclusif"
               class="mono"
               data-erreur="E1"
-              data-retour="Avec cette forme, un dimanche férié serait payant. Rien dans la phrase ne l’interdit : ce « ou » accepte les deux."
+              data-retour="Cette forme est le OU exclusif : un dimanche férié serait payant. Rien dans la phrase ne l’interdit : c’est le OU inclusif, qui accepte les deux."
             >
               (dimanche OU férié) ET NON (dimanche ET férié)
             </li>
@@ -3075,7 +3080,7 @@
               data-option="exclusif"
               class="mono"
               data-erreur="E1"
-              data-retour="Cette forme refuserait la cliente qui donne les deux. Les deux à la fois, c’est permis ici : on la recontacte encore plus facilement."
+              data-retour="Cette forme est le OU exclusif : elle refuserait la cliente qui donne les deux. Ici, les deux à la fois, c’est permis : c’est le OU inclusif, téléphone OU email."
             >
               (téléphone OU email) ET NON (téléphone ET email)
             </li>
@@ -3129,7 +3134,7 @@
               data-option="exclusif"
               class="mono"
               data-erreur="E1"
-              data-retour="Avec cette forme, un membre qui commande pour 80 € paierait la livraison. Rien dans la phrase n’interdit les deux."
+              data-retour="Cette forme est le OU exclusif : un membre qui commande pour 80 € paierait la livraison. Rien dans la phrase n’interdit les deux : c’est le OU inclusif."
             >
               (membre OU commande &gt; 50) ET NON (membre ET commande &gt; 50)
             </li>
@@ -3278,23 +3283,23 @@
 <span class="l br" data-l="4">  afficher « 10 € »</span></code></pre>
         <div class="ex" data-widget="choix" data-id="b6" data-reponse="deux" data-melanger="non">
           <p class="q">
-            Avant de lire sa trace : pour Hugo, 20 ans, étudiant, que tu as vu passer au guichet,
-            quelle est la première ligne VRAIE ?
+            Avant de lire sa trace : pour Sarah, 30 ans, étudiante, quelle est la première ligne
+            VRAIE ?
           </p>
           <ul class="options">
-            <li data-option="un" data-retour="20 &lt; 12 est FAUX : la chaîne passe à la ligne 2.">
+            <li data-option="un" data-retour="30 &lt; 12 est FAUX : la chaîne passe à la ligne 2.">
               Ligne 1
             </li>
             <li data-option="deux">Ligne 2</li>
             <li
               data-option="trois"
-              data-retour="Hugo est étudiant : à la ligne 2, VRAI OU 20 &lt; 26 donne VRAI. La chaîne s’arrête là, et la ligne 3 n’est pas testée."
+              data-retour="Sarah est étudiante : à la ligne 2, VRAI OU 30 &lt; 26 donne VRAI. La chaîne s’arrête là, et la ligne 3 n’est pas testée."
             >
               Ligne 3
             </li>
             <li
               data-option="aucune"
-              data-retour="Regarde la ligne 2 : étudiant vaut VRAI pour Hugo."
+              data-retour="Regarde la ligne 2 : étudiant vaut VRAI pour Sarah."
             >
               Aucune : SINON
             </li>
@@ -3302,7 +3307,7 @@
         </div>
         <table
           class="table-trace"
-          data-lecture="La trace de Hugo, 20 ans, étudiant : ligne 1, 20 plus petit que 12, FAUX ; ligne 2, VRAI OU 20 plus petit que 26, VRAI ; la ligne 3 n’est pas testée ; il affiche 7 euros."
+          data-lecture="La trace de Sarah, 30 ans, étudiante : ligne 1, 30 plus petit que 12, FAUX ; ligne 2, VRAI OU 30 plus petit que 26, VRAI ; la ligne 3 n’est pas testée ; il affiche 7 euros."
         >
           <thead>
             <tr>
@@ -3315,9 +3320,9 @@
           </thead>
           <tbody>
             <tr>
-              <td>Hugo, 20 ans, étudiant</td>
-              <td>20 &lt; 12 : FAUX</td>
-              <td>VRAI OU 20 &lt; 26 : VRAI</td>
+              <td>Sarah, 30 ans, étudiante</td>
+              <td>30 &lt; 12 : FAUX</td>
+              <td>VRAI OU 30 &lt; 26 : VRAI</td>
               <td>pas testée</td>
               <td>7 €</td>
             </tr>
@@ -3325,28 +3330,28 @@
         </table>
         <div class="ex" data-widget="choix" data-id="b0" data-reponse="trois" data-melanger="non">
           <p class="q">
-            Avant de lire sa trace : pour Rose, 68 ans, pas étudiante, quelle est la première ligne
+            Avant de lire sa trace : pour Jean, 72 ans, pas étudiant, quelle est la première ligne
             VRAIE ?
           </p>
           <ul class="options">
-            <li data-option="un" data-retour="68 &lt; 12 est FAUX : la chaîne passe à la ligne 2.">
+            <li data-option="un" data-retour="72 &lt; 12 est FAUX : la chaîne passe à la ligne 2.">
               Ligne 1
             </li>
             <li
               data-option="deux"
-              data-retour="Rose n’est pas étudiante, et 68 &lt; 26 est FAUX : FAUX OU FAUX donne FAUX. La chaîne passe à la ligne 3."
+              data-retour="Jean n’est pas étudiant, et 72 &lt; 26 est FAUX : FAUX OU FAUX donne FAUX. La chaîne passe à la ligne 3."
             >
               Ligne 2
             </li>
             <li data-option="trois">Ligne 3</li>
-            <li data-option="aucune" data-retour="Regarde la ligne 3 : 68 ≥ 65 est VRAI.">
+            <li data-option="aucune" data-retour="Regarde la ligne 3 : 72 ≥ 65 est VRAI.">
               Aucune : SINON
             </li>
           </ul>
         </div>
         <table
           class="table-trace"
-          data-lecture="La trace de Rose, 68 ans, pas étudiante : ligne 1, 68 plus petit que 12, FAUX ; ligne 2, FAUX OU 68 plus petit que 26, FAUX ; ligne 3, 68 plus grand ou égal à 65, VRAI ; il affiche 8 euros."
+          data-lecture="La trace de Jean, 72 ans, pas étudiant : ligne 1, 72 plus petit que 12, FAUX ; ligne 2, FAUX OU 72 plus petit que 26, FAUX ; ligne 3, 72 plus grand ou égal à 65, VRAI ; il affiche 8 euros."
         >
           <thead>
             <tr>
@@ -3359,10 +3364,10 @@
           </thead>
           <tbody>
             <tr>
-              <td>Rose, 68 ans, pas étudiante</td>
-              <td>68 &lt; 12 : FAUX</td>
-              <td>FAUX OU 68 &lt; 26 : FAUX</td>
-              <td>68 ≥ 65 : VRAI</td>
+              <td>Jean, 72 ans, pas étudiant</td>
+              <td>72 &lt; 12 : FAUX</td>
+              <td>FAUX OU 72 &lt; 26 : FAUX</td>
+              <td>72 ≥ 65 : VRAI</td>
               <td>8 €</td>
             </tr>
           </tbody>
@@ -3384,8 +3389,7 @@
       </div>
       <div data-ecran="L’ordre des lignes">
         <p class="accroche">
-          À l’étape 3, le thermostat affichait « tiède » par 30 °C. Ses lignes étaient dans le
-          mauvais ordre :
+          À l’étape 3, le thermostat affichait « tiède » par 30 °C, avec ces lignes :
         </p>
         <pre
           class="pseudo"
@@ -3444,6 +3448,11 @@
           data-sinon-ligne="rien"
           data-cas="score=950 =&gt; or | score=900 =&gt; or | score=700 =&gt; argent | score=600 =&gt; argent | score=400 =&gt; bronze | score=300 =&gt; bronze | score=299 =&gt; rien"
           data-reponse="c,b,a"
+          data-variante-enonce="Un forfait classe ta consommation de données : « énorme » à partir de 100 Go, « forte » à partir de 20, « moyenne » à partir de 5, « faible » en dessous. Remets les lignes dans le bon ordre avec les flèches."
+          data-variante-reponse="b,c,a"
+          data-variante-lignes="a : go ≥ 5 =&gt; moyenne | b : go ≥ 100 =&gt; énorme | c : go ≥ 20 =&gt; forte"
+          data-variante-sinon-ligne="faible"
+          data-variante-cas="go=150 =&gt; énorme | go=100 =&gt; énorme | go=50 =&gt; forte | go=20 =&gt; forte | go=10 =&gt; moyenne | go=5 =&gt; moyenne | go=4 =&gt; faible"
         >
           <p class="q">
             Un jeu donne une médaille selon le score : or à partir de 900, argent à partir de 600,
@@ -3509,6 +3518,11 @@
           data-chaine="score ≥ 900 =&gt; or | score ≥ 600 =&gt; argent | score ≥ 300 =&gt; bronze | SINON =&gt; rien"
           data-variable="score"
           data-candidats="0|299|300|301|450|599|600|899|900|1000"
+          data-variante-enonce="La chaîne du forfait, bien rangée : SI go ≥ 100 : afficher « énorme » ; SINON SI go ≥ 20 : afficher « forte » ; SINON SI go ≥ 5 : afficher « moyenne » ; SINON : afficher « faible ». Les quantités sont des nombres entiers. Quelles sont ses valeurs limites ? Touche chacune, puis vérifie."
+          data-variante-reponse="4 et 5, 19 et 20, 99 et 100"
+          data-variante-chaine="go ≥ 100 =&gt; énorme | go ≥ 20 =&gt; forte | go ≥ 5 =&gt; moyenne | SINON =&gt; faible"
+          data-variante-variable="go"
+          data-variante-candidats="0|4|5|6|12|19|20|21|99|100"
         >
           <p class="q">
             Pour la chaîne des médailles, bien rangée, quelles sont les valeurs limites ? Les scores
@@ -3629,9 +3643,9 @@
       <div data-ecran="Variable et égalité">
         <p class="accroche">
           Une donnée se range dans une <strong>variable</strong>, une boîte qui a un nom :
-          <code>let age = 70</code> crée la variable age et y range 70. L’image a sa limite : une
-          boîte ne garde qu’une valeur à la fois, et ranger une autre valeur remplace l’ancienne. Le
-          signe = range, il ne compare pas : c’est l’<strong>affectation</strong>.
+          <code>let score = 40</code> crée la variable score et y range 40. L’image a sa limite :
+          une boîte ne garde qu’une valeur à la fois, et ranger une autre valeur remplace
+          l’ancienne. Le signe = range, il ne compare pas : c’est l’<strong>affectation</strong>.
         </p>
         <p>
           Un nom de variable ne contient pas d’espace, et l’usage est de l’écrire sans accent : age,
@@ -3684,15 +3698,25 @@
           l’écrirais.
         </p>
         <div class="ex" data-widget="choix" data-id="j5" data-reponse="let">
-          <p class="q">Avant de lire la suite : comment ranges-tu l’âge de Paul, 70, dans age ?</p>
+          <p class="q">
+            Avant de lire la suite : Paul a 70 ans, et il est étudiant. Comment ranges-tu ces deux
+            données dans les variables age et etudiant ?
+          </p>
           <ul class="options">
-            <li data-option="let" class="mono">let age = 70</li>
+            <li data-option="let" class="mono">let age = 70, puis let etudiant = true</li>
+            <li
+              data-option="vrai"
+              class="mono"
+              data-retour="VRAI est un mot du pseudo-code. En JavaScript, VRAI s’écrit true."
+            >
+              let age = 70, puis let etudiant = VRAI
+            </li>
             <li
               data-option="egal"
               class="mono"
-              data-retour="=== compare, il ne range rien. Pour ranger 70 dans age, c’est = : une affectation."
+              data-retour="=== compare, il ne range rien. Pour ranger une valeur dans une variable, c’est = : une affectation."
             >
-              let age === 70
+              let age === 70, puis let etudiant === true
             </li>
           </ul>
         </div>
@@ -3816,11 +3840,26 @@ if (age &lt; 12) {
           data-aide2="Elle teste le seuil 15 et affiche « tiède ». Elle n’a pas besoin de dire « et sous 25 » : si elle est testée, la première était FAUSSE."
           data-aide3="La deuxième ligne s’écrit else if (t &gt;= 15) { console.log('tiède') }. Il reste la branche du else."
           data-solution="if (t &gt;= 25) { console.log('chaud') } else if (t &gt;= 15) { console.log('tiède') } else { console.log('froid') }"
+          data-variante-enonce="Complète de même la force du vent en JavaScript : « tempête » à partir de 90, « fort » à partir de 50, « calme » en dessous. La variable v contient la vitesse du vent, et la page lui donne chaque valeur à tester. La première branche est écrite : complète la deuxième et le else."
+          data-variante-reponse="tempête pour 90 et plus, fort de 50 à 89, calme en dessous"
+          data-variante-variables="v"
+          data-variante-cas="v=90 =&gt; tempête | v=89 =&gt; fort | v=50 =&gt; fort | v=49 =&gt; calme | v=120 =&gt; tempête | v=0 =&gt; calme"
+          data-variante-depart="if (v &gt;= 90) {\n  console.log('tempête')\n} else if () {\n  \n} else {\n  \n}"
+          data-variante-aide1="Que doit tester la deuxième ligne, et que doit-elle afficher ?"
+          data-variante-aide2="Elle teste le seuil 50 et affiche « fort ». Elle n’a pas besoin de dire « et sous 90 » : si elle est testée, la première était FAUSSE."
+          data-variante-aide3="La deuxième ligne s’écrit else if (v &gt;= 50) { console.log('fort') }. Il reste la branche du else."
+          data-variante-solution="if (v &gt;= 90) { console.log('tempête') } else if (v &gt;= 50) { console.log('fort') } else { console.log('calme') }"
         >
           <p class="q">
-            Complète le thermostat corrigé en JavaScript : « chaud » à partir de 25, « tiède » à
-            partir de 15, « froid » en dessous. La variable t contient la température : la page lui
+            Complète le thermostat corrigé en JavaScript : « chaud » à partir de 25, « tiède » à
+            partir de 15, « froid » en dessous. La variable t contient la température : la page lui
             donne elle-même chaque valeur à tester, ne lui donne pas de valeur toi-même.
+          </p>
+          <p>
+            La première branche est écrite dans la case, avec la forme des deux autres :
+            <code>if (t &gt;= 25) { console.log('chaud') }</code>, puis
+            <code>else if () { }</code> et <code>else { }</code>. À toi de compléter la deuxième
+            branche et le else.
           </p>
         </div>
       </div>
@@ -3955,7 +3994,7 @@ if (age &lt; 12) {
             <li
               data-option="deux"
               data-erreur="E3"
-              data-retour="Le guichet n’affiche qu’un prix : il s’arrête à la première ligne remplie, et les lignes qui suivent ne sont même pas testées."
+              data-retour="Le guichet n’affiche qu’un prix : il s’arrête à la première condition VRAIE, et les conditions qui suivent ne sont même pas testées."
             >
               7 €, puis 8 €
             </li>
@@ -3980,7 +4019,7 @@ if (age &lt; 12) {
               data-mots="fait|vrai|faux|booleen|true"
               >ce qu’on en tire</span
             >
-            <span class="fleche">combinés dans l’ordre de calcul, donnent</span>
+            <span class="fleche">combinés par NON, ET, OU, dans l’ordre de calcul, donnent</span>
             <span class="boite" data-case="une condition, une seule valeur" data-mots="condition"
               >ce qu’on obtient</span
             >
@@ -3999,31 +4038,6 @@ if (age &lt; 12) {
               >ce qui s’exécute</span
             >
           </div>
-          <p class="discret">L’ordre de calcul, de mémoire :</p>
-          <p class="ordre-calcul">
-            parenthèses, comparaisons,
-            <span
-              class="boite"
-              data-case="NON"
-              data-mots="non"
-              data-libelle="L’opérateur calculé en premier"
-              >1ᵉʳ</span
-            >
-            <span
-              class="boite"
-              data-case="ET"
-              data-mots="et"
-              data-libelle="L’opérateur calculé en deuxième"
-              >2ᵉ</span
-            >
-            <span
-              class="boite"
-              data-case="OU"
-              data-mots="ou"
-              data-libelle="L’opérateur calculé en dernier"
-              >3ᵉ</span
-            >
-          </p>
         </div>
       </div>
       <div data-ecran="Si le cinéma change d’avis">
@@ -4181,6 +4195,7 @@ if (age &lt; 12) {
     <template data-variante="PR1-1">
       <div class="ex" data-widget="table" data-verifie data-faits="A|B" data-expr="NON A OU B">
         <p class="q">Remplis la table de vérité de NON A OU B.</p>
+        <p class="discret">Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</p>
       </div>
     </template>
     <template data-item="PR1-2">
@@ -4517,7 +4532,8 @@ if (age &lt; 12) {
       >
         <p class="q">
           Ce code doit afficher « ouvert » seulement avec le code 1234. Il affiche « ouvert » même
-          quand code vaut 0. Pourquoi ?
+          quand code vaut 0. Pourquoi ? Dans un if, JavaScript compte tout nombre autre que 0 comme
+          VRAI.
         </p>
         <pre><code>if (code = 1234) {
   console.log('ouvert')
@@ -4552,7 +4568,7 @@ if (age &lt; 12) {
       >
         <p class="q">
           Ce code doit afficher « bloqué » au troisième essai raté. Il affiche « bloqué » dès le
-          premier. Pourquoi ?
+          premier. Pourquoi ? Dans un if, JavaScript compte tout nombre autre que 0 comme VRAI.
         </p>
         <pre><code>if (essais = 3) {
   console.log('bloqué')
@@ -4818,6 +4834,10 @@ if (age &lt; 12) {
         <p class="q">
           Exécute ta chaîne dans la console de ton navigateur, et vérifie ta prédiction.
         </p>
+        <p class="discret">
+          En JavaScript : ≥ s’écrit &gt;=, SI s’écrit if, SINON SI else if, SINON else, et afficher
+          s’écrit console.log.
+        </p>
         <ol>
           <li>Ouvre un onglet vide et sa console.</li>
           <li>
@@ -4950,7 +4970,13 @@ if (age &lt; 12) {
           de 600, il en faut deux : la dernière valeur avant le changement et la première après. »
         </li>
         <li>
-          JavaScript : avant d’exécuter, l’outil repère ≥, ≤ ou ≠ (« En JavaScript, ≥ s’écrit
+          JavaScript à compléter : à l’étape 9, la case du thermostat contient déjà la première
+          branche, if (t &gt;= 25) { console.log('chaud') }, et la forme des deux autres, else if ()
+          { } et else { } (data-depart) ; la consigne le dit, et l’apprenant écrit la deuxième
+          branche et le else. Un code laissé tel quel reçoit un message de forme.
+        </li>
+        <li>
+          JavaScript : avant d’exécuter, l’outil repère ≥, ≤ ou ≠ (« En JavaScript, ≥ s’écrit
           &gt;=… »), un mot de pseudo-code (« Le mot SI est du pseudo-code… »), une variable créée
           par l’apprenant (« Ne crée pas la variable t : la page lui donne elle-même chaque valeur à
           tester… ») et un = seul dans la condition d’un if : « Dans if (t = 25), le signe = range
@@ -4970,9 +4996,11 @@ if (age &lt; 12) {
         <li>
           Schéma de mémoire (étape 12) : le schéma de l’étape 4, boîtes et flèches en place. Chaque
           case est juste si elle contient le terme du cours (données, fait ou VRAI ou FAUX,
-          condition, VRAIE dans la flèche de la chaîne, branche, puis NON, ET, OU), sans tenir
-          compte des accents ; les cases fausses sont bordées de rouge, et le retour dit combien
-          sont justes et que chacune attend un mot du cours.
+          condition, VRAIE dans la flèche de la chaîne, branche), sans tenir compte des accents. La
+          flèche des faits à la condition est écrite en entier, « combinés par NON, ET, OU, dans
+          l’ordre de calcul » : l’ordre de calcul ne se demande pas de mémoire ; les cases fausses
+          sont bordées de rouge, et le retour dit combien sont justes et que chacune attend un mot
+          du cours.
         </li>
       </ul>
       <h3>Les erreurs critiques et le prétest</h3>
@@ -5031,12 +5059,19 @@ if (age &lt; 12) {
         </li>
         <li>
           Dans le cours, après une solution vue, la suite de l’écran attend que l’apprenant refasse
-          sans regarder sur un autre cas (calculs des étapes 6 « À compléter » et « Sans aide », sur
-          le cas écrit dans la fiche ; trace de l’étape 8, sur deux clients tirés autour des seuils,
-          aux prix différents). Une fois l’autre cas réussi, l’apprenant explique en une ou deux
-          phrases pourquoi c’est juste, puis compare avec la solution de la fiche ; la suite de
-          l’écran paraît dès la réussite. Quand il n’y a pas d’autre cas, il explique la solution
-          avec ses mots puis la compare avec celle de la fiche, et la suite paraît ensuite.
+          sans regarder sur un autre cas, écrit dans la fiche (data-autre-expr pour un calcul,
+          data-variante-… pour les autres outils) : les calculs de l’étape 6 « À compléter » et «
+          Sans aide » ; le nombre de lignes de l’étape 5, pour six conditions ; l’ordre et les
+          valeurs limites de l’étape 8, sur la chaîne d’un forfait de données ; le JavaScript de
+          l’étape 9, sur la force du vent, la première branche écrite. La trace de l’étape 8 se
+          refait sur deux clients tirés autour des seuils, aux prix différents, et le schéma de
+          l’étape 12 sur le même schéma, vide. Pendant qu’il refait, l’exercice et sa solution sont
+          cachés : seul l’autre cas reste à l’écran. Une fois l’autre cas réussi, l’apprenant
+          explique en une ou deux phrases pourquoi c’est juste, puis compare avec la solution de la
+          fiche ; la suite de l’écran paraît dès la réussite. Un choix entre des options n’a pas
+          d’autre cas : quand la bonne option est marquée, au deuxième choix faux, l’apprenant
+          explique avec ses mots pourquoi elle est la bonne, puis compare avec la fiche, et la suite
+          paraît ensuite.
         </li>
         <li>
           Dans la pratique, après une solution vue, l’item se refait sur sa variante, puis
@@ -5239,9 +5274,9 @@ if (age &lt; 12) {
             "erreurs": ["E3"]
           },
           {
-            "id": "B02-R7",
-            "question": "En JavaScript : ET s’écrit &&, OU s’écrit ||, NON s’écrit !, ≥ et ≤ s’écrivent >= et <=, ≠ s’écrit !==, et === compare. Transcris en JavaScript la condition « batterie ≥ 80 ET NON enCharge », dans un if qui affiche « débranche ». Puis dis ce qui se passerait avec if (batterie = 100), et pourquoi.",
-            "attendu": "if (batterie >= 80 && !enCharge) { console.log('débranche') }. Avec if (batterie = 100), le signe = range 100 dans batterie au lieu de comparer : c’est une affectation, 100 compte comme VRAI, la branche s’exécute toujours, et batterie vaut 100 ensuite. Pour comparer, il faut l’égalité stricte, ===. Confondre = et ===, c’est l’erreur E4. Déduit de l’étape 9.",
+            "id": "B02-R13",
+            "question": "En JavaScript : SI s’écrit if, afficher s’écrit console.log, ET s’écrit &&, NON s’écrit !, et = pour comparer s’écrit ===. Transcris en JavaScript cette ligne de pseudo-code : SI batterie = 100 ET NON enCharge : afficher « débranche ».",
+            "attendu": "if (batterie === 100 && !enCharge) { console.log('débranche') }. Le = du pseudo-code compare : il devient ===, car un = seul rangerait 100 dans batterie au lieu de comparer. Les parenthèses en plus, comme !(enCharge), sont acceptées. Écrire = ou && à la place de ===, c’est l’erreur E4. Déduit de l’étape 9.",
             "erreurs": ["E4"]
           }
         ],
@@ -5265,9 +5300,9 @@ if (age &lt; 12) {
             "erreurs": ["E3"]
           },
           {
-            "id": "B02-Q4",
-            "question": "En JavaScript, que fait let total = 0 ? Et que teste total === 0 ?",
-            "attendu": "let total = 0 crée la variable total et y range 0 : c’est une affectation. total === 0 compare : true si total vaut 0. Les confondre, c’est l’erreur E4. Déduit de l’étape 9.",
+            "id": "B02-Q13",
+            "question": "En JavaScript, tu tapes let total = 0, puis total = 5, puis total === 0. Que contient total à la fin, et que répond la console à la dernière ligne ?",
+            "attendu": "total contient 5 : total = 5 est une affectation, elle range 5 à la place de 0, car une variable ne garde qu’une valeur à la fois. total === 0 compare sans rien changer : 5 n’est pas 0, la console répond false. Prendre total = 5 pour une comparaison, c’est l’erreur E4. Déduit de l’étape 9.",
             "erreurs": ["E4"]
           },
           {
@@ -5283,9 +5318,9 @@ if (age &lt; 12) {
             "erreurs": []
           },
           {
-            "id": "B02-Q7",
-            "question": "Comment écrit-on « le train ou le car, mais pas les deux » avec ET, OU et NON ?",
-            "attendu": "(train OU car) ET NON (train ET car) : c’est le OU exclusif. train OU car seul accepterait les deux. Déduit de l’étape 7.",
+            "id": "B02-Q14",
+            "question": "Une formule donne une boisson ou un pop-corn, mais pas les deux : (boisson OU popcorn) ET NON (boisson ET popcorn). Un client demande les deux. Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Calcule la condition pour lui, une opération à la fois : l’accepte-t-elle ?",
+            "attendu": "boisson et popcorn valent VRAI. boisson OU popcorn : VRAI OU VRAI donne VRAI. boisson ET popcorn : VRAI ET VRAI donne VRAI, donc NON (boisson ET popcorn) donne FAUX. Enfin VRAI ET FAUX donne FAUX : la condition le refuse, c’est le OU exclusif. boisson OU popcorn seul l’aurait accepté : croire que le OU exclut les deux, c’est l’erreur E1. Déduit des étapes 6 et 7.",
             "erreurs": ["E1"]
           },
           {
@@ -5320,7 +5355,7 @@ if (age &lt; 12) {
           {
             "id": "B02-C7",
             "type": "explication",
-            "consigne": "En JavaScript : SI s’écrit if, afficher s’écrit console.log, et === compare. Une camarade a écrit if (note = 20) { console.log('parfait') }. La console affiche « parfait » même quand note valait 12. Pourquoi ? Corrige la ligne pour qu’elle n’affiche « parfait » que pour 20.",
+            "consigne": "En JavaScript : SI s’écrit if, afficher s’écrit console.log, et === compare. Dans un if, JavaScript compte tout nombre autre que 0 comme VRAI. Une camarade a écrit if (note = 20) { console.log('parfait') }. La console affiche « parfait » même quand note valait 12. Pourquoi ? Corrige la ligne pour qu’elle n’affiche « parfait » que pour 20.",
             "attendu": "= range 20 dans note au lieu de comparer (affectation), et dans un if, un nombre autre que 0 compte comme VRAI : la branche s’exécute toujours, et note vaut 20 ensuite. Pour comparer, il faut l’égalité stricte, === : if (note === 20) { console.log('parfait') }. Confondre = et ===, c’est l’erreur E4. Déduit de l’étape 9.",
             "erreurs": ["E4"]
           },
@@ -5334,8 +5369,8 @@ if (age &lt; 12) {
           {
             "id": "B02-DE8",
             "type": "explication",
-            "consigne": "Une condition combine trois faits, A, B et C. Écris dans l’ordre les huit cas de sa table de vérité, en VRAI et FAUX, et explique pourquoi un quatrième fait doublerait leur nombre.",
-            "attendu": "Rangés comme on compte en binaire, de 000 à 111 : FAUX FAUX FAUX, FAUX FAUX VRAI, FAUX VRAI FAUX, FAUX VRAI VRAI, VRAI FAUX FAUX, VRAI FAUX VRAI, VRAI VRAI FAUX, VRAI VRAI VRAI. Chaque fait vaut VRAI ou FAUX, comme un bit : un fait de plus coupe chaque cas en deux, avec lui FAUX puis VRAI, d’où 2 × 8 = 16 cas. Déduit de l’étape 5.",
+            "consigne": "Une condition combine trois faits, A, B et C. Pour ranger les cas de sa table de vérité, écris les quatre cas de B et C dans l’ordre de l’étape 5 (FAUX FAUX, FAUX VRAI, VRAI FAUX, VRAI VRAI), d’abord avec A FAUX, puis avec A VRAI. Écris ainsi les huit cas, et explique pourquoi un quatrième fait doublerait leur nombre.",
+            "attendu": "Avec A FAUX : FAUX FAUX FAUX, FAUX FAUX VRAI, FAUX VRAI FAUX, FAUX VRAI VRAI. Avec A VRAI : VRAI FAUX FAUX, VRAI FAUX VRAI, VRAI VRAI FAUX, VRAI VRAI VRAI. Chaque fait vaut VRAI ou FAUX, comme un bit : un fait de plus fait écrire les huit cas deux fois, avec lui FAUX puis VRAI, d’où 2 × 8 = 16 cas. Déduit de l’étape 5.",
             "erreurs": []
           },
           {
@@ -5355,7 +5390,7 @@ if (age &lt; 12) {
           {
             "id": "B02-DE11",
             "type": "explication",
-            "consigne": "En JavaScript, = range une valeur dans une variable et === compare. Pour bloquer un compte au troisième essai, un camarade écrit if (essais = 3) { console.log('bloqué') }. Explique pourquoi « bloqué » s’affiche dès le premier essai, ce que vaut essais ensuite, et comment écrire ce if.",
+            "consigne": "En JavaScript, = range une valeur dans une variable et === compare. Dans un if, JavaScript compte tout nombre autre que 0 comme VRAI. Pour bloquer un compte au troisième essai, un camarade écrit if (essais = 3) { console.log('bloqué') }. Explique pourquoi « bloqué » s’affiche dès le premier essai, ce que vaut essais ensuite, et comment écrire ce if.",
             "attendu": "if (essais = 3) range 3 dans essais : c’est une affectation, pas une comparaison. 3 compte comme VRAI, donc la branche s’exécute à chaque fois, dès le premier essai, et essais vaut 3 ensuite. Pour tester le nombre d’essais, il faut l’égalité stricte : if (essais === 3). Écrire = pour comparer, c’est l’erreur E4. Déduit de l’étape 9.",
             "erreurs": ["E4"]
           },
@@ -5561,7 +5596,7 @@ if (age &lt; 12) {
             "questions": [
               "B02-R12",
               "B02-C5",
-              "B02-Q7",
+              "B02-Q14",
               "B02-DE12",
               "B02-DT1",
               "B02-DT10",
@@ -5588,9 +5623,9 @@ if (age &lt; 12) {
             "montree": ["ET9"],
             "pratiquee": ["PR2"],
             "questions": [
-              "B02-R7",
+              "B02-R13",
               "B02-C7",
-              "B02-Q4",
+              "B02-Q13",
               "B02-Q12",
               "B02-DE11",
               "B02-DT8",
@@ -5646,7 +5681,7 @@ if (age &lt; 12) {
             "vers": "N7",
             "type": "equivalence",
             "montree": "ET9",
-            "questions": ["B02-R7", "B02-DT9"]
+            "questions": ["B02-R13", "B02-DT9"]
           },
           {
             "id": "L7",
@@ -8649,6 +8684,8 @@ if (age &lt; 12) {
           bouton.addEventListener('click', () => {
             const nouveau = c.variante()
             if (!nouveau) return
+            // Sans regarder : l'exercice et sa solution se cachent, seul l'autre cas reste à l'écran.
+            for (const n of Array.from(ex.children)) if (n !== zone) n.hidden = true
             nouveau.dataset.variante = 'oui'
             if (ex.dataset.id) nouveau.dataset.origine = ex.dataset.id
             zone.replaceChildren(nouveau)
@@ -9837,6 +9874,9 @@ if (age &lt; 12) {
 
           /** Le schéma du bloc, de mémoire : un ou deux mots par case, reconnus sans les accents. */
           schema(ex) {
+            // L'autre essai, après une solution vue : le même schéma, vide, à refaire sans regarder.
+            const modele = ex.cloneNode(true)
+            modele.removeAttribute('data-id')
             const champs = []
             for (const caseVide of $$('[data-case]', ex)) {
               const consigne = caseVide.textContent.trim()
@@ -9869,8 +9909,9 @@ if (age &lt; 12) {
                 return ok
               })
             const c = {
+              variante: () => modele.cloneNode(true),
               solution: () =>
-                'les données, comparées, donnent des faits, VRAI ou FAUX ; combinés par NON, ET, OU, ils donnent une condition, une seule valeur ; la première VRAIE de la chaîne choisit une seule branche. L’ordre de calcul : parenthèses, comparaisons, NON, ET, OU',
+                'les données, comparées, donnent des faits, VRAI ou FAUX ; combinés par NON, ET, OU, ils donnent une condition, une seule valeur ; la première VRAIE de la chaîne choisit une seule branche',
               remplir(etat, v) {
                 const vs = v && etat !== 'vu' ? String(v).split('|') : null
                 champs.forEach((ch, i) => {
@@ -9913,11 +9954,48 @@ if (age &lt; 12) {
           },
         }
 
+        /**
+         * Un autre cas écrit dans la fiche, pour refaire sans regarder dans le cours (règle F03) : un
+         * exercice du même outil, fait des attributs `data-variante-…` de l'exercice sans leur préfixe,
+         * avec `data-variante-enonce` pour énoncé ; pour remettre dans l'ordre, ses lignes
+         * (`data-variante-lignes` : « a : condition => sortie | … »).
+         */
+        function autreCas(ex) {
+          const donnees = {}
+          for (const [cle, val] of Object.entries(ex.dataset)) {
+            const m = /^variante([A-Z]\w*)$/.exec(cle)
+            if (!m || m[1] === 'Enonce' || m[1] === 'Lignes') continue
+            donnees[m[1].charAt(0).toLowerCase() + m[1].slice(1)] = val
+          }
+          const nouveau = nouvelEx(ex.dataset.widget, donnees, ex.dataset.varianteEnonce)
+          const lignes = ex.dataset.varianteLignes
+          if (lignes)
+            nouveau.append(
+              el(
+                'ol',
+                { class: 'lignes-ordre' },
+                ...lignes.split('|').map((l) => {
+                  const [, id, cond, sortie] =
+                    /^\s*(\w+)\s*:\s*(.+?)\s*=>\s*(.+?)\s*$/.exec(l) ?? []
+                  return el('li', {
+                    'data-ligne': id,
+                    'data-cond': cond,
+                    'data-sortie': sortie,
+                    text: cond + ' : afficher « ' + sortie + ' »',
+                  })
+                }),
+              ),
+            )
+          return nouveau
+        }
+
         /** Monte un exercice : son contrôleur, son échelle d'aide, et l'état gardé d'une visite précédente. */
         function monterEx(ex) {
           const fabrique = TYPES[ex.dataset.widget]
           if (!fabrique) return
           const c = fabrique(ex)
+          if (!c.variante && ex.dataset.varianteEnonce && !dansItem(ex))
+            c.variante = () => autreCas(ex)
           if (ex.dataset.solution && !c.solutionFixe) c.solution = () => ex.dataset.solution
           retourDe(ex)
           if (!c.marque && !c.sansEchelle) {
