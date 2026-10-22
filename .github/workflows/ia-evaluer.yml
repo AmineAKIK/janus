@@ -8,6 +8,10 @@ on:
         description: Le jeu de test à passer
         default: prompts/correction/jeu-de-test/exemple.json
         required: true
+      fiche:
+        description: "Épreuve 1 d'une fiche, au lieu du jeu : « <formation> <bloc> <reponses.md> » (vide pour le jeu)"
+        default: ''
+        required: false
       correcteur:
         description: Le fournisseur à évaluer
         type: choice
@@ -31,19 +35,30 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm ia:evaluer "$JEU"
+      # Le jeu, ou l'épreuve 1 d'une fiche : ses trois mots (formation, bloc, réponses) deviennent trois arguments.
+      - run: |
+          if [ -n "$FICHE" ]; then
+            read -r formation bloc reponses <<< "$FICHE"
+            pnpm ia:evaluer --fiche "$formation" "$bloc" "$reponses"
+          else
+            pnpm ia:evaluer "$JEU"
+          fi
         env:
           JEU: ${{ inputs.jeu }}
+          FICHE: ${{ inputs.fiche }}
           CORRECTEUR: ${{ inputs.correcteur }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       # Le rapport s'affiche dans le résumé de l'exécution.
-      - run: cat prompts/correction/rapports/*.md >> "$GITHUB_STEP_SUMMARY"
+      # Même quand une réponse de l'épreuve ne sort pas Solide (la commande échoue) : le rapport dit laquelle.
+      - if: always()
+        run: cat prompts/correction/rapports/*.md >> "$GITHUB_STEP_SUMMARY"
       # Ses lignes de synthèse, les cas refusés et les cas en désaccord remontent aussi en annotation du job, et les
       # messages rendus pour les cas en désaccord dans les suivantes : l'API des check-runs les rend lisibles sans ouvrir
       # le résumé. Une annotation est coupée au-delà de 4 000 caractères environ : les messages sont groupés par paquets
       # de 3 500 caractères au plus, un paquet par annotation (dix annotations au plus par étape).
-      - run: |
+      - if: always()
+        run: |
           set -- prompts/correction/rapports/*.md
           echapper() { sed 's/%/%25/g' | sed -z 's/\n/%0A/g'; }
           synthese=$(sed '/^## Messages$/q' "$1" | grep -E '^- |refusé \(|\| [1-9] \|$' | echapper)
