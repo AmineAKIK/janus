@@ -347,7 +347,8 @@
         min-width: 0;
       }
       .ecran[hidden],
-      .bouton[hidden] {
+      .bouton[hidden],
+      [data-si-essai][hidden] {
         display: none;
       }
       h2 {
@@ -851,6 +852,28 @@
         display: flex;
         flex-direction: column;
         gap: var(--espacement-8);
+      }
+      /* La tentative (data-essai) : sa correction, toute la série à la fin (règle M01). */
+      .essais-bilan,
+      .essais-bilan > ol {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-12);
+      }
+      .essais-bilan > ol {
+        margin: 0;
+        padding-inline-start: var(--espacement-20);
+      }
+      .essais-bilan p {
+        margin: 0;
+      }
+      /* Ce que l'explication répond à un essai de l'apprenant (data-si-essai) : repérable d'un coup d'œil. */
+      [data-si-essai] {
+        margin: 0;
+        padding: var(--espacement-8) var(--espacement-12);
+        border-inline-start: 3px solid var(--couleur-accent);
+        border-radius: var(--rayon-champ);
+        background: var(--couleur-surface-douce);
       }
       .objectif-liste {
         display: flex;
@@ -2106,9 +2129,10 @@
     <template data-etape="ET3">
       <div data-ecran="Une porte">
         <p class="accroche">
-          Avant les règles, essaie avec ton bon sens. Personne ne te note : après chaque réponse, la
-          page te dit ce qui se passe, et les étapes suivantes l’expliquent. Dans les tableaux, VRAI
-          veut dire oui et FAUX veut dire non.
+          Avant les règles, essaie avec ton bon sens. Personne ne te note : réponds comme tu penses,
+          ou « Je ne sais pas ». À la fin de l’étape, la page te montre tes réponses et ce qui était
+          attendu ; les étapes suivantes expliquent pourquoi. Dans les tableaux, VRAI veut dire oui
+          et FAUX veut dire non.
         </p>
         <div
           class="ex"
@@ -2118,7 +2142,6 @@
           data-faits="badge|code"
           data-expr="badge ET code"
           data-titre="La porte s’ouvre"
-          data-sinon="Relis la règle : il faut le badge, et aussi le bon code."
         >
           <p class="q">
             La porte d’un local s’ouvre avec le badge ET le bon code. Pour chaque cas, dis si la
@@ -2126,7 +2149,7 @@
           </p>
         </div>
       </div>
-      <div data-ecran="Deux « ou »">
+      <div data-ecran="Une attraction, un menu">
         <div
           class="ex"
           data-essai
@@ -2179,7 +2202,7 @@
           </ul>
         </div>
       </div>
-      <div data-ecran="Une règle, deux lectures">
+      <div data-ecran="Une borne de musée">
         <div
           class="ex"
           data-essai
@@ -2190,25 +2213,24 @@
           data-succes="C’est tout le problème : sans ordre de calcul, cette règle a deux lectures. La logique tranche par une convention, que tu vas voir. Avec elle, Léo entre gratuitement."
         >
           <p class="q">
-            La borne d’un musée suit cette règle, écrite sans parenthèses : gratuit si moins de 18
-            ans ET habite la ville OU enseignant. Léo a 30 ans, il est enseignant, et il habite une
-            autre ville. Avec cette phrase seule, sans règle qui dise dans quel ordre la lire,
-            peut-on trancher : la borne le laisse-t-elle entrer gratuitement ?
+            La borne d’un musée suit cette règle : gratuit si moins de 18 ans ET habite la ville OU
+            enseignant. Léo a 30 ans, il est enseignant, et il habite une autre ville. La borne le
+            laisse-t-elle entrer gratuitement ?
           </p>
           <ul class="options">
             <li
               data-option="oui"
-              data-retour="C’est la lecture (moins de 18 ans ET habite la ville) OU enseignant, celle que choisit la règle de calcul que tu vas voir. Mais la phrase seule peut aussi se lire moins de 18 ans ET (habite la ville OU enseignant), et Léo paierait. Sans cette règle, qu’est-ce qui permettrait de trancher ?"
+              data-retour="C’est la lecture (moins de 18 ans ET habite la ville) OU enseignant, celle que choisit la règle de calcul que tu vas voir. Mais la phrase seule peut aussi se lire moins de 18 ans ET (habite la ville OU enseignant), et Léo paierait. Sans règle sur l’ordre, rien ne permet de trancher."
             >
-              Oui : il entre gratuitement.
+              Oui.
             </li>
             <li
               data-option="non"
-              data-retour="C’est la lecture moins de 18 ans ET (habite la ville OU enseignant). Mais la phrase seule peut aussi se lire (moins de 18 ans ET habite la ville) OU enseignant, et Léo entrerait. Sans règle, qu’est-ce qui permettrait de trancher ?"
+              data-retour="C’est la lecture moins de 18 ans ET (habite la ville OU enseignant). Mais la phrase seule peut aussi se lire (moins de 18 ans ET habite la ville) OU enseignant, et Léo entrerait. Sans règle sur l’ordre, rien ne permet de trancher."
             >
-              Oui : il paie.
+              Non : il paie.
             </li>
-            <li data-option="doute">Non : il faut savoir dans quel ordre lire la règle.</li>
+            <li data-option="doute">On ne peut pas trancher avec cette phrase.</li>
           </ul>
         </div>
       </div>
@@ -2237,16 +2259,64 @@
           <ul class="options">
             <li
               data-option="chaud"
-              data-retour="C’est ce qu’on voudrait. Mais regarde la première ligne : 30 ≥ 15, est-ce vrai ?"
+              data-retour="C’est ce qu’on voudrait. Mais 30 ≥ 15 est déjà vrai à la première ligne : le thermostat affiche « tiède » et s’arrête là."
             >
               « chaud »
             </li>
             <li data-option="tiede">« tiède »</li>
             <li
               data-option="deux"
-              data-retour="Il n’affiche qu’un seul mot. Lequel trouve-t-il en premier, de haut en bas ?"
+              data-retour="Il n’affiche qu’un seul mot : le premier dont la condition est vraie, de haut en bas. Ici, « tiède », car 30 ≥ 15."
             >
               « tiède », puis « chaud »
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div data-ecran="Un tarif jeune">
+        <div
+          class="ex"
+          data-essai
+          data-widget="choix"
+          data-id="p6"
+          data-reponse="non"
+          data-melanger="non"
+          data-explication="Nora a 26 ans pile : elle n’a plus moins de 26 ans. Le seuil, 26, est exclu."
+        >
+          <p class="q">
+            Un cinéma réserve son tarif jeune aux moins de 26 ans. Nora fête ses 26 ans aujourd’hui.
+            A-t-elle le tarif jeune ?
+          </p>
+          <ul class="options">
+            <li
+              data-option="oui"
+              data-retour="Moins de 26 ans, c’est 25 ans au plus. À 26 ans pile, Nora n’en fait plus partie."
+            >
+              Oui.
+            </li>
+            <li data-option="non">Non.</li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-essai
+          data-widget="choix"
+          data-id="p7"
+          data-reponse="oui"
+          data-melanger="non"
+          data-explication="« Jusqu’à 26 ans » compte le seuil : à 26 ans pile, Nora en fait partie."
+        >
+          <p class="q">
+            Un autre cinéma écrit : tarif jeune jusqu’à 26 ans, compris. Nora, 26 ans, a-t-elle le
+            tarif jeune ?
+          </p>
+          <ul class="options">
+            <li data-option="oui">Oui.</li>
+            <li
+              data-option="non"
+              data-retour="« Compris » veut dire que 26 en fait partie : Nora, 26 ans pile, y a droit."
+            >
+              Non.
             </li>
           </ul>
         </div>
@@ -2385,6 +2455,16 @@
           C’est là que se cachent les erreurs. Écrire &gt; à la place de ≥, c’est se tromper pour
           une seule valeur : celle du seuil, qu’on oublie souvent de tester.
         </p>
+        <p data-si-essai="p6:faux">
+          Pour Nora, 26 ans pile, et le tarif des moins de 26 ans, tu avais répondu
+          <span data-essai-rappel="p6">autre chose</span>. « Moins de 26 ans » s’écrit âge &lt; 26,
+          et 26 &lt; 26 est FAUX : le seuil n’en fait pas partie.
+        </p>
+        <p data-si-essai="p7:faux">
+          Pour le tarif jusqu’à 26 ans compris, tu avais répondu
+          <span data-essai-rappel="p7">autre chose</span>. Il s’écrit âge ≤ 26, et 26 ≤ 26 est VRAI.
+          Entre &lt; 26 et ≤ 26, une seule valeur change : 26, la valeur limite.
+        </p>
         <div class="groupe">
           <p class="q">Il est midi : heure = 12. Que vaut chaque comparaison ?</p>
           <div class="mini">
@@ -2509,6 +2589,10 @@
           A ET B est VRAI seulement si A est VRAI et B est VRAI. Il suffit d’un FAUX pour que tout
           soit FAUX.
         </p>
+        <p data-si-essai="p1:faux|passe">
+          À l’étape 3, la porte du local te demandait le badge ET le bon code. Elle ne s’ouvre que
+          dans un seul des quatre cas : badge et code à la fois. Un seul des deux ne suffit pas.
+        </p>
         <p>
           Image : deux interrupteurs l’un après l’autre, sur le même fil. Fermé, un interrupteur
           laisse passer le courant : il vaut VRAI. La lampe ne s’allume que si les deux sont fermés.
@@ -2557,6 +2641,11 @@
         <p class="accroche">
           A OU B est VRAI dès qu’au moins un des deux est VRAI. Il n’est FAUX que si les deux sont
           FAUX.
+        </p>
+        <p data-si-essai="p2:faux">
+          Pour Sami, 1,30 m et venu avec son père, tu avais répondu
+          <span data-essai-rappel="p2">autre chose</span>. Ce OU accepte les deux conditions à la
+          fois : Sami en remplit deux, il monte.
         </p>
         <p>
           Image : deux interrupteurs côte à côte, sur deux fils qui mènent à la même lampe. Un seul
@@ -2706,6 +2795,15 @@
           À l’étape 3, la borne du musée lisait « moins de 18 ans ET habite la ville OU
           enseignant ». Deux lectures étaient possibles. Une machine ne peut pas hésiter : une règle
           fixe l’ordre de calcul.
+        </p>
+        <p data-si-essai="p4:juste">
+          Tu l’avais vu pour Léo : sans ordre de calcul, la phrase a deux lectures. Voici la
+          convention qui tranche.
+        </p>
+        <p data-si-essai="p4:faux">
+          Pour Léo, tu avais répondu <span data-essai-rappel="p4">autre chose</span>. Tu as choisi
+          une lecture sans le savoir : l’autre donnait la réponse inverse. La convention ci-dessous
+          tranche, et avec elle Léo entre gratuitement.
         </p>
         <p>
           Une condition se compose de faits, reliés par NON, ET, OU. La calculer, c’est faire une
@@ -2998,6 +3096,11 @@
         <p class="accroche">
           Au restaurant, « fromage ou dessert » interdit les deux. Ce « ou »-là s’appelle le OU
           <strong>exclusif</strong> : il est VRAI quand un seul des deux est VRAI.
+        </p>
+        <p data-si-essai="p3:faux">
+          Pour le menu, tu avais répondu <span data-essai-rappel="p3">autre chose</span>. C’est
+          juste pour le OU de la logique, celui de l’attraction, qui accepte les deux. Le menu en
+          emploie un autre : le OU exclusif.
         </p>
         <div
           class="defile"
@@ -3402,6 +3505,11 @@
 <span class="l br" data-l="2">  afficher « chaud »</span>
 <span class="l" data-l="3"><b>SINON</b> :</span>
 <span class="l br" data-l="3">  afficher « froid »</span></code></pre>
+        <p data-si-essai="p5:faux">
+          Tu avais répondu <span data-essai-rappel="p5">autre chose</span>. Le thermostat lit les
+          lignes de haut en bas et s’arrête à la première condition VRAIE : 30 ≥ 15 l’est déjà. Il
+          n’affiche qu’un mot, « tiède ».
+        </p>
         <div class="ex" data-widget="choix" data-id="b4" data-reponse="chaud" data-melanger="non">
           <p class="q">
             Avant de lire la suite : quelle ligne faut-il tester en premier pour que le thermostat
@@ -4921,8 +5029,9 @@ if (age &lt; 12) {
           parle de la première : pour un OU sur la ligne VRAI, VRAI, « le OU de la logique accepte
           les deux à la fois » ; pour un OU, sinon, « OU n’est FAUX que si les deux sont FAUX » ;
           pour un ET, « ET n’est VRAI que si les deux sont VRAI » ; pour une condition composée,
-          « calcule d’abord « NON B », puis la suite ». À l’étape 3, le retour écrit dans la fiche
-          (data-sinon) remplace cette phrase.
+          « calcule d’abord « NON B », puis la suite ». À l’étape 3, rien ne s’affiche avant la fin
+          de l’étape : le gabarit montre alors, sous « Tes essais », le retour écrit dans la fiche
+          (data-sinon) à la place de cette phrase.
         </li>
         <li>
           Calcul pas à pas : l’apprenant touche l’opération qu’il calculerait maintenant, puis
@@ -5027,8 +5136,9 @@ if (age &lt; 12) {
           11, où une faute sous chronomètre est redite en fin de série.
         </li>
         <li>
-          Prétest : la première réponse à chaque question de l’étape 3 part à l’appli
-          (pretest.reponse), une seule fois : l’option choisie, ou les valeurs de la table.
+          Prétest : le gabarit envoie à l’appli la première réponse à chaque essai de l’étape 3
+          (pretest.reponse), une seule fois : l’option choisie, les valeurs de la table, ou « Je ne
+          sais pas ».
         </li>
       </ul>
       <h3>Les coups de pouce</h3>
@@ -5112,7 +5222,7 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 19,
+        "version": 20,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 expressions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
@@ -8420,16 +8530,6 @@ if (age &lt; 12) {
             }),
           )
         }
-        /** La première réponse à une question de l'étape 3 part à l'appli (pretest.reponse), une seule fois. */
-        function envoyerPretest(ex, reponse) {
-          const id = ex.dataset.id
-          if (!('essai' in ex.dataset) || !id || !reponse || traces['pretest:' + id]) return
-          window.JanusPont?.envoyer('pretest.reponse', {
-            question: id,
-            reponse: String(reponse).slice(0, 2000),
-          })
-          tracer('pretest:' + id, String(reponse))
-        }
         function retourDe(ex) {
           let r = $(':scope > .retour', ex)
           if (!r) {
@@ -8593,11 +8693,38 @@ if (age &lt; 12) {
          * qui suit une réponse fausse compte avec l'aide 1 au moins, le retour de l'erreur a orienté
          * (règle P03).
          */
+        /**
+         * Une réponse à la tentative de l'étape 3 (règles C03 et M01) : elle part au gabarit, qui la garde
+         * sans verdict et corrige toute la série à la fin. L'outil ne dit rien ; l'exercice est fini, la
+         * suite de l'écran paraît. « Je ne sais pas » (fiche:essai-passe) est une réponse vide.
+         */
+        function essayer(ex, c, res) {
+          ex.dataset.fini = 'oui'
+          c.bloquer?.()
+          const reponse = res.r ?? res.v
+          ex.dispatchEvent(
+            new CustomEvent('fiche:essai', {
+              bubbles: true,
+              detail: {
+                cle: ex.dataset.id,
+                reponse: reponse === undefined || reponse === null ? null : String(reponse),
+                juste: Boolean(res.ok),
+                attendu: typeof c.solution === 'function' ? sansPoint(c.solution()) : '',
+                // Après coup, un indice pour réessayer n'a plus d'objet : ce qui cause l'erreur, ou pourquoi.
+                retour: res.ok
+                  ? (ex.dataset.explication ?? '')
+                  : res.d?.m || ex.dataset.explication || '',
+              },
+            }),
+          )
+          devoiler(ex.closest('.ecran, [data-ecran]'))
+        }
+
         function repondre(ex, c, res) {
           if (fini(ex)) return
+          if ('essai' in ex.dataset) return essayer(ex, c, res)
           const fautes = Number(ex.dataset.fautes || 0)
           const cran = c.echelle ? c.echelle.cran() : 0
-          if (fautes === 0) envoyerPretest(ex, res.r)
           if (res.ok) {
             const aide = Math.min(4, fautes > 0 ? Math.max(cran, 1) : cran)
             signaler(ex, true, aide)
@@ -8754,6 +8881,8 @@ if (age &lt; 12) {
               b.addEventListener('click', () => {
                 if (fini(ex)) return
                 const r = items[i].textContent.trim()
+                if ('essai' in ex.dataset)
+                  return essayer(ex, c, { ok: i === juste, r, d: { m: items[i].dataset.retour } })
                 if (i === juste) return repondre(ex, c, { ok: true, r })
                 b.classList.add('choisi-faux')
                 b.disabled = true
@@ -10003,6 +10132,7 @@ if (age &lt; 12) {
             c.variante = () => autreCas(ex)
           if (ex.dataset.solution && !c.solutionFixe) c.solution = () => ex.dataset.solution
           retourDe(ex)
+          if ('essai' in ex.dataset) return monterEssai(ex, c)
           if (!c.marque && !c.sansEchelle) {
             c.echelle = echelle(ex, c, () => montrerSolution(ex, c))
             ex.append(c.echelle.zone)
@@ -10013,6 +10143,21 @@ if (age &lt; 12) {
             appliquer(ex, c, garde.e, garde.v)
             if (garde.e === 'vu') proposerVariante(ex, c)
           }
+        }
+
+        /**
+         * Un essai de l'étape 3 : pas d'échelle d'aide (rien ne s'aide avant l'explication). Déjà répondu,
+         * il reste fini ; « Je ne sais pas », que le gabarit ajoute, arrive ici en fiche:essai-passe.
+         */
+        function monterEssai(ex, c) {
+          if (traces['essai:' + ex.dataset.id]) {
+            ex.dataset.fini = 'oui'
+            c.bloquer?.()
+            return
+          }
+          ex.addEventListener('fiche:essai-passe', () => {
+            if (!fini(ex)) essayer(ex, c, { ok: false })
+          })
         }
 
         /**
@@ -10722,6 +10867,8 @@ if (age &lt; 12) {
       let majPied = () => {}
       /** Remet à jour le bilan affiché quand un statut arrive. */
       let majBilan = () => {}
+      /** La tentative de l'étape `pretest` affichée : ses essais notés se figent, la série finie se corrige. */
+      let majEssais = () => {}
       /** Le dernier bilan envoyé depuis cette page : son identifiant, pour reconnaître un refus. */
       let bilanEnvoye = null
       /**
@@ -10841,6 +10988,170 @@ if (age &lt; 12) {
           if (trace.avis === 'meme' || trace.avis === 'manque') choisir(trace.avis)
         }
       })
+      /*
+       * La tentative avant l'explication (règles C03 et M01) : dans une étape `pretest`, chaque exercice
+       * `data-essai` (avec son `data-id`) émet `fiche:essai`, avec `detail: { cle, reponse, juste,
+       * attendu, retour }`. La page garde la première réponse (trace `essai:<cle>`), l'envoie une fois à
+       * l'appli (`pretest.reponse`), ne dit ni juste ni faux, et corrige toute la série à la fin de
+       * l'étape, sous « Tes essais ». « Je ne sais pas » est une réponse : la page émet
+       * `fiche:essai-passe` sur l'exercice, et l'outil y répond par `fiche:essai`, sa réponse attendue
+       * avec ; sans outil qui réponde, la page lit l'attendu dans les attributs de l'exercice.
+       */
+      document.addEventListener('fiche:essai', (evenement) => {
+        const { cle, reponse, juste, attendu, retour } = evenement.detail ?? {}
+        if (typeof cle !== 'string' || cle === '' || etat.traces?.['essai:' + cle]) return
+        noterEssai(cle, {
+          reponse: typeof reponse === 'string' && reponse.trim() !== '' ? reponse.trim() : null,
+          juste: juste === true,
+          attendu: typeof attendu === 'string' ? attendu : '',
+          retour: typeof retour === 'string' ? retour : '',
+        })
+      })
+      function noterEssai(cle, essai) {
+        etat.traces = { ...(etat.traces ?? {}), ['essai:' + cle]: { ...essai, le: aujourdhui() } }
+        pont.envoyer('pretest.reponse', {
+          question: cle,
+          reponse: (essai.reponse ?? 'Je ne sais pas').slice(0, 2000),
+        })
+        enregistrer()
+        majEssais()
+        rappelerEssais($('contenu'))
+      }
+      /**
+       * Une explication qui part des essais (règle C03) : `data-essai-rappel="c2"` affiche la réponse
+       * notée à l'essai c2 (son texte reste tant qu'il n'y en a pas) ; `data-si-essai="c2:faux"` ne
+       * montre l'élément que si l'essai c2 est dans cet état : `juste`, `faux`, `passe` (« Je ne sais
+       * pas ») ou `absent` (pas encore fait), plusieurs séparés par `|`.
+       */
+      function rappelerEssais(racine) {
+        for (const el of racine.querySelectorAll('[data-essai-rappel]')) {
+          const essai = etat.traces?.['essai:' + el.dataset.essaiRappel]
+          if (essai?.reponse) el.textContent = entreGuillemets(essai.reponse)
+        }
+        for (const el of racine.querySelectorAll('[data-si-essai]')) {
+          const [cle, etats = ''] = el.dataset.siEssai.split(':')
+          const essai = etat.traces?.['essai:' + cle]
+          const etatEssai = !essai
+            ? 'absent'
+            : essai.reponse === null
+              ? 'passe'
+              : essai.juste
+                ? 'juste'
+                : 'faux'
+          el.hidden = !etats.split('|').includes(etatEssai)
+        }
+      }
+      /** Ce qu'un exercice attend, quand aucun outil ne le dit : l'option juste, la solution, la réponse. */
+      function attenduEcrit(ex) {
+        const juste = ex.dataset.reponse
+        const option = juste
+          ? Array.from(ex.querySelectorAll('[data-option]')).find((o) => o.dataset.option === juste)
+          : undefined
+        return (option?.textContent ?? ex.dataset.solution ?? juste ?? '')
+          .replace(/\s+/g, ' ')
+          .trim()
+      }
+      /** Une réponse citée : sans point final, et sans doubler des guillemets qu'elle porte déjà. */
+      function entreGuillemets(texte) {
+        const t = texte.replace(/[.;\s]+$/, '')
+        return /^«.*»$/.test(t) ? t : '« ' + t + ' »'
+      }
+      /** L'énoncé d'un essai, avec la question de son groupe quand il en fait partie (« 1 lampe »). */
+      function enonceEssai(ex) {
+        const propre = ex.querySelector('.q')?.textContent ?? ''
+        const groupe = ex.closest('.groupe')?.querySelector(':scope > .q')?.textContent
+        return ((groupe ? groupe + ' ' : '') + propre).replace(/\s+/g, ' ').trim()
+      }
+      function essaisDe(section) {
+        const exercices = Array.from(section.querySelectorAll('[data-essai][data-id]'))
+        const essais = exercices.map((ex) => etat.traces?.['essai:' + ex.dataset.id])
+        exercices.forEach((ex, k) => {
+          const essai = essais[k]
+          const passer = ex.querySelector(':scope > .essai-passe')
+          if (!essai) {
+            if (passer) return
+            const bouton = creer('button', {
+              type: 'button',
+              className: 'bouton secondaire petit',
+              textContent: 'Je ne sais pas',
+              onclick: () => {
+                const cle = ex.dataset.id
+                ex.dispatchEvent(new CustomEvent('fiche:essai-passe'))
+                if (!etat.traces?.['essai:' + cle])
+                  noterEssai(cle, {
+                    reponse: null,
+                    juste: false,
+                    attendu: attenduEcrit(ex),
+                    retour: ex.dataset.explication ?? '',
+                  })
+              },
+            })
+            ex.append(creer('div', { className: 'actions essai-passe' }, bouton))
+            return
+          }
+          passer?.remove()
+          for (const champ of ex.querySelectorAll('input, button, select, textarea'))
+            champ.disabled = true
+          const note =
+            ex.querySelector(':scope > .essai-note') ??
+            ex.appendChild(creer('p', { className: 'discret essai-note', 'aria-live': 'polite' }))
+          note.textContent =
+            (essai.reponse === null
+              ? 'Noté : tu ne sais pas encore.'
+              : 'Noté : ' + entreGuillemets(essai.reponse) + '.') +
+            ' La correction vient à la fin de l’étape.'
+        })
+        const ecrans = section.querySelectorAll('.ecran')
+        const bilan =
+          section.querySelector('.essais-bilan') ??
+          (ecrans[ecrans.length - 1] ?? section).appendChild(
+            creer('div', { className: 'essais-bilan', hidden: true }),
+          )
+        const fini = exercices.length > 0 && essais.every(Boolean)
+        bilan.hidden = !fini
+        if (fini)
+          bilan.replaceChildren(
+            creer('h3', { textContent: 'Tes essais' }),
+            creer('p', {
+              textContent:
+                'Voici ce que tu as répondu, et ce qui était attendu. L’étape suivante explique pourquoi, à partir de tes réponses.',
+            }),
+            creer(
+              'ol',
+              {},
+              ...exercices.map((ex, k) => {
+                const essai = essais[k]
+                const fin = (texte) => String(texte).replace(/[.;\s]+$/, '') + '.'
+                return creer(
+                  'li',
+                  {},
+                  creer('p', {}, creer('strong', { textContent: enonceEssai(ex) })),
+                  // Sans réponse, pas de solution à garder sans l'avoir comprise (règle F04) :
+                  // l'étape suivante l'explique, à partir des réponses de la série.
+                  ...(essai.reponse === null
+                    ? [
+                        creer('p', {
+                          textContent: 'Tu ne savais pas : l’étape suivante te l’apprend.',
+                        }),
+                      ]
+                    : [
+                        creer('p', {
+                          textContent:
+                            'Ta réponse : ' + fin(essai.reponse) + (essai.juste ? ' Juste.' : ''),
+                        }),
+                        ...(essai.juste || essai.attendu === ''
+                          ? []
+                          : [creer('p', { textContent: 'Attendu : ' + fin(essai.attendu) })]),
+                        ...(essai.retour
+                          ? [creer('p', { className: 'discret', textContent: essai.retour })]
+                          : []),
+                      ]),
+                )
+              }),
+            ),
+          )
+        majPied()
+      }
       /**
        * Une erreur critique repérée, par le correcteur dans une réponse ou par un outil : elle reste
        * connue après un rechargement, et le bilan suivant la coche d'office (`aCocher`) sans que
@@ -10936,6 +11247,17 @@ if (age &lt; 12) {
             ' sur\u00a0' +
             items.length +
             ' pour l’instant.'
+          )
+        }
+        if (etape.type === 'pretest') {
+          const restants = Array.from(
+            $('contenu').querySelectorAll('[data-essai][data-id]'),
+          ).filter((ex) => !etat.traces?.['essai:' + ex.dataset.id]).length
+          if (restants === 0) return ''
+          return (
+            'Réponds à chaque essai avant de passer à la suite, « Je ne sais pas » compris\u00a0: ' +
+            (restants > 1 ? 'il en reste ' + restants : 'il en reste un') +
+            '.'
           )
         }
         if (etape.type !== 'restitution') return ''
@@ -11348,6 +11670,7 @@ if (age &lt; 12) {
       function afficherLibre(etape) {
         const modele = document.querySelector('template[data-etape="' + etape.id + '"]')
         const section = creer('section', {}, creer('h2', { textContent: etape.titre }))
+        if (etape.type === 'pretest') majEssais = () => essaisDe(section)
         if (!modele) {
           section.append(
             creer('p', { className: 'discret', textContent: 'Rien à lire dans cette étape.' }),
@@ -11393,7 +11716,15 @@ if (age &lt; 12) {
           precedent.disabled = k === 0
           avancer.textContent =
             k < ecrans.length - 1 ? 'Suivant' : suivante ? 'Étape suivante' : 'Terminé'
-          avancer.disabled = k === ecrans.length - 1 && !suivante
+          majPied()
+        }
+        // Le dernier écran mène à l'étape suivante quand rien ne reste à faire (la tentative finie).
+        const raison = creer('p', { className: 'discret', hidden: true })
+        majPied = () => {
+          const reste = courant === ecrans.length - 1 ? resteAFaire(etape) : ''
+          avancer.disabled = courant === ecrans.length - 1 && (!suivante || reste !== '')
+          raison.textContent = reste
+          raison.hidden = reste === ''
         }
         precedent.addEventListener('click', () => {
           montrer(courant - 1)
@@ -11403,7 +11734,7 @@ if (age &lt; 12) {
           if (courant < ecrans.length - 1) {
             montrer(courant + 1)
             remonter(section)
-          } else if (suivante) aller(suivante.id)
+          } else if (suivante && resteAFaire(etape) === '') aller(suivante.id)
         })
         for (const e of ecrans) e.classList.add('ecran')
         section.append(
@@ -11411,6 +11742,7 @@ if (age &lt; 12) {
           progres,
           ...ecrans,
           creer('div', { className: 'ecran-nav' }, precedent, avancer),
+          raison,
         )
         activerLiens(section)
         montrer(courant)
@@ -12425,6 +12757,7 @@ if (age &lt; 12) {
         window.speechSynthesis?.cancel()
         majPied = () => {}
         majBilan = () => {}
+        majEssais = () => {}
         afficherEtapes()
         const etape = etapes.find((e) => e.id === etat.etape) ?? etapes[0]
         let vue
@@ -12484,6 +12817,10 @@ if (age &lt; 12) {
             detail: { etape, traces: { ...(etat.traces ?? {}) }, aisance: [...aisanceServeur] },
           }),
         )
+        // Les outils montés, les essais déjà notés se figent et la série finie montre sa correction ;
+        // une explication montre ce qui répond aux essais de l'apprenant.
+        majEssais()
+        rappelerEssais($('contenu'))
       }
 
       async function demarrer() {

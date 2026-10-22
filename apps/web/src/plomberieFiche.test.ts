@@ -718,6 +718,147 @@ describe('les traces de la fiche', () => {
   })
 })
 
+describe('la tentative avant l’explication (pré-test)', () => {
+  /**
+   * Le gabarit, son explication changée en pré-test de deux écrans : un essai par écran, sans outil
+   * de fiche. Le test joue l'outil en émettant fiche:essai, comme le ferait celui d'une fiche.
+   */
+  const avecPretest = GABARIT.replace(
+    '"id": "ET2",\n            "titre": "Explication",\n            "type": "explication"',
+    '"id": "ET2",\n            "titre": "Compter avec des lampes",\n            "type": "pretest"',
+  ).replace(
+    '<template data-etape="ET2">',
+    '<template data-etape="ET2"><div data-ecran="Le compteur"><div class="ex" data-essai data-id="c1" data-reponse="7"><p class="q">Le plus grand nombre avec 3 lampes ?</p><input aria-label="Ta réponse" /></div></div>' +
+      '<div data-ecran="Une lampe de plus"><div class="ex" data-essai data-id="c2" data-reponse="double" data-explication="Compare 8 et 16."><p class="q">Que devient le nombre de valeurs ?</p><ul class="options"><li data-option="deux">Il augmente de 2.</li><li data-option="double">Il double.</li></ul></div></div></template><template data-etape="ET0">',
+  )
+  const essai = (cle: string, detail: Record<string, unknown>) => {
+    const ex = document.querySelector('[data-id="' + cle + '"]')
+    if (!ex) throw new Error('Pas d’essai ' + cle)
+    ex.dispatchEvent(new CustomEvent('fiche:essai', { bubbles: true, detail: { cle, ...detail } }))
+  }
+
+  it('note chaque essai sans dire juste ou faux, et l’envoie une fois à l’appli', async () => {
+    expect(avecPretest).not.toBe(GABARIT)
+    const { pont, envois, sauvees } = pontSimule(aLEtape('ET2'))
+    monter(avecPretest, pont)
+    await screen.findByRole('heading', { name: 'Compter avec des lampes' })
+
+    essai('c1', {
+      reponse: '8',
+      juste: false,
+      attendu: '7',
+      retour: 'Le plus grand est avant le retour à 0.',
+    })
+    essai('c1', { reponse: '7', juste: true, attendu: '7', retour: '' })
+
+    expect(envois.filter((e) => e.type === 'pretest.reponse')).toEqual([
+      { type: 'pretest.reponse', donnees: { question: 'c1', reponse: '8' } },
+    ])
+    expect(
+      screen.getByText(/Noté : « 8 »\. La correction vient à la fin de l’étape\./),
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/Juste|Attendu/)).toBeNull()
+    expect(screen.getByRole('textbox', { name: 'Ta réponse' })).toBeDisabled()
+    expect(sauvees.at(-1)?.['traces']).toMatchObject({
+      'essai:c1': { reponse: '8', juste: false, attendu: '7' },
+    })
+  })
+
+  it('« Je ne sais pas » est une réponse : l’attendu se lit dans la fiche quand aucun outil ne répond', async () => {
+    const { pont, envois } = pontSimule(aLEtape('ET2'))
+    monter(avecPretest, pont)
+    await screen.findByRole('heading', { name: 'Compter avec des lampes' })
+    essai('c1', { reponse: '7', juste: true, attendu: '7' })
+    fireEvent.click(screen.getByRole('button', { name: 'Suivant' }))
+
+    const passer = screen
+      .getAllByRole('button', { name: 'Je ne sais pas' })
+      .find((b) => b.closest('[data-id="c2"]'))
+    if (!passer) throw new Error('Pas de « Je ne sais pas » sur c2')
+    fireEvent.click(passer)
+
+    expect(envois).toContainEqual({
+      type: 'pretest.reponse',
+      donnees: { question: 'c2', reponse: 'Je ne sais pas' },
+    })
+    const bilan = screen.getByRole('heading', { name: 'Tes essais' }).parentElement
+    if (!(bilan instanceof HTMLElement)) throw new Error('Pas de bilan des essais')
+    expect(within(bilan).getByText('Ta réponse : 7. Juste.')).toBeInTheDocument()
+    // Sans réponse, la solution ne se donne pas à garder : l'étape suivante l'explique.
+    expect(
+      within(bilan).getByText('Tu ne savais pas : l’étape suivante te l’apprend.'),
+    ).toBeInTheDocument()
+    expect(within(bilan).queryByText(/Il double|Compare 8 et 16/)).toBeNull()
+  })
+
+  it('garde « Étape suivante » inactif tant qu’un essai attend sa réponse', async () => {
+    const { pont, envois } = pontSimule(aLEtape('ET2'))
+    monter(avecPretest, pont)
+    await screen.findByRole('heading', { name: 'Compter avec des lampes' })
+    fireEvent.click(screen.getByRole('button', { name: 'Suivant' }))
+    const suivante = screen.getByRole('button', { name: 'Étape suivante' })
+
+    expect(suivante).toBeDisabled()
+    expect(
+      screen.getByText(/Réponds à chaque essai avant de passer à la suite/),
+    ).toBeInTheDocument()
+    essai('c1', { reponse: '7', juste: true, attendu: '7' })
+    essai('c2', { reponse: 'Il double.', juste: true, attendu: 'Il double' })
+    expect(suivante).toBeEnabled()
+    fireEvent.click(suivante)
+    expect(envois).toContainEqual({ type: 'etape.vue', donnees: { etape: 'ET3' } })
+  })
+
+  it('rendue plus tard, la série finie garde ses réponses figées et sa correction', async () => {
+    const traces = {
+      'essai:c1': { reponse: '8', juste: false, attendu: '7', retour: '', le: '2026-10-20' },
+      'essai:c2': {
+        reponse: null,
+        juste: false,
+        attendu: 'Il double',
+        retour: '',
+        le: '2026-10-20',
+      },
+    }
+    const { pont, envois } = pontSimule({ ...aLEtape('ET2'), ecrans: { ET2: 1 }, traces })
+    monter(avecPretest, pont)
+    await screen.findByRole('heading', { name: 'Tes essais' })
+
+    expect(screen.getByText('Ta réponse : 8.')).toBeInTheDocument()
+    expect(screen.getByText('Attendu : 7.')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Je ne sais pas' })).toBeNull()
+    expect(envois.filter((e) => e.type === 'pretest.reponse')).toEqual([])
+  })
+
+  it('l’explication qui suit part des réponses de l’apprenant', async () => {
+    const avecExplication = avecPretest
+      .replace(
+        '"id": "ET3",\n            "titre": "Pratique"',
+        '"id": "ET5",\n            "titre": "Pourquoi",\n            "type": "explication"\n          },\n          {\n            "id": "ET3",\n            "titre": "Pratique"',
+      )
+      .replace(
+        '<template data-etape="ET0">',
+        '<template data-etape="ET5"><p data-si-essai="c1:faux">Tu as répondu <span data-essai-rappel="c1">autre chose</span> : c’est le nombre de valeurs, pas le plus grand.</p><p data-si-essai="c1:juste">Tu avais trouvé 7.</p><p data-si-essai="c2:passe|absent">Une lampe de plus double le nombre de valeurs.</p></template><template data-etape="ET0">',
+      )
+    expect(avecExplication).toContain('data-etape="ET5"')
+    const traces = {
+      'essai:c1': { reponse: '8', juste: false, attendu: '7', retour: '', le: '2026-10-20' },
+      'essai:c2': { reponse: null, juste: false, attendu: '', retour: '', le: '2026-10-20' },
+    }
+    const { pont } = pontSimule({ ...aLEtape('ET5'), traces })
+    monter(avecExplication, pont)
+    await screen.findByRole('heading', { name: 'Pourquoi' })
+
+    const rappel = document.querySelector('[data-si-essai="c1:faux"]')
+    expect(rappel).toBeVisible()
+    expect(rappel?.textContent).toBe(
+      'Tu as répondu « 8 » : c’est le nombre de valeurs, pas le plus grand.',
+    )
+    expect(screen.getByText('Tu avais trouvé 7.')).not.toBeVisible()
+    expect(screen.getByText('Une lampe de plus double le nombre de valeurs.')).toBeVisible()
+  })
+})
+
 describe('la pratique', () => {
   /** Le gabarit, avec un premier item dont un outil contrôle la réponse. */
   const avecOutil = GABARIT.replace(
