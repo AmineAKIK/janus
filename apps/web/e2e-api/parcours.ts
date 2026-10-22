@@ -16,6 +16,10 @@ export interface Question {
   readonly attendu: string
   readonly erreurs?: readonly string[]
 }
+export interface Explication extends Question {
+  /** L'item de pratique que l'explication conclut. */
+  readonly item: string
+}
 export interface Differee {
   readonly id: string
   readonly type: 'explication' | 'tache' | 'transfert'
@@ -32,7 +36,7 @@ export interface Manifeste {
   readonly restitution: readonly Question[]
   readonly pratique: readonly { readonly id: string; readonly items: readonly { id: string }[] }[]
   /** Les explications que l'IA juge : l'item qui en déclare une ne compte qu'avec elle Solide. */
-  readonly explication?: readonly Question[]
+  readonly explication?: readonly Explication[]
   readonly atelier?: { readonly id: string }
   readonly aisance?: { readonly paliers_s: readonly number[] }
   readonly differees: readonly Differee[]
