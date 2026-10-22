@@ -205,6 +205,27 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('POST /corrections contre Postgr
     expect(recopiee.json()).toMatchObject({ compte: false, raison_non_compte: 'recopiee' })
   })
 
+  it('juge une explication libre sur l’attendu de la page, sans jamais la compter', async () => {
+    let lue = ''
+    scenario = (requete) => {
+      lue = requete.attendu
+      return undefined
+    }
+    const libre = { question: 'Explique la solution.', attendu: 'La fiche a un seul bloc.' }
+    const reponse = await corriger(demande({ serie: 'explication', question: 'ex:c1', libre }))
+
+    expect(reponse.statusCode).toBe(200)
+    expect(reponse.json()).toMatchObject({ compte: false, raison_non_compte: 'avec_support' })
+    expect(lue).toBe('La fiche a un seul bloc.')
+    // Sans attendu de la page, une explication que le manifeste ne déclare pas est inconnue.
+    expect((await corriger(demande({ serie: 'explication', question: 'ex:c1' }))).statusCode).toBe(
+      404,
+    )
+    // Une explication libre ne se donne que dans la série explication.
+    expect((await corriger(demande({ libre }))).statusCode).toBe(400)
+    scenario = undefined
+  })
+
   it('une certitude « non vérifiée » ne compte pas', async () => {
     scenario = () =>
       JSON.stringify({

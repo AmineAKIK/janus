@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { CodeBloc, Identifiant } from './primitives.ts'
+import { CodeBloc, Identifiant, Texte } from './primitives.ts'
 import { Aide, Certitude, Confiance, Niveau, RaisonNonCompte, Source, Statut } from './enums.ts'
 import { InstantUtc } from './faits.ts'
 
@@ -81,6 +81,13 @@ const communPage = {
 }
 
 /**
+ * Une explication que le manifeste ne déclare pas, demandée après une solution vue (« refais, puis
+ * explique ») : la page dit la question posée et ce qui est attendu. Seulement dans la série
+ * `explication`, et sa correction ne compte jamais pour le statut (avec support : la solution).
+ */
+export const ExplicationLibre = z.strictObject({ question: Texte, attendu: Texte })
+
+/**
  * Ce que l'apprenant envoie pour être corrigé : la question, sa réponse, sa confiance, la relance
  * (vide au premier tour) et le support dont il s'est servi. Le message `restitution.demande` et
  * `POST /corrections` le portent à l'identique.
@@ -92,10 +99,12 @@ export const champsReponse = {
   /** Le texte de la relance, vide au premier tour. */
   relance: Reponse,
   support: z.strictObject({ colle: z.boolean(), retour_cours: z.boolean() }),
+  libre: ExplicationLibre.optional(),
 }
 
 /** La seule série que la page pose elle-même : la restitution. */
-const SeriePage = z.enum(['restitution'])
+/** Les séries qu'une page fait corriger : la restitution, et les explications de ses exercices. */
+const SeriePage = z.enum(['restitution', 'explication'])
 
 /** Hauteur maximale du contenu d'une page, en pixels CSS. */
 export const HAUTEUR_MAX_PAGE = 200_000

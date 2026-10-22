@@ -238,7 +238,11 @@ export function useHoteFiche(
             setEtapeVue(vue)
             setEtapesVues((avant) => (avant.includes(vue) ? avant : [...avant, vue]))
           }
-          if (message.type === 'restitution.demande' && message.relance === '') {
+          if (
+            message.type === 'restitution.demande' &&
+            message.relance === '' &&
+            message.serie === 'restitution'
+          ) {
             const { serie, question } = message
             setEnvoyees((avant) =>
               avant[serie].includes(question)

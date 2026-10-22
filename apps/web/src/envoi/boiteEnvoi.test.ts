@@ -364,6 +364,20 @@ describe('envoiDeMessage', () => {
     expect(route('restitution.demande')).toBe('POST /corrections')
   })
 
+  it('une explication libre part avec sa question et son attendu, une restitution sans', () => {
+    const libre = { question: 'Explique la solution.', attendu: 'La fiche a un seul bloc.' }
+    const explication = MessagePage.parse({
+      ...EXEMPLES_PAGE['restitution.demande'],
+      serie: 'explication',
+      libre,
+    })
+    expect(envoiDeMessage(explication, 3)).toMatchObject({
+      corps: { serie: 'explication', libre },
+    })
+    const restitution = MessagePage.parse(EXEMPLES_PAGE['restitution.demande'])
+    expect(envoiDeMessage(restitution, 3).corps).not.toHaveProperty('libre')
+  })
+
   it('l’état d’une page porte la version et une clé par bloc', () => {
     expect(envoiDeMessage(MessagePage.parse(EXEMPLES_PAGE['etat.sauver']), 3)).toMatchObject({
       corps: { version: 3 },

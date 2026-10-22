@@ -1,0 +1,2 @@
+ALTER TABLE "corrections" DROP CONSTRAINT "corrections_serie";--> statement-breakpoint
+ALTER TABLE "corrections" ADD CONSTRAINT "corrections_serie" CHECK ("corrections"."serie" IN ('restitution', 'explication', 'consolidation', 'rappel', 'verification'));

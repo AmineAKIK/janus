@@ -30,7 +30,7 @@ const ENUMERATIONS = [
   ],
   ['Niveau', Niveau, ['solide', 'partiel', 'fragile', 'pas_encore']],
   ['Confiance', Confiance, ['sur', 'hesitant', 'hasard']],
-  ['Serie', Serie, ['restitution', 'consolidation', 'rappel', 'verification']],
+  ['Serie', Serie, ['restitution', 'explication', 'consolidation', 'rappel', 'verification']],
   ['TypeDifferee', TypeDifferee, ['explication', 'tache', 'transfert']],
   [
     'FormeTransfert',

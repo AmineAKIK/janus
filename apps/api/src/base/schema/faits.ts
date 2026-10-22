@@ -140,7 +140,7 @@ export const corrections = pgTable(
     check('corrections_tour_positif', sql`${table.tour} >= 1`),
     check(
       'corrections_serie',
-      parmi(table.serie, ['restitution', 'consolidation', 'rappel', 'verification']),
+      parmi(table.serie, ['restitution', 'explication', 'consolidation', 'rappel', 'verification']),
     ),
     check('corrections_confiance', parmi(table.confiance, ['sur', 'hesitant', 'hasard'])),
     check(

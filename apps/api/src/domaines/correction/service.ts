@@ -46,13 +46,15 @@ const CARACTERES_PAR_JETON = 3
 
 export interface DemandeCorrection {
   id: string
-  serie: 'restitution' | 'rappel' | 'verification'
+  serie: 'restitution' | 'explication' | 'rappel' | 'verification'
   tentative: number
   question: string
   reponse: string
   confiance: 'sur' | 'hesitant' | 'hasard'
   relance: string
   support: { colle: boolean; retour_cours: boolean }
+  /** Une explication que le manifeste ne déclare pas : la page en dit la question et l'attendu. */
+  libre?: { question: string; attendu: string } | undefined
   conteste?: boolean | undefined
   /** Pour la série `verification` : la vérification tirée, qui donne le bloc (jamais envoyée par la page). */
   verification?: string | undefined
@@ -122,6 +124,18 @@ function numeroter(
   const deLaTentative = deLaQuestion.filter((autre) => autre.tentative === tentative)
   const tour = sansRelance ? 1 : Math.max(2, ...deLaTentative.map(({ tour: t }) => t + 1))
   return { tentative, tour }
+}
+
+/**
+ * La question d'une explication libre, dans la série `explication` seulement : une explication que le
+ * manifeste déclare se juge toujours sur son attendu à lui, jamais sur celui de la page.
+ */
+function explicationLibre(
+  serie: DemandeCorrection['serie'],
+  demande: DemandeCorrection,
+): { id: string; question: string; attendu: string; erreurs: string[]; libre: true } | undefined {
+  if (serie !== 'explication' || demande.libre === undefined) return undefined
+  return { id: demande.question, ...demande.libre, erreurs: [], libre: true }
 }
 
 function trop(relancesMax: number) {
@@ -256,7 +270,8 @@ export function creerServiceCorrection({
         ? manifeste.differees
             .filter(({ id }) => id === demande.question)
             .map(({ id, consigne, attendu }) => ({ id, question: consigne, attendu }))[0]
-        : manifeste[serie].find(({ id }) => id === demande.question)
+        : (manifeste[serie].find(({ id }) => id === demande.question) ??
+          explicationLibre(serie, demande))
     if (question === undefined) throw introuvable(`La question « ${demande.question} »`)
     const bloc = { id: trouve.blocId, code: trouve.code }
 
@@ -379,7 +394,8 @@ export function creerServiceCorrection({
         const verdict = compte({
           tour: numero.tour,
           colle: demande.support.colle,
-          retourCours: demande.support.retour_cours,
+          // Une explication libre suit une solution vue : elle est faite avec support.
+          retourCours: demande.support.retour_cours || 'libre' in question,
           recopiee,
           certitude: sortie.certitude,
         })

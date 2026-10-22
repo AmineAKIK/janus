@@ -10,6 +10,7 @@ const HAUTEUR_MAX_PAGE = 200_000
 
 const identifiant = () => z.string().check(z.trim(), z.minLength(1))
 const codeBloc = () => z.string().check(z.regex(/^[A-Z]{1,3}\d{2,3}$/))
+const texte = () => z.string().check(z.trim(), z.minLength(1))
 const reponse = () => z.string().check(z.maxLength(TAILLE_MAX_REPONSE))
 const idUuid = () => z.uuid({ version: 'v7' })
 const entierMin = (minimum: number) => z.int().check(z.gte(minimum))
@@ -66,7 +67,7 @@ const communPage = {
   t: z.iso.datetime({ offset: true }),
 }
 
-const seriePage = z.enum(['restitution'])
+const seriePage = z.enum(['restitution', 'explication'])
 
 const TAILLE_MAX_LIEN = 2000
 
@@ -123,6 +124,7 @@ export const MessagePage = z.discriminatedUnion('type', [
     confiance,
     relance: reponse(),
     support: z.strictObject({ colle: z.boolean(), retour_cours: z.boolean() }),
+    libre: z.optional(z.strictObject({ question: texte(), attendu: texte() })),
   }),
   z.strictObject({ ...communPage, type: z.literal('bilan.erreurs'), ids: z.array(identifiant()) }),
   z.strictObject({ ...communPage, type: z.literal('etat.sauver'), etat: etatPage }),
