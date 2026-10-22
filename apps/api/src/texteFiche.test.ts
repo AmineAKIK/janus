@@ -30,6 +30,9 @@ async function ficheRemplie(): Promise<string> {
         '  ><span class="fleche">lus avec un codage →</span',
         '  ><span class="boite-fixe">Un sens<small>A</small></span></div>',
         '  <details><summary>Un coup de pouce</summary><p>150 − 128 = 22</p></details>',
+        '  <div data-widget="schema"><p class="q">Refais le schéma.</p><div class="modele" hidden>',
+        '    <div class="chaine"><span class="boite">des bits</span><span class="fleche">lus par</span',
+        '    ><span class="boite">un programme secret</span></div></div></div>',
         '  <p data-si-essai="c2:faux|passe">Tu avais compté <span data-essai-rappel="c2">autre chose</span> valeurs.</p>',
         '</div>',
       ].join('\n'),
@@ -95,6 +98,19 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
 
   it('signale un outil interactif sans en donner le fonctionnement', () => {
     expect(texte).toContain('[outil interactif : octet]')
+  })
+
+  it('tait le schéma du cours caché dans le schéma à refaire, et le donne avec ce qui vient après', () => {
+    expect(texte).toContain('[outil interactif : schema]\nRefais le schéma.')
+    expect(texte).not.toContain('un programme secret')
+    const resultat = validerManifeste(JSON.parse(extraireManifeste(html) ?? 'null'))
+    if (!resultat.ok) throw new Error('Le gabarit rempli doit rester valide.')
+    const gardien = texteDeLaFiche(html, resultat.manifeste, { conception: true })
+    const [avant = '', apres = ''] = gardien.split('## Ce que la page montre après une tentative')
+    expect(avant).not.toContain('un programme secret')
+    expect(apres).toContain(
+      '- Schéma du cours, montré une fois le schéma refait de mémoire jugé par l’IA : des bits lus par un programme secret',
+    )
   })
 
   it('remplace une image par sa description, et tait ce qui est décoratif', () => {

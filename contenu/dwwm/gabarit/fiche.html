@@ -853,6 +853,43 @@
         flex-direction: column;
         gap: var(--espacement-8);
       }
+      /* Le schéma refait de mémoire (JanusGabarit.schema) : boîtes et flèches, l'une sous l'autre. */
+      .schema-libre {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-8);
+      }
+      .schema-chaine {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-4);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .schema-chaine input[type='text'] {
+        width: 100%;
+        max-width: 24rem;
+      }
+      .schema-boite input[type='text'] {
+        font-family: inherit;
+        font-weight: 600;
+      }
+      .schema-fleche {
+        display: flex;
+        align-items: center;
+        gap: var(--espacement-8);
+        padding-inline-start: var(--espacement-20);
+      }
+      .schema-fleche::before {
+        content: '↓';
+        color: var(--couleur-texte-secondaire);
+      }
+      .schema-fleche input[type='text'] {
+        max-width: 20rem;
+        font-family: inherit;
+        font-style: italic;
+      }
       /* L'échelle d'aide (JanusGabarit.echelle) : le bouton, puis les crans ouverts. */
       .pouce {
         display: flex;
@@ -1619,8 +1656,12 @@
        * explications qui ne le sont pas, la page émet `fiche:explication-ratee` sur l'exercice : l'outil
        * montre la solution, et l'item se refait sur sa variante. Une explication que le manifeste ne
        * déclare pas (après une solution vue) se juge sur la solution de la page, une fois, et ne compte
-       * jamais. Sans correcteur, l'explication attend qu'on la renvoie : la page ne juge rien à la place
-       * de l'IA. Hors de l'appli, la correction est simulée et ne retient rien. La trace
+       * jamais ; l'outil peut lui permettre plus d'un essai (`essais`), jusqu'à une correction Solide.
+       * Un outil qui a sa propre saisie (un schéma refait de mémoire) la donne dans `saisie` :
+       * `{ element, lire, manque }`, l'élément à poser à la place du champ, son texte pour le
+       * correcteur, et ce qui manque avant l'envoi (vide : rien) ; `envoyer` nomme le bouton, et
+       * `question`, la question pour le correcteur quand la consigne de l'écran ne suffit pas. Sans
+       * correcteur, l'explication attend qu'on la renvoie : la page ne juge rien à la place de l'IA. Hors de l'appli, la correction est simulée et ne retient rien. La trace
        * `explique:<cle>` garde les essais et leur correction ; elle est émise quand l'explication est
        * finie, pour l'outil qui attend la suite.
        */
@@ -1634,11 +1675,25 @@
       const itemReussi = (item) => Boolean(etat.pratique[item]?.reussi) && explicationFaite(item)
       // Sur #contenu, qui porte tous les exercices de la page.
       $('contenu').addEventListener('fiche:expliquer', (evenement) => {
-        const { cle, solution, consigne } = evenement.detail ?? {}
+        const {
+          cle,
+          solution,
+          consigne,
+          question,
+          saisie,
+          essais: permis,
+          envoyer,
+        } = evenement.detail ?? {}
         const exercice = evenement.target
         if (!(exercice instanceof HTMLElement) || typeof cle !== 'string' || cle === '') return
         if (exercice.querySelector(':scope > .expliquer')) return
         const declaree = explicationDeclaree(cle)
+        // Une explication déclarée a deux essais ; une autre, un seul, sauf si l'outil en permet plus.
+        const maximum = declaree
+          ? ESSAIS_D_EXPLICATION
+          : Number.isInteger(permis) && permis > 0
+            ? permis
+            : 1
         // La page montre la consigne de l'outil ; le correcteur lit la question du manifeste, qui se
         // comprend sans l'écran.
         const intitule =
@@ -1672,11 +1727,15 @@
         }
         const formulaire = (rang) => {
           const id = 'explique-' + cle.replace(/[^\w-]/g, '_') + '-' + rang
-          const champ = creer('textarea', {
-            id,
-            rows: 3,
-            value: rang === 0 && typeof ancienne?.texte === 'string' ? ancienne.texte : '',
-          })
+          // L'outil peut donner sa saisie (un schéma à refaire) : la page la lit en texte.
+          const champ = saisie
+            ? saisie.element
+            : creer('textarea', {
+                id,
+                rows: 3,
+                value: rang === 0 && typeof ancienne?.texte === 'string' ? ancienne.texte : '',
+              })
+          const lireChamp = () => (saisie ? saisie.lire() : champ.value)
           let colle = false
           champ.addEventListener('paste', () => {
             colle = true
@@ -1699,15 +1758,20 @@
           const bouton = creer('button', {
             type: 'button',
             className: 'bouton secondaire petit',
-            textContent: 'Envoyer mon explication',
+            textContent:
+              typeof envoyer === 'string' && envoyer !== '' ? envoyer : 'Envoyer mon explication',
           })
           const bloc = creer(
             'div',
             { className: 'expliquer-essai' },
-            creer('label', {
-              htmlFor: id,
+            creer(saisie ? 'p' : 'label', {
+              ...(saisie ? {} : { htmlFor: id }),
               textContent:
-                rang === 0 ? intitule : 'Reprends ton explication, d’après la correction\u00a0:',
+                rang === 0
+                  ? intitule
+                  : saisie
+                    ? 'Reprends-le, d’après la correction\u00a0:'
+                    : 'Reprends ton explication, d’après la correction\u00a0:',
             }),
             champ,
             confiance,
@@ -1716,7 +1780,9 @@
           )
           bouton.addEventListener('click', async () => {
             const choisie = confiance.querySelector('input:checked')
-            if (champ.value.trim() === '')
+            const manque = saisie ? saisie.manque() : ''
+            if (manque) return void (message.textContent = manque)
+            if (lireChamp().trim() === '')
               return void (message.textContent = 'Écris d’abord ton explication.')
             if (!choisie)
               return void (message.textContent = 'Choisis ta confiance avant d’envoyer.')
@@ -1726,24 +1792,32 @@
               const correction = await pont.demanderCorrection({
                 serie: 'explication',
                 question: cle,
-                reponse: champ.value,
+                reponse: lireChamp(),
                 confiance: choisie.value,
                 relance: '',
                 support: { colle, retour_cours: etat.retourCours },
                 ...(declaree
                   ? {}
-                  : { libre: { question: intitule, attendu: String(solution ?? '') } }),
+                  : {
+                      libre: {
+                        question:
+                          typeof question === 'string' && question !== '' ? question : intitule,
+                        attendu: String(solution ?? ''),
+                      },
+                    }),
               })
               noterReperees('explique:' + cle, correction.erreurs_critiques)
-              essais.push({ texte: champ.value, correction: resumeCorrection(correction) })
+              essais.push({ texte: lireChamp(), correction: resumeCorrection(correction) })
               const fin =
                 mode === 'autonome'
                   ? 'simulee'
                   : !declaree
-                    ? 'jugee'
+                    ? correction.niveau === 'solide' || essais.length >= maximum
+                      ? 'jugee'
+                      : null
                     : correction.niveau === 'solide' && correction.compte
                       ? 'solide'
-                      : essais.length >= ESSAIS_D_EXPLICATION
+                      : essais.length >= maximum
                         ? 'ratee'
                         : null
               if (fin === null) {
@@ -2209,8 +2283,129 @@
           maj,
         }
       }
+      /**
+       * Le schéma du bloc refait de mémoire (règle C08), le même pour toutes les fiches : l'apprenant
+       * écrit les boîtes et, sur chaque flèche, ce qu'elle fait ; il ajoute ou retire des boîtes, rien
+       * n'est donné. Le schéma du cours est dans l'exercice, caché (`.modele`) : des `.boite` et des
+       * `.fleche` dans une `.chaine`, et peut-être des `.lecture` (ce que donne chaque règle) ; avec
+       * des lectures, un champ demande de les écrire aussi. Rend la saisie que `fiche:expliquer` pose
+       * à la place de son champ (`element`, `lire`, `manque`), l'attendu pour le correcteur, la
+       * question qui se comprend sans l'écran, `montrer()` qui dévoile le modèle et `bloquer()`.
+       */
+      function schema(ex) {
+        const modele = ex.querySelector(':scope > .modele')
+        const morceaux = modele ? [...modele.querySelectorAll(':scope .chaine > *')] : []
+        const enTexte = (noeud) => noeud.textContent.replace(/\s+/g, ' ').trim()
+        const ecrire = (boites, fleches) =>
+          boites
+            .map(
+              (boite, i) =>
+                '[' + boite + ']' + (i < fleches.length ? ' —' + fleches[i] + '→ ' : ''),
+            )
+            .join('')
+        const boitesModele = morceaux.filter((m) => m.classList.contains('boite')).map(enTexte)
+        const flechesModele = morceaux.filter((m) => m.classList.contains('fleche')).map(enTexte)
+        const lectures = modele ? [...modele.querySelectorAll('.lecture')].map(enTexte) : []
+        const attendu =
+          ecrire(boitesModele, flechesModele) +
+          (lectures.length ? '. Les règles\u00a0: ' + lectures.join('\u00a0; ') : '') +
+          '.'
+        const question =
+          'Refais de mémoire le schéma du bloc, avec tes mots\u00a0: ses boîtes, et sur chaque flèche ce qu’elle fait. L’apprenant l’écrit [boîte] —flèche→ [boîte], dans l’ordre' +
+          (lectures.length ? ', puis les règles qu’il connaît et ce que chacune donne' : '') +
+          '. Le schéma est juste s’il dit les mêmes relations, dans le même ordre, avec des mots équivalents\u00a0; une boîte ou une flèche qui manque, en trop ou à la mauvaise place est une erreur.'
+        const chaine = creer('ol', { className: 'schema-chaine' })
+        const boutonAjouter = creer('button', {
+          type: 'button',
+          className: 'bouton secondaire petit',
+          textContent: 'Ajouter une flèche et une boîte',
+        })
+        const boutonRetirer = creer('button', {
+          type: 'button',
+          className: 'bouton secondaire petit',
+          textContent: 'Retirer la dernière boîte',
+        })
+        const regles = lectures.length
+          ? creer('textarea', { rows: 3, id: 'schema-regles-' + (ex.dataset.id ?? '') })
+          : null
+        const element = creer(
+          'div',
+          { className: 'schema-libre' },
+          chaine,
+          creer('div', { className: 'actions' }, boutonAjouter, boutonRetirer),
+          ...(regles
+            ? [
+                creer('label', {
+                  htmlFor: regles.id,
+                  textContent: 'Les règles que tu connais, et ce que chacune donne\u00a0:',
+                }),
+                regles,
+              ]
+            : []),
+        )
+        const champs = () => [...chaine.querySelectorAll('input')]
+        function ajouter(type) {
+          const rang = chaine.querySelectorAll('.schema-' + type).length + 1
+          const entree = creer('input', {
+            type: 'text',
+            autocomplete: 'off',
+            spellcheck: false,
+          })
+          entree.setAttribute(
+            'aria-label',
+            type === 'boite' ? 'Boîte ' + rang : 'Flèche ' + rang + '\u00a0: ce qu’elle fait',
+          )
+          entree.placeholder = type === 'boite' ? 'Boîte ' + rang : 'ce que fait la flèche'
+          chaine.append(creer('li', { className: 'schema-' + type }, entree))
+          return entree
+        }
+        function majBoutons() {
+          boutonRetirer.disabled = chaine.querySelectorAll('.schema-boite').length <= 2
+        }
+        ajouter('boite')
+        ajouter('fleche')
+        ajouter('boite')
+        majBoutons()
+        boutonAjouter.addEventListener('click', () => {
+          ajouter('fleche')
+          ajouter('boite').focus()
+          majBoutons()
+        })
+        boutonRetirer.addEventListener('click', () => {
+          if (chaine.querySelectorAll('.schema-boite').length <= 2) return
+          chaine.lastElementChild?.remove()
+          chaine.lastElementChild?.remove()
+          majBoutons()
+        })
+        const valeurs = (type) =>
+          [...chaine.querySelectorAll('.schema-' + type + ' input')].map((i) => i.value.trim())
+        return {
+          saisie: {
+            element,
+            lire: () =>
+              ecrire(valeurs('boite'), valeurs('fleche')) +
+              (regles && regles.value.trim() ? '. Les règles\u00a0: ' + regles.value.trim() : ''),
+            manque: () =>
+              champs().some((i) => i.value.trim() === '')
+                ? 'Écris chaque boîte et chaque flèche, ou retire celles qui sont en trop.'
+                : '',
+          },
+          attendu,
+          question,
+          montrer() {
+            if (!modele) return
+            // Le modèle vient en dernier, après le schéma de l'apprenant et sa correction.
+            ex.append(modele)
+            modele.hidden = false
+          },
+          bloquer() {
+            for (const champ of element.querySelectorAll('input, textarea, button'))
+              champ.disabled = true
+          },
+        }
+      }
       // Ce que le gabarit prête aux outils des fiches.
-      window.JanusGabarit = Object.freeze({ echelle })
+      window.JanusGabarit = Object.freeze({ echelle, schema })
 
       /**
        * Le pied d'une étape : le bouton vers l'étape d'après. Tant qu'une série ouverte n'a pas toutes
