@@ -654,6 +654,20 @@
         cursor: not-allowed;
       }
 
+      /* L'option choisie d'un essai : marquée, la correction viendra à la fin de l'étape. */
+      [data-essai] button[aria-pressed='true']:disabled {
+        border-color: var(--couleur-accent);
+        background: var(--couleur-accent-douce);
+        color: var(--couleur-encre);
+        font-weight: 600;
+        opacity: 1;
+      }
+      [data-essai] .options button[aria-pressed='true']::after {
+        content: ' · ta réponse';
+        color: var(--couleur-accent);
+        font-weight: 600;
+      }
+
       /* Correction : BulleCorrection. */
       .correction {
         display: flex;
@@ -1884,8 +1898,48 @@
           juste: juste === true,
           attendu: typeof attendu === 'string' ? attendu : '',
           retour: typeof retour === 'string' ? retour : '',
+          vue: vueDeLEssai(evenement.target),
         })
       })
+      /**
+       * Ce que l'apprenant voyait en répondant, pour le lui remontrer au retour sur la page : la valeur
+       * de chaque champ, et chaque bouton enfoncé (son rang et son texte, un bouton déplacé ne se
+       * rallume pas à tort).
+       */
+      function vueDeLEssai(ex) {
+        if (!(ex instanceof Element)) return undefined
+        return {
+          champs: Array.from(ex.querySelectorAll('input, textarea'), (c) => c.value),
+          enfonces: Array.from(ex.querySelectorAll('button'))
+            .map((b, k) => [k, b.textContent.trim(), b.getAttribute('aria-pressed')])
+            .filter(([, , presse]) => presse === 'true')
+            .map(([k, texte]) => [k, texte]),
+        }
+      }
+      function remontrerEssai(ex, essai) {
+        const vue = essai.vue
+        if (vue) {
+          const champs = ex.querySelectorAll('input, textarea')
+          if (Array.isArray(vue.champs) && vue.champs.length === champs.length)
+            champs.forEach((c, k) => {
+              if (c.value === '' && typeof vue.champs[k] === 'string') c.value = vue.champs[k]
+            })
+          const boutons = ex.querySelectorAll('button')
+          for (const [k, texte] of Array.isArray(vue.enfonces) ? vue.enfonces : [])
+            if (boutons[k]?.textContent.trim() === texte)
+              boutons[k].setAttribute('aria-pressed', 'true')
+        }
+        if (essai.reponse === null) return
+        // Une option mélangée change de rang : elle se retrouve par son texte.
+        for (const b of ex.querySelectorAll('.options button'))
+          if (b.textContent.trim() === essai.reponse) b.setAttribute('aria-pressed', 'true')
+        if (vue) return
+        // Un essai noté avant que la page ne garde sa vue : son champ unique reprend la réponse.
+        const champs = ex.querySelectorAll(
+          'input:not([type]), input[type="text"], input[type="number"], textarea',
+        )
+        if (champs.length === 1 && champs[0].value === '') champs[0].value = essai.reponse
+      }
       function noterEssai(cle, essai) {
         etat.traces = { ...(etat.traces ?? {}), ['essai:' + cle]: { ...essai, le: aujourdhui() } }
         pont.envoyer('pretest.reponse', {
@@ -1947,6 +2001,9 @@
         exercices.forEach((ex, k) => {
           const essai = essais[k]
           const passer = ex.querySelector(':scope > .essai-passe')
+          // Un essai ne se vérifie pas sur le moment : son bouton dit ce qu'il fait, il garde la réponse.
+          for (const b of ex.querySelectorAll('button'))
+            if (b.textContent.trim() === 'Vérifier') b.textContent = 'Enregistrer'
           if (!essai) {
             if (passer) return
             const bouton = creer('button', {
@@ -1971,6 +2028,8 @@
           passer?.remove()
           for (const champ of ex.querySelectorAll('input, button, select, textarea'))
             champ.disabled = true
+          // La réponse reste visible, même après un rechargement.
+          remontrerEssai(ex, essai)
           const note =
             ex.querySelector(':scope > .essai-note') ??
             ex.appendChild(creer('p', { className: 'discret essai-note', 'aria-live': 'polite' }))
@@ -2727,6 +2786,23 @@
       }
 
       /**
+       * Dans une étape `pretest`, un écran ne se quitte pas en avant tant qu'un de ses essais reste sans
+       * réponse (règle C03) : la tentative précède l'explication, « Je ne sais pas » compris.
+       */
+      function essaisRestants(etape, ecran) {
+        if (etape.type !== 'pretest') return ''
+        const restants = Array.from(ecran.querySelectorAll('[data-essai][data-id]')).filter(
+          (ex) => !etat.traces?.['essai:' + ex.dataset.id],
+        ).length
+        if (restants === 0) return ''
+        return (
+          'Réponds à chaque essai de cet écran avant de passer à la suite, « Je ne sais pas » compris\u00a0: ' +
+          (restants > 1 ? 'il en reste ' + restants : 'il en reste un') +
+          '.'
+        )
+      }
+
+      /**
        * Le contenu libre d'une étape : le `<template data-etape="ETx">` de la page, cloné tel quel.
        * Tout ce qui est dans le gabarit (pont, masquage du cours, confiance, aide, messages) est fixe ;
        * ce que dit le bloc et comment il le dit ne l'est pas.
@@ -2785,8 +2861,9 @@
         // Le dernier écran mène à l'étape suivante quand rien ne reste à faire (la tentative finie).
         const raison = creer('p', { className: 'discret', hidden: true })
         majPied = () => {
-          const reste = courant === ecrans.length - 1 ? resteAFaire(etape) : ''
-          avancer.disabled = courant === ecrans.length - 1 && (!suivante || reste !== '')
+          const dernier = courant === ecrans.length - 1
+          const reste = dernier ? resteAFaire(etape) : essaisRestants(etape, ecrans[courant])
+          avancer.disabled = dernier ? !suivante || reste !== '' : reste !== ''
           raison.textContent = reste
           raison.hidden = reste === ''
         }
@@ -2796,6 +2873,7 @@
         })
         avancer.addEventListener('click', () => {
           if (courant < ecrans.length - 1) {
+            if (essaisRestants(etape, ecrans[courant]) !== '') return
             montrer(courant + 1)
             remonter(section)
           } else if (suivante && resteAFaire(etape) === '') aller(suivante.id)

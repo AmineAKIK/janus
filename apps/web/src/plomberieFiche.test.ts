@@ -795,14 +795,21 @@ describe('la tentative avant l’explication (pré-test)', () => {
     const { pont, envois } = pontSimule(aLEtape('ET2'))
     monter(avecPretest, pont)
     await screen.findByRole('heading', { name: 'Compter avec des lampes' })
-    fireEvent.click(screen.getByRole('button', { name: 'Suivant' }))
+    // Un écran ne se quitte pas en avant avec un essai sans réponse.
+    const suivant = screen.getByRole('button', { name: 'Suivant' })
+    expect(suivant).toBeDisabled()
+    expect(screen.getByText(/Réponds à chaque essai de cet écran/)).toBeInTheDocument()
+    fireEvent.click(suivant)
+    expect(screen.getByText('1 / 2')).toBeInTheDocument()
+    essai('c1', { reponse: '7', juste: true, attendu: '7' })
+    expect(suivant).toBeEnabled()
+    fireEvent.click(suivant)
     const suivante = screen.getByRole('button', { name: 'Étape suivante' })
 
     expect(suivante).toBeDisabled()
     expect(
       screen.getByText(/Réponds à chaque essai avant de passer à la suite/),
     ).toBeInTheDocument()
-    essai('c1', { reponse: '7', juste: true, attendu: '7' })
     essai('c2', { reponse: 'Il double.', juste: true, attendu: 'Il double' })
     expect(suivante).toBeEnabled()
     fireEvent.click(suivante)
@@ -828,6 +835,58 @@ describe('la tentative avant l’explication (pré-test)', () => {
     expect(screen.getByText('Attendu : 7.')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Je ne sais pas' })).toBeNull()
     expect(envois.filter((e) => e.type === 'pretest.reponse')).toEqual([])
+  })
+
+  it('au retour sur la page, la réponse figée reste affichée, et le bouton dit qu’il enregistre', async () => {
+    const avecBoutons = avecPretest
+      .replace(
+        '<input aria-label="Ta réponse" />',
+        '<input aria-label="Ta réponse" /><button type="button">Vérifier</button>',
+      )
+      .replace(
+        '<ul class="options"><li data-option="deux">Il augmente de 2.</li><li data-option="double">Il double.</li></ul>',
+        '<ul class="options"><li><button type="button">Il augmente de 2.</button></li><li><button type="button">Il double.</button></li></ul><button type="button" aria-pressed="false">VRAI</button>',
+      )
+    const traces = {
+      // Noté avant que la page ne garde sa vue : le champ unique reprend la réponse.
+      'essai:c1': { reponse: '8', juste: false, attendu: '7', retour: '', le: '2026-10-20' },
+      'essai:c2': {
+        reponse: 'Il double.',
+        juste: true,
+        attendu: 'Il double',
+        retour: '',
+        le: '2026-10-20',
+        vue: { champs: [], enfonces: [[2, 'VRAI']] },
+      },
+    }
+    const { pont } = pontSimule({ ...aLEtape('ET2'), traces })
+    monter(avecBoutons, pont)
+    await screen.findByRole('heading', { name: 'Compter avec des lampes' })
+
+    expect(screen.getByRole('textbox', { name: 'Ta réponse' })).toHaveValue('8')
+    expect(screen.getByRole('button', { name: 'Enregistrer' })).toBeDisabled()
+    expect(screen.queryByRole('button', { name: 'Vérifier' })).toBeNull()
+    const choisie = screen.getByRole('button', { name: 'Il double.', hidden: true })
+    expect(choisie).toHaveAttribute('aria-pressed', 'true')
+    expect(
+      screen.getByRole('button', { name: 'Il augmente de 2.', hidden: true }),
+    ).not.toHaveAttribute('aria-pressed')
+    expect(screen.getByRole('button', { name: 'VRAI', hidden: true })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  })
+
+  it('garde ce que voyait l’apprenant en répondant', async () => {
+    const { pont, sauvees } = pontSimule(aLEtape('ET2'))
+    monter(avecPretest, pont)
+    await screen.findByRole('heading', { name: 'Compter avec des lampes' })
+    const champ = screen.getByRole('textbox', { name: 'Ta réponse' })
+    fireEvent.input(champ, { target: { value: '7' } })
+    essai('c1', { reponse: '7', juste: true, attendu: '7' })
+
+    const derniere = sauvees.at(-1) as { traces?: Record<string, { vue?: unknown }> } | undefined
+    expect(derniere?.traces?.['essai:c1']?.vue).toEqual({ champs: ['7'], enfonces: [] })
   })
 
   it('l’explication qui suit part des réponses de l’apprenant', async () => {
