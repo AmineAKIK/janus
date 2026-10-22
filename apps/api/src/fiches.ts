@@ -204,6 +204,25 @@ function verifierPratique(
   for (const [, genre, id, corps] of sansScriptsNiCommentaires(html).matchAll(
     /<template\b[^>]*\bdata-(item|variante)\s*=\s*["']([^"']*)["'][^>]*>([\s\S]*?)<\/template\s*>/gi,
   )) {
+    // Un choix sans crans écrits n'aurait que la solution après ses réponses fausses (règle F03).
+    // Chaque réponse fausse retire une option, et un cran attend une réponse fausse (F04) : les crans
+    // utiles sont ceux qu'on atteint avant qu'il ne reste qu'une option, un au moins, trois au plus.
+    const choix = Array.from(
+      (corps ?? '').matchAll(/<[a-z][^>]*\bdata-widget\s*=\s*["']choix["'][^>]*>/gi),
+      ([balise]) => balise,
+    )
+    const options = ((corps ?? '').match(/\bdata-option\s*=/gi) ?? []).length
+    for (const balise of choix) {
+      const attendus = Math.min(3, Math.max(1, Math.round(options / choix.length) - 2))
+      const manquent = ['data-aide1', 'data-aide2', 'data-aide3']
+        .slice(0, attendus)
+        .filter((nom) => !new RegExp(`\\b${nom}\\s*=\\s*["'][^"']`, 'i').test(balise))
+      if (manquent.length > 0) {
+        signaler(
+          `pratique : ${genre === 'variante' ? 'la variante de ' : 'l’item '}${String(id)} a un choix sans ses coups de pouce (${manquent.join(', ')} ${manquent.length > 1 ? 'manquent' : 'manque'}) : après une réponse fausse, l’apprenant n’aurait que la solution (règle F03).`,
+        )
+      }
+    }
     for (const [balise] of (corps ?? '').matchAll(/<[a-z][^>]*\bdata-justifier\s*=[^>]*>/gi)) {
       if (!/\bdata-(?:fiche|solution)\s*=/i.test(balise)) {
         signaler(

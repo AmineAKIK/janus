@@ -853,6 +853,31 @@
         flex-direction: column;
         gap: var(--espacement-8);
       }
+      /* L'échelle d'aide (JanusGabarit.echelle) : le bouton, puis les crans ouverts. */
+      .pouce {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--espacement-8);
+      }
+      .crans {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-8);
+        margin: 0;
+        padding-inline-start: var(--espacement-20);
+      }
+      section .crans > li + li {
+        margin-top: 0;
+      }
+      /* Un seul cran ouvert : pas de « 1. » qui annonce une liste. */
+      .crans:has(li:only-child) {
+        padding-inline-start: 0;
+        list-style: none;
+      }
+      .crans:empty {
+        display: none;
+      }
       /* La tentative (data-essai) : sa correction, toute la série à la fin (règle M01). */
       .essais-bilan,
       .essais-bilan > ol {
@@ -1253,24 +1278,6 @@
         padding: var(--espacement-8) var(--espacement-12);
         border-radius: var(--rayon-option);
         background: var(--couleur-accent-douce);
-      }
-      .pouce {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--espacement-8);
-      }
-      .crans {
-        display: flex;
-        flex-direction: column;
-        gap: var(--espacement-8);
-        padding-inline-start: var(--espacement-20);
-      }
-      section .crans > li + li {
-        margin-top: 0;
-      }
-      .crans:empty {
-        display: none;
       }
       .expliquer {
         display: flex;
@@ -4371,6 +4378,7 @@ if (age &lt; 12) {
     </template>
     <template data-item="PR1-4">
       <div
+        data-aide1="Teste chaque condition sur deux cas : un article personnalisé rendu au bout de 10 jours, qui doit être refusé, et un article intact rendu au bout de 10 jours, qui doit être remboursé."
         class="ex"
         data-widget="choix"
         data-verifie
@@ -4406,6 +4414,7 @@ if (age &lt; 12) {
     </template>
     <template data-variante="PR1-4">
       <div
+        data-aide1="Teste chaque condition sur deux cas : un client premium avec un billet gratuit, qui doit être refusé, et un client premium sur un vol de 2 heures, qui doit entrer."
         class="ex"
         data-widget="choix"
         data-verifie
@@ -4440,6 +4449,7 @@ if (age &lt; 12) {
     </template>
     <template data-item="PR1-5">
       <div
+        data-aide1="Cliquer sur les deux liens gêne-t-il quelqu’un ? Si non, ce « ou » interdit-il les deux ?"
         class="ex"
         data-widget="choix"
         data-verifie
@@ -4471,6 +4481,7 @@ if (age &lt; 12) {
     </template>
     <template data-variante="PR1-5">
       <div
+        data-aide1="Un colis peut-il partir à deux adresses à la fois ? Que demande le mot « choisis » ?"
         class="ex"
         data-widget="choix"
         data-verifie
@@ -4551,6 +4562,7 @@ if (age &lt; 12) {
     </template>
     <template data-item="PR1-7">
       <div
+        data-aide1="Teste les lignes de haut en bas avec niveau = 95. Quelle est la première condition VRAIE ?"
         class="ex"
         data-widget="choix"
         data-verifie
@@ -4594,6 +4606,7 @@ if (age &lt; 12) {
     </template>
     <template data-variante="PR1-7">
       <div
+        data-aide1="Teste les lignes de haut en bas avec temps = 20. Quelle est la première condition VRAIE ?"
         class="ex"
         data-widget="choix"
         data-verifie
@@ -4635,6 +4648,7 @@ if (age &lt; 12) {
     </template>
     <template data-item="PR1-8">
       <div
+        data-aide1="En JavaScript, que fait le signe = seul : il range, ou il compare ? Que vaut alors ce qui est entre les parenthèses du if ?"
         class="ex"
         data-widget="choix"
         data-verifie
@@ -4671,6 +4685,7 @@ if (age &lt; 12) {
     </template>
     <template data-variante="PR1-8">
       <div
+        data-aide1="En JavaScript, que fait le signe = seul : il range, ou il compare ? Que vaut alors ce qui est entre les parenthèses du if ?"
         class="ex"
         data-widget="choix"
         data-verifie
@@ -5182,10 +5197,12 @@ if (age &lt; 12) {
           l’étape 12 sur le même schéma, vide. Pendant qu’il refait, l’exercice et sa solution sont
           cachés : seul l’autre cas reste à l’écran. Une fois l’autre cas réussi, l’apprenant
           explique en une ou deux phrases pourquoi c’est juste, puis compare avec la solution de la
-          fiche ; la suite de l’écran paraît dès la réussite. Un choix entre des options n’a pas
-          d’autre cas : quand la bonne option est marquée, au deuxième choix faux, l’apprenant
-          explique avec ses mots pourquoi elle est la bonne, puis compare avec la fiche, et la suite
-          paraît ensuite.
+          fiche ; la suite de l’écran paraît dès la réussite. Un choix a la même échelle (celle du
+          gabarit) : chaque option fausse est retirée, avec son retour, qui oriente ; en pratique,
+          « Un coup de pouce » donne ensuite l’indice écrit dans la fiche. Quand une seule option
+          reste, même pour un choix VRAI ou FAUX, elle est marquée : c’est une solution vue, et
+          faute d’autre cas l’apprenant explique avec ses mots pourquoi elle est la bonne, puis
+          compare avec la fiche, et la suite paraît ensuite.
         </li>
         <li>
           Dans la pratique, après une solution vue, l’item se refait sur sa variante, puis
@@ -5198,8 +5215,8 @@ if (age &lt; 12) {
         <li>
           Chaque réponse vérifiée d’un item part au gabarit avec l’aide reçue : 0 du premier coup, 1
           au moins après une réponse fausse (son retour a orienté), le numéro du dernier cran
-          ouvert, et 4 pour une solution vue, ce qui comprend une bonne option marquée après deux
-          choix faux.
+          ouvert, et 4 pour une solution vue, ce qui comprend la bonne option marquée quand il n’en
+          reste plus qu’une.
         </li>
       </ul>
       <h3>La vitesse (étape 11)</h3>
@@ -5221,7 +5238,7 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 21,
+        "version": 22,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 expressions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
@@ -8546,63 +8563,6 @@ if (age &lt; 12) {
         const fini = (ex) => ex.dataset.fini === 'oui'
 
         /**
-         * L'échelle d'aide (règle F03) : rien d'abord ; après une vraie tentative, « Un coup de pouce »
-         * montre le cran suivant ; chaque cran demande une nouvelle tentative ; au bout, la solution.
-         * Les crans écrits dans la fiche (`data-aide1` à `data-aide3`) passent avant ceux que l'outil
-         * calcule sur l'état de l'exercice. Sans cran, la solution vient après deux tentatives ; c'est
-         * le cas de la tentative de l'étape 3, qui n'a pas d'aide.
-         */
-        function echelle(ex, c, surSolution) {
-          const crans = [ex.dataset.aide1, ex.dataset.aide2, ex.dataset.aide3].filter(Boolean)
-          if (crans.length === 0 && c.crans && !('essai' in ex.dataset)) crans.push(...c.crans)
-          let cran = 0
-          let depuis = 0
-          let total = 0
-          let vue = false
-          const liste = el('ol', { class: 'crans' })
-          const bouton = el('button', { type: 'button', class: 'bouton secondaire petit' })
-          const zone = el('div', { class: 'pouce' }, bouton, liste)
-          function maj() {
-            const reste = cran < crans.length
-            bouton.textContent = reste
-              ? cran === 0
-                ? 'Un coup de pouce'
-                : 'Un autre coup de pouce'
-              : 'Voir la solution'
-            const seuil = !reste && crans.length === 0 ? 2 : 1
-            // Une fois l'exercice fini, le bouton s'en va ; les crans déjà ouverts restent lisibles.
-            zone.hidden = total === 0 || (fini(ex) && liste.children.length === 0)
-            bouton.hidden = vue || fini(ex)
-            bouton.disabled = depuis < seuil
-          }
-          bouton.addEventListener('click', () => {
-            if (fini(ex) || vue) return
-            if (cran < crans.length) {
-              const x = crans[cran]
-              liste.append(el('li', { text: typeof x === 'function' ? x() : x }))
-              cran += 1
-              depuis = 0
-              maj()
-              return
-            }
-            vue = true
-            maj()
-            surSolution()
-          })
-          maj()
-          return {
-            zone,
-            tentative() {
-              depuis += 1
-              total += 1
-              maj()
-            },
-            cran: () => (vue ? 4 : cran),
-            maj,
-          }
-        }
-
-        /**
          * Après une solution montrée, l'apprenant refait sans regarder puis explique (règle F03) : il
          * écrit son explication, puis la compare avec la solution de la fiche.
          */
@@ -8750,17 +8710,10 @@ if (age &lt; 12) {
             (libre ? '' : ' C’est une erreur critique : envoie ton bilan avant de continuer.')
           if (c.marque) {
             dire(ex, 'faux', m)
-            // Dans un item, la bonne réponse marquée est une solution vue : l'item se refait sur sa variante.
-            if (fautes + 1 >= 2 && dansItem(ex)) return montrerSolution(ex, c, m)
-            if (fautes + 1 >= 2) {
-              if (!dansItem(ex) && ex.dataset.id)
-                tracer('ex:' + ex.dataset.id, { e: 'vu', v: res.v ?? null })
-              const reprise = avecReprise(ex)
-              if (reprise) ex.dataset.reprise = 'oui'
-              appliquer(ex, c, 'vu', res.v, m + ' La bonne réponse est marquée.')
-              if (reprise) apresSolution(ex, c)
-            }
-            return
+            // Tant que plusieurs options restent, l'échelle aide (règle F03). L'option qui reste ne se
+            // choisit pas : c'est une solution vue, qui se refait ou s'explique (règle F04).
+            if (c.restantes() > 1) return c.echelle?.tentative()
+            return montrerSolution(ex, c, m)
           }
           dire(ex, 'faux', m)
           c.echelle?.tentative()
@@ -8798,7 +8751,13 @@ if (age &lt; 12) {
             reprise && c.variante
               ? ' Pour continuer, refais-le sur un autre cas, sans regarder.'
               : ''
-          appliquer(ex, c, 'vu', null, 'Solution : ' + solution + suite)
+          appliquer(
+            ex,
+            c,
+            'vu',
+            null,
+            (avant ? avant + ' ' : '') + 'Solution : ' + solution + suite,
+          )
           if (reprise) apresSolution(ex, c)
           else proposerVariante(ex, c)
         }
@@ -8867,6 +8826,7 @@ if (age &lt; 12) {
             const c = {
               marque: true,
               solution: () => items[juste].textContent.trim(),
+              restantes: () => boutons.filter((b) => !b.disabled).length,
               remplir(etat) {
                 boutons[juste].classList.add(etat === 'vu' ? 'montre' : 'choisi-bon')
               },
@@ -10132,8 +10092,12 @@ if (age &lt; 12) {
           if (ex.dataset.solution && !c.solutionFixe) c.solution = () => ex.dataset.solution
           retourDe(ex)
           if ('essai' in ex.dataset) return monterEssai(ex, c)
-          if (!c.marque && !c.sansEchelle) {
-            c.echelle = echelle(ex, c, () => montrerSolution(ex, c))
+          if (!c.sansEchelle) {
+            c.echelle = window.JanusGabarit.echelle(ex, {
+              crans: c.crans ?? [],
+              fini: () => fini(ex),
+              surSolution: () => montrerSolution(ex, c),
+            })
             ex.append(c.echelle.zone)
           }
           if (dansItem(ex) || ex.dataset.variante) return
@@ -11341,6 +11305,70 @@ if (age &lt; 12) {
         element.append(...enfants)
         return element
       }
+
+      /**
+       * L'échelle d'aide d'un exercice (règles F03 et F04), la même pour toutes les fiches : rien avant
+       * une réponse fausse ; après chacune, un cran de plus s'ouvre à la demande (une question qui
+       * oriente, un indice, l'étape détaillée), puis « Voir la solution ». Les crans se lisent dans
+       * `data-aide1` à `data-aide3` de l'exercice, sinon dans `crans` (des textes, ou des fonctions
+       * qui rendent le texte à l'ouverture) ; sans cran, la solution attend deux réponses fausses.
+       * `fini()` dit que l'exercice est fini, `surSolution()` montre la solution. Rend la zone à poser
+       * dans l'exercice, `tentative()` à appeler à chaque réponse fausse, `cran()` (4 : solution vue)
+       * et `maj()`.
+       */
+      function echelle(ex, { crans = [], fini = () => false, surSolution = () => {} } = {}) {
+        const ecrits = [ex.dataset.aide1, ex.dataset.aide2, ex.dataset.aide3].filter(Boolean)
+        const textes = ecrits.length > 0 ? ecrits : crans
+        let cran = 0
+        let depuis = 0
+        let total = 0
+        let vue = false
+        const liste = creer('ol', { className: 'crans' })
+        const bouton = creer('button', { type: 'button', className: 'bouton secondaire petit' })
+        const zone = creer('div', { className: 'pouce' }, bouton, liste)
+        function maj() {
+          const reste = cran < textes.length
+          bouton.textContent = reste
+            ? cran === 0
+              ? 'Un coup de pouce'
+              : 'Un autre coup de pouce'
+            : 'Voir la solution'
+          const seuil = !reste && textes.length === 0 ? 2 : 1
+          // Une fois l'exercice fini, le bouton s'en va ; les crans déjà ouverts restent lisibles.
+          zone.hidden = total === 0 || (fini() && liste.children.length === 0)
+          bouton.hidden = vue || fini()
+          bouton.disabled = depuis < seuil
+        }
+        bouton.addEventListener('click', () => {
+          if (fini() || vue) return
+          if (cran < textes.length) {
+            const texte = textes[cran]
+            liste.append(
+              creer('li', { textContent: typeof texte === 'function' ? texte() : String(texte) }),
+            )
+            cran += 1
+            depuis = 0
+            maj()
+            return
+          }
+          vue = true
+          maj()
+          surSolution()
+        })
+        maj()
+        return {
+          zone,
+          tentative() {
+            depuis += 1
+            total += 1
+            maj()
+          },
+          cran: () => (vue ? 4 : cran),
+          maj,
+        }
+      }
+      // Ce que le gabarit prête aux outils des fiches.
+      window.JanusGabarit = Object.freeze({ echelle })
 
       /**
        * Le pied d'une étape : le bouton vers l'étape d'après. Tant qu'une série ouverte n'a pas toutes

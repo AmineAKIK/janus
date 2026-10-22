@@ -853,6 +853,31 @@
         flex-direction: column;
         gap: var(--espacement-8);
       }
+      /* L'échelle d'aide (JanusGabarit.echelle) : le bouton, puis les crans ouverts. */
+      .pouce {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--espacement-8);
+      }
+      .crans {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-8);
+        margin: 0;
+        padding-inline-start: var(--espacement-20);
+      }
+      section .crans > li + li {
+        margin-top: 0;
+      }
+      /* Un seul cran ouvert : pas de « 1. » qui annonce une liste. */
+      .crans:has(li:only-child) {
+        padding-inline-start: 0;
+        list-style: none;
+      }
+      .crans:empty {
+        display: none;
+      }
       /* La tentative (data-essai) : sa correction, toute la série à la fin (règle M01). */
       .essais-bilan,
       .essais-bilan > ol {
@@ -1418,29 +1443,6 @@
         padding: var(--espacement-8) var(--espacement-12);
         border-radius: var(--rayon-option);
         background: var(--couleur-accent-douce);
-      }
-      .pouce {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--espacement-8);
-      }
-      .crans {
-        display: flex;
-        flex-direction: column;
-        gap: var(--espacement-8);
-        padding-inline-start: var(--espacement-20);
-      }
-      section .crans > li + li {
-        margin-top: 0;
-      }
-      /* Un seul cran ouvert : pas de « 1. » qui annonce une liste. */
-      .crans:has(li:only-child) {
-        padding-inline-start: 0;
-        list-style: none;
-      }
-      .crans:empty {
-        display: none;
       }
       .expliquer {
         display: flex;
@@ -4378,7 +4380,13 @@
       </div>
     </template>
     <template data-item="PR7-3">
-      <div class="ex" data-widget="choix" data-verifie data-reponse="zero">
+      <div
+        data-aide1="Avec 2 bits, écris toutes les valeurs : 00, 01, 10 et 11. Combien y en a-t-il, et quel est le plus grand nombre ?"
+        class="ex"
+        data-widget="choix"
+        data-verifie
+        data-reponse="zero"
+      >
         <p class="q">
           Un camarade écrit : « Avec 6 bits, on a 64 valeurs, donc le plus grand nombre est 64. » Où
           est son erreur ?
@@ -4402,7 +4410,13 @@
       </div>
     </template>
     <template data-variante="PR7-3">
-      <div class="ex" data-widget="choix" data-verifie data-reponse="zero">
+      <div
+        data-aide1="Avec 2 bits, écris toutes les valeurs : 00, 01, 10 et 11. Combien y en a-t-il, et quel est le plus grand nombre ?"
+        class="ex"
+        data-widget="choix"
+        data-verifie
+        data-reponse="zero"
+      >
         <p class="q">
           Une camarade écrit : « Avec 9 bits, le plus grand nombre est 511, donc il y a 511
           valeurs. » Où est son erreur ?
@@ -4426,7 +4440,13 @@
       </div>
     </template>
     <template data-item="PR7-4">
-      <div class="ex" data-widget="choix" data-verifie data-reponse="double">
+      <div
+        data-aide1="Pars du nombre de valeurs : 64 avec 6 bits. Que devient-il avec un bit de plus ? Le plus grand nombre s’en déduit."
+        class="ex"
+        data-widget="choix"
+        data-verifie
+        data-reponse="double"
+      >
         <p class="q">
           Avec 6 bits, le plus grand nombre est 63. Tu ajoutes un 7e bit. Que devient le plus grand
           nombre ?
@@ -4452,7 +4472,13 @@
       </div>
     </template>
     <template data-variante="PR7-4">
-      <div class="ex" data-widget="choix" data-verifie data-reponse="moitie">
+      <div
+        data-aide1="Pars du nombre de valeurs : 512 avec 9 bits. Que devient-il avec un bit de moins ? Le plus grand nombre s’en déduit."
+        class="ex"
+        data-widget="choix"
+        data-verifie
+        data-reponse="moitie"
+      >
         <p class="q">
           Avec 9 bits, le plus grand nombre est 511. Tu enlèves un bit. Que devient le plus grand
           nombre ?
@@ -4803,6 +4829,7 @@
     </template>
     <template data-item="PR8-2">
       <div
+        data-aide1="Imagine ces trois octets ouverts par un éditeur d’images, puis par le Bloc-notes. Montrent-ils la même chose ?"
         class="ex"
         data-widget="choix"
         data-verifie
@@ -4832,6 +4859,7 @@
     </template>
     <template data-variante="PR8-2">
       <div
+        data-aide1="Imagine ces trois octets ouverts par un éditeur d’images, puis par le Bloc-notes. Montrent-ils la même chose ?"
         class="ex"
         data-widget="choix"
         data-verifie
@@ -4998,7 +5026,13 @@
       </div>
     </template>
     <template data-item="PR8-6">
-      <div class="ex" data-widget="choix" data-verifie data-reponse="envers">
+      <div
+        data-aide1="Lis 11000101 avec les poids 128, 64, 32… de gauche à droite. Trouves-tu 163 ?"
+        class="ex"
+        data-widget="choix"
+        data-verifie
+        data-reponse="envers"
+      >
         <p class="q">Un camarade écrit 163 en binaire : 11000101. Où est son erreur ?</p>
         <ul class="options">
           <li data-option="envers">
@@ -5021,7 +5055,13 @@
       </div>
     </template>
     <template data-variante="PR8-6">
-      <div class="ex" data-widget="choix" data-verifie data-reponse="envers">
+      <div
+        data-aide1="Lis 01001011 avec les poids 128, 64, 32… de gauche à droite. Trouves-tu 210 ?"
+        class="ex"
+        data-widget="choix"
+        data-verifie
+        data-reponse="envers"
+      >
         <p class="q">Une camarade écrit 210 en binaire : 01001011. Où est son erreur ?</p>
         <ul class="options">
           <li data-option="envers">
@@ -5045,6 +5085,7 @@
     </template>
     <template data-item="PR8-8">
       <div
+        data-aide1="Les octets sont-ils les mêmes dans les deux processeurs ? Si oui, cherche ce qui diffère entre les deux processeurs."
         class="ex"
         data-widget="choix"
         data-verifie
@@ -5082,6 +5123,7 @@
     </template>
     <template data-variante="PR8-8">
       <div
+        data-aide1="Que tape un développeur sur son clavier : des 0 et des 1, ou du texte avec des mots ?"
         class="ex"
         data-widget="choix"
         data-verifie
@@ -5206,9 +5248,10 @@
           l’explication comparée avec celle de la fiche.
         </li>
         <li>
-          Un choix du cours n’a pas de crans : le retour de l’option fausse sert d’indice, et la
-          deuxième option fausse laisse une seule option, qui est alors marquée. La solution vue se
-          traite comme ci-dessus.
+          Un choix a la même échelle (celle du gabarit) : chaque option fausse est retirée, avec son
+          retour, qui oriente ; en pratique, « Un coup de pouce » donne ensuite l’indice écrit dans
+          la fiche. Quand une seule option reste, elle est marquée : c’est une solution vue, traitée
+          comme ci-dessus, même pour un choix à deux options.
         </li>
         <li>
           Exception : l’étape 3 est une tentative, sans note, avant toute explication. Chaque essai
@@ -5339,7 +5382,7 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 37,
+        "version": 38,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
@@ -8894,60 +8937,6 @@
         const fini = (ex) => ex.dataset.fini === 'oui'
 
         /**
-         * L'échelle d'aide (règle F03) : rien d'abord ; après une vraie tentative, « Un coup de pouce »
-         * montre le cran suivant ; chaque cran demande une nouvelle tentative ; au bout, la solution.
-         * Sans cran écrit ni calculé, la solution vient après deux tentatives.
-         */
-        function echelle(ex, c, surSolution) {
-          const crans = [ex.dataset.aide1, ex.dataset.aide2, ex.dataset.aide3].filter(Boolean)
-          if (crans.length === 0) crans.push(...cransCalcules(ex))
-          let cran = 0
-          let depuis = 0
-          let total = 0
-          let vue = false
-          const liste = el('ol', { class: 'crans' })
-          const bouton = el('button', { type: 'button', class: 'bouton secondaire petit' })
-          const zone = el('div', { class: 'pouce' }, bouton, liste)
-          function maj() {
-            const reste = cran < crans.length
-            bouton.textContent = reste
-              ? cran === 0
-                ? 'Un coup de pouce'
-                : 'Un autre coup de pouce'
-              : 'Voir la solution'
-            const seuil = !reste && crans.length === 0 ? 2 : 1
-            // Une fois l'exercice fini, le bouton s'en va ; les crans déjà ouverts restent lisibles.
-            zone.hidden = total === 0 || (fini(ex) && liste.children.length === 0)
-            bouton.hidden = vue || fini(ex)
-            bouton.disabled = depuis < seuil
-          }
-          bouton.addEventListener('click', () => {
-            if (fini(ex) || vue) return
-            if (cran < crans.length) {
-              liste.append(el('li', { text: crans[cran] }))
-              cran += 1
-              depuis = 0
-              maj()
-              return
-            }
-            vue = true
-            maj()
-            surSolution()
-          })
-          maj()
-          return {
-            zone,
-            tentative() {
-              depuis += 1
-              total += 1
-              maj()
-            },
-            cran: () => (vue ? 4 : cran),
-            maj,
-          }
-        }
-
-        /**
          * Après une solution montrée, l'apprenant refait sans regarder puis explique (règle F03) : il
          * écrit son explication, puis la compare avec la solution de la fiche.
          */
@@ -9115,17 +9104,10 @@
             (libre ? '' : ATTENDRE_BILAN)
           if (c.marque) {
             dire(ex, 'faux', m)
-            // Dans un item, la bonne réponse marquée est une solution vue : l'item se refait sur sa variante.
-            if (fautes + 1 >= 2 && dansItem(ex)) return montrerSolution(ex, c, m)
-            if (fautes + 1 >= 2) {
-              if (!dansItem(ex) && ex.dataset.id)
-                tracer('ex:' + ex.dataset.id, { e: 'vu', v: res.v ?? null })
-              const reprise = avecReprise(ex)
-              if (reprise) ex.dataset.reprise = 'oui'
-              appliquer(ex, c, 'vu', res.v, m + ' La bonne réponse est marquée.')
-              if (reprise) apresSolution(ex, c)
-            }
-            return
+            // Tant que plusieurs options restent, l'échelle aide (règle F03). L'option qui reste ne se
+            // choisit pas : c'est une solution vue, qui se refait ou s'explique (règle F04).
+            if (c.restantes() > 1) return c.echelle?.tentative()
+            return montrerSolution(ex, c, m)
           }
           dire(ex, 'faux', m)
           c.echelle?.tentative()
@@ -9169,7 +9151,13 @@
             reprise && c.variante
               ? ' Pour continuer, refais-le sur un autre cas, sans regarder.'
               : ''
-          appliquer(ex, c, 'vu', null, 'Solution : ' + solution + suite)
+          appliquer(
+            ex,
+            c,
+            'vu',
+            null,
+            (avant ? avant + ' ' : '') + 'Solution : ' + solution + suite,
+          )
           if (reprise) apresSolution(ex, c)
           else proposerVariante(ex, c)
         }
@@ -9691,6 +9679,7 @@
             const c = {
               marque: true,
               solution: () => items[juste].textContent.trim(),
+              restantes: () => boutons.filter((b) => !b.disabled).length,
               remplir(etat) {
                 boutons[juste].classList.add(etat === 'vu' ? 'montre' : 'choisi-bon')
               },
@@ -9971,8 +9960,12 @@
           if (ex.dataset.solution) c.solution = () => ex.dataset.solution
           retourDe(ex)
           if ('essai' in ex.dataset) return monterEssai(ex, c)
-          if (!c.marque && !c.sansEchelle) {
-            c.echelle = echelle(ex, c, () => montrerSolution(ex, c))
+          if (!c.sansEchelle) {
+            c.echelle = window.JanusGabarit.echelle(ex, {
+              crans: cransCalcules(ex),
+              fini: () => fini(ex),
+              surSolution: () => montrerSolution(ex, c),
+            })
             ex.append(c.echelle.zone)
           }
           if (dansItem(ex) || ex.dataset.variante) return
@@ -11442,6 +11435,70 @@
         element.append(...enfants)
         return element
       }
+
+      /**
+       * L'échelle d'aide d'un exercice (règles F03 et F04), la même pour toutes les fiches : rien avant
+       * une réponse fausse ; après chacune, un cran de plus s'ouvre à la demande (une question qui
+       * oriente, un indice, l'étape détaillée), puis « Voir la solution ». Les crans se lisent dans
+       * `data-aide1` à `data-aide3` de l'exercice, sinon dans `crans` (des textes, ou des fonctions
+       * qui rendent le texte à l'ouverture) ; sans cran, la solution attend deux réponses fausses.
+       * `fini()` dit que l'exercice est fini, `surSolution()` montre la solution. Rend la zone à poser
+       * dans l'exercice, `tentative()` à appeler à chaque réponse fausse, `cran()` (4 : solution vue)
+       * et `maj()`.
+       */
+      function echelle(ex, { crans = [], fini = () => false, surSolution = () => {} } = {}) {
+        const ecrits = [ex.dataset.aide1, ex.dataset.aide2, ex.dataset.aide3].filter(Boolean)
+        const textes = ecrits.length > 0 ? ecrits : crans
+        let cran = 0
+        let depuis = 0
+        let total = 0
+        let vue = false
+        const liste = creer('ol', { className: 'crans' })
+        const bouton = creer('button', { type: 'button', className: 'bouton secondaire petit' })
+        const zone = creer('div', { className: 'pouce' }, bouton, liste)
+        function maj() {
+          const reste = cran < textes.length
+          bouton.textContent = reste
+            ? cran === 0
+              ? 'Un coup de pouce'
+              : 'Un autre coup de pouce'
+            : 'Voir la solution'
+          const seuil = !reste && textes.length === 0 ? 2 : 1
+          // Une fois l'exercice fini, le bouton s'en va ; les crans déjà ouverts restent lisibles.
+          zone.hidden = total === 0 || (fini() && liste.children.length === 0)
+          bouton.hidden = vue || fini()
+          bouton.disabled = depuis < seuil
+        }
+        bouton.addEventListener('click', () => {
+          if (fini() || vue) return
+          if (cran < textes.length) {
+            const texte = textes[cran]
+            liste.append(
+              creer('li', { textContent: typeof texte === 'function' ? texte() : String(texte) }),
+            )
+            cran += 1
+            depuis = 0
+            maj()
+            return
+          }
+          vue = true
+          maj()
+          surSolution()
+        })
+        maj()
+        return {
+          zone,
+          tentative() {
+            depuis += 1
+            total += 1
+            maj()
+          },
+          cran: () => (vue ? 4 : cran),
+          maj,
+        }
+      }
+      // Ce que le gabarit prête aux outils des fiches.
+      window.JanusGabarit = Object.freeze({ echelle })
 
       /**
        * Le pied d'une étape : le bouton vers l'étape d'après. Tant qu'une série ouverte n'a pas toutes
