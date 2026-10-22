@@ -83,10 +83,35 @@ function sansCommentairesScriptsNiStyles(html: string): string {
   return html.replace(/<!--[\s\S]*?-->/g, '').replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, '')
 }
 
+const ETATS_EN_MOTS: Readonly<Record<string, string>> = {
+  juste: 'juste',
+  faux: 'faux',
+  passe: 'passé',
+  absent: 'pas encore fait',
+}
+
+/**
+ * Un encadré qui dépend d'un essai (`data-si-essai`) le dit en tête ; la réponse qu'il cite
+ * (`data-essai-rappel`) se lit à sa place : le texte montre tous les encadrés, la page un seul.
+ */
+function essaisEnTexte(html: string): string {
+  return remplacerElements(html, (_nom, attributs) => {
+    const cle = /\bdata-essai-rappel\s*=\s*["']([^"']*)["']/i.exec(attributs)?.[1]
+    return cle === undefined ? undefined : `[la réponse à l’essai ${cle}]`
+  }).replace(
+    /(<[a-z][a-z0-9-]*\b[^>]*\bdata-si-essai\s*=\s*["']([^"':]*):([^"']*)["'][^>]*>)/gi,
+    (_balise, ouvrante: string, cle: string, etats: string) =>
+      `${ouvrante}[seulement si l’essai ${cle} est ${etats
+        .split('|')
+        .map((etat) => ETATS_EN_MOTS[etat] ?? etat)
+        .join(' ou ')}] `,
+  )
+}
+
 /** Le HTML d'une étape en texte simple : un paragraphe par ligne, les écrans en titres, les outils nommés. */
 function enTexte(html: string): string {
   return decoder(
-    imagesEnTexte(sansCommentairesScriptsNiStyles(html))
+    essaisEnTexte(imagesEnTexte(sansCommentairesScriptsNiStyles(html)))
       .replace(/\s+/g, ' ')
       .replace(
         /<div\b[^>]*\bdata-widget\s*=\s*["']([^"']+)["'][^>]*>/gi,
