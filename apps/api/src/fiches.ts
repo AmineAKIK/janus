@@ -184,8 +184,8 @@ function templatesDesItems(html: string): ReadonlyMap<string, string> {
  * items demandent une explication en prose (`data-justifier`) ; et chaque erreur critique a un item
  * de pratique qui la révèle (`data-erreur="E…"` sur l'option ou l'outil qui la repère), sinon elle
  * n'est vue qu'aux questions, trop tard pour la corriger en s'entraînant. Une explication demandée
- * porte le texte à comparer (`data-fiche`, ou `data-solution` quand la solution dit le pourquoi) :
- * sans lui, le gabarit montre le résultat, et l'apprenant compare un pourquoi à un calcul.
+ * se déclare au manifeste (`explication`, par sa clé : l'item, ou l'item suivi de `:variante`) : l'IA
+ * la juge sur la question et l'attendu qu'elle y lit, et l'item n'est réussi qu'avec elle.
  */
 function verifierPratique(
   manifeste: Manifeste,
@@ -196,6 +196,8 @@ function verifierPratique(
   const ids = manifeste.pratique.flatMap((exercice) => exercice.items.map((item) => item.id))
   const avecExplication = ids.filter((id) => /\bdata-justifier\s*=/i.test(templates.get(id) ?? ''))
   const plafond = Math.ceil(ids.length / 3)
+  const declarees = new Set(manifeste.explication.map(({ id }) => id))
+  const demandees = new Set<string>()
   if (avecExplication.length > plafond) {
     signaler(
       `pratique : ${String(avecExplication.length)} items sur ${String(ids.length)} demandent une explication (data-justifier : ${avecExplication.join(', ')}), au plus un tiers (${String(plafond)}) : ce que l’écran montre déjà ne se demande pas.`,
@@ -223,12 +225,27 @@ function verifierPratique(
         )
       }
     }
+    const qui = `${genre === 'variante' ? 'la variante de ' : 'l’item '}${String(id)}`
     for (const [balise] of (corps ?? '').matchAll(/<[a-z][^>]*\bdata-justifier\s*=[^>]*>/gi)) {
-      if (!/\bdata-(?:fiche|solution)\s*=/i.test(balise)) {
+      const cle = `${String(id)}${genre === 'variante' ? ':variante' : ''}`
+      demandees.add(cle)
+      if (!declarees.has(cle)) {
         signaler(
-          `pratique : ${genre === 'variante' ? 'la variante de ' : 'l’item '}${String(id)} demande une explication (data-justifier) sans texte à comparer (data-fiche) : l’apprenant comparerait son pourquoi au seul résultat.`,
+          `pratique : ${qui} demande une explication (data-justifier) que le manifeste ne déclare pas : ajoute à explication la clé « ${cle} », sa question et son attendu, que l’IA lit pour la juger.`,
         )
       }
+      if (/\bdata-fiche\s*=/i.test(balise)) {
+        signaler(
+          `pratique : ${qui} porte data-fiche : l’attendu d’une explication est dans le manifeste (explication), que l’IA lit pour la juger.`,
+        )
+      }
+    }
+  }
+  for (const explication of manifeste.explication) {
+    if (!demandees.has(explication.id)) {
+      signaler(
+        `explication « ${explication.id} » : ni l’item ${explication.item} ni sa variante ne la demandent (data-justifier) : l’IA jugerait une explication que la page ne pose pas.`,
+      )
     }
   }
   for (const erreur of manifeste.erreurs_critiques) {

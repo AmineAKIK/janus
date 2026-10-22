@@ -1119,6 +1119,163 @@ describe('la pratique', () => {
   })
 })
 
+describe('une explication jugée par l’IA', () => {
+  /** Le gabarit, avec un premier item vérifié par un outil, et son explication déclarée. */
+  const fiche = GABARIT.replace(
+    '<template data-item="PR1-1"><p data-erreur="E1">À REMPLACER : item PR1-1 (E1).</p></template>',
+    '<template data-item="PR1-1"><div data-verifie>Outil de la fiche</div></template>',
+  ).replace(
+    '"explication": [],',
+    '"explication": [{ "id": "PR1-1", "item": "PR1-1", "question": "Pourquoi le bit de gauche vaut-il 128 ?", "attendu": "Chaque place double.", "erreurs": [] }],',
+  )
+  const correction = (niveau: string, compte = true) => ({
+    id: '0190a000-0000-7000-8000-' + String(Math.random()).slice(2, 14).padEnd(12, '0'),
+    echantillon: false,
+    question: 'PR1-1',
+    tour: 1,
+    niveau,
+    message: niveau === 'solide' ? 'Tu as l’idée.' : 'Il manque la place.',
+    erreurs_critiques: [],
+    source: 'deduit',
+    ref: '',
+    certitude: 'sur',
+    compte,
+    ...(compte ? {} : { raison_non_compte: 'avec_support' }),
+  })
+  /** La page sur la pratique ; chaque demande de correction reçoit la réponse suivante de la liste. */
+  async function ouvrir(reponses: (Record<string, unknown> | Error)[]) {
+    const simule = pontSimule({ etape: 'ET3', envoyees: {}, pratique: {}, retourCours: false })
+    Object.assign(simule.pont, {
+      demanderCorrection: (demande: Record<string, unknown>) => {
+        simule.demandes.push(demande)
+        const suivante = reponses.shift()
+        return suivante instanceof Error ? Promise.reject(suivante) : Promise.resolve(suivante)
+      },
+    })
+    monter(fiche, simule.pont)
+    const outil = await screen.findByText('Outil de la fiche')
+    return { ...simule, outil }
+  }
+  const expliquer = (outil: HTMLElement, cle = 'PR1-1') =>
+    outil.dispatchEvent(
+      new CustomEvent('fiche:expliquer', {
+        bubbles: true,
+        detail: { cle, solution: '128.', consigne: 'Pourquoi ?' },
+      }),
+    )
+  async function envoyer(texte: string) {
+    const champ = screen
+      .getAllByRole('textbox')
+      .filter((element) => element instanceof HTMLTextAreaElement && !element.disabled)
+      .at(-1)
+    if (!(champ instanceof HTMLTextAreaElement)) throw new Error('Aucun champ ouvert')
+    const essai = champ.closest('.expliquer-essai')
+    if (!(essai instanceof HTMLElement)) throw new Error('Un champ hors d’un essai')
+    fireEvent.input(champ, { target: { value: texte } })
+    fireEvent.click(within(essai).getByRole('radio', { name: 'Sûr' }))
+    fireEvent.click(within(essai).getByRole('button', { name: 'Envoyer mon explication' }))
+    await waitFor(() => {
+      expect(essai.isConnected).toBe(false)
+    })
+  }
+  const verifierJuste = (outil: HTMLElement) =>
+    outil.dispatchEvent(
+      new CustomEvent('fiche:verification', { bubbles: true, detail: { juste: true } }),
+    )
+
+  it('l’item attend une explication Solide : la première se reprend, la seconde Solide le fait réussir', async () => {
+    const { outil, demandes, sauvees } = await ouvrir([correction('partiel'), correction('solide')])
+    verifierJuste(outil)
+    expliquer(outil)
+    expect(screen.getByText('Explication attendue')).toBeInTheDocument()
+    expect(screen.getByText('0 réussi sur 3.')).toBeInTheDocument()
+
+    await envoyer('Le bit compte.')
+    expect(demandes.at(-1)).toMatchObject({
+      serie: 'explication',
+      question: 'PR1-1',
+      reponse: 'Le bit compte.',
+      confiance: 'sur',
+      relance: '',
+    })
+    expect(demandes.at(-1)).not.toHaveProperty('libre')
+    expect(screen.getByText('Il manque la place.')).toBeInTheDocument()
+    expect(
+      screen.getByText('Reprends ton explication, d’après la correction :'),
+    ).toBeInTheDocument()
+
+    await envoyer('Chaque place vers la gauche double.')
+    expect(screen.getByText('Tu as l’idée.')).toBeInTheDocument()
+    expect(screen.getByText('Réussi')).toBeInTheDocument()
+    expect(screen.getByText('1 réussi sur 3.')).toBeInTheDocument()
+    const etat = sauvees.at(-1) as {
+      pratique: Record<string, { explique?: boolean }>
+      traces: Record<string, { fin: string; essais: unknown[] }>
+    }
+    expect(etat.pratique['PR1-1']?.explique).toBe(true)
+    expect(etat.traces['explique:PR1-1']).toMatchObject({ fin: 'solide' })
+    expect(etat.traces['explique:PR1-1']?.essais).toHaveLength(2)
+  })
+
+  it('deux explications qui ne sont pas Solides : la page demande à l’outil de montrer la solution', async () => {
+    const { outil } = await ouvrir([correction('fragile'), correction('solide', false)])
+    let ratee: unknown
+    outil.addEventListener('fiche:explication-ratee', (evenement) => {
+      ratee = (evenement as CustomEvent).detail
+    })
+    verifierJuste(outil)
+    expliquer(outil)
+    await envoyer('Je ne sais pas trop.')
+    await envoyer('Je recopie la fiche.')
+
+    expect(JSON.stringify(ratee)).toContain('voici la solution de l’item')
+    expect(screen.getByText('Explication attendue')).toBeInTheDocument()
+  })
+
+  it('après une solution vue, l’explication se juge sur la solution de la page, une fois', async () => {
+    const { outil, demandes, sauvees } = await ouvrir([correction('partiel', false)])
+    expliquer(outil, 'ex:c1')
+    await envoyer('Parce que 128.')
+
+    expect(demandes.at(-1)).toMatchObject({
+      serie: 'explication',
+      question: 'ex:c1',
+      libre: { question: 'Pourquoi ?', attendu: '128.' },
+    })
+    const etat = sauvees.at(-1) as { traces: Record<string, { fin: string }> }
+    expect(etat.traces['explique:ex:c1']).toMatchObject({ fin: 'jugee' })
+    expect(screen.queryByRole('button', { name: 'Envoyer mon explication' })).toBeNull()
+  })
+
+  it('sans correction possible, l’explication attend d’être renvoyée : rien ne la juge à la place', async () => {
+    const indisponible = Object.assign(new Error('indisponible'), {
+      detail: 'Le correcteur ne répond pas.',
+    })
+    const { outil, sauvees } = await ouvrir([indisponible, correction('solide')])
+    verifierJuste(outil)
+    expliquer(outil)
+    const champ = screen
+      .getAllByRole('textbox')
+      .find((element) => element instanceof HTMLTextAreaElement)
+    if (!(champ instanceof HTMLTextAreaElement)) throw new Error('Aucun champ')
+    fireEvent.input(champ, { target: { value: 'Chaque place double.' } })
+    fireEvent.click(screen.getByRole('radio', { name: 'Sûr' }))
+    const bouton = screen.getByRole('button', { name: 'Envoyer mon explication' })
+    fireEvent.click(bouton)
+
+    expect(
+      await screen.findByText(
+        /Correction impossible : Le correcteur ne répond pas\. Ton explication attend : renvoie-la\./,
+      ),
+    ).toBeInTheDocument()
+    expect(bouton).not.toBeDisabled()
+    expect(screen.getByText('Explication attendue')).toBeInTheDocument()
+    expect(sauvees.some((etat) => JSON.stringify(etat).includes('explique:PR1-1'))).toBe(false)
+    fireEvent.click(bouton)
+    expect(await screen.findByText('Réussi')).toBeInTheDocument()
+  })
+})
+
 describe('la carte du bloc', () => {
   /** Le gabarit, avec la carte écrite par la fiche (où tu es, à quoi ça sert, ce que tu sauras faire). */
   const avecCarte = GABARIT.replace(

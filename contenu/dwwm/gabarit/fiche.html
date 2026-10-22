@@ -847,7 +847,7 @@
           flex: 0 1 auto;
         }
       }
-      /* Expliquer puis comparer avec la fiche (fiche:expliquer). */
+      /* Une explication jugée par l'IA (fiche:expliquer), et ses essais déjà envoyés. */
       .expliquer {
         display: flex;
         flex-direction: column;
@@ -1156,7 +1156,8 @@
       L'énoncé de chaque item de pratique : un <template data-item="PR1-1"> par item. Chaque erreur
       critique du manifeste a un item qui la révèle : l'option ou l'outil qui la repère porte
       data-erreur="E1". Au plus un tiers des items demandent une explication (data-justifier), sur ce
-      que l'écran ne montre pas ; data-fiche porte la réponse de la fiche à cette demande.
+      que l'écran ne montre pas ; le manifeste la déclare (explication, sous la clé de l'item), avec
+      la question et l'attendu que l'IA lit pour la juger.
     -->
     <template data-item="PR1-1"><p data-erreur="E1">À REMPLACER : item PR1-1 (E1).</p></template>
     <template data-item="PR1-2"><p data-erreur="E2">À REMPLACER : item PR1-2 (E2).</p></template>
@@ -1172,7 +1173,7 @@
         "titre_court": "À REMPLACER",
         "objectif": "À REMPLACER : ce que tu sauras faire à la fin, vérifiable en une phrase.",
         "prerequis": [],
-        "pont": 3,
+        "pont": 4,
         "contexte_ia": "À REMPLACER : ce que le correcteur doit savoir du bloc (1 500 mots au plus) : notions, vocabulaire, pièges.",
         "sources": [
           {
@@ -1219,6 +1220,7 @@
             "etape": "ET2"
           }
         ],
+        "explication": [],
         "restitution": [
           {
             "id": "R1",
@@ -1520,7 +1522,10 @@
           })
       }
       function corrigerLocalement(demande) {
-        const question = manifeste.restitution.find((q) => q.id === demande.question)
+        const question =
+          demande.serie === 'explication'
+            ? (explicationDeclaree(demande.question) ?? demande.libre)
+            : manifeste.restitution.find((q) => q.id === demande.question)
         const reponse = demande.reponse.trim()
         const message = (texte, niveau) => ({
           id: uuidV7(),
@@ -1607,99 +1612,185 @@
         enregistrer()
       })
       /*
-       * Expliquer, puis comparer avec la fiche (règle F03) : un outil émet `fiche:expliquer` sur
-       * l'exercice, avec `detail: { cle, solution, consigne }`. La page y monte le champ, puis montre ce
-       * que dit la fiche et laisse l'apprenant juger lui-même, « Même idée » ou « Il me manque quelque
-       * chose » : la page ne compare rien et ne note rien, elle le dit. Le texte et le choix sont gardés
-       * comme une trace (`explique:<cle>`), pour l'apprenant qui revient.
+       * Expliquer (règle F03) : un outil émet `fiche:expliquer` sur l'exercice, avec `detail: { cle,
+       * solution, consigne }`. L'IA juge l'explication comme une réponse de restitution, dans la série
+       * `explication`. Une explication que le manifeste déclare (`explication`, par sa clé) se juge sur
+       * son attendu, et son item n'est réussi qu'avec une explication Solide qui compte ; après deux
+       * explications qui ne le sont pas, la page émet `fiche:explication-ratee` sur l'exercice : l'outil
+       * montre la solution, et l'item se refait sur sa variante. Une explication que le manifeste ne
+       * déclare pas (après une solution vue) se juge sur la solution de la page, une fois, et ne compte
+       * jamais. Sans correcteur, l'explication attend qu'on la renvoie : la page ne juge rien à la place
+       * de l'IA. Hors de l'appli, la correction est simulée et ne retient rien. La trace
+       * `explique:<cle>` garde les essais et leur correction ; elle est émise quand l'explication est
+       * finie, pour l'outil qui attend la suite.
        */
-      document.addEventListener('fiche:expliquer', (evenement) => {
+      const ESSAIS_D_EXPLICATION = 2
+      const explicationDeclaree = (cle) => (manifeste.explication ?? []).find((e) => e.id === cle)
+      /** L'item n'a pas d'explication à donner, ou elle est faite. */
+      const explicationFaite = (item) =>
+        !(manifeste.explication ?? []).some((e) => e.item === item) ||
+        etat.pratique[item]?.explique === true
+      /** Un item de pratique réussi : sa réponse, puis son explication quand il en demande une. */
+      const itemReussi = (item) => Boolean(etat.pratique[item]?.reussi) && explicationFaite(item)
+      // Sur #contenu, qui porte tous les exercices de la page.
+      $('contenu').addEventListener('fiche:expliquer', (evenement) => {
         const { cle, solution, consigne } = evenement.detail ?? {}
         const exercice = evenement.target
         if (!(exercice instanceof HTMLElement) || typeof cle !== 'string' || cle === '') return
         if (exercice.querySelector(':scope > .expliquer')) return
-        const trace = etat.traces?.['explique:' + cle]
-        const champ = creer('textarea', { id: 'explique-' + cle.replace(/[^\w-]/g, '_'), rows: 3 })
-        const modele = creer('p', {
-          className: 'retour',
-          textContent: 'Ce que dit la fiche : ' + String(solution ?? ''),
-          hidden: true,
-        })
-        const question = creer('p', {
-          textContent: 'Compare toi-même : dis-tu la même idée, même avec d’autres mots ?',
-          hidden: true,
-        })
-        const avis = creer('p', { className: 'discret', 'aria-live': 'polite' })
-        const choisir = (valeur) => {
-          avis.textContent =
-            valeur === 'meme'
-              ? 'Même idée. Rien n’est noté : c’est ton jugement.'
-              : 'Il te manque quelque chose : relis la fiche sur ce point avant de continuer.'
-          for (const b of jugements.children) b.disabled = true
+        const declaree = explicationDeclaree(cle)
+        // La page montre la consigne de l'outil ; le correcteur lit la question du manifeste, qui se
+        // comprend sans l'écran.
+        const intitule =
+          typeof consigne === 'string' && consigne !== ''
+            ? consigne
+            : 'Explique pourquoi c’est juste, en une ou deux phrases\u00a0:'
+        const ancienne = etat.traces?.['explique:' + cle]
+        const essais = Array.isArray(ancienne?.essais) ? ancienne.essais : []
+        const zone = creer('div', { className: 'expliquer' })
+        zone.setAttribute('aria-live', 'polite')
+        const lue = (essai) => [
+          creer('p', { className: 'explication-envoyee', textContent: essai.texte }),
+          bulleCorrection(essai.correction),
+          ...accordSur(essai.correction),
+        ]
+        /** L'explication est finie : la trace part, l'outil et l'item lisent la suite. */
+        const finir = (fin) => {
+          if (declaree && (fin === 'solide' || fin === 'simulee')) {
+            etat.pratique[declaree.item] = {
+              ...(etat.pratique[declaree.item] ?? {}),
+              explique: true,
+            }
+          }
           exercice.dispatchEvent(
             new CustomEvent('fiche:trace', {
               bubbles: true,
-              detail: {
-                cle: 'explique:' + cle,
-                valeur: { texte: champ.value, avis: valeur, le: aujourdhui() },
-              },
+              detail: { cle: 'explique:' + cle, valeur: { essais, fin, le: aujourdhui() } },
             }),
           )
+          exercice.dispatchEvent(new CustomEvent('fiche:explique', { bubbles: true }))
         }
-        const jugements = creer(
-          'div',
-          { className: 'actions', hidden: true },
-          creer('button', {
+        const formulaire = (rang) => {
+          const id = 'explique-' + cle.replace(/[^\w-]/g, '_') + '-' + rang
+          const champ = creer('textarea', {
+            id,
+            rows: 3,
+            value: rang === 0 && typeof ancienne?.texte === 'string' ? ancienne.texte : '',
+          })
+          let colle = false
+          champ.addEventListener('paste', () => {
+            colle = true
+          })
+          const radios = [
+            ['sur', 'Sûr'],
+            ['hesitant', 'Hésitant'],
+            ['hasard', 'Au hasard'],
+          ].map(([valeur, libelle]) => ({
+            libelle,
+            entree: creer('input', { type: 'radio', name: 'conf-' + id, value: valeur }),
+          }))
+          const confiance = creer(
+            'fieldset',
+            { className: 'choix', dataset: { lecture: '' } },
+            creer('legend', { textContent: 'Ta confiance' }),
+            ...radios.map(({ libelle, entree }) => creer('label', {}, entree, libelle)),
+          )
+          const message = creer('p', { className: 'erreur', role: 'alert' })
+          const bouton = creer('button', {
             type: 'button',
             className: 'bouton secondaire petit',
-            textContent: 'Même idée',
-            onclick: () => choisir('meme'),
-          }),
-          creer('button', {
-            type: 'button',
-            className: 'bouton secondaire petit',
-            textContent: 'Il me manque quelque chose',
-            onclick: () => choisir('manque'),
-          }),
-        )
-        const comparer = creer('button', {
-          type: 'button',
-          className: 'bouton secondaire petit',
-          textContent: 'Comparer avec la fiche',
-        })
-        const montrer = () => {
-          champ.disabled = comparer.disabled = true
-          modele.hidden = question.hidden = jugements.hidden = false
-        }
-        comparer.addEventListener('click', () => {
-          if (champ.value.trim() === '')
-            return void (avis.textContent = 'Écris d’abord ton explication.')
-          avis.textContent = ''
-          montrer()
-        })
-        exercice.append(
-          creer(
+            textContent: 'Envoyer mon explication',
+          })
+          const bloc = creer(
             'div',
-            { className: 'expliquer' },
+            { className: 'expliquer-essai' },
             creer('label', {
-              htmlFor: champ.id,
+              htmlFor: id,
               textContent:
-                typeof consigne === 'string' && consigne !== ''
-                  ? consigne
-                  : 'Explique pourquoi c’est juste, en une ou deux phrases :',
+                rang === 0 ? intitule : 'Reprends ton explication, d’après la correction\u00a0:',
             }),
             champ,
-            creer('div', { className: 'actions' }, comparer),
-            modele,
-            question,
-            jugements,
-            avis,
-          ),
-        )
-        if (trace && typeof trace.texte === 'string') {
-          champ.value = trace.texte
-          montrer()
-          if (trace.avis === 'meme' || trace.avis === 'manque') choisir(trace.avis)
+            confiance,
+            creer('div', { className: 'actions' }, bouton),
+            message,
+          )
+          bouton.addEventListener('click', async () => {
+            const choisie = confiance.querySelector('input:checked')
+            if (champ.value.trim() === '')
+              return void (message.textContent = 'Écris d’abord ton explication.')
+            if (!choisie)
+              return void (message.textContent = 'Choisis ta confiance avant d’envoyer.')
+            message.textContent = ''
+            bouton.disabled = true
+            try {
+              const correction = await pont.demanderCorrection({
+                serie: 'explication',
+                question: cle,
+                reponse: champ.value,
+                confiance: choisie.value,
+                relance: '',
+                support: { colle, retour_cours: etat.retourCours },
+                ...(declaree
+                  ? {}
+                  : { libre: { question: intitule, attendu: String(solution ?? '') } }),
+              })
+              noterReperees('explique:' + cle, correction.erreurs_critiques)
+              essais.push({ texte: champ.value, correction: resumeCorrection(correction) })
+              const fin =
+                mode === 'autonome'
+                  ? 'simulee'
+                  : !declaree
+                    ? 'jugee'
+                    : correction.niveau === 'solide' && correction.compte
+                      ? 'solide'
+                      : essais.length >= ESSAIS_D_EXPLICATION
+                        ? 'ratee'
+                        : null
+              if (fin === null) {
+                etat.traces = {
+                  ...(etat.traces ?? {}),
+                  ['explique:' + cle]: { essais, fin, le: aujourdhui() },
+                }
+                enregistrer()
+              } else finir(fin)
+              // La correction affichée est celle que la trace garde : l'avis demandé s'y enregistre.
+              const gardees = etat.traces['explique:' + cle].essais
+              bloc.replaceWith(...lue(gardees[gardees.length - 1]))
+              if (fin === null) zone.append(formulaire(rang + 1))
+              if (fin === 'ratee') {
+                const raison =
+                  'Ton explication n’est pas encore Solide\u00a0: voici la solution de l’item, puis tu le refais sur un autre cas.'
+                zone.append(creer('p', { className: 'discret', textContent: raison }))
+                exercice.dispatchEvent(
+                  new CustomEvent('fiche:explication-ratee', {
+                    bubbles: true,
+                    detail: { message: raison },
+                  }),
+                )
+              }
+            } catch (erreur) {
+              message.textContent =
+                'Correction impossible\u00a0: ' +
+                (erreur && erreur.detail ? erreur.detail : erreur.message) +
+                ' Ton explication attend\u00a0: renvoie-la.'
+              bouton.disabled = false
+            }
+          })
+          return bloc
+        }
+        if (essais.length > 0) zone.append(creer('p', { textContent: intitule }))
+        for (const essai of essais) zone.append(...lue(essai))
+        if (ancienne?.fin === undefined || ancienne.fin === null)
+          zone.append(formulaire(essais.length))
+        exercice.append(zone)
+        // De retour sur la page, l'outil qui attend la fin de l'explication la relit.
+        if (typeof ancienne?.fin === 'string' && ancienne.fin !== 'ratee') {
+          exercice.dispatchEvent(
+            new CustomEvent('fiche:trace', {
+              bubbles: true,
+              detail: { cle: 'explique:' + cle, valeur: ancienne },
+            }),
+          )
         }
       })
       /*
@@ -1951,7 +2042,7 @@
         // jour, et l'apprenant resterait bloqué jusque-là). Une solution vue n'est pas réussie.
         if (etape.type === 'pratique') {
           const items = manifeste.pratique.flatMap((exercice) => exercice.items)
-          const reussis = items.filter((item) => etat.pratique[item.id]?.reussi).length
+          const reussis = items.filter((item) => itemReussi(item.id)).length
           if (reussis === items.length) return ''
           return (
             'Réussis les ' +
@@ -2549,7 +2640,7 @@
         const liste = manifeste.pratique.flatMap((exercice) =>
           exercice.items.map((item, rang) => ({ exercice, item, rang })),
         )
-        const reussi = (entree) => Boolean(etat.pratique[entree.item.id]?.reussi)
+        const reussi = (entree) => itemReussi(entree.item.id)
         const premierRestant = liste.findIndex((entree) => !reussi(entree))
         const index = Math.min(
           Math.max(etat.itemCourant ?? (premierRestant < 0 ? 0 : premierRestant), 0),
@@ -2615,6 +2706,8 @@
             aide: aideNotee,
             essais,
             solutionVue: vue ? aujourdhui() : (avant?.solutionVue ?? false),
+            // Une explication déjà jugée Solide le reste : l'item refait ne la redemande pas.
+            ...(avant?.explique === true ? { explique: true } : {}),
             ...(aideNotee > 0
               ? { aideLe: aujourdhui(), aideMax: aideNotee }
               : { aideLe: avant?.aideLe ?? null, aideMax: avant?.aideMax ?? 0 }),
@@ -2720,18 +2813,22 @@
                 (avecAide(entree) ? ', réussi avec de l’aide' : reussi(entree) ? ', réussi' : ''),
             )
           })
-          boite.dataset.fait = fait?.reussi ? 'oui' : 'non'
+          boite.dataset.fait = reussi({ item }) ? 'oui' : 'non'
           majPied()
           // La solution a été montrée et l'item n'est pas refait : on le dit, à la place du résultat.
           const aRefaire = Boolean(fait?.solutionVue) && !fait.reussi
+          // Réussi, mais l'explication qu'il demande n'est pas encore Solide.
+          const aExpliquer = Boolean(fait?.reussi) && !explicationFaite(item.id)
           etatItem.textContent = fait
-            ? fait.reussi
-              ? fait.aide > 0
-                ? 'Réussi avec de l’aide'
-                : 'Réussi'
-              : aRefaire
-                ? 'Solution vue'
-                : 'À refaire'
+            ? aExpliquer
+              ? 'Explication attendue'
+              : fait.reussi
+                ? fait.aide > 0
+                  ? 'Réussi avec de l’aide'
+                  : 'Réussi'
+                : aRefaire
+                  ? 'Solution vue'
+                  : 'À refaire'
             : ''
           resultat.className = aRefaire ? 'item-refaire' : 'discret'
           // Réussi avec de l'aide : l'appli ne le compte pas encore, la page dit comment il comptera.
@@ -2745,13 +2842,15 @@
                   : '. Refais-le sans aide pour qu’il compte.'
           resultat.textContent = aRefaire
             ? 'Tu as vu la solution. Refais-la sans la regarder.'
-            : fait
-              ? 'Envoyé\u00a0: ' +
-                (fait.reussi ? 'réussi' : 'non réussi') +
-                ', aide ' +
-                fait.aide +
-                pourCompter
-              : ''
+            : aExpliquer
+              ? 'Réussi. Explique-le maintenant\u00a0: l’item compte quand ton explication est Solide.'
+              : fait
+                ? 'Envoyé\u00a0: ' +
+                  (fait.reussi ? 'réussi' : 'non réussi') +
+                  ', aide ' +
+                  fait.aide +
+                  pourCompter
+                : ''
         }
         majItem()
         // L'outil émet fiche:verification à chaque réponse vérifiée. L'item se met à jour sans être
@@ -2779,6 +2878,7 @@
           noter(detail.juste, Math.max(aide, aideOutil))
           majItem()
         })
+        consigne.addEventListener('fiche:explique', () => majItem())
         consigne.addEventListener('fiche:refaire', () => {
           if (verifie && solutionVue()) redessiner()
         })
@@ -3350,7 +3450,7 @@
         const lignes = [ligneRestitution]
         const items = manifeste.pratique.flatMap((exercice) => exercice.items)
         if (items.length > 0) {
-          const reussis = items.filter((item) => etat.pratique[item.id]?.reussi)
+          const reussis = items.filter((item) => itemReussi(item.id))
           const sansAide = reussis.filter((item) => etat.pratique[item.id].aide === 0).length
           lignes.push(
             ligne(

@@ -30,7 +30,7 @@ function catalogue(blocs: string[]) {
 
 const EMPREINTE = 'a'.repeat(64)
 /** Le pont construit, tel que `fiches:assembler` l'écrit : son en-tête puis le code. */
-const PONT = `/*! janus-pont v3 ${EMPREINTE} */\nwindow.JanusPont = {}`
+const PONT = `/*! janus-pont v4 ${EMPREINTE} */\nwindow.JanusPont = {}`
 
 type Manifeste = {
   version: number
@@ -39,6 +39,7 @@ type Manifeste = {
   sources: { id: string; titre: string }[]
   erreurs_critiques: { id: string; libelle: string; etape: string }[]
   restitution: { id: string; question: string; attendu: string }[]
+  explication?: { id: string; item: string; question: string; attendu: string; erreurs: string[] }[]
   rappel: { id: string; question: string; attendu: string; erreurs: string[] }[]
   differees: { id: string; consigne: string; attendu: string }[]
   etapes: { id: string; titre: string; type: string }[]
@@ -234,18 +235,27 @@ describe('vérification des fiches du dépôt', () => {
   })
 
   describe('les leçons du B01 : explications, erreurs critiques, restitution', () => {
+    /** Les explications déclarées au manifeste, une par clé (l'item, ou l'item suivi de `:variante`). */
+    const declarer = (html: string, cles: string[]) =>
+      avecManifeste(html, (manifeste) => {
+        manifeste.explication = cles.map((cle) => ({
+          id: cle,
+          item: cle.replace(/:variante$/, ''),
+          question: 'Pourquoi le premier bit compte-t-il double ?',
+          attendu: 'Chaque place vers la gauche double.',
+          erreurs: [],
+        }))
+      })
+
     it('refuse plus d’un tiers d’items qui demandent une explication', async () => {
       await poser(
         'X00.html',
-        fiche
-          .replace(
-            '<p data-erreur="E1">',
-            '<p data-erreur="E1" data-justifier="Explique." data-fiche="Parce que.">',
-          )
-          .replace(
-            '<p data-erreur="E2">',
-            '<p data-erreur="E2" data-justifier="Explique." data-fiche="Parce que.">',
-          ),
+        declarer(
+          fiche
+            .replace('<p data-erreur="E1">', '<p data-erreur="E1" data-justifier="Explique.">')
+            .replace('<p data-erreur="E2">', '<p data-erreur="E2" data-justifier="Explique.">'),
+          ['PR1-1', 'PR1-2'],
+        ),
       )
 
       expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
@@ -258,35 +268,51 @@ describe('vérification des fiches du dépôt', () => {
     it('accepte un tiers d’items avec explication, arrondi au-dessus', async () => {
       await poser(
         'X00.html',
-        fiche.replace(
-          '<p data-erreur="E1">',
-          '<p data-erreur="E1" data-justifier="Explique." data-fiche="Parce que.">',
+        declarer(
+          fiche.replace('<p data-erreur="E1">', '<p data-erreur="E1" data-justifier="Explique.">'),
+          ['PR1-1'],
         ),
       )
 
       expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
     })
 
-    it('refuse une explication sans texte à comparer, accepte data-solution', async () => {
-      await poser(
-        'X00.html',
-        fiche.replace('<p data-erreur="E1">', '<p data-erreur="E1" data-justifier="Pourquoi ?">'),
+    it('une explication demandée se déclare au manifeste, où l’IA lit sa question et son attendu', async () => {
+      const demandee = fiche.replace(
+        '<p data-erreur="E1">',
+        '<p data-erreur="E1" data-justifier="Pourquoi ?">',
       )
-
+      await poser('X00.html', demandee)
       expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
         expect.stringContaining(
-          'pratique : l’item PR1-1 demande une explication (data-justifier) sans texte à comparer (data-fiche)',
+          'pratique : l’item PR1-1 demande une explication (data-justifier) que le manifeste ne déclare pas : ajoute à explication la clé « PR1-1 »',
+        ),
+      ])
+
+      await poser('X00.html', declarer(fiche, ['PR1-2']))
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'explication « PR1-2 » : ni l’item PR1-2 ni sa variante ne la demandent (data-justifier)',
         ),
       ])
 
       await poser(
         'X00.html',
-        fiche.replace(
-          '<p data-erreur="E1">',
-          '<p data-erreur="E1" data-justifier="Pourquoi ?" data-solution="Parce que.">',
+        declarer(
+          demandee.replace(
+            'data-justifier="Pourquoi ?"',
+            'data-justifier="Pourquoi ?" data-fiche="Parce que."',
+          ),
+          ['PR1-1'],
         ),
       )
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'pratique : l’item PR1-1 porte data-fiche : l’attendu d’une explication est dans le manifeste',
+        ),
+      ])
 
+      await poser('X00.html', declarer(demandee, ['PR1-1']))
       expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
     })
 
@@ -577,13 +603,13 @@ describe('vérification des fiches du dépôt', () => {
       await poser(
         'X00.html',
         avecManifeste(fiche, (manifeste) => {
-          manifeste.pont = 4
+          manifeste.pont = 5
         }),
       )
 
       expect(await verifierLesFiches({ dossierContenu: contenu, pont: PONT })).toEqual([
         expect.stringContaining(
-          'le manifeste déclare pont 4 mais le pont embarqué est en version 3',
+          'le manifeste déclare pont 5 mais le pont embarqué est en version 4',
         ),
       ])
     })
@@ -803,7 +829,7 @@ describe('vérification des fiches du dépôt', () => {
       // Hier : une autre plomberie, un autre pont, version 1. Aujourd'hui : ceux du dépôt, version 2.
       const hier = fiche
         .replace('<script id="plomberie">', '<script id="plomberie">/* plomberie d’hier */')
-        .replace(PONT, `/*! janus-pont v3 ${'b'.repeat(64)} */\nwindow.JanusPont = { hier: true }`)
+        .replace(PONT, `/*! janus-pont v4 ${'b'.repeat(64)} */\nwindow.JanusPont = { hier: true }`)
       await poser('X00.html', fiche.replace('"version": 1', '"version": 2'))
       expect(
         await verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => hier }),

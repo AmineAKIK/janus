@@ -116,7 +116,7 @@ export const corrections = pgTable(
     jetonsSortie: integer('jetons_sortie').notNull(),
     /** En millionièmes d'euro, jamais en nombre à virgule. */
     coutMillioniemes: integer('cout_millioniemes').notNull(),
-    /** L'empreinte de la consigne (`prompts/correction/v2.md`) qui a corrigé. */
+    /** L'empreinte de la consigne (`prompts/correction/<version>.md`) qui a corrigé. */
     consigneEmpreinte: text('consigne_empreinte').notNull(),
     /** Le texte tel que le correcteur l'a rendu, avant toute validation. */
     brut: text('brut').notNull().default(''),
