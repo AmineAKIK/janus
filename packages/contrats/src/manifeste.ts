@@ -37,6 +37,18 @@ const Question = z.strictObject({
 })
 export type Question = z.infer<typeof Question>
 
+/**
+ * Une explication demandée dans un item de pratique (`data-justifier`), que l'IA juge sur `attendu`.
+ * `id` est la clé de l'explication dans la page : l'item (`PR7-1`), ou l'item suivi de `:variante`
+ * quand la variante a la sienne. L'item ne compte réussi qu'avec une explication jugée Solide.
+ */
+const Explication = z.strictObject({
+  ...Question.shape,
+  /** L'item de pratique que l'explication conclut. */
+  item: Identifiant,
+})
+export type Explication = z.infer<typeof Explication>
+
 /** Une tâche vérifiée par code : le langage et les cas de test que l'exécuteur rejoue. */
 export const VerificationParCode = z.strictObject({
   mode: z.literal('code'),
@@ -98,6 +110,8 @@ export const Manifeste = z.strictObject({
     z.strictObject({ id: Identifiant, libelle: Texte, etape: Identifiant.optional() }),
   ),
   restitution: z.array(Question),
+  /** Les explications des items de pratique, jugées par l'IA. Absent des manifestes d'avant : aucune. */
+  explication: z.array(Explication).default([]),
   rappel: z.array(Question),
   differees: z.array(Differee),
   pratique: z.array(Pratique),

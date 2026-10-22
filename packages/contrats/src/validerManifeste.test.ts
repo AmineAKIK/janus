@@ -352,6 +352,28 @@ describe('validerManifeste, règles du cadrage (une règle, un test)', () => {
     ])
   })
 
+  it('explication : elle conclut un item de pratique, sous une clé unique', () => {
+    const m = copie()
+    const explication = { question: 'Pourquoi ?', attendu: 'Parce que.', erreurs: ['E9'] }
+    Object.assign(m, {
+      explication: [
+        { id: 'PR1-1', item: 'PR1-1', ...explication, erreurs: [] },
+        { id: 'PR1-1', item: 'PR9-9', ...explication },
+      ],
+    })
+    expect(problemesDe(m)).toEqual([
+      {
+        chemin: 'explication[1].erreurs[0]',
+        message: 'L’erreur critique « E9 » n’existe pas dans erreurs_critiques.',
+      },
+      { chemin: 'explication[1].id', message: 'L’explication « PR1-1 » est déjà déclarée.' },
+      {
+        chemin: 'explication[1].item',
+        message: 'L’item « PR9-9 » n’existe dans aucune pratique.',
+      },
+    ])
+  })
+
   it('pratique : la réussite est au moins 1', () => {
     const m = copie()
     Object.assign(premier(m, 'pratique'), { reussite: 0 })

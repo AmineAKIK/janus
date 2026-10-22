@@ -137,6 +137,7 @@ function verifierErreursCitees(manifeste: Manifeste, problemes: Probleme[]): voi
   }
   const questions: readonly (readonly [readonly Question[], string])[] = [
     [manifeste.restitution, 'restitution'],
+    [manifeste.explication, 'explication'],
     [manifeste.rappel, 'rappel'],
   ]
   for (const [liste, nom] of questions) verifier(liste, nom)
@@ -186,6 +187,32 @@ function verifierPratique(manifeste: Manifeste, problemes: Probleme[]): void {
   })
 }
 
+/**
+ * Une explication conclut un item de pratique qui existe, et sa clé n'y sert qu'une fois : la page la
+ * retrouve par cette clé, le statut par l'item.
+ */
+function verifierExplications(manifeste: Manifeste, problemes: Probleme[]): void {
+  const items = new Set(manifeste.pratique.flatMap(({ items: liste }) => liste.map(({ id }) => id)))
+  const vues = new Set<string>()
+  manifeste.explication.forEach((explication, i) => {
+    if (vues.has(explication.id)) {
+      ajouter(
+        problemes,
+        `explication[${String(i)}].id`,
+        `L’explication « ${explication.id} » est déjà déclarée.`,
+      )
+    }
+    vues.add(explication.id)
+    if (!items.has(explication.item)) {
+      ajouter(
+        problemes,
+        `explication[${String(i)}].item`,
+        `L’item « ${explication.item} » n’existe dans aucune pratique.`,
+      )
+    }
+  })
+}
+
 function verifierPrerequis(manifeste: Manifeste, problemes: Probleme[]): void {
   if (manifeste.prerequis.includes(manifeste.bloc)) {
     ajouter(
@@ -222,6 +249,7 @@ export function validerManifeste(donnees: unknown): ResultatManifeste {
   verifierErreursFermables(manifeste, problemes)
   verifierEtapesCitees(manifeste, problemes)
   verifierPratique(manifeste, problemes)
+  verifierExplications(manifeste, problemes)
   verifierPrerequis(manifeste, problemes)
   return problemes.length === 0 ? { ok: true, manifeste } : { ok: false, problemes }
 }

@@ -314,6 +314,79 @@ describe('la pratique et l’atelier', () => {
   })
 })
 
+describe('l’explication d’un item de pratique', () => {
+  const question = { question: 'Pourquoi ?', attendu: 'Parce que chaque bit double.', erreurs: [] }
+  const AVEC_EXPLICATION = {
+    ...MANIFESTE,
+    explication: [
+      { id: 'PR1-1', item: 'PR1-1', ...question },
+      { id: 'PR1-1:variante', item: 'PR1-1', ...question },
+    ],
+  }
+  const calculer = (faits: readonly Fait[]) =>
+    calculerBloc(faits, AVEC_EXPLICATION, REGLAGES, apres(DEBUT, 60))
+  const sansExplication = (f: Fabrique) => [
+    ...f.pratique(DEBUT),
+    f.atelier(DEBUT),
+    ...f.restitution(apres(DEBUT, 0, 30)),
+  ]
+
+  it('l’item ne compte réussi qu’avec une explication jugée Solide', () => {
+    const f = fabrique()
+    const base = sansExplication(f)
+    expect(calculer(base).manque).toContainEqual({ code: 'pratique_aide', exercices: ['PR1'] })
+    const partielle = f.correction(apres(DEBUT, 0, 5), 'explication', 'PR1-1', {
+      niveau: 'partiel',
+    })
+    expect(calculer([...base, partielle]).manque.map(({ code }) => code)).toContain('pratique_aide')
+    const solide = f.correction(apres(DEBUT, 0, 6), 'explication', 'PR1-1')
+    expect(calculer([...base, partielle, solide]).manque.map(({ code }) => code)).not.toContain(
+      'pratique_aide',
+    )
+  })
+
+  it('l’explication de la variante conclut aussi l’item', () => {
+    const f = fabrique()
+    const faits = [...sansExplication(f), f.correction(DEBUT, 'explication', 'PR1-1:variante')]
+    expect(calculer(faits).manque.map(({ code }) => code)).not.toContain('pratique_aide')
+  })
+
+  it('une explication Solide qui ne compte pas ne conclut rien, sauf si Amine la fait compter', () => {
+    const f = fabrique()
+    const collee = f.correction(DEBUT, 'explication', 'PR1-1', {
+      compte: false,
+      raisonNonCompte: 'avec_support',
+    })
+    const faits = [...sansExplication(f), collee]
+    expect(calculer(faits).manque.map(({ code }) => code)).toContain('pratique_aide')
+    const tranchee = f.fait(apres(DEBUT, 0, 40), {
+      type: 'correction_tranchee',
+      correction: collee.id,
+      compte: true,
+    })
+    expect(calculer([...faits, tranchee]).manque.map(({ code }) => code)).not.toContain(
+      'pratique_aide',
+    )
+  })
+
+  it('l’exercice est fini à la plus tardive de la réussite et de l’explication', () => {
+    const f = fabrique()
+    const tard = apres(DEBUT, 0, 300)
+    const faits = [...sansExplication(f), f.correction(tard, 'explication', 'PR1-1')]
+    expect(calculer(faits).dates.acquisProvisoirement).toBe(tard)
+  })
+
+  it('une explication sur une autre clé ou une autre série ne conclut pas l’item', () => {
+    const f = fabrique()
+    const faits = [
+      ...sansExplication(f),
+      f.correction(DEBUT, 'explication', 'PR1-2'),
+      f.correction(DEBUT, 'restitution', 'PR1-1'),
+    ]
+    expect(calculer(faits).manque.map(({ code }) => code)).toContain('pratique_aide')
+  })
+})
+
 describe('les erreurs critiques', () => {
   it('une erreur proposée par l’IA ne s’ouvre qu’après confirmation, pas après rejet', () => {
     const f = fabrique()

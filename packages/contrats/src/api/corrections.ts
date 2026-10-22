@@ -56,13 +56,20 @@ const DemandeCorrection = z
     version: z.number().int().min(1).optional(),
   })
   .superRefine((demande, contexte) => {
-    const connu = demande.serie === 'restitution'
+    const connu = demande.serie === 'restitution' || demande.serie === 'explication'
+    if (demande.libre !== undefined && demande.serie !== 'explication') {
+      contexte.addIssue({
+        code: 'custom',
+        path: ['libre'],
+        message: 'Une explication libre ne se donne que dans la série explication.',
+      })
+    }
     for (const champ of ['bloc', 'version'] as const) {
       if (connu && demande[champ] === undefined) {
         contexte.addIssue({
           code: 'custom',
           path: [champ],
-          message: `Le champ ${champ} est exigé pour la série restitution.`,
+          message: `Le champ ${champ} est exigé pour les séries restitution et explication.`,
         })
       }
       if (!connu && demande[champ] !== undefined) {

@@ -262,7 +262,7 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
         '### PR1-3',
         '',
         '- Réponse attendue : « Une base »',
-        '- Après une bonne réponse, à justifier : Explique ton choix. Puis comparée à la solution.',
+        '- Après une bonne réponse, à justifier : Explique ton choix. Puis jugée par l’IA, sur la question et l’attendu que le manifeste déclare.',
         '- Retour à l’option « Un langage » (E2) : Le binaire écrit des nombres.',
         '- Réponse attendue à « 128 tient-il dans 178 ? » : oui',
         '- Après la réponse : 178 − 128 = 50.',
@@ -311,6 +311,7 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
       '### Ce que fait le gabarit, sur toute fiche',
       '### Ce que les outils de cette fiche font d’eux-mêmes',
       'L’outil convertir repère seul les bits à l’envers.',
+      '### Les explications jugées par l’IA',
       '### Les erreurs critiques',
       '### Le tableau d’alignement',
       'Notions :',
@@ -323,6 +324,28 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
     expect(gardien).toMatch(
       /- E1 : .+ Questions qui la touchent : R\d.*Retour écrit pour elle dans : PR1-2\./,
     )
+  })
+
+  it('pour le gardien, donne la question et l’attendu de chaque explication déclarée', () => {
+    const manifeste = validerManifeste(JSON.parse(extraireManifeste(html) ?? 'null'))
+    if (!manifeste.ok) throw new Error('Le gabarit rempli doit rester valide.')
+    const avec = {
+      ...manifeste.manifeste,
+      explication: [
+        {
+          id: 'PR1-1',
+          item: 'PR1-1',
+          question: 'Pourquoi le premier bit vaut-il 128 ?',
+          attendu: 'Chaque place vers la gauche double.',
+          erreurs: [],
+        },
+      ],
+    }
+    const gardien = texteDeLaFiche(html, avec, { conception: true })
+    expect(gardien).toContain(
+      '- PR1-1 (item PR1-1) : Pourquoi le premier bit vaut-il 128 ? Attendu : Chaque place vers la gauche double.',
+    )
+    expect(texteDeLaFiche(html, avec)).not.toContain('Chaque place vers la gauche double.')
   })
 
   it('ne cite du gabarit que des libellés que la page affiche', async () => {

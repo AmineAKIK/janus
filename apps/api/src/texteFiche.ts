@@ -282,7 +282,7 @@ function cachesDuTemplate(contenu: string): string[] {
     const justifier = lire('data-justifier')
     if (justifier !== undefined)
       lignes.push(
-        `- Après une bonne réponse, à justifier : ${justifier} Puis comparée à la solution.`,
+        `- Après une bonne réponse, à justifier : ${justifier} Puis jugée par l’IA, sur la question et l’attendu que le manifeste déclare.`,
       )
     const explication = lire('data-explication')
     if (explication !== undefined && lire('data-widget') === 'schema-memoire')
@@ -365,6 +365,7 @@ export const CE_QUE_FAIT_LE_GABARIT: readonly string[] = [
   'La correction de l’appli compare la réponse à l’attendu du manifeste, avec le contexte du correcteur (`contexte_ia`) : un niveau (Solide, Partiel, Fragile, Pas encore) et un message qui dit ce que la réponse montre de compris, ce qu’elle mélange et ce qui manque. Une réponse à moitié juste est à moitié juste ; un correcteur qui n’est pas sûr de son jugement le dit, et la réponse ne compte pas (« Ne compte pas · Non vérifiée »). Une erreur critique présente dans la réponse la met au plus à Fragile, à Pas encore si l’apprenant s’était dit sûr.',
   'Chaque correction dit d’où vient ce qu’elle corrige : du support (avec sa référence, une des `sources` du manifeste, qui désignent des étapes de la fiche), déduit du support, ou ajouté par le correcteur. Les questions que pose l’appli (rappel, vérifications) l’affichent sous la correction : « D’après le cours », « Déduit du cours » ou « Ajouté hors du cours », puis « Source · Fiche », le bloc et la référence.',
   'La série finie, une réponse qui n’est pas Solide peut se compléter une fois, après sa correction (« Compléter ma réponse », « Ce complément ne compte pas pour le statut ») ; seule la première réponse compte pour le statut. Une correction tirée au sort demande « D’accord avec ce niveau ? ». Le Suivi de l’appli compare la confiance déclarée aux résultats.',
+  'Une explication demandée (après une réussite, ou après une solution vue) s’écrit avec sa confiance et part à la correction de l’appli, qui la juge comme une réponse de restitution et l’affiche aussitôt : niveau et message. En pratique, l’item demandé par le manifeste (`explication`) n’est réussi qu’avec une explication Solide qui compte (« Explication attendue », « l’item compte quand ton explication est Solide ») ; elle se reprend une fois d’après sa correction (« Reprends ton explication, d’après la correction ») ; la deuxième qui n’est pas Solide montre la solution, et l’item se refait sur un autre cas. Après une solution vue, l’explication se juge sur la solution et ne compte jamais (« Ne compte pas · Avec support »). Sans correction possible, elle attend : « Correction impossible : … Ton explication attend : renvoie-la. »',
   'Le statut du bloc suit les preuves : « En cours » dès la première trace, « Vu » quand chaque question de la restitution a sa première réponse, puis « Acquis provisoirement » (restitution, pratique et atelier faits), « Acquis » (vérifications réussies) et « Maîtrisé » (acquis, retesté avec succès, et la cible d’aisance atteinte). Une erreur critique ouverte le met « À reprendre », quel que soit le reste.',
   'Ce que la fiche note sans le corriger (un pari, la reprise du pari, le schéma refait de mémoire), un outil le confie au gabarit (événement `fiche:trace`) : il part à l’appli dans l’état de la page, que l’appli garde, et revient à l’outil à la visite suivante.',
   'Bilan, une fois la restitution finie : ce qui est fait (restitution, items réussis dont ceux sans aide), puis toutes les erreurs critiques du bloc, à cocher. Une erreur déjà ouverte, ou repérée depuis le dernier bilan (« Repérée dans tes réponses ») par le correcteur dans une réponse ou par un outil de la fiche (événement `fiche:erreur`, par exemple des bits lus à l’envers en pratique ou en aisance), est cochée d’office et ne se décoche pas : « Une erreur cochée, ou repérée dans tes réponses, reste cochée : seule une réponse solide à une question qui la touche la referme. » Une erreur repérée par le correcteur, puis rejetée dans l’appli (« Ce n’en est pas une »), n’est plus cochée d’office, sauf si une autre réponse ou un outil l’a aussi repérée.',
@@ -469,6 +470,15 @@ function conceptionDeLaFiche(html: string, manifeste: Manifeste): string[] {
     conception === undefined
       ? 'La fiche ne le dit pas : pas de `<template data-conception>`.'
       : enTexte(conception),
+    '',
+    '### Les explications jugées par l’IA',
+    '',
+    ...(manifeste.explication.length === 0
+      ? ['Aucune.']
+      : manifeste.explication.map(
+          ({ id, item, question, attendu }) =>
+            `- ${id} (item ${item}) : ${question} Attendu : ${attendu}`,
+        )),
     '',
     '### Les erreurs critiques',
     '',

@@ -43,6 +43,7 @@ export function envoiDeMessage(message: MessagePage, versionEtat: number): Envoi
           confiance: message.confiance,
           relance: message.relance,
           support: message.support,
+          ...(message.libre === undefined ? {} : { libre: message.libre }),
           bloc: message.bloc,
           version: message.version,
         },

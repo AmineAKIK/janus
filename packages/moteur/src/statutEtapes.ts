@@ -148,9 +148,6 @@ interface Exercice {
   readonly id: string
   readonly reussite: number
   readonly items: ReadonlySet<string>
-  /** Les items réussis à l'aide 0. */
-  readonly reussis: Set<string>
-  date: string | undefined
 }
 
 export interface ResultatPratique {
@@ -158,8 +155,21 @@ export interface ResultatPratique {
   readonly date: string | null
 }
 
+/**
+ * Un exercice de pratique est fini quand `reussite` de ses items sont réussis à l'aide 0. Un item qui
+ * demande une explication (`explication` du manifeste) n'est réussi qu'avec, en plus, une explication
+ * jugée Solide qui compte (après le tranchage d'Amine, s'il y en a un) : il l'est à la plus tardive
+ * des deux dates.
+ */
 export class SuiviPratique {
-  readonly #exercices: Exercice[]
+  readonly #exercices: readonly Exercice[]
+  /** L'item de chaque clé d'explication du manifeste. */
+  readonly #itemDeLExplication: ReadonlyMap<string, string>
+  /** La première réussite à l'aide 0 de chaque item, par exercice. */
+  readonly #reussites = new Map<string, Map<string, string>>()
+  /** Les corrections d'explication de chaque item. */
+  readonly #explications = new Map<string, Correction[]>()
+  readonly #tranchages = new Map<string, TranchageCorrection>()
   #connu: ResultatPratique | undefined
 
   constructor(manifeste: Manifeste) {
@@ -167,28 +177,68 @@ export class SuiviPratique {
       id: exercice.id,
       reussite: exercice.reussite,
       items: new Set(exercice.items.map((item) => item.id)),
-      reussis: new Set<string>(),
-      date: undefined,
     }))
+    this.#itemDeLExplication = new Map(manifeste.explication.map(({ id, item }) => [id, item]))
   }
 
   avancer(fait: Fait): void {
-    if (fait.type !== 'pratique_resultat' || !fait.reussi || fait.aide !== 0) return
-    for (const exercice of this.#exercices) {
-      if (exercice.date !== undefined || exercice.id !== fait.exercice) continue
-      if (!exercice.items.has(fait.item)) continue
-      exercice.reussis.add(fait.item)
-      if (exercice.reussis.size >= exercice.reussite) {
-        exercice.date = fait.date
+    if (fait.type === 'pratique_resultat' && fait.reussi && fait.aide === 0) {
+      const reussites = this.#reussites.get(fait.exercice) ?? new Map<string, string>()
+      if (!reussites.has(fait.item)) {
+        reussites.set(fait.item, fait.date)
+        this.#reussites.set(fait.exercice, reussites)
         this.#connu = undefined
       }
+    } else if (fait.type === 'correction' && fait.serie === 'explication') {
+      const item = this.#itemDeLExplication.get(fait.question)
+      if (item === undefined) return
+      this.#explications.set(item, [...(this.#explications.get(item) ?? []), fait])
+      this.#connu = undefined
+    } else if (fait.type === 'correction_tranchee') {
+      this.#tranchages.set(fait.correction, fait)
+      this.#connu = undefined
     }
   }
 
+  /** La date où l'item est expliqué, `undefined` s'il ne l'est pas ; `null` s'il n'a rien à expliquer. */
+  #expliqueLe(item: string): string | null | undefined {
+    if (![...this.#itemDeLExplication.values()].includes(item)) return null
+    return (
+      plusTard(
+        (this.#explications.get(item) ?? [])
+          .filter(
+            (correction) =>
+              compteEffectif(this.#tranchages, correction) &&
+              niveauEffectif(this.#tranchages, correction) === 'solide',
+          )
+          .slice(0, 1)
+          .map(({ date }) => date),
+      ) ?? undefined
+    )
+  }
+
+  #finiLe(exercice: Exercice): string | undefined {
+    const dates = [...(this.#reussites.get(exercice.id) ?? [])]
+      .filter(([item]) => exercice.items.has(item))
+      .flatMap(([item, date]) => {
+        const explique = this.#expliqueLe(item)
+        if (explique === undefined) return []
+        return [explique === null ? date : plusTardQue(date, explique)]
+      })
+      .sort((a, b) => instantEnMs(a) - instantEnMs(b))
+    return dates[exercice.reussite - 1]
+  }
+
   resultat(): ResultatPratique {
-    this.#connu ??= {
-      incompletes: this.#exercices.filter(({ date }) => date === undefined).map(({ id }) => id),
-      date: plusTard(this.#exercices.flatMap(({ date }) => (date === undefined ? [] : [date]))),
+    if (this.#connu === undefined) {
+      const fins = this.#exercices.map((exercice) => ({
+        id: exercice.id,
+        date: this.#finiLe(exercice),
+      }))
+      this.#connu = {
+        incompletes: fins.filter(({ date }) => date === undefined).map(({ id }) => id),
+        date: plusTard(fins.flatMap(({ date }) => (date === undefined ? [] : [date]))),
+      }
     }
     return this.#connu
   }

@@ -847,7 +847,7 @@
           flex: 0 1 auto;
         }
       }
-      /* Expliquer puis comparer avec la fiche (fiche:expliquer). */
+      /* Une explication jugée par l'IA (fiche:expliquer), et ses essais déjà envoyés. */
       .expliquer {
         display: flex;
         flex-direction: column;
@@ -4417,7 +4417,6 @@ if (age &lt; 12) {
         data-verifie
         data-reponse="juste"
         data-justifier="Dis à quoi servent les parenthèses dans la condition que tu as choisie."
-        data-fiche="Les parenthèses font calculer le OU avant le ET : jours ≤ 30 OU défectueux d’abord, puis ET NON personnalisé. Sans elles, ET passerait avant OU, et un article personnalisé rendu sous 30 jours serait remboursé."
       >
         <p class="q">
           « Remboursement sous 30 jours, ou à tout moment pour un article défectueux, sauf pour les
@@ -4453,7 +4452,6 @@ if (age &lt; 12) {
         data-verifie
         data-reponse="juste"
         data-justifier="Dis à quoi servent les parenthèses dans la condition que tu as choisie."
-        data-fiche="Les parenthèses font calculer le OU avant le ET : premium OU durée &gt; 6 d’abord, puis ET NON gratuit. Sans elles, ET passerait avant OU, et un client premium avec un billet gratuit entrerait."
       >
         <p class="q">
           « Accès au salon pour les clients premium ou pour les vols de plus de 6 heures, sauf avec
@@ -4938,7 +4936,6 @@ if (age &lt; 12) {
         data-aide3="La première branche s’écrit if (points &gt;= 1000) { console.log('or') }. Les deux suivantes suivent le même modèle avec else if, et else prend le reste."
         data-solution="if (points &gt;= 1000) { console.log('or') } else if (points &gt;= 500) { console.log('argent') } else if (points &gt;= 100) { console.log('bronze') } else { console.log('aucun') }"
         data-justifier="Explique pourquoi ta deuxième condition n’a pas besoin de dire « et moins de 1000 »."
-        data-fiche="La chaîne s’arrête à la première condition VRAIE : si elle arrive à la deuxième, points ≥ 1000 était FAUX, donc points est déjà sous 1000."
       >
         <p class="cas">
           Un site marchand donne un niveau de fidélité selon les points du client : « or » à partir
@@ -4967,7 +4964,6 @@ if (age &lt; 12) {
         data-aide3="La première branche s’écrit if (score &gt;= 800) { console.log('expert') }. Les deux suivantes suivent le même modèle avec else if, et else prend le reste."
         data-solution="if (score &gt;= 800) { console.log('expert') } else if (score &gt;= 400) { console.log('confirmé') } else if (score &gt;= 50) { console.log('débutant') } else { console.log('nouveau') }"
         data-justifier="Explique pourquoi ta deuxième condition n’a pas besoin de dire « et moins de 800 »."
-        data-fiche="La chaîne s’arrête à la première condition VRAIE : si elle arrive à la deuxième, score ≥ 800 était FAUX, donc score est déjà sous 800."
       >
         <p class="cas">
           Un jeu donne un rang selon le score : « expert » à partir de 800, « confirmé » à partir de
@@ -5239,27 +5235,28 @@ if (age &lt; 12) {
           explique en une ou deux phrases pourquoi c’est juste, puis compare avec la solution de la
           fiche ; la suite de l’écran paraît dès la réussite. Si c’est la solution de l’autre cas
           qui est vue, rien n’a été réussi sans regarder : l’apprenant explique d’abord cette
-          solution avec ses mots, et la suite paraît une fois l’explication comparée avec celle de
-          la fiche. À la visite suivante, une solution vue qui n’a été ni refaite ni expliquée fait
-          encore attendre la suite de l’écran. Un choix a la même échelle (celle du gabarit) :
-          chaque option fausse est retirée, avec son retour, qui oriente ; tant que plusieurs
-          options restent, « Un coup de pouce » donne ensuite l’indice écrit dans la fiche, un par
-          réponse fausse possible avant la dernière option (dans le cours, deux pour les choix à
-          quatre options de l’étape 8, la première ligne VRAIE pour Sarah et pour Jean, et de
-          l’étape 9, ce qu’affiche la console ; en pratique, PR1-4, PR1-5, PR1-7 et PR1-8). Le
-          retour d’une option fausse nomme la règle en cause sans désigner la bonne option : « La
-          ligne 3 n’est testée que si la ligne 2 est FAUSSE. Que vaut la ligne 2 pour Sarah ? ».
-          Quand une seule option reste, même pour un choix VRAI ou FAUX, elle est marquée : c’est
-          une solution vue, et faute d’autre cas l’apprenant explique avec ses mots pourquoi elle
-          est la bonne, puis compare avec la fiche, et la suite paraît ensuite.
+          solution avec ses mots, et la suite paraît une fois l’explication jugée par l’IA. À la
+          visite suivante, une solution vue qui n’a été ni refaite ni expliquée fait encore attendre
+          la suite de l’écran. Un choix a la même échelle (celle du gabarit) : chaque option fausse
+          est retirée, avec son retour, qui oriente ; tant que plusieurs options restent, « Un coup
+          de pouce » donne ensuite l’indice écrit dans la fiche, un par réponse fausse possible
+          avant la dernière option (dans le cours, deux pour les choix à quatre options de l’étape
+          8, la première ligne VRAIE pour Sarah et pour Jean, et de l’étape 9, ce qu’affiche la
+          console ; en pratique, PR1-4, PR1-5, PR1-7 et PR1-8). Le retour d’une option fausse nomme
+          la règle en cause sans désigner la bonne option : « La ligne 3 n’est testée que si la
+          ligne 2 est FAUSSE. Que vaut la ligne 2 pour Sarah ? ». Quand une seule option reste, même
+          pour un choix VRAI ou FAUX, elle est marquée : c’est une solution vue, et faute d’autre
+          cas l’apprenant explique avec ses mots pourquoi elle est la bonne ; l’IA juge son
+          explication, et la suite paraît ensuite.
         </li>
         <li>
           Dans la pratique, après une solution vue, l’item se refait sur sa variante, puis
           l’apprenant explique. Quatre items sur treize portent une demande d’explication
           (data-justifier : PR1-4, PR1-5, PR1-7, PR2-4), sur ce que l’écran ne montre pas ; elle
-          paraît après une réussite, et la réponse de la fiche (data-fiche) se compare sans verdict,
-          par le gabarit (fiche:expliquer) : « Même idée » ou « Il me manque quelque chose », c’est
-          l’apprenant qui le dit.
+          paraît après une réussite. Le manifeste la déclare (explication : une question qui se
+          comprend sans l’écran, et l’attendu) ; l’IA la juge, et l’item n’est réussi qu’avec une
+          explication Solide. Après deux explications qui ne le sont pas, la solution s’affiche et
+          l’item revient sur sa variante. Sans correcteur, l’explication attend d’être renvoyée.
         </li>
         <li>
           Chaque réponse vérifiée d’un item part au gabarit avec l’aide reçue : 0 du premier coup, 1
@@ -5287,12 +5284,12 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 23,
+        "version": 24,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 expressions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
         "prerequis": ["B01"],
-        "pont": 3,
+        "pont": 4,
         "contexte_ia": "Bloc B02 du module « Écosystème et outils du développeur » (DWWM), deuxième bloc de la partie La machine. Le modèle du bloc : des données, comparées, donnent des faits qui valent VRAI ou FAUX ; combinés par NON, ET et OU, dans l’ordre de calcul fixé (parenthèses, comparaisons, NON, ET, OU), ils donnent une condition, une seule valeur ; dans une chaîne SI / SINON SI / SINON, la première condition VRAIE, de haut en bas, choisit la seule branche exécutée, et SINON prend les cas où aucune ne l’est. Notations à accepter comme équivalentes : VRAI et FAUX, 1 et 0, true et false ; ET et &&, OU et ||, NON et ! ; en pseudo-code, = compare et ≥, ≤, ≠ s’écrivent ainsi ; en JavaScript, = range une valeur dans une variable (affectation), === compare (égalité stricte), et >=, <=, !== remplacent ≥, ≤, ≠. Le OU logique est inclusif (VRAI OU VRAI = VRAI) ; le ou exclusif s’écrit (A OU B) ET NON (A ET B). Les valeurs limites d’une comparaison sur des entiers : la dernière valeur qui la rend FAUSSE et la première qui la rend VRAIE (17 et 18 pour âge ≥ 18, 18 et 19 pour âge > 18). Quand le « ou » d’une phrase ne permet pas de trancher, la bonne réponse est de demander à l’auteur de la règle. La fiche n’enseigne ni l’opérateur XOR, ni les lois de De Morgan, ni le SI imbriqué, ni ==, ni switch : ne pénalise pas leur absence, et accepte une réponse juste qui les emploie. Pièges à repérer : E1, traiter OU comme exclusif (VRAI OU VRAI jugé FAUX) ; E2, calculer le OU avant le ET (A ET B OU C lu A ET (B OU C)) ; E3, croire que plusieurs branches d’une chaîne s’exécutent, ou que les lignes qui suivent la première VRAIE sont encore testées ; E4, confondre = (affectation), === (égalité stricte) et && (le ET). Une erreur de calcul isolée sur une comparaison n’est pas E2. Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Pour examiner une explication, la grille de compréhension : l’idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d’application, le terme exact, la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Chaque attendu vient de la fiche : les étapes 3 à 9 et 12 (sources S1 à S8) ; ce qui est marqué « D’après » y est écrit ; ce qui est marqué « Déduit » s’obtient en appliquant une règle de la fiche à un autre cas. L’ordre de calcul et les signes de JavaScript sont redonnés avec chaque question qui s’en sert, comme la table hexadécimale en B01 : ce qui est à retenir, c’est le geste (repérer l’opération qui passe en premier, transcrire une condition), pas la liste.",
         "sources": [
           {
@@ -5458,6 +5455,64 @@ if (age &lt; 12) {
             "question": "En JavaScript : SI s’écrit if, afficher s’écrit console.log, ET s’écrit &&, NON s’écrit !, et = pour comparer s’écrit ===. Transcris en JavaScript cette ligne de pseudo-code : SI batterie = 100 ET NON enCharge : afficher « débranche ».",
             "attendu": "if (batterie === 100 && !enCharge) { console.log('débranche') }. Le = du pseudo-code compare : il devient ===, car un = seul rangerait 100 dans batterie au lieu de comparer. Les parenthèses en plus, comme !(enCharge), sont acceptées. Écrire = ou && à la place de ===, c’est l’erreur E4. Déduit de l’étape 9.",
             "erreurs": ["E4"]
+          }
+        ],
+        "explication": [
+          {
+            "id": "PR1-4",
+            "item": "PR1-4",
+            "question": "Un article est remboursé si (jours ≤ 30 OU défectueux) ET NON personnalisé. Dis à quoi servent les parenthèses dans cette condition.",
+            "attendu": "Les parenthèses font calculer le OU avant le ET : jours ≤ 30 OU défectueux d’abord, puis ET NON personnalisé. Sans elles, ET passerait avant OU, et un article personnalisé rendu sous 30 jours serait remboursé.",
+            "erreurs": []
+          },
+          {
+            "id": "PR1-4:variante",
+            "item": "PR1-4",
+            "question": "Un client entre au salon si (premium OU durée > 6) ET NON gratuit. Dis à quoi servent les parenthèses dans cette condition.",
+            "attendu": "Les parenthèses font calculer le OU avant le ET : premium OU durée > 6 d’abord, puis ET NON gratuit. Sans elles, ET passerait avant OU, et un client premium avec un billet gratuit entrerait.",
+            "erreurs": []
+          },
+          {
+            "id": "PR1-5",
+            "item": "PR1-5",
+            "question": "« Pour valider ton compte, clique sur le lien reçu par e-mail ou par SMS. » Une cliente clique sur les deux liens : son compte est-il validé ? Dis pourquoi, et écris la condition.",
+            "attendu": "Oui : ce « ou » est inclusif, il accepte les deux, et cliquer sur les deux liens ne gêne personne. La condition : email OU sms.",
+            "erreurs": []
+          },
+          {
+            "id": "PR1-5:variante",
+            "item": "PR1-5",
+            "question": "« Choisis ta livraison : à domicile ou en point relais. » Une commande peut-elle être livrée aux deux ? Dis pourquoi, et écris la condition.",
+            "attendu": "Non : « choisis » fait choisir, et un colis ne part qu’à une adresse ; ce « ou » est exclusif. La condition : (domicile OU relais) ET NON (domicile ET relais).",
+            "erreurs": []
+          },
+          {
+            "id": "PR1-7",
+            "item": "PR1-7",
+            "question": "Une chaîne teste dans l’ordre : SI niveau ≥ 10, afficher « bas » ; SINON SI niveau ≥ 50, « moyen » ; SINON SI niveau ≥ 90, « plein » ; SINON, « vide ». Le réservoir est à 95 % : dis pourquoi elle n’affiche pas « plein », et comment corriger la chaîne.",
+            "attendu": "La chaîne s’arrête à la première condition VRAIE : 95 ≥ 10 est déjà VRAI à la première ligne, elle affiche « bas ». Il faut tester d’abord la condition la plus exigeante : niveau ≥ 90, puis ≥ 50, puis ≥ 10.",
+            "erreurs": []
+          },
+          {
+            "id": "PR1-7:variante",
+            "item": "PR1-7",
+            "question": "Une chaîne teste dans l’ordre : SI temps < 60, afficher « rapide » ; SINON SI temps < 30, « très rapide » ; SINON, « lent ». La coureuse fait 20 secondes : dis pourquoi elle n’affiche pas « très rapide », et comment corriger la chaîne.",
+            "attendu": "La chaîne s’arrête à la première condition VRAIE : 20 < 60 est déjà VRAI à la première ligne, elle affiche « rapide ». Il faut tester d’abord la condition la plus exigeante : temps < 30, puis temps < 60.",
+            "erreurs": []
+          },
+          {
+            "id": "PR2-4",
+            "item": "PR2-4",
+            "question": "Un niveau de fidélité vaut « or » à partir de 1000 points, « argent » à partir de 500, « bronze » à partir de 100, « aucun » en dessous. Dans la chaîne SI / SINON SI, explique pourquoi la deuxième condition, points ≥ 500, n’a pas besoin de dire « et moins de 1000 ».",
+            "attendu": "La chaîne s’arrête à la première condition VRAIE : si elle arrive à la deuxième, points ≥ 1000 était FAUX, donc points est déjà sous 1000.",
+            "erreurs": []
+          },
+          {
+            "id": "PR2-4:variante",
+            "item": "PR2-4",
+            "question": "Un rang vaut « expert » à partir de 800, « confirmé » à partir de 400, « débutant » à partir de 50, « nouveau » en dessous. Dans la chaîne SI / SINON SI, explique pourquoi la deuxième condition, score ≥ 400, n’a pas besoin de dire « et moins de 800 ».",
+            "attendu": "La chaîne s’arrête à la première condition VRAIE : si elle arrive à la deuxième, score ≥ 800 était FAUX, donc score est déjà sous 800.",
+            "erreurs": []
           }
         ],
         "rappel": [
@@ -5898,7 +5953,7 @@ if (age &lt; 12) {
 
     <!-- La bibliothèque du pont est insérée ici au build (packages/pont/scripts/injecter.ts). -->
     <script id="pont">
-      /*! janus-pont v3 495bff639d949669088ce6365a10842867904f751c29b2701c2fc4e750b80d89 */
+      /*! janus-pont v4 e51d3cd5cebf0b5c4a9aed69f9910205e930abdcd8f7565176cac862f8291a61 */
       ;(function () {
         function e() {
           return Date.now()
@@ -6114,42 +6169,42 @@ if (age &lt; 12) {
           let n = Object.getPrototypeOf(e)
           return t in n ? void 0 : n
         }
-        var D,
-          O = !1,
-          he = {
+        var he,
+          D = !1,
+          ge = {
             configurable: !0,
             get() {
-              O = !0
+              D = !0
             },
           }
-        function k(e, t, n) {
+        function O(e, t, n) {
           let r = Object.getPrototypeOf(e._zod)
-          if (t in r && D !== e._zod) {
-            D = void 0
+          if (t in r && he !== e._zod) {
+            he = void 0
             return
           }
-          ;((D = e._zod),
+          ;((he = e._zod),
             Object.defineProperty(r, t, {
               configurable: !0,
               get() {
-                Object.defineProperty(this, t, he)
-                let e = O
-                O = !1
+                Object.defineProperty(this, t, ge)
+                let e = D
+                D = !1
                 try {
                   let r = n(this)
                   return (
-                    O
+                    D
                       ? delete this[t]
                       : Object.defineProperty(this, t, {
                           configurable: !0,
                           writable: !0,
                           value: r,
                         }),
-                    (O ||= e),
+                    (D ||= e),
                     r
                   )
                 } catch (n) {
-                  throw (delete this[t], (O ||= e), n)
+                  throw (delete this[t], (D ||= e), n)
                 }
               },
               set(e) {
@@ -6157,7 +6212,7 @@ if (age &lt; 12) {
               },
             }))
         }
-        function ge(e, t, n, r) {
+        function _e(e, t, n, r) {
           let i = me(e, t)
           i &&
             Object.defineProperty(i, t, {
@@ -6181,18 +6236,18 @@ if (age &lt; 12) {
               },
             })
         }
-        var _e,
-          ve = { value: void 0, enumerable: !1 },
-          ye = `captureStackTrace` in Error ? Error : null
-        function be(e) {
-          let t = ye
+        var ve,
+          ye = { value: void 0, enumerable: !1 },
+          be = `captureStackTrace` in Error ? Error : null
+        function xe(e) {
+          let t = be
           if (t) {
             let n = t.stackTraceLimit
             if (typeof n == `number`) {
               try {
                 t.stackTraceLimit = 0
               } catch {
-                return ((ye = null), new e())
+                return ((be = null), new e())
               }
               try {
                 return new e()
@@ -6203,7 +6258,7 @@ if (age &lt; 12) {
           }
           return new e()
         }
-        function A(e, t, n, r) {
+        function k(e, t, n, r) {
           let i = {}
           function a(e) {
             ;((this.def = e), (this.constr = d), (this.traits = new Set()))
@@ -6213,11 +6268,11 @@ if (age &lt; 12) {
             s = o && new WeakSet()
           function c(n, r) {
             if (!n._zod) {
-              ve.value = new a(r)
+              ye.value = new a(r)
               try {
-                Object.defineProperty(n, '_zod', ve)
+                Object.defineProperty(n, '_zod', ye)
               } finally {
-                ve.value = void 0
+                ye.value = void 0
               }
             } else if (n._zod.traits.has(e)) return
             if ((n._zod.traits.add(e), t(n, r), s)) {
@@ -6236,7 +6291,7 @@ if (age &lt; 12) {
           class u extends l {}
           Object.defineProperty(u, 'name', { value: e })
           function d(e) {
-            let t = r?.Parent ? be(u) : this
+            let t = r?.Parent ? xe(u) : this
             c(t, e)
             let n = t._zod.deferred
             if (n) {
@@ -6255,35 +6310,35 @@ if (age &lt; 12) {
             d
           )
         }
-        var j = class extends Error {
+        var A = class extends Error {
           constructor() {
             super(`Encountered Promise during synchronous parse. Use .parseAsync() instead.`)
           }
         }
-        ;(_e = globalThis).__zod_globalConfig ?? (_e.__zod_globalConfig = {})
-        var M = globalThis.__zod_globalConfig
-        function N(e) {
-          return (e && Object.assign(M, e), M)
+        ;(ve = globalThis).__zod_globalConfig ?? (ve.__zod_globalConfig = {})
+        var j = globalThis.__zod_globalConfig
+        function M(e) {
+          return (e && Object.assign(j, e), j)
         }
-        function xe() {
+        function Se() {
           let e = this._zod
           return ((e.message ??= JSON.stringify(e.def, l, 2)), e.message)
         }
-        function Se(e) {
+        function Ce(e) {
           this._zod.message = e
         }
-        var Ce = { get: xe, set: Se, enumerable: !0, configurable: !0 },
-          we = { value: void 0, enumerable: !1 },
-          Te = new WeakSet([Object.prototype, Error.prototype]),
-          Ee = (e, t) => {
+        var we = { get: Se, set: Ce, enumerable: !0, configurable: !0 },
+          Te = { value: void 0, enumerable: !1 },
+          Ee = new WeakSet([Object.prototype, Error.prototype]),
+          De = (e, t) => {
             ;((e.name = `$ZodError`),
-              (we.value = t),
-              Object.defineProperty(e, 'issues', we),
-              (we.value = void 0),
-              Object.defineProperty(e, 'message', Ce))
+              (Te.value = t),
+              Object.defineProperty(e, 'issues', Te),
+              (Te.value = void 0),
+              Object.defineProperty(e, 'message', we))
             let n = Object.getPrototypeOf(e)
-            Te.has(n) ||
-              (Te.add(n),
+            Ee.has(n) ||
+              (Ee.add(n),
               Object.defineProperty(n, 'toString', {
                 configurable: !0,
                 enumerable: !1,
@@ -6307,68 +6362,68 @@ if (age &lt; 12) {
                 },
               }))
           }
-        A(`$ZodError`, Ee)
-        var P = A(`$ZodError`, Ee, void 0, { Parent: Error }),
-          De = ((e) => {
+        k(`$ZodError`, De)
+        var N = k(`$ZodError`, De, void 0, { Parent: Error }),
+          Oe = ((e) => {
             let t = (n, r, i, a) => {
               let o = i ? { ...i, async: !1 } : { async: !1 },
                 s = n._zod.run({ value: r, issues: [] }, o)
-              if (s instanceof Promise) throw new j()
+              if (s instanceof Promise) throw new A()
               if (s.issues.length) {
-                let n = new (a?.Err ?? e)(s.issues.map((e) => T(e, o, N())))
+                let n = new (a?.Err ?? e)(s.issues.map((e) => T(e, o, M())))
                 throw (g(n, a?.callee ?? t), n)
               }
               return s.value
             }
             return t
-          })(P),
-          Oe = ((e) => {
+          })(N),
+          ke = ((e) => {
             let t = async (n, r, i, a) => {
               let o = i ? { ...i, async: !0 } : { async: !0 },
                 s = n._zod.run({ value: r, issues: [] }, o)
               if ((s instanceof Promise && (s = await s), s.issues.length)) {
-                let n = new (a?.Err ?? e)(s.issues.map((e) => T(e, o, N())))
+                let n = new (a?.Err ?? e)(s.issues.map((e) => T(e, o, M())))
                 throw (g(n, a?.callee ?? t), n)
               }
               return s.value
             }
             return t
-          })(P),
-          ke = ((e) => (t, n, r) => {
+          })(N),
+          Ae = ((e) => (t, n, r) => {
             let i = r ? { ...r, async: !1 } : { async: !1 },
               a = t._zod.run({ value: n, issues: [] }, i)
-            if (a instanceof Promise) throw new j()
-            return a.issues.length ? Ae(e, a.issues, i) : { success: !0, data: a.value }
-          })(P)
-        function Ae(e, t, n) {
+            if (a instanceof Promise) throw new A()
+            return a.issues.length ? je(e, a.issues, i) : { success: !0, data: a.value }
+          })(N)
+        function je(e, t, n) {
           let r
           return {
             success: !1,
             get error() {
-              return (r || ((r = new e(t.map((e) => T(e, n, N())))), (t = void 0), (n = void 0)), r)
+              return (r || ((r = new e(t.map((e) => T(e, n, M())))), (t = void 0), (n = void 0)), r)
             },
             set error(e) {
               ;((r = e), (t = void 0), (n = void 0))
             },
           }
         }
-        var je = ((e) => async (t, n, r) => {
+        var Me = ((e) => async (t, n, r) => {
             let i = r ? { ...r, async: !0 } : { async: !0 },
               a = t._zod.run({ value: n, issues: [] }, i)
             return (
               a instanceof Promise && (a = await a),
-              a.issues.length ? Ae(e, a.issues, i) : { success: !0, data: a.value }
+              a.issues.length ? je(e, a.issues, i) : { success: !0, data: a.value }
             )
-          })(P),
-          Me = (e) =>
+          })(N),
+          Ne = (e) =>
             e
               ? RegExp(
                   `^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-${e}[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$`,
                 )
               : /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
-          Ne = /^https?$/,
-          Pe = `(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))`
-        function Fe(e) {
+          Pe = /^https?$/,
+          Fe = `(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))`
+        function Ie(e) {
           let t = `(?:[01]\\d|2[0-3]):[0-5]\\d`
           return typeof e.precision == `number`
             ? e.precision === -1
@@ -6380,33 +6435,33 @@ if (age &lt; 12) {
               ? `${t}:[0-5]\\d(?:\\.\\d+)?`
               : `${t}(?::[0-5]\\d(?:\\.\\d+)?)?`
         }
-        function Ie(e) {
+        function Le(e) {
           let t = [`Z`]
           e.offset && t.push(`([+-](?:[01]\\d|2[0-3]):[0-5]\\d)`)
-          let n = `${Fe({ precision: e.precision, seconds: !0 })}(?:${t.join(`|`)})`,
-            r = e.local ? `${n}|${Fe({ precision: e.precision })}` : n
-          return RegExp(`^${Pe}T(?:${r})$`)
+          let n = `${Ie({ precision: e.precision, seconds: !0 })}(?:${t.join(`|`)})`,
+            r = e.local ? `${n}|${Ie({ precision: e.precision })}` : n
+          return RegExp(`^${Fe}T(?:${r})$`)
         }
-        var Le = /^[\s\S]{0,}$/,
-          Re = /^-?\d+(?:\.\d+)?$/,
-          ze = /^(?:true|false)$/i,
-          Be = /^null$/i,
-          F = A(`$ZodCheck`, (e, t) => {
+        var Re = /^[\s\S]{0,}$/,
+          ze = /^-?\d+(?:\.\d+)?$/,
+          Be = /^(?:true|false)$/i,
+          Ve = /^null$/i,
+          P = k(`$ZodCheck`, (e, t) => {
             var n
             ;((e._zod ??= {}), (e._zod.def = t), (n = e._zod).onattach ?? (n.onattach = []))
           }),
-          Ve = (e) => {
+          He = (e) => {
             let t = e.value
             return !f(t) && t.length !== void 0
           },
-          I = { number: `number`, bigint: `bigint`, object: `date` },
-          He = A(`$ZodCheckLessThan`, (e, t) => {
-            F.init(e, t)
-            let n = I[typeof t.value]
+          F = { number: `number`, bigint: `bigint`, object: `date` },
+          Ue = k(`$ZodCheckLessThan`, (e, t) => {
+            P.init(e, t)
+            let n = F[typeof t.value]
             e._zod.check = (r) => {
               ;(t.inclusive ? r.value <= t.value : r.value < t.value) ||
                 r.issues.push({
-                  origin: I[typeof r.value] ?? n,
+                  origin: F[typeof r.value] ?? n,
                   code: `too_big`,
                   maximum: typeof t.value == `object` ? t.value.getTime() : t.value,
                   input: r.value,
@@ -6416,13 +6471,13 @@ if (age &lt; 12) {
                 })
             }
           }),
-          Ue = A(`$ZodCheckGreaterThan`, (e, t) => {
-            F.init(e, t)
-            let n = I[typeof t.value]
+          We = k(`$ZodCheckGreaterThan`, (e, t) => {
+            P.init(e, t)
+            let n = F[typeof t.value]
             e._zod.check = (r) => {
               ;(t.inclusive ? r.value >= t.value : r.value > t.value) ||
                 r.issues.push({
-                  origin: I[typeof r.value] ?? n,
+                  origin: F[typeof r.value] ?? n,
                   code: `too_small`,
                   minimum: typeof t.value == `object` ? t.value.getTime() : t.value,
                   input: r.value,
@@ -6432,8 +6487,8 @@ if (age &lt; 12) {
                 })
             }
           }),
-          We = A(`$ZodCheckNumberFormat`, (e, t) => {
-            ;(F.init(e, t), (t.format = t.format || `float64`))
+          Ge = k(`$ZodCheckNumberFormat`, (e, t) => {
+            ;(P.init(e, t), (t.format = t.format || `float64`))
             let n = t.format?.includes(`int`),
               r = n ? `int` : `number`,
               [i, a] = ie[t.format]
@@ -6498,10 +6553,10 @@ if (age &lt; 12) {
                   }))
             }
           }),
-          Ge = A(`$ZodCheckMaxLength`, (e, t) => {
+          Ke = k(`$ZodCheckMaxLength`, (e, t) => {
             var n
-            ;(F.init(e, t),
-              (n = e._zod.def).when ?? (n.when = Ve),
+            ;(P.init(e, t),
+              (n = e._zod.def).when ?? (n.when = He),
               (e._zod.check = (n) => {
                 let r = n.value,
                   i = r.length
@@ -6518,10 +6573,10 @@ if (age &lt; 12) {
                 })
               }))
           }),
-          Ke = A(`$ZodCheckMinLength`, (e, t) => {
+          qe = k(`$ZodCheckMinLength`, (e, t) => {
             var n
-            ;(F.init(e, t),
-              (n = e._zod.def).when ?? (n.when = Ve),
+            ;(P.init(e, t),
+              (n = e._zod.def).when ?? (n.when = He),
               (e._zod.check = (n) => {
                 let r = n.value,
                   i = r.length
@@ -6542,9 +6597,9 @@ if (age &lt; 12) {
                 })
               }))
           }),
-          qe = A(`$ZodCheckStringFormat`, (e, t) => {
+          Je = k(`$ZodCheckStringFormat`, (e, t) => {
             var n, r
-            ;(F.init(e, t),
+            ;(P.init(e, t),
               t.pattern
                 ? ((n = e._zod).check ??
                   (n.check = (n) => {
@@ -6562,8 +6617,8 @@ if (age &lt; 12) {
                   }))
                 : ((r = e._zod).check ?? (r.check = () => {})))
           }),
-          Je = A(`$ZodCheckRegex`, (e, t) => {
-            ;(qe.init(e, t),
+          Ye = k(`$ZodCheckRegex`, (e, t) => {
+            ;(Je.init(e, t),
               (e._zod.check = (n) => {
                 ;((t.pattern.lastIndex = 0),
                   !t.pattern.test(n.value) &&
@@ -6578,21 +6633,21 @@ if (age &lt; 12) {
                     }))
               }))
           }),
-          Ye = A(`$ZodCheckOverwrite`, (e, t) => {
-            ;(F.init(e, t),
+          Xe = k(`$ZodCheckOverwrite`, (e, t) => {
+            ;(P.init(e, t),
               (e._zod.check = (e) => {
                 e.value = t.tx(e.value)
               }))
           }),
-          Xe = { major: 4, minor: 6, patch: 5 },
-          L = A(
+          Ze = { major: 4, minor: 6, patch: 5 },
+          I = k(
             `$ZodType`,
             (e, t) => {
               var n
               ;((e ??= {}),
                 (e._zod.def = t),
                 (e._zod.bag = e._zod.bag || {}),
-                (e._zod.version = Xe))
+                (e._zod.version = Ze))
               let r = e._zod.def.checks,
                 i = e._zod.traits.has(`$ZodCheck`) ? [e, ...(r ?? [])] : r?.length ? [...r] : []
               for (let t of i) for (let n of t._zod.onattach) n(e)
@@ -6612,7 +6667,7 @@ if (age &lt; 12) {
                       } else if (i) continue
                       let n = t.issues.length,
                         s = o._zod.check(t)
-                      if (s instanceof Promise && r?.async === !1) throw new j()
+                      if (s instanceof Promise && r?.async === !1) throw new A()
                       if (a || s instanceof Promise)
                         a = (a ?? Promise.resolve()).then(async () => {
                           ;(await s, t.issues.length !== n && (oe(t.issues, n, e), (i ||= S(t, n))))
@@ -6628,7 +6683,7 @@ if (age &lt; 12) {
                     if (S(n)) return ((n.aborted = !0), n)
                     let o = t(r, i, a)
                     if (o instanceof Promise) {
-                      if (a.async === !1) throw new j()
+                      if (a.async === !1) throw new A()
                       return o.then((t) => e._zod.parse(t, a))
                     }
                     return e._zod.parse(o, a)
@@ -6641,7 +6696,7 @@ if (age &lt; 12) {
                   }
                   let o = e._zod.parse(r, a)
                   if (o instanceof Promise) {
-                    if (a.async === !1) throw new j()
+                    if (a.async === !1) throw new A()
                     return o.then((e) => t(e, i, a))
                   }
                   return t(o, i, a)
@@ -6650,36 +6705,36 @@ if (age &lt; 12) {
             },
             {
               get '~standard'() {
-                return fe(this, `~standard`, $e(this))
+                return fe(this, `~standard`, et(this))
               },
               set '~standard'(e) {
                 E(this, `~standard`, e)
               },
             },
           ),
-          Ze = (e, t) =>
-            e.issues.length ? { issues: e.issues.map((e) => T(e, t, N())) } : { value: e.value }
-        async function Qe(e, t) {
+          Qe = (e, t) =>
+            e.issues.length ? { issues: e.issues.map((e) => T(e, t, M())) } : { value: e.value }
+        async function $e(e, t) {
           let n = { async: !0 }
-          return Ze(await e._zod.run({ value: t, issues: [] }, n), n)
+          return Qe(await e._zod.run({ value: t, issues: [] }, n), n)
         }
-        function $e(e) {
+        function et(e) {
           return {
             validate: (t) => {
               let n = { async: !1 }
               try {
                 let r = e._zod.run({ value: t, issues: [] }, n)
-                if (!(r instanceof Promise)) return Ze(r, n)
+                if (!(r instanceof Promise)) return Qe(r, n)
               } catch {}
-              return Qe(e, t)
+              return $e(e, t)
             },
             vendor: `zod`,
             version: 1,
           }
         }
-        var et = A(`$ZodString`, (e, t) => {
-            ;(L.init(e, t),
-              (e._zod.pattern = t.pattern ?? Le),
+        var tt = k(`$ZodString`, (e, t) => {
+            ;(I.init(e, t),
+              (e._zod.pattern = t.pattern ?? Re),
               (e._zod.parse = (n, r) => {
                 if (t.coerce)
                   try {
@@ -6697,18 +6752,18 @@ if (age &lt; 12) {
                 )
               }))
           }),
-          R = A(`$ZodStringFormat`, (e, t) => {
-            ;(qe.init(e, t), et.init(e, t))
+          L = k(`$ZodStringFormat`, (e, t) => {
+            ;(Je.init(e, t), tt.init(e, t))
           }),
-          tt = A(`$ZodUUID`, (e, t) => {
+          nt = k(`$ZodUUID`, (e, t) => {
             if (t.version) {
               let e = { v1: 1, v2: 2, v3: 3, v4: 4, v5: 5, v6: 6, v7: 7, v8: 8 }[t.version]
               if (e === void 0) throw Error(`Invalid UUID version: "${t.version}"`)
-              t.pattern ??= Me(e)
-            } else t.pattern ??= Me()
-            R.init(e, t)
+              t.pattern ??= Ne(e)
+            } else t.pattern ??= Ne()
+            L.init(e, t)
           })
-        function nt(e) {
+        function rt(e) {
           try {
             return typeof URL < `u` && typeof URL.canParse == `function`
               ? URL.canParse(e)
@@ -6717,13 +6772,13 @@ if (age &lt; 12) {
             return !1
           }
         }
-        function rt(e, t) {
-          return !(`normalize` in t) && !(`hostname` in t) && !(`protocol` in t)
-            ? nt(e) || 2
-            : it(e, t)
-        }
         function it(e, t) {
-          if (!t.normalize && t.protocol?.source === Ne.source && !/^https?:\/\//i.test(e)) return 1
+          return !(`normalize` in t) && !(`hostname` in t) && !(`protocol` in t)
+            ? rt(e) || 2
+            : at(e, t)
+        }
+        function at(e, t) {
+          if (!t.normalize && t.protocol?.source === Pe.source && !/^https?:\/\//i.test(e)) return 1
           try {
             if (typeof URL < `u`) {
               let t = URL
@@ -6734,25 +6789,25 @@ if (age &lt; 12) {
             return 2
           }
         }
-        var at = /[\t\n\r]/g
-        function ot(e) {
-          return e.replace(at, ``)
-        }
-        function st(e, t) {
-          return ((t.lastIndex = 0), t.test(e.hostname))
+        var ot = /[\t\n\r]/g
+        function st(e) {
+          return e.replace(ot, ``)
         }
         function ct(e, t) {
+          return ((t.lastIndex = 0), t.test(e.hostname))
+        }
+        function lt(e, t) {
           return (
             (t.lastIndex = 0),
             t.test(e.protocol.endsWith(`:`) ? e.protocol.slice(0, -1) : e.protocol)
           )
         }
-        var lt = A(`$ZodURL`, (e, t) => {
-            ;(R.init(e, t),
+        var ut = k(`$ZodURL`, (e, t) => {
+            ;(L.init(e, t),
               (e._zod.check = (n) => {
                 try {
                   let r = n.value.trim(),
-                    i = rt(r, t)
+                    i = it(r, t)
                   if (i === 1) {
                     n.issues.push({
                       code: `invalid_format`,
@@ -6775,11 +6830,11 @@ if (age &lt; 12) {
                     return
                   }
                   if (i === !0) {
-                    n.value = ot(r)
+                    n.value = st(r)
                     return
                   }
                   ;(t.hostname &&
-                    !st(i, t.hostname) &&
+                    !ct(i, t.hostname) &&
                     n.issues.push({
                       code: `invalid_format`,
                       format: `url`,
@@ -6790,7 +6845,7 @@ if (age &lt; 12) {
                       continue: !t.abort,
                     }),
                     t.protocol &&
-                      !ct(i, t.protocol) &&
+                      !lt(i, t.protocol) &&
                       n.issues.push({
                         code: `invalid_format`,
                         format: `url`,
@@ -6800,7 +6855,7 @@ if (age &lt; 12) {
                         inst: e,
                         continue: !t.abort,
                       }),
-                    (n.value = t.normalize ? i.href : ot(r)))
+                    (n.value = t.normalize ? i.href : st(r)))
                   return
                 } catch {
                   n.issues.push({
@@ -6813,12 +6868,12 @@ if (age &lt; 12) {
                 }
               }))
           }),
-          ut = A(`$ZodISODateTime`, (e, t) => {
-            ;((t.pattern ??= Ie(t)), R.init(e, t))
+          dt = k(`$ZodISODateTime`, (e, t) => {
+            ;((t.pattern ??= Le(t)), L.init(e, t))
           }),
-          dt = A(`$ZodNumber`, (e, t) => {
-            ;(L.init(e, t),
-              (e._zod.pattern = Re),
+          ft = k(`$ZodNumber`, (e, t) => {
+            ;(I.init(e, t),
+              (e._zod.pattern = ze),
               (e._zod.parse = (n, r) => {
                 if (t.coerce)
                   try {
@@ -6846,12 +6901,12 @@ if (age &lt; 12) {
                 )
               }))
           }),
-          ft = A(`$ZodNumberFormat`, (e, t) => {
-            ;(We.init(e, t), dt.init(e, t))
+          pt = k(`$ZodNumberFormat`, (e, t) => {
+            ;(Ge.init(e, t), ft.init(e, t))
           }),
-          pt = A(`$ZodBoolean`, (e, t) => {
-            ;(L.init(e, t),
-              (e._zod.pattern = ze),
+          mt = k(`$ZodBoolean`, (e, t) => {
+            ;(I.init(e, t),
+              (e._zod.pattern = Be),
               (e._zod.parse = (n, r) => {
                 if (t.coerce)
                   try {
@@ -6865,9 +6920,9 @@ if (age &lt; 12) {
                 )
               }))
           }),
-          mt = A(`$ZodNull`, (e, t) => {
-            ;(L.init(e, t),
-              (e._zod.pattern = Be),
+          ht = k(`$ZodNull`, (e, t) => {
+            ;(I.init(e, t),
+              (e._zod.pattern = Ve),
               (e._zod.values = new Set([null])),
               (e._zod.parse = (t, n) => {
                 let r = t.value
@@ -6878,19 +6933,19 @@ if (age &lt; 12) {
                 )
               }))
           }),
-          ht = A(`$ZodNever`, (e, t) => {
-            ;(L.init(e, t),
+          gt = k(`$ZodNever`, (e, t) => {
+            ;(I.init(e, t),
               (e._zod.parse = (t, n) => (
                 t.issues.push({ expected: `never`, code: `invalid_type`, input: t.value, inst: e }),
                 t
               )))
           })
-        function gt(e, t, n) {
+        function _t(e, t, n) {
           ;(e.issues.length && t.issues.push(...C(n, e.issues)), (t.value[n] = e.value))
         }
-        var _t = A(`$ZodArray`, (e, t) => {
-          L.init(e, t)
-          let n = M.memoizer
+        var vt = k(`$ZodArray`, (e, t) => {
+          I.init(e, t)
+          let n = j.memoizer
           ;(n?.attach(e),
             (e._zod.parse = (r, i) => {
               let a = r.value
@@ -6905,13 +6960,13 @@ if (age &lt; 12) {
               for (let e = 0; e < a.length; e++) {
                 let n = a[e],
                   c = t.element._zod.run({ value: n, issues: [] }, i)
-                if (c instanceof Promise) o.push(c.then((t) => gt(t, r, e)))
-                else if ((gt(c, r, e), s && c.issues.length !== 0 && S(c))) break
+                if (c instanceof Promise) o.push(c.then((t) => _t(t, r, e)))
+                else if ((_t(c, r, e), s && c.issues.length !== 0 && S(c))) break
               }
               return o.length ? Promise.all(o).then(() => r) : r
             }))
         })
-        function z(e, t, n, r, i, a) {
+        function R(e, t, n, r, i, a) {
           let o = n in r,
             s = a === `optional`
           if (o || !s || i !== `optional`) {
@@ -6934,11 +6989,11 @@ if (age &lt; 12) {
               : (t.value[n] = e.value)
           }
         }
-        var vt = []
-        function yt(e) {
+        var yt = []
+        function bt(e) {
           let t = Object.keys(e.shape),
             n = Object.getOwnPropertySymbols(e.shape),
-            r = n.length ? n : vt,
+            r = n.length ? n : yt,
             i = r.length ? [...t, ...r] : t
           for (let t of i)
             if (!e.shape?.[t]?._zod?.traits?.has(`$ZodType`))
@@ -6953,7 +7008,7 @@ if (age &lt; 12) {
             optionalKeys: new Set(a),
           }
         }
-        function bt(e, t, n, r, i, a, o) {
+        function xt(e, t, n, r, i, a, o) {
           let s = [],
             c = i.keySet,
             l = i.catchall._zod,
@@ -6976,7 +7031,7 @@ if (age &lt; 12) {
               continue
             }
             let a = l.run({ value: t[i], issues: [] }, r)
-            a instanceof Promise ? e.push(a.then((e) => z(e, n, i, t, d, f))) : z(a, n, i, t, d, f)
+            a instanceof Promise ? e.push(a.then((e) => R(e, n, i, t, d, f))) : R(a, n, i, t, d, f)
           }
           return (
             s.length &&
@@ -6990,8 +7045,8 @@ if (age &lt; 12) {
             e.length ? Promise.all(e).then(() => n) : n
           )
         }
-        var xt = A(`$ZodObject`, (e, t) => {
-          L.init(e, t)
+        var St = k(`$ZodObject`, (e, t) => {
+          I.init(e, t)
           let n = Object.getOwnPropertyDescriptor(t, `shape`),
             r = n?.get ? n.get.raw : (t.shape ?? {})
           if (r) {
@@ -7001,8 +7056,8 @@ if (age &lt; 12) {
             }
             ;((e.raw = r), Object.defineProperty(t, 'shape', { get: e }))
           }
-          let i = d(() => yt(t))
-          k(e, `propValues`, (e) => {
+          let i = d(() => bt(t))
+          O(e, `propValues`, (e) => {
             let t = e.def.shape,
               n = {}
             for (let e in t) {
@@ -7018,7 +7073,7 @@ if (age &lt; 12) {
           let a = _,
             o = t.catchall,
             s,
-            c = M.memoizer
+            c = j.memoizer
           ;(c?.attach(e),
             (e._zod.parse = (t, n) => {
               s ??= i.value
@@ -7044,17 +7099,17 @@ if (age &lt; 12) {
                   o = i._zod.optout,
                   s = i._zod.run({ value: r[e], issues: [] }, n)
                 s instanceof Promise
-                  ? l.push(s.then((n) => z(n, t, e, r, a, o)))
-                  : z(s, t, e, r, a, o)
+                  ? l.push(s.then((n) => R(n, t, e, r, a, o)))
+                  : R(s, t, e, r, a, o)
               }
               return o
-                ? bt(l, r, t, n, i.value, e, d === !0)
+                ? xt(l, r, t, n, i.value, e, d === !0)
                 : l.length
                   ? Promise.all(l).then(() => t)
                   : t
             }))
         })
-        function St(e, t, n, r) {
+        function Ct(e, t, n, r) {
           for (let n of e) if (n.issues.length === 0) return ((t.value = n.value), t)
           let i = e.filter((e) => !S(e))
           return i.length === 1
@@ -7063,27 +7118,27 @@ if (age &lt; 12) {
                 code: `invalid_union`,
                 input: t.value,
                 inst: n,
-                errors: e.map((e) => e.issues.map((e) => T(e, r, N()))),
+                errors: e.map((e) => e.issues.map((e) => T(e, r, M()))),
               }),
               t)
         }
-        var Ct = A(`$ZodUnion`, (e, t) => {
-          ;(L.init(e, t),
-            k(e, `optin`, (e) =>
+        var wt = k(`$ZodUnion`, (e, t) => {
+          ;(I.init(e, t),
+            O(e, `optin`, (e) =>
               e.def.options.some((e) => e._zod.optin === `defaulted`)
                 ? `defaulted`
                 : e.def.options.some((e) => e._zod.optin !== void 0)
                   ? `optional`
                   : void 0,
             ),
-            k(e, `optout`, (e) =>
+            O(e, `optout`, (e) =>
               e.def.options.some((e) => e._zod.optout === `optional`) ? `optional` : void 0,
             ),
-            k(e, `values`, (e) => {
+            O(e, `values`, (e) => {
               if (e.def.options.every((e) => e._zod.values))
                 return new Set(e.def.options.flatMap((e) => Array.from(e._zod.values)))
             }),
-            k(e, `pattern`, (e) => {
+            O(e, `pattern`, (e) => {
               if (e.def.options.every((e) => e._zod.pattern)) {
                 let t = e.def.options.map((e) => e._zod.pattern)
                 return RegExp(`^(${t.map((e) => p(e.source)).join(`|`)})$`)
@@ -7102,10 +7157,10 @@ if (age &lt; 12) {
                 o.push(t)
               }
             }
-            return a ? Promise.all(o).then((t) => St(t, r, e, i)) : St(o, r, e, i)
+            return a ? Promise.all(o).then((t) => Ct(t, r, e, i)) : Ct(o, r, e, i)
           }
         })
-        function wt(e) {
+        function Tt(e) {
           let t = new Map()
           for (let n of e.options) {
             let r = n._zod.propValues?.[e.discriminator]
@@ -7119,10 +7174,10 @@ if (age &lt; 12) {
           }
           return t
         }
-        var Tt = A(`$ZodDiscriminatedUnion`, (e, t) => {
-            ;((t.inclusive = !1), Ct.init(e, t))
+        var Et = k(`$ZodDiscriminatedUnion`, (e, t) => {
+            ;((t.inclusive = !1), wt.init(e, t))
             let n = e._zod.parse
-            ;(k(e, `propValues`, (e) => {
+            ;(O(e, `propValues`, (e) => {
               let t = {},
                 n = 0
               for (let r of e.def.options) {
@@ -7144,7 +7199,7 @@ if (age &lt; 12) {
                 if (r && !Object.prototype.hasOwnProperty.call(r, t.discriminator))
                   throw Error(`Invalid discriminated union option at index "${n}"`)
               }))
-            let r = d(() => wt(t))
+            let r = d(() => Tt(t))
             e._zod.parse = (i, a) => {
               let o = i.value
               if (!_(o))
@@ -7171,9 +7226,9 @@ if (age &lt; 12) {
                     i)
             }
           }),
-          Et = A(`$ZodRecord`, (e, t) => {
-            L.init(e, t)
-            let n = M.memoizer
+          Dt = k(`$ZodRecord`, (e, t) => {
+            I.init(e, t)
+            let n = j.memoizer
             ;(n?.attach(e),
               (e._zod.parse = (r, i) => {
                 let a = r.value
@@ -7198,7 +7253,7 @@ if (age &lt; 12) {
                         r.issues.push({
                           code: `invalid_key`,
                           origin: `record`,
-                          issues: s.issues.map((e) => T(e, i, N())),
+                          issues: s.issues.map((e) => T(e, i, M())),
                           input: n,
                           path: [n],
                           inst: e,
@@ -7244,7 +7299,7 @@ if (age &lt; 12) {
                     let l = t.keyType._zod.run({ value: n, issues: [] }, i)
                     if (l instanceof Promise)
                       throw Error(`Async schemas not supported in object keys currently`)
-                    if (typeof n == `string` && Re.test(n) && l.issues.length) {
+                    if (typeof n == `string` && ze.test(n) && l.issues.length) {
                       let e = t.keyType._zod.run({ value: Number(n), issues: [] }, i)
                       if (e instanceof Promise)
                         throw Error(`Async schemas not supported in object keys currently`)
@@ -7258,7 +7313,7 @@ if (age &lt; 12) {
                           : r.issues.push({
                               code: `invalid_key`,
                               origin: `record`,
-                              issues: l.issues.map((e) => T(e, i, N())),
+                              issues: l.issues.map((e) => T(e, i, M())),
                               input: n,
                               path: [n],
                               inst: e,
@@ -7291,12 +7346,12 @@ if (age &lt; 12) {
                 return o.length ? Promise.all(o).then(() => r) : r
               }))
           }),
-          Dt = A(`$ZodEnum`, (e, t) => {
-            L.init(e, t)
+          Ot = k(`$ZodEnum`, (e, t) => {
+            I.init(e, t)
             let n = c(t.entries),
               r = new Set(n)
             ;((e._zod.values = r),
-              k(e, `pattern`, (e) => {
+              O(e, `pattern`, (e) => {
                 let t = c(e.def.entries).filter((e) => y.has(typeof e))
                 return RegExp(
                   t.length ? `^(${t.map((e) => b(e.toString())).join(`|`)})$` : `^[^\\s\\S]$`,
@@ -7311,11 +7366,11 @@ if (age &lt; 12) {
                 )
               }))
           }),
-          Ot = A(`$ZodLiteral`, (e, t) => {
-            L.init(e, t)
+          kt = k(`$ZodLiteral`, (e, t) => {
+            I.init(e, t)
             let n = new Set(t.values)
             ;((e._zod.values = n),
-              k(e, `pattern`, (e) => {
+              O(e, `pattern`, (e) => {
                 let t = e.def.values
                 return RegExp(
                   t.length
@@ -7332,20 +7387,20 @@ if (age &lt; 12) {
                 )
               }))
           })
-        function kt(e, t) {
+        function At(e, t) {
           return ((e.value = t.issues.length ? void 0 : t.value), e)
         }
-        var At = A(`$ZodOptional`, (e, t) => {
-            ;(L.init(e, t),
-              k(e, `optin`, (e) =>
+        var jt = k(`$ZodOptional`, (e, t) => {
+            ;(I.init(e, t),
+              O(e, `optin`, (e) =>
                 e.def.innerType._zod.optin === `defaulted` ? `defaulted` : `optional`,
               ),
               (e._zod.optout = `optional`),
-              k(e, `values`, (e) => {
+              O(e, `values`, (e) => {
                 let t = e.def.innerType._zod.values
                 return t ? new Set([...t, void 0]) : void 0
               }),
-              k(e, `pattern`, (e) => {
+              O(e, `pattern`, (e) => {
                 let t = e.def.innerType._zod.pattern
                 return t ? RegExp(`^(${p(t.source)})?$`) : void 0
               }),
@@ -7353,50 +7408,50 @@ if (age &lt; 12) {
                 if (e.value === void 0) {
                   if (t.innerType._zod.optin !== `defaulted`) return e
                   let r = t.innerType._zod.run({ value: e.value, issues: [] }, n)
-                  return r instanceof Promise ? r.then((t) => kt(e, t)) : kt(e, r)
+                  return r instanceof Promise ? r.then((t) => At(e, t)) : At(e, r)
                 }
                 return t.innerType._zod.run(e, n)
               }))
           }),
-          jt = A(`$ZodNullable`, (e, t) => {
-            ;(L.init(e, t),
-              k(e, `optin`, (e) => e.def.innerType._zod.optin),
-              k(e, `optout`, (e) => e.def.innerType._zod.optout),
-              k(e, `pattern`, (e) => {
+          Mt = k(`$ZodNullable`, (e, t) => {
+            ;(I.init(e, t),
+              O(e, `optin`, (e) => e.def.innerType._zod.optin),
+              O(e, `optout`, (e) => e.def.innerType._zod.optout),
+              O(e, `pattern`, (e) => {
                 let t = e.def.innerType._zod.pattern
                 return t ? RegExp(`^(${p(t.source)}|null)$`) : void 0
               }),
-              k(e, `values`, (e) =>
+              O(e, `values`, (e) =>
                 e.def.innerType._zod.values
                   ? new Set([...e.def.innerType._zod.values, null])
                   : void 0,
               ),
               (e._zod.parse = (e, n) => (e.value === null ? e : t.innerType._zod.run(e, n))))
           }),
-          Mt = A(`$ZodLazy`, (e, t) => {
-            ;(L.init(e, t),
+          Nt = k(`$ZodLazy`, (e, t) => {
+            ;(I.init(e, t),
               ee(e._zod, `innerType`, () => {
                 let e = t
                 return ((e._cachedInner ||= t.getter()), e._cachedInner)
               }),
-              k(e, `pattern`, (e) => e.innerType?._zod?.pattern),
-              k(e, `propValues`, (e) => e.innerType?._zod?.propValues),
-              k(e, `optin`, (e) => e.innerType?._zod?.optin ?? void 0),
-              k(e, `optout`, (e) => e.innerType?._zod?.optout ?? void 0),
+              O(e, `pattern`, (e) => e.innerType?._zod?.pattern),
+              O(e, `propValues`, (e) => e.innerType?._zod?.propValues),
+              O(e, `optin`, (e) => e.innerType?._zod?.optin ?? void 0),
+              O(e, `optout`, (e) => e.innerType?._zod?.optout ?? void 0),
               (e._zod.parse = (t, n) => e._zod.innerType._zod.run(t, n)))
           }),
-          Nt = A(`$ZodCustom`, (e, t) => {
-            ;(F.init(e, t),
-              L.init(e, t),
+          Pt = k(`$ZodCustom`, (e, t) => {
+            ;(P.init(e, t),
+              I.init(e, t),
               (e._zod.parse = (e, t) => e),
               (e._zod.check = (n) => {
                 let r = n.value,
                   i = t.fn(r)
-                if (i instanceof Promise) return i.then((t) => Pt(t, n, r, e))
-                Pt(i, n, r, e)
+                if (i instanceof Promise) return i.then((t) => Ft(t, n, r, e))
+                Ft(i, n, r, e)
               }))
           })
-        function Pt(e, t, n, r) {
+        function Ft(e, t, n, r) {
           if (!e) {
             let e = {
               code: `custom`,
@@ -7408,13 +7463,13 @@ if (age &lt; 12) {
             ;(r._zod.def.params && (e.params = r._zod.def.params), t.issues.push(ue(e)))
           }
         }
-        function Ft(e) {
+        function It(e) {
           return ((e.checks &&= [...e.checks]), e)
         }
-        function It(e, t) {
-          return new e(Ft({ type: `string`, ...x(t) }))
-        }
         function Lt(e, t) {
+          return new e(It({ type: `string`, ...x(t) }))
+        }
+        function Rt(e, t) {
           return new e({
             type: `string`,
             format: `uuid`,
@@ -7423,7 +7478,7 @@ if (age &lt; 12) {
             ...x(t),
           })
         }
-        function Rt(e, t) {
+        function zt(e, t) {
           return new e({
             type: `string`,
             format: `url`,
@@ -7432,7 +7487,7 @@ if (age &lt; 12) {
             ...x(t),
           })
         }
-        function zt(e, t) {
+        function Bt(e, t) {
           return new e({
             type: `string`,
             format: `datetime`,
@@ -7443,10 +7498,10 @@ if (age &lt; 12) {
             ...x(t),
           })
         }
-        function Bt(e, t) {
-          return new e(Ft({ type: `number`, checks: [], ...x(t) }))
-        }
         function Vt(e, t) {
+          return new e(It({ type: `number`, checks: [], ...x(t) }))
+        }
+        function Ht(e, t) {
           return new e({
             type: `number`,
             check: `number_format`,
@@ -7455,32 +7510,32 @@ if (age &lt; 12) {
             ...x(t),
           })
         }
-        function Ht(e, t) {
+        function Ut(e, t) {
           return new e({ type: `boolean`, ...x(t) })
         }
-        function Ut(e, t) {
+        function Wt(e, t) {
           return new e({ type: `null`, ...x(t) })
         }
-        function Wt(e, t) {
+        function Gt(e, t) {
           return new e({ type: `never`, ...x(t) })
         }
-        function Gt(e, t) {
-          return new He({ check: `less_than`, ...x(t), value: e, inclusive: !0 })
+        function Kt(e, t) {
+          return new Ue({ check: `less_than`, ...x(t), value: e, inclusive: !0 })
+        }
+        function z(e, t) {
+          return new We({ check: `greater_than`, ...x(t), value: e, inclusive: !0 })
         }
         function B(e, t) {
-          return new Ue({ check: `greater_than`, ...x(t), value: e, inclusive: !0 })
-        }
-        function Kt(e, t) {
-          return new Ge({ check: `max_length`, ...x(t), maximum: e })
+          return new Ke({ check: `max_length`, ...x(t), maximum: e })
         }
         function qt(e, t) {
-          return new Ke({ check: `min_length`, ...x(t), minimum: e })
+          return new qe({ check: `min_length`, ...x(t), minimum: e })
         }
         function Jt(e, t) {
-          return new Je({ check: `string_format`, format: `regex`, ...x(t), pattern: e })
+          return new Ye({ check: `string_format`, format: `regex`, ...x(t), pattern: e })
         }
         function Yt(e) {
-          return new Ye({ check: `overwrite`, tx: e })
+          return new Xe({ check: `overwrite`, tx: e })
         }
         function Xt() {
           return Yt((e) => e.trim())
@@ -7488,11 +7543,11 @@ if (age &lt; 12) {
         function Zt(e, t, n) {
           return new e({ type: `custom`, check: `custom`, fn: t, ...x(n) })
         }
-        var V = A(
+        var V = k(
             `ZodMiniType`,
             (e, t) => {
               if (!e._zod) throw Error(`Uninitialized schema in ZodMiniType.`)
-              ;(L.init(e, t), (e.def = t), (e.type = t.type))
+              ;(I.init(e, t), (e.def = t), (e.type = t.type))
             },
             {
               get with() {
@@ -7502,16 +7557,16 @@ if (age &lt; 12) {
                 E(this, `with`, e)
               },
               parse(e, t) {
-                return De(this, e, t, { callee: this.parse })
+                return Oe(this, e, t, { callee: this.parse })
               },
               parseAsync(e, t) {
-                return Oe(this, e, t, { callee: this.parseAsync })
+                return ke(this, e, t, { callee: this.parseAsync })
               },
               safeParse(e, t) {
-                return ke(this, e, t)
+                return Ae(this, e, t)
               },
               safeParseAsync(e, t) {
-                return je(this, e, t)
+                return Me(this, e, t)
               },
               check(...e) {
                 let t = this.def
@@ -7544,91 +7599,91 @@ if (age &lt; 12) {
               },
             },
           ),
-          Qt = A(`ZodMiniString`, (e, t) => {
-            ;(et.init(e, t), V.init(e, t))
+          Qt = k(`ZodMiniString`, (e, t) => {
+            ;(tt.init(e, t), V.init(e, t))
           })
         function H(e) {
-          return It(Qt, e)
+          return Lt(Qt, e)
         }
-        var $t = A(`ZodMiniStringFormat`, (e, t) => {
-            ;(R.init(e, t), Qt.init(e, t))
+        var $t = k(`ZodMiniStringFormat`, (e, t) => {
+            ;(L.init(e, t), Qt.init(e, t))
           }),
-          en = A(`ZodMiniUUID`, (e, t) => {
-            ;(tt.init(e, t), $t.init(e, t))
+          en = k(`ZodMiniUUID`, (e, t) => {
+            ;(nt.init(e, t), $t.init(e, t))
           })
         function tn(e) {
-          return Lt(en, e)
+          return Rt(en, e)
         }
-        var nn = A(`ZodMiniURL`, (e, t) => {
-          ;(lt.init(e, t), $t.init(e, t))
+        var nn = k(`ZodMiniURL`, (e, t) => {
+          ;(ut.init(e, t), $t.init(e, t))
         })
         function rn(e) {
-          return Rt(nn, e)
+          return zt(nn, e)
         }
-        var an = A(`ZodMiniNumber`, (e, t) => {
-          ;(dt.init(e, t), V.init(e, t))
+        var an = k(`ZodMiniNumber`, (e, t) => {
+          ;(ft.init(e, t), V.init(e, t))
         })
         function on(e) {
-          return Bt(an, e)
+          return Vt(an, e)
         }
-        var sn = A(`ZodMiniNumberFormat`, (e, t) => {
-          ;(ft.init(e, t), an.init(e, t))
+        var sn = k(`ZodMiniNumberFormat`, (e, t) => {
+          ;(pt.init(e, t), an.init(e, t))
         })
         function cn(e) {
-          return Vt(sn, e)
+          return Ht(sn, e)
         }
-        var ln = A(`ZodMiniBoolean`, (e, t) => {
-          ;(pt.init(e, t), V.init(e, t))
-        })
-        function U(e) {
-          return Ht(ln, e)
-        }
-        var un = A(`ZodMiniNull`, (e, t) => {
+        var ln = k(`ZodMiniBoolean`, (e, t) => {
           ;(mt.init(e, t), V.init(e, t))
         })
-        function dn(e) {
-          return Ut(un, e)
+        function U(e) {
+          return Ut(ln, e)
         }
-        var fn = A(`ZodMiniNever`, (e, t) => {
+        var un = k(`ZodMiniNull`, (e, t) => {
           ;(ht.init(e, t), V.init(e, t))
         })
-        function pn(e) {
-          return Wt(fn, e)
+        function dn(e) {
+          return Wt(un, e)
         }
-        var mn = A(`ZodMiniArray`, (e, t) => {
-          ;(_t.init(e, t), V.init(e, t))
+        var fn = k(`ZodMiniNever`, (e, t) => {
+          ;(gt.init(e, t), V.init(e, t))
+        })
+        function pn(e) {
+          return Gt(fn, e)
+        }
+        var mn = k(`ZodMiniArray`, (e, t) => {
+          ;(vt.init(e, t), V.init(e, t))
         })
         function W(e, t) {
           return new mn({ type: `array`, element: e, ...x(t) })
         }
-        var hn = A(`ZodMiniObject`, (e, t) => {
-          ;(xt.init(e, t), V.init(e, t), ge(e, `shape`, (e) => e._zod.def.shape, !1))
+        var hn = k(`ZodMiniObject`, (e, t) => {
+          ;(St.init(e, t), V.init(e, t), _e(e, `shape`, (e) => e._zod.def.shape, !1))
         })
         function G(e, t) {
           return new hn({ type: `object`, shape: e, catchall: pn(), ...x(t) })
         }
-        var gn = A(`ZodMiniUnion`, (e, t) => {
-          ;(Ct.init(e, t), V.init(e, t))
+        var gn = k(`ZodMiniUnion`, (e, t) => {
+          ;(wt.init(e, t), V.init(e, t))
         })
         function _n(e, t) {
           return new gn({ type: `union`, options: e, ...x(t) })
         }
-        var vn = A(`ZodMiniDiscriminatedUnion`, (e, t) => {
-          ;(Tt.init(e, t), V.init(e, t))
+        var vn = k(`ZodMiniDiscriminatedUnion`, (e, t) => {
+          ;(Et.init(e, t), V.init(e, t))
         })
         function yn(e, t, n) {
           return new vn({ type: `union`, options: t, discriminator: e, ...x(n) })
         }
-        var bn = A(`ZodMiniRecord`, (e, t) => {
-          ;(Et.init(e, t), V.init(e, t))
+        var bn = k(`ZodMiniRecord`, (e, t) => {
+          ;(Dt.init(e, t), V.init(e, t))
         })
         function xn(e, t, n) {
           return !t || !t._zod
             ? new bn({ type: `record`, keyType: H(), valueType: e, ...x(t) })
             : new bn({ type: `record`, keyType: e, valueType: t, ...x(n) })
         }
-        var Sn = A(`ZodMiniEnum`, (e, t) => {
-          ;(Dt.init(e, t), V.init(e, t), (e.options = [...e._zod.values]))
+        var Sn = k(`ZodMiniEnum`, (e, t) => {
+          ;(Ot.init(e, t), V.init(e, t), (e.options = [...e._zod.values]))
         })
         function K(e, t) {
           return new Sn({
@@ -7637,32 +7692,32 @@ if (age &lt; 12) {
             ...x(t),
           })
         }
-        var Cn = A(`ZodMiniLiteral`, (e, t) => {
-          ;(Ot.init(e, t), V.init(e, t))
+        var Cn = k(`ZodMiniLiteral`, (e, t) => {
+          ;(kt.init(e, t), V.init(e, t))
         })
         function q(e, t) {
           return new Cn({ type: `literal`, values: Array.isArray(e) ? e : [e], ...x(t) })
         }
-        var wn = A(`ZodMiniOptional`, (e, t) => {
-          ;(At.init(e, t), V.init(e, t))
+        var wn = k(`ZodMiniOptional`, (e, t) => {
+          ;(jt.init(e, t), V.init(e, t))
         })
         function J(e) {
           return new wn({ type: `optional`, innerType: e })
         }
-        var Tn = A(`ZodMiniNullable`, (e, t) => {
-          ;(jt.init(e, t), V.init(e, t))
+        var Tn = k(`ZodMiniNullable`, (e, t) => {
+          ;(Mt.init(e, t), V.init(e, t))
         })
         function En(e) {
           return new Tn({ type: `nullable`, innerType: e })
         }
-        var Dn = A(`ZodMiniLazy`, (e, t) => {
-          ;(Mt.init(e, t), V.init(e, t))
+        var Dn = k(`ZodMiniLazy`, (e, t) => {
+          ;(Nt.init(e, t), V.init(e, t))
         })
         function On(e) {
           return new Dn({ type: `lazy`, getter: e })
         }
-        var kn = A(`ZodMiniCustom`, (e, t) => {
-          ;(Nt.init(e, t), V.init(e, t))
+        var kn = k(`ZodMiniCustom`, (e, t) => {
+          ;(Pt.init(e, t), V.init(e, t))
         })
         function An(e, t = {}) {
           return Zt(kn, e, t)
@@ -7671,21 +7726,22 @@ if (age &lt; 12) {
           let e = On(() => _n([H(), on(), U(), dn(), W(e), xn(H(), e)]))
           return e
         }
-        var Mn = A(`ZodMiniISODateTime`, (e, t) => {
-          ;(ut.init(e, t), $t.init(e, t))
+        var Mn = k(`ZodMiniISODateTime`, (e, t) => {
+          ;(dt.init(e, t), $t.init(e, t))
         })
         function Nn(e) {
-          return zt(Mn, e)
+          return Bt(Mn, e)
         }
         var Pn = 2e3,
           Fn = 2e5,
           In = 2e5,
           Y = () => H().check(Xt(), qt(1)),
           Ln = () => H().check(Jt(/^[A-Z]{1,3}\d{2,3}$/)),
-          Rn = () => H().check(Kt(Pn)),
+          Rn = () => H().check(Xt(), qt(1)),
+          zn = () => H().check(B(Pn)),
           X = () => tn({ version: `v7` }),
-          Z = (e) => cn().check(B(e)),
-          zn = K([
+          Z = (e) => cn().check(z(e)),
+          Bn = K([
             `non_commence`,
             `en_cours`,
             `vu`,
@@ -7694,13 +7750,13 @@ if (age &lt; 12) {
             `maitrise`,
             `a_reprendre`,
           ]),
-          Bn = K([`solide`, `partiel`, `fragile`, `pas_encore`]),
-          Vn = K([`sur`, `hesitant`, `hasard`]),
-          Hn = K([`support`, `deduit`, `ajoute`]),
-          Un = K([`sur`, `non_verifie`]),
-          Wn = K([`relance`, `avec_support`, `recopiee`, `non_verifiee`]),
-          Gn = q([0, 1, 2, 3, 4]),
-          Kn = G({
+          Vn = K([`solide`, `partiel`, `fragile`, `pas_encore`]),
+          Hn = K([`sur`, `hesitant`, `hasard`]),
+          Un = K([`support`, `deduit`, `ajoute`]),
+          Wn = K([`sur`, `non_verifie`]),
+          Gn = K([`relance`, `avec_support`, `recopiee`, `non_verifiee`]),
+          Kn = q([0, 1, 2, 3, 4]),
+          qn = G({
             code: K([
               `restitution_incomplete`,
               `pratique_aide`,
@@ -7718,15 +7774,15 @@ if (age &lt; 12) {
             erreurs: J(W(Y())),
             apres: J(H()),
           }),
-          qn = xn(H(), jn()).check(
+          Jn = xn(H(), jn()).check(
             An((e) => new TextEncoder().encode(JSON.stringify(e)).length <= Fn, {
               error: `L’état de la page ne doit pas dépasser 200 ko.`,
             }),
           ),
           Q = { id: X(), bloc: Ln(), version: Z(1), t: Nn({ offset: !0 }) },
-          Jn = K([`restitution`]),
-          Yn = rn({ protocol: /^https$/ }).check(
-            Kt(2e3),
+          Yn = K([`restitution`, `explication`]),
+          Xn = rn({ protocol: /^https$/ }).check(
+            B(2e3),
             An(
               (e) => {
                 if (!URL.canParse(e)) return !0
@@ -7736,17 +7792,17 @@ if (age &lt; 12) {
               { error: `Une adresse ne porte ni nom ni mot de passe.` },
             ),
           ),
-          Xn = yn(`type`, [
+          Zn = yn(`type`, [
             G({ ...Q, type: q(`page.prete`), schema: q(2) }),
             G({ ...Q, type: q(`etape.vue`), etape: Y() }),
-            G({ ...Q, type: q(`pretest.reponse`), question: Y(), reponse: Rn() }),
+            G({ ...Q, type: q(`pretest.reponse`), question: Y(), reponse: zn() }),
             G({
               ...Q,
               type: q(`pratique.resultat`),
               exercice: Y(),
               item: Y(),
               reussi: U(),
-              aide: Gn,
+              aide: Kn,
               essais: Z(1),
             }),
             G({
@@ -7754,54 +7810,55 @@ if (age &lt; 12) {
               type: q(`atelier.resultat`),
               reussi: U(),
               predictions_justes: Z(0),
-              aide: Gn,
+              aide: Kn,
             }),
-            G({ ...Q, type: q(`aisance.resultat`), reussi: U(), duree_s: on().check(B(0)) }),
+            G({ ...Q, type: q(`aisance.resultat`), reussi: U(), duree_s: on().check(z(0)) }),
             G({
               ...Q,
               type: q(`restitution.demande`),
-              serie: Jn,
+              serie: Yn,
               question: Y(),
-              reponse: H().check(qt(1), Kt(Pn)),
-              confiance: Vn,
-              relance: Rn(),
+              reponse: H().check(qt(1), B(Pn)),
+              confiance: Hn,
+              relance: zn(),
               support: G({ colle: U(), retour_cours: U() }),
+              libre: J(G({ question: Rn(), attendu: Rn() })),
             }),
             G({ ...Q, type: q(`bilan.erreurs`), ids: W(Y()) }),
-            G({ ...Q, type: q(`etat.sauver`), etat: qn }),
-            G({ ...Q, type: q(`lien.ouvrir`), url: Yn }),
-            G({ ...Q, type: q(`page.taille`), hauteur: cn().check(B(1), Gt(In)) }),
+            G({ ...Q, type: q(`etat.sauver`), etat: Jn }),
+            G({ ...Q, type: q(`lien.ouvrir`), url: Xn }),
+            G({ ...Q, type: q(`page.taille`), hauteur: cn().check(z(1), Kt(In)) }),
             G({ ...Q, type: q(`page.haut`) }),
             G({ ...Q, type: q(`correction.accord`), correction: X(), accord: U() }),
           ]),
-          Zn = {
+          Qn = {
             id: X(),
             echantillon: U(),
             question: Y(),
             tour: Z(1),
             message: H(),
-            niveau: Bn,
+            niveau: Vn,
             erreurs_critiques: W(Y()),
-            source: Hn,
+            source: Un,
             ref: H(),
-            certitude: Un,
+            certitude: Wn,
             compte: U(),
-            raison_non_compte: J(Wn),
+            raison_non_compte: J(Gn),
           },
-          Qn = G(Zn),
-          $n = yn(`type`, [
+          $n = G(Qn),
+          er = yn(`type`, [
             G({
               type: q(`etat.init`),
               bloc: Ln(),
               version: Z(1),
-              etat: En(qn),
-              statut: zn,
+              etat: En(Jn),
+              statut: Bn,
               serie_ouverte: G({ restitution: U() }),
-              aisance: W(G({ le: Nn(), duree_s: on().check(B(0)) })),
+              aisance: W(G({ le: Nn(), duree_s: on().check(z(0)) })),
               theme: J(K([`clair`, `sombre`, `systeme`])),
             }),
-            G({ type: q(`restitution.correction`), ...Zn }),
-            G({ type: q(`statut.maj`), statut: zn, manque: W(Kn) }),
+            G({ type: q(`restitution.correction`), ...Qn }),
+            G({ type: q(`statut.maj`), statut: Bn, manque: W(qn) }),
             G({
               type: q(`erreur`),
               code: K([`correction_indisponible`, `plafond_atteint`, `message_refuse`]),
@@ -7811,9 +7868,9 @@ if (age &lt; 12) {
             G({ type: q(`etape.aller`), etape: Y() }),
             G({ type: q(`erreur.rejetee`), question: Y(), erreur: Y() }),
           ]),
-          er = 2e3,
           tr = 2e3,
-          nr = class extends Error {
+          nr = 2e3,
+          rr = class extends Error {
             code
             detail
             constructor(e) {
@@ -7831,7 +7888,7 @@ if (age &lt; 12) {
             }
           )
         }
-        function rr(n = {}) {
+        function ir(n = {}) {
           let r = n.fenetre ?? window,
             i = n.parent ?? r.parent,
             a = n.maintenant ?? e,
@@ -7855,7 +7912,7 @@ if (age &lt; 12) {
           }
           function y(e, t) {
             if (c === null) return v(`demarrer() n’a pas été appelé.`, e)
-            let n = Xn.safeParse(_(e, t))
+            let n = Zn.safeParse(_(e, t))
             return n.success
               ? (f.set(n.data.id, n.data), o || i.postMessage(n.data, `*`), n.data.id)
               : v(`« ${e} » est mal formé.`, n.error.issues)
@@ -7878,7 +7935,7 @@ if (age &lt; 12) {
                   : d(e)
                 break
               case `restitution.correction`: {
-                let t = Qn.parse(
+                let t = $n.parse(
                   Object.fromEntries(Object.entries(e).filter(([e]) => e !== `type`)),
                 )
                 ne((e) => e.question === t.question)?.resoudre(t)
@@ -7893,7 +7950,7 @@ if (age &lt; 12) {
                 ;(ee.forEach((t) => {
                   t(e)
                 }),
-                  ne((t) => t.id === e.message_id)?.rejeter(new nr(e)))
+                  ne((t) => t.id === e.message_id)?.rejeter(new rr(e)))
                 break
               case `etape.aller`:
                 h.forEach((t) => {
@@ -7908,7 +7965,7 @@ if (age &lt; 12) {
           }
           function re(e) {
             if (e.source !== i) return
-            let t = $n.safeParse(e.data)
+            let t = er.safeParse(e.data)
             if (!t.success) {
               console.error(`[pont] Message de l’appli ignoré : mal formé.`, t.error.issues)
               return
@@ -7939,7 +7996,7 @@ if (age &lt; 12) {
               return
             }
             S = e
-            let t = ae + tr - a()
+            let t = ae + nr - a()
             t <= 0 ? w() : (C ??= setTimeout(w, t))
           }
           function T() {
@@ -7967,7 +8024,7 @@ if (age &lt; 12) {
               ;((d = e),
                 setTimeout(() => {
                   e(null)
-                }, er))
+                }, tr))
             })
             y(`page.prete`, { schema: 2 })
             let n = await t
@@ -7984,13 +8041,13 @@ if (age &lt; 12) {
           async function le(e) {
             if (u === `autonome`) {
               if (l === void 0) throw Error(`Mode autonome sans fonction « ask ».`)
-              let t = Xn.safeParse(_(`restitution.demande`, e))
+              let t = Zn.safeParse(_(`restitution.demande`, e))
               if (!t.success)
                 throw (
                   v(`« restitution.demande » est mal formé.`, t.error.issues),
                   Error(`Demande de correction mal formée.`)
                 )
-              return Qn.parse(await l.ask(e))
+              return $n.parse(await l.ask(e))
             }
             return new Promise((t, n) => {
               let r = y(`restitution.demande`, e)
@@ -8014,7 +8071,7 @@ if (age &lt; 12) {
             surInit: $(g),
           }
         }
-        window.JanusPont = rr()
+        window.JanusPont = ir()
       })()
     </script>
 
@@ -8645,7 +8702,7 @@ if (age &lt; 12) {
               bubbles: true,
               detail: {
                 cle,
-                solution: fr(ex.dataset.fiche ?? sansPoint(solution) + '.'),
+                solution: fr(sansPoint(solution) + '.'),
                 consigne: consigne ? fr(consigne) : undefined,
               },
             }),
@@ -8771,7 +8828,15 @@ if (age &lt; 12) {
             )
             if (ex.closest('[data-solution-vue]') || ex.dataset.variante || cran === 3)
               expliquer(ex, c.solution())
-            else if (ex.dataset.justifier) expliquer(ex, c.solution(), fr(ex.dataset.justifier))
+            else if (ex.dataset.justifier) {
+              // Deux explications qui ne sont pas Solides : la solution, puis l'item sur sa variante.
+              ex.addEventListener(
+                'fiche:explication-ratee',
+                (e) => montrerSolution(ex, c, e.detail?.message),
+                { once: true },
+              )
+              expliquer(ex, c.solution(), fr(ex.dataset.justifier))
+            }
             return
           }
           ex.dataset.fautes = String(fautes + 1)
@@ -10904,7 +10969,10 @@ if (age &lt; 12) {
           })
       }
       function corrigerLocalement(demande) {
-        const question = manifeste.restitution.find((q) => q.id === demande.question)
+        const question =
+          demande.serie === 'explication'
+            ? (explicationDeclaree(demande.question) ?? demande.libre)
+            : manifeste.restitution.find((q) => q.id === demande.question)
         const reponse = demande.reponse.trim()
         const message = (texte, niveau) => ({
           id: uuidV7(),
@@ -10991,99 +11059,185 @@ if (age &lt; 12) {
         enregistrer()
       })
       /*
-       * Expliquer, puis comparer avec la fiche (règle F03) : un outil émet `fiche:expliquer` sur
-       * l'exercice, avec `detail: { cle, solution, consigne }`. La page y monte le champ, puis montre ce
-       * que dit la fiche et laisse l'apprenant juger lui-même, « Même idée » ou « Il me manque quelque
-       * chose » : la page ne compare rien et ne note rien, elle le dit. Le texte et le choix sont gardés
-       * comme une trace (`explique:<cle>`), pour l'apprenant qui revient.
+       * Expliquer (règle F03) : un outil émet `fiche:expliquer` sur l'exercice, avec `detail: { cle,
+       * solution, consigne }`. L'IA juge l'explication comme une réponse de restitution, dans la série
+       * `explication`. Une explication que le manifeste déclare (`explication`, par sa clé) se juge sur
+       * son attendu, et son item n'est réussi qu'avec une explication Solide qui compte ; après deux
+       * explications qui ne le sont pas, la page émet `fiche:explication-ratee` sur l'exercice : l'outil
+       * montre la solution, et l'item se refait sur sa variante. Une explication que le manifeste ne
+       * déclare pas (après une solution vue) se juge sur la solution de la page, une fois, et ne compte
+       * jamais. Sans correcteur, l'explication attend qu'on la renvoie : la page ne juge rien à la place
+       * de l'IA. Hors de l'appli, la correction est simulée et ne retient rien. La trace
+       * `explique:<cle>` garde les essais et leur correction ; elle est émise quand l'explication est
+       * finie, pour l'outil qui attend la suite.
        */
-      document.addEventListener('fiche:expliquer', (evenement) => {
+      const ESSAIS_D_EXPLICATION = 2
+      const explicationDeclaree = (cle) => (manifeste.explication ?? []).find((e) => e.id === cle)
+      /** L'item n'a pas d'explication à donner, ou elle est faite. */
+      const explicationFaite = (item) =>
+        !(manifeste.explication ?? []).some((e) => e.item === item) ||
+        etat.pratique[item]?.explique === true
+      /** Un item de pratique réussi : sa réponse, puis son explication quand il en demande une. */
+      const itemReussi = (item) => Boolean(etat.pratique[item]?.reussi) && explicationFaite(item)
+      // Sur #contenu, qui porte tous les exercices de la page.
+      $('contenu').addEventListener('fiche:expliquer', (evenement) => {
         const { cle, solution, consigne } = evenement.detail ?? {}
         const exercice = evenement.target
         if (!(exercice instanceof HTMLElement) || typeof cle !== 'string' || cle === '') return
         if (exercice.querySelector(':scope > .expliquer')) return
-        const trace = etat.traces?.['explique:' + cle]
-        const champ = creer('textarea', { id: 'explique-' + cle.replace(/[^\w-]/g, '_'), rows: 3 })
-        const modele = creer('p', {
-          className: 'retour',
-          textContent: 'Ce que dit la fiche : ' + String(solution ?? ''),
-          hidden: true,
-        })
-        const question = creer('p', {
-          textContent: 'Compare toi-même : dis-tu la même idée, même avec d’autres mots ?',
-          hidden: true,
-        })
-        const avis = creer('p', { className: 'discret', 'aria-live': 'polite' })
-        const choisir = (valeur) => {
-          avis.textContent =
-            valeur === 'meme'
-              ? 'Même idée. Rien n’est noté : c’est ton jugement.'
-              : 'Il te manque quelque chose : relis la fiche sur ce point avant de continuer.'
-          for (const b of jugements.children) b.disabled = true
+        const declaree = explicationDeclaree(cle)
+        // La page montre la consigne de l'outil ; le correcteur lit la question du manifeste, qui se
+        // comprend sans l'écran.
+        const intitule =
+          typeof consigne === 'string' && consigne !== ''
+            ? consigne
+            : 'Explique pourquoi c’est juste, en une ou deux phrases\u00a0:'
+        const ancienne = etat.traces?.['explique:' + cle]
+        const essais = Array.isArray(ancienne?.essais) ? ancienne.essais : []
+        const zone = creer('div', { className: 'expliquer' })
+        zone.setAttribute('aria-live', 'polite')
+        const lue = (essai) => [
+          creer('p', { className: 'explication-envoyee', textContent: essai.texte }),
+          bulleCorrection(essai.correction),
+          ...accordSur(essai.correction),
+        ]
+        /** L'explication est finie : la trace part, l'outil et l'item lisent la suite. */
+        const finir = (fin) => {
+          if (declaree && (fin === 'solide' || fin === 'simulee')) {
+            etat.pratique[declaree.item] = {
+              ...(etat.pratique[declaree.item] ?? {}),
+              explique: true,
+            }
+          }
           exercice.dispatchEvent(
             new CustomEvent('fiche:trace', {
               bubbles: true,
-              detail: {
-                cle: 'explique:' + cle,
-                valeur: { texte: champ.value, avis: valeur, le: aujourdhui() },
-              },
+              detail: { cle: 'explique:' + cle, valeur: { essais, fin, le: aujourdhui() } },
             }),
           )
+          exercice.dispatchEvent(new CustomEvent('fiche:explique', { bubbles: true }))
         }
-        const jugements = creer(
-          'div',
-          { className: 'actions', hidden: true },
-          creer('button', {
+        const formulaire = (rang) => {
+          const id = 'explique-' + cle.replace(/[^\w-]/g, '_') + '-' + rang
+          const champ = creer('textarea', {
+            id,
+            rows: 3,
+            value: rang === 0 && typeof ancienne?.texte === 'string' ? ancienne.texte : '',
+          })
+          let colle = false
+          champ.addEventListener('paste', () => {
+            colle = true
+          })
+          const radios = [
+            ['sur', 'Sûr'],
+            ['hesitant', 'Hésitant'],
+            ['hasard', 'Au hasard'],
+          ].map(([valeur, libelle]) => ({
+            libelle,
+            entree: creer('input', { type: 'radio', name: 'conf-' + id, value: valeur }),
+          }))
+          const confiance = creer(
+            'fieldset',
+            { className: 'choix', dataset: { lecture: '' } },
+            creer('legend', { textContent: 'Ta confiance' }),
+            ...radios.map(({ libelle, entree }) => creer('label', {}, entree, libelle)),
+          )
+          const message = creer('p', { className: 'erreur', role: 'alert' })
+          const bouton = creer('button', {
             type: 'button',
             className: 'bouton secondaire petit',
-            textContent: 'Même idée',
-            onclick: () => choisir('meme'),
-          }),
-          creer('button', {
-            type: 'button',
-            className: 'bouton secondaire petit',
-            textContent: 'Il me manque quelque chose',
-            onclick: () => choisir('manque'),
-          }),
-        )
-        const comparer = creer('button', {
-          type: 'button',
-          className: 'bouton secondaire petit',
-          textContent: 'Comparer avec la fiche',
-        })
-        const montrer = () => {
-          champ.disabled = comparer.disabled = true
-          modele.hidden = question.hidden = jugements.hidden = false
-        }
-        comparer.addEventListener('click', () => {
-          if (champ.value.trim() === '')
-            return void (avis.textContent = 'Écris d’abord ton explication.')
-          avis.textContent = ''
-          montrer()
-        })
-        exercice.append(
-          creer(
+            textContent: 'Envoyer mon explication',
+          })
+          const bloc = creer(
             'div',
-            { className: 'expliquer' },
+            { className: 'expliquer-essai' },
             creer('label', {
-              htmlFor: champ.id,
+              htmlFor: id,
               textContent:
-                typeof consigne === 'string' && consigne !== ''
-                  ? consigne
-                  : 'Explique pourquoi c’est juste, en une ou deux phrases :',
+                rang === 0 ? intitule : 'Reprends ton explication, d’après la correction\u00a0:',
             }),
             champ,
-            creer('div', { className: 'actions' }, comparer),
-            modele,
-            question,
-            jugements,
-            avis,
-          ),
-        )
-        if (trace && typeof trace.texte === 'string') {
-          champ.value = trace.texte
-          montrer()
-          if (trace.avis === 'meme' || trace.avis === 'manque') choisir(trace.avis)
+            confiance,
+            creer('div', { className: 'actions' }, bouton),
+            message,
+          )
+          bouton.addEventListener('click', async () => {
+            const choisie = confiance.querySelector('input:checked')
+            if (champ.value.trim() === '')
+              return void (message.textContent = 'Écris d’abord ton explication.')
+            if (!choisie)
+              return void (message.textContent = 'Choisis ta confiance avant d’envoyer.')
+            message.textContent = ''
+            bouton.disabled = true
+            try {
+              const correction = await pont.demanderCorrection({
+                serie: 'explication',
+                question: cle,
+                reponse: champ.value,
+                confiance: choisie.value,
+                relance: '',
+                support: { colle, retour_cours: etat.retourCours },
+                ...(declaree
+                  ? {}
+                  : { libre: { question: intitule, attendu: String(solution ?? '') } }),
+              })
+              noterReperees('explique:' + cle, correction.erreurs_critiques)
+              essais.push({ texte: champ.value, correction: resumeCorrection(correction) })
+              const fin =
+                mode === 'autonome'
+                  ? 'simulee'
+                  : !declaree
+                    ? 'jugee'
+                    : correction.niveau === 'solide' && correction.compte
+                      ? 'solide'
+                      : essais.length >= ESSAIS_D_EXPLICATION
+                        ? 'ratee'
+                        : null
+              if (fin === null) {
+                etat.traces = {
+                  ...(etat.traces ?? {}),
+                  ['explique:' + cle]: { essais, fin, le: aujourdhui() },
+                }
+                enregistrer()
+              } else finir(fin)
+              // La correction affichée est celle que la trace garde : l'avis demandé s'y enregistre.
+              const gardees = etat.traces['explique:' + cle].essais
+              bloc.replaceWith(...lue(gardees[gardees.length - 1]))
+              if (fin === null) zone.append(formulaire(rang + 1))
+              if (fin === 'ratee') {
+                const raison =
+                  'Ton explication n’est pas encore Solide\u00a0: voici la solution de l’item, puis tu le refais sur un autre cas.'
+                zone.append(creer('p', { className: 'discret', textContent: raison }))
+                exercice.dispatchEvent(
+                  new CustomEvent('fiche:explication-ratee', {
+                    bubbles: true,
+                    detail: { message: raison },
+                  }),
+                )
+              }
+            } catch (erreur) {
+              message.textContent =
+                'Correction impossible\u00a0: ' +
+                (erreur && erreur.detail ? erreur.detail : erreur.message) +
+                ' Ton explication attend\u00a0: renvoie-la.'
+              bouton.disabled = false
+            }
+          })
+          return bloc
+        }
+        if (essais.length > 0) zone.append(creer('p', { textContent: intitule }))
+        for (const essai of essais) zone.append(...lue(essai))
+        if (ancienne?.fin === undefined || ancienne.fin === null)
+          zone.append(formulaire(essais.length))
+        exercice.append(zone)
+        // De retour sur la page, l'outil qui attend la fin de l'explication la relit.
+        if (typeof ancienne?.fin === 'string' && ancienne.fin !== 'ratee') {
+          exercice.dispatchEvent(
+            new CustomEvent('fiche:trace', {
+              bubbles: true,
+              detail: { cle: 'explique:' + cle, valeur: ancienne },
+            }),
+          )
         }
       })
       /*
@@ -11335,7 +11489,7 @@ if (age &lt; 12) {
         // jour, et l'apprenant resterait bloqué jusque-là). Une solution vue n'est pas réussie.
         if (etape.type === 'pratique') {
           const items = manifeste.pratique.flatMap((exercice) => exercice.items)
-          const reussis = items.filter((item) => etat.pratique[item.id]?.reussi).length
+          const reussis = items.filter((item) => itemReussi(item.id)).length
           if (reussis === items.length) return ''
           return (
             'Réussis les ' +
@@ -11933,7 +12087,7 @@ if (age &lt; 12) {
         const liste = manifeste.pratique.flatMap((exercice) =>
           exercice.items.map((item, rang) => ({ exercice, item, rang })),
         )
-        const reussi = (entree) => Boolean(etat.pratique[entree.item.id]?.reussi)
+        const reussi = (entree) => itemReussi(entree.item.id)
         const premierRestant = liste.findIndex((entree) => !reussi(entree))
         const index = Math.min(
           Math.max(etat.itemCourant ?? (premierRestant < 0 ? 0 : premierRestant), 0),
@@ -11999,6 +12153,8 @@ if (age &lt; 12) {
             aide: aideNotee,
             essais,
             solutionVue: vue ? aujourdhui() : (avant?.solutionVue ?? false),
+            // Une explication déjà jugée Solide le reste : l'item refait ne la redemande pas.
+            ...(avant?.explique === true ? { explique: true } : {}),
             ...(aideNotee > 0
               ? { aideLe: aujourdhui(), aideMax: aideNotee }
               : { aideLe: avant?.aideLe ?? null, aideMax: avant?.aideMax ?? 0 }),
@@ -12104,18 +12260,22 @@ if (age &lt; 12) {
                 (avecAide(entree) ? ', réussi avec de l’aide' : reussi(entree) ? ', réussi' : ''),
             )
           })
-          boite.dataset.fait = fait?.reussi ? 'oui' : 'non'
+          boite.dataset.fait = reussi({ item }) ? 'oui' : 'non'
           majPied()
           // La solution a été montrée et l'item n'est pas refait : on le dit, à la place du résultat.
           const aRefaire = Boolean(fait?.solutionVue) && !fait.reussi
+          // Réussi, mais l'explication qu'il demande n'est pas encore Solide.
+          const aExpliquer = Boolean(fait?.reussi) && !explicationFaite(item.id)
           etatItem.textContent = fait
-            ? fait.reussi
-              ? fait.aide > 0
-                ? 'Réussi avec de l’aide'
-                : 'Réussi'
-              : aRefaire
-                ? 'Solution vue'
-                : 'À refaire'
+            ? aExpliquer
+              ? 'Explication attendue'
+              : fait.reussi
+                ? fait.aide > 0
+                  ? 'Réussi avec de l’aide'
+                  : 'Réussi'
+                : aRefaire
+                  ? 'Solution vue'
+                  : 'À refaire'
             : ''
           resultat.className = aRefaire ? 'item-refaire' : 'discret'
           // Réussi avec de l'aide : l'appli ne le compte pas encore, la page dit comment il comptera.
@@ -12129,13 +12289,15 @@ if (age &lt; 12) {
                   : '. Refais-le sans aide pour qu’il compte.'
           resultat.textContent = aRefaire
             ? 'Tu as vu la solution. Refais-la sans la regarder.'
-            : fait
-              ? 'Envoyé\u00a0: ' +
-                (fait.reussi ? 'réussi' : 'non réussi') +
-                ', aide ' +
-                fait.aide +
-                pourCompter
-              : ''
+            : aExpliquer
+              ? 'Réussi. Explique-le maintenant\u00a0: l’item compte quand ton explication est Solide.'
+              : fait
+                ? 'Envoyé\u00a0: ' +
+                  (fait.reussi ? 'réussi' : 'non réussi') +
+                  ', aide ' +
+                  fait.aide +
+                  pourCompter
+                : ''
         }
         majItem()
         // L'outil émet fiche:verification à chaque réponse vérifiée. L'item se met à jour sans être
@@ -12163,6 +12325,7 @@ if (age &lt; 12) {
           noter(detail.juste, Math.max(aide, aideOutil))
           majItem()
         })
+        consigne.addEventListener('fiche:explique', () => majItem())
         consigne.addEventListener('fiche:refaire', () => {
           if (verifie && solutionVue()) redessiner()
         })
@@ -12734,7 +12897,7 @@ if (age &lt; 12) {
         const lignes = [ligneRestitution]
         const items = manifeste.pratique.flatMap((exercice) => exercice.items)
         if (items.length > 0) {
-          const reussis = items.filter((item) => etat.pratique[item.id]?.reussi)
+          const reussis = items.filter((item) => itemReussi(item.id))
           const sansAide = reussis.filter((item) => etat.pratique[item.id].aide === 0).length
           lignes.push(
             ligne(
