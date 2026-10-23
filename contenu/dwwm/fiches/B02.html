@@ -943,6 +943,36 @@
       .essais-bilan p {
         margin: 0;
       }
+      .essais-bilan > ol > li {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-4);
+        padding: var(--espacement-8) var(--espacement-12);
+        border-inline-start: 4px solid var(--couleur-ligne);
+        border-radius: var(--rayon-option);
+        background: var(--couleur-surface-douce);
+      }
+      .essais-bilan > ol > li[data-etat='juste'] {
+        border-inline-start-color: var(--couleur-succes);
+      }
+      .essais-bilan > ol > li[data-etat='faux'] {
+        border-inline-start-color: var(--couleur-erreur);
+      }
+      .essai-marque {
+        align-self: flex-start;
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: var(--couleur-texte-secondaire);
+      }
+      li[data-etat='juste'] > .essai-marque {
+        color: var(--couleur-succes);
+      }
+      li[data-etat='faux'] > .essai-marque {
+        color: var(--couleur-erreur);
+      }
+      .essai-libelle {
+        font-weight: 600;
+      }
       /* Ce que l'explication répond à un essai de l'apprenant (data-si-essai) : repérable d'un coup d'œil. */
       [data-si-essai] {
         margin: 0;
@@ -5365,7 +5395,7 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 28,
+        "version": 29,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 expressions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
@@ -11509,9 +11539,24 @@ if (age &lt; 12) {
               ...exercices.map((ex, k) => {
                 const essai = essais[k]
                 const fin = (texte) => String(texte).replace(/[.;\s]+$/, '') + '.'
+                // Juste, faux ou passé se voit d'un coup d'œil : une marque écrite et sa couleur.
+                const etatEssai = essai.reponse === null ? 'passe' : essai.juste ? 'juste' : 'faux'
+                const ligne = (libelle, texte) =>
+                  creer(
+                    'p',
+                    {},
+                    creer('span', { className: 'essai-libelle', textContent: libelle }),
+                    texte,
+                  )
                 return creer(
                   'li',
-                  {},
+                  { dataset: { etat: etatEssai } },
+                  creer('span', {
+                    className: 'essai-marque',
+                    textContent: { juste: '✓ Juste', faux: '✗ Pas juste', passe: '? À découvrir' }[
+                      etatEssai
+                    ],
+                  }),
                   creer('p', {}, creer('strong', { textContent: enonceEssai(ex) })),
                   // Sans réponse, pas de solution à garder sans l'avoir comprise (règle F04) :
                   // l'étape suivante l'explique, à partir des réponses de la série.
@@ -11522,13 +11567,10 @@ if (age &lt; 12) {
                         }),
                       ]
                     : [
-                        creer('p', {
-                          textContent:
-                            'Ta réponse : ' + fin(essai.reponse) + (essai.juste ? ' Juste.' : ''),
-                        }),
+                        ligne('Ta réponse : ', fin(essai.reponse)),
                         ...(essai.juste || essai.attendu === ''
                           ? []
-                          : [creer('p', { textContent: 'Attendu : ' + fin(essai.attendu) })]),
+                          : [ligne('Attendu : ', fin(essai.attendu))]),
                         ...(essai.retour
                           ? [creer('p', { className: 'discret', textContent: essai.retour })]
                           : []),

@@ -783,7 +783,11 @@ describe('la tentative avant l’explication (pré-test)', () => {
     })
     const bilan = screen.getByRole('heading', { name: 'Tes essais' }).parentElement
     if (!(bilan instanceof HTMLElement)) throw new Error('Pas de bilan des essais')
-    expect(within(bilan).getByText('Ta réponse : 7. Juste.')).toBeInTheDocument()
+    const items = within(bilan).getAllByRole('listitem')
+    expect(items.map((li) => li.dataset.etat)).toEqual(['juste', 'passe'])
+    expect(items[0]).toHaveTextContent('✓ Juste')
+    expect(items[0]).toHaveTextContent('Ta réponse : 7.')
+    expect(items[1]).toHaveTextContent('? À découvrir')
     // Sans réponse, la solution ne se donne pas à garder : l'étape suivante l'explique.
     expect(
       within(bilan).getByText('Tu ne savais pas : l’étape suivante te l’apprend.'),
@@ -831,8 +835,10 @@ describe('la tentative avant l’explication (pré-test)', () => {
     monter(avecPretest, pont)
     await screen.findByRole('heading', { name: 'Tes essais' })
 
-    expect(screen.getByText('Ta réponse : 8.')).toBeInTheDocument()
-    expect(screen.getByText('Attendu : 7.')).toBeInTheDocument()
+    const faux = screen.getByText('✗ Pas juste').closest('li')
+    expect(faux).toHaveAttribute('data-etat', 'faux')
+    expect(faux).toHaveTextContent('Ta réponse : 8.')
+    expect(faux).toHaveTextContent('Attendu : 7.')
     expect(screen.queryByRole('button', { name: 'Je ne sais pas' })).toBeNull()
     expect(envois.filter((e) => e.type === 'pretest.reponse')).toEqual([])
   })
