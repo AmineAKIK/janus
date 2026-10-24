@@ -1305,11 +1305,39 @@ describe('une explication jugée par l’IA', () => {
     expect(demandes.at(-1)).toMatchObject({
       serie: 'explication',
       question: 'ex:c1',
-      libre: { question: 'Pourquoi ?', attendu: '128.' },
+      libre: {
+        question:
+          'Pourquoi ?\nL’apprenant n’écrit qu’une explication\u00a0: dis ce qui est juste et ce qui manquait, sans lui demander de la refaire.',
+        attendu: '128.',
+      },
     })
     const etat = sauvees.at(-1) as { traces: Record<string, { fin: string }> }
     expect(etat.traces['explique:ex:c1']).toMatchObject({ fin: 'jugee' })
     expect(screen.queryByRole('button', { name: 'Envoyer mon explication' })).toBeNull()
+  })
+
+  it('une explication libre donne au correcteur ce que l’écran montre : la règle, la question, le retour', async () => {
+    const { outil, demandes } = await ouvrir([correction('partiel', false)])
+    const ecran = document.createElement('div')
+    ecran.className = 'ecran'
+    const regle = document.createElement('p')
+    regle.textContent = 'Exemple : « Le code promo marche pour les nouveaux clients, sauf soldés. »'
+    outil.replaceWith(ecran)
+    ecran.append(regle, outil)
+    const enonce = document.createElement('p')
+    enonce.className = 'q'
+    enonce.textContent = 'Un nouveau client aurait-il le code ?'
+    const retour = document.createElement('p')
+    retour.className = 'retour'
+    retour.textContent = 'ET passe avant OU. Solution : Oui.'
+    outil.append(enonce, retour)
+    expliquer(outil, 'ex:t6')
+    await envoyer('Les parenthèses changent le sens.')
+
+    const libre = (demandes.at(-1) as { libre: { question: string; attendu: string } }).libre
+    expect(libre.question).toContain('Exercice\u00a0: Un nouveau client aurait-il le code ?')
+    expect(libre.question).toContain('Le code promo marche pour les nouveaux clients')
+    expect(libre.attendu).toBe('128. ET passe avant OU. Solution : Oui.')
   })
 
   it('sans correction possible, l’explication attend d’être renvoyée : rien ne la juge à la place', async () => {
