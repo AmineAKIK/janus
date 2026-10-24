@@ -2941,8 +2941,9 @@
       </div>
       <div data-ecran="Pas à pas">
         <p class="accroche">
-          Une salle de concert laisse entrer avec cette condition. Calculons-la ensemble pour ce
-          soir, une opération à la fois.
+          Une salle de concert laisse entrer avec cette condition : équipe vaut VRAI pour les
+          personnes qui travaillent au concert ce soir. Calculons-la ensemble, une opération à la
+          fois.
         </p>
         <p>
           Avant chaque étape, touche l’opérateur que tu calculerais maintenant. La page te dit si
@@ -2953,12 +2954,12 @@
           data-widget="pasapas"
           data-id="r2"
           data-demo
-          data-expr="âge ≥ 18 ET NON banni OU invité"
-          data-valeurs="âge=16, banni=FAUX, invité=VRAI"
-          data-succes="Ce soir, la salle laisse entrer : la personne est invitée, et l’invitation suffit."
+          data-expr="âge ≥ 18 ET NON banni OU équipe"
+          data-valeurs="âge=16, banni=FAUX, équipe=VRAI"
+          data-succes="Ce soir, la salle laisse entrer : la personne fait partie de l’équipe, et l’équipe entre toujours."
         >
           <p class="q">
-            La condition : âge ≥ 18 ET NON banni OU invité. Ce soir : âge = 16, banni = FAUX, invité
+            La condition : âge ≥ 18 ET NON banni OU équipe. Ce soir : âge = 16, banni = FAUX, équipe
             = VRAI. Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.
           </p>
         </div>
@@ -2972,15 +2973,15 @@
           data-widget="pasapas"
           data-id="r3"
           data-fait="2"
-          data-expr="prix &lt; 20 OU membre ET NON soldé"
-          data-valeurs="prix=15, membre=VRAI, soldé=VRAI"
+          data-expr="durée &lt; 30 OU abonné ET NON électrique"
+          data-valeurs="durée=15, abonné=VRAI, électrique=VRAI"
           data-autre-expr="taille ≥ 120 OU accompagné ET âge ≥ 6"
           data-autre-valeurs="taille=130, accompagné=FAUX, âge=5"
         >
           <p class="q">
-            Une boutique fait une réduction SI prix &lt; 20 OU membre ET NON soldé. Avec prix = 15,
-            membre = VRAI et soldé = VRAI, la réduction s’applique-t-elle ? Ordre de calcul :
-            parenthèses, comparaisons, NON, ET, OU.
+            Un vélo en libre-service est gratuit SI durée &lt; 30 OU abonné ET NON électrique ;
+            durée compte les minutes du trajet. Avec durée = 15, abonné = VRAI et électrique = VRAI,
+            le trajet est-il gratuit ? Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.
           </p>
         </div>
       </div>
@@ -2995,8 +2996,9 @@
           data-autre-valeurs="stock=0, carte=VRAI, espèces=FAUX"
         >
           <p class="q">
-            Un parking est payant SI (heure &lt; 9 OU heure ≥ 17) ET NON férié. Calcule-le pour
-            heure = 18 et férié = FAUX. Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.
+            Une navette d’entreprise circule SI (heure &lt; 9 OU heure ≥ 17) ET NON férié. Calcule
+            la condition pour heure = 18 et férié = FAUX. Ordre de calcul : parenthèses,
+            comparaisons, NON, ET, OU.
           </p>
         </div>
       </div>
@@ -4487,12 +4489,12 @@ if (age &lt; 12) {
         class="ex"
         data-widget="pasapas"
         data-verifie
-        data-expr="points ≥ 50 OU parrain ET NON suspendu"
-        data-valeurs="points=60, parrain=FAUX, suspendu=VRAI"
+        data-expr="montant ≥ 50 OU membre ET NON volumineux"
+        data-valeurs="montant=60, membre=FAUX, volumineux=VRAI"
       >
         <p class="q">
-          Un cadeau est offert SI points ≥ 50 OU parrain ET NON suspendu. Calcule la condition pour
-          points = 60, parrain = FAUX et suspendu = VRAI, une opération à la fois.
+          La livraison est offerte SI montant ≥ 50 OU membre ET NON volumineux. Calcule la condition
+          pour montant = 60, membre = FAUX et volumineux = VRAI, une opération à la fois.
         </p>
         <p class="discret">Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</p>
       </div>
@@ -4517,12 +4519,12 @@ if (age &lt; 12) {
         class="ex"
         data-widget="pasapas"
         data-verifie
-        data-expr="(abonné OU essai) ET NON (retard &gt; 30)"
-        data-valeurs="abonné=FAUX, essai=FAUX, retard=10"
+        data-expr="(abonné OU essai) ET NON (âge &lt; 16)"
+        data-valeurs="abonné=FAUX, essai=FAUX, âge=20"
       >
         <p class="q">
-          Une vidéo se lance SI (abonné OU essai) ET NON (retard &gt; 30). Calcule la condition pour
-          abonné = FAUX, essai = FAUX et retard = 10.
+          Une vidéo interdite aux moins de 16 ans se lance SI (abonné OU essai) ET NON (âge &lt;
+          16). Calcule la condition pour abonné = FAUX, essai = FAUX et âge = 20.
         </p>
         <p class="discret">Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</p>
       </div>
@@ -5201,7 +5203,7 @@ if (age &lt; 12) {
           n’est VRAI que si les deux côtés sont VRAI », et pour VRAI OU VRAI jugé FAUX : « Le OU de
           la logique accepte les deux à la fois : VRAI OU VRAI ne donne pas FAUX. » (E1). Chaque
           étape juste s’ajoute sous la condition, avec la condition récrite et sa raison : « = FAUX
-          ET NON banni OU invité » puis « âge vaut 16 ; 16 ≥ 18 donne FAUX : 16 est plus petit que
+          ET NON banni OU équipe » puis « âge vaut 16 ; 16 ≥ 18 donne FAUX : 16 est plus petit que
           18. » L’ordre de l’encadré s’applique à la lettre : une opération déjà calculable attend
           celles qui passent avant elle (« Pas encore ce NON : les comparaisons passent avant
           NON »). Seules deux opérations de même rang, au même niveau de parenthèses (deux
@@ -5306,8 +5308,8 @@ if (age &lt; 12) {
           l’exercice. Le premier cran est une question qui oriente, seule ; le deuxième, un indice
           sur la notion en cause ; le troisième, l’étape détaillée. Calcul pas à pas : « Qu’est-ce
           qui passe en premier ici : une parenthèse, une comparaison, un NON, un ET ou un OU ? »,
-          puis l’ordre de calcul, puis « L’opération à calculer maintenant : « membre ET FAUX »,
-          avec membre = VRAI. Que donne-t-elle ? » : l’opération et ses données, sans sa valeur. Une
+          puis l’ordre de calcul, puis « L’opération à calculer maintenant : « abonné ET FAUX »,
+          avec abonné = VRAI. Que donne-t-elle ? » : l’opération et ses données, sans sa valeur. Une
           valeur VRAI ou FAUX choisie à tort laisserait la bonne, donnée : la page montre la
           solution, une solution vue, comme l’option qui reste d’un choix. Table de vérité : « Sur
           chaque ligne, que demande l’opérateur pour donner VRAI ? », puis la règle de ET, OU et NON
@@ -5395,7 +5397,7 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 29,
+        "version": 30,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 expressions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
