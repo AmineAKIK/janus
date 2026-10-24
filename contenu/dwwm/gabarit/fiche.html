@@ -1699,7 +1699,7 @@
        * son attendu, et son item n'est réussi qu'avec une explication Solide qui compte ; après deux
        * explications qui ne le sont pas, la page émet `fiche:explication-ratee` sur l'exercice : l'outil
        * montre la solution, et l'item se refait sur sa variante. Une explication que le manifeste ne
-       * déclare pas (après une solution vue) se juge sur la solution de la page, une fois, et ne compte
+       * déclare pas (après une solution vue) se juge sur la solution de la page et ce que montre l'écran (voir `libre`), une fois, et ne compte
        * jamais ; l'outil peut lui permettre plus d'un essai (`essais`), jusqu'à une correction Solide.
        * Un outil qui a sa propre saisie (un schéma refait de mémoire) la donne dans `saisie` :
        * `{ element, lire, manque }`, l'élément à poser à la place du champ, son texte pour le
@@ -1744,6 +1744,43 @@
           typeof consigne === 'string' && consigne !== ''
             ? consigne
             : 'Explique pourquoi c’est juste, en une ou deux phrases\u00a0:'
+        /*
+         * Une explication libre se juge sur ce que l'écran montre : la consigne et la question de
+         * l'exercice, le texte de l'écran qui le précède (la règle dont il parle), et pour l'attendu,
+         * la solution avec le retour affiché (`.retour`, `.explication`), qui dit pourquoi. Sans eux, le
+         * correcteur ne lit que « Oui » et ne peut rien vérifier. Avec un seul essai, il ne demande pas
+         * de refaire.
+         */
+        const enLigne = (texte) => (texte ?? '').replace(/\s+/g, ' ').trim()
+        const CONTEXTE_MAX = 1500
+        const libre = () => {
+          const ecran = exercice.closest('[data-ecran], .ecran')
+          let avant = ''
+          if (ecran) {
+            const portee = document.createRange()
+            portee.setStart(ecran, 0)
+            portee.setEndBefore(exercice)
+            avant = enLigne(portee.toString())
+            if (avant.length > CONTEXTE_MAX) avant = '…' + avant.slice(-CONTEXTE_MAX)
+          }
+          const lire = (selecteur) => enLigne(exercice.querySelector(selecteur)?.textContent)
+          const enonce = lire(':scope > .q') || lire('.q')
+          const retour = [lire(':scope > .retour'), lire(':scope > .explication')]
+            .filter(Boolean)
+            .join(' ')
+          return {
+            question: [
+              typeof question === 'string' && question !== '' ? question : intitule,
+              enonce && 'Exercice\u00a0: ' + enonce,
+              avant && 'Ce que l’écran montre avant l’exercice\u00a0: ' + avant,
+              maximum === 1 &&
+                'L’apprenant n’écrit qu’une explication\u00a0: dis ce qui est juste et ce qui manquait, sans lui demander de la refaire.',
+            ]
+              .filter(Boolean)
+              .join('\n'),
+            attendu: [String(solution ?? ''), retour].filter(Boolean).join(' '),
+          }
+        }
         const ancienne = etat.traces?.['explique:' + cle]
         const essais = Array.isArray(ancienne?.essais) ? ancienne.essais : []
         const zone = creer('div', { className: 'expliquer' })
@@ -1840,15 +1877,7 @@
                 confiance: choisie.value,
                 relance: '',
                 support: { colle, retour_cours: etat.retourCours },
-                ...(declaree
-                  ? {}
-                  : {
-                      libre: {
-                        question:
-                          typeof question === 'string' && question !== '' ? question : intitule,
-                        attendu: String(solution ?? ''),
-                      },
-                    }),
+                ...(declaree ? {} : { libre: libre() }),
               })
               noterReperees('explique:' + cle, correction.erreurs_critiques)
               essais.push({ texte: lireChamp(), correction: resumeCorrection(correction) })
