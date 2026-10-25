@@ -195,7 +195,7 @@ function verifierPratique(
   const templates = templatesDesItems(html)
   const ids = manifeste.pratique.flatMap((exercice) => exercice.items.map((item) => item.id))
   const avecExplication = ids.filter((id) => /\bdata-justifier\s*=/i.test(templates.get(id) ?? ''))
-  const plafond = Math.ceil(ids.length / 3)
+  const plafond = Math.floor(ids.length / 3)
   const declarees = new Set(manifeste.explication.map(({ id }) => id))
   const demandees = new Set<string>()
   if (avecExplication.length > plafond) {
@@ -509,8 +509,10 @@ function verifierPresupposes(
  * Les rappels vont dans un encadré, pas dans la question (B02 v33, avis d'Amine du 25 octobre 2026 :
  * « dense, abstrait ») : « taille compte les centimètres, accompagné vaut VRAI pour…, et ≥ veut dire
  * « plus grand ou égal à ». Calcule… Ordre de calcul : … » noyait la question. Une consigne de la page
- * redonne au plus une convention ; les autres vont dans l'encadré « Pour lire » de l'écran.
+ * redonne au plus une convention et tient en 45 mots ; le reste va dans l'encadré « Pour lire » de
+ * l'écran (B01 n'avait qu'une consigne au-delà, B02 v33 en avait 25).
  */
+const MOTS_PAR_CONSIGNE = 45
 const RAPPELS = /\bveut dire\b|\bOrdre de calcul\b|\bse lit\b|\bsignifie\b/giu
 
 function verifierConsignesChargees(html: string, signaler: (message: string) => void): void {
@@ -527,11 +529,58 @@ function verifierConsignesChargees(html: string, signaler: (message: string) => 
       .replace(/&amp;/g, '&')
       .replace(/\s+/g, ' ')
       .trim()
-    if ((texte.match(RAPPELS) ?? []).length < 2) continue
+    const mots = texte.split(' ').length
+    if ((texte.match(RAPPELS) ?? []).length < 2 && mots <= MOTS_PAR_CONSIGNE) continue
     signaler(
-      `la consigne « ${texte.slice(0, 60)}… » empile les rappels : garde la situation et la question, et mets les conventions dans l’encadré « Pour lire » de l’écran.`,
+      `la consigne « ${texte.slice(0, 60)}… » empile les rappels (${String(mots)} mots) : garde la situation et la question, et mets les conventions dans l’encadré « Pour lire » de l’écran.`,
     )
   }
+}
+
+/**
+ * Les données d'un cas s'écrivent en mots, et en pseudo-code = ne fait que comparer (B02 v34) :
+ * « pour âge = 8 et résident = FAUX » obligeait à préciser ailleurs « ici, = compare ».
+ */
+function verifierDonneesEnMots(
+  manifeste: Manifeste,
+  html: string,
+  signaler: (message: string) => void,
+): void {
+  const chercher = (texte: string, ou: string) => {
+    for (const [trouve] of texte.matchAll(/\b(?:pour|avec)\s+[\p{L}’']+\s*=\s*(?:VRAI|FAUX|\d+)/gu))
+      signaler(
+        `« ${trouve.replace(/\s+/g, ' ')} » (${ou}) écrit une donnée avec = : dis le cas en mots (« un enfant de 8 ans qui n’habite pas la ville »), = ne fait que comparer.`,
+      )
+  }
+  chercher(
+    sansScriptsNiCommentaires(html)
+      .replace(/<(style|pre|code)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+      .replace(/<template\b[^>]*\bdata-conception\b[^>]*>[\s\S]*?<\/template>/gi, ' ')
+      .replace(/<[^>]+>/g, ' '),
+    'le texte affiché',
+  )
+  textesDuManifeste(manifeste, '', (chemin, texte) => {
+    if (chemin !== 'contexte_ia') chercher(texte, chemin)
+  })
+}
+
+/**
+ * Un prénom, c'est un client, avec les mêmes données partout (B02 v34) : Nina avait 26 ans dans une
+ * étape et 30 ans dans la suivante, et le débutant qui suit l'histoire ne savait plus de qui on parlait.
+ */
+function verifierPrenoms(html: string, signaler: (message: string) => void): void {
+  const texte = sansScriptsNiCommentaires(html)
+    .replace(/<template\b[^>]*\bdata-conception\b[^>]*>[\s\S]*?<\/template>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+  const ages = new Map<string, Set<string>>()
+  for (const [, prenom = '', age = ''] of texte.matchAll(/\b(\p{Lu}\p{Ll}+), (\d+) ans\b/gu))
+    ages.set(prenom, (ages.get(prenom) ?? new Set()).add(age))
+  for (const [prenom, lesAges] of ages)
+    if (lesAges.size > 1)
+      signaler(
+        `${prenom} a plusieurs âges dans la fiche (${[...lesAges].join(', ')} ans) : un prénom garde les mêmes données partout, prends un autre prénom pour un autre client.`,
+      )
 }
 
 /**
@@ -952,6 +1001,8 @@ export async function verifierLesFiches({
       verifierTexteNu(fiche.html, signaler)
       verifierPresupposes(resultat.manifeste, fiche.html, signaler)
       verifierConsignesChargees(fiche.html, signaler)
+      verifierDonneesEnMots(resultat.manifeste, fiche.html, signaler)
+      verifierPrenoms(fiche.html, signaler)
       verifierDonneesALEcran(fiche.html, signaler)
       verifierAlignement(resultat.manifeste, fiche.html, signaler)
 

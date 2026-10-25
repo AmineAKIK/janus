@@ -751,6 +751,39 @@ describe('vérification des fiches du dépôt', () => {
       expect(problemes.join('\n')).not.toContain('Lou, 5 ans')
     })
 
+    it('refuse une donnée écrite avec = et un prénom à deux âges', async () => {
+      await poser(
+        'X00.html',
+        fiche.replace(
+          "<p>À REMPLACER : l'explication du bloc.</p>",
+          '<p>Nina, 26 ans, paie 10 €.</p><p>Calcule pour âge = 8 et résident = FAUX.</p><p>Nina, 30 ans, étudiante.</p><pre>let age = 8</pre>',
+        ),
+      )
+
+      const problemes = await verifierLesFiches({ dossierContenu: contenu })
+      expect(problemes).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('« pour âge = 8 »'),
+          expect.stringContaining('Nina a plusieurs âges'),
+        ]),
+      )
+      expect(problemes.join('\n')).not.toContain('age = 8 »')
+    })
+
+    it('refuse une consigne trop longue, même sans rappel nommé', async () => {
+      await poser(
+        'X00.html',
+        fiche.replace(
+          "<p>À REMPLACER : l'explication du bloc.</p>",
+          `<div class="ex"><p class="q">${'mot '.repeat(46)}?</p></div>`,
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual(
+        expect.arrayContaining([expect.stringContaining('(47 mots)')]),
+      )
+    })
+
     it('laisse libres les notes de conception', async () => {
       await poser(
         'X00.html',
