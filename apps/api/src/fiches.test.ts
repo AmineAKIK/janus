@@ -860,6 +860,20 @@ describe('vérification des fiches du dépôt', () => {
       expect(problemes.filter((p) => p.includes('differees'))).toEqual([])
     })
 
+    it('refuse l’identifiant d’un onglet dans le texte affiché', async () => {
+      await poser(
+        'X00.html',
+        fiche.replace(
+          "<p>À REMPLACER : l'explication du bloc.</p>",
+          '<p>Les interrupteurs d’ET5 ne montraient pas cet ordre.</p>',
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual(
+        expect.arrayContaining([expect.stringContaining('« ET5 » dans le texte affiché')]),
+      )
+    })
+
     it('laisse libres les notes de conception', async () => {
       await poser(
         'X00.html',

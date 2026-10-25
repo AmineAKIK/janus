@@ -416,6 +416,12 @@ const COULISSES: readonly { motif: RegExp; pourquoi: string }[] = [
     pourquoi: 'les onglets n’ont pas de numéro : nomme l’onglet, par exemple « À l’intuition »',
   },
   {
+    // B02 v34 : « Les interrupteurs d'ET5 ne montraient pas… », l'identifiant d'un onglet.
+    motif:
+      /(?:(?<=\b[dl][’'])|(?<=\b(?:en|de|à|dans|depuis|qu[’']en)\s))ET\d{1,2}(?![\p{L}\p{N}])/gu,
+    pourquoi: 'les onglets n’ont pas d’identifiant pour l’apprenant : nomme l’onglet par son titre',
+  },
+  {
     motif: /\bAvant de lire\b[^:?.]*/gu,
     pourquoi: 'c’est une étiquette de conception : pose directement la question',
   },
