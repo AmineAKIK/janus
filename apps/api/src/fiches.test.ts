@@ -827,6 +827,34 @@ describe('vérification des fiches du dépôt', () => {
       )
     })
 
+    it('refuse une question qui emploie un signe de JavaScript sans en redonner le sens', async () => {
+      await poser(
+        'X00.html',
+        avecManifeste(fiche, (m) => {
+          m.rappel = m.rappel.map((q, i) =>
+            i === 0
+              ? { ...q, question: 'Corrige : if (a && !b) { }', attendu: 'if (a === 1 && !b)' }
+              : q,
+          )
+          m.differees = m.differees.map((d, i) =>
+            i === 0
+              ? { ...d, consigne: 'En JavaScript, && est le ET. Corrige : if (a && b) { }' }
+              : d,
+          )
+        }),
+      )
+
+      const problemes = await verifierLesFiches({ dossierContenu: contenu })
+      expect(problemes).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('emploie && sans en redonner le sens'),
+          expect.stringContaining('emploie ! sans en redonner le sens'),
+          expect.stringContaining('emploie === sans en redonner le sens'),
+        ]),
+      )
+      expect(problemes.filter((p) => p.includes('differees'))).toEqual([])
+    })
+
     it('laisse libres les notes de conception', async () => {
       await poser(
         'X00.html',

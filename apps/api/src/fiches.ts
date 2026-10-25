@@ -562,6 +562,59 @@ function verifierConsignesChargees(
 }
 
 /**
+ * Un signe de JavaScript employé par une question s'y redonne (R01, B02 v34, passe 4) : B02-R42 faisait
+ * corriger if (batterie && 100 && !enCharge) sans dire que && est le ET ni ! le NON, et le cours est
+ * masqué pendant la restitution. Le signe compte s'il est dans la question ou dans l'attendu.
+ */
+const SIGNES_JS: readonly { signe: RegExp; sens: RegExp; nom: string }[] = [
+  {
+    nom: '===',
+    signe: /===/u,
+    sens: /===\s*(?:compare|est|veut dire|signifie|teste)\b|\bcompare(?:r)? avec ===/u,
+  },
+  {
+    nom: '&&',
+    signe: /&&/u,
+    sens: /&&\s*(?:est|veut dire|signifie|le ET)\b|(?:ET|le ET)\s*(?:s[’']écrit|est|:)\s*&&/u,
+  },
+  {
+    nom: '||',
+    signe: /\|\|/u,
+    sens: /\|\|\s*(?:est|veut dire|signifie|le OU)\b|(?:OU|le OU)\s*(?:s[’']écrit|est|:)\s*\|\|/u,
+  },
+  {
+    nom: '!',
+    signe: /![\p{L}(]/u,
+    sens: /!\s*(?:est|veut dire|signifie|le NON)\b|(?:NON|le NON)\s*(?:s[’']écrit|est|:)\s*!/u,
+  },
+]
+
+function verifierSignesRedonnes(
+  manifeste: Manifeste,
+  html: string,
+  signaler: (message: string) => void,
+): void {
+  const controler = (question: string, attendu: string, ou: string) => {
+    for (const { signe, sens, nom } of SIGNES_JS)
+      if (signe.test(`${question}\n${attendu}`) && !sens.test(question))
+        signaler(
+          `${ou} emploie ${nom} sans en redonner le sens : la question s’affiche sans le cours, ajoute-le à sa légende (« En JavaScript : && est le ET, ! le NON, === compare. »).`,
+        )
+  }
+  for (const q of manifeste.restitution) controler(q.question, q.attendu, `restitution ${q.id}`)
+  for (const q of manifeste.rappel) controler(q.question, q.attendu, `rappel ${q.id}`)
+  for (const d of manifeste.differees) controler(d.consigne, d.attendu, `differees ${d.id}`)
+  for (const e of manifeste.explication)
+    controler(e.question, e.attendu, `explication ${e.id}`)
+  for (const [, texte = ''] of html.matchAll(/\bdata-justifier="([^"]*)"/g))
+    controler(
+      texte.replace(/&amp;/g, '&'),
+      '',
+      'la demande d’explication « ' + texte.slice(0, 40) + '… »',
+    )
+}
+
+/**
  * Les données d'un cas s'écrivent en mots, et en pseudo-code = ne fait que comparer (B02 v34) :
  * « pour âge = 8 et résident = FAUX » obligeait à préciser ailleurs « ici, = compare ».
  */
@@ -1026,6 +1079,7 @@ export async function verifierLesFiches({
       verifierPresupposes(resultat.manifeste, fiche.html, signaler)
       verifierConsignesChargees(resultat.manifeste, fiche.html, signaler)
       verifierDonneesEnMots(resultat.manifeste, fiche.html, signaler)
+      verifierSignesRedonnes(resultat.manifeste, fiche.html, signaler)
       verifierPrenoms(fiche.html, signaler)
       verifierDonneesALEcran(fiche.html, signaler)
       verifierAlignement(resultat.manifeste, fiche.html, signaler)
