@@ -566,7 +566,7 @@ describe('vérification des fiches du dépôt', () => {
       await poser(
         'X00.html',
         avecManifeste(fiche, (manifeste) => {
-          manifeste.contexte_ia = `Bloc ${manifeste.bloc}. Les signes sont redonnés, comme la table en B01, pas comme en F12.`
+          manifeste.contexte_ia = `Bloc X00. Les signes sont redonnés, comme la table en B01, pas comme en F12.`
         }),
       )
 
