@@ -42,7 +42,8 @@ export function requeteDe(
     readonly historique: readonly TourPrecedent[]
   },
 ): RequeteCorrection {
-  const enMots = (texte: string) => etapesEnMots(texte, manifeste.etapes)
+  const enMots = (texte: string) =>
+    etapesEnMots(texte, manifeste.etapes, manifeste.erreurs_critiques)
   return {
     titre: manifeste.titre,
     contexteIa: enMots(manifeste.contexte_ia),

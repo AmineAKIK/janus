@@ -3066,8 +3066,8 @@
       <div data-ecran="Pas à pas">
         <p class="accroche">
           Une salle de concert laisse entrer SI âge ≥ 18 ET NON banni OU équipe. équipe vaut VRAI
-          pour les personnes qui travaillent au concert. Calculons-la ensemble, une opération à la
-          fois.
+          pour les personnes qui travaillent au concert, et ≥ veut dire « plus grand ou égal à ».
+          Calculons-la ensemble, une opération à la fois.
         </p>
         <details>
           <summary>Les tables, si tu en as besoin</summary>
@@ -3204,53 +3204,6 @@
         </div>
       </div>
       <div data-ecran="Seul">
-        <details>
-          <summary>Les tables, si tu en as besoin</summary>
-          <table
-            class="table-js"
-            data-lecture="Les tables de NON, ET et OU. NON A est VRAI quand A est FAUX, et FAUX quand A est VRAI. A ET B n’est VRAI que si A et B sont VRAI tous les deux. A OU B n’est FAUX que si A et B sont FAUX tous les deux."
-          >
-            <thead>
-              <tr>
-                <th>A</th>
-                <th>B</th>
-                <th>NON A</th>
-                <th>A ET B</th>
-                <th>A OU B</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>FAUX</td>
-                <td>FAUX</td>
-                <td>VRAI</td>
-                <td>FAUX</td>
-                <td>FAUX</td>
-              </tr>
-              <tr>
-                <td>FAUX</td>
-                <td>VRAI</td>
-                <td>VRAI</td>
-                <td>FAUX</td>
-                <td>VRAI</td>
-              </tr>
-              <tr>
-                <td>VRAI</td>
-                <td>FAUX</td>
-                <td>FAUX</td>
-                <td>FAUX</td>
-                <td>VRAI</td>
-              </tr>
-              <tr>
-                <td>VRAI</td>
-                <td>VRAI</td>
-                <td>FAUX</td>
-                <td>VRAI</td>
-                <td>VRAI</td>
-              </tr>
-            </tbody>
-          </table>
-        </details>
         <div
           class="ex"
           data-widget="pasapas"
@@ -3263,8 +3216,9 @@
         >
           <p class="q">
             Une navette d’entreprise circule SI (heure &lt; 9 OU heure ≥ 17) ET NON férié. Calcule
-            la condition pour heure = 18 et férié = FAUX. Ordre de calcul : parenthèses,
-            comparaisons, NON, ET, OU.
+            la condition pour heure = 18 et férié = FAUX. Le signe &lt; veut dire « strictement plus
+            petit que », ≥ « plus grand ou égal à ». Ordre de calcul : parenthèses, comparaisons,
+            NON, ET, OU.
           </p>
         </div>
       </div>
@@ -5026,7 +4980,7 @@ if (age &lt; 12) {
         Il faut plusieurs séries réussies, chacune un jour différent : la liste sous ce texte montre
         celles qui sont faites et celles qui restent. Tu peux faire autant de séries que tu veux, et
         continuer le bloc sans attendre : reviens ici les jours suivants. La dernière série réussie,
-        c’est la preuve « Aisance » : sur la page des blocs, elle devient « Prouvé ».
+        c’est la preuve « Aisance », que la page des blocs affiche.
       </p>
       <div class="outil" data-widget="aisance"></div>
     </template>
@@ -5300,7 +5254,8 @@ if (age &lt; 12) {
         data-valeurs="âge=8, résident=FAUX"
       >
         <p class="q">
-          Un musée est gratuit SI âge &lt; 12 OU âge ≥ 65 ET résident. Calcule la condition pour âge
+          Un musée est gratuit SI âge &lt; 12 OU âge ≥ 65 ET résident. Le signe &lt; veut dire
+          « strictement plus petit que », ≥ « plus grand ou égal à ». Calcule la condition pour âge
           = 8 et résident = FAUX, une opération à la fois.
         </p>
         <p class="discret">Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</p>
@@ -5316,7 +5271,8 @@ if (age &lt; 12) {
       >
         <p class="q">
           La livraison est offerte SI montant ≥ 50 OU membre ET NON volumineux. Calcule la condition
-          pour montant = 60, membre = FAUX et volumineux = VRAI, une opération à la fois.
+          pour montant = 60, membre = FAUX et volumineux = VRAI, une opération à la fois. Le signe ≥
+          veut dire « plus grand ou égal à ».
         </p>
         <p class="discret">Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</p>
       </div>
@@ -5433,17 +5389,14 @@ if (age &lt; 12) {
       >
         <p class="q">
           « Pour valider ton compte, clique sur le lien reçu par e-mail ou par SMS. » Une cliente
-          clique sur les deux liens. Son compte doit-il être validé ? Pour un « ou » : un mot qui
-          fait choisir (« au choix », « soit… soit ») le rend exclusif ; une condition pour avoir
-          droit à quelque chose est un OU inclusif ; pour une chose offerte sans mot qui fait
-          choisir, seul celui qui l’offre sait s’il donne les deux.
+          clique sur les deux liens. Son compte doit-il être validé ?
         </p>
         <ul class="options">
           <li data-option="inclusif">Oui.</li>
           <li
             data-option="exclusif"
             data-erreur="E1"
-            data-retour="Relis à quoi sert le lien : la phrase interdit-elle de cliquer sur les deux ?"
+            data-retour="Le OU de la logique accepte les deux à la fois. La phrase dit-elle quelque part de ne cliquer que sur un seul lien ?"
           >
             Non.
           </li>
@@ -5468,10 +5421,7 @@ if (age &lt; 12) {
       >
         <p class="q">
           « Choisis ta livraison : à domicile ou en point relais. » Une commande peut-elle être
-          livrée aux deux ? Pour un « ou » : un mot qui fait choisir (« au choix », « soit… soit »)
-          le rend exclusif ; une condition pour avoir droit à quelque chose est un OU inclusif ;
-          pour une chose offerte sans mot qui fait choisir, seul celui qui l’offre sait s’il donne
-          les deux.
+          livrée aux deux ?
         </p>
         <ul class="options">
           <li data-option="exclusif">Non.</li>
@@ -5501,10 +5451,7 @@ if (age &lt; 12) {
       >
         <p class="q">
           « Avec ce forfait mobile, un mois de musique ou un mois de vidéo, au choix. » Quelle
-          condition dit que l’offre choisie par un client est acceptée ? Pour un « ou » : un mot qui
-          fait choisir (« au choix », « soit… soit ») le rend exclusif ; une condition pour avoir
-          droit à quelque chose est un OU inclusif ; pour une chose offerte sans mot qui fait
-          choisir, seul celui qui l’offre sait s’il donne les deux.
+          condition dit que l’offre choisie par un client est acceptée ?
         </p>
         <ul class="options">
           <li data-option="exclusif" class="mono">(musique OU vidéo) ET NON (musique ET vidéo)</li>
@@ -5536,10 +5483,7 @@ if (age &lt; 12) {
       >
         <p class="q">
           « Avec ton abonnement, une place de cinéma ou une place de théâtre, au choix. » Quelle
-          condition dit que la place choisie est acceptée ? Pour un « ou » : un mot qui fait choisir
-          (« au choix », « soit… soit ») le rend exclusif ; une condition pour avoir droit à quelque
-          chose est un OU inclusif ; pour une chose offerte sans mot qui fait choisir, seul celui
-          qui l’offre sait s’il donne les deux.
+          condition dit que la place choisie est acceptée ?
         </p>
         <ul class="options">
           <li data-option="exclusif" class="mono">
@@ -6505,14 +6449,14 @@ if (age &lt; 12) {
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-R15",
-            "question": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Avec note = 12, bonus = VRAI et absent = VRAI, calcule « note ≥ 10 OU bonus ET NON absent », une opération à la fois, en disant à chaque étape ce que tu calcules.",
-            "attendu": "Le ET se calcule avant le OU : bonus ET NON absent donne VRAI ET FAUX, soit FAUX, puis note ≥ 10, VRAI, OU FAUX donne VRAI. Calculer le OU d’abord donnerait FAUX : c’est l’erreur E2. Déduit de l’étape 6.",
+            "id": "B02-R29",
+            "question": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Avec note = 12, bonus = VRAI et absent = VRAI, calcule « note ≥ 10 OU bonus ET NON absent », où ≥ veut dire « plus grand ou égal à », une opération à la fois, en disant à chaque étape ce que tu calcules.",
+            "attendu": "Les comparaisons d’abord : note ≥ 10 donne VRAI. Puis NON : NON absent donne FAUX. Puis ET : bonus ET FAUX donne FAUX. Puis OU : VRAI OU FAUX donne VRAI. Calculer le OU avant le ET donnerait (VRAI OU VRAI) ET FAUX, soit FAUX : c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
           {
-            "id": "B02-R25",
-            "question": "Pour un « ou » : un mot qui fait choisir (« au choix », « soit… soit ») le rend exclusif ; une condition pour avoir droit à quelque chose est un OU inclusif ; pour une chose offerte sans mot qui fait choisir, seul celui qui l’offre sait s’il donne les deux. Une bibliothèque écrit : « Pour emprunter un livre, il faut une carte de lecteur ou une pièce d’identité. » Traduis cette règle en condition, avec le bon « ou ». Dis qui serait refusé si on lisait ce « ou » comme exclusif.",
+            "id": "B02-R28",
+            "question": "Une bibliothèque écrit : « Pour emprunter un livre, il faut une carte de lecteur ou une pièce d’identité. » Traduis cette règle en condition, avec le bon « ou ». Dis qui serait refusé si on lisait ce « ou » comme exclusif.",
             "attendu": "carte OU identité, un OU inclusif : c’est une condition pour avoir droit à emprunter. Lu comme exclusif, il refuserait le lecteur qui montre sa carte et sa pièce d’identité : c’est l’erreur E1. Déduit de l’étape 7.",
             "erreurs": ["E1"]
           },
@@ -6553,15 +6497,15 @@ if (age &lt; 12) {
           {
             "id": "PR1-5",
             "item": "PR1-5",
-            "question": "« Pour valider ton compte, clique sur le lien reçu par e-mail ou par SMS. » Une cliente clique sur les deux liens : son compte est-il validé ? Pour un « ou » : un mot qui fait choisir (« au choix », « soit… soit ») le rend exclusif ; une condition pour avoir droit à quelque chose est un OU inclusif ; pour une chose offerte sans mot qui fait choisir, seul celui qui l’offre sait s’il donne les deux. Dis ce qui arriverait à la cliente si le code utilisait la forme exclusive.",
-            "attendu": "Avec la forme exclusive, (email OU sms) ET NON (email ET sms), la cliente qui clique sur les deux liens verrait son compte refusé, alors que la phrase pose une condition pour avoir droit à quelque chose : son « ou » est inclusif, et la bonne condition est email OU sms. Prendre ce « ou » pour un exclusif, c’est l’erreur E1. Déduit de l’étape 7.",
+            "question": "« Pour valider ton compte, clique sur le lien reçu par e-mail ou par SMS. » Une cliente clique sur les deux liens : son compte est-il validé ?  Dis ce qui arriverait à la cliente si le code utilisait la forme exclusive, (email OU sms) ET NON (email ET sms).",
+            "attendu": "Avec la forme exclusive, la cliente qui clique sur les deux liens verrait son compte refusé : elle remplit les deux conditions, et la forme exclusive refuse ce cas.",
             "erreurs": []
           },
           {
             "id": "PR1-5:variante",
             "item": "PR1-5",
-            "question": "« Choisis ta livraison : à domicile ou en point relais. » Une commande peut-elle être livrée aux deux ? Pour un « ou » : un mot qui fait choisir (« au choix », « soit… soit ») le rend exclusif ; une condition pour avoir droit à quelque chose est un OU inclusif ; pour une chose offerte sans mot qui fait choisir, seul celui qui l’offre sait s’il donne les deux. Dis ce qui arriverait à une commande si le code utilisait le OU inclusif.",
-            "attendu": "Avec domicile OU relais, une commande qui demande les deux serait acceptée, alors qu’un colis ne part qu’à une adresse : « choisis » fait choisir, et la bonne condition est (domicile OU relais) ET NON (domicile ET relais). Déduit de l’étape 7.",
+            "question": "« Choisis ta livraison : à domicile ou en point relais. » Une commande peut-elle être livrée aux deux ?  Dis ce qui arriverait à une commande si le code utilisait le OU inclusif, domicile OU relais.",
+            "attendu": "Avec le OU inclusif, une commande qui demande les deux livraisons serait acceptée, alors qu’un colis ne part qu’à une adresse.",
             "erreurs": []
           },
           {
@@ -6607,14 +6551,14 @@ if (age &lt; 12) {
             "erreurs": ["E2"]
           },
           {
-            "id": "B02-Q20",
-            "question": "Voici une chaîne : SI stock = 0 : afficher « épuisé » ; SINON SI stock < 5 : afficher « presque épuisé » ; SINON : afficher « en stock ». Ici, = compare : stock = 0 veut dire « stock est égal à 0 ». Avec stock = 0, qu’affiche-t-elle ? La deuxième ligne est-elle testée ?",
-            "attendu": "Elle affiche « épuisé », et seulement ça : 0 = 0 est VRAI à la première ligne, et la chaîne s’arrête à la première condition VRAIE. La deuxième ligne n’est pas testée, même si 0 < 5 serait VRAI ; afficher aussi « presque épuisé », c’est l’erreur E3. Déduit de l’étape 8.",
+            "id": "B02-Q23",
+            "question": "Voici une chaîne : SI stock = 0 : afficher « épuisé » ; SINON SI stock < 5 : afficher « presque épuisé » ; SINON : afficher « en stock ». Ici, = compare : stock = 0 veut dire « stock est égal à 0 », et < veut dire « strictement plus petit que ». Avec stock = 0, qu’affiche-t-elle ? La ligne SINON SI stock < 5 est-elle testée ?",
+            "attendu": "Elle affiche « épuisé », et seulement ça : 0 = 0 est VRAI à la première ligne, et la chaîne s’arrête à la première condition VRAIE. La ligne SINON SI stock < 5 n’est pas testée, même si 0 < 5 serait VRAI ; afficher aussi « presque épuisé », c’est l’erreur E3. Déduit de l’étape 8.",
             "erreurs": ["E3"]
           },
           {
-            "id": "B02-Q13",
-            "question": "En JavaScript, let crée une variable, = range une valeur et === compare. Tu tapes let total = 0, puis total = 5, puis total === 0. Que contient total à la fin, et que répond la console à la dernière ligne ?",
+            "id": "B02-Q21",
+            "question": "En JavaScript, let crée une variable, = range une valeur et === compare ; true veut dire VRAI et false FAUX. Tu tapes let total = 0, puis total = 5, puis total === 0. Que contient total à la fin, et que répond la console à la dernière ligne ?",
             "attendu": "total contient 5 : total = 5 est une affectation, elle range 5 à la place de 0, car une variable ne garde qu’une valeur à la fois. total === 0 compare sans rien changer : 5 n’est pas 0, la console répond false. Prendre total = 5 pour une comparaison, c’est l’erreur E4. Déduit de l’étape 9.",
             "erreurs": ["E4"]
           },
@@ -6637,8 +6581,8 @@ if (age &lt; 12) {
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-Q16",
-            "question": "En JavaScript, let crée une variable, = range une valeur et ≥ s’écrit >=. Dans la console, tu tapes let prix = 12, puis prix >= 10, puis prix = 8, puis de nouveau prix >= 10. Que répond la console aux deux lignes prix >= 10, et pourquoi sa réponse change-t-elle ?",
+            "id": "B02-Q22",
+            "question": "En JavaScript, let crée une variable, = range une valeur, ≥ veut dire « plus grand ou égal à » et s’écrit >= ; true veut dire VRAI et false FAUX. Dans la console, tu tapes let prix = 12, puis prix >= 10, puis prix = 8, puis de nouveau prix >= 10. Que répond la console aux deux lignes prix >= 10, et pourquoi sa réponse change-t-elle ?",
             "attendu": "true, puis false : prix = 8 a remplacé 12 par 8, car une variable ne garde qu’une valeur à la fois, et la comparaison se recalcule avec la valeur du moment, 8 >= 10. Déduit des étapes 4 et 9.",
             "erreurs": []
           }
@@ -6659,9 +6603,9 @@ if (age &lt; 12) {
             "erreurs": ["E2"]
           },
           {
-            "id": "B02-C9",
+            "id": "B02-C16",
             "type": "explication",
-            "consigne": "Voici une chaîne : SI vitesse > 50, afficher « ralentis » ; SINON SI vitesse > 90, afficher « danger » ; SINON, afficher « ok ». Qu’affiche-t-elle pour 100 ? Corrige-la.",
+            "consigne": "Voici une chaîne : SI vitesse > 50, afficher « ralentis » ; SINON SI vitesse > 90, afficher « danger » ; SINON, afficher « ok ». Le signe > veut dire « strictement plus grand que ». Qu’affiche-t-elle pour 100 ? Corrige-la.",
             "attendu": "Pour 100, elle affiche « ralentis » : 100 > 50 est VRAI dès la première ligne, la chaîne en sort, et la ligne « danger » n’est jamais atteinte. Correction, la plus exigeante d’abord : SI vitesse > 90, « danger » ; SINON SI vitesse > 50, « ralentis » ; SINON, « ok ». Croire que « danger » s’affiche aussi, c’est l’erreur E3. Déduit de l’étape 8.",
             "erreurs": ["E3"]
           },
@@ -6687,9 +6631,9 @@ if (age &lt; 12) {
             "erreurs": ["E2"]
           },
           {
-            "id": "B02-DE17",
+            "id": "B02-DE20",
             "type": "explication",
-            "consigne": "Un relevé de notes affiche « très bien » à partir de 16, « bien » à partir de 14, « assez bien » à partir de 12. Un camarade écrit : SI note ≥ 12 : afficher « assez bien » ; SINON SI note ≥ 14 : afficher « bien » ; SINON SI note ≥ 16 : afficher « très bien ». Qu’affiche sa chaîne pour 17 ? Explique pourquoi on met d’abord la condition la plus exigeante.",
+            "consigne": "Un relevé de notes affiche « très bien » à partir de 16, « bien » à partir de 14, « assez bien » à partir de 12. Un camarade écrit : SI note ≥ 12 : afficher « assez bien » ; SINON SI note ≥ 14 : afficher « bien » ; SINON SI note ≥ 16 : afficher « très bien ». Le signe ≥ veut dire « plus grand ou égal à ». Qu’affiche sa chaîne pour 17 ? Explique pourquoi on met d’abord la condition la plus exigeante.",
             "attendu": "Pour 17, elle affiche « assez bien » : 17 ≥ 12 est déjà VRAI à la première ligne, et seule la branche de la première condition VRAIE s’exécute (croire que les suivantes s’exécutent aussi, c’est l’erreur E3). La plus exigeante d’abord, ≥ 16, puis ≥ 14, puis ≥ 12, car chaque ligne sait alors que celles du dessus sont FAUSSES. Déduit de l’étape 8.",
             "erreurs": ["E3"]
           },
@@ -6701,33 +6645,33 @@ if (age &lt; 12) {
             "erreurs": ["E4"]
           },
           {
-            "id": "B02-DE16",
+            "id": "B02-DE19",
             "type": "explication",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Pour un « ou » : un mot qui fait choisir (« au choix », « soit… soit ») le rend exclusif ; une condition pour avoir droit à quelque chose est un OU inclusif ; pour une chose offerte sans mot qui fait choisir, seul celui qui l’offre sait s’il donne les deux. Explique la différence entre le OU de la logique et le « ou » de « une boisson au choix : jus ou soda », et écris la condition de chacun.",
-            "attendu": "Le OU de la logique est inclusif, VRAI aussi quand les deux le sont : jus OU soda. « Au choix » n’en permet qu’un, c’est exclusif : (jus OU soda) ET NON (jus ET soda) ; prendre le OU logique pour un exclusif, c’est l’erreur E1. Déduit de l’étape 7.",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Un menu dit : « une boisson au choix : jus ou soda ». Avec les faits jus et soda, écris deux conditions : celle du OU de la logique, puis celle qui respecte « au choix ». Explique ce qui les distingue : que donne chacune pour un client qui prend les deux ?",
+            "attendu": "Le OU de la logique est inclusif, VRAI aussi quand les deux le sont : jus OU soda accepterait le client qui prend les deux. « Au choix » n’en permet qu’un, c’est exclusif : (jus OU soda) ET NON (jus ET soda), FAUX pour ce client. Prendre le OU logique pour un exclusif, ou l’inverse, c’est l’erreur E1. Déduit de l’étape 7.",
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-DT17",
+            "id": "B02-DT23",
             "type": "transfert",
             "forme": "choisir_methode",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Pour un « ou » : un mot qui fait choisir (« au choix », « soit… soit ») le rend exclusif ; une condition pour avoir droit à quelque chose est un OU inclusif ; pour une chose offerte sans mot qui fait choisir, seul celui qui l’offre sait s’il donne les deux. Deux règles : (a) « accès avec le badge ou le code » ; (b) « une entrée ou un dessert, au choix, avec le plat ». Écris la condition de chacune.",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Deux règles : (a) « accès avec le badge ou le code » ; (b) « une entrée ou un dessert, au choix, avec le plat ». Écris la condition de chacune.",
             "attendu": "(a) badge OU code, un OU inclusif : rien n’interdit d’avoir les deux. (b) (entrée OU dessert) ET NON (entrée ET dessert) : « au choix » interdit de prendre les deux. Prendre (a) pour un ou exclusif, c’est l’erreur E1. Déduit de l’étape 7.",
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-DT22",
+            "id": "B02-DT25",
             "type": "transfert",
             "forme": "adapter_condition",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Une école affiche « admis » SI note ≥ 10, SINON « refusé ». Elle ajoute qu’un élève qui a fait le stage est aussi admis avec 8 ou 9. Les notes sont entières, et ≥ veut dire « plus grand ou égal à ». Écris la nouvelle condition, et donne les valeurs à tester. Les valeurs à tester d’une condition sur un nombre sont ses valeurs limites : la dernière valeur avant le seuil et la première après. Quand une condition mêle un nombre et un fait, chaque valeur limite se teste deux fois : avec le fait VRAI, puis avec le fait FAUX.",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Une école affiche « admis » SI note ≥ 10, SINON « refusé ». Elle ajoute qu’un élève qui a fait le stage est aussi admis avec 8 ou 9. Les notes sont entières, et ≥ veut dire « plus grand ou égal à ». Écris la nouvelle condition, et donne les valeurs à tester. Les valeurs à tester d’une condition sur un nombre sont ses valeurs limites : la dernière valeur avant le seuil et la première après. ",
             "attendu": "note ≥ 10 OU (note ≥ 8 ET stage) ; la lire (note ≥ 10 OU note ≥ 8) ET stage refuserait un 15 sans stage : c’est l’erreur E2. Valeurs à tester : 7 et 8, 9 et 10, chacune avec stage VRAI puis FAUX. Déduit des étapes 6 et 8.",
             "erreurs": ["E2"]
           },
           {
-            "id": "B02-DT18",
+            "id": "B02-DT24",
             "type": "transfert",
             "forme": "hors_champ",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Pour un « ou » : un mot qui fait choisir (« au choix », « soit… soit ») le rend exclusif ; une condition pour avoir droit à quelque chose est un OU inclusif ; pour une chose offerte sans mot qui fait choisir, seul celui qui l’offre sait s’il donne les deux. Deux boutiques t’écrivent. La première : « Dès 30 € d’achat, une gourde ou un sac en toile, au choix. » La seconde : « Dès 30 € d’achat, une gourde ou un sac en toile. » Pour chacune, écris la condition du cadeau, ou dis ce que tu fais si la phrase ne permet pas de l’écrire.",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Deux boutiques t’écrivent. La première : « Dès 30 € d’achat, une gourde ou un sac en toile, au choix. » La seconde : « Dès 30 € d’achat, une gourde ou un sac en toile. » Pour chacune, écris la condition du cadeau, ou dis ce que tu fais si la phrase ne permet pas de l’écrire.",
             "attendu": "La première fait choisir, c’est un ou exclusif : (gourde OU sac) ET NON (gourde ET sac). La seconde offre sans mot qui fait choisir et ne dit pas si les deux sont permis : on demande à la boutique avant d’écrire le code. Déduit de l’étape 7.",
             "erreurs": []
           },
@@ -6895,7 +6839,7 @@ if (age &lt; 12) {
             "notion": "Évaluer une condition avec comparaisons et parenthèses, une opération à la fois, en justifiant chaque étape par l’ordre de calcul : parenthèses, comparaisons, NON, ET, OU",
             "montree": ["ET6"],
             "pratiquee": ["PR1"],
-            "questions": ["B02-R15", "B02-C11", "B02-Q9", "B02-DE9", "B02-K15"]
+            "questions": ["B02-R29", "B02-C11", "B02-Q9", "B02-DE9", "B02-K15"]
           },
           {
             "id": "N4",
@@ -6903,12 +6847,12 @@ if (age &lt; 12) {
             "montree": ["ET7"],
             "pratiquee": ["PR1"],
             "questions": [
-              "B02-R25",
+              "B02-R28",
               "B02-C15",
               "B02-Q14",
-              "B02-DE16",
-              "B02-DT17",
-              "B02-DT18",
+              "B02-DE19",
+              "B02-DT23",
+              "B02-DT24",
               "B02-K23"
             ]
           },
@@ -6917,14 +6861,14 @@ if (age &lt; 12) {
             "notion": "Dire que dans une chaîne SI / SINON SI / SINON, les conditions sont testées dans l’ordre et que seule la branche de la première VRAIE s’exécute, et tracer la chaîne pour un cas",
             "montree": ["ET8"],
             "pratiquee": ["PR1", "PR2"],
-            "questions": ["B02-R18", "B02-Q20", "B02-K6"]
+            "questions": ["B02-R18", "B02-Q23", "B02-K6"]
           },
           {
             "id": "N6",
             "notion": "Écrire une chaîne à quatre branches bien ordonnée, la plus exigeante d’abord, et choisir ses valeurs limites pour la tester",
             "montree": ["ET8"],
             "pratiquee": ["PR2"],
-            "questions": ["B02-R27", "B02-C9", "B02-DE17", "B02-DT22", "B02-DT13", "B02-K20"]
+            "questions": ["B02-R27", "B02-C16", "B02-DE20", "B02-DT25", "B02-DT13", "B02-K20"]
           },
           {
             "id": "N7",
@@ -6934,8 +6878,8 @@ if (age &lt; 12) {
             "questions": [
               "B02-R26",
               "B02-C14",
-              "B02-Q13",
-              "B02-Q16",
+              "B02-Q21",
+              "B02-Q22",
               "B02-DE18",
               "B02-DT21",
               "B02-K22",
@@ -6950,7 +6894,7 @@ if (age &lt; 12) {
             "vers": "N3",
             "type": "composition",
             "montree": "ET6",
-            "questions": ["B02-R15", "B02-C11"]
+            "questions": ["B02-R29", "B02-C11"]
           },
           {
             "id": "L2",
@@ -6966,7 +6910,7 @@ if (age &lt; 12) {
             "vers": "N4",
             "type": "opposition",
             "montree": "ET7",
-            "questions": ["B02-DE16", "B02-C10", "B02-DT17"]
+            "questions": ["B02-DE19", "B02-C10", "B02-DT23"]
           },
           {
             "id": "L4",
@@ -6974,7 +6918,7 @@ if (age &lt; 12) {
             "vers": "N5",
             "type": "condition",
             "montree": "ET8",
-            "questions": ["B02-R18", "B02-Q20"]
+            "questions": ["B02-R18", "B02-Q23"]
           },
           {
             "id": "L5",
@@ -6982,7 +6926,7 @@ if (age &lt; 12) {
             "vers": "N6",
             "type": "cause",
             "montree": "ET8",
-            "questions": ["B02-DE17", "B02-C9", "B02-DT13"]
+            "questions": ["B02-DE20", "B02-C16", "B02-DT13"]
           },
           {
             "id": "L6",
@@ -7012,7 +6956,7 @@ if (age &lt; 12) {
         "ensemble": {
           "montree": "ET2",
           "rappelee": "ET12",
-          "questions": ["B02-R18", "B02-R27", "B02-DT22"]
+          "questions": ["B02-R18", "B02-R27", "B02-DT25"]
         },
         "hors_objectif": [
           "L’opérateur OU exclusif lui-même, comme xor en PHP : la fiche écrit le ou exclusif avec ET, OU et NON (étape 7) et nomme l’opérateur dans « À explorer plus tard » (étape 12), jamais interrogé",
