@@ -3651,9 +3651,9 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
             de tous, comme « fromage ou dessert » au restaurant : un seul des deux, c’est exclusif.
           </li>
           <li>
-            Une condition pour avoir droit à quelque chose, entrer, payer moins, être recontacté :
-            remplir les deux ne gêne personne, c’est le OU inclusif. C’est le sens du OU quand rien
-            ne dit le contraire.
+            Une condition pour avoir droit à quelque chose, entrer, payer moins : remplir les deux
+            ne gêne personne, c’est le OU inclusif. C’est le sens du OU quand rien ne dit le
+            contraire.
           </li>
           <li>
             Une chose offerte, sans mot qui fait choisir : seul celui qui l’offre sait s’il donne
@@ -3663,7 +3663,7 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
         <div class="ex" data-widget="choix" data-id="t2" data-reponse="inclusif">
           <p class="q">
             Un formulaire dit : « Pour qu’on te recontacte, indique ton téléphone ou ton e-mail. »
-            Une cliente remplit les deux. Quelle condition doit accepter son formulaire ?
+            Une cliente remplit les deux. Quelle condition le site doit-il tester ?
           </p>
           <ul class="options">
             <li data-option="inclusif" class="mono">téléphone OU email</li>
@@ -3720,7 +3720,7 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
         <div class="ex" data-widget="choix" data-id="t3" data-reponse="ou">
           <p class="q">
             « Livraison gratuite pour les membres et pour les commandes de plus de 50 €. » Quelle
-            condition ? Les comparaisons se font avant le OU.
+            condition ? Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.
           </p>
           <ul class="options">
             <li data-option="ou" class="mono">membre OU commande &gt; 50</li>
@@ -4094,7 +4094,7 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
         >
           <p class="q">
             Le signe ≥ veut dire « plus grand ou égal à ». Quelle ligne faut-il tester en premier
-            pour que le thermostat affiche « chaud » par 30 °C ?
+            pour que le thermostat affiche juste à la fois par 18 °C et par 30 °C ?
           </p>
           <ul class="options">
             <li data-option="chaud">température ≥ 25 : afficher « chaud »</li>
@@ -5278,9 +5278,9 @@ if (age &lt; 12) {
           </p>
           <p>
             Une condition se calcule dans un ordre fixé : parenthèses, comparaisons, NON, ET, OU. Tu
-            n’as pas à apprendre cette liste : elle est écrite avec chaque question qui s’en sert.
-            Ce qui compte, c’est de repérer l’opération qui passe en premier. Le OU de la logique
-            accepte les deux à la fois ; le « ou » du français, pas toujours.
+            n’as pas à apprendre cette liste : elle est écrite avec chaque question où elle change
+            la réponse. Ce qui compte, c’est de repérer l’opération qui passe en premier. Le OU de
+            la logique accepte les deux à la fois ; le « ou » du français, pas toujours.
           </p>
           <p>
             On teste une chaîne sur ses valeurs limites, et on prédit ce qu’elle affiche avant de
@@ -6184,19 +6184,52 @@ if (age &lt; 12) {
             Écris la chaîne en JavaScript, avec Maj+Entrée entre les lignes. N’appuie pas encore sur
             Entrée.
           </li>
-          <li>Écris sur un papier ce que la console va afficher.</li>
-          <li>Appuie sur Entrée, puis compare avec ce que tu as écrit sur le papier.</li>
+          <li>
+            Avant d’appuyer sur Entrée, réponds à la question sous ces étapes : ce que la console va
+            afficher pour 500, puis pour 999.
+          </li>
+          <li>Appuie sur Entrée.</li>
           <li>
             Tape <code>points = 999</code>, sans let, puis Entrée. Fais revenir le code de la chaîne
-            avec la flèche du haut (deux appuis : le premier rappelle points = 999), écris ta
-            prédiction sur le papier, puis appuie sur Entrée.
+            avec la flèche du haut (deux appuis : le premier rappelle points = 999), puis appuie sur
+            Entrée.
           </li>
         </ol>
-        <p class="discret">
-          C’est réussi si la console affiche « argent » pour 500, puis « argent » pour 999, sans
-          message en rouge. Compare aussi avec ton papier : là où ta prédiction diffère, relis la
-          chaîne ligne par ligne. Le undefined qui suit ne compte pas.
-        </p>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-reponse="argent"
+          data-aide1="Pour chaque valeur, teste les lignes de haut en bas : laquelle est VRAIE la première ?"
+          data-aide2="Pour 500 : 500 ≥ 1000 est FAUX, puis que vaut 500 ≥ 500 ? Pour 999, fais de même ligne par ligne."
+          data-melanger="non"
+          data-explication="C’est réussi si la console affiche « argent » pour 500, puis « argent » pour 999, sans message en rouge. Le undefined qui suit ne compte pas."
+        >
+          <p class="q">
+            Avant d’appuyer sur Entrée : que va afficher la console pour points = 500, puis pour
+            points = 999 ?
+          </p>
+          <ul class="options">
+            <li data-option="argent">« argent », puis « argent »</li>
+            <li
+              data-option="or"
+              data-retour="Pour 999, teste la ligne 1 : 999 ≥ 1000 est-il VRAI ?"
+            >
+              « argent », puis « or »
+            </li>
+            <li
+              data-option="bronze"
+              data-retour="≥ veut dire « plus grand ou égal à » : que vaut 500 ≥ 500 ?"
+            >
+              « bronze », puis « argent »
+            </li>
+            <li
+              data-option="plusieurs"
+              data-retour="Une chaîne n’exécute qu’une branche : laquelle choisit-elle en premier, de haut en bas ?"
+            >
+              « argent » et « bronze », puis « argent » et « bronze »
+            </li>
+          </ul>
+        </div>
       </div>
     </template>
 
@@ -6795,9 +6828,9 @@ if (age &lt; 12) {
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-C22",
+            "id": "B02-C25",
             "type": "explication",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Le signe < veut dire « strictement plus petit que ». Avec heure = 20, weekend = FAUX et férié = VRAI, calcule « heure < 18 ET (weekend OU férié) », puis « heure < 18 ET weekend OU férié », chacune une opération à la fois. Donnent-elles le même résultat ? Pourquoi ?",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Le signe < veut dire « strictement plus petit que ». Avec heure = 20, weekend = FAUX et férié = VRAI, voici deux conditions : « heure < 18 ET (weekend OU férié) » et « heure < 18 ET weekend OU férié ». Calcule les deux, une opération à la fois, puis dis d’où vient ce que tu observes entre leurs résultats.",
             "attendu": "Avec les parenthèses : 20 < 18 est FAUX, weekend OU férié donne VRAI, puis FAUX ET VRAI donne FAUX. Sans parenthèses : 20 < 18 est FAUX, FAUX ET FAUX donne FAUX, car ET passe avant OU, puis FAUX OU VRAI donne VRAI. Elles ne donnent pas le même résultat, parce que les parenthèses imposent le OU d’abord ; lire l’une comme l’autre, c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
@@ -6823,9 +6856,9 @@ if (age &lt; 12) {
             "erreurs": []
           },
           {
-            "id": "B02-DE28",
+            "id": "B02-DE29",
             "type": "explication",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Calcule VRAI OU FAUX ET FAUX, puis (VRAI OU FAUX) ET FAUX, chacune une opération à la fois. Les deux résultats sont-ils les mêmes ? Pourquoi ?",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Voici deux expressions : VRAI OU FAUX ET FAUX et (VRAI OU FAUX) ET FAUX. Calcule les deux, une opération à la fois, puis dis d’où vient ce que tu observes entre leurs résultats.",
             "attendu": "Sans parenthèses, ET passe avant OU, selon la priorité des opérateurs, une convention : VRAI OU (FAUX ET FAUX) = VRAI OU FAUX = VRAI. Avec les parenthèses, le OU d’abord : VRAI OU FAUX = VRAI, puis VRAI ET FAUX = FAUX. Les deux résultats ne sont pas les mêmes : l’ordre de calcul change le résultat ; calculer le OU d’abord sans parenthèses, c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
@@ -6867,10 +6900,10 @@ if (age &lt; 12) {
             "erreurs": ["E2"]
           },
           {
-            "id": "B02-DT24",
+            "id": "B02-DT30",
             "type": "transfert",
             "forme": "hors_champ",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Deux boutiques t’écrivent. La première : « Dès 30 € d’achat, une gourde ou un sac en toile, au choix. » La seconde : « Dès 30 € d’achat, une gourde ou un sac en toile. » Pour chacune, écris la condition du cadeau, ou dis ce que tu fais si la phrase ne permet pas de l’écrire.",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Deux boutiques t’écrivent. La première : « Une gourde ou un sac en toile, au choix. » La seconde : « Une gourde ou un sac en toile. » Pour chacune, que fais-tu pour écrire la condition du cadeau ?",
             "attendu": "La première fait choisir, c’est un ou exclusif : (gourde OU sac) ET NON (gourde ET sac). La seconde offre sans mot qui fait choisir et ne dit pas si les deux sont permis : on demande à la boutique avant d’écrire le code. Déduit de l’étape 7.",
             "erreurs": []
           },
@@ -6883,10 +6916,10 @@ if (age &lt; 12) {
             "erreurs": ["E3"]
           },
           {
-            "id": "B02-DT28",
+            "id": "B02-DT29",
             "type": "transfert",
             "forme": "adapter_condition",
-            "consigne": "En JavaScript : SI c s’écrit if (c) { … }, ET s’écrit &&, OU s’écrit ||, les comparaisons passent avant && et ||, && passe avant ||, comme ET avant OU, < veut dire « strictement plus petit que », et === compare deux valeurs, des textes entre apostrophes compris. Ton code ouvre la session avec if (motDePasse === 'secret' && essais < 3). On veut accepter aussi le code de secours 'urgence', même après 3 essais. Le code de secours se tape dans le même champ : motDePasse vaut alors 'urgence'. Adapte la condition, avec les parenthèses qui gardent le sens.",
+            "consigne": "En JavaScript : SI c s’écrit if (c) { … }, ET s’écrit &&, OU s’écrit ||, les comparaisons passent avant && et ||, && passe avant ||, comme ET avant OU, < veut dire « strictement plus petit que », et === compare deux valeurs, des textes entre apostrophes compris. Ton code ouvre la session avec if (motDePasse === 'secret' && essais < 3). On veut accepter aussi le code de secours 'urgence', même après 3 essais. Le code de secours se tape dans le même champ : motDePasse vaut alors 'urgence'. Adapte la condition.",
             "attendu": "if ((motDePasse === 'secret' && essais < 3) || motDePasse === 'urgence') : le code de secours s’ajoute par un OU, hors de la parenthèse du ET. Écrire motDePasse === 'secret' && (essais < 3 || motDePasse === 'urgence') refuserait toujours 'urgence' : c’est l’erreur E2. Déduit des étapes 6 et 9.",
             "erreurs": ["E2"]
           }
@@ -7038,7 +7071,7 @@ if (age &lt; 12) {
             "notion": "Évaluer une condition avec comparaisons et parenthèses, une opération à la fois, en justifiant chaque étape par l’ordre de calcul : parenthèses, comparaisons, NON, ET, OU",
             "montree": ["ET6"],
             "pratiquee": ["PR1"],
-            "questions": ["B02-R29", "B02-C22", "B02-Q9", "B02-DE28", "B02-K15"]
+            "questions": ["B02-R29", "B02-C25", "B02-Q9", "B02-DE29", "B02-K15"]
           },
           {
             "id": "N4",
@@ -7051,7 +7084,7 @@ if (age &lt; 12) {
               "B02-Q25",
               "B02-DE26",
               "B02-DT23",
-              "B02-DT24",
+              "B02-DT30",
               "B02-K23"
             ]
           },
@@ -7080,7 +7113,7 @@ if (age &lt; 12) {
               "B02-Q21",
               "B02-Q24",
               "B02-DE23",
-              "B02-DT28",
+              "B02-DT29",
               "B02-K25",
               "B02-K17"
             ]
@@ -7093,7 +7126,7 @@ if (age &lt; 12) {
             "vers": "N3",
             "type": "composition",
             "montree": "ET6",
-            "questions": ["B02-R29", "B02-C22"]
+            "questions": ["B02-R29", "B02-C25"]
           },
           {
             "id": "L2",
@@ -7101,7 +7134,7 @@ if (age &lt; 12) {
             "vers": "N3",
             "type": "composition",
             "montree": "ET6",
-            "questions": ["B02-DE28", "B02-Q9"]
+            "questions": ["B02-DE29", "B02-Q9"]
           },
           {
             "id": "L3",
