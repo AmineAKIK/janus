@@ -735,6 +735,22 @@ describe('vérification des fiches du dépôt', () => {
       )
     })
 
+    it('refuse une consigne qui empile les rappels au lieu de les mettre dans l’encadré', async () => {
+      await poser(
+        'X00.html',
+        fiche.replace(
+          "<p>À REMPLACER : l'explication du bloc.</p>",
+          '<div class="ex"><p class="q">Le vélo est gratuit SI durée &lt; 30 ; &lt; veut dire « plus petit que ». Ordre de calcul : NON, ET, OU. Est-il gratuit ?</p></div><div class="ex"><p class="q">Lou, 5 ans, monte-t-elle ?</p></div>',
+        ),
+      )
+
+      const problemes = await verifierLesFiches({ dossierContenu: contenu })
+      expect(problemes).toEqual(
+        expect.arrayContaining([expect.stringContaining('« Le vélo est gratuit SI durée < 30')]),
+      )
+      expect(problemes.join('\n')).not.toContain('Lou, 5 ans')
+    })
+
     it('laisse libres les notes de conception', async () => {
       await poser(
         'X00.html',

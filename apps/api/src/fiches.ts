@@ -506,6 +506,35 @@ function verifierPresupposes(
 }
 
 /**
+ * Les rappels vont dans un encadré, pas dans la question (B02 v33, avis d'Amine du 25 octobre 2026 :
+ * « dense, abstrait ») : « taille compte les centimètres, accompagné vaut VRAI pour…, et ≥ veut dire
+ * « plus grand ou égal à ». Calcule… Ordre de calcul : … » noyait la question. Une consigne de la page
+ * redonne au plus une convention ; les autres vont dans l'encadré « Pour lire » de l'écran.
+ */
+const RAPPELS = /\bveut dire\b|\bOrdre de calcul\b|\bse lit\b|\bsignifie\b/giu
+
+function verifierConsignesChargees(html: string, signaler: (message: string) => void): void {
+  const page = sansScriptsNiCommentaires(html)
+  const consignes = [
+    ...Array.from(page.matchAll(/<p class="q"[^>]*>([\s\S]*?)<\/p>/g), ([, q = '']) => q),
+    ...Array.from(page.matchAll(/\bdata-autre-enonce="([^"]*)"/g), ([, q = '']) => q),
+  ]
+  for (const consigne of consignes) {
+    const texte = consigne
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/\s+/g, ' ')
+      .trim()
+    if ((texte.match(RAPPELS) ?? []).length < 2) continue
+    signaler(
+      `la consigne « ${texte.slice(0, 60)}… » empile les rappels : garde la situation et la question, et mets les conventions dans l’encadré « Pour lire » de l’écran.`,
+    )
+  }
+}
+
+/**
  * Un texte nu entre deux blocs n'a été écrit pour personne : « RAW: » restait affiché entre deux
  * paragraphes de B02 version 33, et « Écouter » le lisait. Le texte de l'apprenant est dans un bloc.
  */
@@ -922,6 +951,7 @@ export async function verifierLesFiches({
       verifierCoulisses(resultat.manifeste, fiche.html, signaler)
       verifierTexteNu(fiche.html, signaler)
       verifierPresupposes(resultat.manifeste, fiche.html, signaler)
+      verifierConsignesChargees(fiche.html, signaler)
       verifierDonneesALEcran(fiche.html, signaler)
       verifierAlignement(resultat.manifeste, fiche.html, signaler)
 
