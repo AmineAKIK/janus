@@ -448,6 +448,25 @@ function verifierCoulisses(
 }
 
 /**
+ * Un texte nu entre deux blocs n'a été écrit pour personne : « RAW: » restait affiché entre deux
+ * paragraphes de B02 version 33, et « Écouter » le lisait. Le texte de l'apprenant est dans un bloc.
+ */
+const BLOC = 'p|div|pre|ul|ol|table|h[1-6]|figure|details|section|blockquote'
+
+function verifierTexteNu(html: string, signaler: (message: string) => void): void {
+  const page = sansScriptsNiCommentaires(html).replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+  const nu = new RegExp(
+    `</(?:${BLOC})>\\s*([^<\\s][^<]*?)\\s*<(?:/?(?:${BLOC})|/template)\\b`,
+    'gi',
+  )
+  for (const [, texte = ''] of page.matchAll(nu)) {
+    signaler(
+      `le texte « ${texte.replace(/\s+/g, ' ').slice(0, 60)} » est posé entre deux blocs, hors de tout paragraphe : retire-le, ou mets-le dans le paragraphe qu’il complète.`,
+    )
+  }
+}
+
+/**
  * Un écran se résout avec ce qu'il montre (Amine, 25 octobre 2026) : « Pour la chaîne des médailles,
  * bien rangée, quelles sont les valeurs limites ? » demandait de se souvenir des seuils d'un autre
  * écran. Pour un exercice qui calcule sur des données (`data-chaine`, `data-expr`, `data-variable`),
@@ -843,6 +862,7 @@ export async function verifierLesFiches({
       verifierRenvoisAuxEssais(fiche.html, signaler)
       verifierRenvoisAuxCours(resultat.manifeste, fiche.html, signaler)
       verifierCoulisses(resultat.manifeste, fiche.html, signaler)
+      verifierTexteNu(fiche.html, signaler)
       verifierDonneesALEcran(fiche.html, signaler)
       verifierAlignement(resultat.manifeste, fiche.html, signaler)
 
