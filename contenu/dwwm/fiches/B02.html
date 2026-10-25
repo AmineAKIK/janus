@@ -2976,10 +2976,56 @@
         </p>
         <p>
           Une condition se compose de faits, reliés par NON, ET, OU. La calculer, c’est faire une
-          opération à la fois, chacune avec la table de son opérateur : NON inverse la valeur, ET
-          n’est VRAI que si les deux côtés le sont, OU n’est FAUX que si les deux côtés le sont.
-          Reste à savoir laquelle faire d’abord.
+          opération à la fois, chacune avec la table de son opérateur. Reste à savoir laquelle faire
+          d’abord.
         </p>
+        <details>
+          <summary>Les tables, si tu en as besoin</summary>
+          <table
+            class="table-js"
+            data-lecture="Les tables de NON, ET et OU. NON A est VRAI quand A est FAUX, et FAUX quand A est VRAI. A ET B n’est VRAI que si A et B sont VRAI tous les deux. A OU B n’est FAUX que si A et B sont FAUX tous les deux."
+          >
+            <thead>
+              <tr>
+                <th>A</th>
+                <th>B</th>
+                <th>NON A</th>
+                <th>A ET B</th>
+                <th>A OU B</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>FAUX</td>
+                <td>FAUX</td>
+                <td>VRAI</td>
+                <td>FAUX</td>
+                <td>FAUX</td>
+              </tr>
+              <tr>
+                <td>FAUX</td>
+                <td>VRAI</td>
+                <td>VRAI</td>
+                <td>FAUX</td>
+                <td>VRAI</td>
+              </tr>
+              <tr>
+                <td>VRAI</td>
+                <td>FAUX</td>
+                <td>FAUX</td>
+                <td>FAUX</td>
+                <td>VRAI</td>
+              </tr>
+              <tr>
+                <td>VRAI</td>
+                <td>VRAI</td>
+                <td>FAUX</td>
+                <td>VRAI</td>
+                <td>VRAI</td>
+              </tr>
+            </tbody>
+          </table>
+        </details>
         <div class="cadre a-retenir">
           <p>Dans une condition, on calcule dans cet ordre :</p>
           <ol>
@@ -3054,10 +3100,6 @@
           NON porte sur ce qui le suit : un fait, une comparaison ou une parenthèse. Comme les
           comparaisons passent avant lui, NON âge ≥ 18 se lit NON (âge ≥ 18). Écris quand même ces
           parenthèses : en JavaScript, NON passe avant les comparaisons.
-        </p>
-        <p>
-          Pour chaque opération, sa table : NON inverse la valeur, ET n’est VRAI que si les deux
-          côtés le sont, OU n’est FAUX que si les deux côtés le sont.
         </p>
         <div class="ex" data-widget="choix" data-id="r5" data-reponse="faux" data-melanger="non">
           <p class="q">
@@ -3628,7 +3670,7 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
         <div class="ex" data-widget="choix" data-id="t3" data-reponse="ou">
           <p class="q">
             « Livraison gratuite pour les membres et pour les commandes de plus de 50 €. » Quelle
-            condition ?
+            condition ? Les comparaisons se font avant le OU.
           </p>
           <ul class="options">
             <li data-option="ou" class="mono">membre OU commande &gt; 50</li>
@@ -3962,6 +4004,7 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
           class="ex"
           data-widget="trace"
           data-id="b1"
+          data-autre-enonce="Trace la chaîne du guichet, ci-dessus, pour ces deux cas."
           data-chaine="âge &lt; 12 =&gt; 5 € | étudiant OU âge &lt; 26 =&gt; 7 € | âge ≥ 65 =&gt; 8 € | SINON =&gt; 10 €"
           data-cas="âge=11, étudiant=VRAI | âge=26, étudiant=FAUX"
           data-noms="Tom|Nina"
@@ -5063,9 +5106,7 @@ if (age &lt; 12) {
 <span class="l" data-l="4"><b>SINON</b> :</span>
 <span class="l br" data-l="4">  afficher « 10 € »</span></code></pre>
         <p class="discret">
-          Les lignes sont numérotées de haut en bas. Le signe &lt; veut dire « strictement plus
-          petit que », ≥ « plus grand ou égal à ». Dans la ligne 2, on fait d’abord la comparaison
-          âge &lt; 26, puis le OU.
+          Le signe &lt; veut dire « strictement plus petit que », ≥ « plus grand ou égal à ».
         </p>
         <div
           data-widget="pari"
@@ -5377,14 +5418,14 @@ if (age &lt; 12) {
         <p class="discret">Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</p>
       </div>
     </template>
-    <template data-item="PR1-4">
+    <template data-item="PR1-11">
       <div
         data-aide1="Dans chaque condition, quelle opération se calcule en premier : le OU, ou le ET ?"
         class="ex"
         data-widget="choix"
         data-verifie
         data-reponse="juste"
-        data-justifier="Dis à quoi servent les parenthèses dans la condition que tu as choisie."
+        data-justifier="Sans ces parenthèses, quel article serait remboursé à tort, et pourquoi ?"
       >
         <p class="q">
           « Remboursement sous 30 jours, ou à tout moment pour un article défectueux, sauf pour les
@@ -5413,14 +5454,14 @@ if (age &lt; 12) {
         </ul>
       </div>
     </template>
-    <template data-variante="PR1-4">
+    <template data-variante="PR1-11">
       <div
         data-aide1="Dans chaque condition, quelle opération se calcule en premier : le OU, ou le ET ?"
         class="ex"
         data-widget="choix"
         data-verifie
         data-reponse="juste"
-        data-justifier="Dis à quoi servent les parenthèses dans la condition que tu as choisie."
+        data-justifier="Sans ces parenthèses, quel client entrerait à tort, et pourquoi ?"
       >
         <p class="q">
           « Accès au salon pour les clients premium ou pour les vols de plus de 6 heures, sauf avec
@@ -6348,7 +6389,7 @@ if (age &lt; 12) {
           et pour Jean, à l’étape 8, et ce qu’affiche le guichet en JavaScript, à l’étape 9 ; un
           seul pour les choix à trois options : les cas à tester de note ≥ 8 ET stage, à l’étape 8,
           le signe qui compare et la prédiction de la console, à l’étape 9 ; en pratique, un seul
-          pour PR1-4, PR1-5, PR1-8, PR1-9 et PR1-10). Le retour d’une option fausse nomme la règle
+          pour PR1-11, PR1-5, PR1-8, PR1-9 et PR1-10). Le retour d’une option fausse nomme la règle
           en cause sans désigner la bonne option : « La ligne 3 n’est testée que si la ligne 2 est
           FAUSSE. Que vaut la ligne 2 pour Sarah ? ». Quand une seule option reste, même pour un
           choix VRAI ou FAUX, elle est marquée : c’est une solution vue, et faute d’autre cas
@@ -6360,7 +6401,7 @@ if (age &lt; 12) {
         <li>
           Dans la pratique, après une solution vue, l’item se refait sur sa variante, puis
           l’apprenant explique. Quatre items sur quatorze portent une demande d’explication
-          (data-justifier : PR1-4, PR1-5, PR1-10, PR2-4), sur ce que l’écran ne montre pas ; elle
+          (data-justifier : PR1-11, PR1-5, PR1-10, PR2-4), sur ce que l’écran ne montre pas ; elle
           paraît après une réussite. Le manifeste la déclare (explication : une question qui se
           comprend sans l’écran, et l’attendu) ; l’IA la juge, et l’item n’est réussi qu’avec une
           explication Solide. Après deux explications qui ne le sont pas, la solution s’affiche et
@@ -6548,8 +6589,8 @@ if (age &lt; 12) {
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-R32",
-            "question": "Un parking calcule son tarif avec cette chaîne : SI abonné, afficher « 0 € » ; SINON SI durée < 60, afficher « 2 € » ; SINON SI durée < 180, afficher « 5 € » ; SINON, afficher « 12 € ». Le signe < veut dire « strictement plus petit que ». Une abonnée reste 240 minutes. Qu’affiche la chaîne ? Explique pourquoi elle n’affiche pas aussi « 12 € ».",
+            "id": "B02-R33",
+            "question": "Un parking calcule son tarif avec cette chaîne : SI abonné, afficher « 0 € » ; SINON SI durée < 60, afficher « 2 € » ; SINON SI durée < 180, afficher « 5 € » ; SINON, afficher « 12 € ». Le signe < veut dire « strictement plus petit que ». Une abonnée reste 240 minutes. Qu’affiche la chaîne, et pourquoi une seule ligne s’exécute-t-elle ?",
             "attendu": "« 0 € » seulement : la première condition, abonné, est VRAIE, et la chaîne exécute sa branche puis en sort, sans tester les suivantes. Croire que « 12 € » s’affiche aussi, c’est l’erreur E3. Déduit de l’étape 8.",
             "erreurs": ["E3"]
           },
@@ -6568,17 +6609,17 @@ if (age &lt; 12) {
         ],
         "explication": [
           {
-            "id": "PR1-4",
-            "item": "PR1-4",
-            "question": "Un article est remboursé si (jours ≤ 30 OU défectueux) ET NON personnalisé ; le signe ≤ veut dire « plus petit ou égal à ». Dis à quoi servent les parenthèses dans cette condition.",
-            "attendu": "Les parenthèses font calculer le OU avant le ET : jours ≤ 30 OU défectueux d’abord, puis ET NON personnalisé. Sans elles, ET passerait avant OU, et un article personnalisé rendu sous 30 jours serait remboursé. Déduit de l’étape 6.",
+            "id": "PR1-11",
+            "item": "PR1-11",
+            "question": "Un article est remboursé si (jours ≤ 30 OU défectueux) ET NON personnalisé ; le signe ≤ veut dire « plus petit ou égal à ». Sans ces parenthèses, quel article serait remboursé à tort, et pourquoi ?",
+            "attendu": "Sans parenthèses, ET passerait avant OU : jours ≤ 30 OU (défectueux ET NON personnalisé). Un article personnalisé rendu sous 30 jours serait alors remboursé, alors que la règle l’exclut. Déduit de l’étape 6.",
             "erreurs": []
           },
           {
-            "id": "PR1-4:variante",
-            "item": "PR1-4",
-            "question": "Un client entre au salon si (premium OU durée > 6) ET NON gratuit ; le signe > veut dire « strictement plus grand que ». Dis à quoi servent les parenthèses dans cette condition.",
-            "attendu": "Les parenthèses font calculer le OU avant le ET : premium OU durée > 6 d’abord, puis ET NON gratuit. Sans elles, ET passerait avant OU, et un client premium avec un billet gratuit entrerait. Déduit de l’étape 6.",
+            "id": "PR1-11:variante",
+            "item": "PR1-11",
+            "question": "Un client entre au salon si (premium OU durée > 6) ET NON gratuit ; le signe > veut dire « strictement plus grand que ». Sans ces parenthèses, quel client entrerait à tort, et pourquoi ?",
+            "attendu": "Sans parenthèses, ET passerait avant OU : premium OU (durée > 6 ET NON gratuit). Un client premium avec un billet gratuit entrerait alors, alors que la règle l’exclut. Déduit de l’étape 6.",
             "erreurs": []
           },
           {
@@ -6683,10 +6724,10 @@ if (age &lt; 12) {
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-C19",
+            "id": "B02-C20",
             "type": "explication",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Le signe < veut dire « strictement plus petit que ». Avec heure = 20, weekend = FAUX et férié = VRAI, « heure < 18 ET (weekend OU férié) » donne FAUX. Calcule « heure < 18 ET weekend OU férié », une opération à la fois, puis dis pourquoi son résultat n’est pas le même.",
-            "attendu": "20 < 18 est FAUX ; FAUX ET FAUX donne FAUX, car ET passe avant OU ; puis FAUX OU VRAI donne VRAI. Sans parenthèses le ET se calcule d’abord, alors que les parenthèses imposaient le OU d’abord : lire l’une comme l’autre, c’est l’erreur E2. Déduit de l’étape 6.",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Le signe < veut dire « strictement plus petit que ». Avec heure = 20, weekend = FAUX et férié = VRAI, calcule « heure < 18 ET (weekend OU férié) », puis « heure < 18 ET weekend OU férié », chacune une opération à la fois. Compare les deux résultats.",
+            "attendu": "Avec les parenthèses : 20 < 18 est FAUX, weekend OU férié donne VRAI, puis FAUX ET VRAI donne FAUX. Sans parenthèses : 20 < 18 est FAUX, FAUX ET FAUX donne FAUX, car ET passe avant OU, puis FAUX OU VRAI donne VRAI. Les résultats diffèrent parce que les parenthèses imposent le OU d’abord ; lire l’une comme l’autre, c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
           {
@@ -6711,9 +6752,9 @@ if (age &lt; 12) {
             "erreurs": []
           },
           {
-            "id": "B02-DE9",
+            "id": "B02-DE25",
             "type": "explication",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Explique pourquoi VRAI OU FAUX ET FAUX et (VRAI OU FAUX) ET FAUX ne donnent pas le même résultat, en calculant chacune une opération à la fois.",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Calcule VRAI OU FAUX ET FAUX, puis (VRAI OU FAUX) ET FAUX, chacune une opération à la fois. Compare les deux résultats, et explique ce qui les fait différer ou non.",
             "attendu": "Sans parenthèses, ET passe avant OU, selon la priorité des opérateurs, une convention : VRAI OU (FAUX ET FAUX) = VRAI OU FAUX = VRAI. Avec les parenthèses, le OU d’abord : VRAI OU FAUX = VRAI, puis VRAI ET FAUX = FAUX. L’ordre de calcul change le résultat ; calculer le OU d’abord sans parenthèses, c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
@@ -6809,7 +6850,7 @@ if (age &lt; 12) {
                 "id": "PR1-10"
               },
               {
-                "id": "PR1-4"
+                "id": "PR1-11"
               }
             ],
             "reussite": 9
@@ -6926,7 +6967,7 @@ if (age &lt; 12) {
             "notion": "Évaluer une condition avec comparaisons et parenthèses, une opération à la fois, en justifiant chaque étape par l’ordre de calcul : parenthèses, comparaisons, NON, ET, OU",
             "montree": ["ET6"],
             "pratiquee": ["PR1"],
-            "questions": ["B02-R29", "B02-C19", "B02-Q9", "B02-DE9", "B02-K15"]
+            "questions": ["B02-R29", "B02-C20", "B02-Q9", "B02-DE25", "B02-K15"]
           },
           {
             "id": "N4",
@@ -6948,7 +6989,7 @@ if (age &lt; 12) {
             "notion": "Dire que dans une chaîne SI / SINON SI / SINON, les conditions sont testées dans l’ordre et que seule la branche de la première VRAIE s’exécute, et tracer la chaîne pour un cas",
             "montree": ["ET8"],
             "pratiquee": ["PR1", "PR2"],
-            "questions": ["B02-R32", "B02-Q23", "B02-K6"]
+            "questions": ["B02-R33", "B02-Q23", "B02-K6"]
           },
           {
             "id": "N6",
@@ -6981,7 +7022,7 @@ if (age &lt; 12) {
             "vers": "N3",
             "type": "composition",
             "montree": "ET6",
-            "questions": ["B02-R29", "B02-C19"]
+            "questions": ["B02-R29", "B02-C20"]
           },
           {
             "id": "L2",
@@ -6989,7 +7030,7 @@ if (age &lt; 12) {
             "vers": "N3",
             "type": "composition",
             "montree": "ET6",
-            "questions": ["B02-DE9", "B02-Q9"]
+            "questions": ["B02-DE25", "B02-Q9"]
           },
           {
             "id": "L3",
@@ -7005,7 +7046,7 @@ if (age &lt; 12) {
             "vers": "N5",
             "type": "condition",
             "montree": "ET8",
-            "questions": ["B02-R32", "B02-Q23"]
+            "questions": ["B02-R33", "B02-Q23"]
           },
           {
             "id": "L5",
@@ -7043,7 +7084,7 @@ if (age &lt; 12) {
         "ensemble": {
           "montree": "ET2",
           "rappelee": "ET12",
-          "questions": ["B02-R32", "B02-R31", "B02-DT26"]
+          "questions": ["B02-R33", "B02-R31", "B02-DT26"]
         },
         "hors_objectif": [
           "L’opérateur OU exclusif lui-même, comme xor en PHP : la fiche écrit le ou exclusif avec ET, OU et NON (étape 7) et nomme l’opérateur dans « À explorer plus tard » (étape 12), jamais interrogé",
@@ -10724,7 +10765,7 @@ if (age &lt; 12) {
                 nouvelEx(
                   'trace',
                   { chaine: d.chaine, cas: casAuHasard(ch, cas.length, d.cas) },
-                  'Trace la même chaîne pour ces ' + cas.length + ' cas.',
+                  d.autreEnonce ?? 'Trace la même chaîne pour ces ' + cas.length + ' cas.',
                 )
             return c
           },
