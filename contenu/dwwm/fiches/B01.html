@@ -3042,9 +3042,9 @@
           <span class="boite-fixe">un sens<small>la lettre L</small></span>
         </figure>
         <p>
-          La chaîne a sa limite : un codage ne donne pas un sens à n’importe quels bits. Dans la
-          table ASCII, les numéros 0 à 31 ne donnent aucun signe à l’écran : ce sont des codes
-          invisibles, qui commandent par exemple le retour à la ligne.
+          Cette chaîne ne vaut pas pour tout : un codage ne donne pas un sens à n’importe quels
+          bits. Dans la table ASCII, les numéros 0 à 31 ne donnent aucun signe à l’écran : ce sont
+          des codes invisibles, qui commandent par exemple le retour à la ligne.
         </p>
         <p>
           Pour lire un octet comme une lettre : calcule son nombre, puis cherche ce numéro dans la
@@ -5453,7 +5453,7 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 46,
+        "version": 47,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
@@ -5790,9 +5790,9 @@
             "erreurs": ["E3"]
           },
           {
-            "id": "DE21",
+            "id": "DE31",
             "type": "explication",
-            "consigne": "Avec 12 bits, combien de valeurs différentes, et quel est le plus grand nombre ? Explique pourquoi ces deux nombres diffèrent de 1.",
+            "consigne": "Avec 12 bits, combien de valeurs différentes, et quel est le plus grand nombre ? Explique d’où vient chacun.",
             "attendu": "Chaque bit ajouté double le nombre de valeurs : 2 puissance 12 = 4 096 valeurs. Le plus grand nombre est 4 095, car on compte à partir de 0, qui est une valeur. Déduit de l’étape 4.",
             "erreurs": ["E1"]
           },
@@ -6030,7 +6030,7 @@
             "notion": "Expliquer qu’avec n bits on forme 2ⁿ valeurs, de 0 à 2ⁿ − 1, parce que chaque bit double le nombre de valeurs et qu’on compte à partir de 0 : 256 valeurs et un maximum de 255 pour un octet ; dire ce que deviennent ces deux nombres pour un autre nombre de bits, et combien de bits il faut pour un nombre de valeurs",
             "montree": ["ET4"],
             "pratiquee": ["PR7"],
-            "questions": ["R21", "C22", "Q23", "DE21", "DE22", "DT22", "K23"]
+            "questions": ["R21", "C22", "Q23", "DE31", "DE22", "DT22", "K23"]
           },
           {
             "id": "N3",
@@ -11616,7 +11616,7 @@
             creer('h3', { textContent: 'Tes essais' }),
             creer('p', {
               textContent:
-                'Voici ce que tu as répondu, et ce qui était attendu. L’étape suivante explique pourquoi, à partir de tes réponses.',
+                'Voici ce que tu as répondu, et ce qui était attendu. Les étapes suivantes expliquent pourquoi, à partir de tes réponses.',
             }),
             creer(
               'ol',
@@ -11643,12 +11643,15 @@
                     ],
                   }),
                   creer('p', {}, creer('strong', { textContent: enonceEssai(ex) })),
+                  // Les lignes que l'essai faisait lire (un pseudo-code) reviennent avec lui : le bilan
+                  // se lit sans remonter à l'écran de l'essai (B02 v33, le thermostat).
+                  ...Array.from(ex.querySelectorAll(':scope > pre'), (pre) => pre.cloneNode(true)),
                   // Sans réponse, pas de solution à garder sans l'avoir comprise (règle F04) :
                   // l'étape suivante l'explique, à partir des réponses de la série.
                   ...(essai.reponse === null
                     ? [
                         creer('p', {
-                          textContent: 'Tu ne savais pas : l’étape suivante te l’apprend.',
+                          textContent: 'Tu ne savais pas : les étapes suivantes te l’apprennent.',
                         }),
                       ]
                     : [
@@ -12046,7 +12049,7 @@
        * Le pied d'une étape : le bouton vers l'étape d'après. Tant qu'une série ouverte n'a pas toutes
        * ses réponses, il reste inactif et dit ce qui manque.
        */
-      function piedEtape(etape, libelle = 'Étape suivante') {
+      function piedEtape(etape, libelle = 'Étape suivante', zone = null) {
         const suivante = etapes[etapes.findIndex((e) => e.id === etape.id) + 1]
         if (!suivante) return []
         const bouton = creer('button', {
@@ -12055,11 +12058,12 @@
           textContent: libelle,
         })
         const raison = creer('p', { className: 'discret' })
+        const restant = () => resteAFaire(etape) || (zone ? exercicesRestants(etape, zone) : '')
         bouton.addEventListener('click', () => {
-          if (resteAFaire(etape) === '') aller(suivante.id)
+          if (restant() === '') aller(suivante.id)
         })
         majPied = () => {
-          const reste = resteAFaire(etape)
+          const reste = restant()
           bouton.disabled = reste !== ''
           raison.textContent = reste
           raison.hidden = reste === ''
@@ -12379,6 +12383,43 @@
       }
 
       /**
+       * Hors de la tentative et de la pratique, un écran ne se quitte pas en avant tant qu'un exercice
+       * du cours qu'il montre n'est pas fini (décision d'Amine du 25 octobre 2026, pour tous les blocs) :
+       * réussi, ou sa solution vue au bout de l'échelle d'aide. L'outil de la fiche marque l'exercice
+       * fini par `data-fini="oui"` ; un exercice encore caché (suite d'écran, encadré d'essai) attend.
+       */
+      function exercicesRestants(etape, zone) {
+        if (etape.type === 'pretest' || etape.type === 'pratique') return ''
+        const restants = Array.from(zone.querySelectorAll('.ex[data-id]')).filter(
+          (ex) =>
+            !('essai' in ex.dataset) &&
+            !ex.closest('.item') &&
+            !ex.closest('[hidden]') &&
+            ex.dataset.fini !== 'oui',
+        ).length
+        if (restants === 0) return ''
+        return (
+          'Termine les exercices de cet écran avant de passer à la suite\u00a0: ' +
+          (restants > 1 ? 'il en reste ' + restants : 'il en reste un') +
+          '.'
+        )
+      }
+      /**
+       * Le pied se remet à jour quand un exercice finit ou qu'une suite d'écran paraît. Seuls les
+       * changements dans un écran comptent : le pied lui-même (sa raison cachée ou montrée) relancerait
+       * l'observateur sans fin.
+       */
+      function suivreExercices(racine) {
+        new MutationObserver((changements) => {
+          if (changements.some(({ target }) => target.closest?.('.ecran'))) majPied()
+        }).observe(racine, {
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['data-fini', 'hidden'],
+        })
+      }
+
+      /**
        * Le contenu libre d'une étape : le `<template data-etape="ETx">` de la page, cloné tel quel.
        * Tout ce qui est dans le gabarit (pont, masquage du cours, confiance, aide, messages) est fixe ;
        * ce que dit le bloc et comment il le dit ne l'est pas.
@@ -12400,7 +12441,8 @@
           const { ecran, lu } = ecranUnique(modele)
           section.append(barreEcoute(lu), ecran)
           activerLiens(section)
-          section.append(...piedEtape(etape))
+          section.append(...piedEtape(etape, 'Étape suivante', ecran))
+          suivreExercices(ecran)
           return section
         }
         // Plusieurs écrans : un seul visible à la fois, les autres restent dans la page (outils déjà montés).
@@ -12438,7 +12480,9 @@
         const raison = creer('p', { className: 'discret', hidden: true })
         majPied = () => {
           const dernier = courant === ecrans.length - 1
-          const reste = dernier ? resteAFaire(etape) : essaisRestants(etape, ecrans[courant])
+          const reste =
+            (dernier ? resteAFaire(etape) : essaisRestants(etape, ecrans[courant])) ||
+            exercicesRestants(etape, ecrans[courant])
           avancer.disabled = dernier ? !suivante || reste !== '' : reste !== ''
           raison.textContent = reste
           raison.hidden = reste === ''
@@ -12450,9 +12494,15 @@
         avancer.addEventListener('click', () => {
           if (courant < ecrans.length - 1) {
             if (essaisRestants(etape, ecrans[courant]) !== '') return
+            if (exercicesRestants(etape, ecrans[courant]) !== '') return
             montrer(courant + 1)
             remonter(section)
-          } else if (suivante && resteAFaire(etape) === '') aller(suivante.id)
+          } else if (
+            suivante &&
+            resteAFaire(etape) === '' &&
+            exercicesRestants(etape, ecrans[courant]) === ''
+          )
+            aller(suivante.id)
         })
         for (const e of ecrans) e.classList.add('ecran')
         section.append(
@@ -12463,6 +12513,7 @@
           raison,
         )
         activerLiens(section)
+        suivreExercices(section)
         montrer(courant)
         return section
       }

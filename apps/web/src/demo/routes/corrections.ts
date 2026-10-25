@@ -128,7 +128,7 @@ export function routesCorrectionsDemo({
       await attendre(delaiCorrectionMs)
       const correction = corrigerSimule(
         corps.reponse,
-        etapesEnMots(question.attendu, manifeste.etapes),
+        etapesEnMots(question.attendu, manifeste.etapes, manifeste.erreurs_critiques),
       )
       if (correction.refusee) {
         throw probleme(400, 'donnees_invalides', 'Réponse refusée', correction.message)

@@ -133,7 +133,8 @@ export type PartieCorrigee = Pick<
 
 /**
  * Corrige une tâche ; `undefined` quand une tâche de code arrive sans le résultat de ses cas. L'attendu
- * montré nomme les onglets (`etapes`) : la fiche n'affiche pas de numéro d'étape.
+ * montré nomme les onglets (`etapes`) et les erreurs critiques (`erreurs`) : la fiche n'affiche ni
+ * numéro d'étape ni code d'erreur.
  */
 export function corrigerTache(
   differee: Differee,
@@ -144,6 +145,7 @@ export function corrigerTache(
     code?: { reussis: number; total: number } | undefined
     constat?: { coches: readonly number[]; aide: number } | undefined
   },
+  erreurs: Manifeste['erreurs_critiques'] = [],
 ): PartieCorrigee | undefined {
   const { verification } = differee
   const comptee = compte({
@@ -182,7 +184,9 @@ export function corrigerTache(
   return {
     reussi,
     compte: comptee,
-    correction: reussi ? 'Réponse exacte.' : `Attendu : ${etapesEnMots(differee.attendu, etapes)}`,
+    correction: reussi
+      ? 'Réponse exacte.'
+      : `Attendu : ${etapesEnMots(differee.attendu, etapes, erreurs)}`,
   }
 }
 

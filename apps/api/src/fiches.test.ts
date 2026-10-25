@@ -558,12 +558,66 @@ describe('vérification des fiches du dépôt', () => {
       expect(problemes[0]).toContain('se suffit à elle-même')
     })
 
+    it('refuse le code d’un autre bloc, comme « en B01 » dans contexte_ia', async () => {
+      await writeFile(
+        join(contenu, 'test', 'catalogue.json'),
+        JSON.stringify(catalogue(['B01', 'X00'])),
+      )
+      await poser(
+        'X00.html',
+        avecManifeste(fiche, (manifeste) => {
+          manifeste.contexte_ia = `Bloc X00. Les signes sont redonnés, comme la table en B01, pas comme en F12.`
+        }),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('« B01 » dans contexte_ia'),
+      ])
+    })
+
     it('ne prend pas les mots du métier pour un renvoi', async () => {
       await poser(
         'X00.html',
         fiche.replace(
           "<p>À REMPLACER : l'explication du bloc.</p>",
           '<p>Une page 404, un fichier PDF, HTTP/1.1, la page 3 de ton carnet : rien de tout ça ne renvoie à un cours.</p>',
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+  })
+
+  describe('un écran se résout avec ce qu’il montre', () => {
+    const exercice =
+      '<div class="ex" data-widget="limites" data-id="b3" data-variable="score" data-chaine="score ≥ 900 =&gt; or | score ≥ 600 =&gt; argent | SINON =&gt; rien"><p class="q">QUESTION</p></div>'
+    const avecEcrans = (question: string) =>
+      fiche.replace(
+        "<p>À REMPLACER : l'explication du bloc.</p>",
+        '<div data-ecran="Les médailles"><p>Or à partir de 900, argent à partir de 600 : SI score ≥ 900…</p></div>' +
+          '<div data-ecran="Les valeurs limites">' +
+          exercice.replace('QUESTION', question) +
+          '</div>',
+      )
+
+    it('refuse un exercice dont les données sont sur un autre écran', async () => {
+      await poser(
+        'X00.html',
+        avecEcrans('Pour la chaîne des médailles, bien rangée, quelles sont les valeurs limites ?'),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'écran « Les valeurs limites » : l’exercice b3 calcule sur 900, 600, score, que son écran ne montre pas',
+        ),
+      ])
+    })
+
+    it('accepte un exercice qui redonne sa chaîne', async () => {
+      await poser(
+        'X00.html',
+        avecEcrans(
+          'La chaîne : SI score ≥ 900 : « or » ; SINON SI score ≥ 600 : « argent » ; SINON : rien. Quelles sont ses valeurs limites ?',
         ),
       )
 
@@ -597,6 +651,88 @@ describe('vérification des fiches du dépôt', () => {
         expect.stringContaining('« étape 5 » dans sources[0].titre'),
       ])
       expect(problemes[0]).toContain('nomme l’onglet')
+    })
+
+    it('refuse le vocabulaire de la méthode : « Image : », « Sa limite : », « limites de l’image »', async () => {
+      await poser(
+        'X00.html',
+        avecManifeste(
+          fiche.replace(
+            "<p>À REMPLACER : l'explication du bloc.</p>",
+            '<p>Image\u00a0: deux interrupteurs. Sa limite : pas de NON.</p><h3>Les limites de l’image</h3><p>Une image de 4 pixels. L’aiguillage a sa limite\u00a0: pas de feu.</p>',
+          ),
+          () => {},
+        ),
+      )
+
+      const problemes = await verifierLesFiches({ dossierContenu: contenu })
+
+      expect(problemes).toEqual([
+        expect.stringContaining('« Image : » dans le texte affiché'),
+        expect.stringContaining('« Sa limite : » dans le texte affiché'),
+        expect.stringContaining('« limites de l’image » dans le texte affiché'),
+        expect.stringContaining('« a sa limite : » dans le texte affiché'),
+      ])
+    })
+
+    it('refuse un texte nu entre deux paragraphes', async () => {
+      await poser(
+        'X00.html',
+        avecManifeste(
+          fiche.replace(
+            "<p>À REMPLACER : l'explication du bloc.</p>",
+            '<p>NON inverse la valeur.</p>\n        à revoir\n        <p>ET demande les deux.</p>',
+          ),
+          () => {},
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('le texte « à revoir » est posé entre deux blocs'),
+      ])
+    })
+
+    it('refuse « RAW: », reste d’un script d’édition, même dans un paragraphe', async () => {
+      await poser(
+        'X00.html',
+        avecManifeste(
+          fiche.replace(
+            "<p>À REMPLACER : l'explication du bloc.</p>",
+            '<p>RAW: NON inverse la valeur.</p>',
+          ),
+          () => {},
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('« RAW: » dans le texte affiché'),
+      ])
+    })
+
+    it('refuse une question qui souffle sa réponse, comme « dis ce qui les fait différer »', async () => {
+      await poser(
+        'X00.html',
+        avecManifeste(
+          fiche.replace(
+            "<p>À REMPLACER : l'explication du bloc.</p>",
+            '<div class="ex" data-justifier="Explique pourquoi elle n’a pas besoin de dire « et moins de 1000 »."><p class="q">Écris la chaîne.</p></div>',
+          ),
+          (manifeste) => {
+            const question = manifeste.restitution[0]
+            if (question)
+              question.question =
+                'Calcule les deux, et dis ce qui les fait différer. Quelle branche s’exécute ?'
+          },
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('« différer » dans restitution[0].question'),
+          expect.stringContaining('« n’a pas besoin de » dans data-justifier'),
+          expect.stringContaining('« Quelle branche s’exécute » dans restitution[0].question'),
+        ]),
+      )
     })
 
     it('laisse libres les notes de conception', async () => {
@@ -911,6 +1047,33 @@ describe('vérification des fiches du dépôt', () => {
         await verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => fiche }),
       ).toEqual([
         expect.stringContaining('test/methode/regles.json : le fichier n’est pas du JSON valide'),
+      ])
+    })
+
+    it('refuse une citation « » qui ne se lit pas dans la page ; « … » coupe, “ ” cite ce que la page calcule', async () => {
+      await poser('X00.html', modifiee)
+      const avec = (c02: string) =>
+        grille(
+          [
+            '| C01 | appliquée | ET1 à ET6 : le cycle entier |',
+            `| C02 | appliquée | ET2 : ${c02} |`,
+            '| C11 | écartée | rien à mettre en répétition espacée dans ce bloc |',
+            '| A01 | appliquée | PR1-2, et le manifeste fixe la réussite |',
+          ],
+          '# Grille de la méthode : X00, version 2',
+        )
+      const verifier = () =>
+        verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => fiche })
+
+      await poserGrille(avec('« Titre du bloc »'))
+      expect(await verifier()).toEqual([])
+      await poserGrille(avec('« Titre … bloc », et “Un coup de pouce calculé pour 12”'))
+      expect(await verifier()).toEqual([])
+      await poserGrille(avec('« À l’étape 3, le thermostat affichait »'))
+      expect(await verifier()).toEqual([
+        expect.stringContaining(
+          'grille : la ligne 8 cite « À l’étape 3, le thermostat affichait », qui ne se lit plus dans la page',
+        ),
       ])
     })
 

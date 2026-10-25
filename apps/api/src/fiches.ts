@@ -368,6 +368,7 @@ function textesDuManifeste(
 function verifierRenvoisAuxCours(
   manifeste: Manifeste,
   html: string,
+  codes: ReadonlySet<string>,
   signaler: (message: string) => void,
 ): void {
   const chercher = (texte: string, ou: string) => {
@@ -382,12 +383,22 @@ function verifierRenvoisAuxCours(
       }
     }
   }
-  chercher(
-    sansScriptsNiCommentaires(html).replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ''),
-    'le texte affiché',
-  )
+  // B02 v33 : « comme la table hexadécimale en B01 » dans `contexte_ia`. Le code d'un autre bloc du
+  // catalogue est un code du plan ; le manifeste ne nomme que son bloc et ses prérequis (`bloc`, `prerequis`).
+  const autreBloc = (texte: string, ou: string) => {
+    for (const [code] of texte.matchAll(/(?<![\w-])[A-Z]\d{2}(?![\w-])/g)) {
+      if (code === manifeste.bloc || !codes.has(code)) continue
+      signaler(
+        `la fiche nomme un autre bloc par son code (« ${code} » dans ${ou}) : redonne ce qu’il faut sur place, sans renvoi au plan.`,
+      )
+    }
+  }
+  const page = sansScriptsNiCommentaires(html).replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+  chercher(page, 'le texte affiché')
+  autreBloc(page, 'le texte affiché')
   textesDuManifeste(manifeste, '', (chemin, texte) => {
     chercher(texte, chemin)
+    if (chemin !== 'bloc' && !chemin.startsWith('prerequis')) autreBloc(texte, chemin)
   })
 }
 
@@ -407,6 +418,21 @@ const COULISSES: readonly { motif: RegExp; pourquoi: string }[] = [
   {
     motif: /\bAvant de lire\b[^:?.]*/gu,
     pourquoi: 'c’est une étiquette de conception : pose directement la question',
+  },
+  {
+    // B02 v33 (25 octobre 2026) : « Image : … », « Sa limite : … », « Les limites de l'image »
+    // recopiaient le patron de la méthode (image, mécanisme, terme, limite de l'image, règle C05).
+    // Une étiquette en tête de bloc, pas « la hauteur de l’image : … » au fil d'une phrase ; puis
+    // « L’image a sa limite : » (B02) et « La chaîne a sa limite : » (B01), la même étiquette en phrase.
+    motif:
+      /(?<=(?:>|[.!?])\s*)(?:image|sa limite)\s*:|limites? de l[’']image|\ba\s+(?:sa|ses)\s+limites?\s*:/giu,
+    pourquoi:
+      'c’est le vocabulaire de la méthode : dis l’image et sa limite en langue naturelle (« Pour te le représenter : », « Ce que les interrupteurs ne montrent pas »)',
+  },
+  {
+    // B02 v33 : un script d'édition a laissé deux fois « RAW: » devant un paragraphe affiché.
+    motif: /\bRAW:/gu,
+    pourquoi: 'c’est un reste d’un script d’édition : retire-le',
   },
 ]
 
@@ -436,6 +462,165 @@ function verifierCoulisses(
   )
   textesDuManifeste(manifeste, '', (chemin, texte) => {
     if (chemin !== 'contexte_ia' && !/(^|\.)attendu$/.test(chemin)) chercher(texte, chemin)
+  })
+}
+
+/**
+ * Une question ne dit pas la règle qu'elle vérifie ni le résultat qu'elle attend (B02 v33, passes 11
+ * à 13) : « explique ce qui les fait différer », « pourquoi sa réponse change-t-elle ? », « n'a pas
+ * besoin de dire », « qu'est-ce qu'il confond ? » donnaient la réponse à celui qui a l'erreur qu'on
+ * cherche. « Quelle branche s'exécute ? » suppose qu'une seule le fait (carte K6, passe 17). La liste reprend les tournures trouvées et s'allonge à chaque nouvelle.
+ */
+const PRESUPPOSES: readonly RegExp[] = [
+  /\bdiffèrent\b/giu,
+  /\bdifférer\b/giu,
+  /\bchange-t-(?:il|elle)\b/giu,
+  /\bn[’']a pas besoin de\b/giu,
+  /\bqu[’']est-ce qu[’'](?:il|elle) confond\b/giu,
+  /\bpourquoi une seule\b/giu,
+  /\bquelle (?:seule )?(?:branche|ligne) s[’']exécute\b/giu,
+  /\bmais pas les deux\b/giu,
+  /\ble bon\s«/giu,
+  /\bbien ordonnée?s?\b/giu,
+  /\bla bonne (?:condition|chaîne)\b/giu,
+  /(?<!\p{L})à tort\b/giu,
+]
+
+function verifierPresupposes(
+  manifeste: Manifeste,
+  html: string,
+  signaler: (message: string) => void,
+): void {
+  const chercher = (texte: string, ou: string) => {
+    for (const motif of PRESUPPOSES)
+      for (const [trouve] of texte.matchAll(motif))
+        signaler(
+          `la question souffle sa réponse (« ${trouve} » dans ${ou}) : demande le résultat sans le dire, par exemple « donnent-elles le même résultat ? Pourquoi ? ».`,
+        )
+  }
+  textesDuManifeste(manifeste, '', (chemin, texte) => {
+    if (/\.(?:question|consigne|recto)$/.test(chemin)) chercher(texte, chemin)
+  })
+  for (const [, texte = ''] of html.matchAll(/\bdata-justifier="([^"]*)"/g))
+    chercher(texte, 'data-justifier')
+}
+
+/**
+ * Un texte nu entre deux blocs n'a été écrit pour personne : « RAW: » restait affiché entre deux
+ * paragraphes de B02 version 33, et « Écouter » le lisait. Le texte de l'apprenant est dans un bloc.
+ */
+const BLOC = 'p|div|pre|ul|ol|table|h[1-6]|figure|details|section|blockquote'
+
+function verifierTexteNu(html: string, signaler: (message: string) => void): void {
+  const page = sansScriptsNiCommentaires(html).replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+  const nu = new RegExp(
+    `</(?:${BLOC})>\\s*([^<\\s][^<]*?)\\s*<(?:/?(?:${BLOC})|/template)\\b`,
+    'gi',
+  )
+  for (const [, texte = ''] of page.matchAll(nu)) {
+    signaler(
+      `le texte « ${texte.replace(/\s+/g, ' ').slice(0, 60)} » est posé entre deux blocs, hors de tout paragraphe : retire-le, ou mets-le dans le paragraphe qu’il complète.`,
+    )
+  }
+}
+
+/**
+ * Un écran se résout avec ce qu'il montre (Amine, 25 octobre 2026) : « Pour la chaîne des médailles,
+ * bien rangée, quelles sont les valeurs limites ? » demandait de se souvenir des seuils d'un autre
+ * écran. Pour un exercice qui calcule sur des données (`data-chaine`, `data-expr`, `data-variable`),
+ * chaque nombre et chaque variable se lit dans le texte de son écran (ou de son item), hors attributs.
+ */
+function verifierDonneesALEcran(html: string, signaler: (message: string) => void): void {
+  const texte = (morceau: string) =>
+    morceau
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&gt;/g, '>')
+      .replace(/&lt;/g, '<')
+      .replace(/&amp;/g, '&')
+  const modeles = sansScriptsNiCommentaires(html).matchAll(
+    /<template\b[^>]*\bdata-(etape|item)\s*=\s*"([^"]+)"[^>]*>([\s\S]*?)<\/template>/gi,
+  )
+  for (const [, sorte = '', id = '', contenu = ''] of modeles) {
+    // Les écrans sont frères : chacun va de son ouverture à celle du suivant.
+    const debuts = [...contenu.matchAll(/<div\b[^>]*\bdata-ecran\s*=/gi)].map(({ index }) => index)
+    const ecrans =
+      debuts.length === 0
+        ? [contenu]
+        : debuts.map((debut, k) => contenu.slice(debut, debuts[k + 1] ?? contenu.length))
+    for (const ecran of ecrans) {
+      const titre = /\bdata-ecran\s*=\s*"([^"]*)"/.exec(ecran)?.[1]
+      const ou = sorte === 'item' ? `l’item ${id}` : `${id}${titre ? `, écran « ${titre} »` : ''}`
+      const visible = texte(ecran)
+      for (const [balise] of ecran.matchAll(/<div\b(?=[^>]*\bclass\s*=\s*"ex")[^>]*>/gi)) {
+        const attribut = (nom: string) =>
+          new RegExp(`\\b${nom}\\s*=\\s*"([^"]*)"`).exec(balise)?.[1]
+        const exercice = attribut('data-id') ?? attribut('data-widget') ?? 'un exercice'
+        const manque = new Set<string>()
+        for (const nom of ['data-chaine', 'data-expr']) {
+          for (const [nombre] of texte(attribut(nom) ?? '').matchAll(/\d+(?:[.,]\d+)?/g)) {
+            if (!new RegExp(`(?<![\\d.,])${nombre.replace(/[.,]/g, '[.,]')}(?!\\d)`).test(visible))
+              manque.add(nombre)
+          }
+        }
+        const variable = attribut('data-variable')
+        if (
+          variable &&
+          !new RegExp(`(?<![\\p{L}\\p{N}_])${variable}(?![\\p{L}\\p{N}_])`, 'u').test(visible)
+        )
+          manque.add(variable)
+        if (manque.size > 0) {
+          signaler(
+            `${ou} : l’exercice ${exercice} calcule sur ${[...manque].join(', ')}, que son écran ne montre pas : redonne la donnée sur l’écran (la chaîne, la règle en mots), l’apprenant ne la cherche pas ailleurs.`,
+          )
+        }
+      }
+    }
+  }
+}
+
+/** Un texte ramené à ce qui se compare : casse, espaces (insécables compris) et apostrophes mises à part. */
+function pourComparer(texte: string): string {
+  return texte
+    .replace(/&nbsp;|&#160;/g, ' ')
+    .replace(/&gt;/g, '>')
+    .replace(/&lt;/g, '<')
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/\\u00a0/g, ' ')
+    .replace(/[’‘]/g, "'")
+    .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, (chiffre) => String('⁰¹²³⁴⁵⁶⁷⁸⁹'.indexOf(chiffre)))
+    .replace(/[\s\u00a0\u202f]+/g, ' ')
+    .trim()
+    .toLowerCase()
+}
+
+/**
+ * La grille décrit vrai (25 octobre 2026) : ce qu'une ligne « appliquée » cite entre « » se lit dans la
+ * page, outils et gabarit compris. Une citation périmée (la page a changé, la grille non) laisse croire
+ * qu'une règle est tenue. Une coupure se marque « … » ou « […] » : chaque morceau doit s'y lire.
+ */
+export function verifierCitationsDeLaGrille(
+  grille: string,
+  html: string,
+  signaler: (message: string) => void,
+): void {
+  // Le texte entre les balises (un exposant <sup> collé à son nombre), et les attributs tels quels :
+  // coups de pouce, retours, titres d'écran, textes des outils.
+  const page = [html.replace(/<[^>]+>/g, ' '), html.replace(/<[^>]+>/g, ''), html]
+    .map(pourComparer)
+    .join('\n')
+  grille.split(/\r?\n/).forEach((ligne, index) => {
+    if (!ligne.trim().startsWith('|') || !/\|\s*appliquée\s*\|/i.test(ligne)) return
+    for (const [, cite = ''] of ligne.matchAll(/«\s*([^«»]+?)\s*»/g)) {
+      const morceaux = cite
+        .split(/\[…\]|…|\.\.\./)
+        .map((morceau) => pourComparer(morceau))
+        .filter((morceau) => morceau.length > 0)
+      if (morceaux.every((morceau) => page.includes(morceau))) continue
+      signaler(
+        `grille : la ligne ${String(index + 1)} cite « ${cite.trim()} », qui ne se lit plus dans la page : une citation dit ce que l’apprenant voit, recopie-la de la page ou coupe-la par « … ».`,
+      )
+    }
   })
 }
 
@@ -733,8 +918,11 @@ export async function verifierLesFiches({
       verifierOrdreDuCycle(resultat.manifeste, signaler)
       verifierAdressesExternes(fiche.html, signaler)
       verifierRenvoisAuxEssais(fiche.html, signaler)
-      verifierRenvoisAuxCours(resultat.manifeste, fiche.html, signaler)
+      verifierRenvoisAuxCours(resultat.manifeste, fiche.html, codes, signaler)
       verifierCoulisses(resultat.manifeste, fiche.html, signaler)
+      verifierTexteNu(fiche.html, signaler)
+      verifierPresupposes(resultat.manifeste, fiche.html, signaler)
+      verifierDonneesALEcran(fiche.html, signaler)
       verifierAlignement(resultat.manifeste, fiche.html, signaler)
 
       const avant = contenuDeReference?.(fiche.nom)
@@ -744,6 +932,7 @@ export async function verifierLesFiches({
         )
         if (grille !== undefined) {
           verifierGrille(grille, regles, resultat.manifeste, signaler)
+          verifierCitationsDeLaGrille(grille, fiche.html, signaler)
         } else if (
           contenuDeReference !== undefined &&
           (avant === undefined ||
