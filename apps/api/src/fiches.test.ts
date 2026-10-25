@@ -838,7 +838,11 @@ describe('vérification des fiches du dépôt', () => {
           )
           m.differees = m.differees.map((d, i) =>
             i === 0
-              ? { ...d, consigne: 'En JavaScript, && est le ET. Corrige : if (a && b) { }' }
+              ? {
+                  ...d,
+                  consigne:
+                    'En JavaScript : if (c) veut dire SI c, && est le ET. Corrige : if (a && b) { }',
+                }
               : d,
           )
         }),
@@ -850,6 +854,7 @@ describe('vérification des fiches du dépôt', () => {
           expect.stringContaining('emploie && sans en redonner le sens'),
           expect.stringContaining('emploie ! sans en redonner le sens'),
           expect.stringContaining('emploie === sans en redonner le sens'),
+          expect.stringContaining('emploie if sans en redonner le sens'),
         ]),
       )
       expect(problemes.filter((p) => p.includes('differees'))).toEqual([])

@@ -568,6 +568,11 @@ function verifierConsignesChargees(
  */
 const SIGNES_JS: readonly { signe: RegExp; sens: RegExp; nom: string }[] = [
   {
+    nom: 'if',
+    signe: /\bif\s*\(/u,
+    sens: /\bif\s*(?:\([^)]*\)\s*)?(?:\{[^}]*\}\s*)?(?:veut dire|est|signifie|:)|\bSI\s*(?:s[’']écrit|:|→)\s*if\b/u,
+  },
+  {
     nom: '===',
     signe: /===/u,
     sens: /===\s*(?:compare|est|veut dire|signifie|teste)\b|\bcompare(?:r)? avec ===/u,
