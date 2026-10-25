@@ -11643,6 +11643,9 @@
                     ],
                   }),
                   creer('p', {}, creer('strong', { textContent: enonceEssai(ex) })),
+                  // Les lignes que l'essai faisait lire (un pseudo-code) reviennent avec lui : le bilan
+                  // se lit sans remonter à l'écran de l'essai (B02 v33, le thermostat).
+                  ...Array.from(ex.querySelectorAll(':scope > pre'), (pre) => pre.cloneNode(true)),
                   // Sans réponse, pas de solution à garder sans l'avoir comprise (règle F04) :
                   // l'étape suivante l'explique, à partir des réponses de la série.
                   ...(essai.reponse === null

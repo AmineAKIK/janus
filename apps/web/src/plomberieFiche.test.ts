@@ -796,6 +796,26 @@ describe('la tentative avant l’explication (pré-test)', () => {
     expect(within(bilan).queryByText(/Il double|Compare 8 et 16/)).toBeNull()
   })
 
+  it('redonne dans « Tes essais » les lignes que l’essai faisait lire', async () => {
+    const avecLignes = avecPretest.replace(
+      '<p class="q">Que devient le nombre de valeurs ?</p>',
+      '<p class="q">Qu’affiche le thermostat ?</p><pre class="pseudo"><code>SI température ≥ 15 : afficher « tiède »</code></pre>',
+    )
+    expect(avecLignes).not.toBe(avecPretest)
+    const { pont } = pontSimule(aLEtape('ET2'))
+    monter(avecLignes, pont)
+    await screen.findByRole('heading', { name: 'Compter avec des lampes' })
+    essai('c1', { reponse: '7', juste: true, attendu: '7' })
+    fireEvent.click(screen.getByRole('button', { name: 'Suivant' }))
+    essai('c2', { reponse: 'chaud', juste: false, attendu: 'tiède' })
+
+    const bilan = screen.getByRole('heading', { name: 'Tes essais' }).parentElement
+    if (!(bilan instanceof HTMLElement)) throw new Error('Pas de bilan des essais')
+    const item = within(bilan).getAllByRole('listitem')[1]
+    expect(item).toHaveTextContent('Qu’affiche le thermostat ?')
+    expect(item?.querySelector('pre')).toHaveTextContent('SI température ≥ 15 : afficher « tiède »')
+  })
+
   it('garde « Étape suivante » inactif tant qu’un essai attend sa réponse', async () => {
     const { pont, envois } = pontSimule(aLEtape('ET2'))
     monter(avecPretest, pont)
