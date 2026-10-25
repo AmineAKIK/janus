@@ -466,6 +466,41 @@ function verifierCoulisses(
 }
 
 /**
+ * Une question ne dit pas la règle qu'elle vérifie ni le résultat qu'elle attend (B02 v33, passes 11
+ * à 13) : « explique ce qui les fait différer », « pourquoi sa réponse change-t-elle ? », « n'a pas
+ * besoin de dire », « qu'est-ce qu'il confond ? » donnaient la réponse à celui qui a l'erreur qu'on
+ * cherche. La liste reprend les tournures trouvées et s'allonge à chaque nouvelle.
+ */
+const PRESUPPOSES: readonly RegExp[] = [
+  /\bdiffèrent\b/giu,
+  /\bdifférer\b/giu,
+  /\bchange-t-(?:il|elle)\b/giu,
+  /\bn[’']a pas besoin de\b/giu,
+  /\bqu[’']est-ce qu[’'](?:il|elle) confond\b/giu,
+  /\bpourquoi une seule\b/giu,
+  /\bmais pas les deux\b/giu,
+]
+
+function verifierPresupposes(
+  manifeste: Manifeste,
+  html: string,
+  signaler: (message: string) => void,
+): void {
+  const chercher = (texte: string, ou: string) => {
+    for (const motif of PRESUPPOSES)
+      for (const [trouve] of texte.matchAll(motif))
+        signaler(
+          `la question souffle sa réponse (« ${trouve} » dans ${ou}) : demande le résultat sans le dire, par exemple « donnent-elles le même résultat ? Pourquoi ? ».`,
+        )
+  }
+  textesDuManifeste(manifeste, '', (chemin, texte) => {
+    if (/\.(?:question|consigne|recto)$/.test(chemin)) chercher(texte, chemin)
+  })
+  for (const [, texte = ''] of html.matchAll(/\bdata-justifier="([^"]*)"/g))
+    chercher(texte, 'data-justifier')
+}
+
+/**
  * Un texte nu entre deux blocs n'a été écrit pour personne : « RAW: » restait affiché entre deux
  * paragraphes de B02 version 33, et « Écouter » le lisait. Le texte de l'apprenant est dans un bloc.
  */
@@ -881,6 +916,7 @@ export async function verifierLesFiches({
       verifierRenvoisAuxCours(resultat.manifeste, fiche.html, codes, signaler)
       verifierCoulisses(resultat.manifeste, fiche.html, signaler)
       verifierTexteNu(fiche.html, signaler)
+      verifierPresupposes(resultat.manifeste, fiche.html, signaler)
       verifierDonneesALEcran(fiche.html, signaler)
       verifierAlignement(resultat.manifeste, fiche.html, signaler)
 

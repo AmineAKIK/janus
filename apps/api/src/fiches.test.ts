@@ -709,6 +709,29 @@ describe('vérification des fiches du dépôt', () => {
       ])
     })
 
+    it('refuse une question qui souffle sa réponse, comme « dis ce qui les fait différer »', async () => {
+      await poser(
+        'X00.html',
+        avecManifeste(
+          fiche.replace(
+            "<p>À REMPLACER : l'explication du bloc.</p>",
+            '<div class="ex" data-justifier="Explique pourquoi elle n’a pas besoin de dire « et moins de 1000 »."><p class="q">Écris la chaîne.</p></div>',
+          ),
+          (manifeste) => {
+            const question = manifeste.restitution[0]
+            if (question) question.question = 'Calcule les deux, et dis ce qui les fait différer.'
+          },
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('« différer » dans restitution[0].question'),
+          expect.stringContaining('« n’a pas besoin de » dans data-justifier'),
+        ]),
+      )
+    })
+
     it('laisse libres les notes de conception', async () => {
       await poser(
         'X00.html',

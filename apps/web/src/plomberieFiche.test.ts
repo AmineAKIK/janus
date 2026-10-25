@@ -791,7 +791,7 @@ describe('la tentative avant l’explication (pré-test)', () => {
     expect(items[1]).toHaveTextContent('? À découvrir')
     // Sans réponse, la solution ne se donne pas à garder : l'étape suivante l'explique.
     expect(
-      within(bilan).getByText('Tu ne savais pas : l’étape suivante te l’apprend.'),
+      within(bilan).getByText('Tu ne savais pas : les étapes suivantes te l’apprennent.'),
     ).toBeInTheDocument()
     expect(within(bilan).queryByText(/Il double|Compare 8 et 16/)).toBeNull()
   })
