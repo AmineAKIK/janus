@@ -719,7 +719,9 @@ describe('vérification des fiches du dépôt', () => {
           ),
           (manifeste) => {
             const question = manifeste.restitution[0]
-            if (question) question.question = 'Calcule les deux, et dis ce qui les fait différer.'
+            if (question)
+              question.question =
+                'Calcule les deux, et dis ce qui les fait différer. Quelle branche s’exécute ?'
           },
         ),
       )
@@ -728,6 +730,7 @@ describe('vérification des fiches du dépôt', () => {
         expect.arrayContaining([
           expect.stringContaining('« différer » dans restitution[0].question'),
           expect.stringContaining('« n’a pas besoin de » dans data-justifier'),
+          expect.stringContaining('« Quelle branche s’exécute » dans restitution[0].question'),
         ]),
       )
     })

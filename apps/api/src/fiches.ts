@@ -469,7 +469,7 @@ function verifierCoulisses(
  * Une question ne dit pas la règle qu'elle vérifie ni le résultat qu'elle attend (B02 v33, passes 11
  * à 13) : « explique ce qui les fait différer », « pourquoi sa réponse change-t-elle ? », « n'a pas
  * besoin de dire », « qu'est-ce qu'il confond ? » donnaient la réponse à celui qui a l'erreur qu'on
- * cherche. La liste reprend les tournures trouvées et s'allonge à chaque nouvelle.
+ * cherche. « Quelle branche s'exécute ? » suppose qu'une seule le fait (carte K6, passe 17). La liste reprend les tournures trouvées et s'allonge à chaque nouvelle.
  */
 const PRESUPPOSES: readonly RegExp[] = [
   /\bdiffèrent\b/giu,
@@ -478,6 +478,7 @@ const PRESUPPOSES: readonly RegExp[] = [
   /\bn[’']a pas besoin de\b/giu,
   /\bqu[’']est-ce qu[’'](?:il|elle) confond\b/giu,
   /\bpourquoi une seule\b/giu,
+  /\bquelle (?:seule )?(?:branche|ligne) s[’']exécute\b/giu,
   /\bmais pas les deux\b/giu,
   /\ble bon\s«/giu,
   /\bbien ordonnée?s?\b/giu,

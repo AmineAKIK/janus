@@ -2901,6 +2901,43 @@
         </p>
       </div>
       <div data-ecran="OU, à toi">
+        <details>
+          <summary>Les tables, si tu en as besoin</summary>
+          <table
+            class="table-js"
+            data-lecture="La table de OU. A OU B n’est FAUX que si A et B sont FAUX tous les deux."
+          >
+            <thead>
+              <tr>
+                <th>A</th>
+                <th>B</th>
+                <th>A OU B</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>FAUX</td>
+                <td>FAUX</td>
+                <td>FAUX</td>
+              </tr>
+              <tr>
+                <td>FAUX</td>
+                <td>VRAI</td>
+                <td>VRAI</td>
+              </tr>
+              <tr>
+                <td>VRAI</td>
+                <td>FAUX</td>
+                <td>VRAI</td>
+              </tr>
+              <tr>
+                <td>VRAI</td>
+                <td>VRAI</td>
+                <td>VRAI</td>
+              </tr>
+            </tbody>
+          </table>
+        </details>
         <div class="ex" data-widget="choix" data-id="o1" data-reponse="oui" data-melanger="non">
           <p class="q">
             Une alarme sonne SI porte ouverte OU fenêtre ouverte. Ce soir, la porte et la fenêtre
@@ -2922,6 +2959,43 @@
         </div>
       </div>
       <div data-ecran="Un distributeur">
+        <details>
+          <summary>Les tables, si tu en as besoin</summary>
+          <table
+            class="table-js"
+            data-lecture="La table de ET. A ET B n’est VRAI que si A et B sont VRAI tous les deux."
+          >
+            <thead>
+              <tr>
+                <th>A</th>
+                <th>B</th>
+                <th>A ET B</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>FAUX</td>
+                <td>FAUX</td>
+                <td>FAUX</td>
+              </tr>
+              <tr>
+                <td>FAUX</td>
+                <td>VRAI</td>
+                <td>FAUX</td>
+              </tr>
+              <tr>
+                <td>VRAI</td>
+                <td>FAUX</td>
+                <td>FAUX</td>
+              </tr>
+              <tr>
+                <td>VRAI</td>
+                <td>VRAI</td>
+                <td>VRAI</td>
+              </tr>
+            </tbody>
+          </table>
+        </details>
         <div class="ex" data-widget="choix" data-id="o2" data-reponse="non" data-melanger="non">
           <p class="q">
             Un distributeur rend la monnaie SI pièce reconnue ET stock suffisant. La pièce est
@@ -3584,9 +3658,9 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
           <strong>exclusif</strong> : il est VRAI quand un seul des deux est VRAI.
         </p>
         <p data-si-essai="p3:faux">
-          Pour le menu, tu avais répondu <span data-essai-rappel="p3">autre chose</span>. C’est
-          juste pour le OU de la logique, qui accepte les deux. Le menu en emploie un autre : le OU
-          exclusif.
+          Pour le menu « fromage ou dessert », à la question « Peux-tu prendre les deux ? », tu
+          avais répondu <span data-essai-rappel="p3">autre chose</span>. C’est juste pour le OU de
+          la logique, qui accepte les deux. Le menu en emploie un autre : le OU exclusif.
         </p>
         <div
           class="defile"
@@ -4093,8 +4167,10 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
           data-prediction
         >
           <p class="q">
-            Le signe ≥ veut dire « plus grand ou égal à ». Quelle ligne faut-il tester en premier
-            pour que le thermostat affiche juste à la fois par 18 °C et par 30 °C ?
+            Le thermostat doit afficher « chaud » à partir de 25 °C, « tiède » à partir de 15 °C,
+            « froid » en dessous. Le signe ≥ veut dire « plus grand ou égal à ». Quelle ligne
+            faut-il tester en premier pour que le thermostat affiche juste à la fois par 18 °C et
+            par 30 °C ?
           </p>
           <ul class="options">
             <li data-option="chaud">température ≥ 25 : afficher « chaud »</li>
@@ -5009,7 +5085,7 @@ if (age &lt; 12) {
       <div data-ecran="Prédire">
         <p class="accroche">
           Reste une habitude à prendre : prédire, puis vérifier. Avant d’exécuter un code, dis ce
-          qu’il va afficher. Si la console te surprend, c’est ton modèle de la chaîne qu’il faut
+          qu’il va afficher. Si la console te surprend, c’est ta façon de lire la chaîne qu’il faut
           corriger.
         </p>
         <div
@@ -5733,7 +5809,7 @@ if (age &lt; 12) {
     </template>
     <template data-item="PR1-10">
       <div
-        data-aide1="La chaîne s’arrête à la première ligne VRAIE : regarde ce que vaut la ligne 1 pour Léa."
+        data-aide1="Pour Léa, que vaut la ligne 1 ? Que fait la chaîne quand une ligne est VRAIE ?"
         class="ex"
         data-widget="choix"
         data-verifie
@@ -5775,7 +5851,7 @@ if (age &lt; 12) {
     </template>
     <template data-variante="PR1-10">
       <div
-        data-aide1="La chaîne s’arrête à la première ligne VRAIE : regarde ce que vaut la ligne 1 pour Malik."
+        data-aide1="Pour Malik, que vaut la ligne 1 ? Que fait la chaîne quand une ligne est VRAIE ?"
         class="ex"
         data-widget="choix"
         data-verifie
@@ -6758,14 +6834,14 @@ if (age &lt; 12) {
             "id": "PR2-2",
             "item": "PR2-2",
             "question": "Un niveau de fidélité vaut « or » à partir de 1000 points, « argent » à partir de 500, « bronze » à partir de 100, « aucun » en dessous. Le signe ≥ veut dire « plus grand ou égal à ». Pourquoi faut-il tester à la fois 499 et 500 ?",
-            "attendu": "Le seuil de 500 sépare « bronze » et « argent » : 499 est la dernière valeur avant le changement, 500 la première après. Tester les deux vérifie que le seuil est au bon endroit et que le signe est le bon : avec points > 500, 500 afficherait « bronze ». Déduit de l’étape 8.",
+            "attendu": "499 et 500 encadrent le seuil qui sépare « bronze » et « argent ». Tester les deux vérifie que le seuil est au bon endroit et que le signe est le bon : avec points > 500, 500 afficherait « bronze ». Déduit de l’étape 8.",
             "erreurs": []
           },
           {
             "id": "PR2-2:variante",
             "item": "PR2-2",
             "question": "Un rang vaut « expert » à partir de 800, « confirmé » à partir de 400, « débutant » à partir de 50, « nouveau » en dessous. Le signe ≥ veut dire « plus grand ou égal à ». Pourquoi faut-il tester à la fois 399 et 400 ?",
-            "attendu": "Le seuil de 400 sépare « débutant » et « confirmé » : 399 est la dernière valeur avant le changement, 400 la première après. Tester les deux vérifie que le seuil est au bon endroit et que le signe est le bon : avec score > 400, 400 afficherait « débutant ». Déduit de l’étape 8.",
+            "attendu": "399 et 400 encadrent le seuil qui sépare « débutant » et « confirmé ». Tester les deux vérifie que le seuil est au bon endroit et que le signe est le bon : avec score > 400, 400 afficherait « débutant ». Déduit de l’étape 8.",
             "erreurs": []
           }
         ],
@@ -6830,14 +6906,14 @@ if (age &lt; 12) {
           {
             "id": "B02-C25",
             "type": "explication",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Le signe < veut dire « strictement plus petit que ». Avec heure = 20, weekend = FAUX et férié = VRAI, voici deux conditions : « heure < 18 ET (weekend OU férié) » et « heure < 18 ET weekend OU férié ». Calcule les deux, une opération à la fois, puis dis d’où vient ce que tu observes entre leurs résultats.",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Le signe < veut dire « strictement plus petit que ». Avec heure = 20, weekend = FAUX et férié = VRAI, voici deux conditions : « heure < 18 ET (weekend OU férié) » et « heure < 18 ET weekend OU férié ». Calcule les deux conditions, une opération à la fois, puis dis d’où vient ce que tu observes.",
             "attendu": "Avec les parenthèses : 20 < 18 est FAUX, weekend OU férié donne VRAI, puis FAUX ET VRAI donne FAUX. Sans parenthèses : 20 < 18 est FAUX, FAUX ET FAUX donne FAUX, car ET passe avant OU, puis FAUX OU VRAI donne VRAI. Elles ne donnent pas le même résultat, parce que les parenthèses imposent le OU d’abord ; lire l’une comme l’autre, c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
           {
-            "id": "B02-C16",
+            "id": "B02-C26",
             "type": "explication",
-            "consigne": "Voici une chaîne : SI vitesse > 50 : afficher « ralentis » ; SINON SI vitesse > 90 : afficher « danger » ; SINON : afficher « ok ». Le signe > veut dire « strictement plus grand que ». Qu’affiche-t-elle pour 100 ? Corrige-la.",
+            "consigne": "Voici une chaîne, écrite pour afficher « danger » au-dessus de 90, « ralentis » au-dessus de 50, et « ok » sinon : SI vitesse > 50 : afficher « ralentis » ; SINON SI vitesse > 90 : afficher « danger » ; SINON : afficher « ok ». Le signe > veut dire « strictement plus grand que ». Qu’affiche-t-elle pour 100 ? Corrige-la.",
             "attendu": "Pour 100, elle affiche « ralentis » : 100 > 50 est VRAI dès la première ligne, la chaîne en sort, et la ligne « danger » n’est jamais atteinte. Correction, la plus exigeante d’abord : SI vitesse > 90 : afficher « danger » ; SINON SI vitesse > 50 : afficher « ralentis » ; SINON : afficher « ok ». Croire que « danger » s’affiche aussi, c’est l’erreur E3. Déduit de l’étape 8.",
             "erreurs": ["E3"]
           },
@@ -6858,7 +6934,7 @@ if (age &lt; 12) {
           {
             "id": "B02-DE29",
             "type": "explication",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Voici deux expressions : VRAI OU FAUX ET FAUX et (VRAI OU FAUX) ET FAUX. Calcule les deux, une opération à la fois, puis dis d’où vient ce que tu observes entre leurs résultats.",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Voici deux expressions : VRAI OU FAUX ET FAUX et (VRAI OU FAUX) ET FAUX. Calcule les deux expressions, une opération à la fois, puis dis d’où vient ce que tu observes.",
             "attendu": "Sans parenthèses, ET passe avant OU, selon la priorité des opérateurs, une convention : VRAI OU (FAUX ET FAUX) = VRAI OU FAUX = VRAI. Avec les parenthèses, le OU d’abord : VRAI OU FAUX = VRAI, puis VRAI ET FAUX = FAUX. Les deux résultats ne sont pas les mêmes : l’ordre de calcul change le résultat ; calculer le OU d’abord sans parenthèses, c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
@@ -7013,8 +7089,8 @@ if (age &lt; 12) {
             "verso": "(A OU B) ET NON (A ET B) : VRAI quand un seul des deux est VRAI, comme « fromage ou dessert ». D’après « Traduire une règle »."
           },
           {
-            "id": "B02-K6",
-            "recto": "Dans une chaîne SI / SINON SI / SINON, quelle branche s’exécute ?",
+            "id": "B02-K26",
+            "recto": "Dans une chaîne SI / SINON SI / SINON, qu’est-ce qui s’exécute ?",
             "verso": "Une seule : celle de la première condition VRAIE, de haut en bas ; SINON si aucune ne l’est. D’après « Une seule branche »."
           },
           {
@@ -7093,14 +7169,14 @@ if (age &lt; 12) {
             "notion": "Dire que dans une chaîne SI / SINON SI / SINON, les conditions sont testées dans l’ordre et que seule la branche de la première VRAIE s’exécute, et tracer la chaîne pour un cas",
             "montree": ["ET8"],
             "pratiquee": ["PR1", "PR2"],
-            "questions": ["B02-R34", "B02-Q23", "B02-K6"]
+            "questions": ["B02-R34", "B02-Q23", "B02-K26"]
           },
           {
             "id": "N6",
             "notion": "Écrire une chaîne à quatre branches bien ordonnée, la plus exigeante d’abord, et choisir ses valeurs limites pour la tester",
             "montree": ["ET8"],
             "pratiquee": ["PR2"],
-            "questions": ["B02-R38", "B02-C16", "B02-DE24", "B02-DT26", "B02-DT27", "B02-K20"]
+            "questions": ["B02-R38", "B02-C26", "B02-DE24", "B02-DT26", "B02-DT27", "B02-K20"]
           },
           {
             "id": "N7",
@@ -7158,7 +7234,7 @@ if (age &lt; 12) {
             "vers": "N6",
             "type": "cause",
             "montree": "ET8",
-            "questions": ["B02-DE24", "B02-C16", "B02-DT27"]
+            "questions": ["B02-DE24", "B02-C26", "B02-DT27"]
           },
           {
             "id": "L6",
