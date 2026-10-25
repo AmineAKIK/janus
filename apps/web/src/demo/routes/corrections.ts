@@ -1,4 +1,10 @@
-import { corrigerSimule, DELAI_CORRECTION_SIMULEE_MS, ErreurApi, ROUTES } from '@janus/contrats'
+import {
+  corrigerSimule,
+  DELAI_CORRECTION_SIMULEE_MS,
+  ErreurApi,
+  etapesEnMots,
+  ROUTES,
+} from '@janus/contrats'
 import type { CorrectionRendue } from '@janus/contrats'
 import { compte, estRecopiee, statutDuBloc } from '@janus/moteur'
 import { MANIFESTES_GRAINE } from '../graine.ts'
@@ -120,7 +126,10 @@ export function routesCorrectionsDemo({
       }
 
       await attendre(delaiCorrectionMs)
-      const correction = corrigerSimule(corps.reponse, question.attendu)
+      const correction = corrigerSimule(
+        corps.reponse,
+        etapesEnMots(question.attendu, manifeste.etapes),
+      )
       if (correction.refusee) {
         throw probleme(400, 'donnees_invalides', 'Réponse refusée', correction.message)
       }

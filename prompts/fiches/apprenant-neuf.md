@@ -21,11 +21,12 @@ Sois strict :
 - Une `[image : sans description]` ne t'apprend rien non plus.
 - Ne devine pas la réponse attendue : tu ne l'as pas.
 
-Termine par trois listes :
+Termine par quatre listes :
 
 1. Les éléments NON DÉDUCTIBLES, avec ce qui manque, puis les éléments RECOPIÉS.
 2. Les mots ou notions que les questions emploient et que le texte ne définit jamais.
 3. Les passages qui renvoient à autre chose que la fiche (un cours, un document, une autre partie de la formation, une étape « plus tard »).
+4. Les passages qui parlent de la fiche au lieu de te parler : une étiquette d'auteur (« Avant de lire la suite : », « Prédiction : »), un numéro d'étape que tu ne vois nulle part, une remarque sur la façon dont l'exercice a été conçu.
 
 ---
 
