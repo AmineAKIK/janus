@@ -6,7 +6,7 @@ Consigne donnée à un agent neuf (aucun historique, aucun autre fichier) avec l
 
 Tu joues un adulte en reconversion qui découvre ce sujet, sur un téléphone, sans aucune base. Tu lis la partie « Ce que la fiche enseigne » dans l'ordre, écran par écran, sans sauter ni revenir en arrière, et tu ne lis pas « Ce qu'on te demande ». Même si tu connais le sujet, tu ne sais que ce que le texte t'a dit jusque-là.
 
-Pendant la lecture, écris pour chaque écran une ligne : `ÉTAPE, écran : ce que je comprends maintenant / ce qui me manque`. Marque `DÉCROCHAGE` un écran où tu aurais fermé l'appli : un mur de mots nouveaux, une consigne sans savoir quoi chercher, une évaluation avant d'avoir appris, une contradiction apparente avec un écran précédent.
+Pendant la lecture, écris pour chaque écran une ligne : `ÉTAPE, écran : ce que je comprends maintenant / ce qui me manque`. Marque `DÉCROCHAGE` un écran où tu aurais fermé l'appli : un mur de mots nouveaux, une consigne noyée sous les rappels, plusieurs écrans abstraits d'affilée sans savoir de quoi on parle, une consigne sans savoir quoi chercher, une évaluation avant d'avoir appris, une contradiction apparente avec un écran précédent.
 
 À la fin, sans relire, écris :
 
@@ -18,6 +18,7 @@ Pendant la lecture, écris pour chaque écran une ligne : `ÉTAPE, écran : ce q
 6. **Ce que j'ai dû corriger.** Une idée que tu t'étais faite et qu'un écran plus tard a contredite ; as-tu eu un moment pour la reprendre ?
 7. **Les images.** Chaque image ou comparaison que le texte emploie, et si le texte dit où elle s'arrête.
 8. **Ce que j'ai dû retrouver ailleurs.** Chaque écran où tu as dû te souvenir d'un autre écran pour comprendre ou répondre (une donnée, des seuils, une chaîne, un code, un exemple « du début »), avec la phrase exacte. Un renvoi qui redonne la donnée sur place ne compte pas.
+9. **Le fil.** Pour chaque écran, marque `CONCRET` s'il s'ouvre sur une personne, un objet ou un but que tu reconnais, `ABSTRAIT` s'il s'ouvre sur une définition, une formule, une table ou des variables. Donne la plus longue suite d'écrans `ABSTRAIT`. Dis si la situation du premier écran revient dans chaque étape et y fait avancer quelque chose, et combien de situations différentes tu as croisées dans le cours. Cite les consignes où tu as dû trier toi-même ce qui est rappel et ce qui est demandé, et les données écrites en variables (« accompagné = FAUX ») là où une phrase t'aurait suffi.
 
 Sois strict :
 
@@ -30,7 +31,7 @@ Sois strict :
 
 ## Ce que l'auteur de la fiche fait du résultat
 
-L'épreuve passe quand : aucun DÉCROCHAGE ; « où je suis » et « à quoi ça sert » sont dits et justes ; le modèle est d'un seul tenant, sans île ; la relation centrale est celle du modèle du bloc (`ensemble` et `relations` du tableau d'alignement) ; le système a été vu fonctionner avant l'explication, suivi d'un pari ou d'une tentative ; chaque image a sa limite ; rien n'a dû être retrouvé ailleurs : chaque écran redonne ce qu'il utilise.
+L'épreuve passe quand : aucun DÉCROCHAGE ; « où je suis » et « à quoi ça sert » sont dits et justes ; le modèle est d'un seul tenant, sans île ; la relation centrale est celle du modèle du bloc (`ensemble` et `relations` du tableau d'alignement) ; le système a été vu fonctionner avant l'explication, suivi d'un pari ou d'une tentative ; chaque image a sa limite ; rien n'a dû être retrouvé ailleurs : chaque écran redonne ce qu'il utilise ; la situation du début revient dans chaque étape et porte sa notion, et aucune suite de plus de quatre écrans abstraits (B02 version 33 en avait treize : Amine l'a trouvé « dense, abstrait, sans histoire », voir « Leçons du B02 » dans AGENTS.md).
 
 - Une île est un défaut de la fiche, pas de l'apprenant : il manque l'écran qui relie, le schéma d'ensemble ou le retour à l'ensemble.
 - Un décrochage se corrige à l'écran qui le cause (trop de mots nouveaux d'un coup, une consigne sans but, l'objectif avant la carte), pas en ajoutant un écran plus loin.
