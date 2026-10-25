@@ -604,8 +604,7 @@ function verifierSignesRedonnes(
   for (const q of manifeste.restitution) controler(q.question, q.attendu, `restitution ${q.id}`)
   for (const q of manifeste.rappel) controler(q.question, q.attendu, `rappel ${q.id}`)
   for (const d of manifeste.differees) controler(d.consigne, d.attendu, `differees ${d.id}`)
-  for (const e of manifeste.explication)
-    controler(e.question, e.attendu, `explication ${e.id}`)
+  for (const e of manifeste.explication) controler(e.question, e.attendu, `explication ${e.id}`)
   for (const [, texte = ''] of html.matchAll(/\bdata-justifier="([^"]*)"/g))
     controler(
       texte.replace(/&amp;/g, '&'),
