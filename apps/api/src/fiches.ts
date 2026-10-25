@@ -513,15 +513,26 @@ function verifierPresupposes(
  * l'écran (B01 n'avait qu'une consigne au-delà, B02 v33 en avait 25).
  */
 const MOTS_PAR_CONSIGNE = 45
-const RAPPELS = /\bveut dire\b|\bOrdre de calcul\b|\bse lit\b|\bsignifie\b/giu
+const MOTS_PAR_QUESTION = 70
+const RAPPELS = /\bveut dire\b|\bOrdre de calcul\b|\bse lit\b|\bsignifie\b|\bs[’']écrit\b/giu
 
-function verifierConsignesChargees(html: string, signaler: (message: string) => void): void {
+function verifierConsignesChargees(
+  manifeste: Manifeste,
+  html: string,
+  signaler: (message: string) => void,
+): void {
   const page = sansScriptsNiCommentaires(html)
   const consignes = [
     ...Array.from(page.matchAll(/<p class="q"[^>]*>([\s\S]*?)<\/p>/g), ([, q = '']) => q),
-    ...Array.from(page.matchAll(/\bdata-autre-enonce="([^"]*)"/g), ([, q = '']) => q),
+    ...Array.from(page.matchAll(/\bdata-(?:autre-enonce|justifier)="([^"]*)"/g), ([, q = '']) => q),
   ]
-  for (const consigne of consignes) {
+  // Une question de restitution ou une carte s'affiche sans encadré et sans le cours : elle redonne
+  // la chaîne ou le code qu'elle interroge, d'où plus de mots, mais pas plus d'un rappel.
+  const questions: string[] = []
+  textesDuManifeste(manifeste, '', (chemin, texte) => {
+    if (/\.(?:question|consigne|recto)$/.test(chemin)) questions.push(texte)
+  })
+  for (const consigne of [...consignes, ...questions]) {
     const texte = consigne
       .replace(/<[^>]+>/g, ' ')
       .replace(/&lt;/g, '<')
@@ -530,7 +541,8 @@ function verifierConsignesChargees(html: string, signaler: (message: string) => 
       .replace(/\s+/g, ' ')
       .trim()
     const mots = texte.split(' ').length
-    if ((texte.match(RAPPELS) ?? []).length < 2 && mots <= MOTS_PAR_CONSIGNE) continue
+    const plafond = questions.includes(consigne) ? MOTS_PAR_QUESTION : MOTS_PAR_CONSIGNE
+    if ((texte.match(RAPPELS) ?? []).length < 2 && mots <= plafond) continue
     signaler(
       `la consigne « ${texte.slice(0, 60)}… » empile les rappels (${String(mots)} mots) : garde la situation et la question, et mets les conventions dans l’encadré « Pour lire » de l’écran.`,
     )
@@ -1000,7 +1012,7 @@ export async function verifierLesFiches({
       verifierCoulisses(resultat.manifeste, fiche.html, signaler)
       verifierTexteNu(fiche.html, signaler)
       verifierPresupposes(resultat.manifeste, fiche.html, signaler)
-      verifierConsignesChargees(fiche.html, signaler)
+      verifierConsignesChargees(resultat.manifeste, fiche.html, signaler)
       verifierDonneesEnMots(resultat.manifeste, fiche.html, signaler)
       verifierPrenoms(fiche.html, signaler)
       verifierDonneesALEcran(fiche.html, signaler)

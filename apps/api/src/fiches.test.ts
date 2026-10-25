@@ -784,6 +784,27 @@ describe('vérification des fiches du dépôt', () => {
       )
     })
 
+    it('refuse une question du manifeste qui empile les rappels ou dépasse 70 mots', async () => {
+      await poser(
+        'X00.html',
+        avecManifeste(fiche, (m) => {
+          m.differees = m.differees.map((q, i) =>
+            i === 0
+              ? { ...q, consigne: 'En JavaScript, ET s’écrit && et OU s’écrit ||. Que vaut la ligne ?' }
+              : q,
+          )
+          m.rappel = m.rappel.map((q, i) => (i === 0 ? { ...q, question: `${'mot '.repeat(71)}?` } : q))
+        }),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('« En JavaScript, ET s’écrit && et OU s’écrit ||.'),
+          expect.stringContaining('(72 mots)'),
+        ]),
+      )
+    })
+
     it('laisse libres les notes de conception', async () => {
       await poser(
         'X00.html',
