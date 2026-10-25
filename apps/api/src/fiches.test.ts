@@ -790,10 +790,15 @@ describe('vérification des fiches du dépôt', () => {
         avecManifeste(fiche, (m) => {
           m.differees = m.differees.map((q, i) =>
             i === 0
-              ? { ...q, consigne: 'En JavaScript, ET s’écrit && et OU s’écrit ||. Que vaut la ligne ?' }
+              ? {
+                  ...q,
+                  consigne: 'En JavaScript, ET s’écrit && et OU s’écrit ||. Que vaut la ligne ?',
+                }
               : q,
           )
-          m.rappel = m.rappel.map((q, i) => (i === 0 ? { ...q, question: `${'mot '.repeat(71)}?` } : q))
+          m.rappel = m.rappel.map((q, i) =>
+            i === 0 ? { ...q, question: `${'mot '.repeat(71)}?` } : q,
+          )
         }),
       )
 
