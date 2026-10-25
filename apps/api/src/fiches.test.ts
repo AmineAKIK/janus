@@ -571,6 +571,47 @@ describe('vérification des fiches du dépôt', () => {
     })
   })
 
+  describe('ce que l’apprenant lit ne laisse pas voir la conception', () => {
+    it('refuse un numéro d’étape et « Avant de lire », dans la page comme dans le manifeste', async () => {
+      await poser(
+        'X00.html',
+        avecManifeste(
+          fiche.replace(
+            "<p>À REMPLACER : l'explication du bloc.</p>",
+            '<p>À l’étape 3, tu avais répondu.</p><p class="q">Avant de lire la suite : que vaut A ?</p>',
+          ),
+          (manifeste) => {
+            manifeste.contexte_ia = 'Chaque attendu vient des étapes 3 à 9.'
+            manifeste.sources = [{ id: 'S1', titre: 'Les tables, étape 5' }]
+            // Un attendu garde son texte (haché dans l'identifiant) : etapesEnMots le traduit à la lecture.
+            for (const question of manifeste.restitution) question.attendu += ' (étape 4)'
+          },
+        ),
+      )
+
+      const problemes = await verifierLesFiches({ dossierContenu: contenu })
+
+      expect(problemes).toEqual([
+        expect.stringContaining('« étape 3 » dans le texte affiché'),
+        expect.stringContaining('« Avant de lire la suite » dans le texte affiché'),
+        expect.stringContaining('« étape 5 » dans sources[0].titre'),
+      ])
+      expect(problemes[0]).toContain('nomme l’onglet')
+    })
+
+    it('laisse libres les notes de conception', async () => {
+      await poser(
+        'X00.html',
+        fiche.replace(
+          "<p>À REMPLACER : l'explication du bloc.</p>",
+          '<p>Tu as vu les tables.</p><template data-conception><p>À l’étape 3, avant de lire la suite.</p></template>',
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+  })
+
   describe('le pont embarqué, comparé au pont construit', () => {
     it('accepte une fiche dont le pont est celui du dépôt, même indenté par un reformatage', async () => {
       await poser(

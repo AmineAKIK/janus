@@ -1,3 +1,4 @@
+import { etapesEnMots } from '@janus/contrats'
 import type { Confiance, Manifeste } from '@janus/contrats'
 
 /** Un échange précédent d'une relance : ce que l'apprenant a écrit et ce que le tuteur a répondu. */
@@ -28,7 +29,9 @@ export interface RequeteCorrection {
 
 /**
  * La requête du premier essai : tout ce que le manifeste donne au correcteur, plus la question posée
- * et ce que l'apprenant a écrit. Le second essai (`strict`) est fait par l'appelant.
+ * et ce que l'apprenant a écrit. Le second essai (`strict`) est fait par l'appelant. Les renvois à une
+ * étape par son numéro y nomment l'onglet (`etapesEnMots`) : le correcteur ne peut pas les recopier
+ * dans son message, où ils ne diraient rien à l'apprenant.
  */
 export function requeteDe(
   manifeste: Manifeste,
@@ -39,16 +42,17 @@ export function requeteDe(
     readonly historique: readonly TourPrecedent[]
   },
 ): RequeteCorrection {
+  const enMots = (texte: string) => etapesEnMots(texte, manifeste.etapes)
   return {
     titre: manifeste.titre,
-    contexteIa: manifeste.contexte_ia,
+    contexteIa: enMots(manifeste.contexte_ia),
     sources: manifeste.sources.map(({ id, titre }) => ({ id, ref: titre })),
     erreursCritiques: manifeste.erreurs_critiques.map(({ id, libelle }) => ({
       id,
       texte: libelle,
     })),
-    question: question.question,
-    attendu: question.attendu,
+    question: enMots(question.question),
+    attendu: enMots(question.attendu),
     ...saisie,
     strict: false,
   }

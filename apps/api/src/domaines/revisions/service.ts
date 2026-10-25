@@ -279,7 +279,7 @@ export function creerServiceRevisions({
       // La correction se fait hors transaction : elle appelle le fournisseur.
       let corrigee: Omit<EvenementPartie, 'partie' | 'type' | 'reponse'>
       if (differee.type === 'tache') {
-        const tache = corrigerTache(differee, corps)
+        const tache = corrigerTache(differee, manifeste.etapes, corps)
         if (tache === undefined) {
           const constat = differee.verification?.mode === 'constat'
           throw new ErreurProtocole(

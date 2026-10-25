@@ -2,6 +2,7 @@ import {
   corrigerSimule,
   DELAI_CORRECTION_SIMULEE_MS,
   ErreurApi,
+  etapesEnMots,
   nouvelId,
   PREFIXE_CORRECTION_SIMULEE,
   reservesDuType,
@@ -221,6 +222,7 @@ interface PartieCorrigee {
 
 function corrigerPartie(
   etat: EtatDemo,
+  manifeste: Manifeste,
   differee: Differee,
   corps: {
     reponse: string
@@ -284,10 +286,12 @@ function corrigerPartie(
     return {
       reussi,
       compte: comptee(false).compte,
-      correction: reussi ? 'Réponse exacte.' : `Attendu : ${differee.attendu}`,
+      correction: reussi
+        ? 'Réponse exacte.'
+        : `Attendu : ${etapesEnMots(differee.attendu, manifeste.etapes)}`,
     }
   }
-  const correction = corrigerSimule(corps.reponse, differee.attendu)
+  const correction = corrigerSimule(corps.reponse, etapesEnMots(differee.attendu, manifeste.etapes))
   if (correction.refusee) {
     throw probleme(400, 'donnees_invalides', 'Réponse refusée', correction.message)
   }
@@ -443,7 +447,7 @@ export function routesVerificationsDemo({
         if (derniere) await attendre(delaiCorrectionMs)
 
         const differee = partieDeManifeste(manifeste, partie.id)
-        const corrigee = corrigerPartie(etat, differee, corps)
+        const corrigee = corrigerPartie(etat, manifeste, differee, corps)
         const debut = verification.debut ?? maintenant
         const reponses = {
           ...verification.reponses,

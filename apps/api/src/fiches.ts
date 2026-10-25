@@ -391,6 +391,54 @@ function verifierRenvoisAuxCours(
   })
 }
 
+/**
+ * Ce que l'apprenant lit ne laisse pas passer la conception (Amine, 25 octobre 2026) : les onglets n'ont
+ * pas de numéro, donc « l'étape 3 » ne mène nulle part (on nomme l'onglet : « À l'intuition ») ; et
+ * « Avant de lire la suite : » était une étiquette de conception, pas une question. Le contexte du
+ * correcteur (`contexte_ia`) et les notes de conception (`<template data-conception>`) restent libres.
+ * Les attendus aussi : leur texte est haché dans l'identifiant de la question, et tout ce qui les montre
+ * ou les lit (correcteur IA, correction affichée, mode autonome de la fiche) passe par `etapesEnMots`.
+ */
+const COULISSES: readonly { motif: RegExp; pourquoi: string }[] = [
+  {
+    motif: /(?<![\p{L}\p{N}])étapes?\s+\d+/giu,
+    pourquoi: 'les onglets n’ont pas de numéro : nomme l’onglet, par exemple « À l’intuition »',
+  },
+  {
+    motif: /\bAvant de lire\b[^:?.]*/gu,
+    pourquoi: 'c’est une étiquette de conception : pose directement la question',
+  },
+]
+
+function verifierCoulisses(
+  manifeste: Manifeste,
+  html: string,
+  signaler: (message: string) => void,
+): void {
+  const chercher = (texte: string, ou: string) => {
+    for (const { motif, pourquoi } of COULISSES) {
+      const vus = new Set<string>()
+      for (const [trouve] of texte.matchAll(motif)) {
+        const net = trouve.replace(/\s+/g, ' ').trim()
+        if (vus.has(net)) continue
+        vus.add(net)
+        signaler(
+          `le texte de l’apprenant laisse voir la conception (« ${net} » dans ${ou}) : ${pourquoi}.`,
+        )
+      }
+    }
+  }
+  chercher(
+    sansScriptsNiCommentaires(html)
+      .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+      .replace(/<template\b[^>]*\bdata-conception\b[^>]*>[\s\S]*?<\/template>/gi, ''),
+    'le texte affiché',
+  )
+  textesDuManifeste(manifeste, '', (chemin, texte) => {
+    if (chemin !== 'contexte_ia' && !/(^|\.)attendu$/.test(chemin)) chercher(texte, chemin)
+  })
+}
+
 /** Le texte JSON d'un `<script type="application/json" id="…">` de la page. */
 export function blocJson(html: string, id: string): string | undefined {
   for (const [, attributs, contenu] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
@@ -686,6 +734,7 @@ export async function verifierLesFiches({
       verifierAdressesExternes(fiche.html, signaler)
       verifierRenvoisAuxEssais(fiche.html, signaler)
       verifierRenvoisAuxCours(resultat.manifeste, fiche.html, signaler)
+      verifierCoulisses(resultat.manifeste, fiche.html, signaler)
       verifierAlignement(resultat.manifeste, fiche.html, signaler)
 
       const avant = contenuDeReference?.(fiche.nom)

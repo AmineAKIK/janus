@@ -1,4 +1,10 @@
-import { Niveau, ResultatVerification, reservesDuType, TypeDifferee } from '@janus/contrats'
+import {
+  etapesEnMots,
+  Niveau,
+  ResultatVerification,
+  reservesDuType,
+  TypeDifferee,
+} from '@janus/contrats'
 import type {
   Differee,
   Fait,
@@ -125,9 +131,13 @@ export type PartieCorrigee = Pick<
   'reussi' | 'declaree' | 'cas' | 'compte' | 'correction'
 >
 
-/** Corrige une tâche ; `undefined` quand une tâche de code arrive sans le résultat de ses cas. */
+/**
+ * Corrige une tâche ; `undefined` quand une tâche de code arrive sans le résultat de ses cas. L'attendu
+ * montré nomme les onglets (`etapes`) : la fiche n'affiche pas de numéro d'étape.
+ */
 export function corrigerTache(
   differee: Differee,
+  etapes: Manifeste['etapes'],
   corps: {
     reponse: string
     support: { colle: boolean; retour_cours: boolean }
@@ -172,7 +182,7 @@ export function corrigerTache(
   return {
     reussi,
     compte: comptee,
-    correction: reussi ? 'Réponse exacte.' : `Attendu : ${differee.attendu}`,
+    correction: reussi ? 'Réponse exacte.' : `Attendu : ${etapesEnMots(differee.attendu, etapes)}`,
   }
 }
 

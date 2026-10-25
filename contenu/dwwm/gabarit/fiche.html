@@ -1592,14 +1592,12 @@
             return nom ? 'l' + apostrophe + 'erreur «\u00a0' + nom + '\u00a0»' : tout
           })
           .replace(/(étapes?) (\d+(?:, \d+)*(?: et \d+)?)/g, (tout, mot, liste) => {
-            return (
-              mot +
-              ' ' +
-              liste.replace(/\d+/g, (n) => {
-                const t = titre(n)
-                return t ? n + ' (' + t + ')' : n
-              })
-            )
+            // Les onglets n'ont pas de numéro : on nomme l'onglet, comme `etapesEnMots` côté appli.
+            const noms = (liste.match(/\d+/g) ?? []).map(titre)
+            if (noms.some((nom) => !nom)) return tout
+            const cites = noms.map((nom) => '«\u00a0' + nom + '\u00a0»')
+            const dernier = cites.pop()
+            return mot + ' ' + (cites.length ? cites.join(', ') + ' et ' + dernier : dernier)
           })
       }
       function corrigerLocalement(demande) {

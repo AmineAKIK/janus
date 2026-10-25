@@ -630,9 +630,10 @@ describe('la correction simulée, hors de l’appli', () => {
     await screen.findAllByText('À comparer', {}, { timeout: 3000 })
     const attendu = screen.getByText(/Lu à l'envers, on trouverait 45/)
     expect(attendu).toHaveTextContent(
-      "c'est l'erreur « À REMPLACER : confusion centrale 1 ». D'après les étapes 2 (Explication) et 3 (Pratique).",
+      "c'est l'erreur « À REMPLACER : confusion centrale 1 ». D'après les étapes « Explication » et « Pratique ».",
     )
     expect(attendu).not.toHaveTextContent(/\bE1\b/)
+    expect(attendu).not.toHaveTextContent(/étapes? \d/)
   })
 
   it('dit « Pas encore » à « je ne sais pas », et « Trop courte » à une réponse trop courte', async () => {

@@ -38,10 +38,10 @@ const constat: Differee = {
 
 describe('corrigerTache, constat', () => {
   const declarer = (coches: number[], aide: number) =>
-    corrigerTache(constat, { reponse: 'x', support: SUPPORT, constat: { coches, aide } })
+    corrigerTache(constat, [], { reponse: 'x', support: SUPPORT, constat: { coches, aide } })
 
   it('sans constat envoyé : undefined', () => {
-    expect(corrigerTache(constat, { reponse: 'x', support: SUPPORT })).toBeUndefined()
+    expect(corrigerTache(constat, [], { reponse: 'x', support: SUPPORT })).toBeUndefined()
   })
 
   it('tous les critères cochés à l’aide 0 : réussie, et marquée comme déclarée', () => {
@@ -60,34 +60,42 @@ describe('corrigerTache, constat', () => {
 
 describe('corrigerTache', () => {
   it('accepte une des réponses exactes, et dit l’attendu sinon', () => {
-    expect(corrigerTache(exacte, { reponse: ' Fiche ', support: SUPPORT })).toMatchObject({
+    expect(corrigerTache(exacte, [], { reponse: ' Fiche ', support: SUPPORT })).toMatchObject({
       reussi: true,
       compte: true,
     })
-    expect(corrigerTache(exacte, { reponse: 'fiche', support: SUPPORT })).toMatchObject({
+    expect(corrigerTache(exacte, [], { reponse: 'fiche', support: SUPPORT })).toMatchObject({
       reussi: false,
       correction: 'Attendu : FICHE',
     })
   })
 
+  it('nomme l’onglet quand l’attendu cite une étape', () => {
+    const renvoi = { ...exacte, attendu: 'Voir l’étape 2.' }
+    const etapes = [{ id: 'ET2', titre: 'Le guichet' }] as Parameters<typeof corrigerTache>[1]
+    expect(corrigerTache(renvoi, etapes, { reponse: 'x', support: SUPPORT })).toMatchObject({
+      correction: 'Attendu : Voir l’étape «\u00a0Le guichet\u00a0».',
+    })
+  })
+
   it('ne compte pas une réponse collée', () => {
     expect(
-      corrigerTache(exacte, { reponse: 'FICHE', support: { colle: true, retour_cours: false } })
+      corrigerTache(exacte, [], { reponse: 'FICHE', support: { colle: true, retour_cours: false } })
         ?.compte,
     ).toBe(false)
   })
 
   it('exige le résultat des cas pour une tâche de code, tous réussis et au moins ceux du manifeste', () => {
-    expect(corrigerTache(code, { reponse: 'x', support: SUPPORT })).toBeUndefined()
+    expect(corrigerTache(code, [], { reponse: 'x', support: SUPPORT })).toBeUndefined()
     expect(
-      corrigerTache(code, { reponse: 'x', support: SUPPORT, code: { reussis: 2, total: 2 } }),
+      corrigerTache(code, [], { reponse: 'x', support: SUPPORT, code: { reussis: 2, total: 2 } }),
     ).toMatchObject({ reussi: true, cas: { reussis: 2, total: 2 } })
     expect(
-      corrigerTache(code, { reponse: 'x', support: SUPPORT, code: { reussis: 1, total: 2 } })
+      corrigerTache(code, [], { reponse: 'x', support: SUPPORT, code: { reussis: 1, total: 2 } })
         ?.reussi,
     ).toBe(false)
     expect(
-      corrigerTache(code, { reponse: 'x', support: SUPPORT, code: { reussis: 1, total: 1 } })
+      corrigerTache(code, [], { reponse: 'x', support: SUPPORT, code: { reussis: 1, total: 1 } })
         ?.reussi,
     ).toBe(false)
   })
