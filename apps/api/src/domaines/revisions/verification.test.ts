@@ -78,6 +78,17 @@ describe('corrigerTache', () => {
     })
   })
 
+  it('nomme l’erreur critique par son libellé quand l’attendu cite son code', () => {
+    const avecErreur = { ...exacte, attendu: 'FICHE ; FICHIER, c’est l’erreur E1.' }
+    const erreurs = [{ id: 'E1', libelle: 'Confondre les deux mots' }]
+    expect(
+      corrigerTache(avecErreur, [], { reponse: 'x', support: SUPPORT }, erreurs),
+    ).toMatchObject({
+      correction:
+        'Attendu : FICHE ; FICHIER, c’est l’erreur «\u00a0Confondre les deux mots\u00a0».',
+    })
+  })
+
   it('ne compte pas une réponse collée', () => {
     expect(
       corrigerTache(exacte, [], { reponse: 'FICHE', support: { colle: true, retour_cours: false } })

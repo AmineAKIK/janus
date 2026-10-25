@@ -17,6 +17,7 @@ Pendant la lecture, écris pour chaque écran une ligne : `ÉTAPE, écran : ce q
 5. **Ce que j'ai vu fonctionner.** As-tu vu ou entendu le système marcher en entier avant qu'on te l'explique ? À quel écran ? T'a-t-on demandé de parier ou d'essayer avant l'explication ?
 6. **Ce que j'ai dû corriger.** Une idée que tu t'étais faite et qu'un écran plus tard a contredite ; as-tu eu un moment pour la reprendre ?
 7. **Les images.** Chaque image ou comparaison que le texte emploie, et si le texte dit où elle s'arrête.
+8. **Ce que j'ai dû retrouver ailleurs.** Chaque écran où tu as dû te souvenir d'un autre écran pour comprendre ou répondre (une donnée, des seuils, une chaîne, un code, un exemple « du début »), avec la phrase exacte. Un renvoi qui redonne la donnée sur place ne compte pas.
 
 Sois strict :
 
@@ -29,7 +30,7 @@ Sois strict :
 
 ## Ce que l'auteur de la fiche fait du résultat
 
-L'épreuve passe quand : aucun DÉCROCHAGE ; « où je suis » et « à quoi ça sert » sont dits et justes ; le modèle est d'un seul tenant, sans île ; la relation centrale est celle du modèle du bloc (`ensemble` et `relations` du tableau d'alignement) ; le système a été vu fonctionner avant l'explication, suivi d'un pari ou d'une tentative ; chaque image a sa limite.
+L'épreuve passe quand : aucun DÉCROCHAGE ; « où je suis » et « à quoi ça sert » sont dits et justes ; le modèle est d'un seul tenant, sans île ; la relation centrale est celle du modèle du bloc (`ensemble` et `relations` du tableau d'alignement) ; le système a été vu fonctionner avant l'explication, suivi d'un pari ou d'une tentative ; chaque image a sa limite ; rien n'a dû être retrouvé ailleurs : chaque écran redonne ce qu'il utilise.
 
 - Une île est un défaut de la fiche, pas de l'apprenant : il manque l'écran qui relie, le schéma d'ensemble ou le retour à l'ensemble.
 - Un décrochage se corrige à l'écran qui le cause (trop de mots nouveaux d'un coup, une consigne sans but, l'objectif avant la carte), pas en ajoutant un écran plus loin.

@@ -925,6 +925,64 @@ describe('la tentative avant l’explication (pré-test)', () => {
   })
 })
 
+describe('un exercice du cours', () => {
+  /**
+   * Le gabarit, son explication en deux écrans, un exercice du cours sur chacun, sans outil de fiche.
+   * Le test joue l'outil : il marque l'exercice fini (`data-fini`), comme le fait celui d'une fiche
+   * quand la réponse est juste ou la solution vue.
+   */
+  const avecExercices = GABARIT.replace(
+    '<template data-etape="ET2">',
+    '<template data-etape="ET2"><div data-ecran="Lire"><div class="ex" data-id="x1"><p class="q">Combien ?</p><input aria-label="Ta réponse" /></div></div>' +
+      '<div data-ecran="Écrire"><div class="ex" data-id="x2"><p class="q">Et ici ?</p><input aria-label="Ta réponse" /></div></div></template><template data-etape="ET0">',
+  )
+  const finir = (cle: string) => {
+    const ex = document.querySelector<HTMLElement>('[data-id="' + cle + '"]')
+    if (!ex) throw new Error('Pas d’exercice ' + cle)
+    ex.dataset.fini = 'oui'
+  }
+
+  it('garde « Suivant » et « Étape suivante » inactifs tant que l’exercice de l’écran n’est pas fini', async () => {
+    const { pont, envois } = pontSimule(aLEtape('ET2'))
+    monter(avecExercices, pont)
+    await screen.findByRole('heading', { name: 'Explication' })
+    const suivant = screen.getByRole('button', { name: 'Suivant' })
+    expect(suivant).toBeDisabled()
+    expect(screen.getByText(/Termine les exercices de cet écran/)).toBeInTheDocument()
+    fireEvent.click(suivant)
+    expect(screen.getByText('1 / 2')).toBeInTheDocument()
+    finir('x1')
+    await waitFor(() => expect(suivant).toBeEnabled())
+    fireEvent.click(suivant)
+    const suivante = screen.getByRole('button', { name: 'Étape suivante' })
+
+    expect(suivante).toBeDisabled()
+    fireEvent.click(suivante)
+    expect(envois).not.toContainEqual({ type: 'etape.vue', donnees: { etape: 'ET3' } })
+    finir('x2')
+    await waitFor(() => expect(suivante).toBeEnabled())
+    fireEvent.click(suivante)
+    expect(envois).toContainEqual({ type: 'etape.vue', donnees: { etape: 'ET3' } })
+  })
+
+  it('un exercice encore caché n’attend pas : il compte dès qu’il paraît', async () => {
+    const cache = avecExercices.replace(
+      '<div class="ex" data-id="x1">',
+      '<div class="ex" data-id="x0" hidden><p class="q">Pas encore là</p></div><div class="ex" data-id="x1">',
+    )
+    const { pont } = pontSimule(aLEtape('ET2'))
+    monter(cache, pont)
+    await screen.findByRole('heading', { name: 'Explication' })
+    finir('x1')
+    const suivant = screen.getByRole('button', { name: 'Suivant' })
+    await waitFor(() => expect(suivant).toBeEnabled())
+    const x0 = document.querySelector<HTMLElement>('[data-id="x0"]')
+    if (!x0) throw new Error('Pas d’exercice x0')
+    x0.hidden = false
+    await waitFor(() => expect(suivant).toBeDisabled())
+  })
+})
+
 describe('la pratique', () => {
   /** Le gabarit, avec un premier item dont un outil contrôle la réponse. */
   const avecOutil = GABARIT.replace(

@@ -25,6 +25,7 @@ Une ou deux phrases libres, si utile.
 - La première ligne porte le bloc et la version du manifeste : la grille se refait à chaque version.
 - Chaque règle de `regles.json` figure exactement une fois.
 - `appliquée` cite au moins une étape (`ET2`), un item de pratique (`PR1-3`) ou le mot « manifeste » ou « alignement » ; chaque étape citée existe dans le manifeste.
+- Ce qu'une ligne `appliquée` cite entre « » se lit tel quel dans la page (texte, attributs, outils), casse, espaces et apostrophes mises à part ; une coupure se marque « … » ou « […] ». Un texte que la page calcule (un coup de pouce fait avec les nombres de l'exercice) ou qu'elle a retiré se cite entre “ ”. `pnpm fiches:verifier` refuse une citation « » périmée : la grille se relit à chaque version de la fiche (25 octobre 2026).
 - `écartée` donne la raison ; une règle noyau ne s'écarte pas.
 
 `pnpm fiches:verifier` refuse une fiche nouvelle ou modifiée sans grille (avec `--base`, comme en CI), et toute grille incomplète ou mal formée. Une fiche seulement réassemblée (`pnpm fiches:assembler --forcer`, puis sa version) n'est pas modifiée au sens de la grille : l'apprenant n'y voit rien de nouveau ; si elle a déjà une grille, seule la version de l'en-tête change. L'épreuve du gardien de la méthode (`prompts/fiches/gardien-methode.md`) vérifie ensuite que la grille dit vrai : la grille décrit, elle ne décide pas.

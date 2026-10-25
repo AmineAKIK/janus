@@ -408,6 +408,14 @@ const COULISSES: readonly { motif: RegExp; pourquoi: string }[] = [
     motif: /\bAvant de lire\b[^:?.]*/gu,
     pourquoi: 'c’est une étiquette de conception : pose directement la question',
   },
+  {
+    // B02 v33 (25 octobre 2026) : « Image : … », « Sa limite : … », « Les limites de l'image »
+    // recopiaient le patron de la méthode (image, mécanisme, terme, limite de l'image, règle C05).
+    // Une étiquette en tête de bloc, pas « la hauteur de l’image : … » au fil d'une phrase.
+    motif: /(?<=(?:>|[.!?])\s*)(?:image|sa limite)\s*:|limites? de l[’']image/giu,
+    pourquoi:
+      'c’est le vocabulaire de la méthode : dis l’image et sa limite en langue naturelle (« Pour te le représenter : », « Ce que les interrupteurs ne montrent pas »)',
+  },
 ]
 
 function verifierCoulisses(
@@ -436,6 +444,106 @@ function verifierCoulisses(
   )
   textesDuManifeste(manifeste, '', (chemin, texte) => {
     if (chemin !== 'contexte_ia' && !/(^|\.)attendu$/.test(chemin)) chercher(texte, chemin)
+  })
+}
+
+/**
+ * Un écran se résout avec ce qu'il montre (Amine, 25 octobre 2026) : « Pour la chaîne des médailles,
+ * bien rangée, quelles sont les valeurs limites ? » demandait de se souvenir des seuils d'un autre
+ * écran. Pour un exercice qui calcule sur des données (`data-chaine`, `data-expr`, `data-variable`),
+ * chaque nombre et chaque variable se lit dans le texte de son écran (ou de son item), hors attributs.
+ */
+function verifierDonneesALEcran(html: string, signaler: (message: string) => void): void {
+  const texte = (morceau: string) =>
+    morceau
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&gt;/g, '>')
+      .replace(/&lt;/g, '<')
+      .replace(/&amp;/g, '&')
+  const modeles = sansScriptsNiCommentaires(html).matchAll(
+    /<template\b[^>]*\bdata-(etape|item)\s*=\s*"([^"]+)"[^>]*>([\s\S]*?)<\/template>/gi,
+  )
+  for (const [, sorte = '', id = '', contenu = ''] of modeles) {
+    // Les écrans sont frères : chacun va de son ouverture à celle du suivant.
+    const debuts = [...contenu.matchAll(/<div\b[^>]*\bdata-ecran\s*=/gi)].map(({ index }) => index)
+    const ecrans =
+      debuts.length === 0
+        ? [contenu]
+        : debuts.map((debut, k) => contenu.slice(debut, debuts[k + 1] ?? contenu.length))
+    for (const ecran of ecrans) {
+      const titre = /\bdata-ecran\s*=\s*"([^"]*)"/.exec(ecran)?.[1]
+      const ou = sorte === 'item' ? `l’item ${id}` : `${id}${titre ? `, écran « ${titre} »` : ''}`
+      const visible = texte(ecran)
+      for (const [balise] of ecran.matchAll(/<div\b(?=[^>]*\bclass\s*=\s*"ex")[^>]*>/gi)) {
+        const attribut = (nom: string) =>
+          new RegExp(`\\b${nom}\\s*=\\s*"([^"]*)"`).exec(balise)?.[1]
+        const exercice = attribut('data-id') ?? attribut('data-widget') ?? 'un exercice'
+        const manque = new Set<string>()
+        for (const nom of ['data-chaine', 'data-expr']) {
+          for (const [nombre] of texte(attribut(nom) ?? '').matchAll(/\d+(?:[.,]\d+)?/g)) {
+            if (!new RegExp(`(?<![\\d.,])${nombre.replace(/[.,]/g, '[.,]')}(?!\\d)`).test(visible))
+              manque.add(nombre)
+          }
+        }
+        const variable = attribut('data-variable')
+        if (
+          variable &&
+          !new RegExp(`(?<![\\p{L}\\p{N}_])${variable}(?![\\p{L}\\p{N}_])`, 'u').test(visible)
+        )
+          manque.add(variable)
+        if (manque.size > 0) {
+          signaler(
+            `${ou} : l’exercice ${exercice} calcule sur ${[...manque].join(', ')}, que son écran ne montre pas : redonne la donnée sur l’écran (la chaîne, la règle en mots), l’apprenant ne la cherche pas ailleurs.`,
+          )
+        }
+      }
+    }
+  }
+}
+
+/** Un texte ramené à ce qui se compare : casse, espaces (insécables compris) et apostrophes mises à part. */
+function pourComparer(texte: string): string {
+  return texte
+    .replace(/&nbsp;|&#160;/g, ' ')
+    .replace(/&gt;/g, '>')
+    .replace(/&lt;/g, '<')
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/\\u00a0/g, ' ')
+    .replace(/[’‘]/g, "'")
+    .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, (chiffre) => String('⁰¹²³⁴⁵⁶⁷⁸⁹'.indexOf(chiffre)))
+    .replace(/[\s\u00a0\u202f]+/g, ' ')
+    .trim()
+    .toLowerCase()
+}
+
+/**
+ * La grille décrit vrai (25 octobre 2026) : ce qu'une ligne « appliquée » cite entre « » se lit dans la
+ * page, outils et gabarit compris. Une citation périmée (la page a changé, la grille non) laisse croire
+ * qu'une règle est tenue. Une coupure se marque « … » ou « […] » : chaque morceau doit s'y lire.
+ */
+export function verifierCitationsDeLaGrille(
+  grille: string,
+  html: string,
+  signaler: (message: string) => void,
+): void {
+  // Le texte entre les balises (un exposant <sup> collé à son nombre), et les attributs tels quels :
+  // coups de pouce, retours, titres d'écran, textes des outils.
+  const page = [html.replace(/<[^>]+>/g, ' '), html.replace(/<[^>]+>/g, ''), html]
+    .map(pourComparer)
+    .join('\n')
+  grille.split(/\r?\n/).forEach((ligne, index) => {
+    if (!ligne.trim().startsWith('|') || !/\|\s*appliquée\s*\|/i.test(ligne)) return
+    for (const [, cite = ''] of ligne.matchAll(/«\s*([^«»]+?)\s*»/g)) {
+      const morceaux = cite
+        .split(/\[…\]|…|\.\.\./)
+        .map((morceau) => pourComparer(morceau))
+        .filter((morceau) => morceau.length > 0)
+      if (morceaux.every((morceau) => page.includes(morceau))) continue
+      signaler(
+        `grille : la ligne ${String(index + 1)} cite « ${cite.trim()} », qui ne se lit plus dans la page : une citation dit ce que l’apprenant voit, recopie-la de la page ou coupe-la par « … ».`,
+      )
+    }
   })
 }
 
@@ -735,6 +843,7 @@ export async function verifierLesFiches({
       verifierRenvoisAuxEssais(fiche.html, signaler)
       verifierRenvoisAuxCours(resultat.manifeste, fiche.html, signaler)
       verifierCoulisses(resultat.manifeste, fiche.html, signaler)
+      verifierDonneesALEcran(fiche.html, signaler)
       verifierAlignement(resultat.manifeste, fiche.html, signaler)
 
       const avant = contenuDeReference?.(fiche.nom)
@@ -744,6 +853,7 @@ export async function verifierLesFiches({
         )
         if (grille !== undefined) {
           verifierGrille(grille, regles, resultat.manifeste, signaler)
+          verifierCitationsDeLaGrille(grille, fiche.html, signaler)
         } else if (
           contenuDeReference !== undefined &&
           (avant === undefined ||

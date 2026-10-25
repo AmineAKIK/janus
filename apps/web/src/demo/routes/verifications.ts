@@ -288,10 +288,13 @@ function corrigerPartie(
       compte: comptee(false).compte,
       correction: reussi
         ? 'Réponse exacte.'
-        : `Attendu : ${etapesEnMots(differee.attendu, manifeste.etapes)}`,
+        : `Attendu : ${etapesEnMots(differee.attendu, manifeste.etapes, manifeste.erreurs_critiques)}`,
     }
   }
-  const correction = corrigerSimule(corps.reponse, etapesEnMots(differee.attendu, manifeste.etapes))
+  const correction = corrigerSimule(
+    corps.reponse,
+    etapesEnMots(differee.attendu, manifeste.etapes, manifeste.erreurs_critiques),
+  )
   if (correction.refusee) {
     throw probleme(400, 'donnees_invalides', 'Réponse refusée', correction.message)
   }

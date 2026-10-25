@@ -28,4 +28,12 @@ describe('etapesEnMots', () => {
     expect(etapesEnMots('les étapes 3 à 9', etapes)).toBe('les étapes 3 à 9')
     expect(etapesEnMots('des métapes 3', etapes)).toBe('des métapes 3')
   })
+
+  it('nomme une erreur critique par son libellé, pas par son code', () => {
+    const erreurs = [{ id: 'E4', libelle: 'Lire les poids à l’envers' }]
+    expect(etapesEnMots('on trouverait 170 : c’est l’erreur E4.', etapes, erreurs)).toBe(
+      'on trouverait 170 : c’est l’erreur « Lire les poids à l’envers ».',
+    )
+    expect(etapesEnMots('c’est l’erreur E9.', etapes, erreurs)).toBe('c’est l’erreur E9.')
+  })
 })

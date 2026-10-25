@@ -571,6 +571,43 @@ describe('vérification des fiches du dépôt', () => {
     })
   })
 
+  describe('un écran se résout avec ce qu’il montre', () => {
+    const exercice =
+      '<div class="ex" data-widget="limites" data-id="b3" data-variable="score" data-chaine="score ≥ 900 =&gt; or | score ≥ 600 =&gt; argent | SINON =&gt; rien"><p class="q">QUESTION</p></div>'
+    const avecEcrans = (question: string) =>
+      fiche.replace(
+        "<p>À REMPLACER : l'explication du bloc.</p>",
+        '<div data-ecran="Les médailles"><p>Or à partir de 900, argent à partir de 600 : SI score ≥ 900…</p></div>' +
+          '<div data-ecran="Les valeurs limites">' +
+          exercice.replace('QUESTION', question) +
+          '</div>',
+      )
+
+    it('refuse un exercice dont les données sont sur un autre écran', async () => {
+      await poser(
+        'X00.html',
+        avecEcrans('Pour la chaîne des médailles, bien rangée, quelles sont les valeurs limites ?'),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'écran « Les valeurs limites » : l’exercice b3 calcule sur 900, 600, score, que son écran ne montre pas',
+        ),
+      ])
+    })
+
+    it('accepte un exercice qui redonne sa chaîne', async () => {
+      await poser(
+        'X00.html',
+        avecEcrans(
+          'La chaîne : SI score ≥ 900 : « or » ; SINON SI score ≥ 600 : « argent » ; SINON : rien. Quelles sont ses valeurs limites ?',
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+  })
+
   describe('ce que l’apprenant lit ne laisse pas voir la conception', () => {
     it('refuse un numéro d’étape et « Avant de lire », dans la page comme dans le manifeste', async () => {
       await poser(
@@ -597,6 +634,27 @@ describe('vérification des fiches du dépôt', () => {
         expect.stringContaining('« étape 5 » dans sources[0].titre'),
       ])
       expect(problemes[0]).toContain('nomme l’onglet')
+    })
+
+    it('refuse le vocabulaire de la méthode : « Image : », « Sa limite : », « limites de l’image »', async () => {
+      await poser(
+        'X00.html',
+        avecManifeste(
+          fiche.replace(
+            "<p>À REMPLACER : l'explication du bloc.</p>",
+            '<p>Image\u00a0: deux interrupteurs. Sa limite : pas de NON.</p><h3>Les limites de l’image</h3><p>Une image de 4 pixels.</p>',
+          ),
+          () => {},
+        ),
+      )
+
+      const problemes = await verifierLesFiches({ dossierContenu: contenu })
+
+      expect(problemes).toEqual([
+        expect.stringContaining('« Image : » dans le texte affiché'),
+        expect.stringContaining('« Sa limite : » dans le texte affiché'),
+        expect.stringContaining('« limites de l’image » dans le texte affiché'),
+      ])
     })
 
     it('laisse libres les notes de conception', async () => {
@@ -911,6 +969,33 @@ describe('vérification des fiches du dépôt', () => {
         await verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => fiche }),
       ).toEqual([
         expect.stringContaining('test/methode/regles.json : le fichier n’est pas du JSON valide'),
+      ])
+    })
+
+    it('refuse une citation « » qui ne se lit pas dans la page ; « … » coupe, “ ” cite ce que la page calcule', async () => {
+      await poser('X00.html', modifiee)
+      const avec = (c02: string) =>
+        grille(
+          [
+            '| C01 | appliquée | ET1 à ET6 : le cycle entier |',
+            `| C02 | appliquée | ET2 : ${c02} |`,
+            '| C11 | écartée | rien à mettre en répétition espacée dans ce bloc |',
+            '| A01 | appliquée | PR1-2, et le manifeste fixe la réussite |',
+          ],
+          '# Grille de la méthode : X00, version 2',
+        )
+      const verifier = () =>
+        verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => fiche })
+
+      await poserGrille(avec('« Titre du bloc »'))
+      expect(await verifier()).toEqual([])
+      await poserGrille(avec('« Titre … bloc », et “Un coup de pouce calculé pour 12”'))
+      expect(await verifier()).toEqual([])
+      await poserGrille(avec('« À l’étape 3, le thermostat affichait »'))
+      expect(await verifier()).toEqual([
+        expect.stringContaining(
+          'grille : la ligne 8 cite « À l’étape 3, le thermostat affichait », qui ne se lit plus dans la page',
+        ),
       ])
     })
 
