@@ -479,10 +479,10 @@ const PRESUPPOSES: readonly RegExp[] = [
   /\bqu[’']est-ce qu[’'](?:il|elle) confond\b/giu,
   /\bpourquoi une seule\b/giu,
   /\bmais pas les deux\b/giu,
-  /\ble bon «/giu,
+  /\ble bon\s«/giu,
   /\bbien ordonnée?s?\b/giu,
   /\bla bonne (?:condition|chaîne)\b/giu,
-  /\bà tort\b/giu,
+  /(?<!\p{L})à tort\b/giu,
 ]
 
 function verifierPresupposes(
