@@ -2901,30 +2901,27 @@
         </p>
       </div>
       <div data-ecran="OU, à toi">
-        <div class="cadre a-retenir">
-          <p>Pour le retenir : OU n’est FAUX que dans un seul cas, quand les deux sont FAUX.</p>
-        </div>
         <div class="ex" data-widget="choix" data-id="o1" data-reponse="oui" data-melanger="non">
           <p class="q">
             Une alarme sonne SI porte ouverte OU fenêtre ouverte. Ce soir, la porte et la fenêtre
             sont ouvertes toutes les deux. L’alarme sonne-t-elle ?
           </p>
           <ul class="options">
-            <li data-option="oui">Oui : VRAI OU VRAI donne VRAI.</li>
+            <li data-option="oui">Oui.</li>
             <li
               data-option="non"
               data-erreur="E1"
               data-retour="A OU B est VRAI dès qu’au moins un des deux est VRAI. Ici, porte ouverte et fenêtre ouverte valent VRAI toutes les deux : que donne VRAI OU VRAI ?"
             >
-              Non : OU veut dire l’un ou l’autre, pas les deux.
+              Non.
             </li>
           </ul>
         </div>
+        <div class="cadre a-retenir">
+          <p>Pour le retenir : OU n’est FAUX que dans un seul cas, quand les deux sont FAUX.</p>
+        </div>
       </div>
       <div data-ecran="Un distributeur">
-        <div class="cadre a-retenir">
-          <p>Pour le retenir : ET n’est VRAI que dans un seul cas, quand les deux sont VRAI.</p>
-        </div>
         <div class="ex" data-widget="choix" data-id="o2" data-reponse="non" data-melanger="non">
           <p class="q">
             Un distributeur rend la monnaie SI pièce reconnue ET stock suffisant. La pièce est
@@ -2935,10 +2932,13 @@
               data-option="oui"
               data-retour="ET demande que les deux soient VRAI. Que vaut stock suffisant quand le stock de monnaie est vide ?"
             >
-              Oui : une des deux conditions suffit.
+              Oui.
             </li>
-            <li data-option="non">Non : VRAI ET FAUX donne FAUX.</li>
+            <li data-option="non">Non.</li>
           </ul>
+        </div>
+        <div class="cadre a-retenir">
+          <p>Pour le retenir : ET n’est VRAI que dans un seul cas, quand les deux sont VRAI.</p>
         </div>
       </div>
     </template>
@@ -3688,10 +3688,7 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
       <div data-ecran="Le parking">
         <div class="ex" data-widget="choix" data-id="t1" data-reponse="ou">
           <p class="q">
-            « Le parking est gratuit le dimanche ou les jours fériés. » Quelle condition ? Pour un
-            « ou » : un mot qui fait choisir (« au choix », « soit… soit ») le rend exclusif ; une
-            condition pour avoir droit à quelque chose est un OU inclusif ; pour une chose offerte
-            sans mot qui fait choisir, seul celui qui l’offre sait s’il donne les deux.
+            « Le parking est gratuit le dimanche ou les jours fériés. » Quelle condition ?
           </p>
           <ul class="options">
             <li data-option="ou" class="mono">dimanche OU férié</li>
@@ -3706,7 +3703,7 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
               data-option="exclusif"
               class="mono"
               data-erreur="E1"
-              data-retour="Avec cette forme, un dimanche qui est aussi un jour férié serait payant. La phrase dit-elle cela ?"
+              data-retour="Une condition pour avoir droit à quelque chose est un OU inclusif. Avec cette forme, un dimanche qui est aussi un jour férié serait payant : la phrase dit-elle cela ?"
             >
               (dimanche OU férié) ET NON (dimanche ET férié)
             </li>
@@ -6098,7 +6095,7 @@ if (age &lt; 12) {
         data-aide2="Une branche par niveau : if, puis deux else if, puis else. Range-les du seuil le plus haut au plus bas."
         data-aide3="La première branche s’écrit if (points &gt;= 1000) { console.log('or') }. Les deux suivantes suivent le même modèle avec else if, et else prend le reste."
         data-solution="if (points &gt;= 1000) { console.log('or') } else if (points &gt;= 500) { console.log('argent') } else if (points &gt;= 100) { console.log('bronze') } else { console.log('aucun') }"
-        data-justifier="Dans la chaîne, la condition qui teste le seuil de 500 points vient juste après celle de 1000. Explique pourquoi elle n’a pas besoin de dire « et moins de 1000 »."
+        data-justifier="La deuxième condition, points ≥ 500, doit-elle aussi dire « et moins de 1000 » ? Pourquoi ?"
       >
         <p class="cas">
           Un site marchand donne un niveau de fidélité selon les points du client : « aucun » sous
@@ -6127,7 +6124,7 @@ if (age &lt; 12) {
         data-aide2="Une branche par niveau : if, puis deux else if, puis else. Range-les du seuil le plus haut au plus bas."
         data-aide3="La première branche s’écrit if (score &gt;= 800) { console.log('expert') }. Les deux suivantes suivent le même modèle avec else if, et else prend le reste."
         data-solution="if (score &gt;= 800) { console.log('expert') } else if (score &gt;= 400) { console.log('confirmé') } else if (score &gt;= 50) { console.log('débutant') } else { console.log('nouveau') }"
-        data-justifier="Dans la chaîne, la condition qui teste le seuil de 400 vient juste après celle de 800. Explique pourquoi elle n’a pas besoin de dire « et moins de 800 »."
+        data-justifier="La deuxième condition, score ≥ 400, doit-elle aussi dire « et moins de 800 » ? Pourquoi ?"
       >
         <p class="cas">
           Un jeu donne un rang selon le score : « nouveau » sous 50, « débutant » à partir de 50,
@@ -6267,8 +6264,8 @@ if (age &lt; 12) {
           les deux à la fois » ; pour un OU, sinon, « OU n’est FAUX que si les deux sont FAUX » ;
           pour un ET, « ET n’est VRAI que si les deux sont VRAI » ; pour une condition composée,
           « calcule d’abord « NON B », puis la suite ». À l’étape 3, rien ne s’affiche avant la fin
-          de l’étape : le gabarit montre alors, sous « Tes essais », le retour écrit dans la fiche
-          (data-sinon) à la place de cette phrase.
+          de l’étape : le gabarit montre alors, sous « Tes essais », la réponse et l’attendu, chaque
+          cas nommé par ses valeurs (« badge = FAUX, code = FAUX : FAUX »), puis ce même retour.
         </li>
         <li>
           Calcul pas à pas : l’apprenant touche l’opération qu’il calculerait maintenant, puis
@@ -6689,7 +6686,7 @@ if (age &lt; 12) {
           {
             "id": "PR1-5:variante",
             "item": "PR1-5",
-            "question": "« Choisis ta livraison : à domicile ou en point relais. » Une commande peut-elle être livrée aux deux ? Dis ce qui arriverait à une commande si le code utilisait le OU inclusif, domicile OU relais.",
+            "question": "« Choisis ta livraison : à domicile ou en point relais. » Une commande peut-elle être livrée aux deux ? Dis ce qui arriverait à une commande qui demande les deux livraisons si le code utilisait le OU inclusif, domicile OU relais.",
             "attendu": "Avec le OU inclusif, une commande qui demande les deux livraisons serait acceptée, alors qu’un colis ne part qu’à une adresse. Déduit de l’étape 7.",
             "erreurs": []
           },
@@ -6710,15 +6707,15 @@ if (age &lt; 12) {
           {
             "id": "PR2-4",
             "item": "PR2-4",
-            "question": "Un niveau de fidélité vaut « or » à partir de 1000 points, « argent » à partir de 500, « bronze » à partir de 100, « aucun » en dessous. Le signe ≥ veut dire « plus grand ou égal à ». Dans la chaîne SI / SINON SI, explique pourquoi la deuxième condition, points ≥ 500, n’a pas besoin de dire « et moins de 1000 ».",
-            "attendu": "La chaîne s’arrête à la première condition VRAIE : si elle arrive à la deuxième, points ≥ 1000 était FAUX, donc points est déjà sous 1000. Déduit de l’étape 8.",
+            "question": "Un niveau de fidélité vaut « or » à partir de 1000 points, « argent » à partir de 500, « bronze » à partir de 100, « aucun » en dessous. Le signe ≥ veut dire « plus grand ou égal à ». Dans la chaîne SI / SINON SI, la deuxième condition, points ≥ 500, doit-elle aussi dire « et moins de 1000 » ? Pourquoi ?",
+            "attendu": "Non : la chaîne s’arrête à la première condition VRAIE : si elle arrive à la deuxième, points ≥ 1000 était FAUX, donc points est déjà sous 1000. Déduit de l’étape 8.",
             "erreurs": []
           },
           {
             "id": "PR2-4:variante",
             "item": "PR2-4",
-            "question": "Un rang vaut « expert » à partir de 800, « confirmé » à partir de 400, « débutant » à partir de 50, « nouveau » en dessous. Le signe ≥ veut dire « plus grand ou égal à ». Dans la chaîne SI / SINON SI, explique pourquoi la deuxième condition, score ≥ 400, n’a pas besoin de dire « et moins de 800 ».",
-            "attendu": "La chaîne s’arrête à la première condition VRAIE : si elle arrive à la deuxième, score ≥ 800 était FAUX, donc score est déjà sous 800. Déduit de l’étape 8.",
+            "question": "Un rang vaut « expert » à partir de 800, « confirmé » à partir de 400, « débutant » à partir de 50, « nouveau » en dessous. Le signe ≥ veut dire « plus grand ou égal à ». Dans la chaîne SI / SINON SI, la deuxième condition, score ≥ 400, doit-elle aussi dire « et moins de 800 » ? Pourquoi ?",
+            "attendu": "Non : la chaîne s’arrête à la première condition VRAIE : si elle arrive à la deuxième, score ≥ 800 était FAUX, donc score est déjà sous 800. Déduit de l’étape 8.",
             "erreurs": []
           }
         ],
@@ -6760,31 +6757,31 @@ if (age &lt; 12) {
             "erreurs": []
           },
           {
-            "id": "B02-Q14",
-            "question": "Une formule donne une boisson ou un pop-corn, mais pas les deux : (boisson OU popcorn) ET NON (boisson ET popcorn). Un client demande les deux. Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Calcule la condition pour lui, une opération à la fois : l’accepte-t-elle ?",
-            "attendu": "boisson et popcorn valent VRAI. boisson OU popcorn : VRAI OU VRAI donne VRAI. boisson ET popcorn : VRAI ET VRAI donne VRAI, donc NON (boisson ET popcorn) donne FAUX. Enfin VRAI ET FAUX donne FAUX : la condition le refuse, c’est le OU exclusif. boisson OU popcorn seul l’aurait accepté : croire que le OU exclut les deux, c’est l’erreur E1. Déduit des étapes 6 et 7.",
+            "id": "B02-Q25",
+            "question": "Une formule accepte une commande SI (boisson OU popcorn) ET NON (boisson ET popcorn). Un client demande les deux. Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Calcule la condition pour lui, une opération à la fois : l’accepte-t-elle ?",
+            "attendu": "boisson et popcorn valent VRAI. boisson OU popcorn : VRAI OU VRAI donne VRAI, car le OU de la logique accepte les deux ; le calculer FAUX, c’est croire que le OU exclut les deux, l’erreur E1. boisson ET popcorn : VRAI ET VRAI donne VRAI, donc NON (boisson ET popcorn) donne FAUX. Enfin VRAI ET FAUX donne FAUX : la condition le refuse, c’est le OU exclusif. Déduit des étapes 6 et 7.",
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-Q22",
-            "question": "En JavaScript, let crée une variable, = range une valeur, ≥ veut dire « plus grand ou égal à » et s’écrit >= ; true veut dire VRAI et false FAUX. Dans la console, tu tapes let prix = 12, puis prix >= 10, puis prix = 8, puis de nouveau prix >= 10. Que répond la console aux deux lignes prix >= 10, et pourquoi sa réponse change-t-elle ?",
+            "id": "B02-Q24",
+            "question": "En JavaScript, let crée une variable, = range une valeur, ≥ veut dire « plus grand ou égal à » et s’écrit >= ; true veut dire VRAI et false FAUX. Dans la console, tu tapes let prix = 12, puis prix >= 10, puis prix = 8, puis de nouveau prix >= 10. Que répond la console à chacune des deux lignes prix >= 10 ? Explique ces deux réponses.",
             "attendu": "true, puis false : prix = 8 a remplacé 12 par 8, car une variable ne garde qu’une valeur à la fois, et la comparaison se recalcule avec la valeur du moment, 8 >= 10. Déduit des étapes 4 et 9.",
             "erreurs": []
           }
         ],
         "differees": [
           {
-            "id": "B02-C10",
+            "id": "B02-C23",
             "type": "explication",
-            "consigne": "Une salle de sport laisse entrer SI membre OU invité. Lina est membre, et elle a aussi une invitation. Un camarade programme la porte pour la refuser : « elle remplit les deux, et OU veut dire l’un ou l’autre ». Qu’est-ce qu’il confond ? Que vaut la condition pour Lina ?",
-            "attendu": "Il confond le OU de la logique, inclusif, avec le « ou » exclusif du français : pour Lina, VRAI OU VRAI donne VRAI, elle entre. Refuser celle qui remplit les deux, c’est l’erreur E1. Déduit des étapes 5 et 7.",
+            "consigne": "Une salle de sport laisse entrer SI membre OU invité. Lina est membre, et elle a aussi une invitation. Un camarade programme la porte pour la refuser : « elle remplit les deux, et OU veut dire l’un ou l’autre ». A-t-il raison ? Que vaut la condition pour Lina ?",
+            "attendu": "Non : il confond le OU de la logique, inclusif, avec le « ou » exclusif du français : pour Lina, VRAI OU VRAI donne VRAI, elle entre. Refuser celle qui remplit les deux, c’est l’erreur E1. Déduit des étapes 5 et 7.",
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-C21",
+            "id": "B02-C22",
             "type": "explication",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Le signe < veut dire « strictement plus petit que ». Avec heure = 20, weekend = FAUX et férié = VRAI, calcule « heure < 18 ET (weekend OU férié) », puis « heure < 18 ET weekend OU férié », chacune une opération à la fois. Compare les deux résultats, et dis ce qui les fait différer.",
-            "attendu": "Avec les parenthèses : 20 < 18 est FAUX, weekend OU férié donne VRAI, puis FAUX ET VRAI donne FAUX. Sans parenthèses : 20 < 18 est FAUX, FAUX ET FAUX donne FAUX, car ET passe avant OU, puis FAUX OU VRAI donne VRAI. Les résultats diffèrent parce que les parenthèses imposent le OU d’abord ; lire l’une comme l’autre, c’est l’erreur E2. Déduit de l’étape 6.",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Le signe < veut dire « strictement plus petit que ». Avec heure = 20, weekend = FAUX et férié = VRAI, calcule « heure < 18 ET (weekend OU férié) », puis « heure < 18 ET weekend OU férié », chacune une opération à la fois. Donnent-elles le même résultat ? Pourquoi ?",
+            "attendu": "Avec les parenthèses : 20 < 18 est FAUX, weekend OU férié donne VRAI, puis FAUX ET VRAI donne FAUX. Sans parenthèses : 20 < 18 est FAUX, FAUX ET FAUX donne FAUX, car ET passe avant OU, puis FAUX OU VRAI donne VRAI. Elles ne donnent pas le même résultat, parce que les parenthèses imposent le OU d’abord ; lire l’une comme l’autre, c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
           {
@@ -6809,10 +6806,10 @@ if (age &lt; 12) {
             "erreurs": []
           },
           {
-            "id": "B02-DE27",
+            "id": "B02-DE28",
             "type": "explication",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Calcule VRAI OU FAUX ET FAUX, puis (VRAI OU FAUX) ET FAUX, chacune une opération à la fois. Qu’est-ce qui fait que les deux résultats diffèrent ?",
-            "attendu": "Sans parenthèses, ET passe avant OU, selon la priorité des opérateurs, une convention : VRAI OU (FAUX ET FAUX) = VRAI OU FAUX = VRAI. Avec les parenthèses, le OU d’abord : VRAI OU FAUX = VRAI, puis VRAI ET FAUX = FAUX. L’ordre de calcul change le résultat ; calculer le OU d’abord sans parenthèses, c’est l’erreur E2. Déduit de l’étape 6.",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Calcule VRAI OU FAUX ET FAUX, puis (VRAI OU FAUX) ET FAUX, chacune une opération à la fois. Les deux résultats sont-ils les mêmes ? Pourquoi ?",
+            "attendu": "Sans parenthèses, ET passe avant OU, selon la priorité des opérateurs, une convention : VRAI OU (FAUX ET FAUX) = VRAI OU FAUX = VRAI. Avec les parenthèses, le OU d’abord : VRAI OU FAUX = VRAI, puis VRAI ET FAUX = FAUX. Les deux résultats ne sont pas les mêmes : l’ordre de calcul change le résultat ; calculer le OU d’abord sans parenthèses, c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
           {
@@ -7017,14 +7014,14 @@ if (age &lt; 12) {
             "notion": "Réciter les tables de vérité de NON, ET et OU, et dire que le OU logique est inclusif (VRAI OU VRAI donne VRAI) ; dire pourquoi deux faits donnent quatre lignes",
             "montree": ["ET5"],
             "pratiquee": ["PR1", "ET11"],
-            "questions": ["B02-R30", "B02-C10", "B02-Q18", "B02-Q6", "B02-K2", "B02-K3"]
+            "questions": ["B02-R30", "B02-C23", "B02-Q18", "B02-Q6", "B02-K2", "B02-K3"]
           },
           {
             "id": "N3",
             "notion": "Évaluer une condition avec comparaisons et parenthèses, une opération à la fois, en justifiant chaque étape par l’ordre de calcul : parenthèses, comparaisons, NON, ET, OU",
             "montree": ["ET6"],
             "pratiquee": ["PR1"],
-            "questions": ["B02-R29", "B02-C21", "B02-Q9", "B02-DE27", "B02-K15"]
+            "questions": ["B02-R29", "B02-C22", "B02-Q9", "B02-DE28", "B02-K15"]
           },
           {
             "id": "N4",
@@ -7034,7 +7031,7 @@ if (age &lt; 12) {
             "questions": [
               "B02-R35",
               "B02-C17",
-              "B02-Q14",
+              "B02-Q25",
               "B02-DE26",
               "B02-DT23",
               "B02-DT24",
@@ -7064,7 +7061,7 @@ if (age &lt; 12) {
               "B02-R36",
               "B02-C18",
               "B02-Q21",
-              "B02-Q22",
+              "B02-Q24",
               "B02-DE23",
               "B02-DT28",
               "B02-K25",
@@ -7079,7 +7076,7 @@ if (age &lt; 12) {
             "vers": "N3",
             "type": "composition",
             "montree": "ET6",
-            "questions": ["B02-R29", "B02-C21"]
+            "questions": ["B02-R29", "B02-C22"]
           },
           {
             "id": "L2",
@@ -7087,7 +7084,7 @@ if (age &lt; 12) {
             "vers": "N3",
             "type": "composition",
             "montree": "ET6",
-            "questions": ["B02-DE27", "B02-Q9"]
+            "questions": ["B02-DE28", "B02-Q9"]
           },
           {
             "id": "L3",
@@ -7095,7 +7092,7 @@ if (age &lt; 12) {
             "vers": "N4",
             "type": "opposition",
             "montree": "ET7",
-            "questions": ["B02-C10", "B02-DT23"]
+            "questions": ["B02-C23", "B02-DT23"]
           },
           {
             "id": "L4",
