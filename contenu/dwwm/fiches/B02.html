@@ -2306,6 +2306,12 @@
         </div>
       </div>
       <div data-ecran="Un thermostat">
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>≥ veut dire « plus grand ou égal à ».</li>
+          </ul>
+        </div>
         <div
           class="ex"
           data-essai
@@ -2316,8 +2322,7 @@
           data-explication="Le thermostat affiche « tiède » : 30 ≥ 15 est déjà vrai à la première ligne, et il s’arrête là. La ligne « chaud » n’est jamais atteinte. L’étape « Une seule branche » dit pourquoi, et comment le corriger."
         >
           <p class="q">
-            Un thermostat suit ces lignes, de haut en bas. Il fait 30 °C. Le signe ≥ veut dire
-            « plus grand ou égal à ». Qu’affiche-t-il ?
+            Un thermostat suit ces lignes, de haut en bas. Il fait 30 °C. Qu’affiche-t-il ?
           </p>
           <pre
             class="pseudo"
@@ -2420,7 +2425,7 @@
           non déjà rangés dans les données : pour Inès, étudiant vaut FAUX, et samedi aussi.
           D’autres se calculent en comparant deux nombres : pour elle, âge &lt; 26 vaut VRAI, car 23
           est plus petit que 26. Les faits se combinent ensuite en conditions plus grandes, comme
-          celle de la ligne 2.
+          celle de la ligne 2, (étudiant OU âge &lt; 26) ET NON samedi.
         </p>
         <p>
           Pour te la représenter : une question à laquelle on ne répond que par oui ou par non. Où
@@ -2515,66 +2520,30 @@
           Regarde la dernière colonne : quand les deux nombres sont égaux, seuls ≤, ≥ et = donnent
           VRAI. Pour Nina, âge &lt; 26 vaut FAUX : elle n’a plus moins de 26 ans.
         </p>
-        <div class="groupe">
-          <p class="q">Léo fête ses 12 ans. Que vaut chaque comparaison pour lui ?</p>
-          <div class="mini">
-            <div
-              class="ex"
-              data-widget="choix"
-              data-id="v5"
-              data-reponse="faux"
-              data-melanger="non"
+        <div class="ex" data-widget="choix" data-id="v9" data-reponse="sup-egal">
+          <p class="q">Léo fête ses 12 ans. Laquelle de ces comparaisons vaut VRAI pour lui ?</p>
+          <ul class="options">
+            <li data-option="sup-egal" class="mono">âge ≥ 12</li>
+            <li
+              data-option="inf"
+              class="mono"
+              data-retour="&lt; est strict : 12 &lt; 12 est FAUX, l’égalité ne suffit pas. Regarde la ligne &lt; du tableau."
             >
-              <p class="q mono">âge &lt; 12</p>
-              <ul class="options">
-                <li
-                  data-option="vrai"
-                  data-retour="Regarde la ligne &lt; du tableau : quand les deux nombres sont égaux, que donne-t-elle ?"
-                >
-                  VRAI
-                </li>
-                <li data-option="faux">FAUX</li>
-              </ul>
-            </div>
-            <div
-              class="ex"
-              data-widget="choix"
-              data-id="v6"
-              data-reponse="vrai"
-              data-melanger="non"
+              âge &lt; 12
+            </li>
+            <li
+              data-option="diff"
+              class="mono"
+              data-retour="≠ veut dire « différent de » : 12 ≠ 12 est FAUX, car 12 est égal à 12."
             >
-              <p class="q mono">âge ≥ 12</p>
-              <ul class="options">
-                <li data-option="vrai">VRAI</li>
-                <li
-                  data-option="faux"
-                  data-retour="Regarde la ligne ≥ du tableau : quand les deux nombres sont égaux, que donne-t-elle ?"
-                >
-                  FAUX
-                </li>
-              </ul>
-            </div>
-            <div
-              class="ex"
-              data-widget="choix"
-              data-id="v7"
-              data-reponse="faux"
-              data-melanger="non"
-            >
-              <p class="q mono">âge ≠ 12</p>
-              <ul class="options">
-                <li
-                  data-option="vrai"
-                  data-retour="Regarde la ligne ≠ du tableau : 12 est-il différent de 12 ?"
-                >
-                  VRAI
-                </li>
-                <li data-option="faux">FAUX</li>
-              </ul>
-            </div>
-          </div>
+              âge ≠ 12
+            </li>
+          </ul>
         </div>
-        <p>Léo ne paie donc pas 5 € : pour la ligne 1, il n’a plus moins de 12 ans.</p>
+        <p>
+          âge ≥ 12 est VRAI, âge &lt; 12 et âge ≠ 12 sont FAUX. Léo ne paie donc pas 5 € : pour la
+          ligne 1, il n’a plus moins de 12 ans.
+        </p>
       </div>
       <div data-ecran="Le seuil">
         <p class="accroche">
@@ -2687,7 +2656,9 @@
         </p>
         <p data-si-essai="p2:faux">
           Pour Sami, 1,30 m et venu avec son père, tu avais répondu
-          <span data-essai-rappel="p2">autre chose</span>. La table ci-dessous dit s’il monte.
+          <span data-essai-rappel="p2">autre chose</span>. Tu as sans doute lu ce « ou » comme
+          « l’un ou l’autre, pas les deux ». Mais rien dans la règle n’interdit d’avoir les deux :
+          Sami en remplit deux, et il monte.
         </p>
         <p>
           Pour te le représenter : deux interrupteurs côte à côte, sur deux fils qui mènent à la
@@ -2748,9 +2719,15 @@
             <li
               data-option="faux"
               data-erreur="E1"
-              data-retour="Hugo est étudiant, et 20 &lt; 26 : quelle ligne de la table de OU est-ce, et que donne-t-elle ?"
+              data-retour="Le OU de la logique accepte les deux à la fois : VRAI OU VRAI donne VRAI. Hugo est étudiant, et 20 &lt; 26."
             >
-              FAUX
+              FAUX : il remplit les deux à la fois
+            </li>
+            <li
+              data-option="doute"
+              data-retour="Le OU de la logique tranche toujours : il n’est FAUX que si les deux côtés le sont. Que valent ici étudiant et 20 &lt; 26 ?"
+            >
+              On ne peut pas savoir : il remplit les deux à la fois
             </li>
           </ul>
         </div>
@@ -2819,30 +2796,76 @@
             </tbody>
           </table>
         </div>
+        <details>
+          <summary>La table de OU, si tu en as besoin</summary>
+          <table
+            class="table-js"
+            data-lecture="La table de OU : A OU B n’est FAUX que si A et B sont FAUX tous les deux."
+          >
+            <thead>
+              <tr>
+                <th>A</th>
+                <th>B</th>
+                <th>A OU B</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>FAUX</td>
+                <td>FAUX</td>
+                <td>FAUX</td>
+              </tr>
+              <tr>
+                <td>FAUX</td>
+                <td>VRAI</td>
+                <td>VRAI</td>
+              </tr>
+              <tr>
+                <td>VRAI</td>
+                <td>FAUX</td>
+                <td>VRAI</td>
+              </tr>
+              <tr>
+                <td>VRAI</td>
+                <td>VRAI</td>
+                <td>VRAI</td>
+              </tr>
+            </tbody>
+          </table>
+        </details>
         <div class="cadre pour-lire">
           <p class="discret">Le guichet, pour lire :</p>
           <ul>
             <li>&lt; veut dire « strictement plus petit que ».</li>
+            <li>étudiant vaut VRAI pour un client étudiant, FAUX sinon.</li>
             <li>samedi vaut VRAI le samedi ; NON samedi vaut VRAI les autres jours.</li>
             <li>Ce qui est entre parenthèses se calcule d’abord.</li>
           </ul>
         </div>
-        <div class="ex" data-widget="choix" data-id="o5" data-reponse="faux" data-melanger="non">
+        <div class="ex" data-widget="choix" data-id="o6" data-reponse="dix" data-melanger="non">
           <p class="q">
-            Théo a 17 ans, il n’est pas étudiant, et il vient un samedi. Que vaut pour lui la ligne
-            2, (étudiant OU âge &lt; 26) ET NON samedi ?
+            Théo a 17 ans, il n’est pas étudiant, et il vient un samedi. Combien paie-t-il ?
           </p>
           <ul class="options">
             <li
-              data-option="vrai"
-              data-retour="Pour Théo, que vaut NON samedi ? Et que faut-il à ET pour donner VRAI ?"
+              data-option="cinq"
+              data-retour="17 &lt; 12 est FAUX : la ligne 1 ne lui donne pas 5 €. Que vaut ensuite la ligne 2 ?"
             >
-              VRAI
+              5 €
             </li>
-            <li data-option="faux">FAUX</li>
+            <li
+              data-option="sept"
+              data-retour="ET n’est VRAI que si ses deux côtés le sont. Pour Théo, que vaut NON samedi ?"
+            >
+              7 €
+            </li>
+            <li data-option="dix">10 €</li>
           </ul>
         </div>
-        <p>Théo paie donc 10 € ce samedi ; un mardi, il aurait payé 7 €.</p>
+        <p>
+          La ligne 2 est FAUSSE pour Théo, la ligne 1 aussi, car 17 &lt; 12 est FAUX, et la ligne 3
+          aussi, car 17 ≥ 65 est FAUX : il paie 10 € ce samedi. Un mardi, il aurait payé 7 €.
+        </p>
       </div>
       <div data-ecran="Quatre lignes">
         <p class="accroche">
@@ -2960,6 +2983,53 @@
           ET se calcule comme une multiplication, 1 × 0 = 0, et OU comme une addition, 0 + 1 = 1. Où
           l’image s’arrête : 1 OU 1 donne 1, pas 2.
         </p>
+        <details>
+          <summary>Les tables, si tu en as besoin</summary>
+          <table
+            class="table-js"
+            data-lecture="Les tables de NON, ET et OU. NON A est VRAI quand A est FAUX, et FAUX quand A est VRAI. A ET B n’est VRAI que si A et B sont VRAI tous les deux. A OU B n’est FAUX que si A et B sont FAUX tous les deux."
+          >
+            <thead>
+              <tr>
+                <th>A</th>
+                <th>B</th>
+                <th>NON A</th>
+                <th>A ET B</th>
+                <th>A OU B</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>FAUX</td>
+                <td>FAUX</td>
+                <td>VRAI</td>
+                <td>FAUX</td>
+                <td>FAUX</td>
+              </tr>
+              <tr>
+                <td>FAUX</td>
+                <td>VRAI</td>
+                <td>VRAI</td>
+                <td>FAUX</td>
+                <td>VRAI</td>
+              </tr>
+              <tr>
+                <td>VRAI</td>
+                <td>FAUX</td>
+                <td>FAUX</td>
+                <td>FAUX</td>
+                <td>VRAI</td>
+              </tr>
+              <tr>
+                <td>VRAI</td>
+                <td>VRAI</td>
+                <td>FAUX</td>
+                <td>VRAI</td>
+                <td>VRAI</td>
+              </tr>
+            </tbody>
+          </table>
+        </details>
         <div class="cadre pour-lire">
           <p class="discret">L’affiche, pour lire :</p>
           <ul>
@@ -2976,9 +3046,15 @@
             <li
               data-option="faux"
               data-erreur="E2"
-              data-retour="Tu as calculé le OU en premier. Dans la liste ci-dessus, lequel passe avant l’autre, ET ou OU ?"
+              data-retour="ET passe avant OU : tu as calculé le OU en premier. Refais le calcul avec le ET d’abord."
             >
               FAUX : il paie plein tarif
+            </li>
+            <li
+              data-option="indecis"
+              data-retour="L’ordre de calcul tranche toujours : ET passe avant OU. Calcule d’abord le ET, puis le OU."
+            >
+              On ne peut pas trancher : l’affiche a deux lectures
             </li>
           </ul>
         </div>
@@ -3014,15 +3090,11 @@
           </figure>
         </div>
         <p>
-          Avec les parenthèses, la ligne 2 est FAUSSE pour Yanis, la ligne 3 aussi, car 30 ≥ 65 est
-          FAUX : il paie 10 €, comme le veut le gérant. Des parenthèses changent l’ordre de calcul,
-          et peuvent changer le résultat. Quand ET et OU se mélangent, mets-en, même si l’ordre te
-          convient : la règle se relit sans hésiter.
-        </p>
-        <p>
-          NON porte sur ce qui le suit : un fait, une comparaison ou une parenthèse. Comme les
-          comparaisons passent avant lui, NON âge ≥ 65 se calcule comme NON (âge ≥ 65). Écris quand
-          même ces parenthèses : en JavaScript, NON passe avant les comparaisons.
+          Avec les parenthèses, la ligne 2 est FAUSSE pour Yanis. Le guichet passe à la ligne 3,
+          SINON SI âge ≥ 65 : afficher « 8 € », FAUSSE aussi, car 30 ≥ 65 est FAUX, puis au SINON :
+          afficher « 10 € ». Yanis paie 10 €, comme le veut le gérant. Des parenthèses changent
+          l’ordre de calcul, et peuvent changer le résultat. Quand ET et OU se mélangent, mets-en,
+          même si l’ordre te convient : la règle se relit sans hésiter.
         </p>
         <details>
           <summary>Les tables, si tu en as besoin</summary>
@@ -3077,22 +3149,28 @@
             <li>L’ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</li>
           </ul>
         </div>
-        <div class="ex" data-widget="choix" data-id="r5" data-reponse="faux" data-melanger="non">
-          <p class="q">Que vaut (FAUX OU VRAI) ET FAUX ?</p>
+        <div class="ex" data-widget="choix" data-id="r10" data-reponse="a" data-melanger="non">
+          <p class="q">Quel calcul de (FAUX OU VRAI) ET FAUX est juste ?</p>
           <ul class="options">
+            <li data-option="a">= VRAI ET FAUX = FAUX</li>
             <li
-              data-option="vrai"
-              data-retour="Les parenthèses passent avant tout : que vaut d’abord FAUX OU VRAI ? Puis que donne le ET avec FAUX ?"
+              data-option="b"
+              data-retour="Les parenthèses passent avant tout : ici, tu as calculé VRAI ET FAUX avant le OU entre parenthèses. Calcule d’abord FAUX OU VRAI."
             >
-              VRAI
+              = FAUX OU FAUX = FAUX
             </li>
-            <li data-option="faux">FAUX</li>
+            <li
+              data-option="c"
+              data-retour="Les parenthèses passent d’abord, puis le ET qui reste : VRAI ET FAUX donne FAUX, car ET n’est VRAI que si les deux le sont."
+            >
+              = VRAI
+            </li>
           </ul>
         </div>
       </div>
       <div data-ecran="Pas à pas">
         <p class="accroche">
-          Lina, 24 ans, pas étudiante, vient un dimanche. Calculons ensemble la ligne 2 pour elle,
+          Emma, 24 ans, pas étudiante, vient un dimanche. Calculons ensemble la ligne 2 pour elle,
           une opération à la fois.
         </p>
         <details>
@@ -3162,15 +3240,19 @@
           data-en-mots
           data-expr="(étudiant OU âge &lt; 26) ET NON samedi"
           data-valeurs="étudiant=FAUX, âge=24, samedi=FAUX"
-          data-succes="Lina a la réduction ce dimanche : elle paie 7 €."
+          data-succes="Emma a la réduction ce dimanche : elle paie 7 €."
         >
           <p class="q">
-            La ligne 2, (étudiant OU âge &lt; 26) ET NON samedi, pour Lina, 24 ans, pas étudiante,
+            La ligne 2, (étudiant OU âge &lt; 26) ET NON samedi, pour Emma, 24 ans, pas étudiante,
             venue un dimanche.
           </p>
         </div>
       </div>
       <div data-ecran="À compléter">
+        <p class="accroche">
+          Revenons à l’affiche sans parenthèses, étudiant OU âge &lt; 26 ET NON samedi. Zoé, 19 ans,
+          pas étudiante, vient un samedi.
+        </p>
         <details>
           <summary>Les tables, si tu en as besoin</summary>
           <table
@@ -3239,13 +3321,12 @@
           data-autre-enonce="Sur la même affiche, sans parenthèses : Malo, 40 ans, étudiant, vient un samedi. Calcule ce que l’affiche donne pour lui, une opération à la fois."
         >
           <p class="q">
-            Revenons à l’affiche sans parenthèses, étudiant OU âge &lt; 26 ET NON samedi. Zoé, 19
-            ans, pas étudiante, vient un samedi : que donne l’affiche pour elle ? Les deux premières
-            opérations sont faites : continue.
+            Que donne l’affiche pour Zoé ? Les deux premières opérations sont faites : continue.
           </p>
         </div>
       </div>
       <div data-ecran="Seul">
+        <p class="accroche">Malik, 22 ans, étudiant, vient un samedi.</p>
         <div class="cadre pour-lire">
           <p class="discret">La ligne 2, pour lire :</p>
           <ul>
@@ -3266,8 +3347,7 @@
           data-autre-enonce="Sofia, 16 ans, pas étudiante, vient un dimanche. Calcule pour elle la ligne 2, (étudiant OU âge &lt; 26) ET NON samedi, une opération à la fois."
         >
           <p class="q">
-            Malik, 22 ans, étudiant, vient un samedi. Calcule pour lui la ligne 2 du guichet,
-            (étudiant OU âge &lt; 26) ET NON samedi.
+            Calcule pour Malik la ligne 2 du guichet, (étudiant OU âge &lt; 26) ET NON samedi.
           </p>
         </div>
       </div>
@@ -3345,13 +3425,13 @@
           data-prediction
         >
           <p class="q">
-            Nina, 30 ans, étudiante, vient un mardi. La phrase lui donne-t-elle le tarif réduit ?
+            Chloé, 30 ans, étudiante, vient un mardi. La phrase lui donne-t-elle le tarif réduit ?
           </p>
           <ul class="options">
             <li data-option="oui">Oui</li>
             <li
               data-option="non"
-              data-retour="Relis la phrase : à qui donne-t-elle la réduction ? Nina fait-elle partie d’un de ces groupes ?"
+              data-retour="Relis la phrase : à qui donne-t-elle la réduction ? Chloé fait-elle partie d’un de ces groupes ?"
             >
               Non
             </li>
@@ -3360,7 +3440,7 @@
         <p>
           Oui : la phrase ajoute deux groupes de clients, les étudiants et les moins de 26 ans, et
           chacun a droit à la réduction. Ce « et » se traduit OU. Avec ET, il faudrait être des deux
-          groupes à la fois, et Nina paierait plein tarif. Hugo, étudiant de 20 ans, est des deux
+          groupes à la fois, et Chloé paierait plein tarif. Hugo, étudiant de 20 ans, est des deux
           groupes : rien ne l’exclut, c’est le OU inclusif.
         </p>
         <p>La traduction, jusqu’ici :</p>
@@ -3393,7 +3473,8 @@
         </p>
         <p>
           Les parenthèses gardent le sens de la phrase : sans elles, ET passerait avant OU, et un
-          étudiant aurait la réduction le samedi, comme Yanis sur l’affiche.
+          étudiant aurait la réduction le samedi, comme Yanis, 30 ans, étudiant, venu un samedi, sur
+          l’affiche du gérant.
         </p>
         <p>La traduction :</p>
         <pre class="pseudo"><code>faits : étudiant, âge &lt; 26, samedi
@@ -3425,12 +3506,12 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
           data-prediction
         >
           <p class="q">
-            Nina, 30 ans, étudiante, revient un samedi. Que donne la condition pour elle ?
+            Chloé, 30 ans, étudiante, revient un samedi. Que donne la condition pour elle ?
           </p>
           <ul class="options">
             <li
               data-option="vrai"
-              data-retour="Nina vient un samedi. Que vaut NON samedi, et que faut-il à ET pour donner VRAI ?"
+              data-retour="Chloé vient un samedi. Que vaut NON samedi, et que faut-il à ET pour donner VRAI ?"
             >
               VRAI
             </li>
@@ -3438,7 +3519,7 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
           </ul>
         </div>
         <p>
-          (VRAI OU FAUX) ET NON VRAI donne VRAI ET FAUX, donc FAUX : pas de réduction pour Nina ce
+          (VRAI OU FAUX) ET NON VRAI donne VRAI ET FAUX, donc FAUX : pas de réduction pour Chloé ce
           samedi, comme le veut la phrase. La traduction tient.
         </p>
       </div>
@@ -3468,7 +3549,7 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
               data-option="sans"
               class="mono"
               data-erreur="E2"
-              data-retour="Pour un jeune de 15 ans, un samedi, que donne cette condition, calculée dans l’ordre ? La phrase lui donne-t-elle le cours ce jour-là ?"
+              data-retour="Sans parenthèses, ET passe avant OU : un jeune de 15 ans aurait le cours gratuit le samedi, ce que la phrase exclut."
             >
               âge &lt; 18 OU demandeur ET NON samedi
             </li>
@@ -3484,13 +3565,15 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
       </div>
       <div data-ecran="Le ou exclusif">
         <p class="accroche">
-          Au restaurant, « fromage ou dessert » interdit les deux. Ce « ou »-là s’appelle le OU
-          <strong>exclusif</strong> : il est VRAI quand un seul des deux est VRAI.
+          Au guichet, l’affiche du cinéma dit : « Avec ton billet, une boisson ou un popcorn, au
+          choix. » Ce « ou » interdit les deux. Il s’appelle le OU <strong>exclusif</strong> : il
+          est VRAI quand un seul des deux est VRAI.
         </p>
         <p data-si-essai="p3:faux">
           Pour le menu « fromage ou dessert », à la question « Peux-tu prendre les deux ? », tu
           avais répondu <span data-essai-rappel="p3">autre chose</span>. C’est juste pour le OU de
-          la logique, qui accepte les deux. Le menu en emploie un autre : le OU exclusif.
+          la logique, qui accepte les deux. Le menu, comme l’affiche du cinéma, en emploie un
+          autre : le OU exclusif.
         </p>
         <div
           class="defile"
@@ -3539,7 +3622,7 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
         </p>
         <pre
           class="pseudo"
-        ><code>(fromage <b>OU</b> dessert) <b>ET NON</b> (fromage <b>ET</b> dessert)</code></pre>
+        ><code>(boisson <b>OU</b> popcorn) <b>ET NON</b> (boisson <b>ET</b> popcorn)</code></pre>
         <p>
           La phrase française ne dit pas toujours lequel des deux elle veut. La question à poser :
           les deux à la fois, c’est permis ? Si oui, c’est le OU inclusif. Si non, c’est la forme
@@ -3563,8 +3646,8 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
         </ul>
         <div class="ex" data-widget="choix" data-id="t2" data-reponse="inclusif">
           <p class="q">
-            Un formulaire dit : « Pour qu’on te recontacte, indique ton téléphone ou ton e-mail. »
-            Une cliente remplit les deux. Quelle condition le site doit-il tester ?
+            Le site du cinéma dit : « Pour être prévenu des avant-premières, indique ton téléphone
+            ou ton e-mail. » Une cliente remplit les deux. Quelle condition le site doit-il tester ?
           </p>
           <ul class="options">
             <li data-option="inclusif" class="mono">téléphone OU email</li>
@@ -3572,24 +3655,24 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
               data-option="exclusif"
               class="mono"
               data-erreur="E1"
-              data-retour="Cette forme refuserait la cliente qui donne les deux. La phrase interdit-elle de donner les deux ?"
+              data-retour="Une condition pour avoir droit à quelque chose est un OU inclusif : donner les deux ne gêne personne. Cette forme refuserait la cliente qui donne les deux."
             >
               (téléphone OU email) ET NON (téléphone ET email)
             </li>
             <li
               data-option="et"
               class="mono"
-              data-retour="Avec ET, il faudrait les deux : un client sans téléphone serait refusé, alors que l’e-mail suffit."
+              data-retour="Avec ET, il faudrait les deux : une cliente sans téléphone ne serait pas prévenue, alors que l’e-mail suffit."
             >
               téléphone ET email
             </li>
           </ul>
         </div>
       </div>
-      <div data-ecran="Ni badge ni code">
+      <div data-ecran="Ni billet ni abonnement">
         <p class="accroche">
-          « Ni… ni » se traduit par deux NON reliés par ET : « ni carte ni espèces » devient NON
-          carte ET NON espèces.
+          À l’entrée de la salle, un panneau dit : « Pas de séance si tu n’as ni billet ni
+          abonnement. » Le contrôleur veut une condition qui déclenche le refus.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -3597,28 +3680,30 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
             <li>L’ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</li>
           </ul>
         </div>
-        <div class="ex" data-widget="choix" data-id="t4" data-reponse="ni">
-          <p class="q">
-            « Accès refusé si tu n’as ni badge ni code. » Quelle condition déclenche le refus ?
-          </p>
+        <div class="ex" data-widget="choix" data-id="t18" data-reponse="ni" data-prediction>
+          <p class="q">À ton avis, quelle condition déclenche le refus ?</p>
           <ul class="options">
-            <li data-option="ni" class="mono">NON badge ET NON code</li>
+            <li data-option="ni" class="mono">NON billet ET NON abonnement</li>
             <li
               data-option="ou"
               class="mono"
-              data-retour="Avec OU, il suffirait d’oublier le badge pour être refusé, même avec le code. Que demande « ni… ni » ?"
+              data-retour="Avec OU, il suffirait d’oublier son billet pour être refusé, même avec un abonnement. Que demande « ni… ni » ?"
             >
-              NON badge OU NON code
+              NON billet OU NON abonnement
             </li>
             <li
               data-option="non-et"
               class="mono"
-              data-retour="NON (badge ET code) est VRAI dès qu’il en manque un seul : tu serais refusé avec le code sans le badge. Que demande « ni… ni » ?"
+              data-retour="NON (billet ET abonnement) est VRAI dès qu’il en manque un seul : un abonné sans billet serait refusé. Que demande « ni… ni » ?"
             >
-              NON (badge ET code)
+              NON (billet ET abonnement)
             </li>
           </ul>
         </div>
+        <p>
+          « Ni… ni » se traduit par deux NON reliés par ET : « ni billet ni abonnement » devient NON
+          billet ET NON abonnement. Le refus ne tombe que sur celui à qui il manque les deux.
+        </p>
       </div>
     </template>
 
@@ -3717,6 +3802,10 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
       </div>
       <div data-ecran="Tracer">
         <p class="accroche">
+          Sarah, 30 ans, étudiante, vient un mardi. Le guichet va tester ses lignes une à une, de
+          haut en bas.
+        </p>
+        <p>
           <strong>Tracer</strong> une chaîne, c’est la suivre pour un client, ligne par ligne, en
           notant ce que vaut chaque condition testée, jusqu’à la branche choisie. Les lignes qui
           suivent la première VRAIE sont « pas testées ».
@@ -3744,40 +3833,80 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
             <li>L’ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</li>
           </ul>
         </div>
-        <p>
-          Pour chacun des deux clients, choisis la première ligne VRAIE : sa trace s’affiche
-          ensuite.
-        </p>
+        <p>Avant chaque ligne, prévois ce que le guichet y trouve : VRAI, FAUX, ou pas testée.</p>
         <div
           class="ex"
           data-widget="choix"
-          data-id="b11"
-          data-reponse="deux"
+          data-id="b20"
+          data-reponse="faux"
           data-melanger="non"
-          data-aide1="Remplace les données de Sarah dans chaque ligne, de haut en bas. Laquelle est VRAIE la première ?"
-          data-aide2="Dans la ligne 2, calcule d’abord la parenthèse : un OU est VRAI dès qu’un de ses deux côtés l’est."
           data-prediction
         >
-          <p class="q">
-            Pour Sarah, 30 ans, étudiante, venue un mardi, quelle est la première ligne VRAIE ?
-          </p>
+          <p class="q">Ligne 1, SI âge &lt; 12 : que vaut-elle pour Sarah ?</p>
           <ul class="options">
-            <li data-option="un" data-retour="30 &lt; 12 est FAUX : la chaîne passe à la ligne 2.">
-              Ligne 1
-            </li>
-            <li data-option="deux">Ligne 2</li>
             <li
-              data-option="trois"
-              data-retour="La ligne 3 n’est testée que si la ligne 2 est FAUSSE. Que vaut la ligne 2 pour Sarah ?"
+              data-option="vrai"
+              data-retour="30 &lt; 12 est FAUX : 30 n’est pas strictement plus petit que 12."
             >
-              Ligne 3
+              VRAI
+            </li>
+            <li data-option="faux">FAUX</li>
+            <li
+              data-option="pas"
+              data-retour="La chaîne commence toujours en haut : la ligne 1 est testée pour chaque client."
+            >
+              Pas testée
+            </li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="b21"
+          data-reponse="vrai"
+          data-melanger="non"
+          data-prediction
+        >
+          <p class="q">Ligne 2, la réduction : que vaut-elle pour Sarah ?</p>
+          <ul class="options">
+            <li data-option="vrai">VRAI</li>
+            <li
+              data-option="faux"
+              data-retour="Pour Sarah, étudiant vaut VRAI : un OU est VRAI dès qu’un de ses côtés l’est. Et NON samedi vaut VRAI un mardi."
+            >
+              FAUX
             </li>
             <li
-              data-option="aucune"
-              data-retour="SINON ne sert que si toutes les lignes sont FAUSSES. Recalcule la ligne 2 pour Sarah : est-elle FAUSSE ?"
+              data-option="pas"
+              data-retour="La ligne 1 est FAUSSE pour Sarah : la chaîne passe donc à la ligne 2, et la teste."
             >
-              Aucune : SINON
+              Pas testée
             </li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="b22"
+          data-reponse="pas"
+          data-melanger="non"
+          data-prediction
+        >
+          <p class="q">Ligne 3, SINON SI âge ≥ 65 : que vaut-elle pour Sarah ?</p>
+          <ul class="options">
+            <li
+              data-option="vrai"
+              data-retour="La ligne 2 est VRAIE pour Sarah : la chaîne exécute sa branche, puis sort. La ligne 3 n’est pas testée."
+            >
+              VRAI
+            </li>
+            <li
+              data-option="faux"
+              data-retour="La ligne 2 est VRAIE pour Sarah : la chaîne exécute sa branche, puis sort. La ligne 3 n’est pas testée."
+            >
+              FAUX
+            </li>
+            <li data-option="pas">Pas testée</li>
           </ul>
         </div>
         <table
@@ -3803,35 +3932,79 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
             </tr>
           </tbody>
         </table>
+        <p class="accroche">Jean, 72 ans, pas étudiant, vient un vendredi.</p>
         <div
           class="ex"
           data-widget="choix"
-          data-id="b12"
-          data-reponse="trois"
+          data-id="b23"
+          data-reponse="faux"
           data-melanger="non"
-          data-aide1="Remplace les données de Jean dans chaque ligne, de haut en bas. Laquelle est VRAIE la première ?"
-          data-aide2="Dans la ligne 2, un OU n’est FAUX que si ses deux côtés le sont ; ≥ accepte l’égalité."
           data-prediction
         >
-          <p class="q">
-            Pour Jean, 72 ans, pas étudiant, venu un vendredi, quelle est la première ligne VRAIE ?
-          </p>
+          <p class="q">Ligne 1, SI âge &lt; 12 : que vaut-elle pour Jean ?</p>
           <ul class="options">
-            <li data-option="un" data-retour="72 &lt; 12 est FAUX : la chaîne passe à la ligne 2.">
-              Ligne 1
+            <li
+              data-option="vrai"
+              data-retour="72 &lt; 12 est FAUX : 72 n’est pas strictement plus petit que 12."
+            >
+              VRAI
+            </li>
+            <li data-option="faux">FAUX</li>
+            <li
+              data-option="pas"
+              data-retour="La chaîne commence toujours en haut : la ligne 1 est testée pour chaque client."
+            >
+              Pas testée
+            </li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="b24"
+          data-reponse="faux"
+          data-melanger="non"
+          data-prediction
+        >
+          <p class="q">Ligne 2, la réduction : que vaut-elle pour Jean ?</p>
+          <ul class="options">
+            <li
+              data-option="vrai"
+              data-retour="Pour Jean, étudiant vaut FAUX et 72 &lt; 26 est FAUX : un OU n’est FAUX que si ses deux côtés le sont, et ET avec un FAUX donne FAUX."
+            >
+              VRAI
+            </li>
+            <li data-option="faux">FAUX</li>
+            <li
+              data-option="pas"
+              data-retour="La ligne 1 est FAUSSE pour Jean : la chaîne passe donc à la ligne 2, et la teste."
+            >
+              Pas testée
+            </li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="b25"
+          data-reponse="vrai"
+          data-melanger="non"
+          data-prediction
+        >
+          <p class="q">Ligne 3, SINON SI âge ≥ 65 : que vaut-elle pour Jean ?</p>
+          <ul class="options">
+            <li data-option="vrai">VRAI</li>
+            <li
+              data-option="faux"
+              data-retour="≥ veut dire « plus grand ou égal à » : 72 ≥ 65 est VRAI."
+            >
+              FAUX
             </li>
             <li
-              data-option="deux"
-              data-retour="Pour Jean, étudiant vaut FAUX : que vaut 72 &lt; 26, et donc la parenthèse ?"
+              data-option="pas"
+              data-retour="Les lignes 1 et 2 sont FAUSSES pour Jean : la chaîne passe donc à la ligne 3, et la teste."
             >
-              Ligne 2
-            </li>
-            <li data-option="trois">Ligne 3</li>
-            <li
-              data-option="aucune"
-              data-retour="SINON ne sert que si toutes les lignes sont FAUSSES. Recalcule la ligne 3 pour Jean : est-elle FAUSSE ?"
-            >
-              Aucune : SINON
+              Pas testée
             </li>
           </ul>
         </div>
@@ -3895,19 +4068,19 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
           data-chaine="âge &lt; 12 =&gt; 5 € | (étudiant OU âge &lt; 26) ET NON samedi =&gt; 7 € | âge ≥ 65 =&gt; 8 € | SINON =&gt; 10 €"
           data-cas="âge=11, étudiant=FAUX, samedi=VRAI | âge=26, étudiant=FAUX, samedi=FAUX"
           data-noms="Tom|Nina"
-          data-qui="Tom, 11 ans, un samedi|Nina, 26 ans, pas étudiante, un mardi"
+          data-qui="Tom, 11 ans, pas étudiant, un samedi|Nina, 26 ans, pas étudiante, un mardi"
           data-fait="1"
         >
           <p class="q">
-            Trace la chaîne pour Tom, 11 ans, venu un samedi, et pour Nina, 26 ans, pas étudiante,
-            venue un mardi. La ligne 1 de Tom est faite : complète le reste.
+            Trace la chaîne pour Tom, 11 ans, pas étudiant, venu un samedi, et pour Nina, 26 ans,
+            pas étudiante, venue un mardi. La ligne 1 de Tom est faite : complète le reste.
           </p>
         </div>
       </div>
       <div data-ecran="L’ordre des lignes">
         <p class="accroche">
-          Le gérant se demande s’il peut mettre la ligne de la réduction en premier. Léa, 9 ans, pas
-          étudiante, vient un mardi.
+          Léa, 9 ans, pas étudiante, vient un mardi. Le gérant se demande s’il peut mettre la ligne
+          de la réduction en premier.
         </p>
         <pre
           class="pseudo"
@@ -3948,7 +4121,7 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
             <li
               data-option="deux"
               data-erreur="E3"
-              data-retour="Combien de branches une chaîne SI / SINON SI / SINON exécute-t-elle ?"
+              data-retour="Une chaîne SI / SINON SI / SINON n’exécute qu’une branche : celle de sa première ligne VRAIE, puis elle sort."
             >
               7 €, puis 5 €
             </li>
@@ -3956,28 +4129,37 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
         </div>
         <p>
           Léa paierait 7 € au lieu de 5 € : la ligne de la réduction est VRAIE pour elle aussi, et
-          la chaîne s’arrête là. Un enfant ne paierait plus 5 € que le samedi. Parce que la chaîne
-          s’arrête à la première ligne VRAIE, l’ordre des lignes change ce qu’elle affiche. Quand
-          des conditions se recouvrent, commence par la plus exigeante, celle que le moins de
-          clients remplissent : âge &lt; 12 avant la réduction des moins de 26 ans.
+          la chaîne s’arrête là. Un enfant ne paierait plus 5 € que le samedi. L’ordre des lignes
+          change donc ce que la chaîne affiche. Quand des conditions se recouvrent, commence par la
+          plus exigeante, celle que le moins de clients remplissent : âge &lt; 12 avant la réduction
+          des moins de 26 ans.
         </p>
         <p>
-          Chaque ligne peut alors compter sur une chose : toutes celles du dessus sont FAUSSES.
-          Arrivé à la ligne 2 de la vraie chaîne, le guichet sait déjà que le client a 12 ans ou
-          plus.
+          Chaque ligne peut alors compter sur une chose : toutes celles du dessus sont FAUSSES. La
+          ligne 1 de la vraie chaîne est SI âge &lt; 12 : afficher « 5 € ». Arrivé à la ligne 2, le
+          guichet sait donc déjà que le client a 12 ans ou plus.
         </p>
         <p data-si-essai="p5:faux">
           Le thermostat d’« À l’intuition » avait le même défaut : SI température ≥ 15, « tiède »,
           puis SINON SI température ≥ 25, « chaud ». Tu avais répondu
           <span data-essai-rappel="p5">autre chose</span> ; par 30 °C, 30 ≥ 15 est déjà VRAI à la
-          première ligne, et il affiche « tiède ». La plus exigeante d’abord, ≥ 25, le corrige.
+          première ligne, et il affiche « tiède ». Mettre ≥ 25 en haut le corrige.
         </p>
       </div>
       <div data-ecran="Une ligne placée">
+        <p class="accroche">
+          Le cinéma classe ses films selon leur durée, en minutes entières : « court » sous 60,
+          « moyen » à partir de 60, « long » à partir de 120, « très long » à partir de 150,
+          « fleuve » à partir de 180.
+        </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
           <ul>
             <li>≥ veut dire « plus grand ou égal à ».</li>
+            <li>
+              Quand des conditions se recouvrent, la chaîne commence par la plus exigeante, celle
+              que le moins de cas remplissent.
+            </li>
           </ul>
         </div>
         <div
@@ -3988,7 +4170,7 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
           data-sinon-ligne="court"
           data-cas="durée=200 =&gt; fleuve | durée=180 =&gt; fleuve | durée=179 =&gt; très long | durée=150 =&gt; très long | durée=149 =&gt; long | durée=120 =&gt; long | durée=119 =&gt; moyen | durée=60 =&gt; moyen | durée=59 =&gt; court"
           data-reponse="b,d,a,c"
-          data-variante-enonce="Une station météo classe le vent, en km/h entiers : « calme » sous 20, « modéré » à partir de 20, « fort » à partir de 50, « violent » à partir de 90, « tempête » à partir de 120. Le signe ≥ veut dire « plus grand ou égal à ». La ligne la plus exigeante est déjà placée en haut, et bloquée : range les trois autres avec les flèches."
+          data-variante-enonce="Une station météo classe le vent, en km/h entiers : « calme » sous 20, « modéré » à partir de 20, « fort » à partir de 50, « violent » à partir de 90, « tempête » à partir de 120. La ligne « tempête » est placée en haut, et bloquée ; « calme » est le SINON. Range les trois autres."
           data-variante-reponse="b,d,a,c"
           data-variante-fixe="b"
           data-variante-lignes="a : vent ≥ 50 =&gt; fort | b : vent ≥ 120 =&gt; tempête | c : vent ≥ 20 =&gt; modéré | d : vent ≥ 90 =&gt; violent"
@@ -3996,10 +4178,8 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
           data-variante-cas="vent=130 =&gt; tempête | vent=120 =&gt; tempête | vent=119 =&gt; violent | vent=90 =&gt; violent | vent=89 =&gt; fort | vent=50 =&gt; fort | vent=49 =&gt; modéré | vent=20 =&gt; modéré | vent=19 =&gt; calme"
         >
           <p class="q">
-            Le cinéma classe ses films selon leur durée, en minutes entières : « court » sous 60,
-            « moyen » à partir de 60, « long » à partir de 120, « très long » à partir de 150,
-            « fleuve » à partir de 180. La ligne la plus exigeante est déjà placée en haut, et
-            bloquée : range les trois autres avec les flèches.
+            La ligne « fleuve » est déjà placée en haut, et bloquée ; « court » est le SINON, sous
+            la chaîne. Range les trois autres lignes avec les flèches.
           </p>
           <ol class="lignes-ordre">
             <li data-ligne="a" data-cond="durée ≥ 120" data-sortie="long">
@@ -4018,10 +4198,19 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
         </div>
       </div>
       <div data-ecran="L’affluence">
+        <p class="accroche">
+          Pour chaque séance, le guichet affiche l’affluence : « calme » sous 50 spectateurs,
+          « animée » à partir de 50, « presque pleine » à partir de 150, « complète » à partir de
+          200.
+        </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
           <ul>
             <li>≥ veut dire « plus grand ou égal à ».</li>
+            <li>
+              Quand des conditions se recouvrent, la chaîne commence par la plus exigeante, celle
+              que le moins de cas remplissent.
+            </li>
           </ul>
         </div>
         <div
@@ -4031,16 +4220,15 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
           data-sinon-ligne="calme"
           data-cas="spectateurs=250 =&gt; complète | spectateurs=200 =&gt; complète | spectateurs=199 =&gt; presque pleine | spectateurs=150 =&gt; presque pleine | spectateurs=149 =&gt; animée | spectateurs=50 =&gt; animée | spectateurs=49 =&gt; calme"
           data-reponse="c,b,a"
-          data-variante-enonce="Un forfait classe ta consommation de données : « faible » sous 5 Go, « moyenne » à partir de 5, « forte » à partir de 20, « énorme » à partir de 100. Le signe ≥ veut dire « plus grand ou égal à ». Remets les lignes dans l’ordre avec les flèches."
+          data-variante-enonce="Un forfait classe ta consommation de données : « faible » sous 5 Go, « moyenne » à partir de 5, « forte » à partir de 20, « énorme » à partir de 100. « faible » est le SINON. Remets les trois autres lignes dans l’ordre avec les flèches."
           data-variante-reponse="b,c,a"
           data-variante-lignes="a : go ≥ 5 =&gt; moyenne | b : go ≥ 100 =&gt; énorme | c : go ≥ 20 =&gt; forte"
           data-variante-sinon-ligne="faible"
           data-variante-cas="go=150 =&gt; énorme | go=100 =&gt; énorme | go=50 =&gt; forte | go=20 =&gt; forte | go=10 =&gt; moyenne | go=5 =&gt; moyenne | go=4 =&gt; faible"
         >
           <p class="q">
-            Pour chaque séance, le guichet affiche l’affluence : « calme » sous 50 spectateurs,
-            « animée » à partir de 50, « presque pleine » à partir de 150, « complète » à partir de
-            200. Remets les lignes dans l’ordre avec les flèches.
+            « calme » est le SINON, sous la chaîne. Remets les trois autres lignes dans l’ordre avec
+            les flèches.
           </p>
           <ol class="lignes-ordre">
             <li data-ligne="a" data-cond="spectateurs ≥ 50" data-sortie="animée">
@@ -4057,9 +4245,13 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
       </div>
       <div data-ecran="Les valeurs limites">
         <p class="accroche">
-          Pour vérifier une chaîne, on ne la teste pas au hasard : on la teste là où une condition
-          change de valeur, sur ses deux valeurs limites, la dernière valeur avant le changement et
-          la première après. Prends la ligne 3 du guichet, le tarif senior : âge ≥ 65.
+          Le gérant veut vérifier la ligne 3 du guichet, le tarif senior : SINON SI âge ≥ 65 :
+          afficher « 8 € ». Il ne va pas faire passer des clients au hasard.
+        </p>
+        <p>
+          Pour vérifier une chaîne, on la teste là où une condition change de valeur, sur ses deux
+          <strong>valeurs limites</strong> : la dernière valeur avant le changement et la première
+          après.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -4097,63 +4289,51 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
         <p>
           64 et 65 : à 64 ans, âge ≥ 65 est FAUX, à 65 ans, VRAI. Avec âge &gt; 65, ce seraient 65
           et 66, car 65 &gt; 65 est FAUX. Une erreur, un &gt; à la place d’un ≥ par exemple, se voit
-          sur une de ces deux valeurs ; 30 ou 80 ne montreraient rien. Pour tout le guichet : 11 et
-          12, 25 et 26, 64 et 65.
+          sur une de ces deux valeurs ; 30 ou 80 ne montreraient rien.
         </p>
       </div>
-      <div data-ecran="Un nombre et un fait">
+      <div data-ecran="Les valeurs du guichet">
         <p class="accroche">
-          La ligne 2 mêle un nombre, l’âge, et un fait, étudiant. Le gérant veut tester son seuil,
-          26, un jour de semaine.
+          Le gérant passe à tout le guichet, pour un client pas étudiant, un mardi. Pour lui, la
+          ligne 2 devient (FAUX OU âge &lt; 26) ET NON FAUX, soit âge &lt; 26 :
         </p>
+        <pre class="pseudo"><code><b>SI</b> âge &lt; 12 :
+  afficher « 5 € »
+<b>SINON SI</b> âge &lt; 26 :
+  afficher « 7 € »
+<b>SINON SI</b> âge ≥ 65 :
+  afficher « 8 € »
+<b>SINON</b> :
+  afficher « 10 € »</code></pre>
         <div class="cadre pour-lire">
-          <p class="discret">Le guichet, pour lire :</p>
+          <p class="discret">Pour lire :</p>
           <ul>
-            <li>
-              Les lignes sont numérotées de haut en bas ; une ligne, c’est une condition et ce
-              qu’elle affiche.
-            </li>
             <li>&lt; veut dire « strictement plus petit que », ≥ « plus grand ou égal à ».</li>
-            <li>étudiant vaut VRAI pour un client étudiant ; samedi vaut VRAI le samedi.</li>
-            <li>L’ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</li>
+            <li>
+              Les valeurs limites d’un seuil : la dernière valeur avant le changement et la première
+              après.
+            </li>
           </ul>
         </div>
         <div
           class="ex"
-          data-widget="choix"
-          data-id="b18"
-          data-reponse="quatre"
-          data-melanger="non"
-          data-aide1="Quelles sont les deux valeurs limites de âge &lt; 26 ? Et combien de valeurs le fait étudiant peut-il prendre ?"
-          data-explication="25 et 26 sont les valeurs limites de âge &lt; 26, et chacune se teste avec étudiant VRAI, puis FAUX : pour un étudiant, la ligne 2 est VRAIE à tout âge en semaine, et une erreur de seuil ne se verrait pas."
+          data-widget="limites"
+          data-id="b26"
+          data-chaine="âge &lt; 12 =&gt; 5 € | âge &lt; 26 =&gt; 7 € | âge ≥ 65 =&gt; 8 € | SINON =&gt; 10 €"
+          data-variable="âge"
+          data-candidats="10|11|12|13|24|25|26|27|63|64|65|66"
+          data-fait="11|12"
         >
           <p class="q">
-            Quels clients le gérant doit-il faire passer, un mardi, pour tester ce seuil ?
+            Quelles sont les valeurs limites de cette chaîne, pour des âges entiers ? Celles du
+            seuil 12 sont touchées : touche les autres, puis vérifie.
           </p>
-          <ul class="options">
-            <li data-option="quatre">25 ans et 26 ans, chacun une fois étudiant, une fois pas</li>
-            <li
-              data-option="etud"
-              data-retour="Pour un étudiant, que vaut la ligne 2 à 25 ans, et à 26 ans ? Une erreur sur le seuil se verrait-elle ?"
-            >
-              25 ans et 26 ans, étudiants
-            </li>
-            <li
-              data-option="seuil"
-              data-retour="Les valeurs limites sont la dernière où âge &lt; 26 est VRAI et la première où il est FAUX. Est-ce le cas de 26 et de 27 ?"
-            >
-              26 ans et 27 ans, chacun une fois étudiant, une fois pas
-            </li>
-          </ul>
         </div>
-        <p>
-          Le fait change ce que donne le même âge : à 26 ans, un mardi, la ligne 2 est VRAIE pour un
-          étudiant et FAUSSE sinon. Quand une condition mêle un nombre et un fait, teste chaque
-          valeur limite deux fois, avec le fait VRAI, puis FAUX : une erreur peut se cacher dans
-          l’un des deux cas.
-        </p>
       </div>
       <div data-ecran="Les valeurs de l’affluence">
+        <p class="accroche">
+          Le gérant veut aussi vérifier la chaîne de l’affluence de ses séances.
+        </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
           <ul>
@@ -4193,6 +4373,66 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
 <span class="l" data-l="4"><b>SINON</b> :</span>
 <span class="l br" data-l="4">  afficher « calme »</span></code></pre>
         </div>
+      </div>
+      <div data-ecran="Un nombre et un fait">
+        <p class="accroche">
+          Le gérant veut tester le seuil de la ligne 2, 26, un mardi. Cette ligne mêle un nombre,
+          l’âge, et un fait, étudiant :
+        </p>
+        <pre
+          class="pseudo"
+        ><code><b>SINON SI</b> (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi :
+  afficher « 7 € »</code></pre>
+        <div class="cadre pour-lire">
+          <p class="discret">Le guichet, pour lire :</p>
+          <ul>
+            <li>
+              Les lignes sont numérotées de haut en bas ; une ligne, c’est une condition et ce
+              qu’elle affiche.
+            </li>
+            <li>&lt; veut dire « strictement plus petit que », ≥ « plus grand ou égal à ».</li>
+            <li>étudiant vaut VRAI pour un client étudiant ; samedi vaut VRAI le samedi.</li>
+            <li>L’ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</li>
+            <li>
+              Les valeurs limites d’un seuil : la dernière valeur avant le changement et la première
+              après. Celles de 26 sont 25 et 26.
+            </li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="b18"
+          data-reponse="quatre"
+          data-melanger="non"
+          data-prediction
+        >
+          <p class="q">
+            À ton avis, quels clients le gérant doit-il faire passer, un mardi, pour tester ce
+            seuil ?
+          </p>
+          <ul class="options">
+            <li data-option="quatre">25 ans et 26 ans, chacun une fois étudiant, une fois pas</li>
+            <li
+              data-option="etud"
+              data-retour="Pour un étudiant, que vaut la ligne 2 à 25 ans, et à 26 ans ? Une erreur sur le seuil se verrait-elle ?"
+            >
+              25 ans et 26 ans, étudiants
+            </li>
+            <li
+              data-option="seuil"
+              data-retour="Les valeurs limites sont la dernière où âge &lt; 26 est VRAI et la première où il est FAUX. Est-ce le cas de 26 et de 27 ?"
+            >
+              26 ans et 27 ans, chacun une fois étudiant, une fois pas
+            </li>
+          </ul>
+        </div>
+        <p>
+          Le fait change ce que donne le même âge : à 26 ans, un mardi, la ligne 2 est VRAIE pour un
+          étudiant et FAUSSE sinon. Pour un étudiant, elle est VRAIE à tout âge en semaine : une
+          erreur de seuil ne se verrait pas. Quand une condition mêle un nombre et un fait, teste
+          donc chaque valeur limite deux fois, avec le fait VRAI, puis FAUX.
+        </p>
       </div>
     </template>
 
@@ -4263,11 +4503,11 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
       </div>
       <div data-ecran="Comparer : ===">
         <p class="accroche">
+          Léo fête ses 12 ans au guichet : le programme doit tester si la variable age contient 12.
           Puisque = range, comparer demande un autre signe. JavaScript en prend trois,
-          <code>===</code> : l’<strong>égalité stricte</strong>. <code>age === 12</code> vaut true
-          si age contient 12, false sinon. Elle compare aussi des textes, écrits entre apostrophes :
-          <code>nom === 'Paul'</code>. Tu croiseras aussi ==, une égalité moins stricte : on s’en
-          passe ici.
+          <code>===</code> : l’<strong>égalité stricte</strong>. <code>age === 12</code> vaut true
+          si age contient 12, false sinon. Elle compare aussi des textes, écrits entre apostrophes.
+          Tu croiseras aussi ==, une égalité moins stricte : on s’en passe ici.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -4278,43 +4518,44 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
         <div
           class="ex"
           data-widget="choix"
-          data-id="j15"
+          data-id="j25"
           data-reponse="egal"
           data-aide1="Lequel de ces signes compare, sans rien ranger ni combiner ?"
         >
           <p class="q">
-            La variable age contient l’âge du client. Dans un if, comment écrit-on « age égal à
-            12 » ?
+            Le guichet range le prénom du client dans la variable nom. Dans un if, comment écrit-on
+            « nom égal à 'Paul' » ?
           </p>
           <ul class="options">
-            <li data-option="egal" class="mono">age === 12</li>
+            <li data-option="egal" class="mono">nom === 'Paul'</li>
             <li
               data-option="affecte"
               class="mono"
               data-erreur="E4"
-              data-retour="age = 12 range 12 dans la variable age, c’est une affectation : que compare-t-il ?"
+              data-retour="En JavaScript, = range une valeur, c’est l’affectation : nom = 'Paul' range 'Paul' dans nom. Pour comparer, il faut ===."
             >
-              age = 12
+              nom = 'Paul'
             </li>
             <li
               data-option="et"
               class="mono"
               data-erreur="E4"
-              data-retour="&amp;&amp; est le ET : combine-t-il deux conditions, ou compare-t-il deux nombres ?"
+              data-retour="&amp;&amp; est le ET : il combine deux conditions, il ne compare pas deux valeurs. Pour comparer, il faut ===."
             >
-              age &amp;&amp; 12
+              nom &amp;&amp; 'Paul'
             </li>
           </ul>
         </div>
       </div>
       <div data-ecran="Le piège du signe =">
         <p class="accroche">
-          En JavaScript, le signe = range une valeur, et === compare. Un piège :
-          <code>if (age = 18)</code> ne donne pas d’erreur. JavaScript range 18 dans age, puis teste
-          la valeur rangée, 18. Une condition vaut VRAI ou FAUX, mais JavaScript accepte aussi un
-          nombre à sa place : il compte alors tout nombre autre que 0 comme VRAI. C’est une
-          convention du langage, utile ici seulement pour comprendre ce piège. La branche s’exécute
-          donc à chaque fois, quel que soit l’âge de départ.
+          Inès, 23 ans, est au guichet : la variable age contient 23. Pour tester si elle a 18 ans,
+          un développeur écrit par erreur <code>if (age = 18)</code>, avec = au lieu de ===.
+          JavaScript ne signale rien : il range 18 dans age, puis teste la valeur rangée, 18. Une
+          condition vaut VRAI ou FAUX, mais JavaScript accepte aussi un nombre à sa place : il
+          compte alors tout nombre autre que 0 comme VRAI. C’est une convention du langage, utile
+          ici seulement pour comprendre ce piège. La branche s’exécute donc à chaque fois, et la
+          variable age ne contient plus 23 : elle contient 18.
         </p>
       </div>
       <div data-ecran="Les signes de JavaScript">
@@ -4629,20 +4870,21 @@ if (age &lt; 12) {
       </div>
       <div data-ecran="Écrire et tester ici">
         <p class="accroche">
-          Avant la console, écris ici : la page exécute ton code pour chaque valeur à tester et te
-          montre ce qu’il affiche.
+          Le guichet affiche aussi le moment de chaque séance : « soir » à partir de 18 heures,
+          « après-midi » à partir de 12 heures, « matin » avant. Avant la console, écris ce code
+          ici : la page l’exécute pour chaque heure à tester et te montre ce qu’il affiche.
         </p>
         <div
           class="ex"
           data-widget="js"
-          data-id="j2"
-          data-variables="t"
-          data-cas="t=25 =&gt; chaud | t=24 =&gt; tiède | t=15 =&gt; tiède | t=14 =&gt; froid | t=30 =&gt; chaud | t=0 =&gt; froid"
-          data-depart="if (t &gt;= 25) {\n  console.log('chaud')\n} else if () {\n  \n} else {\n  \n}"
+          data-id="j26"
+          data-variables="h"
+          data-cas="h=18 =&gt; soir | h=17 =&gt; après-midi | h=12 =&gt; après-midi | h=11 =&gt; matin | h=22 =&gt; soir | h=9 =&gt; matin"
+          data-depart="if (h &gt;= 18) {\n  console.log('soir')\n} else if () {\n  \n} else {\n  \n}"
           data-aide1="Que doit tester la deuxième branche, et que doit-elle afficher ?"
-          data-aide2="Elle teste le seuil 15 et affiche « tiède ». Elle n’a pas besoin de dire « et sous 25 » : si elle est testée, la première était FAUSSE."
+          data-aide2="Elle teste le seuil 12 et affiche « après-midi ». Elle n’a pas besoin de dire « et avant 18 » : si elle est testée, la première était FAUSSE."
           data-aide3="Elle reprend le modèle de la première branche avec else if devant : mets la condition de son seuil entre les parenthèses, et le mot qu’elle affiche dans console.log. Puis écris le else."
-          data-solution="if (t &gt;= 25) { console.log('chaud') } else if (t &gt;= 15) { console.log('tiède') } else { console.log('froid') }"
+          data-solution="if (h &gt;= 18) { console.log('soir') } else if (h &gt;= 12) { console.log('après-midi') } else { console.log('matin') }"
           data-variante-enonce="Complète en JavaScript la force du vent : « violent » à partir de 90, « fort » à partir de 50, « calme » en dessous. La variable v contient la vitesse du vent : la page lui donne elle-même chaque valeur à tester, ne lui donne pas de valeur toi-même. La case contient déjà la première branche, if (v &gt;= 90) { console.log('violent') }, et la forme des deux autres, else if () { } et else { } : complète la deuxième branche et le else."
           data-variante-reponse="violent pour 90 et plus, fort de 50 à 89, calme en dessous"
           data-variante-variables="v"
@@ -4654,13 +4896,13 @@ if (age &lt; 12) {
           data-variante-solution="if (v &gt;= 90) { console.log('violent') } else if (v &gt;= 50) { console.log('fort') } else { console.log('calme') }"
         >
           <p class="q">
-            Complète ce thermostat en JavaScript : « chaud » à partir de 25, « tiède » à partir de
-            15, « froid » en dessous. La variable t contient la température : la page lui donne
-            elle-même chaque valeur à tester, ne lui donne pas de valeur toi-même.
+            Complète en JavaScript le moment de la séance. La variable h contient l’heure, un nombre
+            entier : la page lui donne elle-même chaque valeur à tester, ne lui en donne pas
+            toi-même.
           </p>
           <p>
             La première branche est écrite dans la case, avec la forme des deux autres :
-            <code>if (t &gt;= 25) { console.log('chaud') }</code>, puis
+            <code>if (h &gt;= 18) { console.log('soir') }</code>, puis
             <code>else if () { }</code> et <code>else { }</code>. À toi de compléter la deuxième
             branche et le else.
           </p>
@@ -4694,151 +4936,155 @@ if (age &lt; 12) {
         <div class="cadre pour-lire">
           <p class="discret">La console, pour lire :</p>
           <ul>
-            <li>&gt;= veut dire « plus grand ou égal à ».</li>
+            <li>&lt; veut dire « strictement plus petit que », &gt;= « plus grand ou égal à ».</li>
             <li>true veut dire VRAI, false veut dire FAUX.</li>
           </ul>
         </div>
         <div
           class="ex"
           data-widget="choix"
-          data-id="j12"
-          data-reponse="cinq"
+          data-id="j21"
+          data-reponse="faux"
           data-melanger="non"
           data-prediction
         >
-          <p class="q">Première ligne : <code>2 + 3</code>. Que va répondre la console ?</p>
+          <p class="q">
+            Première ligne, la comparaison de Nina au guichet : <code>26 &lt; 26</code>. Que va
+            répondre la console ?
+          </p>
           <ul class="options">
-            <li data-option="cinq" class="mono">5</li>
+            <li data-option="faux" class="mono">false</li>
             <li
-              data-option="texte"
+              data-option="vrai"
               class="mono"
-              data-retour="La console exécute la ligne qu’on tape : que vaut 2 + 3 ?"
+              data-retour="&lt; est strict : 26 est-il strictement plus petit que 26 ?"
             >
-              2 + 3
+              true
             </li>
             <li
               data-option="undefined"
               class="mono"
-              data-retour="2 + 3 calcule une valeur : laquelle ?"
+              data-retour="26 &lt; 26 compare deux nombres : que donne une comparaison ?"
             >
               undefined
             </li>
           </ul>
         </div>
         <p>
-          Tape <code>2 + 3</code>, puis Entrée : la console répond 5. Une ligne qui calcule répond
-          par sa valeur.
+          Tape <code>26 &lt; 26</code>, puis Entrée : la console répond false, car &lt; est strict.
+          Une ligne qui calcule répond par sa valeur.
         </p>
         <div
           class="ex"
           data-widget="choix"
-          data-id="j11"
+          data-id="j22"
           data-reponse="vrai"
           data-melanger="non"
           data-prediction
         >
-          <p class="q">Ligne suivante : <code>18 &gt;= 18</code>. Que va répondre la console ?</p>
+          <p class="q">
+            Ligne suivante, le tarif senior pour un client de 65 ans : <code>65 &gt;= 65</code>. Que
+            va répondre la console ?
+          </p>
           <ul class="options">
             <li data-option="vrai" class="mono">true</li>
             <li
               data-option="faux"
               class="mono"
-              data-retour="&gt;= accepte l’égalité : 18 est-il plus grand que 18, ou égal à 18 ?"
+              data-retour="&gt;= accepte l’égalité : 65 est-il plus grand que 65, ou égal à 65 ?"
             >
               false
             </li>
             <li
               data-option="undefined"
               class="mono"
-              data-retour="18 &gt;= 18 compare deux nombres : que donne une comparaison ?"
+              data-retour="65 &gt;= 65 compare deux nombres : que donne une comparaison ?"
             >
               undefined
             </li>
           </ul>
         </div>
         <p>
-          Tape <code>18 &gt;= 18</code>, puis Entrée : la console répond true, car &gt;= accepte
+          Tape <code>65 &gt;= 65</code>, puis Entrée : la console répond true, car &gt;= accepte
           l’égalité.
         </p>
       </div>
       <div data-ecran="Prédire une réponse">
         <p class="accroche">
-          Dans la même console, tape ensuite <code>let age = 16</code>. Avant, prédis ce qu’elle va
-          répondre.
+          Inès, 23 ans, revient au guichet. Dans la même console, tape ensuite
+          <code>let age = 23</code>. Avant, prédis ce qu’elle va répondre.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">La console, pour lire :</p>
           <ul>
             <li>let crée une variable et y range une valeur.</li>
-            <li>&gt;= veut dire « plus grand ou égal à ».</li>
+            <li>&lt; veut dire « strictement plus petit que ».</li>
             <li>true veut dire VRAI, false veut dire FAUX.</li>
           </ul>
         </div>
         <div
           class="ex"
           data-widget="choix"
-          data-id="j13"
+          data-id="j23"
           data-reponse="undefined"
           data-melanger="non"
           data-prediction
         >
-          <p class="q">Que va répondre la console à <code>let age = 16</code> ?</p>
+          <p class="q">Que va répondre la console à <code>let age = 23</code> ?</p>
           <ul class="options">
             <li data-option="undefined" class="mono">undefined</li>
             <li
-              data-option="seize"
+              data-option="vingt-trois"
               class="mono"
-              data-retour="let range 16 dans age : cette ligne calcule-t-elle une valeur à montrer ?"
+              data-retour="let range 23 dans age : cette ligne calcule-t-elle une valeur à montrer ?"
             >
-              16
+              23
             </li>
             <li
               data-option="vrai"
               class="mono"
-              data-retour="let age = 16 ne compare rien, elle range une valeur. Calcule-t-elle une valeur à montrer ?"
+              data-retour="let age = 23 ne compare rien, elle range une valeur. Calcule-t-elle une valeur à montrer ?"
             >
               true
             </li>
           </ul>
         </div>
         <p>
-          Tape <code>let age = 16</code>, puis Entrée : la console répond undefined. Ce n’est pas
-          une erreur : la ligne range 16 dans age, elle ne calcule rien à montrer.
-        </p>
-        <p>
-          <code>let age = 16</code> a rangé 16 dans la variable age. Avant de taper la ligne
-          suivante, prédis ce qu’elle va répondre.
+          Tape <code>let age = 23</code>, puis Entrée : la console répond undefined. Ce n’est pas
+          une erreur : la ligne range 23 dans age, elle ne calcule rien à montrer. Avant de taper la
+          ligne suivante, prédis ce qu’elle va répondre.
         </p>
         <div
           class="ex"
           data-widget="choix"
-          data-id="j10"
-          data-reponse="faux"
+          data-id="j24"
+          data-reponse="vrai"
           data-melanger="non"
           data-prediction
-          data-aide1="Une comparaison se calcule avec la valeur que contient la variable au moment où la console la lit."
-          data-explication="age &gt;= 18 compare 16 à 18, et une comparaison donne true ou false : 16 n’est pas plus grand ou égal à 18, la console répond false."
         >
-          <p class="q">Que va répondre la console à <code>age &gt;= 18</code> ?</p>
+          <p class="q">Que va répondre la console à <code>age &lt; 26</code> ?</p>
           <ul class="options">
-            <li data-option="faux" class="mono">false</li>
+            <li data-option="vrai" class="mono">true</li>
             <li
-              data-option="vrai"
+              data-option="faux"
               class="mono"
-              data-retour="age contient 16. Est-ce que 16 est plus grand ou égal à 18 ?"
+              data-retour="age contient 23. Est-ce que 23 est strictement plus petit que 26 ?"
             >
-              true
+              false
             </li>
             <li
               data-option="undefined"
               class="mono"
-              data-retour="age &gt;= 18 compare deux nombres : que donne une comparaison ?"
+              data-retour="age &lt; 26 compare deux nombres : que donne une comparaison ?"
             >
               undefined
             </li>
           </ul>
         </div>
-        <p>Tape maintenant <code>age &gt;= 18</code>, puis Entrée : la console répond false.</p>
+        <p>
+          Tape maintenant <code>age &lt; 26</code>, puis Entrée : la console répond true. La
+          comparaison se calcule avec la valeur que contient age à ce moment-là, 23.
+        </p>
       </div>
       <div data-ecran="Coller, et les messages en rouge">
         <p class="accroche">
@@ -4854,7 +5100,7 @@ if (age &lt; 12) {
         <ul>
           <li>
             « has already been declared » ou « redeclaration » : la variable existe déjà dans cet
-            onglet. Écris <code>age = 16</code>, sans let, ou recharge l’onglet.
+            onglet. Écris <code>age = 23</code>, sans let, ou recharge l’onglet.
           </li>
           <li>« is not defined » : une majuscule en trop, ou une variable pas encore créée.</li>
           <li>
@@ -4892,7 +5138,7 @@ if (age &lt; 12) {
           data-id="j19"
           data-reponse="dix"
           data-melanger="non"
-          data-aide1="Teste les conditions de haut en bas avec age = 26, etudiant = false et samedi = false. Quelle est la première condition VRAIE ?"
+          data-aide1="Teste les conditions de haut en bas : age vaut 26, etudiant et samedi valent false. Quelle est la première condition VRAIE ?"
           data-aide2="Dans la deuxième condition, calcule d’abord la parenthèse. Attention : &lt; est strict."
         >
           <p class="q">Que va afficher la console ?</p>
@@ -4982,7 +5228,7 @@ if (age &lt; 12) {
             <li data-option="huit" data-retour="25 &gt;= 65 est FAUX.">8 €</li>
             <li
               data-option="dix"
-              data-retour="La branche du else ne s’exécute que si toutes les conditions sont FAUSSES. Pour age = 25, que vaut age &lt; 26 ?"
+              data-retour="La branche du else ne s’exécute que si toutes les conditions sont FAUSSES. Quand age vaut 25, que vaut age &lt; 26 ?"
             >
               10 €
             </li>
@@ -5106,12 +5352,11 @@ if (age &lt; 12) {
 <span class="l" data-l="4"><b>SINON</b> :</span>
 <span class="l br" data-l="4">  afficher « 10 € »</span></code></pre>
         <p>
-          Le guichet affiche 7 €, et seulement 7 €. Il teste ses lignes de haut en bas et s’arrête à
-          la première condition VRAIE. Pour Paul, 70 ans, étudiant, venu un mardi : ligne 1, 70 &lt;
-          12, FAUX ; ligne 2, (VRAI OU 70 &lt; 26) ET NON FAUX, soit VRAI ET VRAI, donc VRAI. Il
-          affiche 7 € et sort de la chaîne : la ligne 3, âge ≥ 65, n’est même pas testée, bien
-          qu’elle soit VRAIE pour Paul. Un samedi, la ligne 2 aurait été FAUSSE, et Paul aurait payé
-          8 €.
+          Le guichet affiche 7 €, et seulement 7 €. Pour Paul, 70 ans, étudiant, venu un mardi :
+          ligne 1, 70 &lt; 12, FAUX ; ligne 2, (VRAI OU 70 &lt; 26) ET NON FAUX, soit VRAI ET VRAI,
+          donc VRAI. Le guichet affiche 7 € et sort de la chaîne : la ligne 3, âge ≥ 65, n’est même
+          pas testée, bien qu’elle soit VRAIE pour Paul. Un samedi, la ligne 2 aurait été FAUSSE, et
+          Paul aurait payé 8 €.
         </p>
       </div>
       <div data-ecran="Si le cinéma change d’avis">
@@ -5174,9 +5419,9 @@ if (age &lt; 12) {
           </p>
           <p>
             Une condition se calcule dans un ordre fixé : parenthèses, comparaisons, NON, ET, OU. Tu
-            n’as pas à apprendre cette liste : elle est écrite avec chaque question où elle change
-            la réponse. Ce qui compte, c’est de repérer l’opération qui passe en premier. Le OU de
-            la logique accepte les deux à la fois ; le « ou » du français, pas toujours.
+            n’as pas à apprendre cette liste : elle est écrite avec chaque question qui s’en sert.
+            Ce qui compte, c’est de repérer l’opération qui passe en premier. Le OU de la logique
+            accepte les deux à la fois ; le « ou » du français, pas toujours.
           </p>
           <p>
             On teste une chaîne sur ses valeurs limites, et on prédit ce qu’elle affiche avant de
@@ -5291,14 +5536,24 @@ if (age &lt; 12) {
     -->
     <template data-item="PR1-1">
       <div class="ex" data-widget="table" data-verifie data-faits="A|B" data-expr="A ET NON B">
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>L’ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</li>
+          </ul>
+        </div>
         <p class="q">Remplis la table de vérité de A ET NON B.</p>
-        <p class="discret">Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</p>
       </div>
     </template>
     <template data-variante="PR1-1">
       <div class="ex" data-widget="table" data-verifie data-faits="A|B" data-expr="NON A OU B">
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>L’ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</li>
+          </ul>
+        </div>
         <p class="q">Remplis la table de vérité de NON A OU B.</p>
-        <p class="discret">Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</p>
       </div>
     </template>
     <template data-item="PR1-2">
@@ -5309,12 +5564,19 @@ if (age &lt; 12) {
         data-expr="âge &lt; 12 OU âge ≥ 65 ET résident"
         data-valeurs="âge=8, résident=FAUX"
       >
-        <p class="q">
-          Un musée est gratuit SI âge &lt; 12 OU âge ≥ 65 ET résident. Le signe &lt; veut dire
-          « strictement plus petit que », ≥ « plus grand ou égal à ». Calcule la condition pour âge
-          = 8 et résident = FAUX, une opération à la fois.
+        <p class="cas">
+          Un musée est gratuit SI âge &lt; 12 OU âge ≥ 65 ET résident. Un enfant de 8 ans, qui
+          n’habite pas la ville, se présente à l’entrée.
         </p>
-        <p class="discret">Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>&lt; veut dire « strictement plus petit que », ≥ « plus grand ou égal à ».</li>
+            <li>résident vaut VRAI pour qui habite la ville.</li>
+            <li>L’ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</li>
+          </ul>
+        </div>
+        <p class="q">Calcule la condition pour cet enfant, une opération à la fois.</p>
       </div>
     </template>
     <template data-variante="PR1-2">
@@ -5325,12 +5587,19 @@ if (age &lt; 12) {
         data-expr="montant ≥ 50 OU membre ET NON volumineux"
         data-valeurs="montant=60, membre=FAUX, volumineux=VRAI"
       >
-        <p class="q">
-          La livraison est offerte SI montant ≥ 50 OU membre ET NON volumineux. Calcule la condition
-          pour montant = 60, membre = FAUX et volumineux = VRAI, une opération à la fois. Le signe ≥
-          veut dire « plus grand ou égal à ».
+        <p class="cas">
+          La livraison est offerte SI montant ≥ 50 OU membre ET NON volumineux. Camille, qui n’est
+          pas membre, commande un canapé, un colis volumineux, pour 60 €.
         </p>
-        <p class="discret">Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>≥ veut dire « plus grand ou égal à ».</li>
+            <li>montant est le prix de la commande, en euros.</li>
+            <li>L’ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</li>
+          </ul>
+        </div>
+        <p class="q">Calcule la condition pour sa commande, une opération à la fois.</p>
       </div>
     </template>
     <template data-item="PR1-3">
@@ -5341,12 +5610,18 @@ if (age &lt; 12) {
         data-expr="(connecté OU invité) ET NON (articles = 0)"
         data-valeurs="connecté=FAUX, invité=VRAI, articles=3"
       >
-        <p class="q">
-          Le bouton Commander s’affiche SI (connecté OU invité) ET NON (articles = 0). Ici, =
-          compare : articles = 0 veut dire « articles est égal à 0 ». Calcule la condition pour
-          connecté = FAUX, invité = VRAI et articles = 3.
+        <p class="cas">
+          Le bouton Commander s’affiche SI (connecté OU invité) ET NON (articles = 0). Une cliente
+          n’est pas connectée, elle passe en invitée, et son panier contient 3 articles.
         </p>
-        <p class="discret">Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>= compare : articles = 0 est VRAI quand le panier est vide.</li>
+            <li>L’ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</li>
+          </ul>
+        </div>
+        <p class="q">Calcule la condition pour elle, une opération à la fois.</p>
       </div>
     </template>
     <template data-variante="PR1-3">
@@ -5357,12 +5632,18 @@ if (age &lt; 12) {
         data-expr="(abonné OU essai) ET NON (âge &lt; 16)"
         data-valeurs="abonné=FAUX, essai=FAUX, âge=20"
       >
-        <p class="q">
+        <p class="cas">
           Une vidéo interdite aux moins de 16 ans se lance SI (abonné OU essai) ET NON (âge &lt;
-          16). Le signe &lt; veut dire « strictement plus petit que ». Calcule la condition pour
-          abonné = FAUX, essai = FAUX et âge = 20.
+          16). Bastien a 20 ans ; il n’est pas abonné, et il n’a pas d’essai gratuit.
         </p>
-        <p class="discret">Ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>&lt; veut dire « strictement plus petit que ».</li>
+            <li>L’ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</li>
+          </ul>
+        </div>
+        <p class="q">Calcule la condition pour Bastien, une opération à la fois.</p>
       </div>
     </template>
     <template data-item="PR1-11">
@@ -5372,7 +5653,7 @@ if (age &lt; 12) {
         data-widget="choix"
         data-verifie
         data-reponse="juste"
-        data-justifier="Sans ces parenthèses, la règle donnerait-elle les mêmes réponses ? Sinon, pour quel article ?"
+        data-justifier="Compare cette condition avec la même sans parenthèses : donnent-elles la même réponse pour chaque article ? Justifie avec un article."
       >
         <p class="q">
           « Remboursement sous 30 jours, ou à tout moment pour un article défectueux, sauf pour les
@@ -5394,7 +5675,7 @@ if (age &lt; 12) {
             data-option="sans"
             class="mono"
             data-erreur="E2"
-            data-retour="ET passe avant OU. Dans cette condition, quelle partie se calcule en premier, et est-ce ce que dit la phrase ?"
+            data-retour="Sans parenthèses, cette condition ne se calcule pas dans l’ordre de la phrase : quelle partie passe en premier, et est-ce ce que dit la phrase ?"
           >
             jours ≤ 30 OU défectueux ET NON personnalisé
           </li>
@@ -5415,7 +5696,7 @@ if (age &lt; 12) {
         data-widget="choix"
         data-verifie
         data-reponse="juste"
-        data-justifier="Sans ces parenthèses, la règle donnerait-elle les mêmes réponses ? Sinon, pour quel client ?"
+        data-justifier="Compare cette condition avec la même sans parenthèses : donnent-elles la même réponse pour chaque client ? Justifie avec un client."
       >
         <p class="q">
           « Accès au salon pour les clients premium ou pour les vols de plus de 6 heures, sauf avec
@@ -5435,7 +5716,7 @@ if (age &lt; 12) {
             data-option="sans"
             class="mono"
             data-erreur="E2"
-            data-retour="ET passe avant OU. Dans cette condition, quelle partie se calcule en premier, et est-ce ce que dit la phrase ?"
+            data-retour="Sans parenthèses, cette condition ne se calcule pas dans l’ordre de la phrase : quelle partie passe en premier, et est-ce ce que dit la phrase ?"
           >
             premium OU durée &gt; 6 ET NON gratuit
           </li>
@@ -5586,11 +5867,7 @@ if (age &lt; 12) {
         data-chaine="âge &lt; 4 =&gt; gratuit | âge &lt; 18 OU habitant =&gt; 2 € | âge ≥ 60 =&gt; 3 € | SINON =&gt; 5 €"
         data-cas="âge=17, habitant=FAUX | âge=18, habitant=VRAI | âge=60, habitant=FAUX"
       >
-        <p class="q">
-          Une piscine calcule son tarif avec cette chaîne. Le signe &lt; veut dire « strictement
-          plus petit que », ≥ « plus grand ou égal à ». Trace-la pour trois clients : 17 ans, pas
-          habitant ; 18 ans, habitant ; 60 ans, pas habitant.
-        </p>
+        <p class="cas">Une piscine calcule son tarif avec cette chaîne.</p>
         <pre
           class="pseudo"
           data-pseudo="piscine"
@@ -5602,10 +5879,21 @@ if (age &lt; 12) {
 <span class="l br" data-l="3">  afficher « 3 € »</span>
 <span class="l" data-l="4"><b>SINON</b> :</span>
 <span class="l br" data-l="4">  afficher « 5 € »</span></code></pre>
-        <p class="discret">
-          Les lignes sont numérotées de haut en bas : une ligne, c’est une condition et ce qu’elle
-          affiche. Dans la ligne 2, on fait d’abord la comparaison âge &lt; 18, puis le OU. Pour
-          chaque ligne, choisis VRAI, FAUX ou « pas testée ».
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              Les lignes sont numérotées de haut en bas : une ligne, c’est une condition et ce
+              qu’elle affiche.
+            </li>
+            <li>&lt; veut dire « strictement plus petit que », ≥ « plus grand ou égal à ».</li>
+            <li>habitant vaut VRAI pour qui habite la ville.</li>
+            <li>Dans la ligne 2, on fait d’abord la comparaison âge &lt; 18, puis le OU.</li>
+          </ul>
+        </div>
+        <p class="q">
+          Trace-la pour trois clients : 17 ans, pas habitant ; 18 ans, habitant ; 60 ans, pas
+          habitant. Pour chaque ligne, choisis VRAI, FAUX ou « pas testée ».
         </p>
       </div>
     </template>
@@ -5617,11 +5905,7 @@ if (age &lt; 12) {
         data-chaine="âge &lt; 4 =&gt; gratuit | âge &lt; 18 OU habitant =&gt; 2 € | âge ≥ 60 =&gt; 3 € | SINON =&gt; 5 €"
         data-cas="âge=4, habitant=FAUX | âge=59, habitant=FAUX | âge=70, habitant=VRAI"
       >
-        <p class="q">
-          Une piscine calcule son tarif avec cette chaîne. Le signe &lt; veut dire « strictement
-          plus petit que », ≥ « plus grand ou égal à ». Trace-la pour trois clients : 4 ans, pas
-          habitant ; 59 ans, pas habitant ; 70 ans, habitant.
-        </p>
+        <p class="cas">Une piscine calcule son tarif avec cette chaîne.</p>
         <pre
           class="pseudo"
           data-pseudo="piscine"
@@ -5633,26 +5917,37 @@ if (age &lt; 12) {
 <span class="l br" data-l="3">  afficher « 3 € »</span>
 <span class="l" data-l="4"><b>SINON</b> :</span>
 <span class="l br" data-l="4">  afficher « 5 € »</span></code></pre>
-        <p class="discret">
-          Les lignes sont numérotées de haut en bas : une ligne, c’est une condition et ce qu’elle
-          affiche. Dans la ligne 2, on fait d’abord la comparaison âge &lt; 18, puis le OU. Pour
-          chaque ligne, choisis VRAI, FAUX ou « pas testée ».
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              Les lignes sont numérotées de haut en bas : une ligne, c’est une condition et ce
+              qu’elle affiche.
+            </li>
+            <li>&lt; veut dire « strictement plus petit que », ≥ « plus grand ou égal à ».</li>
+            <li>habitant vaut VRAI pour qui habite la ville.</li>
+            <li>Dans la ligne 2, on fait d’abord la comparaison âge &lt; 18, puis le OU.</li>
+          </ul>
+        </div>
+        <p class="q">
+          Trace-la pour trois clients : 4 ans, pas habitant ; 59 ans, pas habitant ; 70 ans,
+          habitant. Pour chaque ligne, choisis VRAI, FAUX ou « pas testée ».
         </p>
       </div>
     </template>
     <template data-item="PR1-10">
       <div
-        data-aide1="Pour Léa, que vaut la ligne 1 ? Que fait la chaîne quand une ligne est VRAIE ?"
+        data-aide1="Pour Jade, que vaut la ligne 1 ? Que fait la chaîne quand une ligne est VRAIE ?"
         class="ex"
         data-widget="choix"
         data-verifie
         data-reponse="bonjour"
-        data-justifier="Dis pourquoi la chaîne n’affiche pas « Bonjour, admin » pour Léa, et comment la corriger."
+        data-justifier="Dis pourquoi la chaîne n’affiche pas « Bonjour, admin » pour Jade, et comment la corriger."
         data-solution="« Bonjour » : connecté est déjà VRAI à la première ligne, et la chaîne s’arrête là. Il faut tester d’abord la condition la plus exigeante, connecté ET admin"
       >
         <p class="q">
-          Pour l’accueil d’un site, un camarade a écrit cette chaîne. Léa est connectée, et elle est
-          administratrice du site. Qu’affiche la chaîne pour elle ?
+          Pour l’accueil d’un site, un camarade a écrit cette chaîne. Jade est connectée, et elle
+          est administratrice du site. Qu’affiche la chaîne pour elle ?
         </p>
         <pre
           class="pseudo"
@@ -5668,7 +5963,7 @@ if (age &lt; 12) {
           <li
             data-option="admin"
             data-erreur="E3"
-            data-retour="Pour Léa, quelle est la première ligne VRAIE, en partant du haut ?"
+            data-retour="Pour Jade, quelle est la première ligne VRAIE, en partant du haut ?"
           >
             « Bonjour, admin »
           </li>
@@ -5684,16 +5979,16 @@ if (age &lt; 12) {
     </template>
     <template data-variante="PR1-10">
       <div
-        data-aide1="Pour Malik, que vaut la ligne 1 ? Que fait la chaîne quand une ligne est VRAIE ?"
+        data-aide1="Pour Karim, que vaut la ligne 1 ? Que fait la chaîne quand une ligne est VRAIE ?"
         class="ex"
         data-widget="choix"
         data-verifie
         data-reponse="dix"
-        data-justifier="Dis pourquoi la chaîne n’affiche pas « 20 % » pour Malik, et comment la corriger."
+        data-justifier="Dis pourquoi la chaîne n’affiche pas « 20 % » pour Karim, et comment la corriger."
         data-solution="« 10 % » : membre est déjà VRAI à la première ligne, et la chaîne s’arrête là. Il faut tester d’abord la condition la plus exigeante, membre ET anniversaire"
       >
         <p class="q">
-          Pour la réduction d’une boutique, un camarade a écrit cette chaîne. Malik est membre, et
+          Pour la réduction d’une boutique, un camarade a écrit cette chaîne. Karim est membre, et
           c’est son anniversaire aujourd’hui. Quelle réduction la chaîne affiche-t-elle pour lui ?
         </p>
         <pre
@@ -5710,7 +6005,7 @@ if (age &lt; 12) {
           <li
             data-option="vingt"
             data-erreur="E3"
-            data-retour="Pour Malik, quelle est la première ligne VRAIE, en partant du haut ?"
+            data-retour="Pour Karim, quelle est la première ligne VRAIE, en partant du haut ?"
           >
             « 20 % »
           </li>
@@ -5733,12 +6028,22 @@ if (age &lt; 12) {
         data-reponse="affecte"
         data-solution="if (code === 1234) : === compare code à 1234 et donne true ou false ; = rangeait 1234 dans code"
       >
+        <div class="cadre pour-lire">
+          <p class="discret">Le JavaScript, pour lire :</p>
+          <ul>
+            <li>
+              if (c) { … } veut dire SI c ; console.log affiche ce qui est entre ses parenthèses.
+            </li>
+            <li>= range une valeur, === compare, &amp;&amp; est le ET.</li>
+            <li>
+              Un if accepte un nombre à la place d’une condition : tout nombre autre que 0 compte
+              comme VRAI.
+            </li>
+          </ul>
+        </div>
         <p class="q">
           Ce code doit afficher « ouvert » seulement avec le code 1234. Il affiche « ouvert » même
-          quand code vaut 0. Pourquoi ? En JavaScript, if (c) { … } veut dire SI c, console.log
-          affiche ce qui est entre ses parenthèses, = range une valeur, === compare, &amp;&amp; est
-          le ET, et un if accepte un nombre à la place d’une condition : tout nombre autre que 0
-          compte comme VRAI.
+          quand code vaut 0. Pourquoi ?
         </p>
         <pre><code>if (code = 1234) {
   console.log('ouvert')
@@ -5773,12 +6078,23 @@ if (age &lt; 12) {
         data-reponse="affecte"
         data-solution="if (stock === 0) : === compare stock à 0 ; = rangeait 0 dans stock, et 0 compte comme FAUX, d’où « en stock » à chaque fois"
       >
+        <div class="cadre pour-lire">
+          <p class="discret">Le JavaScript, pour lire :</p>
+          <ul>
+            <li>
+              if (c) { … } veut dire SI c, else { … } SINON ; console.log affiche ce qui est entre
+              ses parenthèses.
+            </li>
+            <li>= range une valeur, === compare, &amp;&amp; est le ET.</li>
+            <li>
+              Un if accepte un nombre à la place d’une condition : tout nombre autre que 0 compte
+              comme VRAI, et 0 compte comme FAUX.
+            </li>
+          </ul>
+        </div>
         <p class="q">
           Ce code doit afficher « épuisé » quand il ne reste aucun article, et « en stock » sinon.
-          Il affiche « en stock » même quand stock vaut 0. Pourquoi ? En JavaScript, if (c) { … }
-          veut dire SI c, else { … } SINON, console.log affiche ce qui est entre ses parenthèses, =
-          range une valeur, === compare, &amp;&amp; est le ET, et un if accepte un nombre à la place
-          d’une condition : tout nombre autre que 0 compte comme VRAI, et 0 compte comme FAUX.
+          Il affiche « en stock » même quand stock vaut 0. Pourquoi ?
         </p>
         <pre><code>if (stock = 0) {
   console.log('épuisé')
@@ -5820,10 +6136,17 @@ if (age &lt; 12) {
           partir de 120 minutes de retard, « très en retard » avec moins de 120, « en retard » avec
           moins de 30, « à l’heure » avec moins de 5. Les retards sont des nombres entiers.
         </p>
-        <p class="q">
-          Le signe &lt; veut dire « strictement plus petit que ». Remets les lignes de sa chaîne
-          dans le bon ordre avec les flèches.
-        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>&lt; veut dire « strictement plus petit que ».</li>
+            <li>
+              « perdu » est le SINON : il reste en bas, et prend tous les retards qu’aucune ligne ne
+              prend.
+            </li>
+          </ul>
+        </div>
+        <p class="q">Remets les lignes de sa chaîne dans le bon ordre avec les flèches.</p>
         <ol class="lignes-ordre">
           <li data-ligne="a" data-cond="retard &lt; 30" data-sortie="en retard">
             retard &lt; 30 : afficher « en retard »
@@ -5851,10 +6174,17 @@ if (age &lt; 12) {
           partir de 3000, « lent » sous 3000, « correct » sous 1000, « rapide » sous 100. Les temps
           sont des nombres entiers.
         </p>
-        <p class="q">
-          Le signe &lt; veut dire « strictement plus petit que ». Remets les lignes de sa chaîne
-          dans le bon ordre avec les flèches.
-        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>&lt; veut dire « strictement plus petit que ».</li>
+            <li>
+              « trop lent » est le SINON : il reste en bas, et prend tous les temps qu’aucune ligne
+              ne prend.
+            </li>
+          </ul>
+        </div>
+        <p class="q">Remets les lignes de sa chaîne dans le bon ordre avec les flèches.</p>
         <ol class="lignes-ordre">
           <li data-ligne="a" data-cond="temps &lt; 3000" data-sortie="lent">
             temps &lt; 3000 : afficher « lent »
@@ -5871,7 +6201,6 @@ if (age &lt; 12) {
     <template data-item="PR2-2">
       <div
         class="ex"
-        data-justifier="Pourquoi faut-il tester à la fois 499 et 500 ?"
         data-widget="limites"
         data-verifie
         data-chaine="points ≥ 1000 =&gt; or | points ≥ 500 =&gt; argent | points ≥ 100 =&gt; bronze | SINON =&gt; aucun"
@@ -5881,7 +6210,7 @@ if (age &lt; 12) {
         <p class="cas">
           Un site marchand donne un niveau de fidélité selon les points du client : « aucun » sous
           100 points, « bronze » à partir de 100, « argent » à partir de 500, « or » à partir de
-          1000. Les points sont des nombres entiers. Le signe ≥ veut dire « plus grand ou égal à ».
+          1000. Les points sont des nombres entiers.
         </p>
         <pre
           class="pseudo"
@@ -5894,16 +6223,24 @@ if (age &lt; 12) {
 <span class="l br" data-l="3">  afficher « bronze »</span>
 <span class="l" data-l="4"><b>SINON</b> :</span>
 <span class="l br" data-l="4">  afficher « aucun »</span></code></pre>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>≥ veut dire « plus grand ou égal à ».</li>
+            <li>
+              Les valeurs limites d’un seuil : la dernière valeur avant le changement et la première
+              après.
+            </li>
+          </ul>
+        </div>
         <p class="q">
-          Les valeurs limites d’un seuil sont la dernière valeur avant le changement et la première
-          après. Quelles sont les valeurs limites de cette chaîne ? Touche chacune, puis vérifie.
+          Quelles sont les valeurs limites de cette chaîne ? Touche chacune, puis vérifie.
         </p>
       </div>
     </template>
     <template data-variante="PR2-2">
       <div
         class="ex"
-        data-justifier="Pourquoi faut-il tester à la fois 399 et 400 ?"
         data-widget="limites"
         data-verifie
         data-chaine="score ≥ 800 =&gt; expert | score ≥ 400 =&gt; confirmé | score ≥ 50 =&gt; débutant | SINON =&gt; nouveau"
@@ -5913,7 +6250,7 @@ if (age &lt; 12) {
         <p class="cas">
           Un jeu donne un rang selon le score : « nouveau » sous 50, « débutant » à partir de 50,
           « confirmé » à partir de 400, « expert » à partir de 800. Les scores sont des nombres
-          entiers. Le signe ≥ veut dire « plus grand ou égal à ».
+          entiers.
         </p>
         <pre
           class="pseudo"
@@ -5926,9 +6263,18 @@ if (age &lt; 12) {
 <span class="l br" data-l="3">  afficher « débutant »</span>
 <span class="l" data-l="4"><b>SINON</b> :</span>
 <span class="l br" data-l="4">  afficher « nouveau »</span></code></pre>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>≥ veut dire « plus grand ou égal à ».</li>
+            <li>
+              Les valeurs limites d’un seuil : la dernière valeur avant le changement et la première
+              après.
+            </li>
+          </ul>
+        </div>
         <p class="q">
-          Les valeurs limites d’un seuil sont la dernière valeur avant le changement et la première
-          après. Quelles sont les valeurs limites de cette chaîne ? Touche chacune, puis vérifie.
+          Quelles sont les valeurs limites de cette chaîne ? Touche chacune, puis vérifie.
         </p>
       </div>
     </template>
@@ -5943,7 +6289,7 @@ if (age &lt; 12) {
         <p class="cas">
           Un site marchand donne un niveau de fidélité selon les points du client : « aucun » sous
           100 points, « bronze » à partir de 100, « argent » à partir de 500, « or » à partir de
-          1000. Les points sont des nombres entiers. Le signe ≥ veut dire « plus grand ou égal à ».
+          1000. Les points sont des nombres entiers.
         </p>
         <pre
           class="pseudo"
@@ -5956,10 +6302,19 @@ if (age &lt; 12) {
 <span class="l br" data-l="3">  afficher « bronze »</span>
 <span class="l" data-l="4"><b>SINON</b> :</span>
 <span class="l br" data-l="4">  afficher « aucun »</span></code></pre>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>≥ veut dire « plus grand ou égal à ».</li>
+            <li>
+              Les lignes sont numérotées de haut en bas : une ligne, c’est une condition et ce
+              qu’elle affiche.
+            </li>
+          </ul>
+        </div>
         <p class="q">
-          Trace la chaîne pour cinq de ses valeurs limites : 99, 100, 499, 500 et 1000. Les lignes
-          sont numérotées de haut en bas : une ligne, c’est une condition et ce qu’elle affiche.
-          Pour chaque ligne, choisis VRAI, FAUX ou « pas testée ».
+          Trace la chaîne pour cinq de ses valeurs limites : 99, 100, 499, 500 et 1000. Pour chaque
+          ligne, choisis VRAI, FAUX ou « pas testée ».
         </p>
       </div>
     </template>
@@ -5974,7 +6329,7 @@ if (age &lt; 12) {
         <p class="cas">
           Un jeu donne un rang selon le score : « nouveau » sous 50, « débutant » à partir de 50,
           « confirmé » à partir de 400, « expert » à partir de 800. Les scores sont des nombres
-          entiers. Le signe ≥ veut dire « plus grand ou égal à ».
+          entiers.
         </p>
         <pre
           class="pseudo"
@@ -5987,10 +6342,19 @@ if (age &lt; 12) {
 <span class="l br" data-l="3">  afficher « débutant »</span>
 <span class="l" data-l="4"><b>SINON</b> :</span>
 <span class="l br" data-l="4">  afficher « nouveau »</span></code></pre>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>≥ veut dire « plus grand ou égal à ».</li>
+            <li>
+              Les lignes sont numérotées de haut en bas : une ligne, c’est une condition et ce
+              qu’elle affiche.
+            </li>
+          </ul>
+        </div>
         <p class="q">
-          Trace la chaîne pour cinq de ses valeurs limites : 49, 50, 399, 400 et 800. Les lignes
-          sont numérotées de haut en bas : une ligne, c’est une condition et ce qu’elle affiche.
-          Pour chaque ligne, choisis VRAI, FAUX ou « pas testée ».
+          Trace la chaîne pour cinq de ses valeurs limites : 49, 50, 399, 400 et 800. Pour chaque
+          ligne, choisis VRAI, FAUX ou « pas testée ».
         </p>
       </div>
     </template>
@@ -6010,16 +6374,22 @@ if (age &lt; 12) {
         <p class="cas">
           Un site marchand donne un niveau de fidélité selon les points du client : « aucun » sous
           100 points, « bronze » à partir de 100, « argent » à partir de 500, « or » à partir de
-          1000. Les points sont des nombres entiers. Le signe ≥ veut dire « plus grand ou égal à ».
+          1000. Les points sont des nombres entiers.
         </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Le JavaScript, pour lire :</p>
+          <ul>
+            <li>≥ veut dire « plus grand ou égal à ».</li>
+            <li>
+              SI c s’écrit if (c) { … }, SINON SI c s’écrit else if (c) { … }, SINON s’écrit else {
+              … }.
+            </li>
+            <li>afficher « texte » s’écrit console.log('texte'), et ≥ s’écrit &gt;=.</li>
+          </ul>
+        </div>
         <p class="q">
           Écris en JavaScript la chaîne SI / SINON SI / SINON qui donne ce niveau, avec la variable
-          points. La page lui donne elle-même chaque valeur à tester : ne lui donne pas de valeur
-          toi-même.
-        </p>
-        <p class="discret">
-          En JavaScript : SI c s’écrit if (c) { … }, SINON SI c s’écrit else if (c) { … }, SINON
-          s’écrit else { … }, afficher « texte » s’écrit console.log('texte'), et ≥ s’écrit &gt;=.
+          points. La page donne elle-même chaque valeur à tester : ne lui en donne pas toi-même.
         </p>
       </div>
     </template>
@@ -6039,16 +6409,22 @@ if (age &lt; 12) {
         <p class="cas">
           Un jeu donne un rang selon le score : « nouveau » sous 50, « débutant » à partir de 50,
           « confirmé » à partir de 400, « expert » à partir de 800. Les scores sont des nombres
-          entiers. Le signe ≥ veut dire « plus grand ou égal à ».
+          entiers.
         </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Le JavaScript, pour lire :</p>
+          <ul>
+            <li>≥ veut dire « plus grand ou égal à ».</li>
+            <li>
+              SI c s’écrit if (c) { … }, SINON SI c s’écrit else if (c) { … }, SINON s’écrit else {
+              … }.
+            </li>
+            <li>afficher « texte » s’écrit console.log('texte'), et ≥ s’écrit &gt;=.</li>
+          </ul>
+        </div>
         <p class="q">
           Écris en JavaScript la chaîne SI / SINON SI / SINON qui donne ce rang, avec la variable
-          score. La page lui donne elle-même chaque valeur à tester : ne lui donne pas de valeur
-          toi-même.
-        </p>
-        <p class="discret">
-          En JavaScript : SI c s’écrit if (c) { … }, SINON SI c s’écrit else if (c) { … }, SINON
-          s’écrit else { … }, afficher « texte » s’écrit console.log('texte'), et ≥ s’écrit &gt;=.
+          score. La page donne elle-même chaque valeur à tester : ne lui en donne pas toi-même.
         </p>
       </div>
     </template>
@@ -6057,8 +6433,7 @@ if (age &lt; 12) {
         <p class="cas">
           Un site marchand donne un niveau de fidélité selon les points du client : « aucun » sous
           100 points, « bronze » à partir de 100, « argent » à partir de 500, « or » à partir de
-          1000. Les points sont des nombres entiers. Le signe ≥ veut dire « plus grand ou égal à ».
-          Voici sa chaîne :
+          1000. Les points sont des nombres entiers. Voici sa chaîne :
         </p>
         <pre
           class="pseudo"
@@ -6071,14 +6446,22 @@ if (age &lt; 12) {
 <span class="l br" data-l="3">  afficher « bronze »</span>
 <span class="l" data-l="4"><b>SINON</b> :</span>
 <span class="l br" data-l="4">  afficher « aucun »</span></code></pre>
+        <div class="cadre pour-lire">
+          <p class="discret">Le JavaScript, pour lire :</p>
+          <ul>
+            <li>≥ veut dire « plus grand ou égal à ».</li>
+            <li>
+              SI c s’écrit if (c) { … }, SINON SI c s’écrit else if (c) { … }, SINON s’écrit else {
+              … }.
+            </li>
+            <li>afficher « texte » s’écrit console.log('texte'), et ≥ s’écrit &gt;=.</li>
+          </ul>
+        </div>
         <p class="q">
           Écris cette chaîne en JavaScript dans la console de ton navigateur, prédis ce qu’elle va
           afficher, puis exécute-la.
         </p>
-        <p class="discret">
-          En JavaScript : SI c s’écrit if (c) { … }, SINON SI c s’écrit else if (c) { … }, SINON
-          s’écrit else { … }, afficher « texte » s’écrit console.log('texte'), et ≥ s’écrit &gt;=.
-        </p>
+        <p class="discret">Dans la console, étape par étape :</p>
         <ol>
           <li>
             Ouvre un onglet vide et sa console : F12, ou Ctrl+Maj+J dans Chrome (Cmd+Option+J sur
@@ -6114,8 +6497,8 @@ if (age &lt; 12) {
           data-explication="C’est réussi si la console affiche « argent » pour 500, puis « argent » pour 999, sans message en rouge. Le undefined qui suit ne compte pas."
         >
           <p class="q">
-            Avant d’appuyer sur Entrée : que va afficher la console pour points = 500, puis pour
-            points = 999 ?
+            Avant d’appuyer sur Entrée : que va afficher la console quand points vaut 500, puis
+            quand il vaut 999 ?
           </p>
           <ul class="options">
             <li data-option="argent">« argent », puis « argent »</li>
@@ -6222,7 +6605,8 @@ if (age &lt; 12) {
           pour un ET, « ET n’est VRAI que si les deux sont VRAI » ; pour une condition composée,
           « calcule d’abord « NON B », puis la suite ». À l’étape 3, rien ne s’affiche avant la fin
           de l’étape : le gabarit montre alors, sous « Tes essais », la réponse et l’attendu, chaque
-          cas nommé par ses valeurs (« badge = FAUX, code = FAUX : FAUX »), puis ce même retour.
+          cas nommé par ses valeurs en mots (« badge vaut FAUX et code vaut FAUX : FAUX »), puis ce
+          même retour.
         </li>
         <li>
           Calcul pas à pas : l’apprenant touche l’opération qu’il calculerait maintenant, puis
@@ -6274,9 +6658,10 @@ if (age &lt; 12) {
           autre ne peut passer au-dessus ; son autre cas, le vent, se fait de même. L’ordre est
           vérifié sur ce que la chaîne affiche pour chaque cas écrit dans la fiche (data-cas) ; le
           retour donne le premier cas qui se trompe, et pose une question sans désigner la ligne en
-          cause : “Avec ton ordre, spectateurs = 250 donne « animée » au lieu de « complète ». La
-          chaîne s’arrête à la première ligne VRAIE : laquelle est-ce, pour ce cas ?” (E3). Quand
-          aucune ligne n’est VRAIE pour ce cas : « Une de tes lignes est-elle VRAIE pour ce cas ? »
+          cause : “Avec ton ordre, quand spectateurs vaut 250, la chaîne donne « animée » au lieu de
+          « complète ». La chaîne s’arrête à la première ligne VRAIE : laquelle est-ce, pour ce cas
+          ?” (E3). Quand aucune ligne n’est VRAIE pour ce cas : « Une de tes lignes est-elle VRAIE
+          pour ce cas ? »
         </li>
         <li>
           Valeurs limites : à chaque seuil où la chaîne change de sortie, la dernière valeur avant
@@ -6284,13 +6669,16 @@ if (age &lt; 12) {
           trop : “51 n’est pas une valeur limite. 50, 51 et 52 donnent-ils la même sortie ?” Une
           valeur qui manque, sans dire autour de quel seuil : « Il manque une valeur limite :
           vérifie chaque seuil où la sortie change. » Les seuils, puis les deux valeurs du premier,
-          viennent aux crans 2 et 3.
+          viennent aux crans 2 et 3. À l’étape 8, les valeurs limites suivent la progression du
+          cours : celles du tarif senior en démonstration, une prédiction ; celles du guichet à
+          compléter (data-fait), les valeurs du seuil 12 déjà touchées et bloquées ; celles de
+          l’affluence seul.
         </li>
         <li>
-          JavaScript à compléter : à l’étape 9, la case du thermostat contient déjà la première
-          branche, if (t &gt;= 25) { console.log('chaud') }, et la forme des deux autres, else if ()
-          { } et else { } (data-depart) ; la consigne le dit, et l’apprenant écrit la deuxième
-          branche et le else. Un code laissé tel quel reçoit un message de forme.
+          JavaScript à compléter : à l’étape 9, la case du moment de la séance contient déjà la
+          première branche, if (h &gt;= 18) { console.log('soir') }, et la forme des deux autres,
+          else if () { } et else { } (data-depart) ; la consigne le dit, et l’apprenant écrit la
+          deuxième branche et le else. Un code laissé tel quel reçoit un message de forme.
         </li>
         <li>
           JavaScript : avant d’exécuter, l’outil repère ≥, ≤ ou ≠ (« En JavaScript, ≥ s’écrit
@@ -6352,9 +6740,9 @@ if (age &lt; 12) {
           l’exercice. Le premier cran est une question qui oriente, seule ; le deuxième, un indice
           sur la notion en cause ; le troisième, l’étape détaillée. Calcul pas à pas : « Qu’est-ce
           qui passe en premier ici : une parenthèse, une comparaison, un NON, un ET ou un OU ? »,
-          puis l’ordre de calcul, puis “L’opération à calculer maintenant : « âge &lt; 26 », avec
-          âge = 19. Que donne-t-elle ?” : l’opération et ses données, sans sa valeur. Une valeur
-          VRAI ou FAUX choisie à tort laisserait la bonne, donnée : la page montre la solution, une
+          puis l’ordre de calcul, puis “L’opération à calculer maintenant : « âge &lt; 26 », où âge
+          vaut 19. Que donne-t-elle ?” : l’opération et ses données, sans sa valeur. Une valeur VRAI
+          ou FAUX choisie à tort laisserait la bonne, donnée : la page montre la solution, une
           solution vue, comme l’option qui reste d’un choix. Table de vérité : « Sur chaque ligne,
           que demande l’opérateur pour donner VRAI ? », puis la règle de ET, OU et NON avec l’ordre
           des opérations, puis le calcul d’une ligne à revoir. Tracer : « Pour chaque cas, quelle
@@ -6399,19 +6787,17 @@ if (age &lt; 12) {
           fait encore attendre la suite de l’écran. Un choix a la même échelle (celle du gabarit) :
           chaque option fausse est retirée, avec son retour, qui oriente ; tant que plusieurs
           options restent, « Un coup de pouce » donne ensuite l’indice écrit dans la fiche, un par
-          réponse fausse possible avant la dernière option (dans le cours, deux pour les choix à
-          quatre options : la première ligne VRAIE pour Sarah et pour Jean, à l’étape 8, et ce
-          qu’affiche le guichet en JavaScript, à l’étape 9 ; un seul pour les choix à trois
-          options : les clients à faire passer pour le seuil 26 de la ligne 2, à l’étape 8, le signe
-          qui compare et la prédiction de la console, à l’étape 9 ; en pratique, un seul pour
-          PR1-11, PR1-5, PR1-8, PR1-9 et PR1-10). Le retour d’une option fausse nomme la règle en
-          cause sans désigner la bonne option : « La ligne 3 n’est testée que si la ligne 2 est
-          FAUSSE. Que vaut la ligne 2 pour Sarah ? ». Quand une seule option reste, même pour un
-          choix VRAI ou FAUX, elle est marquée : c’est une solution vue, et faute d’autre cas
-          l’apprenant explique avec ses mots pourquoi elle est la bonne ; l’IA juge son explication,
-          et la suite paraît ensuite. Sauf pour une prédiction, une question posée avant le texte
-          qui l’explique (data-prediction) : la bonne réponse marquée, la suite de l’écran paraît
-          sans explication à écrire, car le texte qui suit l’explique.
+          réponse fausse possible avant la dernière option (dans le cours, deux pour ce qu’affiche
+          le guichet en JavaScript, à l’étape 9, un choix à quatre options ; un seul pour le signe
+          qui compare, à l’étape 9, un choix à trois options ; en pratique, un seul pour PR1-11,
+          PR1-5, PR1-8, PR1-9 et PR1-10). Le retour d’une option fausse nomme la règle en cause sans
+          désigner la bonne option : « ET passe avant OU : tu as calculé le OU en premier. Refais le
+          calcul avec le ET d’abord. ». Quand une seule option reste, même pour un choix VRAI ou
+          FAUX, elle est marquée : c’est une solution vue, et faute d’autre cas l’apprenant explique
+          avec ses mots pourquoi elle est la bonne ; l’IA juge son explication, et la suite paraît
+          ensuite. Sauf pour une prédiction, une question posée avant le texte qui l’explique
+          (data-prediction) : la bonne réponse marquée, la suite de l’écran paraît sans explication
+          à écrire, car le texte qui suit l’explique.
         </li>
         <li>
           Dans la pratique, après une solution vue, l’item se refait sur sa variante, puis
@@ -6452,7 +6838,7 @@ if (age &lt; 12) {
         "version": 34,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
-        "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 expressions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
+        "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 conditions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
         "prerequis": ["B01"],
         "pont": 4,
         "contexte_ia": "Bloc B02 du module « Écosystème et outils du développeur » (DWWM), deuxième bloc de la partie La machine. Le modèle du bloc : des données, comparées, donnent des faits qui valent VRAI ou FAUX ; combinés par NON, ET et OU, dans l’ordre de calcul fixé (parenthèses, comparaisons, NON, ET, OU), ils donnent une condition, une seule valeur ; dans une chaîne SI / SINON SI / SINON, la première condition VRAIE, de haut en bas, choisit la seule branche exécutée, et SINON prend les cas où aucune ne l’est. Notations à accepter comme équivalentes : VRAI et FAUX, 1 et 0, true et false ; ET et &&, OU et ||, NON et ! ; en pseudo-code, = compare et ≥, ≤, ≠ s’écrivent ainsi ; en JavaScript, = range une valeur dans une variable (affectation), === compare (égalité stricte), et >=, <=, !== remplacent ≥, ≤, ≠. Le OU logique est inclusif (VRAI OU VRAI = VRAI) ; le ou exclusif s’écrit (A OU B) ET NON (A ET B). Les valeurs limites d’une comparaison sur des entiers : de part et d’autre du seuil, la dernière valeur avant le changement et la première après (17 et 18 pour âge ≥ 18, 18 et 19 pour âge > 18). Quand le « ou » d’une phrase ne permet pas de trancher, la bonne réponse est de demander à l’auteur de la règle. La fiche n’enseigne ni l’opérateur XOR, ni les lois de De Morgan, ni le SI imbriqué, ni ==, ni switch : ne pénalise pas leur absence, et accepte une réponse juste qui les emploie. Pièges à repérer : E1, traiter OU comme exclusif (VRAI OU VRAI jugé FAUX) ; E2, calculer le OU avant le ET (A ET B OU C lu A ET (B OU C)) ; E3, croire que plusieurs branches d’une chaîne s’exécutent, ou que les lignes qui suivent la première VRAIE sont encore testées ; E4, confondre = (affectation), === (égalité stricte) et && (le ET). Une erreur de calcul isolée sur une comparaison n’est pas E2. Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Pour examiner une explication, la grille de compréhension : l’idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d’application, le terme exact, la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Chaque attendu vient de la fiche : les étapes 3 à 9 et 12 (sources S1 à S8) ; ce qui est marqué « D’après » y est écrit ; ce qui est marqué « Déduit » s’obtient en appliquant une règle de la fiche à un autre cas. L’ordre de calcul et les signes de JavaScript sont redonnés avec chaque question qui s’en sert : ce qui compte, c’est de repérer l’opération qui passe en premier et de transcrire une condition, pas de réciter la liste.",
@@ -6592,9 +6978,9 @@ if (age &lt; 12) {
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-R29",
-            "question": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Avec note = 12, bonus = VRAI et absent = VRAI, calcule « note ≥ 10 OU bonus ET NON absent », où ≥ veut dire « plus grand ou égal à », une opération à la fois, en disant à chaque étape ce que tu calcules.",
-            "attendu": "Les comparaisons d’abord : note ≥ 10 donne VRAI. Puis NON : NON absent donne FAUX. Puis ET : bonus ET FAUX donne FAUX. Puis OU : VRAI OU FAUX donne VRAI. Calculer le OU avant le ET donnerait (VRAI OU VRAI) ET FAUX, soit FAUX : c’est l’erreur E2. Déduit de l’étape 6.",
+            "id": "B02-R39",
+            "question": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. ≥ veut dire « plus grand ou égal à ». Un élève passe en classe supérieure SI note ≥ 10 OU bonus ET NON absent. Lucas a 12 de moyenne, il a un bonus, et il a été absent à l’examen de fin d’année. Calcule la condition pour lui, une opération à la fois, en disant à chaque étape ce que tu calcules.",
+            "attendu": "Pour Lucas, note vaut 12, bonus VRAI et absent VRAI. Les comparaisons d’abord : 12 ≥ 10 donne VRAI. Puis NON : NON absent donne FAUX. Puis ET : bonus ET FAUX donne FAUX. Puis OU : VRAI OU FAUX donne VRAI : Lucas passe. Calculer le OU avant le ET donnerait (VRAI OU VRAI) ET FAUX, soit FAUX : c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
           {
@@ -6626,15 +7012,15 @@ if (age &lt; 12) {
           {
             "id": "PR1-11",
             "item": "PR1-11",
-            "question": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Un article est remboursé si (jours ≤ 30 OU défectueux) ET NON personnalisé ; le signe ≤ veut dire « plus petit ou égal à ». Sans ces parenthèses, la règle donnerait-elle les mêmes réponses ? Sinon, pour quel article ?",
-            "attendu": "Non. Sans parenthèses, ET passerait avant OU : jours ≤ 30 OU (défectueux ET NON personnalisé). Un article personnalisé rendu sous 30 jours serait alors remboursé, alors que la règle l’exclut. Déduit de l’étape 6.",
+            "question": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Un article est remboursé si (jours ≤ 30 OU défectueux) ET NON personnalisé ; le signe ≤ veut dire « plus petit ou égal à ». Compare cette condition avec la même sans parenthèses : donnent-elles la même réponse pour chaque article ? Justifie avec un article.",
+            "attendu": "Elles diffèrent. Sans parenthèses, ET passerait avant OU : jours ≤ 30 OU (défectueux ET NON personnalisé). Un article personnalisé rendu sous 30 jours serait alors remboursé, alors que la règle l’exclut. Déduit de l’étape 6.",
             "erreurs": []
           },
           {
             "id": "PR1-11:variante",
             "item": "PR1-11",
-            "question": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Un client entre au salon si (premium OU durée > 6) ET NON gratuit ; le signe > veut dire « strictement plus grand que ». Sans ces parenthèses, la règle donnerait-elle les mêmes réponses ? Sinon, pour quel client ?",
-            "attendu": "Non. Sans parenthèses, ET passerait avant OU : premium OU (durée > 6 ET NON gratuit). Un client premium avec un billet gratuit entrerait alors, alors que la règle l’exclut. Déduit de l’étape 6.",
+            "question": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Un client entre au salon si (premium OU durée > 6) ET NON gratuit ; le signe > veut dire « strictement plus grand que ». Compare cette condition avec la même sans parenthèses : donnent-elles la même réponse pour chaque client ? Justifie avec un client.",
+            "attendu": "Elles diffèrent. Sans parenthèses, ET passerait avant OU : premium OU (durée > 6 ET NON gratuit). Un client premium avec un billet gratuit entrerait alors, alors que la règle l’exclut. Déduit de l’étape 6.",
             "erreurs": []
           },
           {
@@ -6654,14 +7040,14 @@ if (age &lt; 12) {
           {
             "id": "PR1-10",
             "item": "PR1-10",
-            "question": "Une chaîne d’accueil teste dans l’ordre : SI connecté, afficher « Bonjour » ; SINON SI connecté ET admin, « Bonjour, admin » ; SINON, « Connecte-toi ». Léa est connectée et administratrice : dis pourquoi la chaîne n’affiche pas « Bonjour, admin » pour Léa, et comment la corriger.",
+            "question": "Une chaîne d’accueil teste dans l’ordre : SI connecté, afficher « Bonjour » ; SINON SI connecté ET admin, « Bonjour, admin » ; SINON, « Connecte-toi ». Jade est connectée et administratrice : dis pourquoi la chaîne n’affiche pas « Bonjour, admin » pour Jade, et comment la corriger.",
             "attendu": "La chaîne s’arrête à la première condition VRAIE : connecté est déjà VRAI à la première ligne, elle affiche « Bonjour ». Il faut tester d’abord la condition la plus exigeante, connecté ET admin, puis connecté. Déduit de l’étape 8.",
             "erreurs": []
           },
           {
             "id": "PR1-10:variante",
             "item": "PR1-10",
-            "question": "Une chaîne de réduction teste dans l’ordre : SI membre, afficher « 10 % » ; SINON SI membre ET anniversaire, « 20 % » ; SINON, « 0 % ». Malik est membre, et c’est son anniversaire : dis pourquoi la chaîne n’affiche pas « 20 % » pour Malik, et comment la corriger.",
+            "question": "Une chaîne de réduction teste dans l’ordre : SI membre, afficher « 10 % » ; SINON SI membre ET anniversaire, « 20 % » ; SINON, « 0 % ». Karim est membre, et c’est son anniversaire : dis pourquoi la chaîne n’affiche pas « 20 % » pour Karim, et comment la corriger.",
             "attendu": "La chaîne s’arrête à la première condition VRAIE : membre est déjà VRAI à la première ligne, elle affiche « 10 % ». Il faut tester d’abord la condition la plus exigeante, membre ET anniversaire, puis membre. Déduit de l’étape 8.",
             "erreurs": []
           },
@@ -6678,20 +7064,6 @@ if (age &lt; 12) {
             "question": "Un rang vaut « expert » à partir de 800, « confirmé » à partir de 400, « débutant » à partir de 50, « nouveau » en dessous. Le signe ≥ veut dire « plus grand ou égal à ». Dans la chaîne SI / SINON SI, la deuxième condition, score ≥ 400, doit-elle aussi dire « et moins de 800 » ? Pourquoi ?",
             "attendu": "Non : la chaîne s’arrête à la première condition VRAIE : si elle arrive à la deuxième, score ≥ 800 était FAUX, donc score est déjà sous 800. Déduit de l’étape 8.",
             "erreurs": []
-          },
-          {
-            "id": "PR2-2",
-            "item": "PR2-2",
-            "question": "Un niveau de fidélité vaut « or » à partir de 1000 points, « argent » à partir de 500, « bronze » à partir de 100, « aucun » en dessous. Le signe ≥ veut dire « plus grand ou égal à ». Pourquoi faut-il tester à la fois 499 et 500 ?",
-            "attendu": "499 et 500 encadrent le seuil qui sépare « bronze » et « argent ». Tester les deux vérifie que le seuil est au bon endroit et que le signe est le bon : avec points > 500, 500 afficherait « bronze ». Déduit de l’étape 8.",
-            "erreurs": []
-          },
-          {
-            "id": "PR2-2:variante",
-            "item": "PR2-2",
-            "question": "Un rang vaut « expert » à partir de 800, « confirmé » à partir de 400, « débutant » à partir de 50, « nouveau » en dessous. Le signe ≥ veut dire « plus grand ou égal à ». Pourquoi faut-il tester à la fois 399 et 400 ?",
-            "attendu": "399 et 400 encadrent le seuil qui sépare « débutant » et « confirmé ». Tester les deux vérifie que le seuil est au bon endroit et que le signe est le bon : avec score > 400, 400 afficherait « débutant ». Déduit de l’étape 8.",
-            "erreurs": []
           }
         ],
         "rappel": [
@@ -6702,14 +7074,14 @@ if (age &lt; 12) {
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-Q9",
-            "question": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Avec A = VRAI, B = VRAI et C = FAUX, que vaut A OU B ET C ? Et (A OU B) ET C ?",
-            "attendu": "A OU B ET C : le ET d’abord, même s’il vient après, VRAI ET FAUX donne FAUX, puis VRAI OU FAUX donne VRAI. (A OU B) ET C : les parenthèses d’abord, VRAI OU VRAI donne VRAI, puis VRAI ET FAUX donne FAUX. Lire le premier comme le second, c’est l’erreur E2. Déduit de l’étape 6.",
+            "id": "B02-Q26",
+            "question": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. A vaut FAUX, B vaut FAUX et C vaut VRAI. Que vaut A ET B OU C ? Et A ET (B OU C) ?",
+            "attendu": "A ET B OU C : le ET d’abord, FAUX ET FAUX donne FAUX, puis FAUX OU VRAI donne VRAI. A ET (B OU C) : les parenthèses d’abord, FAUX OU VRAI donne VRAI, puis FAUX ET VRAI donne FAUX. Lire le premier comme le second, c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
           {
-            "id": "B02-Q23",
-            "question": "Voici une chaîne : SI stock = 0 : afficher « épuisé » ; SINON SI stock < 5 : afficher « presque épuisé » ; SINON : afficher « en stock ». Ici, = compare : stock = 0 veut dire « stock est égal à 0 », et < veut dire « strictement plus petit que ». Avec stock = 0, qu’affiche-t-elle ? La ligne SINON SI stock < 5 est-elle testée ?",
+            "id": "B02-Q28",
+            "question": "Voici la chaîne d’un magasin : SI stock = 0 : afficher « épuisé » ; SINON SI stock < 5 : afficher « presque épuisé » ; SINON : afficher « en stock ». < veut dire « strictement plus petit que ». Le magasin n’a plus aucun article : qu’affiche la chaîne ? La ligne SINON SI stock < 5 est-elle testée ?",
             "attendu": "Elle affiche « épuisé », et seulement ça : 0 = 0 est VRAI à la première ligne, et la chaîne s’arrête à la première condition VRAIE. La ligne SINON SI stock < 5 n’est pas testée, même si 0 < 5 serait VRAI ; afficher aussi « presque épuisé », c’est l’erreur E3. Déduit de l’étape 8.",
             "erreurs": ["E3"]
           },
@@ -6720,8 +7092,8 @@ if (age &lt; 12) {
             "erreurs": ["E4"]
           },
           {
-            "id": "B02-Q17",
-            "question": "< veut dire « strictement plus petit que », ≤ veut dire « plus petit ou égal à ». Avec note = 10, que valent note < 10 et note ≤ 10 ?",
+            "id": "B02-Q27",
+            "question": "< veut dire « strictement plus petit que », ≤ veut dire « plus petit ou égal à ». Une élève a eu 10 sur 20 à son contrôle. Pour sa note, que valent note < 10 et note ≤ 10 ?",
             "attendu": "note < 10 est FAUX : < est strict, et 10 n’est pas plus petit que 10. note ≤ 10 est VRAI. Quand les deux nombres sont égaux, seuls ≤, ≥ et = donnent VRAI. Déduit de l’étape 4.",
             "erreurs": []
           },
@@ -6753,10 +7125,10 @@ if (age &lt; 12) {
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-C25",
+            "id": "B02-C27",
             "type": "explication",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Le signe < veut dire « strictement plus petit que ». Avec heure = 20, weekend = FAUX et férié = VRAI, voici deux conditions : « heure < 18 ET (weekend OU férié) » et « heure < 18 ET weekend OU férié ». Calcule les deux conditions, une opération à la fois, puis dis d’où vient ce que tu observes.",
-            "attendu": "Avec les parenthèses : 20 < 18 est FAUX, weekend OU férié donne VRAI, puis FAUX ET VRAI donne FAUX. Sans parenthèses : 20 < 18 est FAUX, FAUX ET FAUX donne FAUX, car ET passe avant OU, puis FAUX OU VRAI donne VRAI. Elles ne donnent pas le même résultat, parce que les parenthèses imposent le OU d’abord ; lire l’une comme l’autre, c’est l’erreur E2. Déduit de l’étape 6.",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Le signe < veut dire « strictement plus petit que ». Une salle de sport est gratuite SI heure < 18 ET (weekend OU férié). Recopiée sans parenthèses, la règle devient heure < 18 ET weekend OU férié. Une cliente arrive à 20 heures, un mardi férié. Calcule les deux conditions pour elle, une opération à la fois, puis dis d’où vient ce que tu observes.",
+            "attendu": "Pour elle, heure vaut 20, weekend FAUX et férié VRAI. Avec les parenthèses : 20 < 18 est FAUX, weekend OU férié donne VRAI, puis FAUX ET VRAI donne FAUX : elle paie. Sans parenthèses : 20 < 18 est FAUX, FAUX ET FAUX donne FAUX, car ET passe avant OU, puis FAUX OU VRAI donne VRAI : elle entrerait gratuitement. Elles ne donnent pas le même résultat, parce que les parenthèses imposent le OU d’abord ; lire l’une comme l’autre, c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
           {
@@ -6781,10 +7153,10 @@ if (age &lt; 12) {
             "erreurs": []
           },
           {
-            "id": "B02-DE29",
+            "id": "B02-DE30",
             "type": "explication",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Voici deux expressions : VRAI OU FAUX ET FAUX et (VRAI OU FAUX) ET FAUX. Calcule les deux expressions, une opération à la fois, puis dis d’où vient ce que tu observes.",
-            "attendu": "Sans parenthèses, ET passe avant OU, selon la priorité des opérateurs, une convention : VRAI OU (FAUX ET FAUX) = VRAI OU FAUX = VRAI. Avec les parenthèses, le OU d’abord : VRAI OU FAUX = VRAI, puis VRAI ET FAUX = FAUX. Les deux résultats ne sont pas les mêmes : l’ordre de calcul change le résultat ; calculer le OU d’abord sans parenthèses, c’est l’erreur E2. Déduit de l’étape 6.",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Voici deux conditions : FAUX ET VRAI OU VRAI et FAUX ET (VRAI OU VRAI). Calcule les deux conditions, une opération à la fois, puis dis d’où vient ce que tu observes.",
+            "attendu": "Sans parenthèses, ET passe avant OU, selon la priorité des opérateurs, une convention : (FAUX ET VRAI) OU VRAI = FAUX OU VRAI = VRAI. Avec les parenthèses, le OU d’abord : VRAI OU VRAI = VRAI, puis FAUX ET VRAI = FAUX. Les deux résultats ne sont pas les mêmes : l’ordre de calcul change le résultat ; calculer le OU d’abord sans parenthèses, c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
           {
@@ -6833,10 +7205,10 @@ if (age &lt; 12) {
             "erreurs": []
           },
           {
-            "id": "B02-DT27",
+            "id": "B02-DT31",
             "type": "transfert",
             "forme": "trouver_erreur",
-            "consigne": "En JavaScript : SI s’écrit if, SINON SI else if, SINON else, afficher console.log, et < garde son signe ; < veut dire « strictement plus petit que ». Ce code doit afficher « enfant » avant 12 ans, « ado » de 12 à 17 ans et « adulte » ensuite : if (age < 18) { console.log('ado') } else if (age < 12) { console.log('enfant') } else { console.log('adulte') }. Qu’affiche-t-il pour age = 8 ? Corrige-le.",
+            "consigne": "En JavaScript : SI s’écrit if, SINON SI else if, SINON else, afficher console.log, et < garde son signe ; < veut dire « strictement plus petit que ». Ce code doit afficher « enfant » avant 12 ans, « ado » de 12 à 17 ans et « adulte » ensuite : if (age < 18) { console.log('ado') } else if (age < 12) { console.log('enfant') } else { console.log('adulte') }. Qu’affiche-t-il pour un enfant de 8 ans ? Corrige-le.",
             "attendu": "« ado » : 8 < 18 est VRAI dès la première ligne, et la chaîne en sort sans atteindre « enfant ». La plus exigeante d’abord : if (age < 12) { console.log('enfant') } else if (age < 18) { console.log('ado') } else { console.log('adulte') } ; croire que « enfant » s’affiche aussi, c’est l’erreur E3. Déduit des étapes 8 et 9.",
             "erreurs": ["E3"]
           },
@@ -6928,9 +7300,9 @@ if (age &lt; 12) {
             "verso": "FAUX seulement si les deux sont FAUX. FAUX OU FAUX : FAUX ; FAUX OU VRAI : VRAI ; VRAI OU FAUX : VRAI ; VRAI OU VRAI : VRAI, le OU est inclusif. D’après « NON, ET, OU »."
           },
           {
-            "id": "B02-K15",
-            "recto": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Avec A = VRAI, B = FAUX et C = FAUX, que vaut A OU B ET C ?",
-            "verso": "VRAI. B ET C d’abord, car ET passe avant OU : FAUX ET FAUX donne FAUX. Puis VRAI OU FAUX donne VRAI. Calculer le OU d’abord, (VRAI OU FAUX) ET FAUX, donnerait FAUX. Déduit de « L’ordre de calcul »."
+            "id": "B02-K27",
+            "recto": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. A vaut VRAI, B vaut VRAI et C vaut FAUX : que vaut A OU B ET C ?",
+            "verso": "VRAI. B ET C d’abord, car ET passe avant OU : VRAI ET FAUX donne FAUX. Puis VRAI OU FAUX donne VRAI. Calculer le OU d’abord, (VRAI OU VRAI) ET FAUX, donnerait FAUX. Déduit de « L’ordre de calcul »."
           },
           {
             "id": "B02-K23",
@@ -6960,7 +7332,7 @@ if (age &lt; 12) {
           {
             "id": "B02-K17",
             "recto": "Que fait la console du navigateur quand tu y tapes une ligne de JavaScript, puis Entrée ?",
-            "verso": "Elle exécute la ligne aussitôt et répond par sa valeur : 2 + 3 donne 5, 18 >= 18 donne true ; une ligne qui range une valeur, comme let age = 16, répond undefined. D’après « Dans la console »."
+            "verso": "Elle exécute la ligne aussitôt et répond par sa valeur : 26 < 26 donne false, 65 >= 65 donne true ; une ligne qui range une valeur, comme let age = 23, répond undefined. D’après « Dans la console »."
           }
         ]
       }
@@ -6982,7 +7354,7 @@ if (age &lt; 12) {
             "notion": "Dire qu’une condition vaut VRAI ou FAUX, une valeur booléenne (1 ou 0, true ou false), et qu’une comparaison entre deux nombres en donne une, y compris à la valeur limite (18 ≥ 18 est VRAI, 18 > 18 est FAUX)",
             "montree": ["ET4"],
             "pratiquee": ["PR1"],
-            "questions": ["B02-Q17", "B02-K1", "B02-K19"]
+            "questions": ["B02-Q27", "B02-K1", "B02-K19"]
           },
           {
             "id": "N2",
@@ -6996,7 +7368,7 @@ if (age &lt; 12) {
             "notion": "Évaluer une condition avec comparaisons et parenthèses, une opération à la fois, en justifiant chaque étape par l’ordre de calcul : parenthèses, comparaisons, NON, ET, OU",
             "montree": ["ET6"],
             "pratiquee": ["PR1"],
-            "questions": ["B02-R29", "B02-C25", "B02-Q9", "B02-DE29", "B02-K15"]
+            "questions": ["B02-R39", "B02-C27", "B02-Q26", "B02-DE30", "B02-K27"]
           },
           {
             "id": "N4",
@@ -7018,14 +7390,14 @@ if (age &lt; 12) {
             "notion": "Dire que dans une chaîne SI / SINON SI / SINON, les conditions sont testées dans l’ordre et que seule la branche de la première VRAIE s’exécute, et tracer la chaîne pour un cas",
             "montree": ["ET8"],
             "pratiquee": ["PR1", "PR2"],
-            "questions": ["B02-R34", "B02-Q23", "B02-K26"]
+            "questions": ["B02-R34", "B02-Q28", "B02-K26"]
           },
           {
             "id": "N6",
             "notion": "Écrire une chaîne à quatre branches bien ordonnée, la plus exigeante d’abord, et choisir ses valeurs limites pour la tester",
             "montree": ["ET8"],
             "pratiquee": ["PR2"],
-            "questions": ["B02-R38", "B02-C26", "B02-DE24", "B02-DT26", "B02-DT27", "B02-K20"]
+            "questions": ["B02-R38", "B02-C26", "B02-DE24", "B02-DT26", "B02-DT31", "B02-K20"]
           },
           {
             "id": "N7",
@@ -7051,7 +7423,7 @@ if (age &lt; 12) {
             "vers": "N3",
             "type": "composition",
             "montree": "ET6",
-            "questions": ["B02-R29", "B02-C25"]
+            "questions": ["B02-R39", "B02-C27"]
           },
           {
             "id": "L2",
@@ -7059,7 +7431,7 @@ if (age &lt; 12) {
             "vers": "N3",
             "type": "composition",
             "montree": "ET6",
-            "questions": ["B02-DE29", "B02-Q9"]
+            "questions": ["B02-DE30", "B02-Q26"]
           },
           {
             "id": "L3",
@@ -7075,7 +7447,7 @@ if (age &lt; 12) {
             "vers": "N5",
             "type": "condition",
             "montree": "ET8",
-            "questions": ["B02-R34", "B02-Q23"]
+            "questions": ["B02-R34", "B02-Q28"]
           },
           {
             "id": "L5",
@@ -7083,7 +7455,7 @@ if (age &lt; 12) {
             "vers": "N6",
             "type": "cause",
             "montree": "ET8",
-            "questions": ["B02-DE24", "B02-C26", "B02-DT27"]
+            "questions": ["B02-DE24", "B02-C26", "B02-DT31"]
           },
           {
             "id": "L6",
@@ -7091,7 +7463,7 @@ if (age &lt; 12) {
             "vers": "N7",
             "type": "equivalence",
             "montree": "ET9",
-            "questions": ["B02-R36", "B02-DT27"]
+            "questions": ["B02-R36", "B02-DT31"]
           },
           {
             "id": "L7",
@@ -7117,7 +7489,7 @@ if (age &lt; 12) {
         },
         "hors_objectif": [
           "L’opérateur OU exclusif lui-même, comme xor en PHP : la fiche écrit le ou exclusif avec ET, OU et NON (étape 7) et nomme l’opérateur dans « À explorer plus tard » (étape 12), jamais interrogé",
-          "Les lois de De Morgan : dans « À explorer plus tard » (étape 12), jamais interrogées ; l’exercice « ni badge ni code » de l’étape 7 se résout par la traduction de « ni… ni », sans elles",
+          "Les lois de De Morgan : dans « À explorer plus tard » (étape 12), jamais interrogées ; l’exercice « ni billet ni abonnement » de l’étape 7 se résout par la traduction de « ni… ni », sans elles",
           "Le SI imbriqué : nommé dans « À explorer plus tard » (étape 12), jamais interrogé",
           "== et les autres conversions (textes, valeurs vides) ; seule la règle « un nombre autre que 0 compte comme VRAI, 0 comme FAUX » sert, redonnée avec chaque question",
           "switch et l’écriture courte condition ? a : b : dans « À explorer plus tard », jamais interrogés",
@@ -9439,10 +9811,12 @@ if (age &lt; 12) {
           return vals
         }
         const ecrireValeur = (v) => (typeof v === 'boolean' ? VF(v) : nombre(v))
-        const texteValeurs = (vals) =>
-          Object.entries(vals)
-            .map(([k, v]) => k + ' = ' + ecrireValeur(v))
-            .join(', ')
+        // Les valeurs d'un cas, en mots : « âge vaut 8 et résident vaut FAUX ». En pseudo-code, le
+        // signe = ne fait que comparer : il ne sert jamais à donner une valeur.
+        const texteValeurs = (vals) => {
+          const t = Object.entries(vals).map(([k, v]) => k + ' vaut ' + ecrireValeur(v))
+          return t.length > 1 ? t.slice(0, -1).join(', ') + ' et ' + t[t.length - 1] : t.join('')
+        }
         /** Un client du guichet dit en mots (« 25 ans, pas étudiant, un samedi »), ou null. */
         const MOTS = {
           âge: (v) => nombre(v) + ' ans',
@@ -10215,7 +10589,7 @@ if (age &lt; 12) {
               })
               lignes.push({ vals, attendu: evaluer(racine, vals), dit: null, boutons: [] })
             }
-            const decrire = (L) => noms.map((f) => f + ' = ' + VF(L.vals[f])).join(', ')
+            const decrire = (L) => texteValeurs(L.vals)
             const peindreLigne = (L) =>
               L.boutons.forEach((b, i) =>
                 b.setAttribute('aria-pressed', String(L.dit === (i === 0))),
@@ -10269,7 +10643,7 @@ if (age &lt; 12) {
               racine.g.t === 'var' &&
               racine.d.t === 'var'
             function diagLigne(L) {
-              const debut = 'Regarde la ligne ' + decrire(L) + ' : '
+              const debut = 'Regarde la ligne où ' + decrire(L) + ' : '
               if (simple && racine.t === 'ou' && L.vals[racine.g.nom] && L.vals[racine.d.nom])
                 return debut + 'le OU de la logique accepte les deux à la fois.'
               if (simple && racine.t === 'ou')
@@ -10315,7 +10689,7 @@ if (age &lt; 12) {
                 },
                 () => {
                   const L = lignes.find((x) => x.dit !== x.attendu) ?? lignes[0]
-                  return 'Ligne ' + decrire(L) + ' : ' + resume(derouler(racine, L.vals).pas) + '.'
+                  return 'Quand ' + decrire(L) + ' : ' + resume(derouler(racine, L.vals).pas) + '.'
                 },
               ],
             }
@@ -10379,10 +10753,10 @@ if (age &lt; 12) {
             // Les valeurs du cas, sauf si la question les dit déjà toutes.
             const enonce = ($(':scope > .q', ex)?.textContent ?? '').replace(/\s+/g, ' ')
             const dites = Object.entries(vals).every(([k, v]) =>
-              enonce.includes(k + ' = ' + ecrireValeur(v)),
+              enonce.includes(k + ' vaut ' + ecrireValeur(v)),
             )
             if (!dites && !('enMots' in d))
-              ex.append(el('p', { class: 'discret', text: 'Avec ' + texteValeurs(vals) + '.' }))
+              ex.append(el('p', { class: 'discret', text: 'Ici, ' + texteValeurs(vals) + '.' }))
             ex.append(ligne, choixValeur, historique)
             let choisi = null
             let jetonsVus = []
@@ -10531,12 +10905,12 @@ if (age &lt; 12) {
                   if (!n) return 'Tout est calculé.'
                   const donnees = (n.t === 'cmp' ? [n.g, n.d] : operandes(n))
                     .filter((o) => o.t === 'var')
-                    .map((o) => o.nom + ' = ' + ecrireValeur(vals[o.nom]))
+                    .map((o) => o.nom + ' vaut ' + ecrireValeur(vals[o.nom]))
                   return (
                     'L’opération à calculer maintenant : « ' +
                     texte(n) +
                     ' »' +
-                    (donnees.length ? ', avec ' + donnees.join(' et ') : '') +
+                    (donnees.length ? ', où ' + donnees.join(' et ') : '') +
                     '. Que donne-t-elle ?'
                   )
                 },
@@ -10555,7 +10929,7 @@ if (age &lt; 12) {
                   d.autreEnonce ??
                     'Calcule ' +
                       d.autreExpr +
-                      ' avec ' +
+                      ', où ' +
                       texteValeurs(lireValeurs(d.autreValeurs)) +
                       ', une opération à la fois.',
                 )
@@ -10926,7 +11300,7 @@ if (age &lt; 12) {
                   return (
                     'La plus exigeante ici : « ' +
                     bonOrdre()[0].cond +
-                    ' ». Puis teste ton ordre avec ' +
+                    ' ». Puis teste ton ordre quand ' +
                     texteValeurs(x.vals) +
                     ' : la chaîne doit afficher « ' +
                     x.attendu +
@@ -10943,9 +11317,9 @@ if (age &lt; 12) {
                 return repondre(ex, c, { ok: true, v, m: 'Juste : la plus exigeante d’abord.' })
               const r = sortieAvec(ordre, x.vals)
               const m =
-                'Avec ton ordre, ' +
+                'Avec ton ordre, quand ' +
                 texteValeurs(x.vals) +
-                ' donne « ' +
+                ', la chaîne donne « ' +
                 r.sortie +
                 ' » au lieu de « ' +
                 x.attendu +
@@ -10971,16 +11345,19 @@ if (age &lt; 12) {
               if (sortie(x) !== sortie(x - 1)) seuils.push(x)
             const limite = (x) => sortie(x) !== sortie(x - 1) || sortie(x) !== sortie(x + 1)
             const attendus = candidats.filter(limite)
-            const choisis = new Set()
+            // À compléter : les valeurs de data-fait sont déjà touchées, et ne se détouchent pas.
+            const faits = new Set(d.fait ? d.fait.split('|').map(Number) : [])
+            const choisis = new Set(faits)
             const boutons = candidats.map((x) => {
               const b = el('button', {
                 type: 'button',
                 class: 'bouton secondaire petit',
-                'aria-pressed': 'false',
+                'aria-pressed': String(faits.has(x)),
                 text: nombre(x),
               })
+              if (faits.has(x)) b.disabled = true
               b.addEventListener('click', () => {
-                if (fini(ex)) return
+                if (fini(ex) || faits.has(x)) return
                 if (choisis.has(x)) choisis.delete(x)
                 else choisis.add(x)
                 b.setAttribute('aria-pressed', String(choisis.has(x)))
@@ -11013,6 +11390,7 @@ if (age &lt; 12) {
                 ' : à chaque seuil, la dernière valeur avant le changement et la première après',
               remplir(etat, v) {
                 choisis.clear()
+                faits.forEach((x) => choisis.add(x))
                 const liste = etat !== 'vu' && v ? String(v).split('|').map(Number) : attendus
                 liste.forEach((x) => choisis.add(x))
                 peindre()
@@ -11041,7 +11419,7 @@ if (age &lt; 12) {
             }
             bouton.addEventListener('click', () => {
               if (fini(ex)) return
-              if (!choisis.size)
+              if (choisis.size === faits.size)
                 return void dire(ex, '', 'Touche les valeurs limites, puis vérifie.')
               const v = [...choisis].sort((a, b) => a - b).join('|')
               const enTrop = candidats.filter((x) => choisis.has(x) && !limite(x))
@@ -11233,7 +11611,7 @@ if (age &lt; 12) {
             function bilan(r) {
               if (!Array.isArray(r)) return messageErreur(r.erreur)
               for (const R of r) {
-                const avec = 'Avec ' + texteValeurs(R.x.vals)
+                const avec = 'Quand ' + texteValeurs(R.x.vals)
                 if (R.erreur) return avec + ' : ' + messageErreur(R.erreur)
                 if (R.sortie.length === 0)
                   return (
