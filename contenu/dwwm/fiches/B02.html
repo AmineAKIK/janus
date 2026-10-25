@@ -2104,9 +2104,11 @@
         « plus grand ou égal à ».
       </p>
       <p class="discret">
-        Les lignes sont numérotées de haut en bas. Une ligne, c’est une condition et ce qu’elle
-        affiche : la ligne 1 est SI âge &lt; 12, la ligne 2 SINON SI étudiant OU âge &lt; 26, la
-        ligne 3 SINON SI âge ≥ 65, et la ligne 4, SINON, prend tous les autres cas.
+        Les lignes sont numérotées de haut en bas. Une ligne, c’est une condition, une question à
+        laquelle on répond oui ou non, et ce qu’elle affiche : la ligne 1 est SI âge &lt; 12, la
+        ligne 2 SINON SI étudiant OU âge &lt; 26, la ligne 3 SINON SI âge ≥ 65, et la ligne 4,
+        SINON, prend tous les autres cas. Dans la ligne 2, on fait d’abord la comparaison âge &lt;
+        26, puis le OU.
       </p>
       <p>Fais passer les clients au guichet, un par un, et regarde ce qui s’allume.</p>
       <div class="outil" data-widget="guichet"></div>
@@ -2315,7 +2317,8 @@
           data-explication="Le thermostat affiche « tiède » : 30 ≥ 15 est déjà vrai à la première ligne, et il s’arrête là. La ligne « chaud » n’est jamais atteinte. L’étape « Une seule branche » dit pourquoi, et comment le corriger."
         >
           <p class="q">
-            Un thermostat suit ces lignes, de haut en bas. Il fait 30 °C. Qu’affiche-t-il ?
+            Un thermostat suit ces lignes, de haut en bas. Il fait 30 °C. Le signe ≥ veut dire
+            « plus grand ou égal à ». Qu’affiche-t-il ?
           </p>
           <pre
             class="pseudo"
@@ -2406,7 +2409,7 @@
         </p>
         <div
           class="schema-bloc"
-          data-lecture="Le schéma du bloc, en quatre marches. Les données, par exemple âge égale 23 et étudiant FAUX, sont comparées et donnent des faits, VRAI ou FAUX : étudiant, FAUX ; 23 plus petit que 12, FAUX ; 23 plus petit que 26, VRAI. Les faits sont combinés par NON, ET, OU, dans un ordre fixé, que tu verras, et donnent des conditions, une par ligne de la chaîne, chacune une seule valeur : ligne 1, âge plus petit que 12, FAUX ; ligne 2, étudiant OU âge plus petit que 26, VRAI. De haut en bas, la première condition VRAIE choisit une seule branche : afficher 7 euros."
+          data-lecture="Le schéma du bloc, en quatre marches. Les données, par exemple âge égale 23 et étudiant FAUX, sont comparées et donnent des faits, VRAI ou FAUX : étudiant, FAUX ; 23 plus petit que 12, FAUX ; 23 plus petit que 26, VRAI. Les faits sont combinés par NON, ET, OU, dans un ordre fixé, que tu verras, et donnent des conditions, une par ligne de la chaîne, chacune une seule valeur : lignes numérotées de haut en bas : ligne 1, âge plus petit que 12, FAUX ; ligne 2, étudiant OU âge plus petit que 26, VRAI. De haut en bas, la première condition VRAIE choisit une seule branche : afficher 7 euros."
         >
           <span class="boite-fixe">Les données<small>âge = 23, étudiant = FAUX</small></span
           ><span class="fleche">comparées, donnent →</span
@@ -2417,7 +2420,8 @@
           ><span class="fleche">combinés par NON, ET, OU, dans un ordre fixé, que tu verras →</span
           ><span class="boite-fixe"
             >Des conditions, une valeur chacune<small
-              >ligne 1, âge &lt; 12 : FAUX ; ligne 2, étudiant OU âge &lt; 26 : VRAI</small
+              >lignes numérotées de haut en bas : ligne 1, âge &lt; 12 : FAUX ; ligne 2, étudiant OU
+              âge &lt; 26 : VRAI</small
             ></span
           ><span class="fleche">de haut en bas, la première VRAIE choisit →</span
           ><span class="boite-fixe">Une seule branche<small>afficher « 7 € »</small></span>
@@ -2442,7 +2446,8 @@
           ><span class="fleche">combinés par NON, ET, OU, dans un ordre fixé, que tu verras →</span
           ><span class="boite-fixe eteinte"
             >Des conditions, une valeur chacune<small
-              >ligne 1, âge &lt; 12 : FAUX ; ligne 2, étudiant OU âge &lt; 26 : VRAI</small
+              >lignes numérotées de haut en bas : ligne 1, âge &lt; 12 : FAUX ; ligne 2, étudiant OU
+              âge &lt; 26 : VRAI</small
             ></span
           ><span class="fleche">de haut en bas, la première VRAIE choisit →</span
           ><span class="boite-fixe eteinte">Une seule branche<small>afficher « 7 € »</small></span>
@@ -2652,13 +2657,15 @@
           ><span class="fleche">combinés par NON, ET, OU, dans un ordre fixé, que tu verras →</span
           ><span class="boite-fixe"
             >Des conditions, une valeur chacune<small
-              >ligne 1, âge &lt; 12 : FAUX ; ligne 2, étudiant OU âge &lt; 26 : VRAI</small
+              >lignes numérotées de haut en bas : ligne 1, âge &lt; 12 : FAUX ; ligne 2, étudiant OU
+              âge &lt; 26 : VRAI</small
             ></span
           ><span class="fleche">de haut en bas, la première VRAIE choisit →</span
           ><span class="boite-fixe eteinte">Une seule branche<small>afficher « 7 € »</small></span>
         </div>
         <p class="accroche">
-          Les conditions se combinent avec trois opérateurs : NON, ET, OU. On les appelle des
+          Les faits se combinent en conditions avec trois opérateurs : NON, ET, OU. On les appelle
+          des
           <strong>opérateurs logiques</strong>. Le plus simple, NON, inverse une valeur.
         </p>
         <div
@@ -2946,7 +2953,8 @@
           ><span class="fleche">combinés par NON, ET, OU, dans l’ordre de calcul →</span
           ><span class="boite-fixe"
             >Des conditions, une valeur chacune<small
-              >ligne 1, âge &lt; 12 : FAUX ; ligne 2, étudiant OU âge &lt; 26 : VRAI</small
+              >lignes numérotées de haut en bas : ligne 1, âge &lt; 12 : FAUX ; ligne 2, étudiant OU
+              âge &lt; 26 : VRAI</small
             ></span
           ><span class="fleche">de haut en bas, la première VRAIE choisit →</span
           ><span class="boite-fixe eteinte">Une seule branche<small>afficher « 7 € »</small></span>
@@ -3682,7 +3690,8 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
           ><span class="fleche">combinés par NON, ET, OU, dans l’ordre de calcul →</span
           ><span class="boite-fixe"
             >Des conditions, une valeur chacune<small
-              >ligne 1, âge &lt; 12 : FAUX ; ligne 2, étudiant OU âge &lt; 26 : VRAI</small
+              >lignes numérotées de haut en bas : ligne 1, âge &lt; 12 : FAUX ; ligne 2, étudiant OU
+              âge &lt; 26 : VRAI</small
             ></span
           ><span class="fleche">de haut en bas, la première VRAIE choisit →</span
           ><span class="boite-fixe">Une seule branche<small>afficher « 7 € »</small></span>
@@ -3792,7 +3801,9 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
         <p class="discret">
           Une ligne, c’est une condition et ce qu’elle affiche : la ligne 1 est SI âge &lt; 12, la
           ligne 2 SINON SI étudiant OU âge &lt; 26, la ligne 3 SINON SI âge ≥ 65 ; la ligne 4,
-          SINON, n’a pas de condition.
+          SINON, n’a pas de condition. Le signe &lt; veut dire « strictement plus petit que », ≥
+          « plus grand ou égal à ». Dans la ligne 2, on fait d’abord la comparaison âge &lt; 26,
+          puis le OU.
         </p>
         <p>
           Pour chacun des deux clients, choisis la première ligne VRAIE : sa trace s’affiche
@@ -3921,8 +3932,9 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
         <p class="discret">
           Une ligne, c’est une condition et ce qu’elle affiche : la ligne 1 est SI âge &lt; 12, la
           ligne 2 SINON SI étudiant OU âge &lt; 26, la ligne 3 SINON SI âge ≥ 65 ; la ligne 4,
-          SINON, n’a pas de condition. Une ligne qui suit la première VRAIE est « pas testée ». Le
-          signe &lt; veut dire « strictement plus petit que », ≥ « plus grand ou égal à ».
+          SINON, n’a pas de condition. Dans la ligne 2, on fait d’abord la comparaison âge &lt; 26,
+          puis le OU. Une ligne qui suit la première VRAIE est « pas testée ». Le signe &lt; veut
+          dire « strictement plus petit que », ≥ « plus grand ou égal à ».
         </p>
         <div
           class="ex"
@@ -3966,8 +3978,8 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
           data-prediction
         >
           <p class="q">
-            Quelle ligne faut-il tester en premier pour que le thermostat affiche « chaud » par 30
-            °C ?
+            Le signe ≥ veut dire « plus grand ou égal à ». Quelle ligne faut-il tester en premier
+            pour que le thermostat affiche « chaud » par 30 °C ?
           </p>
           <ul class="options">
             <li data-option="chaud">température ≥ 25 : afficher « chaud »</li>
@@ -4053,7 +4065,7 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
           data-sinon-ligne="rien"
           data-cas="score=950 =&gt; or | score=900 =&gt; or | score=700 =&gt; argent | score=600 =&gt; argent | score=400 =&gt; bronze | score=300 =&gt; bronze | score=299 =&gt; rien"
           data-reponse="c,b,a"
-          data-variante-enonce="Un forfait classe ta consommation de données : « faible » sous 5 Go, « moyenne » à partir de 5, « forte » à partir de 20, « énorme » à partir de 100. Remets les lignes dans le bon ordre avec les flèches."
+          data-variante-enonce="Un forfait classe ta consommation de données : « faible » sous 5 Go, « moyenne » à partir de 5, « forte » à partir de 20, « énorme » à partir de 100. Le signe ≥ veut dire « plus grand ou égal à ». Remets les lignes dans le bon ordre avec les flèches."
           data-variante-reponse="b,c,a"
           data-variante-lignes="a : go ≥ 5 =&gt; moyenne | b : go ≥ 100 =&gt; énorme | c : go ≥ 20 =&gt; forte"
           data-variante-sinon-ligne="faible"
@@ -5003,6 +5015,11 @@ if (age &lt; 12) {
 <span class="l br" data-l="3">  afficher « 8 € »</span>
 <span class="l" data-l="4"><b>SINON</b> :</span>
 <span class="l br" data-l="4">  afficher « 10 € »</span></code></pre>
+        <p class="discret">
+          Les lignes sont numérotées de haut en bas. Le signe &lt; veut dire « strictement plus
+          petit que », ≥ « plus grand ou égal à ». Dans la ligne 2, on fait d’abord la comparaison
+          âge &lt; 26, puis le OU.
+        </p>
         <div
           data-widget="pari"
           data-cle="pari-fin"
@@ -5082,6 +5099,11 @@ if (age &lt; 12) {
 <span class="l br" data-l="3">  afficher « 8 € »</span>
 <span class="l" data-l="4"><b>SINON</b> :</span>
 <span class="l br" data-l="4">  afficher « 10 € »</span></code></pre>
+        <p class="discret">
+          Les lignes sont numérotées de haut en bas : une ligne, c’est une condition et ce qu’elle
+          affiche. Le signe &lt; veut dire « strictement plus petit que », ≥ « plus grand ou égal
+          à ». Dans la ligne 2, on fait d’abord la comparaison âge &lt; 26, puis le OU.
+        </p>
         <div class="ex" data-widget="choix" data-id="f3" data-reponse="ordre">
           <p class="q">
             Le cinéma veut que les 65 ans et plus paient 8 €, même s’ils sont étudiants. Que faut-il
@@ -5531,7 +5553,8 @@ if (age &lt; 12) {
 <span class="l br" data-l="4">  afficher « 5 € »</span></code></pre>
         <p class="discret">
           Les lignes sont numérotées de haut en bas : une ligne, c’est une condition et ce qu’elle
-          affiche. Pour une ligne que la chaîne ne teste pas, choisis « pas testée ».
+          affiche. Dans la ligne 2, on fait d’abord la comparaison âge &lt; 18, puis le OU. Pour une
+          ligne que la chaîne ne teste pas, choisis « pas testée ».
         </p>
       </div>
     </template>
@@ -5561,7 +5584,8 @@ if (age &lt; 12) {
 <span class="l br" data-l="4">  afficher « 5 € »</span></code></pre>
         <p class="discret">
           Les lignes sont numérotées de haut en bas : une ligne, c’est une condition et ce qu’elle
-          affiche. Pour une ligne que la chaîne ne teste pas, choisis « pas testée ».
+          affiche. Dans la ligne 2, on fait d’abord la comparaison âge &lt; 18, puis le OU. Pour une
+          ligne que la chaîne ne teste pas, choisis « pas testée ».
         </p>
       </div>
     </template>
@@ -5651,7 +5675,7 @@ if (age &lt; 12) {
     </template>
     <template data-item="PR1-8">
       <div
-        data-aide1="En JavaScript, que fait le signe = seul : il range, ou il compare ? Que vaut alors ce qui est entre les parenthèses du if ?"
+        data-aide1="Que contient la variable juste après le signe = ? Que vaut alors ce qui est entre les parenthèses du if ?"
         class="ex"
         data-widget="choix"
         data-verifie
@@ -5661,14 +5685,17 @@ if (age &lt; 12) {
         <p class="q">
           Ce code doit afficher « ouvert » seulement avec le code 1234. Il affiche « ouvert » même
           quand code vaut 0. Pourquoi ? En JavaScript, if (c) { … } veut dire SI c, console.log
-          affiche ce qui est entre ses parenthèses, === compare, &amp;&amp; est le ET, et un if
-          accepte un nombre à la place d’une condition : tout nombre autre que 0 compte comme VRAI.
+          affiche ce qui est entre ses parenthèses, = range une valeur, === compare, &amp;&amp; est
+          le ET, et un if accepte un nombre à la place d’une condition : tout nombre autre que 0
+          compte comme VRAI.
         </p>
         <pre><code>if (code = 1234) {
   console.log('ouvert')
 }</code></pre>
         <ul class="options">
-          <li data-option="affecte">= range 1234 dans code au lieu de le comparer à 1234.</li>
+          <li data-option="affecte">
+            Le if teste la valeur que code vient de recevoir, 1234, et non une égalité.
+          </li>
           <li
             data-option="et"
             data-erreur="E4"
@@ -5688,7 +5715,7 @@ if (age &lt; 12) {
     </template>
     <template data-variante="PR1-8">
       <div
-        data-aide1="En JavaScript, que fait le signe = seul : il range, ou il compare ? Que vaut alors ce qui est entre les parenthèses du if ?"
+        data-aide1="Que contient la variable juste après le signe = ? Que vaut alors ce qui est entre les parenthèses du if ?"
         class="ex"
         data-widget="choix"
         data-verifie
@@ -5698,9 +5725,9 @@ if (age &lt; 12) {
         <p class="q">
           Ce code doit afficher « épuisé » quand il ne reste aucun article, et « en stock » sinon.
           Il affiche « en stock » même quand stock vaut 0. Pourquoi ? En JavaScript, if (c) { … }
-          veut dire SI c, else { … } SINON, console.log affiche ce qui est entre ses parenthèses,
-          === compare, &amp;&amp; est le ET, et un if accepte un nombre à la place d’une condition :
-          tout nombre autre que 0 compte comme VRAI, et 0 compte comme FAUX.
+          veut dire SI c, else { … } SINON, console.log affiche ce qui est entre ses parenthèses, =
+          range une valeur, === compare, &amp;&amp; est le ET, et un if accepte un nombre à la place
+          d’une condition : tout nombre autre que 0 compte comme VRAI, et 0 compte comme FAUX.
         </p>
         <pre><code>if (stock = 0) {
   console.log('épuisé')
@@ -5709,7 +5736,7 @@ if (age &lt; 12) {
 }</code></pre>
         <ul class="options">
           <li data-option="affecte">
-            = range 0 dans stock au lieu de le comparer à 0, et 0 compte comme FAUX.
+            Le if teste la valeur que stock vient de recevoir, 0, et non une égalité.
           </li>
           <li
             data-option="et"
@@ -5742,7 +5769,10 @@ if (age &lt; 12) {
           partir de 120 minutes de retard, « très en retard » avec moins de 120, « en retard » avec
           moins de 30, « à l’heure » avec moins de 5. Les retards sont des nombres entiers.
         </p>
-        <p class="q">Remets les lignes de sa chaîne dans le bon ordre avec les flèches.</p>
+        <p class="q">
+          Le signe &lt; veut dire « strictement plus petit que ». Remets les lignes de sa chaîne
+          dans le bon ordre avec les flèches.
+        </p>
         <ol class="lignes-ordre">
           <li data-ligne="a" data-cond="retard &lt; 30" data-sortie="en retard">
             retard &lt; 30 : afficher « en retard »
@@ -5770,7 +5800,10 @@ if (age &lt; 12) {
           partir de 3000, « lent » sous 3000, « correct » sous 1000, « rapide » sous 100. Les temps
           sont des nombres entiers.
         </p>
-        <p class="q">Remets les lignes de sa chaîne dans le bon ordre avec les flèches.</p>
+        <p class="q">
+          Le signe &lt; veut dire « strictement plus petit que ». Remets les lignes de sa chaîne
+          dans le bon ordre avec les flèches.
+        </p>
         <ol class="lignes-ordre">
           <li data-ligne="a" data-cond="temps &lt; 3000" data-sortie="lent">
             temps &lt; 3000 : afficher « lent »
@@ -5796,7 +5829,7 @@ if (age &lt; 12) {
         <p class="cas">
           Un site marchand donne un niveau de fidélité selon les points du client : « aucun » sous
           100 points, « bronze » à partir de 100, « argent » à partir de 500, « or » à partir de
-          1000. Les points sont des nombres entiers.
+          1000. Les points sont des nombres entiers. Le signe ≥ veut dire « plus grand ou égal à ».
         </p>
         <pre
           class="pseudo"
@@ -5827,7 +5860,7 @@ if (age &lt; 12) {
         <p class="cas">
           Un jeu donne un rang selon le score : « nouveau » sous 50, « débutant » à partir de 50,
           « confirmé » à partir de 400, « expert » à partir de 800. Les scores sont des nombres
-          entiers.
+          entiers. Le signe ≥ veut dire « plus grand ou égal à ».
         </p>
         <pre
           class="pseudo"
@@ -5857,7 +5890,7 @@ if (age &lt; 12) {
         <p class="cas">
           Un site marchand donne un niveau de fidélité selon les points du client : « aucun » sous
           100 points, « bronze » à partir de 100, « argent » à partir de 500, « or » à partir de
-          1000. Les points sont des nombres entiers.
+          1000. Les points sont des nombres entiers. Le signe ≥ veut dire « plus grand ou égal à ».
         </p>
         <pre
           class="pseudo"
@@ -5888,7 +5921,7 @@ if (age &lt; 12) {
         <p class="cas">
           Un jeu donne un rang selon le score : « nouveau » sous 50, « débutant » à partir de 50,
           « confirmé » à partir de 400, « expert » à partir de 800. Les scores sont des nombres
-          entiers.
+          entiers. Le signe ≥ veut dire « plus grand ou égal à ».
         </p>
         <pre
           class="pseudo"
@@ -5924,7 +5957,7 @@ if (age &lt; 12) {
         <p class="cas">
           Un site marchand donne un niveau de fidélité selon les points du client : « aucun » sous
           100 points, « bronze » à partir de 100, « argent » à partir de 500, « or » à partir de
-          1000. Les points sont des nombres entiers.
+          1000. Les points sont des nombres entiers. Le signe ≥ veut dire « plus grand ou égal à ».
         </p>
         <p class="q">
           Écris sa chaîne en JavaScript, avec la variable points. La page lui donne elle-même chaque
@@ -5952,7 +5985,7 @@ if (age &lt; 12) {
         <p class="cas">
           Un jeu donne un rang selon le score : « nouveau » sous 50, « débutant » à partir de 50,
           « confirmé » à partir de 400, « expert » à partir de 800. Les scores sont des nombres
-          entiers.
+          entiers. Le signe ≥ veut dire « plus grand ou égal à ».
         </p>
         <p class="q">
           Écris sa chaîne en JavaScript, avec la variable score. La page lui donne elle-même chaque
@@ -6597,9 +6630,9 @@ if (age &lt; 12) {
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-C11",
+            "id": "B02-C19",
             "type": "explication",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Avec heure = 20, weekend = FAUX et férié = VRAI, « heure < 18 ET (weekend OU férié) » donne FAUX. Calcule « heure < 18 ET weekend OU férié », une opération à la fois, puis dis pourquoi son résultat n’est pas le même.",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Le signe < veut dire « strictement plus petit que ». Avec heure = 20, weekend = FAUX et férié = VRAI, « heure < 18 ET (weekend OU férié) » donne FAUX. Calcule « heure < 18 ET weekend OU férié », une opération à la fois, puis dis pourquoi son résultat n’est pas le même.",
             "attendu": "20 < 18 est FAUX ; FAUX ET FAUX donne FAUX, car ET passe avant OU ; puis FAUX OU VRAI donne VRAI. Sans parenthèses le ET se calcule d’abord, alors que les parenthèses imposaient le OU d’abord : lire l’une comme l’autre, c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
@@ -6611,9 +6644,9 @@ if (age &lt; 12) {
             "erreurs": ["E3"]
           },
           {
-            "id": "B02-C14",
+            "id": "B02-C18",
             "type": "explication",
-            "consigne": "En JavaScript : SI c s’écrit if (c) { … }, afficher s’écrit console.log, === compare, et un if accepte un nombre à la place d’une condition : tout nombre autre que 0 compte comme VRAI. Dans un jeu, un camarade a écrit if (niveau = 5) { console.log('dernier niveau') }. La console affiche « dernier niveau » dès le niveau 1. Pourquoi ? Corrige la ligne pour qu’elle ne l’affiche qu’au niveau 5.",
+            "consigne": "En JavaScript : SI c s’écrit if (c) { … }, afficher s’écrit console.log, = range une valeur, === compare, et un if accepte un nombre à la place d’une condition : tout nombre autre que 0 compte comme VRAI. Dans un jeu, un camarade a écrit if (niveau = 5) { console.log('dernier niveau') }. La console affiche « dernier niveau » dès le niveau 1. Pourquoi ? Corrige la ligne pour qu’elle ne l’affiche qu’au niveau 5.",
             "attendu": "= range 5 dans niveau au lieu de comparer, et 5 compte comme VRAI : la branche s’exécute quel que soit le niveau de départ. Pour comparer, il faut === : if (niveau === 5) { console.log('dernier niveau') } ; confondre = et ===, c’est l’erreur E4. Déduit de l’étape 9.",
             "erreurs": ["E4"]
           },
@@ -6632,16 +6665,16 @@ if (age &lt; 12) {
             "erreurs": ["E2"]
           },
           {
-            "id": "B02-DE22",
+            "id": "B02-DE24",
             "type": "explication",
-            "consigne": "Un relevé de notes affiche « très bien » à partir de 16, « bien » à partir de 14, « assez bien » à partir de 12. Un camarade écrit : SI note ≥ 12 : afficher « assez bien » ; SINON SI note ≥ 14 : afficher « bien » ; SINON SI note ≥ 16 : afficher « très bien ». Le signe ≥ veut dire « plus grand ou égal à ». Qu’affiche sa chaîne pour 17, et pourquoi ? Corrige-la.",
+            "consigne": "Un relevé de notes affiche « très bien » à partir de 16, « bien » à partir de 14, « assez bien » à partir de 12. Un camarade écrit : SI note ≥ 12 : afficher « assez bien » ; SINON SI note ≥ 14 : afficher « bien » ; SINON SI note ≥ 16 : afficher « très bien ». Le signe ≥ veut dire « plus grand ou égal à ». Qu’affiche sa chaîne pour 17 ? Corrige-la.",
             "attendu": "Pour 17, elle affiche « assez bien » : 17 ≥ 12 est déjà VRAI à la première ligne, et seule la branche de la première condition VRAIE s’exécute (croire que les suivantes s’exécutent aussi, c’est l’erreur E3). Il faut mettre la plus exigeante d’abord, ≥ 16, puis ≥ 14, puis ≥ 12 : chaque ligne sait alors que celles du dessus sont FAUSSES. Déduit de l’étape 8.",
             "erreurs": ["E3"]
           },
           {
-            "id": "B02-DE18",
+            "id": "B02-DE23",
             "type": "explication",
-            "consigne": "En JavaScript, if (c) { … } veut dire SI c, console.log affiche ce qui est entre ses parenthèses, === compare, && est le ET, et un if accepte un nombre à la place d’une condition : tout nombre autre que 0 compte comme VRAI. Pour bloquer un compte au troisième essai, un camarade écrit if (essais = 3) { console.log('bloqué') }. « bloqué » s’affiche dès le premier essai. Explique pourquoi, et corrige ce if.",
+            "consigne": "En JavaScript, if (c) { … } veut dire SI c, console.log affiche ce qui est entre ses parenthèses, = range une valeur, === compare, && est le ET, et un if accepte un nombre à la place d’une condition : tout nombre autre que 0 compte comme VRAI. Pour bloquer un compte au troisième essai, un camarade écrit if (essais = 3) { console.log('bloqué') }. « bloqué » s’affiche dès le premier essai. Explique pourquoi, et corrige ce if.",
             "attendu": "= range 3 dans essais au lieu de comparer, et 3 compte comme VRAI : la branche s’exécute dès le premier essai. Il faut l’égalité stricte : if (essais === 3) { console.log('bloqué') } ; écrire = pour comparer, c’est l’erreur E4. Déduit de l’étape 9.",
             "erreurs": ["E4"]
           },
@@ -6711,6 +6744,9 @@ if (age &lt; 12) {
                 "id": "PR1-8"
               },
               {
+                "id": "PR1-3"
+              },
+              {
                 "id": "PR1-1"
               },
               {
@@ -6721,9 +6757,6 @@ if (age &lt; 12) {
               },
               {
                 "id": "PR1-4"
-              },
-              {
-                "id": "PR1-3"
               }
             ],
             "reussite": 9
@@ -6792,8 +6825,8 @@ if (age &lt; 12) {
             "verso": "Une des deux valeurs de part et d’autre du seuil où une condition change : la dernière avant le changement et la première après, 17 et 18 pour âge ≥ 18, 18 et 19 pour âge > 18. Déduit de « Vrai ou faux » et « Une seule branche »."
           },
           {
-            "id": "B02-K22",
-            "recto": "En JavaScript, if (c) { … } veut dire SI c, === compare, et un if accepte un nombre à la place d’une condition : tout nombre autre que 0 compte comme VRAI. Que fait if (age = 18), quel que soit l’âge de départ ?",
+            "id": "B02-K24",
+            "recto": "En JavaScript, if (c) { … } veut dire SI c, = range une valeur, === compare, et un if accepte un nombre à la place d’une condition : tout nombre autre que 0 compte comme VRAI. Que fait if (age = 18), quel que soit l’âge de départ ?",
             "verso": "Il range 18 dans age au lieu de comparer : c’est une affectation. La valeur rangée, 18, compte comme VRAI, et la branche s’exécute à chaque fois. Pour comparer : if (age === 18). D’après « Dans la console »."
           },
           {
@@ -6840,7 +6873,7 @@ if (age &lt; 12) {
             "notion": "Évaluer une condition avec comparaisons et parenthèses, une opération à la fois, en justifiant chaque étape par l’ordre de calcul : parenthèses, comparaisons, NON, ET, OU",
             "montree": ["ET6"],
             "pratiquee": ["PR1"],
-            "questions": ["B02-R29", "B02-C11", "B02-Q9", "B02-DE9", "B02-K15"]
+            "questions": ["B02-R29", "B02-C19", "B02-Q9", "B02-DE9", "B02-K15"]
           },
           {
             "id": "N4",
@@ -6869,7 +6902,7 @@ if (age &lt; 12) {
             "notion": "Écrire une chaîne à quatre branches bien ordonnée, la plus exigeante d’abord, et choisir ses valeurs limites pour la tester",
             "montree": ["ET8"],
             "pratiquee": ["PR2"],
-            "questions": ["B02-R31", "B02-C16", "B02-DE22", "B02-DT26", "B02-DT27", "B02-K20"]
+            "questions": ["B02-R31", "B02-C16", "B02-DE24", "B02-DT26", "B02-DT27", "B02-K20"]
           },
           {
             "id": "N7",
@@ -6878,12 +6911,12 @@ if (age &lt; 12) {
             "pratiquee": ["PR2"],
             "questions": [
               "B02-R26",
-              "B02-C14",
+              "B02-C18",
               "B02-Q21",
               "B02-Q22",
-              "B02-DE18",
+              "B02-DE23",
               "B02-DT21",
-              "B02-K22",
+              "B02-K24",
               "B02-K17"
             ]
           }
@@ -6895,7 +6928,7 @@ if (age &lt; 12) {
             "vers": "N3",
             "type": "composition",
             "montree": "ET6",
-            "questions": ["B02-R29", "B02-C11"]
+            "questions": ["B02-R29", "B02-C19"]
           },
           {
             "id": "L2",
@@ -6927,7 +6960,7 @@ if (age &lt; 12) {
             "vers": "N6",
             "type": "cause",
             "montree": "ET8",
-            "questions": ["B02-DE22", "B02-C16", "B02-DT27"]
+            "questions": ["B02-DE24", "B02-C16", "B02-DT27"]
           },
           {
             "id": "L6",
@@ -6943,7 +6976,7 @@ if (age &lt; 12) {
             "vers": "N7",
             "type": "opposition",
             "montree": "ET9",
-            "questions": ["B02-DE18", "B02-C14", "B02-K22"]
+            "questions": ["B02-DE23", "B02-C18", "B02-K24"]
           },
           {
             "id": "L8",
