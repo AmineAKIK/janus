@@ -659,7 +659,7 @@ describe('vérification des fiches du dépôt', () => {
         avecManifeste(
           fiche.replace(
             "<p>À REMPLACER : l'explication du bloc.</p>",
-            '<p>Image\u00a0: deux interrupteurs. Sa limite : pas de NON.</p><h3>Les limites de l’image</h3><p>Une image de 4 pixels.</p>',
+            '<p>Image\u00a0: deux interrupteurs. Sa limite : pas de NON.</p><h3>Les limites de l’image</h3><p>Une image de 4 pixels. L’aiguillage a sa limite\u00a0: pas de feu.</p>',
           ),
           () => {},
         ),
@@ -671,6 +671,7 @@ describe('vérification des fiches du dépôt', () => {
         expect.stringContaining('« Image : » dans le texte affiché'),
         expect.stringContaining('« Sa limite : » dans le texte affiché'),
         expect.stringContaining('« limites de l’image » dans le texte affiché'),
+        expect.stringContaining('« a sa limite : » dans le texte affiché'),
       ])
     })
 

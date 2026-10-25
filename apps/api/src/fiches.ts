@@ -422,8 +422,10 @@ const COULISSES: readonly { motif: RegExp; pourquoi: string }[] = [
   {
     // B02 v33 (25 octobre 2026) : « Image : … », « Sa limite : … », « Les limites de l'image »
     // recopiaient le patron de la méthode (image, mécanisme, terme, limite de l'image, règle C05).
-    // Une étiquette en tête de bloc, pas « la hauteur de l’image : … » au fil d'une phrase.
-    motif: /(?<=(?:>|[.!?])\s*)(?:image|sa limite)\s*:|limites? de l[’']image/giu,
+    // Une étiquette en tête de bloc, pas « la hauteur de l’image : … » au fil d'une phrase ; puis
+    // « L’image a sa limite : » (B02) et « La chaîne a sa limite : » (B01), la même étiquette en phrase.
+    motif:
+      /(?<=(?:>|[.!?])\s*)(?:image|sa limite)\s*:|limites? de l[’']image|\ba\s+(?:sa|ses)\s+limites?\s*:/giu,
     pourquoi:
       'c’est le vocabulaire de la méthode : dis l’image et sa limite en langue naturelle (« Pour te le représenter : », « Ce que les interrupteurs ne montrent pas »)',
   },
