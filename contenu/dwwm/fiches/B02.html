@@ -2634,12 +2634,10 @@
         </p>
         <p>
           Pour te le représenter : le mot « pas » placé devant une réponse, qui change oui en non,
-          et non en oui. Où l’image s’arrête : NON porte sur ce qui le suit immédiatement, un fait,
-          ou une parenthèse déjà calculée.
+          et non en oui. Où l’image s’arrête : NON porte seulement sur ce qui le suit immédiatement.
         </p>
-        <pre
-          class="pseudo"
-        ><code><b>NON</b> (VRAI <b>ET</b> VRAI) → <b>NON</b> VRAI → FAUX</code></pre>
+        <p>Pour Hugo, venu un samedi :</p>
+        <pre class="pseudo"><code><b>NON</b> samedi → <b>NON</b> VRAI → FAUX</code></pre>
         <div
           class="defile"
           data-lecture="La table de NON : quand samedi est FAUX, NON samedi est VRAI ; quand samedi est VRAI, NON samedi est FAUX."
@@ -2687,8 +2685,7 @@
         <p>
           Pour te le représenter : deux interrupteurs côte à côte, sur deux fils qui mènent à la
           même lampe. Fermé, un interrupteur laisse passer le courant : il vaut VRAI. Un seul fermé
-          suffit pour allumer la lampe. Où l’image s’arrête : les interrupteurs ne montrent ni NON,
-          ni l’ordre de calcul quand ET et OU se mélangent.
+          suffit pour allumer la lampe. Où l’image s’arrête : ils ne montrent pas NON.
         </p>
         <div class="outil" data-widget="interrupteurs" data-op="ou"></div>
         <div
@@ -2779,25 +2776,25 @@
           class="ex"
           data-widget="choix"
           data-id="o8"
-          data-reponse="dix"
+          data-reponse="faux"
           data-melanger="non"
           data-prediction
         >
-          <p class="q">Ce samedi, combien le guichet demande-t-il à Hugo ?</p>
+          <p class="q">
+            Ce samedi, que vaut pour Hugo la ligne 2, (étudiant OU âge &lt; 26) ET NON samedi ?
+          </p>
           <ul class="options">
-            <li
-              data-option="sept"
-              data-retour="La réduction est VRAIE pour Hugo. Mais que vaut NON samedi un samedi ?"
-            >
-              7 €
+            <li data-option="vrai" data-retour="Que vaut NON samedi pour Hugo, venu un samedi ?">
+              VRAI
             </li>
-            <li data-option="dix">10 €</li>
+            <li data-option="faux">FAUX</li>
           </ul>
         </div>
         <p>
           A ET B est VRAI seulement si A et B sont VRAI tous les deux. Il suffit d’un FAUX pour que
           tout soit FAUX. Pour Hugo ce samedi : d’abord la parenthèse, VRAI OU VRAI, qui donne
-          VRAI ; puis NON samedi, FAUX ; enfin VRAI ET FAUX donne FAUX : Hugo paie 10 €.
+          VRAI ; puis NON samedi, FAUX ; enfin VRAI ET FAUX donne FAUX : la ligne 2 est FAUSSE pour
+          Hugo. La ligne 3, 20 ≥ 65, est FAUSSE aussi : Hugo paie le SINON, 10 €.
         </p>
         <p data-si-essai="p1:faux|passe">
           À l’intuition, la porte d’un local s’ouvrait avec le badge ET le bon code. Elle ne s’ouvre
@@ -2805,7 +2802,9 @@
         </p>
         <p>
           Pour te le représenter : deux interrupteurs l’un après l’autre, sur le même fil. La lampe
-          ne s’allume que si les deux sont fermés. Essaie les quatre positions.
+          ne s’allume que si les deux sont fermés. Essaie les quatre positions. Où l’image
+          s’arrête : sur le fil, un interrupteur vient avant l’autre, mais A ET B ne dépend pas de
+          cet ordre.
         </p>
         <div class="outil" data-widget="interrupteurs" data-op="et"></div>
         <div
@@ -2846,16 +2845,19 @@
         </div>
       </div>
       <div data-ecran="Pour Théo">
+        <p class="accroche">Théo, 17 ans, pas étudiant, vient un samedi.</p>
         <details>
-          <summary>La table de OU, si tu en as besoin</summary>
+          <summary>Les tables, si tu en as besoin</summary>
           <table
             class="table-js"
-            data-lecture="La table de OU : A OU B n’est FAUX que si A et B sont FAUX tous les deux."
+            data-lecture="Les tables de NON, ET et OU. NON A est VRAI quand A est FAUX, et FAUX quand A est VRAI. A ET B n’est VRAI que si A et B sont VRAI tous les deux. A OU B n’est FAUX que si A et B sont FAUX tous les deux."
           >
             <thead>
               <tr>
                 <th>A</th>
                 <th>B</th>
+                <th>NON A</th>
+                <th>A ET B</th>
                 <th>A OU B</th>
               </tr>
             </thead>
@@ -2863,26 +2865,35 @@
               <tr>
                 <td>FAUX</td>
                 <td>FAUX</td>
+                <td>VRAI</td>
+                <td>FAUX</td>
                 <td>FAUX</td>
               </tr>
               <tr>
                 <td>FAUX</td>
                 <td>VRAI</td>
                 <td>VRAI</td>
-              </tr>
-              <tr>
-                <td>VRAI</td>
                 <td>FAUX</td>
                 <td>VRAI</td>
               </tr>
               <tr>
                 <td>VRAI</td>
+                <td>FAUX</td>
+                <td>FAUX</td>
+                <td>FAUX</td>
+                <td>VRAI</td>
+              </tr>
+              <tr>
+                <td>VRAI</td>
+                <td>VRAI</td>
+                <td>FAUX</td>
                 <td>VRAI</td>
                 <td>VRAI</td>
               </tr>
             </tbody>
           </table>
         </details>
+
         <div class="cadre pour-lire">
           <p class="discret">Le guichet, pour lire :</p>
           <ul>
@@ -2896,34 +2907,25 @@
           class="ex"
           data-widget="choix"
           data-id="o7"
-          data-aide1="Calcule d’abord la parenthèse pour Théo, puis NON samedi un samedi. Que demande ET à ses deux côtés ?"
+          data-aide1="Calcule d’abord la parenthèse pour Théo, puis NON samedi un samedi. Que dit la table de ET pour ces deux valeurs ?"
           data-reponse="faux"
           data-melanger="non"
         >
-          <p class="q">
-            Théo a 17 ans, il n’est pas étudiant, et il vient un samedi. Que vaut pour lui la ligne
-            2, (étudiant OU âge &lt; 26) ET NON samedi ?
-          </p>
+          <p class="q">Que vaut pour Théo la ligne 2, (étudiant OU âge &lt; 26) ET NON samedi ?</p>
           <ul class="options">
-            <li
-              data-option="vrai"
-              data-retour="Calcule chaque côté du ET : que vaut la parenthèse pour Théo, et que vaut NON samedi un samedi ? Que demande ET pour donner VRAI ?"
-            >
+            <li data-option="vrai" data-retour="Que vaut NON samedi pour Théo, venu un samedi ?">
               VRAI : il a moins de 26 ans
             </li>
             <li data-option="faux">FAUX</li>
-            <li
-              data-option="doute"
-              data-retour="Le ET tranche toujours : il n’est VRAI que si ses deux côtés le sont. Que valent ici la parenthèse et NON samedi ?"
-            >
+            <li data-option="doute" data-retour="Que demande ET à ses deux côtés ?">
               On ne peut pas savoir sans son prix
             </li>
           </ul>
         </div>
         <p>
           La parenthèse est VRAIE pour Théo, car 17 &lt; 26, mais NON samedi est FAUX ce samedi :
-          VRAI ET FAUX donne FAUX. Pas de réduction : Théo paie 10 € ce samedi. Un mardi, sa ligne 2
-          aurait été VRAIE.
+          VRAI ET FAUX donne FAUX : pas de réduction. La ligne 3, 17 ≥ 65, est FAUSSE aussi : Théo
+          paie le SINON, 10 € ce samedi. Un mardi, sa ligne 2 aurait été VRAIE.
         </p>
       </div>
       <div data-ecran="Quatre lignes">
@@ -3042,6 +3044,14 @@
           ET se calcule comme une multiplication, 1 × 0 = 0, et OU comme une addition, 0 + 1 = 1. Où
           l’image s’arrête : 1 OU 1 donne 1, pas 2.
         </p>
+        <p>
+          NON porte sur ce qui le suit immédiatement : un fait, ou une parenthèse déjà calculée. Les
+          interrupteurs d’ET5 ne montraient pas cet ordre quand ET et OU se mélangent : c’est la
+          convention qui le fixe.
+        </p>
+        <pre
+          class="pseudo"
+        ><code><b>NON</b> (VRAI <b>ET</b> VRAI) → <b>NON</b> VRAI → FAUX</code></pre>
         <details>
           <summary>Les tables, si tu en as besoin</summary>
           <table
@@ -3132,30 +3142,36 @@
       </div>
       <div data-ecran="Les parenthèses">
         <p class="accroche">
-          Pour garder le sens de sa règle, le gérant remet les parenthèses. Pour Théo, 17 ans, pas
-          étudiant, un samedi, la ligne 2 devient (FAUX OU VRAI) ET FAUX.
+          Pour garder le sens de sa règle, le gérant remet les parenthèses : (étudiant OU âge &lt;
+          26) ET NON samedi.
         </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>L’ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</li>
+            <li>&lt; veut dire « strictement plus petit que ».</li>
+          </ul>
+        </div>
         <div
           class="ex"
           data-widget="choix"
-          data-id="r11"
-          data-reponse="dix"
+          data-id="r12"
+          data-reponse="non"
           data-melanger="non"
           data-prediction
-          data-succes="Théo paie 10 € ce samedi."
         >
-          <p class="q">Avec les parenthèses, combien Théo paie-t-il ce samedi ?</p>
+          <p class="q">
+            Avec les parenthèses, la ligne 2 donne-t-elle la réduction à Yanis, 30 ans, étudiant, un
+            samedi ?
+          </p>
           <ul class="options">
-            <li
-              data-option="sept"
-              data-retour="La parenthèse se calcule d’abord. Que donne ensuite le ET avec NON samedi, un samedi ?"
-            >
-              7 €
+            <li data-option="oui" data-retour="Que vaut NON samedi pour Yanis, venu un samedi ?">
+              Oui
             </li>
-            <li data-option="dix">10 €</li>
+            <li data-option="non">Non</li>
           </ul>
         </div>
-        <p>Pour Yanis, 30 ans, étudiant, venu un samedi, compare les deux calculs :</p>
+        <p>Pour Yanis, compare les deux calculs :</p>
         <div class="deux-calculs">
           <figure
             data-lecture="Sans parenthèses, ET passe d’abord : étudiant OU âge plus petit que 26 ET NON samedi devient VRAI OU FAUX ET FAUX, puis VRAI OU FAUX, soit VRAI : la ligne 2 donne 7 euros."
@@ -3230,37 +3246,6 @@
             </tbody>
           </table>
         </details>
-        <div class="cadre pour-lire">
-          <p class="discret">Pour lire :</p>
-          <ul>
-            <li>L’ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</li>
-          </ul>
-        </div>
-        <div
-          class="ex"
-          data-widget="choix"
-          data-id="r10"
-          data-aide1="Commence par la parenthèse, FAUX OU VRAI. Il reste alors une seule opération : laquelle ?"
-          data-reponse="a"
-          data-melanger="non"
-        >
-          <p class="q">Quel calcul de (FAUX OU VRAI) ET FAUX est juste ?</p>
-          <ul class="options">
-            <li data-option="a">→ VRAI ET FAUX → FAUX</li>
-            <li
-              data-option="b"
-              data-retour="Quelle opération passe d’abord : celle entre parenthèses, ou le ET ?"
-            >
-              → FAUX OU FAUX → FAUX
-            </li>
-            <li
-              data-option="c"
-              data-retour="Après la parenthèse, il reste une opération : laquelle, et que demande-t-elle pour donner VRAI ?"
-            >
-              → VRAI
-            </li>
-          </ul>
-        </div>
       </div>
       <div data-ecran="Pas à pas">
         <p class="accroche">
@@ -3591,7 +3576,8 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
           <p class="discret">Pour lire :</p>
           <ul>
             <li>L’ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</li>
-            <li>&lt; veut dire « strictement plus petit que ».</li>
+            <li>&lt; veut dire « strictement plus petit que ».</li>
+            <li>étudiant vaut VRAI pour un client étudiant ; samedi vaut VRAI le samedi.</li>
           </ul>
         </div>
         <div
@@ -3608,7 +3594,7 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
           <ul class="options">
             <li
               data-option="vrai"
-              data-retour="Chloé vient un samedi. Que vaut NON samedi, et que faut-il à ET pour donner VRAI ?"
+              data-retour="Chloé vient un samedi : que vaut NON samedi pour elle ?"
             >
               VRAI
             </li>
@@ -3984,13 +3970,13 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
             <li data-option="vrai">VRAI</li>
             <li
               data-option="faux"
-              data-retour="Calcule d’abord la parenthèse : que vaut étudiant pour Sarah, et que demande un OU pour être VRAI ? Puis que vaut NON samedi un mardi ?"
+              data-retour="Sarah est étudiante, venue un mardi : que vaut pour elle la parenthèse, étudiant OU âge &lt; 26 ?"
             >
               FAUX
             </li>
             <li
               data-option="pas"
-              data-retour="Que vaut la ligne 1 pour Sarah ? Quand une ligne est FAUSSE, que fait la chaîne ?"
+              data-retour="Quand la ligne 1 est FAUSSE pour Sarah, la chaîne s’arrête-t-elle ?"
             >
               Pas testée
             </li>
@@ -4908,7 +4894,7 @@ let samedi = false</code></pre>
             <li
               data-option="sans"
               class="mono"
-              data-retour="Sans parenthèses, dans quel ordre se calculent &amp;&amp; et || ? Pour un étudiant venu un samedi, que donnerait cette ligne ?"
+              data-retour="Sans parenthèses, que donnerait cette ligne pour un étudiant venu un samedi ?"
             >
               else if (etudiant || age &lt; 26 &amp;&amp; !samedi)
             </li>
@@ -4930,7 +4916,7 @@ let samedi = false</code></pre>
             <li
               data-option="signe"
               class="mono"
-              data-retour="Le signe ≥ n’existe pas en JavaScript. Les tables repliées sur cet écran disent comment l’écrire."
+              data-retour="Que disent les tables repliées sur cet écran pour écrire ≥ en JavaScript ?"
             >
               else if (age ≥ 65)
             </li>
@@ -4952,7 +4938,7 @@ let samedi = false</code></pre>
             <li
               data-option="elseif"
               class="mono"
-              data-retour="else if attend une condition. SINON n’en teste aucune : il prend tous les cas qui restent."
+              data-retour="SINON teste-t-il une condition, comme le fait else if ?"
             >
               else if { console.log('10 €') }
             </li>
@@ -5379,6 +5365,7 @@ if (age &lt; 12) {
         dans le désordre. Pour chacune, tu touches VRAI ou FAUX, ou tu tapes V ou F au clavier.
       </p>
       <p>
+        Une série est réussie quand ses 10 lignes sont justes, sans erreur, en 25 secondes au plus.
         Il faut plusieurs séries réussies, chacune un jour différent : la liste sous ce texte montre
         celles qui sont faites et celles qui restent. Tu peux faire autant de séries que tu veux, et
         continuer le bloc sans attendre : reviens ici les jours suivants. La dernière série réussie,
@@ -5927,15 +5914,15 @@ if (age &lt; 12) {
     </template>
     <template data-item="PR1-9">
       <div
-        data-aide1="« Au choix » permet-il de prendre les deux ? Et sans rien prendre, l’offre est-elle acceptée ?"
+        data-aide1="« Soit… soit… » permet-il de prendre les deux ? Et sans rien prendre, l’offre est-elle acceptée ?"
         class="ex"
         data-widget="choix"
         data-verifie
         data-reponse="exclusif"
-        data-solution="(musique OU vidéo) ET NON (musique ET vidéo) : « au choix » fait prendre un seul des deux ; OU demande au moins un des deux, ET NON (musique ET vidéo) refuse les deux"
+        data-solution="(musique OU vidéo) ET NON (musique ET vidéo) : « soit… soit… » fait prendre un seul des deux ; OU demande au moins un des deux, ET NON (musique ET vidéo) refuse les deux"
       >
         <p class="q">
-          « Avec ce forfait mobile, un mois de musique ou un mois de vidéo, au choix. » Quelle
+          « Avec ce forfait mobile, soit un mois de musique, soit un mois de vidéo. » Quelle
           condition dit que l’offre choisie par un client est acceptée ?
         </p>
         <ul class="options">
@@ -5943,7 +5930,7 @@ if (age &lt; 12) {
           <li
             data-option="inclusif"
             class="mono"
-            data-retour="Avec OU seul, un client qui prend la musique et la vidéo serait accepté. Or « au choix » fait choisir."
+            data-retour="Avec OU seul, un client qui prend la musique et la vidéo serait accepté. « Soit… soit… » le permet-il ?"
           >
             musique OU vidéo
           </li>
@@ -6509,15 +6496,43 @@ if (age &lt; 12) {
           1000. Les points sont des nombres entiers.
         </p>
         <div class="cadre pour-lire">
-          <p class="discret">Le JavaScript, pour lire :</p>
+          <p class="discret">Le JavaScript, pour lire :</p>
           <ul>
-            <li>≥ veut dire « plus grand ou égal à ».</li>
-            <li>
-              SI c s’écrit if (c) { … }, SINON SI c s’écrit else if (c) { … }, SINON s’écrit else {
-              … }.
-            </li>
-            <li>afficher « texte » s’écrit console.log('texte'), et ≥ s’écrit &gt;=.</li>
+            <li>≥ veut dire « plus grand ou égal à ».</li>
           </ul>
+          <table
+            class="table-js"
+            data-lecture="La table des mots, du pseudo-code au JavaScript. SI c devient if, c entre parenthèses, puis des accolades. SINON SI c devient else if, SINON devient else. Afficher un texte devient console point log, le texte entre apostrophes. Plus grand ou égal devient le signe plus grand puis le signe égal."
+          >
+            <thead>
+              <tr>
+                <th>Pseudo-code</th>
+                <th>JavaScript</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>SI c</td>
+                <td class="mono">if (c) { … }</td>
+              </tr>
+              <tr>
+                <td>SINON SI c</td>
+                <td class="mono">else if (c) { … }</td>
+              </tr>
+              <tr>
+                <td>SINON</td>
+                <td class="mono">else { … }</td>
+              </tr>
+              <tr>
+                <td>afficher « texte »</td>
+                <td class="mono">console.log('texte')</td>
+              </tr>
+              <tr>
+                <td>≥</td>
+                <td class="mono">&gt;=</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <p class="q">
           Écris en JavaScript la chaîne SI / SINON SI / SINON qui donne ce niveau, avec la variable
@@ -6544,15 +6559,43 @@ if (age &lt; 12) {
           entiers.
         </p>
         <div class="cadre pour-lire">
-          <p class="discret">Le JavaScript, pour lire :</p>
+          <p class="discret">Le JavaScript, pour lire :</p>
           <ul>
-            <li>≥ veut dire « plus grand ou égal à ».</li>
-            <li>
-              SI c s’écrit if (c) { … }, SINON SI c s’écrit else if (c) { … }, SINON s’écrit else {
-              … }.
-            </li>
-            <li>afficher « texte » s’écrit console.log('texte'), et ≥ s’écrit &gt;=.</li>
+            <li>≥ veut dire « plus grand ou égal à ».</li>
           </ul>
+          <table
+            class="table-js"
+            data-lecture="La table des mots, du pseudo-code au JavaScript. SI c devient if, c entre parenthèses, puis des accolades. SINON SI c devient else if, SINON devient else. Afficher un texte devient console point log, le texte entre apostrophes. Plus grand ou égal devient le signe plus grand puis le signe égal."
+          >
+            <thead>
+              <tr>
+                <th>Pseudo-code</th>
+                <th>JavaScript</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>SI c</td>
+                <td class="mono">if (c) { … }</td>
+              </tr>
+              <tr>
+                <td>SINON SI c</td>
+                <td class="mono">else if (c) { … }</td>
+              </tr>
+              <tr>
+                <td>SINON</td>
+                <td class="mono">else { … }</td>
+              </tr>
+              <tr>
+                <td>afficher « texte »</td>
+                <td class="mono">console.log('texte')</td>
+              </tr>
+              <tr>
+                <td>≥</td>
+                <td class="mono">&gt;=</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <p class="q">
           Écris en JavaScript la chaîne SI / SINON SI / SINON qui donne ce rang, avec la variable
@@ -6579,15 +6622,43 @@ if (age &lt; 12) {
 <span class="l" data-l="4"><b>SINON</b> :</span>
 <span class="l br" data-l="4">  afficher « aucun »</span></code></pre>
         <div class="cadre pour-lire">
-          <p class="discret">Le JavaScript, pour lire :</p>
+          <p class="discret">Le JavaScript, pour lire :</p>
           <ul>
-            <li>≥ veut dire « plus grand ou égal à ».</li>
-            <li>
-              SI c s’écrit if (c) { … }, SINON SI c s’écrit else if (c) { … }, SINON s’écrit else {
-              … }.
-            </li>
-            <li>afficher « texte » s’écrit console.log('texte'), et ≥ s’écrit &gt;=.</li>
+            <li>≥ veut dire « plus grand ou égal à ».</li>
           </ul>
+          <table
+            class="table-js"
+            data-lecture="La table des mots, du pseudo-code au JavaScript. SI c devient if, c entre parenthèses, puis des accolades. SINON SI c devient else if, SINON devient else. Afficher un texte devient console point log, le texte entre apostrophes. Plus grand ou égal devient le signe plus grand puis le signe égal."
+          >
+            <thead>
+              <tr>
+                <th>Pseudo-code</th>
+                <th>JavaScript</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>SI c</td>
+                <td class="mono">if (c) { … }</td>
+              </tr>
+              <tr>
+                <td>SINON SI c</td>
+                <td class="mono">else if (c) { … }</td>
+              </tr>
+              <tr>
+                <td>SINON</td>
+                <td class="mono">else { … }</td>
+              </tr>
+              <tr>
+                <td>afficher « texte »</td>
+                <td class="mono">console.log('texte')</td>
+              </tr>
+              <tr>
+                <td>≥</td>
+                <td class="mono">&gt;=</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <p class="q">
           Écris cette chaîne en JavaScript dans la console de ton navigateur, prédis ce qu’elle va
@@ -6969,7 +7040,7 @@ if (age &lt; 12) {
         "version": 34,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
-        "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 conditions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
+        "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 conditions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 3 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
         "prerequis": ["B01"],
         "pont": 4,
         "contexte_ia": "Bloc B02 du module « Écosystème et outils du développeur » (DWWM), deuxième bloc de la partie La machine. Le modèle du bloc : des données, comparées, donnent des faits qui valent VRAI ou FAUX ; combinés par NON, ET et OU, dans l’ordre de calcul fixé (parenthèses, comparaisons, NON, ET, OU), ils donnent une condition, une seule valeur ; dans une chaîne SI / SINON SI / SINON, la première condition VRAIE, de haut en bas, choisit la seule branche exécutée, et SINON prend les cas où aucune ne l’est. Notations à accepter comme équivalentes : VRAI et FAUX, 1 et 0, true et false ; ET et &&, OU et ||, NON et ! ; en pseudo-code, = compare et ≥, ≤, ≠ s’écrivent ainsi ; en JavaScript, = range une valeur dans une variable (affectation), === compare (égalité stricte), et >=, <=, !== remplacent ≥, ≤, ≠. Le OU logique est inclusif (VRAI OU VRAI = VRAI) ; le ou exclusif s’écrit (A OU B) ET NON (A ET B). Les valeurs limites d’une comparaison sur des entiers : de part et d’autre du seuil, la dernière valeur avant le changement et la première après (17 et 18 pour âge ≥ 18, 18 et 19 pour âge > 18). Quand le « ou » d’une phrase ne permet pas de trancher, la bonne réponse est de demander à l’auteur de la règle. La fiche n’enseigne ni l’opérateur XOR, ni les lois de De Morgan, ni le SI imbriqué, ni ==, ni switch : ne pénalise pas leur absence, et accepte une réponse juste qui les emploie. Pièges à repérer : E1, traiter OU comme exclusif (VRAI OU VRAI jugé FAUX) ; E2, calculer le OU avant le ET (A ET B OU C lu A ET (B OU C)) ; E3, croire que plusieurs branches d’une chaîne s’exécutent, ou que les lignes qui suivent la première VRAIE sont encore testées ; E4, confondre = (affectation), === (égalité stricte) et && (le ET). Une erreur de calcul isolée sur une comparaison n’est pas E2. Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Pour examiner une explication, la grille de compréhension : l’idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d’application, le terme exact, la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Chaque attendu vient de la fiche : les étapes 3 à 9 et 12 (sources S1 à S8) ; ce qui est marqué « D’après » y est écrit ; ce qui est marqué « Déduit » s’obtient en appliquant une règle de la fiche à un autre cas. L’ordre de calcul et les signes de JavaScript sont redonnés avec chaque question qui s’en sert : ce qui compte, c’est de repérer l’opération qui passe en premier et de transcrire une condition, pas de réciter la liste.",
@@ -7134,7 +7205,7 @@ if (age &lt; 12) {
           },
           {
             "id": "B02-R42",
-            "question": "Pour lire : en pseudo-code, = compare ; en JavaScript, === compare, && est le ET, ! le NON. Un camarade a transcrit SI batterie = 100 ET NON enCharge en if (batterie && 100 && !enCharge). Trouve son erreur, et corrige la ligne.",
+            "question": "Pour lire : en pseudo-code, = compare ; en JavaScript, if (c) veut dire SI c, === compare, && est le ET, ! le NON. Un camarade a transcrit SI batterie = 100 ET NON enCharge en if (batterie && 100 && !enCharge). Trouve son erreur, et corrige la ligne.",
             "attendu": "batterie && 100 ne compare pas batterie à 100 : && est le ET, il combine des conditions. Pour comparer, JavaScript demande === : if (batterie === 100 && !enCharge) ; confondre && et ===, c’est l’erreur E4. Déduit de l’étape 9.",
             "erreurs": ["E4"]
           }
@@ -7347,8 +7418,8 @@ if (age &lt; 12) {
             "id": "B02-DT33",
             "type": "transfert",
             "forme": "adapter_condition",
-            "consigne": "En JavaScript : === compare, < veut dire « strictement plus petit que », || est le OU, && le ET, et && passe avant ||. Ton code ouvre la session avec if (motDePasse === 'secret' && essais < 3). Il doit accepter aussi le mot de passe 'urgence', tapé dans le même champ, même après 3 essais. Adapte la condition.",
-            "attendu": "if ((motDePasse === 'secret' && essais < 3) || motDePasse === 'urgence') : le code de secours s’ajoute par un OU, hors de la parenthèse du ET. Écrire motDePasse === 'secret' && (essais < 3 || motDePasse === 'urgence') refuserait toujours 'urgence' : c’est l’erreur E2. Déduit des étapes 6 et 9.",
+            "consigne": "En JavaScript : if (c) veut dire SI c, === compare, < « strictement plus petit que », || est le OU, && le ET, et && passe avant ||. Ton code ouvre la session avec if (motDePasse === 'secret' && essais < 3). Il doit accepter aussi le mot de passe 'urgence', tapé dans le même champ, même après 3 essais. Adapte la condition.",
+            "attendu": "if ((motDePasse === 'secret' && essais < 3) || motDePasse === 'urgence'), ou la même sans les parenthèses du ET, if (motDePasse === 'secret' && essais < 3 || motDePasse === 'urgence'), juste aussi puisque && passe avant || : le code de secours s’ajoute par un OU, hors du ET. Écrire motDePasse === 'secret' && (essais < 3 || motDePasse === 'urgence') refuserait toujours 'urgence' : c’est l’erreur E2. Déduit des étapes 6 et 9.",
             "erreurs": ["E2"]
           }
         ],
