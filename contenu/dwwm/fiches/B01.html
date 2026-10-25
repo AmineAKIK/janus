@@ -5158,12 +5158,22 @@
         data-reponse="jeu"
         data-justifier="Dis ce qui distingue le binaire d’un langage de programmation."
       >
+        <div class="cadre pour-lire">
+          <p class="discret">Les deux processeurs, pour lire :</p>
+          <ul>
+            <li>
+              Le premier a la table de « Une instruction » : 1 suivi d’un nombre range ce nombre
+              dans le registre, 3 suivi de 0 affiche le registre.
+            </li>
+            <li>
+              Le second a une autre table : 1 suivi d’un nombre ajoute 1 à ce nombre et l’affiche, 3
+              l’arrête.
+            </li>
+          </ul>
+        </div>
         <p class="q">
-          Les octets 1 6 3 0 passent dans deux processeurs. Le premier a la table de « Une
-          instruction » : 1 suivi d’un nombre range ce nombre dans le registre, 3 suivi de 0 affiche
-          le registre. Il affiche 6. Le second a une autre table : 1 suivi d’un nombre ajoute 1 à ce
-          nombre et l’affiche, 3 l’arrête. Il affiche 7. Pourquoi les mêmes octets ne font-ils pas
-          la même chose ?
+          Les octets 1 6 3 0 passent dans ces deux processeurs. Le premier affiche 6, le second 7.
+          Pourquoi les mêmes octets ne font-ils pas la même chose ?
         </p>
         <ul class="options">
           <li data-option="jeu">
@@ -5453,7 +5463,7 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 47,
+        "version": 48,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
@@ -5825,9 +5835,9 @@
             "erreurs": ["E3"]
           },
           {
-            "id": "DE29",
+            "id": "DE32",
             "type": "explication",
-            "consigne": "Un processeur imaginaire a trois instructions, de deux octets chacune : 1 suivi d’un nombre range ce nombre dans le registre ; 2 suivi d’un nombre l’ajoute au registre ; 3 suivi de 0 affiche le registre. Extrait de la table ASCII : A = 65, B = 66. Un fichier contient les octets 1 65 3 0. Qu’affiche ce processeur ? Que devient l’octet 65 lu avec la table ASCII ? Un camarade dit : « C’est le binaire qui fait de ce fichier un programme. » Que lui montrent tes deux lectures ?",
+            "consigne": "Un processeur imaginaire : 1 suivi d’un nombre le range dans le registre, 2 suivi d’un nombre l’ajoute, 3 suivi de 0 affiche le registre. Un fichier contient 1 65 3 0. Qu’affiche ce processeur ? Que devient 65 lu avec la table ASCII, où A = 65 ? Un camarade dit : « C’est le binaire qui en fait un programme. » Que lui montrent tes deux lectures ?",
             "attendu": "Le processeur range 65 dans le registre (1 65), puis l’affiche (3 0) : il affiche 65. Avec la table ASCII, l’octet 65 est la lettre A. Les octets sont les mêmes dans les deux lectures, donc le même binaire : ce n’est pas lui qui en fait un programme. C’est le jeu d’instructions du processeur qui les lit comme des instructions ; la table ASCII, elle, les lit comme des lettres. Déduit des étapes 7 et 11.",
             "erreurs": ["E3"]
           },
@@ -5846,10 +5856,10 @@
             "erreurs": ["E4"]
           },
           {
-            "id": "DT29",
+            "id": "DT30",
             "type": "transfert",
             "forme": "choisir_methode",
-            "consigne": "Trois suites d’octets, trois situations. Pour chacune, dis avec quel codage la lire, puis lis-la. a) Dans un fichier texte : 72 105 (extrait de la table ASCII : H = 72, i = 105). b) Dans une feuille CSS : #c03060 (table des 16 chiffres : 0 à 9, puis a = 10, b = 11, c = 12, d = 13, e = 14, f = 15). c) Pour le processeur imaginaire à trois instructions (1 suivi d’un nombre le range dans le registre, 2 suivi d’un nombre l’ajoute, 3 suivi de 0 affiche le registre) : 1 9 3 0.",
+            "consigne": "Pour chaque suite d’octets, dis avec quel codage la lire, puis lis-la. a) Dans un fichier texte : 72 105 (en ASCII, H = 72 et i = 105). b) Dans une feuille CSS : #c03060 (en hexadécimal, a = 10 jusqu’à f = 15). c) Pour le processeur imaginaire (1 suivi d’un nombre le range, 2 l’ajoute, 3 suivi de 0 affiche le registre) : 1 9 3 0.",
             "attendu": "a) La table ASCII : « Hi ». b) RGB, écrit en hexadécimal : c0 = 192, 30 = 48, 60 = 96, soit rgb(192, 48, 96). c) Le jeu d’instructions du processeur : il range 9, puis l’affiche. C’est la situation, le programme qui lit, qui dit quel codage appliquer. Déduit des étapes 7, 9, 11 et 14.",
             "erreurs": ["E2"]
           },
@@ -6093,7 +6103,7 @@
             "notion": "Lire un programme de quelques octets avec le jeu d’instructions d’un processeur, ici un processeur à trois instructions dont la table est donnée, et dire que ces octets, lus avec ce jeu, forment le code machine",
             "montree": ["ET11"],
             "pratiquee": ["PR7"],
-            "questions": ["R26", "C25", "DE29", "K30"]
+            "questions": ["R26", "C25", "DE32", "K30"]
           },
           {
             "id": "N12",
@@ -6166,13 +6176,13 @@
             "vers": "N4",
             "type": "categorie",
             "montree": "ET14",
-            "questions": ["DT29", "K26"]
+            "questions": ["DT30", "K26"]
           }
         ],
         "ensemble": {
           "montree": "ET2",
           "rappelee": "ET14",
-          "questions": ["R31", "DT29", "DE30", "DE24", "DT24", "Q24"]
+          "questions": ["R31", "DT30", "DE30", "DE24", "DT24", "Q24"]
         },
         "hors_objectif": [
           "Les nombres négatifs : nommés comme limite du système binaire du bloc dans « À explorer plus tard » (étape 14) ; DT24 demande seulement de dire cette limite, jamais une méthode",

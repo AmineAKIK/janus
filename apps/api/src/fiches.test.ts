@@ -735,6 +735,145 @@ describe('vérification des fiches du dépôt', () => {
       )
     })
 
+    it('refuse une consigne qui empile les rappels au lieu de les mettre dans l’encadré', async () => {
+      await poser(
+        'X00.html',
+        fiche.replace(
+          "<p>À REMPLACER : l'explication du bloc.</p>",
+          '<div class="ex"><p class="q">Le vélo est gratuit SI durée &lt; 30 ; &lt; veut dire « plus petit que ». Ordre de calcul : NON, ET, OU. Est-il gratuit ?</p></div><div class="ex"><p class="q">Lou, 5 ans, monte-t-elle ?</p></div>',
+        ),
+      )
+
+      const problemes = await verifierLesFiches({ dossierContenu: contenu })
+      expect(problemes).toEqual(
+        expect.arrayContaining([expect.stringContaining('« Le vélo est gratuit SI durée < 30')]),
+      )
+      expect(problemes.join('\n')).not.toContain('Lou, 5 ans')
+    })
+
+    it('refuse une donnée écrite avec = et un prénom à deux âges', async () => {
+      await poser(
+        'X00.html',
+        fiche.replace(
+          "<p>À REMPLACER : l'explication du bloc.</p>",
+          '<p>Nina, 26 ans, paie 10 €.</p><p>Calcule pour âge = 8 et résident = FAUX.</p><p>Nina, 30 ans, étudiante.</p><pre>let age = 8</pre>',
+        ),
+      )
+
+      const problemes = await verifierLesFiches({ dossierContenu: contenu })
+      expect(problemes).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('« pour âge = 8 »'),
+          expect.stringContaining('Nina a plusieurs âges'),
+        ]),
+      )
+      expect(problemes.join('\n')).not.toContain('age = 8 »')
+    })
+
+    it('refuse une consigne trop longue, même sans rappel nommé', async () => {
+      await poser(
+        'X00.html',
+        fiche.replace(
+          "<p>À REMPLACER : l'explication du bloc.</p>",
+          `<div class="ex"><p class="q">${'mot '.repeat(46)}?</p></div>`,
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual(
+        expect.arrayContaining([expect.stringContaining('(47 mots)')]),
+      )
+    })
+
+    it('refuse une question du manifeste qui empile les rappels ou dépasse 70 mots', async () => {
+      await poser(
+        'X00.html',
+        avecManifeste(fiche, (m) => {
+          m.differees = m.differees.map((q, i) =>
+            i === 0
+              ? {
+                  ...q,
+                  consigne: 'En JavaScript, ET s’écrit && et OU s’écrit ||. Que vaut la ligne ?',
+                }
+              : q,
+          )
+          m.rappel = m.rappel.map((q, i) =>
+            i === 0 ? { ...q, question: `${'mot '.repeat(71)}?` } : q,
+          )
+        }),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('« En JavaScript, ET s’écrit && et OU s’écrit ||.'),
+          expect.stringContaining('(72 mots)'),
+        ]),
+      )
+    })
+
+    it('refuse une variante trop longue et une explication qui ne nomme pas son sujet', async () => {
+      await poser(
+        'X00.html',
+        fiche.replace(
+          "<p>À REMPLACER : l'explication du bloc.</p>",
+          `<div class="ex" data-variante-enonce="${'mot '.repeat(46)}?" data-justifier="Donnent-elles le même prix ?"></div>`,
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('(47 mots)'),
+          expect.stringContaining('s’ouvre sur « Donnent-elles »'),
+        ]),
+      )
+    })
+
+    it('refuse une question qui emploie un signe de JavaScript sans en redonner le sens', async () => {
+      await poser(
+        'X00.html',
+        avecManifeste(fiche, (m) => {
+          m.rappel = m.rappel.map((q, i) =>
+            i === 0
+              ? { ...q, question: 'Corrige : if (a && !b) { }', attendu: 'if (a === 1 && !b)' }
+              : q,
+          )
+          m.differees = m.differees.map((d, i) =>
+            i === 0
+              ? {
+                  ...d,
+                  consigne:
+                    'En JavaScript : if (c) veut dire SI c, && est le ET. Corrige : if (a && b) { }',
+                }
+              : d,
+          )
+        }),
+      )
+
+      const problemes = await verifierLesFiches({ dossierContenu: contenu })
+      expect(problemes).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('emploie && sans en redonner le sens'),
+          expect.stringContaining('emploie ! sans en redonner le sens'),
+          expect.stringContaining('emploie === sans en redonner le sens'),
+          expect.stringContaining('emploie if sans en redonner le sens'),
+        ]),
+      )
+      expect(problemes.filter((p) => p.includes('differees'))).toEqual([])
+    })
+
+    it('refuse l’identifiant d’un onglet dans le texte affiché', async () => {
+      await poser(
+        'X00.html',
+        fiche.replace(
+          "<p>À REMPLACER : l'explication du bloc.</p>",
+          '<p>Les interrupteurs d’ET5 ne montraient pas cet ordre.</p>',
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual(
+        expect.arrayContaining([expect.stringContaining('« ET5 » dans le texte affiché')]),
+      )
+    })
+
     it('laisse libres les notes de conception', async () => {
       await poser(
         'X00.html',

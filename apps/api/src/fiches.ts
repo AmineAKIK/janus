@@ -195,7 +195,7 @@ function verifierPratique(
   const templates = templatesDesItems(html)
   const ids = manifeste.pratique.flatMap((exercice) => exercice.items.map((item) => item.id))
   const avecExplication = ids.filter((id) => /\bdata-justifier\s*=/i.test(templates.get(id) ?? ''))
-  const plafond = Math.ceil(ids.length / 3)
+  const plafond = Math.floor(ids.length / 3)
   const declarees = new Set(manifeste.explication.map(({ id }) => id))
   const demandees = new Set<string>()
   if (avecExplication.length > plafond) {
@@ -416,6 +416,12 @@ const COULISSES: readonly { motif: RegExp; pourquoi: string }[] = [
     pourquoi: 'les onglets n’ont pas de numéro : nomme l’onglet, par exemple « À l’intuition »',
   },
   {
+    // B02 v34 : « Les interrupteurs d'ET5 ne montraient pas… », l'identifiant d'un onglet.
+    motif:
+      /(?:(?<=\b[dl][’'])|(?<=\b(?:en|de|à|dans|depuis|qu[’']en)\s))ET\d{1,2}(?![\p{L}\p{N}])/gu,
+    pourquoi: 'les onglets n’ont pas d’identifiant pour l’apprenant : nomme l’onglet par son titre',
+  },
+  {
     motif: /\bAvant de lire\b[^:?.]*/gu,
     pourquoi: 'c’est une étiquette de conception : pose directement la question',
   },
@@ -495,14 +501,173 @@ function verifierPresupposes(
     for (const motif of PRESUPPOSES)
       for (const [trouve] of texte.matchAll(motif))
         signaler(
-          `la question souffle sa réponse (« ${trouve} » dans ${ou}) : demande le résultat sans le dire, par exemple « donnent-elles le même résultat ? Pourquoi ? ».`,
+          `la question souffle sa réponse (« ${trouve} » dans ${ou}) : demande le résultat sans le dire, par exemple « sans les parenthèses, cette condition donnerait-elle le même résultat ? Pourquoi ? ».`,
         )
   }
   textesDuManifeste(manifeste, '', (chemin, texte) => {
     if (/\.(?:question|consigne|recto)$/.test(chemin)) chercher(texte, chemin)
   })
-  for (const [, texte = ''] of html.matchAll(/\bdata-justifier="([^"]*)"/g))
+  for (const [, texte = ''] of html.matchAll(/\bdata-justifier="([^"]*)"/g)) {
     chercher(texte, 'data-justifier')
+    // L'option fausse choisie disparaît de l'écran : « Donnent-elles… ? » ne renvoie plus à rien (B02 v34).
+    const pronom = /^\s*\p{L}+-(?:t-)?(?:ils?|elles?)\b/u.exec(texte)
+    if (pronom)
+      signaler(
+        `la demande d’explication « ${texte.slice(0, 60)}… » s’ouvre sur « ${pronom[0].trim()} » : nomme ce dont elle parle, l’option que l’apprenant a écartée peut avoir disparu de l’écran.`,
+      )
+  }
+}
+
+/**
+ * Les rappels vont dans un encadré, pas dans la question (B02 v33, avis d'Amine du 25 octobre 2026 :
+ * « dense, abstrait ») : « taille compte les centimètres, accompagné vaut VRAI pour…, et ≥ veut dire
+ * « plus grand ou égal à ». Calcule… Ordre de calcul : … » noyait la question. Une consigne de la page
+ * redonne au plus une convention et tient en 45 mots ; le reste va dans l'encadré « Pour lire » de
+ * l'écran (B01 n'avait qu'une consigne au-delà, B02 v33 en avait 25).
+ */
+const MOTS_PAR_CONSIGNE = 45
+const MOTS_PAR_QUESTION = 70
+const RAPPELS = /\bveut dire\b|\bOrdre de calcul\b|\bse lit\b|\bsignifie\b|\bs[’']écrit\b/giu
+
+function verifierConsignesChargees(
+  manifeste: Manifeste,
+  html: string,
+  signaler: (message: string) => void,
+): void {
+  const page = sansScriptsNiCommentaires(html)
+  const consignes = [
+    ...Array.from(page.matchAll(/<p class="q"[^>]*>([\s\S]*?)<\/p>/g), ([, q = '']) => q),
+    ...Array.from(
+      page.matchAll(
+        /\bdata-(?:autre-enonce|justifier|variante-enonce|variante-consigne)="([^"]*)"/g,
+      ),
+      ([, q = '']) => q,
+    ),
+  ]
+  // Une question de restitution ou une carte s'affiche sans encadré et sans le cours : elle redonne
+  // la chaîne ou le code qu'elle interroge, d'où plus de mots, mais pas plus d'un rappel.
+  const questions: string[] = []
+  textesDuManifeste(manifeste, '', (chemin, texte) => {
+    if (/\.(?:question|consigne|recto)$/.test(chemin)) questions.push(texte)
+  })
+  for (const consigne of [...consignes, ...questions]) {
+    const texte = consigne
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/\s+/g, ' ')
+      .trim()
+    const mots = texte.split(' ').length
+    const plafond = questions.includes(consigne) ? MOTS_PAR_QUESTION : MOTS_PAR_CONSIGNE
+    if ((texte.match(RAPPELS) ?? []).length < 2 && mots <= plafond) continue
+    signaler(
+      `la consigne « ${texte.slice(0, 60)}… » empile les rappels (${String(mots)} mots) : garde la situation et la question, et mets les conventions dans l’encadré « Pour lire » de l’écran.`,
+    )
+  }
+}
+
+/**
+ * Un signe de JavaScript employé par une question s'y redonne (R01, B02 v34, passe 4) : B02-R42 faisait
+ * corriger if (batterie && 100 && !enCharge) sans dire que && est le ET ni ! le NON, et le cours est
+ * masqué pendant la restitution. Le signe compte s'il est dans la question ou dans l'attendu.
+ */
+const SIGNES_JS: readonly { signe: RegExp; sens: RegExp; nom: string }[] = [
+  {
+    nom: 'if',
+    signe: /\bif\s*\(/u,
+    sens: /\bif\s*(?:\([^)]*\)\s*)?(?:\{[^}]*\}\s*)?(?:veut dire|est|signifie|:)|\bSI\s*(?:s[’']écrit|:|→)\s*if\b/u,
+  },
+  {
+    nom: '===',
+    signe: /===/u,
+    sens: /===\s*(?:compare|est|veut dire|signifie|teste)\b|\bcompare(?:r)? avec ===/u,
+  },
+  {
+    nom: '&&',
+    signe: /&&/u,
+    sens: /&&\s*(?:est|veut dire|signifie|le ET)\b|(?:ET|le ET)\s*(?:s[’']écrit|est|:)\s*&&/u,
+  },
+  {
+    nom: '||',
+    signe: /\|\|/u,
+    sens: /\|\|\s*(?:est|veut dire|signifie|le OU)\b|(?:OU|le OU)\s*(?:s[’']écrit|est|:)\s*\|\|/u,
+  },
+  {
+    nom: '!',
+    signe: /![\p{L}(]/u,
+    sens: /!\s*(?:est|veut dire|signifie|le NON)\b|(?:NON|le NON)\s*(?:s[’']écrit|est|:)\s*!/u,
+  },
+]
+
+function verifierSignesRedonnes(
+  manifeste: Manifeste,
+  html: string,
+  signaler: (message: string) => void,
+): void {
+  const controler = (question: string, attendu: string, ou: string) => {
+    for (const { signe, sens, nom } of SIGNES_JS)
+      if (signe.test(`${question}\n${attendu}`) && !sens.test(question))
+        signaler(
+          `${ou} emploie ${nom} sans en redonner le sens : la question s’affiche sans le cours, ajoute-le à sa légende (« En JavaScript : && est le ET, ! le NON, === compare. »).`,
+        )
+  }
+  for (const q of manifeste.restitution) controler(q.question, q.attendu, `restitution ${q.id}`)
+  for (const q of manifeste.rappel) controler(q.question, q.attendu, `rappel ${q.id}`)
+  for (const d of manifeste.differees) controler(d.consigne, d.attendu, `differees ${d.id}`)
+  for (const e of manifeste.explication) controler(e.question, e.attendu, `explication ${e.id}`)
+  for (const [, texte = ''] of html.matchAll(/\bdata-justifier="([^"]*)"/g))
+    controler(
+      texte.replace(/&amp;/g, '&'),
+      '',
+      'la demande d’explication « ' + texte.slice(0, 40) + '… »',
+    )
+}
+
+/**
+ * Les données d'un cas s'écrivent en mots, et en pseudo-code = ne fait que comparer (B02 v34) :
+ * « pour âge = 8 et résident = FAUX » obligeait à préciser ailleurs « ici, = compare ».
+ */
+function verifierDonneesEnMots(
+  manifeste: Manifeste,
+  html: string,
+  signaler: (message: string) => void,
+): void {
+  const chercher = (texte: string, ou: string) => {
+    for (const [trouve] of texte.matchAll(/\b(?:pour|avec)\s+[\p{L}’']+\s*=\s*(?:VRAI|FAUX|\d+)/gu))
+      signaler(
+        `« ${trouve.replace(/\s+/g, ' ')} » (${ou}) écrit une donnée avec = : dis le cas en mots (« un enfant de 8 ans qui n’habite pas la ville »), = ne fait que comparer.`,
+      )
+  }
+  chercher(
+    sansScriptsNiCommentaires(html)
+      .replace(/<(style|pre|code)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+      .replace(/<template\b[^>]*\bdata-conception\b[^>]*>[\s\S]*?<\/template>/gi, ' ')
+      .replace(/<[^>]+>/g, ' '),
+    'le texte affiché',
+  )
+  textesDuManifeste(manifeste, '', (chemin, texte) => {
+    if (chemin !== 'contexte_ia') chercher(texte, chemin)
+  })
+}
+
+/**
+ * Un prénom, c'est un client, avec les mêmes données partout (B02 v34) : Nina avait 26 ans dans une
+ * étape et 30 ans dans la suivante, et le débutant qui suit l'histoire ne savait plus de qui on parlait.
+ */
+function verifierPrenoms(html: string, signaler: (message: string) => void): void {
+  const texte = sansScriptsNiCommentaires(html)
+    .replace(/<template\b[^>]*\bdata-conception\b[^>]*>[\s\S]*?<\/template>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+  const ages = new Map<string, Set<string>>()
+  for (const [, prenom = '', age = ''] of texte.matchAll(/\b(\p{Lu}\p{Ll}+), (\d+) ans\b/gu))
+    ages.set(prenom, (ages.get(prenom) ?? new Set()).add(age))
+  for (const [prenom, lesAges] of ages)
+    if (lesAges.size > 1)
+      signaler(
+        `${prenom} a plusieurs âges dans la fiche (${[...lesAges].join(', ')} ans) : un prénom garde les mêmes données partout, prends un autre prénom pour un autre client.`,
+      )
 }
 
 /**
@@ -922,6 +1087,10 @@ export async function verifierLesFiches({
       verifierCoulisses(resultat.manifeste, fiche.html, signaler)
       verifierTexteNu(fiche.html, signaler)
       verifierPresupposes(resultat.manifeste, fiche.html, signaler)
+      verifierConsignesChargees(resultat.manifeste, fiche.html, signaler)
+      verifierDonneesEnMots(resultat.manifeste, fiche.html, signaler)
+      verifierSignesRedonnes(resultat.manifeste, fiche.html, signaler)
+      verifierPrenoms(fiche.html, signaler)
       verifierDonneesALEcran(fiche.html, signaler)
       verifierAlignement(resultat.manifeste, fiche.html, signaler)
 
