@@ -558,6 +558,23 @@ describe('vérification des fiches du dépôt', () => {
       expect(problemes[0]).toContain('se suffit à elle-même')
     })
 
+    it('refuse le code d’un autre bloc, comme « en B01 » dans contexte_ia', async () => {
+      await writeFile(
+        join(contenu, 'test', 'catalogue.json'),
+        JSON.stringify(catalogue(['B01', 'X00'])),
+      )
+      await poser(
+        'X00.html',
+        avecManifeste(fiche, (manifeste) => {
+          manifeste.contexte_ia = `Bloc ${manifeste.bloc}. Les signes sont redonnés, comme la table en B01, pas comme en F12.`
+        }),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('« B01 » dans contexte_ia'),
+      ])
+    })
+
     it('ne prend pas les mots du métier pour un renvoi', async () => {
       await poser(
         'X00.html',

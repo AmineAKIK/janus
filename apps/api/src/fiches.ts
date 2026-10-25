@@ -368,6 +368,7 @@ function textesDuManifeste(
 function verifierRenvoisAuxCours(
   manifeste: Manifeste,
   html: string,
+  codes: ReadonlySet<string>,
   signaler: (message: string) => void,
 ): void {
   const chercher = (texte: string, ou: string) => {
@@ -382,12 +383,22 @@ function verifierRenvoisAuxCours(
       }
     }
   }
-  chercher(
-    sansScriptsNiCommentaires(html).replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ''),
-    'le texte affiché',
-  )
+  // B02 v33 : « comme la table hexadécimale en B01 » dans `contexte_ia`. Le code d'un autre bloc du
+  // catalogue est un code du plan ; le manifeste ne nomme que son bloc et ses prérequis (`bloc`, `prerequis`).
+  const autreBloc = (texte: string, ou: string) => {
+    for (const [code] of texte.matchAll(/(?<![\w-])[A-Z]\d{2}(?![\w-])/g)) {
+      if (code === manifeste.bloc || !codes.has(code)) continue
+      signaler(
+        `la fiche nomme un autre bloc par son code (« ${code} » dans ${ou}) : redonne ce qu’il faut sur place, sans renvoi au plan.`,
+      )
+    }
+  }
+  const page = sansScriptsNiCommentaires(html).replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+  chercher(page, 'le texte affiché')
+  autreBloc(page, 'le texte affiché')
   textesDuManifeste(manifeste, '', (chemin, texte) => {
     chercher(texte, chemin)
+    if (chemin !== 'bloc' && !chemin.startsWith('prerequis')) autreBloc(texte, chemin)
   })
 }
 
@@ -860,7 +871,7 @@ export async function verifierLesFiches({
       verifierOrdreDuCycle(resultat.manifeste, signaler)
       verifierAdressesExternes(fiche.html, signaler)
       verifierRenvoisAuxEssais(fiche.html, signaler)
-      verifierRenvoisAuxCours(resultat.manifeste, fiche.html, signaler)
+      verifierRenvoisAuxCours(resultat.manifeste, fiche.html, codes, signaler)
       verifierCoulisses(resultat.manifeste, fiche.html, signaler)
       verifierTexteNu(fiche.html, signaler)
       verifierDonneesALEcran(fiche.html, signaler)
