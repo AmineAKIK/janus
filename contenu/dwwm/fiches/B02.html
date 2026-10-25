@@ -2462,8 +2462,8 @@
         </div>
         <p>
           Une <strong>branche</strong>, c’est ce que le programme exécute dans un cas : pour Inès,
-          afficher « 7 € ». Les étapes suivantes ouvrent les boîtes une à une, en commençant par les
-          faits.
+          afficher « 7 € ». La ligne 1 n’a qu’un fait : sa condition, c’est ce fait. Les étapes
+          suivantes ouvrent les boîtes une à une, en commençant par les faits.
         </p>
       </div>
       <div data-ecran="Comparer">
@@ -2738,7 +2738,6 @@
           data-id="o4"
           data-aide1="Que vaut étudiant pour Hugo ? Que vaut 20 &lt; 26 ? Cherche ces deux valeurs dans la table de OU."
           data-reponse="vrai"
-          data-melanger="non"
         >
           <p class="q">
             Hugo a 20 ans, et il est étudiant. Que vaut pour lui étudiant OU âge &lt; 26 ?
@@ -2774,10 +2773,52 @@
           Hugo, lui, est venu un samedi. Il a 20 ans, il est étudiant. La ligne 2 exige deux choses
           à la fois : la réduction, étudiant OU âge &lt; 26, ET NON samedi.
         </p>
+        <details>
+          <summary>Les tables, si tu en as besoin</summary>
+          <table
+            class="table-js"
+            data-lecture="Les tables de NON et de OU. NON A est VRAI quand A est FAUX, et FAUX quand A est VRAI. A OU B n’est FAUX que si A et B sont FAUX tous les deux."
+          >
+            <thead>
+              <tr>
+                <th>A</th>
+                <th>B</th>
+                <th>NON A</th>
+                <th>A OU B</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>FAUX</td>
+                <td>FAUX</td>
+                <td>VRAI</td>
+                <td>FAUX</td>
+              </tr>
+              <tr>
+                <td>FAUX</td>
+                <td>VRAI</td>
+                <td>VRAI</td>
+                <td>VRAI</td>
+              </tr>
+              <tr>
+                <td>VRAI</td>
+                <td>FAUX</td>
+                <td>FAUX</td>
+                <td>VRAI</td>
+              </tr>
+              <tr>
+                <td>VRAI</td>
+                <td>VRAI</td>
+                <td>FAUX</td>
+                <td>VRAI</td>
+              </tr>
+            </tbody>
+          </table>
+        </details>
         <div class="cadre pour-lire">
-          <p class="discret">Le guichet, pour lire :</p>
+          <p class="discret">Le guichet, pour lire :</p>
           <ul>
-            <li>&lt; veut dire « strictement plus petit que ».</li>
+            <li>&lt; veut dire « strictement plus petit que », ≥ « plus grand ou égal à ».</li>
             <li>étudiant vaut VRAI pour un client étudiant, FAUX sinon.</li>
             <li>samedi vaut VRAI le samedi ; NON samedi vaut VRAI les autres jours.</li>
             <li>Ce qui est entre parenthèses se calcule d’abord.</li>
@@ -2908,7 +2949,7 @@
         <div class="cadre pour-lire">
           <p class="discret">Le guichet, pour lire :</p>
           <ul>
-            <li>&lt; veut dire « strictement plus petit que ».</li>
+            <li>&lt; veut dire « strictement plus petit que », ≥ « plus grand ou égal à ».</li>
             <li>étudiant vaut VRAI pour un client étudiant, FAUX sinon.</li>
             <li>samedi vaut VRAI le samedi ; NON samedi vaut VRAI les autres jours.</li>
             <li>Ce qui est entre parenthèses se calcule d’abord.</li>
@@ -3121,7 +3162,6 @@
           data-id="r6"
           data-aide1="Dans la liste, ET vient avant OU : quel morceau de l’affiche calcules-tu donc en premier pour Yanis ?"
           data-reponse="vrai"
-          data-melanger="non"
         >
           <p class="q">
             Avec cet ordre, que donne l’affiche pour Yanis, 30 ans, étudiant, venu un samedi ?
@@ -3158,7 +3198,7 @@
           <p class="discret">Pour lire :</p>
           <ul>
             <li>L’ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</li>
-            <li>&lt; veut dire « strictement plus petit que ».</li>
+            <li>&lt; veut dire « strictement plus petit que », ≥ « plus grand ou égal à ».</li>
             <li>étudiant vaut VRAI pour un client étudiant ; samedi vaut VRAI le samedi.</li>
           </ul>
         </div>
@@ -3638,6 +3678,7 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
           data-id="t10"
           data-aide1="Le « sauf » retire le samedi à tout le groupe d’avant, jeunes et demandeurs d’emploi. Que faut-il pour que ET NON porte sur ce groupe entier ?"
           data-reponse="paren"
+          data-succes="Un jeune de 15 ans a son cours gratuit un mardi, pas le samedi : le « sauf » retire le samedi à tout le groupe."
         >
           <p class="q">
             Finis la traduction : quelle condition dit que le cours d’essai est gratuit ?
@@ -3760,6 +3801,7 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
           data-id="t2"
           data-aide1="Une cliente qui donne ses deux contacts gêne-t-elle le site ? Le « ou » de la phrase interdit-il les deux ?"
           data-reponse="inclusif"
+          data-succes="La cliente qui donne les deux est prévenue : rien dans la phrase n’interdit les deux contacts."
         >
           <p class="q">
             Le site du cinéma dit : « Pour être prévenu des avant-premières, indique ton téléphone
@@ -3841,6 +3883,12 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
             même pas testées. SINON prend tous les cas où aucune n’est VRAIE. Sans SINON, il se peut
             que rien ne s’exécute.
           </p>
+        </div>
+        <div class="cadre pour-lire">
+          <p class="discret">Le guichet, pour lire :</p>
+          <ul>
+            <li>&lt; veut dire « strictement plus petit que », ≥ « plus grand ou égal à ».</li>
+          </ul>
         </div>
         <div
           class="defile"
@@ -3973,14 +4021,7 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
             </li>
           </ul>
         </div>
-        <div
-          class="ex"
-          data-widget="choix"
-          data-id="b21"
-          data-reponse="vrai"
-          data-melanger="non"
-          data-prediction
-        >
+        <div class="ex" data-widget="choix" data-id="b21" data-reponse="vrai" data-prediction>
           <p class="q">Ligne 2, la réduction : que vaut-elle pour Sarah ?</p>
           <ul class="options">
             <li data-option="vrai">VRAI</li>
@@ -4094,14 +4135,7 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
             </li>
           </ul>
         </div>
-        <div
-          class="ex"
-          data-widget="choix"
-          data-id="b25"
-          data-reponse="vrai"
-          data-melanger="non"
-          data-prediction
-        >
+        <div class="ex" data-widget="choix" data-id="b25" data-reponse="vrai" data-prediction>
           <p class="q">Ligne 3, SINON SI âge ≥ 65 : que vaut-elle pour Jean ?</p>
           <ul class="options">
             <li data-option="vrai">VRAI</li>
@@ -4338,11 +4372,11 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
             les flèches.
           </p>
           <ol class="lignes-ordre">
-            <li data-ligne="a" data-cond="spectateurs ≥ 50" data-sortie="animée">
-              spectateurs ≥ 50 : afficher « animée »
-            </li>
             <li data-ligne="b" data-cond="spectateurs ≥ 150" data-sortie="presque pleine">
               spectateurs ≥ 150 : afficher « presque pleine »
+            </li>
+            <li data-ligne="a" data-cond="spectateurs ≥ 50" data-sortie="animée">
+              spectateurs ≥ 50 : afficher « animée »
             </li>
             <li data-ligne="c" data-cond="spectateurs ≥ 200" data-sortie="complète">
               spectateurs ≥ 200 : afficher « complète »
@@ -4363,17 +4397,10 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
           <ul>
-            <li>≥ veut dire « plus grand ou égal à ».</li>
+            <li>≥ veut dire « plus grand ou égal à », &gt; « strictement plus grand que ».</li>
           </ul>
         </div>
-        <div
-          class="ex"
-          data-widget="choix"
-          data-id="b17"
-          data-reponse="a"
-          data-melanger="non"
-          data-prediction
-        >
+        <div class="ex" data-widget="choix" data-id="b17" data-reponse="a" data-prediction>
           <p class="q">
             Pour âge ≥ 65, avec des âges entiers, quelles sont les deux valeurs limites ?
           </p>
@@ -4431,6 +4458,12 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
           data-variable="âge"
           data-candidats="10|11|12|13|24|25|26|27|63|64|65|66"
           data-fait="11|12"
+          data-variante-enonce="Un parking, en minutes entières : SI durée &lt; 30 : gratuit ; SINON SI durée &lt; 120 : 2 € ; SINON SI durée ≥ 600 : 15 € ; SINON : 6 €. Celles de 30 sont touchées : touche les autres."
+          data-variante-reponse="29 et 30, 119 et 120, 599 et 600"
+          data-variante-chaine="durée &lt; 30 =&gt; gratuit | durée &lt; 120 =&gt; 2 € | durée ≥ 600 =&gt; 15 € | SINON =&gt; 6 €"
+          data-variante-variable="durée"
+          data-variante-candidats="28|29|30|31|118|119|120|121|598|599|600|601"
+          data-variante-fait="29|30"
         >
           <p class="q">
             Quelles sont les valeurs limites de cette chaîne, pour des âges entiers ? Celles du
@@ -4446,10 +4479,6 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
           <p class="discret">Pour lire :</p>
           <ul>
             <li>≥ veut dire « plus grand ou égal à ».</li>
-            <li>
-              Les valeurs limites d’un seuil : la dernière valeur avant le changement et la première
-              après.
-            </li>
           </ul>
         </div>
         <div
@@ -4504,14 +4533,7 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
             </li>
           </ul>
         </div>
-        <div
-          class="ex"
-          data-widget="choix"
-          data-id="b18"
-          data-reponse="quatre"
-          data-melanger="non"
-          data-prediction
-        >
+        <div class="ex" data-widget="choix" data-id="b18" data-reponse="quatre" data-prediction>
           <p class="q">
             À ton avis, quels clients le gérant doit-il faire passer, un mardi, pour tester ce
             seuil ?
@@ -4611,7 +4633,7 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
       <div data-ecran="Comparer : ===">
         <p class="accroche">
           Léo fête ses 12 ans au guichet : le programme doit tester si la variable age contient 12.
-          Puisque = range, comparer demande un autre signe. JavaScript en prend trois,
+          Puisque = range, comparer demande un autre signe. JavaScript en prend trois à la suite,
           <code>===</code> : l’<strong>égalité stricte</strong>. <code>age === 12</code> vaut true
           si age contient 12, false sinon. Elle compare aussi des textes, écrits entre apostrophes.
           Tu croiseras aussi ==, une égalité moins stricte : on s’en passe ici.
@@ -4724,8 +4746,9 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
         <p>
           Dans le pseudo-code, on calcule dans cet ordre : parenthèses, comparaisons, NON, ET, OU.
           En JavaScript, ! passe avant les comparaisons : <code>!age &gt;= 18</code> calcule d’abord
-           !age, puis compare ce résultat à 18. Or !age ne donne pas un âge, mais true ou false : la
-          condition ne teste plus l’âge. Pour nier une comparaison, garde les parenthèses :
+           !age, puis compare ce résultat à 18. Or !age ne donne pas un âge, mais true ou false, et
+          true &gt;= 18 donne false, quel que soit l’âge, comme false &gt;= 18 : la condition ne
+          teste plus l’âge. Pour nier une comparaison, garde les parenthèses :
           <code>!(age &gt;= 18)</code>.
         </p>
       </div>
@@ -4887,14 +4910,7 @@ let samedi = false</code></pre>
         </div>
         <pre><code>if (age &lt; 12) {
   console.log('5 €')</code></pre>
-        <div
-          class="ex"
-          data-widget="choix"
-          data-id="j17"
-          data-reponse="elseif"
-          data-melanger="non"
-          data-prediction
-        >
+        <div class="ex" data-widget="choix" data-id="j17" data-reponse="elseif" data-prediction>
           <p class="q">
             Comment s’écrit la ligne 2, SINON SI (étudiant OU âge &lt; 26) ET NON samedi : afficher
             « 7 € » ?
@@ -4906,7 +4922,7 @@ let samedi = false</code></pre>
             <li
               data-option="sans"
               class="mono"
-              data-retour="Sans parenthèses, que donnerait cette ligne pour un étudiant venu un samedi ?"
+              data-retour="Sans parenthèses, &amp;&amp; passe avant || : que donnerait cette ligne pour un étudiant venu un samedi ?"
             >
               else if (etudiant || age &lt; 26 &amp;&amp; !samedi)
             </li>
@@ -5016,9 +5032,9 @@ if (age &lt; 12) {
           data-variante-solution="if (v &gt;= 90) { console.log('violent') } else if (v &gt;= 50) { console.log('fort') } else { console.log('calme') }"
         >
           <p class="q">
-            Complète en JavaScript le moment de la séance. La variable h contient l’heure, un nombre
-            entier : la page lui donne elle-même chaque valeur à tester, ne lui en donne pas
-            toi-même.
+            Complète en JavaScript le code du moment de la séance. La variable h contient l’heure,
+            un nombre entier. N’écris pas de valeur pour h : la page essaie elle-même chaque heure à
+            tester.
           </p>
           <p>
             La première branche est écrite dans la case, avec la forme des deux autres :
@@ -5073,7 +5089,6 @@ if (age &lt; 12) {
             répondre la console ?
           </p>
           <ul class="options">
-            <li data-option="faux" class="mono">false</li>
             <li
               data-option="vrai"
               class="mono"
@@ -5081,6 +5096,7 @@ if (age &lt; 12) {
             >
               true
             </li>
+            <li data-option="faux" class="mono">false</li>
             <li
               data-option="undefined"
               class="mono"
@@ -5108,7 +5124,6 @@ if (age &lt; 12) {
             va répondre la console ?
           </p>
           <ul class="options">
-            <li data-option="vrai" class="mono">true</li>
             <li
               data-option="faux"
               class="mono"
@@ -5116,6 +5131,7 @@ if (age &lt; 12) {
             >
               false
             </li>
+            <li data-option="vrai" class="mono">true</li>
             <li
               data-option="undefined"
               class="mono"
@@ -5153,7 +5169,6 @@ if (age &lt; 12) {
         >
           <p class="q">Que va répondre la console à <code>let age = 23</code> ?</p>
           <ul class="options">
-            <li data-option="undefined" class="mono">undefined</li>
             <li
               data-option="vingt-trois"
               class="mono"
@@ -5168,6 +5183,7 @@ if (age &lt; 12) {
             >
               true
             </li>
+            <li data-option="undefined" class="mono">undefined</li>
           </ul>
         </div>
         <p>
@@ -5185,7 +5201,6 @@ if (age &lt; 12) {
         >
           <p class="q">Que va répondre la console à <code>age &lt; 26</code> ?</p>
           <ul class="options">
-            <li data-option="vrai" class="mono">true</li>
             <li
               data-option="faux"
               class="mono"
@@ -5193,6 +5208,7 @@ if (age &lt; 12) {
             >
               false
             </li>
+            <li data-option="vrai" class="mono">true</li>
             <li
               data-option="undefined"
               class="mono"
@@ -5408,10 +5424,7 @@ if (age &lt; 12) {
         <div class="cadre pour-lire">
           <p class="discret">Le guichet, pour lire :</p>
           <ul>
-            <li>
-              Les lignes sont numérotées de haut en bas ; une ligne, c’est une condition et ce
-              qu’elle affiche.
-            </li>
+            <li>Il lit les lignes de haut en bas ; elles sont numérotées de 1 à 4.</li>
             <li>&lt; veut dire « strictement plus petit que », ≥ « plus grand ou égal à ».</li>
             <li>étudiant vaut VRAI pour un client étudiant ; samedi vaut VRAI le samedi.</li>
             <li>L’ordre de calcul : parenthèses, comparaisons, NON, ET, OU.</li>
@@ -5570,6 +5583,13 @@ if (age &lt; 12) {
           <div>
             <dt>Condition</dt>
             <dd>Une affirmation qui vaut VRAI ou FAUX.</dd>
+          </div>
+          <div>
+            <dt>Fait</dt>
+            <dd>
+              Une condition simple, sans NON, ET ni OU : une donnée lue, comme étudiant, ou une
+              comparaison, comme âge &lt; 26. Les faits se combinent en conditions plus grandes.
+            </dd>
           </div>
           <div>
             <dt>Booléen</dt>
@@ -5789,7 +5809,7 @@ if (age &lt; 12) {
         data-widget="choix"
         data-verifie
         data-reponse="juste"
-        data-justifier="Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Sans les parenthèses, jours ≤ 30 OU défectueux ET NON personnalisé donnerait-il la même réponse pour chaque article ? Dis pourquoi."
+        data-justifier="Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Sans les parenthèses, jours ≤ 30 OU défectueux ET NON personnalisé donnerait-il la même réponse que (jours ≤ 30 OU défectueux) ET NON personnalisé pour chaque article ? Dis pourquoi."
       >
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -5832,7 +5852,7 @@ if (age &lt; 12) {
         data-widget="choix"
         data-verifie
         data-reponse="juste"
-        data-justifier="Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Sans les parenthèses, premium OU durée &gt; 6 ET NON gratuit donnerait-il la même réponse pour chaque client ? Dis pourquoi."
+        data-justifier="Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Sans les parenthèses, premium OU durée &gt; 6 ET NON gratuit donnerait-il la même réponse que (premium OU durée &gt; 6) ET NON gratuit pour chaque client ? Dis pourquoi."
       >
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -6277,10 +6297,7 @@ if (age &lt; 12) {
           <p class="discret">Pour lire :</p>
           <ul>
             <li>&lt; veut dire « strictement plus petit que ».</li>
-            <li>
-              « perdu » est le SINON : il reste en bas, et prend tous les retards qu’aucune ligne ne
-              prend.
-            </li>
+            <li>« perdu » est le SINON, sous la chaîne.</li>
           </ul>
         </div>
         <p class="q">Remets les lignes de sa chaîne dans le bon ordre avec les flèches.</p>
@@ -6315,10 +6332,7 @@ if (age &lt; 12) {
           <p class="discret">Pour lire :</p>
           <ul>
             <li>&lt; veut dire « strictement plus petit que ».</li>
-            <li>
-              « trop lent » est le SINON : il reste en bas, et prend tous les temps qu’aucune ligne
-              ne prend.
-            </li>
+            <li>« trop lent » est le SINON, sous la chaîne.</li>
           </ul>
         </div>
         <p class="q">Remets les lignes de sa chaîne dans le bon ordre avec les flèches.</p>
@@ -6364,10 +6378,6 @@ if (age &lt; 12) {
           <p class="discret">Pour lire :</p>
           <ul>
             <li>≥ veut dire « plus grand ou égal à ».</li>
-            <li>
-              Les valeurs limites d’un seuil : la dernière valeur avant le changement et la première
-              après.
-            </li>
           </ul>
         </div>
         <p class="q">
@@ -6404,10 +6414,6 @@ if (age &lt; 12) {
           <p class="discret">Pour lire :</p>
           <ul>
             <li>≥ veut dire « plus grand ou égal à ».</li>
-            <li>
-              Les valeurs limites d’un seuil : la dernière valeur avant le changement et la première
-              après.
-            </li>
           </ul>
         </div>
         <p class="q">
@@ -7198,8 +7204,8 @@ if (age &lt; 12) {
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-R44",
-            "question": "Pour lire : ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Un élève passe SI reçu OU bonus ET NON absent, où reçu vaut VRAI pour une moyenne d’au moins 10 sur 20. Lucas a 12 de moyenne, un bonus, et il a été absent. Calcule la condition pour lui, une opération à la fois, en disant pourquoi cette opération passe à ce moment-là.",
+            "id": "B02-R45",
+            "question": "Pour lire : ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Un élève passe SI reçu OU bonus ET NON absent, où reçu vaut VRAI pour une moyenne d’au moins 10 sur 20. Lucas a 12 de moyenne, un bonus, et il a été absent. Calcule la condition pour lui, une opération à la fois, en disant pour chacune les valeurs qu’elle combine et ce qu’elle donne.",
             "attendu": "Pour Lucas, reçu vaut VRAI, car 12 fait au moins 10, bonus vaut VRAI et absent VRAI. NON d’abord, car il passe avant ET et OU : NON absent donne FAUX. Puis ET, qui passe avant OU : bonus ET FAUX donne FAUX. Enfin OU, le dernier de l’ordre : VRAI OU FAUX donne VRAI : Lucas passe. Calculer le OU avant le ET donnerait (VRAI OU VRAI) ET FAUX, soit FAUX : c’est l’erreur E2. Déduit de l’étape 6.",
             "erreurs": ["E2"]
           },
@@ -7232,14 +7238,14 @@ if (age &lt; 12) {
           {
             "id": "PR1-11",
             "item": "PR1-11",
-            "question": "Pour lire : ordre de calcul : parenthèses, comparaisons, NON, ET, OU ; ≤ : « plus petit ou égal à ». Un article est remboursé si (jours ≤ 30 OU défectueux) ET NON personnalisé. Sans les parenthèses, jours ≤ 30 OU défectueux ET NON personnalisé donnerait-il la même réponse pour chaque article ? Dis pourquoi.",
+            "question": "Pour lire : ordre de calcul : parenthèses, comparaisons, NON, ET, OU ; ≤ : « plus petit ou égal à ». Un article est remboursé si (jours ≤ 30 OU défectueux) ET NON personnalisé. Sans les parenthèses, jours ≤ 30 OU défectueux ET NON personnalisé donnerait-il la même réponse que (jours ≤ 30 OU défectueux) ET NON personnalisé pour chaque article ? Dis pourquoi.",
             "attendu": "Non. Sans parenthèses, ET passerait avant OU : jours ≤ 30 OU (défectueux ET NON personnalisé). Un article personnalisé rendu sous 30 jours serait alors remboursé, alors que la règle l’exclut. Déduit de l’étape 6.",
             "erreurs": []
           },
           {
             "id": "PR1-11:variante",
             "item": "PR1-11",
-            "question": "Pour lire : ordre de calcul : parenthèses, comparaisons, NON, ET, OU ; > : « strictement plus grand que ». Un client entre au salon si (premium OU durée > 6) ET NON gratuit. Sans les parenthèses, premium OU durée > 6 ET NON gratuit donnerait-il la même réponse pour chaque client ? Dis pourquoi.",
+            "question": "Pour lire : ordre de calcul : parenthèses, comparaisons, NON, ET, OU ; > : « strictement plus grand que ». Un client entre au salon si (premium OU durée > 6) ET NON gratuit. Sans les parenthèses, premium OU durée > 6 ET NON gratuit donnerait-il la même réponse que (premium OU durée > 6) ET NON gratuit pour chaque client ? Dis pourquoi.",
             "attendu": "Non. Sans parenthèses, ET passerait avant OU : premium OU (durée > 6 ET NON gratuit). Un client premium avec un billet gratuit entrerait alors, alors que la règle l’exclut. Déduit de l’étape 6.",
             "erreurs": []
           },
@@ -7396,7 +7402,7 @@ if (age &lt; 12) {
           {
             "id": "B02-DE33",
             "type": "explication",
-            "consigne": "Un menu dit : « une boisson au choix : jus ou soda ». Avec les faits jus et soda, écris la condition qui dit si une commande respecte ce menu. Que donne-t-elle pour un client qui prend les deux ?",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Un menu dit : « une boisson au choix : jus ou soda ». Avec les faits jus et soda, écris la condition qui dit si une commande respecte ce menu. Que donne-t-elle pour un client qui prend les deux ?",
             "attendu": "« Au choix » n’en permet qu’un, c’est un OU exclusif : (jus OU soda) ET NON (jus ET soda), FAUX pour ce client. Le OU de la logique est inclusif : jus OU soda donnerait VRAI et accepterait ce client à tort. Déduit de l’étape 7.",
             "erreurs": []
           },
@@ -7588,7 +7594,7 @@ if (age &lt; 12) {
             "notion": "Évaluer une condition avec comparaisons et parenthèses, une opération à la fois, en justifiant chaque étape par l’ordre de calcul : parenthèses, comparaisons, NON, ET, OU",
             "montree": ["ET6"],
             "pratiquee": ["PR1"],
-            "questions": ["B02-R44", "B02-C27", "B02-Q26", "B02-DE30", "B02-K27"]
+            "questions": ["B02-R45", "B02-C27", "B02-Q26", "B02-DE30", "B02-K27"]
           },
           {
             "id": "N4",
@@ -7643,7 +7649,7 @@ if (age &lt; 12) {
             "vers": "N3",
             "type": "composition",
             "montree": "ET6",
-            "questions": ["B02-R44", "B02-C27"]
+            "questions": ["B02-R45", "B02-C27"]
           },
           {
             "id": "L2",
