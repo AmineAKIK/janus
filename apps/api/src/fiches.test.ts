@@ -810,6 +810,23 @@ describe('vérification des fiches du dépôt', () => {
       )
     })
 
+    it('refuse une variante trop longue et une explication qui ne nomme pas son sujet', async () => {
+      await poser(
+        'X00.html',
+        fiche.replace(
+          "<p>À REMPLACER : l'explication du bloc.</p>",
+          `<div class="ex" data-variante-enonce="${'mot '.repeat(46)}?" data-justifier="Donnent-elles le même prix ?"></div>`,
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('(47 mots)'),
+          expect.stringContaining('s’ouvre sur « Donnent-elles »'),
+        ]),
+      )
+    })
+
     it('laisse libres les notes de conception', async () => {
       await poser(
         'X00.html',

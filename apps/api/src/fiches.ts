@@ -495,14 +495,21 @@ function verifierPresupposes(
     for (const motif of PRESUPPOSES)
       for (const [trouve] of texte.matchAll(motif))
         signaler(
-          `la question souffle sa réponse (« ${trouve} » dans ${ou}) : demande le résultat sans le dire, par exemple « donnent-elles le même résultat ? Pourquoi ? ».`,
+          `la question souffle sa réponse (« ${trouve} » dans ${ou}) : demande le résultat sans le dire, par exemple « sans les parenthèses, cette condition donnerait-elle le même résultat ? Pourquoi ? ».`,
         )
   }
   textesDuManifeste(manifeste, '', (chemin, texte) => {
     if (/\.(?:question|consigne|recto)$/.test(chemin)) chercher(texte, chemin)
   })
-  for (const [, texte = ''] of html.matchAll(/\bdata-justifier="([^"]*)"/g))
+  for (const [, texte = ''] of html.matchAll(/\bdata-justifier="([^"]*)"/g)) {
     chercher(texte, 'data-justifier')
+    // L'option fausse choisie disparaît de l'écran : « Donnent-elles… ? » ne renvoie plus à rien (B02 v34).
+    const pronom = /^\s*\p{L}+-(?:t-)?(?:ils?|elles?)\b/u.exec(texte)
+    if (pronom)
+      signaler(
+        `la demande d’explication « ${texte.slice(0, 60)}… » s’ouvre sur « ${pronom[0].trim()} » : nomme ce dont elle parle, l’option que l’apprenant a écartée peut avoir disparu de l’écran.`,
+      )
+  }
 }
 
 /**
@@ -524,7 +531,12 @@ function verifierConsignesChargees(
   const page = sansScriptsNiCommentaires(html)
   const consignes = [
     ...Array.from(page.matchAll(/<p class="q"[^>]*>([\s\S]*?)<\/p>/g), ([, q = '']) => q),
-    ...Array.from(page.matchAll(/\bdata-(?:autre-enonce|justifier)="([^"]*)"/g), ([, q = '']) => q),
+    ...Array.from(
+      page.matchAll(
+        /\bdata-(?:autre-enonce|justifier|variante-enonce|variante-consigne)="([^"]*)"/g,
+      ),
+      ([, q = '']) => q,
+    ),
   ]
   // Une question de restitution ou une carte s'affiche sans encadré et sans le cours : elle redonne
   // la chaîne ou le code qu'elle interroge, d'où plus de mots, mais pas plus d'un rappel.
