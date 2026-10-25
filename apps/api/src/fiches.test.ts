@@ -674,20 +674,37 @@ describe('vérification des fiches du dépôt', () => {
       ])
     })
 
-    it('refuse un texte nu entre deux paragraphes, comme « RAW: »', async () => {
+    it('refuse un texte nu entre deux paragraphes', async () => {
       await poser(
         'X00.html',
         avecManifeste(
           fiche.replace(
             "<p>À REMPLACER : l'explication du bloc.</p>",
-            '<p>NON inverse la valeur.</p>\n        RAW:\n        <p>ET demande les deux.</p>',
+            '<p>NON inverse la valeur.</p>\n        à revoir\n        <p>ET demande les deux.</p>',
           ),
           () => {},
         ),
       )
 
       expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
-        expect.stringContaining('le texte « RAW: » est posé entre deux blocs'),
+        expect.stringContaining('le texte « à revoir » est posé entre deux blocs'),
+      ])
+    })
+
+    it('refuse « RAW: », reste d’un script d’édition, même dans un paragraphe', async () => {
+      await poser(
+        'X00.html',
+        avecManifeste(
+          fiche.replace(
+            "<p>À REMPLACER : l'explication du bloc.</p>",
+            '<p>RAW: NON inverse la valeur.</p>',
+          ),
+          () => {},
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('« RAW: » dans le texte affiché'),
       ])
     })
 

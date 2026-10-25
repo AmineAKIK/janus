@@ -427,6 +427,11 @@ const COULISSES: readonly { motif: RegExp; pourquoi: string }[] = [
     pourquoi:
       'c’est le vocabulaire de la méthode : dis l’image et sa limite en langue naturelle (« Pour te le représenter : », « Ce que les interrupteurs ne montrent pas »)',
   },
+  {
+    // B02 v33 : un script d'édition a laissé deux fois « RAW: » devant un paragraphe affiché.
+    motif: /\bRAW:/gu,
+    pourquoi: 'c’est un reste d’un script d’édition : retire-le',
+  },
 ]
 
 function verifierCoulisses(
