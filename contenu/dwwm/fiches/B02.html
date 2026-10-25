@@ -3047,6 +3047,11 @@
           comparaisons passent avant lui, NON âge ≥ 18 se lit NON (âge ≥ 18). Écris quand même ces
           parenthèses : en JavaScript, NON passe avant les comparaisons.
         </p>
+        RAW:
+        <p>
+          Pour chaque opération, sa table : NON inverse la valeur, ET n’est VRAI que si les deux
+          côtés le sont, OU n’est FAUX que si les deux côtés le sont.
+        </p>
         <div class="ex" data-widget="choix" data-id="r5" data-reponse="faux" data-melanger="non">
           <p class="q">
             Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Que vaut (FAUX OU VRAI) ET
@@ -3193,13 +3198,14 @@
           data-valeurs="durée=15, abonné=VRAI, électrique=VRAI"
           data-autre-expr="taille ≥ 120 OU accompagné ET âge ≥ 6"
           data-autre-valeurs="taille=130, accompagné=FAUX, âge=5"
-          data-autre-enonce="Un manège laisse monter SI taille ≥ 120 OU accompagné ET âge ≥ 6 ; taille compte les centimètres, et accompagné vaut VRAI pour un enfant venu avec un adulte. Calcule la condition pour taille = 130, accompagné = FAUX et âge = 5, une opération à la fois. Ordre de calcul : parenthèses, comparaisons, NON, ET, OU."
+          data-autre-enonce="Un manège laisse monter SI taille ≥ 120 OU accompagné ET âge ≥ 6 ; taille compte les centimètres, accompagné vaut VRAI pour un enfant venu avec un adulte, et ≥ veut dire « plus grand ou égal à ». Calcule la condition pour taille = 130, accompagné = FAUX et âge = 5, une opération à la fois. Ordre de calcul : parenthèses, comparaisons, NON, ET, OU."
         >
           <p class="q">
             Un vélo en libre-service est gratuit SI durée &lt; 30 OU abonné ET NON électrique ;
-            durée compte les minutes du trajet. Avec durée = 15, abonné = VRAI et électrique = VRAI,
-            le trajet est-il gratuit ? Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Les
-            deux premières opérations sont faites : continue.
+            durée compte les minutes du trajet, et le signe &lt; veut dire « strictement plus petit
+            que ». Avec durée = 15, abonné = VRAI et électrique = VRAI, le trajet est-il gratuit ?
+            Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Les deux premières opérations
+            sont faites : continue.
           </p>
         </div>
       </div>
@@ -3388,53 +3394,6 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
         <pre
           class="pseudo"
         ><code>condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></pre>
-        <details>
-          <summary>Les tables, si tu en as besoin</summary>
-          <table
-            class="table-js"
-            data-lecture="Les tables de NON, ET et OU. NON A est VRAI quand A est FAUX, et FAUX quand A est VRAI. A ET B n’est VRAI que si A et B sont VRAI tous les deux. A OU B n’est FAUX que si A et B sont FAUX tous les deux."
-          >
-            <thead>
-              <tr>
-                <th>A</th>
-                <th>B</th>
-                <th>NON A</th>
-                <th>A ET B</th>
-                <th>A OU B</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>FAUX</td>
-                <td>FAUX</td>
-                <td>VRAI</td>
-                <td>FAUX</td>
-                <td>FAUX</td>
-              </tr>
-              <tr>
-                <td>FAUX</td>
-                <td>VRAI</td>
-                <td>VRAI</td>
-                <td>FAUX</td>
-                <td>VRAI</td>
-              </tr>
-              <tr>
-                <td>VRAI</td>
-                <td>FAUX</td>
-                <td>FAUX</td>
-                <td>FAUX</td>
-                <td>VRAI</td>
-              </tr>
-              <tr>
-                <td>VRAI</td>
-                <td>VRAI</td>
-                <td>FAUX</td>
-                <td>VRAI</td>
-                <td>VRAI</td>
-              </tr>
-            </tbody>
-          </table>
-        </details>
         <div
           class="ex"
           data-widget="choix"
@@ -4048,6 +4007,45 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
 <span class="l" data-l="3"><b>SINON</b> :</span>
 <span class="l br" data-l="3">  afficher « froid »</span></code></pre>
       </div>
+      <div data-ecran="Une ligne placée">
+        <div
+          class="ex"
+          data-widget="ordre"
+          data-id="b10"
+          data-fixe="b"
+          data-sinon-ligne="courte"
+          data-cas="km=50 =&gt; marathon | km=42 =&gt; marathon | km=41 =&gt; semi-marathon | km=21 =&gt; semi-marathon | km=20 =&gt; longue | km=10 =&gt; longue | km=9 =&gt; moyenne | km=5 =&gt; moyenne | km=4 =&gt; courte"
+          data-reponse="b,d,a,c"
+          data-variante-enonce="Une station météo classe le vent, en km/h entiers : « calme » sous 20, « modéré » à partir de 20, « fort » à partir de 50, « violent » à partir de 90, « tempête » à partir de 120. Le signe ≥ veut dire « plus grand ou égal à ». La ligne la plus exigeante est déjà placée en haut, et bloquée : range les trois autres avec les flèches."
+          data-variante-reponse="b,d,a,c"
+          data-variante-fixe="b"
+          data-variante-lignes="a : vent ≥ 50 =&gt; fort | b : vent ≥ 120 =&gt; tempête | c : vent ≥ 20 =&gt; modéré | d : vent ≥ 90 =&gt; violent"
+          data-variante-sinon-ligne="calme"
+          data-variante-cas="vent=130 =&gt; tempête | vent=120 =&gt; tempête | vent=119 =&gt; violent | vent=90 =&gt; violent | vent=89 =&gt; fort | vent=50 =&gt; fort | vent=49 =&gt; modéré | vent=20 =&gt; modéré | vent=19 =&gt; calme"
+        >
+          <p class="q">
+            Une appli de course classe ta sortie selon la distance, en kilomètres entiers :
+            « courte » sous 5, « moyenne » à partir de 5, « longue » à partir de 10,
+            « semi-marathon » à partir de 21, « marathon » à partir de 42. Le signe ≥ veut dire
+            « plus grand ou égal à ». La ligne la plus exigeante est déjà placée en haut, et
+            bloquée : range les trois autres avec les flèches.
+          </p>
+          <ol class="lignes-ordre">
+            <li data-ligne="a" data-cond="km ≥ 10" data-sortie="longue">
+              km ≥ 10 : afficher « longue »
+            </li>
+            <li data-ligne="b" data-cond="km ≥ 42" data-sortie="marathon">
+              km ≥ 42 : afficher « marathon »
+            </li>
+            <li data-ligne="c" data-cond="km ≥ 5" data-sortie="moyenne">
+              km ≥ 5 : afficher « moyenne »
+            </li>
+            <li data-ligne="d" data-cond="km ≥ 21" data-sortie="semi-marathon">
+              km ≥ 21 : afficher « semi-marathon »
+            </li>
+          </ol>
+        </div>
+      </div>
       <div data-ecran="Les médailles">
         <div
           class="ex"
@@ -4064,8 +4062,8 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
         >
           <p class="q">
             Un jeu donne une médaille selon le score : rien sous 300, bronze à partir de 300, argent
-            à partir de 600, or à partir de 900. Remets les lignes dans le bon ordre avec les
-            flèches.
+            à partir de 600, or à partir de 900. Le signe ≥ veut dire « plus grand ou égal à ».
+            Remets les lignes dans le bon ordre avec les flèches.
           </p>
           <ol class="lignes-ordre">
             <li data-ligne="a" data-cond="score ≥ 300" data-sortie="bronze">
@@ -4105,7 +4103,7 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
         >
           <p class="q">
             Pour la condition température ≥ 25, avec des températures entières, quelles sont les
-            deux valeurs limites ?
+            deux valeurs limites ? Le signe ≥ veut dire « plus grand ou égal à ».
           </p>
           <ul class="options">
             <li data-option="a">24 et 25</li>
@@ -4145,9 +4143,9 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
 <span class="l br" data-l="3">  afficher « enfant »</span></code></pre>
         <div class="ex" data-widget="choix" data-id="b9" data-reponse="onze" data-melanger="non">
           <p class="q">
-            Les valeurs limites d’un seuil sont la dernière valeur avant le seuil et la première
-            après ; ≥ veut dire « plus grand ou égal à ». Celles du seuil 65 sont données : 64 et
-            65. Quelles sont celles de l’autre seuil ?
+            Les valeurs limites d’un seuil sont la dernière valeur avant le changement et la
+            première après ; ≥ veut dire « plus grand ou égal à ». Celles du seuil 65 sont données :
+            64 et 65. Quelles sont celles de l’autre seuil ?
           </p>
           <ul class="options">
             <li data-option="onze">11 et 12</li>
@@ -4183,9 +4181,9 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
           data-explication="7 et 8 sont les valeurs limites de note ≥ 8, et chacune se teste avec le stage VRAI, puis FAUX : avec note = 8, la condition vaut VRAI avec le stage et FAUX sans."
         >
           <p class="q">
-            Une école admet un élève SI note ≥ 8 ET stage. Les notes sont entières. Les valeurs
-            limites d’un seuil sont la dernière valeur avant le seuil et la première après. Quels
-            couples (note, stage) faut-il tester ?
+            Une école admet un élève SI note ≥ 8 ET stage. Les notes sont entières, et ≥ veut dire
+            « plus grand ou égal à ». Les valeurs limites d’un seuil sont la dernière valeur avant
+            le changement et la première après. Quels couples (note, stage) faut-il tester ?
           </p>
           <ul class="options">
             <li data-option="quatre">(7, VRAI), (7, FAUX), (8, VRAI) et (8, FAUX)</li>
@@ -4212,7 +4210,7 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
           data-chaine="score ≥ 900 =&gt; or | score ≥ 600 =&gt; argent | score ≥ 300 =&gt; bronze | SINON =&gt; rien"
           data-variable="score"
           data-candidats="0|299|300|301|450|599|600|899|900|1000"
-          data-variante-enonce="Voici la chaîne d’un forfait de données : SI go ≥ 100 : afficher « énorme » ; SINON SI go ≥ 20 : afficher « forte » ; SINON SI go ≥ 5 : afficher « moyenne » ; SINON : afficher « faible ». Les quantités sont des nombres entiers. ≥ veut dire « plus grand ou égal à ». Les valeurs limites d’un seuil sont la dernière valeur avant le seuil et la première après. Quelles sont ses valeurs limites ? Touche chacune, puis vérifie."
+          data-variante-enonce="Voici la chaîne d’un forfait de données : SI go ≥ 100 : afficher « énorme » ; SINON SI go ≥ 20 : afficher « forte » ; SINON SI go ≥ 5 : afficher « moyenne » ; SINON : afficher « faible ». Les quantités sont des nombres entiers. ≥ veut dire « plus grand ou égal à ». Les valeurs limites d’un seuil sont la dernière valeur avant le changement et la première après. Quelles sont ses valeurs limites ? Touche chacune, puis vérifie."
           data-variante-reponse="4 et 5, 19 et 20, 99 et 100"
           data-variante-chaine="go ≥ 100 =&gt; énorme | go ≥ 20 =&gt; forte | go ≥ 5 =&gt; moyenne | SINON =&gt; faible"
           data-variante-variable="go"
@@ -4221,8 +4219,8 @@ condition : (nouveau <b>OU</b> commande &gt; 50) <b>ET NON</b> soldé</code></p
           <p class="q">
             Voici la chaîne des médailles d’un jeu. Les scores sont des nombres entiers. ≥ veut dire
             « plus grand ou égal à ». Les valeurs limites d’un seuil sont la dernière valeur avant
-            le seuil et la première après. Quelles sont ses valeurs limites ? Touche chacune, puis
-            vérifie.
+            le changement et la première après. Quelles sont ses valeurs limites ? Touche chacune,
+            puis vérifie.
           </p>
           <pre
             class="pseudo"
@@ -4900,8 +4898,9 @@ if (age &lt; 12) {
             Voici la chaîne du guichet en JavaScript, avec <code>let age = 26</code> et
             <code>let etudiant = false</code> en tête. En JavaScript, if veut dire SI, else if SINON
             SI, else SINON, let crée une variable et y range une valeur, false veut dire FAUX, ||
-            est le OU, &gt;= est ≥, et console.log affiche ce qui est entre ses parenthèses. Que va
-            afficher la console ?
+            est le OU, &lt; veut dire « strictement plus petit que », &gt;= veut dire « plus grand
+            ou égal à », et console.log affiche ce qui est entre ses parenthèses. Que va afficher la
+            console ?
           </p>
           <pre><code>let age = 26
 let etudiant = false
@@ -4937,9 +4936,10 @@ if (age &lt; 12) {
           Sur un ordinateur, ouvre un onglet vide et sa console : F12, ou Ctrl+Maj+J dans Chrome
           (Cmd+Option+J sur Mac). Tu lis sur un téléphone ? Il n’a pas de console : refais cet écran
           plus tard sur un ordinateur. En JavaScript, if veut dire SI, else if SINON SI, else SINON,
-          let crée une variable et y range une valeur, false veut dire FAUX, || est le OU, &gt;= est
-          ≥, et console.log affiche ce qui est entre ses parenthèses. Prédis ce que le code va
-          afficher, puis tape-le, avec Maj+Entrée entre les lignes :
+          let crée une variable et y range une valeur, false veut dire FAUX, || est le OU, &lt; veut
+          dire « strictement plus petit que », &gt;= veut dire « plus grand ou égal à », et
+          console.log affiche ce qui est entre ses parenthèses. Prédis ce que le code va afficher,
+          puis tape-le, avec Maj+Entrée entre les lignes :
         </p>
         <pre><code>let age = 25
 let etudiant = false
@@ -5384,7 +5384,7 @@ if (age &lt; 12) {
         data-widget="choix"
         data-verifie
         data-reponse="inclusif"
-        data-justifier="Dis ce qui arriverait à la cliente si le code utilisait la forme exclusive."
+        data-justifier="Dis ce qui arriverait à la cliente si le code utilisait la forme exclusive, (email OU sms) ET NON (email ET sms)."
         data-solution="Oui : c’est une condition pour valider le compte, cliquer sur les deux liens ne gêne personne. Ce « ou » accepte les deux : email OU sms"
       >
         <p class="q">
@@ -5416,7 +5416,7 @@ if (age &lt; 12) {
         data-widget="choix"
         data-verifie
         data-reponse="exclusif"
-        data-justifier="Dis ce qui arriverait à une commande si le code utilisait le OU inclusif."
+        data-justifier="Dis ce qui arriverait à une commande si le code utilisait le OU inclusif, domicile OU relais."
         data-solution="Non : « choisis » fait choisir, et un colis ne part qu’à une adresse. Ce « ou » est exclusif : (domicile OU relais) ET NON (domicile ET relais)"
       >
         <p class="q">
@@ -5532,7 +5532,7 @@ if (age &lt; 12) {
 <span class="l br" data-l="4">  afficher « 5 € »</span></code></pre>
         <p class="discret">
           Les lignes sont numérotées de haut en bas : une ligne, c’est une condition et ce qu’elle
-          affiche. Une ligne qui suit la première VRAIE est « pas testée ».
+          affiche. Pour une ligne que la chaîne ne teste pas, choisis « pas testée ».
         </p>
       </div>
     </template>
@@ -5562,7 +5562,7 @@ if (age &lt; 12) {
 <span class="l br" data-l="4">  afficher « 5 € »</span></code></pre>
         <p class="discret">
           Les lignes sont numérotées de haut en bas : une ligne, c’est une condition et ce qu’elle
-          affiche. Une ligne qui suit la première VRAIE est « pas testée ».
+          affiche. Pour une ligne que la chaîne ne teste pas, choisis « pas testée ».
         </p>
       </div>
     </template>
@@ -5811,7 +5811,7 @@ if (age &lt; 12) {
 <span class="l" data-l="4"><b>SINON</b> :</span>
 <span class="l br" data-l="4">  afficher « aucun »</span></code></pre>
         <p class="q">
-          Les valeurs limites d’un seuil sont la dernière valeur avant le seuil et la première
+          Les valeurs limites d’un seuil sont la dernière valeur avant le changement et la première
           après. Quelles sont les valeurs limites de cette chaîne ? Touche chacune, puis vérifie.
         </p>
       </div>
@@ -5842,7 +5842,7 @@ if (age &lt; 12) {
 <span class="l" data-l="4"><b>SINON</b> :</span>
 <span class="l br" data-l="4">  afficher « nouveau »</span></code></pre>
         <p class="q">
-          Les valeurs limites d’un seuil sont la dernière valeur avant le seuil et la première
+          Les valeurs limites d’un seuil sont la dernière valeur avant le changement et la première
           après. Quelles sont les valeurs limites de cette chaîne ? Touche chacune, puis vérifie.
         </p>
       </div>
@@ -5873,8 +5873,8 @@ if (age &lt; 12) {
 <span class="l br" data-l="4">  afficher « aucun »</span></code></pre>
         <p class="q">
           Trace la chaîne pour cinq de ses valeurs limites : 99, 100, 499, 500 et 1000. Les lignes
-          sont numérotées de haut en bas : une ligne, c’est une condition et ce qu’elle affiche. Une
-          ligne qui suit la première VRAIE est « pas testée ».
+          sont numérotées de haut en bas : une ligne, c’est une condition et ce qu’elle affiche.
+          Pour une ligne que la chaîne ne teste pas, choisis « pas testée ».
         </p>
       </div>
     </template>
@@ -5904,8 +5904,8 @@ if (age &lt; 12) {
 <span class="l br" data-l="4">  afficher « nouveau »</span></code></pre>
         <p class="q">
           Trace la chaîne pour cinq de ses valeurs limites : 49, 50, 399, 400 et 800. Les lignes
-          sont numérotées de haut en bas : une ligne, c’est une condition et ce qu’elle affiche. Une
-          ligne qui suit la première VRAIE est « pas testée ».
+          sont numérotées de haut en bas : une ligne, c’est une condition et ce qu’elle affiche.
+          Pour une ligne que la chaîne ne teste pas, choisis « pas testée ».
         </p>
       </div>
     </template>
@@ -6128,12 +6128,14 @@ if (age &lt; 12) {
         </li>
         <li>
           Remettre des lignes dans l’ordre : SINON reste en bas, sans flèche ; les mots SI et SINON
-          SI suivent la place des lignes. L’ordre est vérifié sur ce que la chaîne affiche pour
-          chaque cas écrit dans la fiche (data-cas) ; le retour donne le premier cas qui se trompe,
-          et pose une question sans désigner la ligne en cause : « Avec ton ordre, score = 950 donne
-          « bronze » au lieu de « or ». La chaîne s’arrête à la première ligne VRAIE : laquelle
-          est-ce, pour ce cas ? » (E3). Quand aucune ligne n’est VRAIE pour ce cas : « Une de tes
-          lignes est-elle VRAIE pour ce cas ? »
+          SI suivent la place des lignes. À l’étape 8, « Une ligne placée » est la forme à compléter
+          (data-fixe) : la ligne la plus exigeante est en haut, ses flèches bloquées, et aucune
+          autre ne peut passer au-dessus ; son autre cas, le vent, se fait de même. L’ordre est
+          vérifié sur ce que la chaîne affiche pour chaque cas écrit dans la fiche (data-cas) ; le
+          retour donne le premier cas qui se trompe, et pose une question sans désigner la ligne en
+          cause : « Avec ton ordre, score = 950 donne « bronze » au lieu de « or ». La chaîne
+          s’arrête à la première ligne VRAIE : laquelle est-ce, pour ce cas ? » (E3). Quand aucune
+          ligne n’est VRAIE pour ce cas : « Une de tes lignes est-elle VRAIE pour ce cas ? »
         </li>
         <li>
           Valeurs limites : à chaque seuil où la chaîne change de sortie, la dernière valeur avant
@@ -6443,8 +6445,8 @@ if (age &lt; 12) {
         ],
         "restitution": [
           {
-            "id": "B02-R22",
-            "question": "Les lignes d’une table de vérité se rangent comme on compte en binaire : FAUX FAUX, FAUX VRAI, VRAI FAUX, VRAI VRAI. Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Écris de mémoire, dans cet ordre, la table de vérité de A OU NON B : pour chaque ligne, la valeur de NON B, puis celle de la condition.",
+            "id": "B02-R30",
+            "question": "Les lignes d’une table de vérité se rangent comme on compte en binaire : FAUX FAUX, FAUX VRAI, VRAI FAUX, VRAI VRAI (A, puis B). Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Écris de mémoire, dans cet ordre, la table de vérité de A OU NON B : pour chaque ligne, la valeur de NON B, puis celle de la condition.",
             "attendu": "La condition n’est FAUSSE que sur la ligne A FAUX, B VRAI : NON B y vaut FAUX, et FAUX OU FAUX donne FAUX. Sur les trois autres lignes elle est VRAIE, VRAI OU VRAI compris, car le OU est inclusif : donner FAUX pour VRAI OU VRAI, c’est l’erreur E1 ; les notations 1 et 0 sont acceptées. Déduit de l’étape 5.",
             "erreurs": ["E1"]
           },
@@ -6467,8 +6469,8 @@ if (age &lt; 12) {
             "erreurs": ["E3"]
           },
           {
-            "id": "B02-R27",
-            "question": "Une montre affiche « à charger » sous 10 % de batterie, « faible » à partir de 10 %, « correcte » à partir de 40 %, et « pleine » à partir de 80 %. Les pourcentages sont entiers. ≥ veut dire « plus grand ou égal à ». Écris en pseudo-code sa chaîne SI / SINON SI / SINON à quatre branches, bien ordonnée, sur ce modèle : SI x ≥ n : afficher « … » ; SINON SI … ; SINON : afficher « … ». Puis donne ses valeurs limites. Les valeurs limites d’un seuil sont la dernière valeur avant le seuil et la première après.",
+            "id": "B02-R31",
+            "question": "Une montre affiche « à charger » sous 10 % de batterie, « faible » à partir de 10 %, « correcte » à partir de 40 %, et « pleine » à partir de 80 %. Les pourcentages sont entiers. ≥ veut dire « plus grand ou égal à ». Écris en pseudo-code sa chaîne SI / SINON SI / SINON à quatre branches, bien ordonnée, sur ce modèle : SI x ≥ n : afficher « … » ; SINON SI … ; SINON : afficher « … ». Puis donne ses valeurs limites. Les valeurs limites d’un seuil sont la dernière valeur avant le changement et la première après.",
             "attendu": "SI batterie ≥ 80 : « pleine » ; SINON SI ≥ 40 : « correcte » ; SINON SI ≥ 10 : « faible » ; SINON : « à charger », avec n’importe quel nom de variable, la plus exigeante d’abord, sans qu’il faille justifier l’ordre. Valeurs limites : 79 et 80, 39 et 40, 9 et 10, les formes équivalentes (x > 79) étant acceptées. Déduit de l’étape 8.",
             "erreurs": []
           },
@@ -6497,15 +6499,15 @@ if (age &lt; 12) {
           {
             "id": "PR1-5",
             "item": "PR1-5",
-            "question": "« Pour valider ton compte, clique sur le lien reçu par e-mail ou par SMS. » Une cliente clique sur les deux liens : son compte est-il validé ?  Dis ce qui arriverait à la cliente si le code utilisait la forme exclusive, (email OU sms) ET NON (email ET sms).",
-            "attendu": "Avec la forme exclusive, la cliente qui clique sur les deux liens verrait son compte refusé : elle remplit les deux conditions, et la forme exclusive refuse ce cas.",
+            "question": "« Pour valider ton compte, clique sur le lien reçu par e-mail ou par SMS. » Une cliente clique sur les deux liens. Son compte doit-il être validé ? Dis ce qui arriverait à la cliente si le code utilisait la forme exclusive, (email OU sms) ET NON (email ET sms).",
+            "attendu": "Avec la forme exclusive, la cliente qui clique sur les deux liens verrait son compte refusé : elle remplit les deux conditions, et la forme exclusive refuse ce cas. Déduit de l’étape 7.",
             "erreurs": []
           },
           {
             "id": "PR1-5:variante",
             "item": "PR1-5",
-            "question": "« Choisis ta livraison : à domicile ou en point relais. » Une commande peut-elle être livrée aux deux ?  Dis ce qui arriverait à une commande si le code utilisait le OU inclusif, domicile OU relais.",
-            "attendu": "Avec le OU inclusif, une commande qui demande les deux livraisons serait acceptée, alors qu’un colis ne part qu’à une adresse.",
+            "question": "« Choisis ta livraison : à domicile ou en point relais. » Une commande peut-elle être livrée aux deux ? Dis ce qui arriverait à une commande si le code utilisait le OU inclusif, domicile OU relais.",
+            "attendu": "Avec le OU inclusif, une commande qui demande les deux livraisons serait acceptée, alors qu’un colis ne part qu’à une adresse. Déduit de l’étape 7.",
             "erreurs": []
           },
           {
@@ -6617,9 +6619,9 @@ if (age &lt; 12) {
             "erreurs": ["E4"]
           },
           {
-            "id": "B02-C15",
+            "id": "B02-C17",
             "type": "explication",
-            "consigne": "En français, « et » peut relier deux groupes qui ont chacun droit à la même chose ; en logique, ET demande d’être les deux à la fois. Un panneau dit : « Les enfants et les étudiants paient demi-tarif. » Un camarade écrit la condition enfant ET étudiant. Qui paie demi-tarif avec sa condition ? Écris la bonne condition.",
+            "consigne": " Un panneau dit : « Les enfants et les étudiants paient demi-tarif. » Un camarade écrit la condition enfant ET étudiant. Qui paie demi-tarif avec sa condition ? Écris la bonne condition.",
             "attendu": "Avec ET, seulement ceux qui sont à la fois enfant et étudiant : presque personne. La bonne condition est enfant OU étudiant : la phrase ajoute deux groupes de clients, et son « et » veut dire OU. Déduit de l’étape 7.",
             "erreurs": []
           },
@@ -6631,10 +6633,10 @@ if (age &lt; 12) {
             "erreurs": ["E2"]
           },
           {
-            "id": "B02-DE20",
+            "id": "B02-DE22",
             "type": "explication",
-            "consigne": "Un relevé de notes affiche « très bien » à partir de 16, « bien » à partir de 14, « assez bien » à partir de 12. Un camarade écrit : SI note ≥ 12 : afficher « assez bien » ; SINON SI note ≥ 14 : afficher « bien » ; SINON SI note ≥ 16 : afficher « très bien ». Le signe ≥ veut dire « plus grand ou égal à ». Qu’affiche sa chaîne pour 17 ? Explique pourquoi on met d’abord la condition la plus exigeante.",
-            "attendu": "Pour 17, elle affiche « assez bien » : 17 ≥ 12 est déjà VRAI à la première ligne, et seule la branche de la première condition VRAIE s’exécute (croire que les suivantes s’exécutent aussi, c’est l’erreur E3). La plus exigeante d’abord, ≥ 16, puis ≥ 14, puis ≥ 12, car chaque ligne sait alors que celles du dessus sont FAUSSES. Déduit de l’étape 8.",
+            "consigne": "Un relevé de notes affiche « très bien » à partir de 16, « bien » à partir de 14, « assez bien » à partir de 12. Un camarade écrit : SI note ≥ 12 : afficher « assez bien » ; SINON SI note ≥ 14 : afficher « bien » ; SINON SI note ≥ 16 : afficher « très bien ». Le signe ≥ veut dire « plus grand ou égal à ». Qu’affiche sa chaîne pour 17, et pourquoi ? Corrige-la.",
+            "attendu": "Pour 17, elle affiche « assez bien » : 17 ≥ 12 est déjà VRAI à la première ligne, et seule la branche de la première condition VRAIE s’exécute (croire que les suivantes s’exécutent aussi, c’est l’erreur E3). Il faut mettre la plus exigeante d’abord, ≥ 16, puis ≥ 14, puis ≥ 12 : chaque ligne sait alors que celles du dessus sont FAUSSES. Déduit de l’étape 8.",
             "erreurs": ["E3"]
           },
           {
@@ -6645,9 +6647,9 @@ if (age &lt; 12) {
             "erreurs": ["E4"]
           },
           {
-            "id": "B02-DE19",
+            "id": "B02-DE21",
             "type": "explication",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Un menu dit : « une boisson au choix : jus ou soda ». Avec les faits jus et soda, écris deux conditions : celle du OU de la logique, puis celle qui respecte « au choix ». Explique ce qui les distingue : que donne chacune pour un client qui prend les deux ?",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Un menu dit : « une boisson au choix : jus ou soda ». Avec les faits jus et soda, on peut écrire la condition du OU de la logique, et celle de la phrase du menu. Écris les deux conditions, puis dis ce que donne chacune pour un client qui prend les deux.",
             "attendu": "Le OU de la logique est inclusif, VRAI aussi quand les deux le sont : jus OU soda accepterait le client qui prend les deux. « Au choix » n’en permet qu’un, c’est exclusif : (jus OU soda) ET NON (jus ET soda), FAUX pour ce client. Prendre le OU logique pour un exclusif, ou l’inverse, c’est l’erreur E1. Déduit de l’étape 7.",
             "erreurs": ["E1"]
           },
@@ -6660,11 +6662,11 @@ if (age &lt; 12) {
             "erreurs": ["E1"]
           },
           {
-            "id": "B02-DT25",
+            "id": "B02-DT26",
             "type": "transfert",
             "forme": "adapter_condition",
-            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Une école affiche « admis » SI note ≥ 10, SINON « refusé ». Elle ajoute qu’un élève qui a fait le stage est aussi admis avec 8 ou 9. Les notes sont entières, et ≥ veut dire « plus grand ou égal à ». Écris la nouvelle condition, et donne les valeurs à tester. Les valeurs à tester d’une condition sur un nombre sont ses valeurs limites : la dernière valeur avant le seuil et la première après. ",
-            "attendu": "note ≥ 10 OU (note ≥ 8 ET stage) ; la lire (note ≥ 10 OU note ≥ 8) ET stage refuserait un 15 sans stage : c’est l’erreur E2. Valeurs à tester : 7 et 8, 9 et 10, chacune avec stage VRAI puis FAUX. Déduit des étapes 6 et 8.",
+            "consigne": "Ordre de calcul : parenthèses, comparaisons, NON, ET, OU. Une école affiche « admis » SI note ≥ 10, SINON « refusé ». Elle ajoute qu’un élève qui a fait le stage est aussi admis avec 8 ou 9. Les notes sont entières, et ≥ veut dire « plus grand ou égal à ». Écris la nouvelle condition, et donne les cas à tester. Les valeurs limites d’un seuil sont la dernière valeur avant le changement et la première après.",
+            "attendu": "note ≥ 10 OU (note ≥ 8 ET stage) ; la lire (note ≥ 10 OU note ≥ 8) ET stage refuserait un 15 sans stage : c’est l’erreur E2. Cas à tester : 7 et 8, 9 et 10, chacune avec stage VRAI puis FAUX. Déduit des étapes 6 et 8.",
             "erreurs": ["E2"]
           },
           {
@@ -6676,10 +6678,10 @@ if (age &lt; 12) {
             "erreurs": []
           },
           {
-            "id": "B02-DT13",
+            "id": "B02-DT27",
             "type": "transfert",
             "forme": "trouver_erreur",
-            "consigne": "En JavaScript : SI s’écrit if, SINON SI else if, SINON else, afficher console.log, et < garde son signe. Ce code doit afficher « enfant » avant 12 ans, « ado » de 12 à 17 ans et « adulte » ensuite : if (age < 18) { console.log('ado') } else if (age < 12) { console.log('enfant') } else { console.log('adulte') }. Qu’affiche-t-il pour age = 8 ? Corrige-le.",
+            "consigne": "En JavaScript : SI s’écrit if, SINON SI else if, SINON else, afficher console.log, et < garde son signe ; < veut dire « strictement plus petit que ». Ce code doit afficher « enfant » avant 12 ans, « ado » de 12 à 17 ans et « adulte » ensuite : if (age < 18) { console.log('ado') } else if (age < 12) { console.log('enfant') } else { console.log('adulte') }. Qu’affiche-t-il pour age = 8 ? Corrige-le.",
             "attendu": "« ado » : 8 < 18 est VRAI dès la première ligne, et la chaîne en sort sans atteindre « enfant ». La plus exigeante d’abord : if (age < 12) { console.log('enfant') } else if (age < 18) { console.log('ado') } else { console.log('adulte') } ; croire que « enfant » s’affiche aussi, c’est l’erreur E3. Déduit des étapes 8 et 9.",
             "erreurs": ["E3"]
           },
@@ -6832,7 +6834,7 @@ if (age &lt; 12) {
             "notion": "Réciter les tables de vérité de NON, ET et OU, et dire que le OU logique est inclusif (VRAI OU VRAI donne VRAI) ; dire pourquoi deux faits donnent quatre lignes",
             "montree": ["ET5"],
             "pratiquee": ["PR1", "ET11"],
-            "questions": ["B02-R22", "B02-C10", "B02-Q18", "B02-Q6", "B02-K2", "B02-K3"]
+            "questions": ["B02-R30", "B02-C10", "B02-Q18", "B02-Q6", "B02-K2", "B02-K3"]
           },
           {
             "id": "N3",
@@ -6848,9 +6850,9 @@ if (age &lt; 12) {
             "pratiquee": ["PR1"],
             "questions": [
               "B02-R28",
-              "B02-C15",
+              "B02-C17",
               "B02-Q14",
-              "B02-DE19",
+              "B02-DE21",
               "B02-DT23",
               "B02-DT24",
               "B02-K23"
@@ -6868,7 +6870,7 @@ if (age &lt; 12) {
             "notion": "Écrire une chaîne à quatre branches bien ordonnée, la plus exigeante d’abord, et choisir ses valeurs limites pour la tester",
             "montree": ["ET8"],
             "pratiquee": ["PR2"],
-            "questions": ["B02-R27", "B02-C16", "B02-DE20", "B02-DT25", "B02-DT13", "B02-K20"]
+            "questions": ["B02-R31", "B02-C16", "B02-DE22", "B02-DT26", "B02-DT27", "B02-K20"]
           },
           {
             "id": "N7",
@@ -6910,7 +6912,7 @@ if (age &lt; 12) {
             "vers": "N4",
             "type": "opposition",
             "montree": "ET7",
-            "questions": ["B02-DE19", "B02-C10", "B02-DT23"]
+            "questions": ["B02-DE21", "B02-C10", "B02-DT23"]
           },
           {
             "id": "L4",
@@ -6926,7 +6928,7 @@ if (age &lt; 12) {
             "vers": "N6",
             "type": "cause",
             "montree": "ET8",
-            "questions": ["B02-DE20", "B02-C16", "B02-DT13"]
+            "questions": ["B02-DE22", "B02-C16", "B02-DT27"]
           },
           {
             "id": "L6",
@@ -6934,7 +6936,7 @@ if (age &lt; 12) {
             "vers": "N7",
             "type": "equivalence",
             "montree": "ET9",
-            "questions": ["B02-R26", "B02-DT13"]
+            "questions": ["B02-R26", "B02-DT27"]
           },
           {
             "id": "L7",
@@ -6956,7 +6958,7 @@ if (age &lt; 12) {
         "ensemble": {
           "montree": "ET2",
           "rappelee": "ET12",
-          "questions": ["B02-R18", "B02-R27", "B02-DT25"]
+          "questions": ["B02-R18", "B02-R31", "B02-DT26"]
         },
         "hors_objectif": [
           "L’opérateur OU exclusif lui-même, comme xor en PHP : la fiche écrit le ou exclusif avec ET, OU et NON (étape 7) et nomme l’opérateur dans « À explorer plus tard » (étape 12), jamais interrogé",
@@ -10656,7 +10658,9 @@ if (age &lt; 12) {
               sortie: li.dataset.sortie,
               texte: li.textContent.trim(),
             }))
-            let ordre = lignes.slice()
+            // Une ligne déjà placée en haut et bloquée (`data-fixe`) : l'ordre à compléter (règle C06).
+            const fixee = lignes.find((L) => L.id === d.fixe)
+            let ordre = fixee ? [fixee, ...lignes.filter((L) => L !== fixee)] : lignes.slice()
             for (const L of lignes) {
               L.mot = el('b', { class: 'mot' })
               L.haut = el('button', {
@@ -10692,8 +10696,10 @@ if (age &lt; 12) {
               ordre.forEach((L, k) => {
                 liste.append(L.li)
                 L.mot.textContent = k === 0 ? 'SI' : 'SINON SI'
-                L.haut.disabled = fini(ex) || k === 0
-                L.bas.disabled = fini(ex) || k === ordre.length - 1
+                const bas = fixee ? 1 : 0
+                L.haut.disabled = fini(ex) || k <= bas || L === fixee
+                L.bas.disabled = fini(ex) || k === ordre.length - 1 || L === fixee
+                L.li.classList.toggle('placee', L === fixee)
               })
               liste.append(fixe)
             }
@@ -10701,6 +10707,7 @@ if (age &lt; 12) {
               if (fini(ex)) return
               const k = ordre.indexOf(L)
               const l = k + sens
+              if (L === fixee || ordre[l] === fixee) return
               if (l < 0 || l >= ordre.length) return
               ;[ordre[k], ordre[l]] = [ordre[l], ordre[k]]
               peindre()
