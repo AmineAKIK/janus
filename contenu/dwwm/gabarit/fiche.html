@@ -1254,7 +1254,7 @@
         "titre_court": "À REMPLACER",
         "objectif": "À REMPLACER : ce que tu sauras faire à la fin, vérifiable en une phrase.",
         "prerequis": [],
-        "pont": 4,
+        "pont": 5,
         "contexte_ia": "À REMPLACER : ce que le correcteur doit savoir du bloc (1 500 mots au plus) : notions, vocabulaire, pièges.",
         "sources": [
           {
@@ -1676,8 +1676,13 @@
        */
       let aisanceServeur = []
 
-      function enregistrer() {
-        pont.sauver(etat)
+      /**
+       * L'état part à l'appli tout de suite : une réponse, une trace ou un résultat ne se perd pas si
+       * l'apprenant quitte la fiche juste après. Seuls les déplacements (étape, écran, item), qui
+       * peuvent se suivre vite, se regroupent (`regrouper`, au plus un envoi toutes les 2 secondes).
+       */
+      function enregistrer({ regrouper = false } = {}) {
+        pont.sauver(etat, { immediat: !regrouper })
       }
       /**
        * Les traces de la fiche : un outil émet `fiche:trace` (`detail: { cle, valeur }`) pour garder ce
@@ -1702,7 +1707,9 @@
        * Un outil qui a sa propre saisie (un schéma refait de mémoire) la donne dans `saisie` :
        * `{ element, lire, manque }`, l'élément à poser à la place du champ, son texte pour le
        * correcteur, et ce qui manque avant l'envoi (vide : rien) ; `envoyer` nomme le bouton, et
-       * `question`, la question pour le correcteur quand la consigne de l'écran ne suffit pas. Sans
+       * `question`, la question pour le correcteur quand la consigne de l'écran ne suffit pas ;
+       * `apresSolution: false` dit qu'elle ne suit pas une solution vue (un schéma refait de mémoire) :
+       * elle n'est alors pas faite avec support. Sans
        * correcteur, l'explication attend qu'on la renvoie : la page ne juge rien à la place de l'IA. Hors de l'appli, la correction est simulée et ne retient rien. La trace
        * `explique:<cle>` garde les essais et leur correction ; elle est émise quand l'explication est
        * finie, pour l'outil qui attend la suite.
@@ -1725,6 +1732,7 @@
           saisie,
           essais: permis,
           envoyer,
+          apresSolution,
         } = evenement.detail ?? {}
         const exercice = evenement.target
         if (!(exercice instanceof HTMLElement) || typeof cle !== 'string' || cle === '') return
@@ -1882,7 +1890,16 @@
                 // « Revenir au cours » ne marque que les réponses données pendant la restitution
                 // commencée : pas une explication de la pratique faite après, la série finie.
                 support: { colle, retour_cours: etat.retourCours && serieEnCours() !== undefined },
-                ...(declaree ? {} : { libre: libre() }),
+                // Une explication libre suit une solution vue (avec support), sauf quand l'outil dit
+                // le contraire (`apresSolution: false`, un schéma refait de mémoire).
+                ...(declaree
+                  ? {}
+                  : {
+                      libre: {
+                        ...libre(),
+                        ...(apresSolution === false ? { apres_solution: false } : {}),
+                      },
+                    }),
               })
               noterReperees('explique:' + cle, correction.erreurs_critiques)
               essais.push({ texte: lireChamp(), correction: resumeCorrection(correction) })
@@ -2222,10 +2239,18 @@
         noterReperees('outil:' + ou, [erreur])
         if (bilanAttendu()) evenement.preventDefault()
       })
+      /**
+       * L'étape affichée est vue : l'appli la coche. Pas une étape masquée par la restitution en cours,
+       * dont l'apprenant ne lit que « Masqué » ; elle le sera quand elle se rouvrira.
+       */
+      function noterVue() {
+        const etape = etapes.find((e) => e.id === etat.etape) ?? etapes[0]
+        if (etape && !masquee(etape)) pont.envoyer('etape.vue', { etape: etape.id })
+      }
       function aller(id) {
         etat.etape = id
-        pont.envoyer('etape.vue', { etape: id })
-        enregistrer()
+        noterVue()
+        enregistrer({ regrouper: true })
         afficher()
         remonter($('contenu'))
       }
@@ -2249,6 +2274,21 @@
       const questions = (serie) => (serie === 'restitution' ? manifeste.restitution : [])
       const reponsesFinies = (serie) => questions(serie).filter((q) => etat.envoyees[q.id]).length
       /**
+       * Le décompte de la pratique, le même partout : « 5 sur 14, dont 2 avec de l’aide ». Un item réussi
+       * avec de l'aide compte pour avancer ; l'appli ne le compte qu'une fois refait sans aide.
+       */
+      function decomptePratique() {
+        const items = manifeste.pratique.flatMap((exercice) => exercice.items)
+        const reussis = items.filter((item) => itemReussi(item.id))
+        const avecAide = reussis.filter((item) => (etat.pratique[item.id]?.aide ?? 0) > 0).length
+        return (
+          reussis.length +
+          ' sur\u00a0' +
+          items.length +
+          (avecAide > 0 ? ', dont ' + avecAide + ' avec de l’aide' : '')
+        )
+      }
+      /**
        * Ce qui retient dans une étape : les questions d'une série ouverte qui n'ont pas encore leur
        * réponse finale. On ne quitte pas une restitution à moitié faite.
        */
@@ -2263,10 +2303,8 @@
             'Réussis les ' +
             items.length +
             ' items avant de passer à la suite\u00a0: ' +
-            reussis +
-            ' sur\u00a0' +
-            items.length +
-            ' pour l’instant.'
+            decomptePratique() +
+            ', pour l’instant.'
           )
         }
         if (etape.type === 'pretest') {
@@ -2369,11 +2407,16 @@
        * oriente, un indice, l'étape détaillée), puis « Voir la solution ». Les crans se lisent dans
        * `data-aide1` à `data-aide3` de l'exercice, sinon dans `crans` (des textes, ou des fonctions
        * qui rendent le texte à l'ouverture) ; sans cran, la solution attend deux réponses fausses.
+       * `restantes()` (un choix) : le nombre d'options encore à choisir ; « Voir la solution » ne paraît
+       * pas quand il ne pourrait jamais servir (la dernière option se montre d'office).
        * `fini()` dit que l'exercice est fini, `surSolution()` montre la solution. Rend la zone à poser
        * dans l'exercice, `tentative()` à appeler à chaque réponse fausse, `cran()` (4 : solution vue)
        * et `maj()`.
        */
-      function echelle(ex, { crans = [], fini = () => false, surSolution = () => {} } = {}) {
+      function echelle(
+        ex,
+        { crans = [], fini = () => false, surSolution = () => {}, restantes } = {},
+      ) {
         const ecrits = [ex.dataset.aide1, ex.dataset.aide2, ex.dataset.aide3].filter(Boolean)
         const textes = ecrits.length > 0 ? ecrits : crans
         let cran = 0
@@ -2391,9 +2434,16 @@
               : 'Un autre coup de pouce'
             : 'Voir la solution'
           const seuil = !reste && textes.length === 0 ? 2 : 1
+          // Un choix (`restantes`) : chaque réponse fausse retire une option, et la dernière qui reste
+          // se montre d'office. « Voir la solution » ne sert que s'il reste au moins deux options quand
+          // il s'ouvre ; sinon il ne paraît pas, plutôt que de rester grisé.
+          const inutile =
+            !reste &&
+            typeof restantes === 'function' &&
+            restantes() - Math.max(0, seuil - depuis) < 2
           // Une fois l'exercice fini, le bouton s'en va ; les crans déjà ouverts restent lisibles.
-          zone.hidden = total === 0 || (fini() && liste.children.length === 0)
-          bouton.hidden = vue || fini()
+          zone.hidden = total === 0 || ((fini() || inutile) && liste.children.length === 0)
+          bouton.hidden = vue || fini() || inutile
           bouton.disabled = depuis < seuil
         }
         bouton.addEventListener('click', () => {
@@ -2890,6 +2940,8 @@
        * du cours qu'il montre n'est pas fini (décision d'Amine du 25 octobre 2026, pour tous les blocs) :
        * réussi, ou sa solution vue au bout de l'échelle d'aide. L'outil de la fiche marque l'exercice
        * fini par `data-fini="oui"` ; un exercice encore caché (suite d'écran, encadré d'essai) attend.
+       * Après une solution vue, `data-reprise="oui"` le garde à faire tant qu'il n'est pas refait sur un
+       * autre cas, ou expliqué : l'écran l'annonce (« Pour continuer, refais-le… »).
        */
       function exercicesRestants(etape, zone) {
         if (etape.type === 'pretest' || etape.type === 'pratique') return ''
@@ -2898,7 +2950,8 @@
             !('essai' in ex.dataset) &&
             !ex.closest('.item') &&
             !ex.closest('[hidden]') &&
-            ex.dataset.fini !== 'oui',
+            // Solution vue : il reste à refaire sur un autre cas, ou à expliquer (`data-reprise`).
+            (ex.dataset.fini !== 'oui' || ex.dataset.reprise === 'oui'),
         ).length
         if (restants === 0) return ''
         return (
@@ -2918,7 +2971,7 @@
         }).observe(racine, {
           subtree: true,
           attributes: true,
-          attributeFilter: ['data-fini', 'hidden'],
+          attributeFilter: ['data-fini', 'data-reprise', 'hidden'],
         })
       }
 
@@ -2967,7 +3020,7 @@
           arreter()
           courant = k
           etat.ecrans = { ...(etat.ecrans ?? {}), [etape.id]: k }
-          enregistrer()
+          enregistrer({ regrouper: true })
           ecrans.forEach((e, j) => {
             e.hidden = j !== k
           })
@@ -3054,7 +3107,7 @@
         const etape = etapes.find((e) => e.type === 'pratique')
         const aller_a = (k) => {
           etat.itemCourant = Math.min(Math.max(k, 0), liste.length - 1)
-          enregistrer()
+          enregistrer({ regrouper: true })
           afficher()
           remonter($('contenu'))
         }
@@ -3127,6 +3180,24 @@
           afficher()
           if (ok && suivant >= 0) remonter($('contenu'))
         }
+        const jaiReussi = creer('button', {
+          type: 'button',
+          className: 'bouton',
+          textContent: 'J’ai réussi',
+          onclick: () => envoyer(true),
+        })
+        const pasReussi = creer('button', {
+          type: 'button',
+          className: 'bouton secondaire',
+          textContent: 'Pas réussi',
+          onclick: () => envoyer(false),
+        })
+        const attente = creer('p', {
+          className: 'discret',
+          textContent:
+            'Réponds d’abord à la question de l’item : « J’ai réussi » attend ta réponse.',
+          hidden: true,
+        })
         const aides = [1, 2, 3, 4].map((cran) => {
           const b = creer('button', {
             type: 'button',
@@ -3171,39 +3242,35 @@
           // Ce que la page ne voit pas (une manipulation ailleurs), l'apprenant le déclare.
           ...(verifie
             ? []
-            : [
-                creer(
-                  'div',
-                  { className: 'actions' },
-                  creer('button', {
-                    type: 'button',
-                    className: 'bouton',
-                    textContent: 'J’ai réussi',
-                    onclick: () => envoyer(true),
-                  }),
-                  creer('button', {
-                    type: 'button',
-                    className: 'bouton secondaire',
-                    textContent: 'Pas réussi',
-                    onclick: () => envoyer(false),
-                  }),
-                ),
-              ]),
+            : [creer('div', { className: 'actions' }, jaiReussi, pasReussi), attente]),
           resultat,
         )
+        // Un item déclaré peut contenir une question que l'outil vérifie (une prédiction avant la
+        // console) : « J'ai réussi » attend qu'elle ait sa réponse, sinon l'item réussirait sans elle.
+        const questionsEnAttente = () =>
+          Array.from(consigne.querySelectorAll('.ex[data-widget]')).filter(
+            (ex) => ex.dataset.fini !== 'oui',
+          ).length
+        const majDeclaration = () => {
+          const reste = questionsEnAttente()
+          jaiReussi.disabled = reste > 0
+          attente.hidden = reste === 0
+        }
+        if (!verifie) {
+          majDeclaration()
+          new MutationObserver(majDeclaration).observe(consigne, {
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['data-fini'],
+          })
+        }
         /** Le compteur, les points, l'état de l'item et la ligne du résultat, d'après l'état noté. */
         const majItem = () => {
           const fait = etat.pratique[item.id]
           // Réussi avec de l'aide : l'appli ne le compte pas encore. La page le compte à part, pour ne
           // pas dire « réussi » et « ne compte pas » du même item.
           const avecAide = (entree) => reussi(entree) && etat.pratique[entree.item.id].aide > 0
-          const nbSansAide = liste.filter((entree) => reussi(entree) && !avecAide(entree)).length
-          const nbAvecAide = liste.filter(avecAide).length
-          compteur.textContent =
-            pluriel(nbSansAide, 'réussi', 'réussis') +
-            ' sur\u00a0' +
-            liste.length +
-            (nbAvecAide > 0 ? ', et ' + nbAvecAide + ' avec de l’aide.' : '.')
+          compteur.textContent = decomptePratique() + '.'
           liste.forEach((entree, k) => {
             const p = points.children[k]
             p.dataset.etat = avecAide(entree) ? 'fait-aide' : reussi(entree) ? 'fait' : 'a-faire'
@@ -3270,8 +3337,10 @@
         }
         consigne.addEventListener('fiche:verification', (evenement) => {
           const detail = evenement.detail ?? {}
-          if (!verifie || typeof detail.juste !== 'boolean') return
+          if (typeof detail.juste !== 'boolean') return
           const aideOutil = [1, 2, 3, 4].includes(detail.aide) ? detail.aide : 0
+          // Dans un item déclaré, seule la solution montrée compte : l'apprenant déclare le reste.
+          if (!verifie && aideOutil < 4) return
           if (aideOutil >= 4) {
             noter(false, 4, true)
             if (detail.garder === true) majItem()
@@ -3283,7 +3352,7 @@
         })
         consigne.addEventListener('fiche:explique', () => majItem())
         consigne.addEventListener('fiche:refaire', () => {
-          if (verifie && solutionVue()) redessiner()
+          if (solutionVue()) redessiner()
         })
         return creer(
           'section',
@@ -3402,7 +3471,8 @@
           )
         else if (
           gardee.premiere.niveau !== 'solide' &&
-          serieOuverte[serie] &&
+          // La série finie se ferme côté serveur dès « Vu » : le complément reste permis, une fois.
+          (serieOuverte[serie] || reponsesFinies(serie) === questions(serie).length) &&
           !aRefaire(serie).includes(question)
         ) {
           // Une question à reprendre ne se complète pas : un complément (second tour) ne compte
@@ -4061,6 +4131,7 @@
                 etat.retourCours = true
                 enregistrer()
                 afficher()
+                noterVue()
               },
             }),
             creer('p', {
@@ -4136,8 +4207,12 @@
           $('avis').textContent = 'Erreur\u00a0: ' + erreur.detail
           $('avis').hidden = false
         })
-        pont.surEtape((id) => {
-          if (etapes.some((e) => e.id === id)) aller(id)
+        pont.surEtape((id, { retourCours }) => {
+          if (!etapes.some((e) => e.id === id)) return
+          // « Revoir le cours » de l'appli, pendant la série : le cours se rouvre en un clic, et les
+          // réponses suivantes le disent, comme avec « Revenir au cours » de la page.
+          if (retourCours && serieEnCours() !== undefined) etat.retourCours = true
+          aller(id)
         })
         pont.surRejet(({ question, erreur }) => {
           if (!retirerReperee(question, erreur)) return
@@ -4175,6 +4250,8 @@
         })
         if (depart.etat && typeof depart.etat === 'object') etat = { ...etat, ...depart.etat }
         afficher()
+        // L'étape montrée à l'ouverture est vue, comme celle où l'on va (la première, sinon jamais cochée).
+        noterVue()
       }
       void demarrer()
     </script>

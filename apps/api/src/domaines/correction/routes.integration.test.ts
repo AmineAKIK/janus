@@ -226,6 +226,37 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('POST /corrections contre Postgr
     scenario = undefined
   })
 
+  it('un schéma refait de mémoire (apres_solution: false) n’est pas marqué avec support', async () => {
+    const schema = {
+      question: 'Refais de mémoire le schéma du bloc.',
+      attendu: 'La fiche a un seul bloc.',
+      apres_solution: false,
+    }
+    const memoire = await corriger(
+      demande({ serie: 'explication', question: 'ex:f1', libre: schema }),
+    )
+    const apresSolution = await corriger(
+      demande({
+        serie: 'explication',
+        question: 'ex:f2',
+        libre: { ...schema, apres_solution: true },
+      }),
+    )
+
+    expect(memoire.statusCode).toBe(200)
+    expect(memoire.json()).not.toMatchObject({ raison_non_compte: 'avec_support' })
+    expect(apresSolution.json()).toMatchObject({ compte: false, raison_non_compte: 'avec_support' })
+    // Le drapeau est validé : une autre valeur qu'un booléen est refusée.
+    const mauvais = await corriger(
+      demande({
+        serie: 'explication',
+        question: 'ex:f3',
+        libre: { ...schema, apres_solution: 'non' },
+      }),
+    )
+    expect(mauvais.statusCode).toBe(400)
+  })
+
   it('une certitude « non vérifiée » ne compte pas', async () => {
     scenario = () =>
       JSON.stringify({

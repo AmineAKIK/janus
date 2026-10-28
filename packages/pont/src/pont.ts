@@ -78,10 +78,14 @@ export interface Pont {
   /** Renvoie à l'identique (même identifiant) un message déjà envoyé. */
   renvoyer: (id: string) => boolean
   demanderCorrection: (demande: DemandeCorrection) => Promise<CorrectionRecue>
-  sauver: (etat: EtatPage) => void
+  /** Garde l'état ; `immediat` l'envoie sans attendre l'intervalle (après une réponse ou une trace). */
+  sauver: (etat: EtatPage, options?: { readonly immediat?: boolean }) => void
   surStatut: (rappel: (statut: Statut) => void) => () => void
   surErreur: (rappel: (erreur: ErreurAppli) => void) => () => void
-  surEtape: (rappel: (etape: string) => void) => () => void
+  /** L'appli demande une étape ; `retourCours` : par « Revoir le cours », pendant une série. */
+  surEtape: (
+    rappel: (etape: string, options: { readonly retourCours: boolean }) => void,
+  ) => () => void
   /** Amine a rejeté une erreur critique que la correction d'une question avait repérée. */
   surRejet: (rappel: (rejet: { question: string; erreur: string }) => void) => () => void
   /** Un `etat.init` reçu après le démarrage : la série ouverte a changé (la restitution se rouvre). */
@@ -112,7 +116,9 @@ export function creerPont(options: OptionsPont = {}): Pont {
   const attentes: Attente[] = []
   const rappelsStatut = new Set<(statut: Statut) => void>()
   const rappelsErreur = new Set<(erreur: ErreurAppli) => void>()
-  const rappelsEtape = new Set<(etape: string) => void>()
+  const rappelsEtape = new Set<
+    (etape: string, options: { readonly retourCours: boolean }) => void
+  >()
   const rappelsRejet = new Set<(rejet: { question: string; erreur: string }) => void>()
   const rappelsInit = new Set<(init: Init) => void>()
 
@@ -181,7 +187,7 @@ export function creerPont(options: OptionsPont = {}): Pont {
       }
       case 'etape.aller':
         rappelsEtape.forEach((rappel) => {
-          rappel(message.etape)
+          rappel(message.etape, { retourCours: message.retour_cours === true })
         })
         break
       case 'erreur.rejetee':
@@ -229,12 +235,17 @@ export function creerPont(options: OptionsPont = {}): Pont {
     derniereEmission = maintenant()
   }
 
-  function sauver(etat: EtatPage) {
+  function sauver(etat: EtatPage, options: { readonly immediat?: boolean } = {}) {
     if (mode === null) {
       refuser('demarrer() n’a pas été appelé.', 'etat.sauver')
       return
     }
     enAttente = etat
+    // Une réponse ou une trace part tout de suite : quitter la fiche juste après ne la perd pas.
+    if (options.immediat === true) {
+      emettre()
+      return
+    }
     const attente = derniereEmission + INTERVALLE_SAUVER_MS - maintenant()
     if (attente <= 0) emettre()
     else minuteur ??= setTimeout(emettre, attente)
@@ -326,7 +337,12 @@ export function creerPont(options: OptionsPont = {}): Pont {
     sauver,
     surStatut: abonnement(rappelsStatut),
     surErreur: abonnement(rappelsErreur),
-    surEtape: abonnement(rappelsEtape),
+    surEtape: (rappel) => {
+      rappelsEtape.add(rappel)
+      return () => {
+        rappelsEtape.delete(rappel)
+      }
+    },
     surRejet: abonnement(rappelsRejet),
     surInit: abonnement(rappelsInit),
   }

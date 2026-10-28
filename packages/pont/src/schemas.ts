@@ -124,7 +124,14 @@ export const MessagePage = z.discriminatedUnion('type', [
     confiance,
     relance: reponse(),
     support: z.strictObject({ colle: z.boolean(), retour_cours: z.boolean() }),
-    libre: z.optional(z.strictObject({ question: texte(), attendu: texte() })),
+    libre: z.optional(
+      z.strictObject({
+        question: texte(),
+        attendu: texte(),
+        /** Faux pour une explication qui ne suit pas une solution vue (un schéma refait de mémoire). */
+        apres_solution: z.optional(z.boolean()),
+      }),
+    ),
   }),
   z.strictObject({ ...communPage, type: z.literal('bilan.erreurs'), ids: z.array(identifiant()) }),
   z.strictObject({ ...communPage, type: z.literal('etat.sauver'), etat: etatPage }),
@@ -181,7 +188,12 @@ export const MessageAppli = z.discriminatedUnion('type', [
     detail: z.string(),
     message_id: z.optional(idUuid()),
   }),
-  z.strictObject({ type: z.literal('etape.aller'), etape: identifiant() }),
+  z.strictObject({
+    type: z.literal('etape.aller'),
+    etape: identifiant(),
+    /** « Revoir le cours » pendant une série : la fiche rouvre le cours, les réponses suivantes le disent. */
+    retour_cours: z.optional(z.literal(true)),
+  }),
   z.strictObject({
     type: z.literal('erreur.rejetee'),
     question: identifiant(),

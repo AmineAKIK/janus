@@ -282,6 +282,25 @@ describe('page d’un bloc', () => {
     })
   })
 
+  it('garde le dernier état que la fiche envoie en partant, quand on quitte le bloc', async () => {
+    const { envoyer, transport, routeur, fenetre } = await afficher()
+    await envoyer(prete)
+
+    // On quitte le bloc : la fiche se décharge et poste son dernier état, écouteur déjà retiré.
+    await act(async () => {
+      await routeur.navigate({ to: '/' })
+    })
+    expect(screen.queryByTitle(/^Fiche du bloc B03/)).not.toBeInTheDocument()
+    await envoyer(message('etat.sauver', { etat: { etape: 'ET5' } }), fenetre)
+    // Une autre fenêtre ne peut pas profiter de ce délai.
+    await envoyer(message('etat.sauver', { etat: { etape: 'ET9' } }), window)
+
+    await waitFor(async () => {
+      const bloc = await transport.appeler(ROUTES['GET /blocs/:id'], { params: { id: 'B03' } })
+      expect(bloc.etat_page?.etat).toEqual({ etape: 'ET5' })
+    })
+  })
+
   it('dit que la fiche ne répond pas au bout de 10 secondes, et la recharge', async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true })
     const { iframe } = await afficher()
@@ -355,7 +374,11 @@ describe('restitution verrouillée', () => {
     expect(recu).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'etape.aller' }), '*')
 
     await utilisateur.click(screen.getByRole('button', { name: 'Revoir le cours' }))
-    expect(recu).toHaveBeenCalledWith({ type: 'etape.aller', etape: cours?.id }, '*')
+    // Un seul clic : la fiche rouvre le cours, sans redemander « Revenir au cours ».
+    expect(recu).toHaveBeenCalledWith(
+      { type: 'etape.aller', etape: cours?.id, retour_cours: true },
+      '*',
+    )
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
