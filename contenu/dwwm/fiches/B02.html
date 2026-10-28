@@ -7061,7 +7061,7 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 34,
+        "version": 35,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 conditions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 3 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
@@ -12902,11 +12902,13 @@ if (age &lt; 12) {
             ? permis
             : 1
         // La page montre la consigne de l'outil ; le correcteur lit la question du manifeste, qui se
-        // comprend sans l'écran.
+        // comprend sans l'écran. Sans consigne, l'exercice qui déclare sa demande (`data-justifier`)
+        // la montre : sinon l'apprenant explique autre chose que ce que le correcteur juge.
         const intitule =
           typeof consigne === 'string' && consigne !== ''
             ? consigne
-            : 'Explique pourquoi c’est juste, en une ou deux phrases\u00a0:'
+            : exercice.dataset.justifier ||
+              'Explique pourquoi c’est juste, en une ou deux phrases\u00a0:'
         /*
          * Une explication libre se juge sur ce que l'écran montre : la consigne et la question de
          * l'exercice, le texte de l'écran qui le précède (la règle dont il parle), et pour l'attendu,

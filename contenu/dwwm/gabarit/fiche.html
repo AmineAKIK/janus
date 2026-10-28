@@ -1737,11 +1737,13 @@
             ? permis
             : 1
         // La page montre la consigne de l'outil ; le correcteur lit la question du manifeste, qui se
-        // comprend sans l'écran.
+        // comprend sans l'écran. Sans consigne, l'exercice qui déclare sa demande (`data-justifier`)
+        // la montre : sinon l'apprenant explique autre chose que ce que le correcteur juge.
         const intitule =
           typeof consigne === 'string' && consigne !== ''
             ? consigne
-            : 'Explique pourquoi c’est juste, en une ou deux phrases\u00a0:'
+            : exercice.dataset.justifier ||
+              'Explique pourquoi c’est juste, en une ou deux phrases\u00a0:'
         /*
          * Une explication libre se juge sur ce que l'écran montre : la consigne et la question de
          * l'exercice, le texte de l'écran qui le précède (la règle dont il parle), et pour l'attendu,
