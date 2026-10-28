@@ -30,7 +30,7 @@ function catalogue(blocs: string[]) {
 
 const EMPREINTE = 'a'.repeat(64)
 /** Le pont construit, tel que `fiches:assembler` l'écrit : son en-tête puis le code. */
-const PONT = `/*! janus-pont v4 ${EMPREINTE} */\nwindow.JanusPont = {}`
+const PONT = `/*! janus-pont v5 ${EMPREINTE} */\nwindow.JanusPont = {}`
 
 type Manifeste = {
   version: number
@@ -919,13 +919,13 @@ describe('vérification des fiches du dépôt', () => {
       await poser(
         'X00.html',
         avecManifeste(fiche, (manifeste) => {
-          manifeste.pont = 5
+          manifeste.pont = 6
         }),
       )
 
       expect(await verifierLesFiches({ dossierContenu: contenu, pont: PONT })).toEqual([
         expect.stringContaining(
-          'le manifeste déclare pont 5 mais le pont embarqué est en version 4',
+          'le manifeste déclare pont 6 mais le pont embarqué est en version 5',
         ),
       ])
     })
@@ -1145,7 +1145,7 @@ describe('vérification des fiches du dépôt', () => {
       // Hier : une autre plomberie, un autre pont, version 1. Aujourd'hui : ceux du dépôt, version 2.
       const hier = fiche
         .replace('<script id="plomberie">', '<script id="plomberie">/* plomberie d’hier */')
-        .replace(PONT, `/*! janus-pont v4 ${'b'.repeat(64)} */\nwindow.JanusPont = { hier: true }`)
+        .replace(PONT, `/*! janus-pont v5 ${'b'.repeat(64)} */\nwindow.JanusPont = { hier: true }`)
       await poser('X00.html', fiche.replace('"version": 1', '"version": 2'))
       expect(
         await verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => hier }),

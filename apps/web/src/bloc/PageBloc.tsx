@@ -165,7 +165,7 @@ function FicheOuverte({
             setRevoir(null)
           }}
           surRevoir={() => {
-            hote.allerEtape(revoir)
+            hote.allerEtape(revoir, { retourCours: true })
             setRevoir(null)
           }}
         />

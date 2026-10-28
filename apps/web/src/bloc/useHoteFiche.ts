@@ -11,6 +11,8 @@ import type { SerieVerrou } from './verrou.ts'
 
 /** Au bout de ce délai sans `page.prete`, la fiche est jugée muette. */
 export const DELAI_FICHE_MS = 10_000
+/** Après le départ de la fiche, le temps pendant lequel son dernier `etat.sauver` est encore reçu. */
+export const DELAI_DERNIER_ETAT_MS = 2000
 
 export interface DonneesFiche {
   readonly bloc: string
@@ -131,6 +133,9 @@ export function useHoteFiche(
 
   // La dernière valeur de chaque donnée, pour que l'écouteur n'ait pas à se réinstaller.
   const dernieres = useRef({ donnees, statut, etat: donnees.etatPage?.etat ?? null })
+  /** La fenêtre de la fiche qui a parlé en dernier, gardée pour son dernier message au départ. */
+  const fenetreFiche = useRef<MessageEventSource | null>(null)
+  const generationEcouteur = useRef(0)
   dernieres.current.donnees = donnees
   dernieres.current.statut = statut
 
@@ -313,12 +318,10 @@ export function useHoteFiche(
 
     const surMessage = (evenement: MessageEvent) => {
       const { bloc, version } = dernieres.current.donnees
-      const resultat = filtrerMessage(evenement, {
-        fenetreFiche: iframe.current?.contentWindow ?? null,
-        bloc,
-        version,
-      })
+      const fenetre = iframe.current?.contentWindow ?? null
+      const resultat = filtrerMessage(evenement, { fenetreFiche: fenetre, bloc, version })
       if (resultat.accepte) {
+        fenetreFiche.current = fenetre
         // La taille de la page change aussi sans geste d'Amine (chargement, rotation) : ce n'est pas de l'activité.
         if (resultat.message.type !== 'page.taille') rappelActivite.current?.()
         traiter(resultat.message)
@@ -340,8 +343,27 @@ export function useHoteFiche(
     }
 
     window.addEventListener('message', surMessage)
+    const generation = (generationEcouteur.current += 1)
     return () => {
       window.removeEventListener('message', surMessage)
+      /*
+       * La fiche qui s'en va (on quitte le bloc) envoie son dernier état à son déchargement, après le
+       * retrait de l'écouteur. On l'écoute encore un moment, de cette fenêtre-là seulement et pour ce
+       * seul message : sinon la dernière réponse serait perdue. Un nouvel écouteur installé entre-temps
+       * (la même page qui se met à jour) reprend tout.
+       */
+      const fenetre = fenetreFiche.current
+      if (fenetre === null) return
+      const dernierEtat = (evenement: MessageEvent) => {
+        if (generationEcouteur.current !== generation) return
+        const { bloc, version } = dernieres.current.donnees
+        const resultat = filtrerMessage(evenement, { fenetreFiche: fenetre, bloc, version })
+        if (resultat.accepte && resultat.message.type === 'etat.sauver') traiter(resultat.message)
+      }
+      window.addEventListener('message', dernierEtat)
+      setTimeout(() => {
+        window.removeEventListener('message', dernierEtat)
+      }, DELAI_DERNIER_ETAT_MS)
     }
   }, [appliquerStatut, boite, envoyerInit, iframe, vers])
 
@@ -479,8 +501,13 @@ export function useHoteFiche(
     recommencer,
     conflit,
     refus,
-    allerEtape: (etape: string) => {
-      vers({ type: 'etape.aller', etape })
+    /** `retourCours` : « Revoir le cours » pendant une série, la fiche rouvre le cours en un clic. */
+    allerEtape: (etape: string, options: { readonly retourCours?: boolean } = {}) => {
+      vers({
+        type: 'etape.aller',
+        etape,
+        ...(options.retourCours === true ? { retour_cours: true as const } : {}),
+      })
     },
     statut,
     /** La hauteur du contenu de la fiche, `null` tant qu'elle ne l'a pas donnée. */

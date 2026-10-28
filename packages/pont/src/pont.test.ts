@@ -271,11 +271,13 @@ describe('messages reçus', () => {
 
     depuisParent({ type: 'erreur', code: 'plafond_atteint', detail: 'Plafond.' })
     depuisParent({ type: 'etape.aller', etape: 'ET3' })
+    depuisParent({ type: 'etape.aller', etape: 'ET4', retour_cours: true })
     retirer()
     depuisParent({ type: 'erreur', code: 'plafond_atteint', detail: 'Encore.' })
 
     expect(surErreur).toHaveBeenCalledOnce()
-    expect(surEtape).toHaveBeenCalledWith('ET3')
+    expect(surEtape).toHaveBeenCalledWith('ET3', { retourCours: false })
+    expect(surEtape).toHaveBeenCalledWith('ET4', { retourCours: true })
   })
 
   it('transmet le rejet d’une erreur repérée', () => {
@@ -413,6 +415,19 @@ describe('sauver', () => {
 
     expect(recus).toHaveLength(2)
     expect(recus[1]).toMatchObject({ type: 'etat.sauver', etat: { n: 3 } })
+  })
+
+  it('envoie aussitôt un état marqué immédiat, même dans l’intervalle', async () => {
+    const { pont, recus } = await pontEnModeAppli()
+    pont.sauver({ n: 1 })
+    pont.sauver({ n: 2 })
+
+    pont.sauver({ n: 3 }, { immediat: true })
+
+    expect(recus).toHaveLength(2)
+    expect(recus[1]).toMatchObject({ type: 'etat.sauver', etat: { n: 3 } })
+    await vi.advanceTimersByTimeAsync(INTERVALLE_SAUVER_MS)
+    expect(recus).toHaveLength(2)
   })
 
   it('n’envoie pas un état qui n’a pas changé', async () => {

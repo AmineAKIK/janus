@@ -54,7 +54,7 @@ export interface DemandeCorrection {
   relance: string
   support: { colle: boolean; retour_cours: boolean }
   /** Une explication que le manifeste ne déclare pas : la page en dit la question et l'attendu. */
-  libre?: { question: string; attendu: string } | undefined
+  libre?: { question: string; attendu: string; apres_solution?: boolean | undefined } | undefined
   conteste?: boolean | undefined
   /** Pour la série `verification` : la vérification tirée, qui donne le bloc (jamais envoyée par la page). */
   verification?: string | undefined
@@ -135,7 +135,9 @@ function explicationLibre(
   demande: DemandeCorrection,
 ): { id: string; question: string; attendu: string; erreurs: string[]; libre: true } | undefined {
   if (serie !== 'explication' || demande.libre === undefined) return undefined
-  return { id: demande.question, ...demande.libre, erreurs: [], libre: true }
+  // `apres_solution` ne dit que le support : il ne part pas au correcteur.
+  const { question, attendu } = demande.libre
+  return { id: demande.question, question, attendu, erreurs: [], libre: true }
 }
 
 function trop(relancesMax: number) {
@@ -394,8 +396,11 @@ export function creerServiceCorrection({
         const verdict = compte({
           tour: numero.tour,
           colle: demande.support.colle,
-          // Une explication libre suit une solution vue : elle est faite avec support.
-          retourCours: demande.support.retour_cours || 'libre' in question,
+          // Une explication libre qui suit une solution vue est faite avec support ; pas un schéma
+          // refait de mémoire (`apres_solution: false`).
+          retourCours:
+            demande.support.retour_cours ||
+            ('libre' in question && demande.libre?.apres_solution !== false),
           recopiee,
           certitude: sortie.certitude,
         })

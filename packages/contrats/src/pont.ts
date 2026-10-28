@@ -82,10 +82,19 @@ const communPage = {
 
 /**
  * Une explication que le manifeste ne déclare pas, demandée après une solution vue (« refais, puis
- * explique ») : la page dit la question posée et ce qui est attendu. Seulement dans la série
- * `explication`, et sa correction ne compte jamais pour le statut (avec support : la solution).
+ * explique ») ou pour un schéma refait de mémoire : la page dit la question posée et ce qui est
+ * attendu. Seulement dans la série `explication`, et sa correction ne compte jamais pour le statut ;
+ * après une solution vue, elle est faite avec support (la solution).
  */
-export const ExplicationLibre = z.strictObject({ question: Texte, attendu: Texte })
+export const ExplicationLibre = z.strictObject({
+  question: Texte,
+  attendu: Texte,
+  /**
+   * Faux pour une explication qui ne suit pas une solution vue (le schéma du bloc refait de mémoire) :
+   * elle n'est pas faite avec support. Absent, l'explication libre suit une solution vue.
+   */
+  apres_solution: z.boolean().optional(),
+})
 
 /**
  * Ce que l'apprenant envoie pour être corrigé : la question, sa réponse, sa confiance, la relance
@@ -262,6 +271,8 @@ export const MessageAppli = z.discriminatedUnion('type', [
     type: z.literal('etape.aller'),
     /** L'étape à afficher (fil d'étapes de l'appli). */
     etape: Identifiant,
+    /** « Revoir le cours » pendant une série : la fiche rouvre le cours, les réponses suivantes le disent. */
+    retour_cours: z.literal(true).optional(),
   }),
   z.strictObject({
     type: z.literal('erreur.rejetee'),
