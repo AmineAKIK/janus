@@ -7061,7 +7061,7 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 35,
+        "version": 36,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 conditions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 3 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
@@ -10495,7 +10495,8 @@ if (age &lt; 12) {
             ex.append(el('p', { class: 'explication', text: explication }))
           devoiler(ex.closest('.ecran, [data-ecran]'))
           const parent = ex.parentElement?.closest('.ex')
-          if (parent) libererApresVariante(parent, ex, c, etat)
+          // Remontée d'une visite précédente : la trace est déjà là, rien ne se relâche.
+          if (parent && ex.dataset.remonte !== 'oui') libererApresVariante(parent, ex, c, etat, v)
         }
 
         /**
@@ -10504,19 +10505,28 @@ if (age &lt; 12) {
          * réussi sans regarder (règle F04) : l'apprenant explique d'abord cette solution, comme après
          * une solution vue sans autre cas, puis la suite paraît.
          */
-        function libererApresVariante(parent, ex, c, etat) {
-          if (parent.dataset.reprise !== 'oui') return
+        function libererApresVariante(parent, ex, c, etat, v) {
+          // La trace garde aussi l'autre cas et sa réponse : il revient fini à la visite suivante.
+          const garder = () => {
+            if (parent.dataset.id)
+              tracer('ex:' + parent.dataset.id, {
+                e: 'vu',
+                v: null,
+                refait: true,
+                variante: { e: etat, v: v ?? null },
+              })
+          }
+          if (parent.dataset.reprise !== 'oui') return garder()
           if (etat === 'vu')
-            return expliquer(
-              ex,
-              c.solution(),
-              fr('Pour continuer, explique cette solution avec tes mots, en une ou deux phrases :'),
-              () => libererReprise(parent),
-            )
-          if (parent.dataset.id)
-            tracer('ex:' + parent.dataset.id, { e: 'vu', v: null, refait: true })
+            return expliquer(ex, c.solution(), fr(POUR_CONTINUER), () => {
+              garder()
+              libererReprise(parent)
+            })
+          garder()
           libererReprise(parent)
         }
+        const POUR_CONTINUER =
+          'Pour continuer, explique cette solution avec tes mots, en une ou deux phrases :'
 
         /**
          * Dans le cours, après une solution vue (règles F03 et F04) : la suite de l'écran attend que
@@ -10588,6 +10598,8 @@ if (age &lt; 12) {
             const etat = fautes === 0 && cran === 0 ? 'ok1' : 'ok'
             if (!dansItem(ex) && ex.dataset.id && !ex.dataset.variante)
               tracer('ex:' + ex.dataset.id, { e: etat, v: res.v ?? null })
+            // Dans un item, la réponse juste se garde aussi : elle revient au retour sur l'item.
+            if (dansItem(ex)) tracerItem(ex, { e: etat, v: res.v ?? null, cran })
             appliquer(
               ex,
               c,
@@ -10595,17 +10607,7 @@ if (age &lt; 12) {
               res.v,
               (res.m || 'Juste.') + (ex.dataset.succes ? ' ' + ex.dataset.succes : ''),
             )
-            if (ex.closest('[data-solution-vue]') || ex.dataset.variante || cran === 3)
-              expliquer(ex, c.solution())
-            else if (ex.dataset.justifier) {
-              // Deux explications qui ne sont pas Solides : la solution, puis l'item sur sa variante.
-              ex.addEventListener(
-                'fiche:explication-ratee',
-                (e) => montrerSolution(ex, c, e.detail?.message),
-                { once: true },
-              )
-              expliquer(ex, c.solution(), fr(ex.dataset.justifier))
-            }
+            expliquerApres(ex, c, cran)
             return
           }
           ex.dataset.fautes = String(fautes + 1)
@@ -10628,10 +10630,36 @@ if (age &lt; 12) {
           c.echelle?.tentative()
         }
 
+        /**
+         * Après une réponse juste, l'explication que l'exercice demande. Après une solution vue, sur
+         * une variante ou au dernier cran, il explique la solution ; sinon, `data-justifier` pose sa
+         * question. Une explication déclarée qui n'est pas Solide deux fois (ou ne compte pas) montre
+         * la solution, puis l'item se refait sur l'autre cas, dans les deux branches : sans cela,
+         * l'item resterait ni réussi ni à refaire.
+         */
+        function expliquerApres(ex, c, cran) {
+          const libre = ex.closest('[data-solution-vue]') || ex.dataset.variante || cran === 3
+          if (!libre && !ex.dataset.justifier) return
+          ex.addEventListener(
+            'fiche:explication-ratee',
+            (e) => montrerSolution(ex, c, e.detail?.message),
+            { once: true },
+          )
+          if (libre) expliquer(ex, c.solution())
+          else expliquer(ex, c.solution(), fr(ex.dataset.justifier))
+        }
+
+        /** L'état gardé d'un item de pratique : le cas montré (`origine` ou `variante`) et sa fin. */
+        function tracerItem(ex, val) {
+          const id = ex.closest('.item')?.dataset.item
+          if (id) tracer('item:' + id, { cas: montre[id] ?? 'origine', ...val, le: jourCle() })
+        }
+
         /** La solution montrée, en bout d'échelle. */
         function montrerSolution(ex, c, avant) {
           const solution = sansPoint(c.solution()) + '.'
           if (dansItem(ex)) {
+            tracerItem(ex, { e: 'vu', v: null })
             // Le gabarit note « solution vue » tout de suite ; l'item se redessine sur « je refais ».
             signaler(ex, false, 4, { garder: true })
             ex.dataset.fini = 'oui'
@@ -12034,7 +12062,11 @@ if (age &lt; 12) {
             })
             ex.append(c.echelle.zone)
           }
-          if (dansItem(ex) || ex.dataset.variante) return
+          if (dansItem(ex)) {
+            remonterItem(ex, c)
+            return c
+          }
+          if (ex.dataset.variante) return c
           const garde = traces['ex:' + ex.dataset.id]
           if (garde && typeof garde === 'object' && garde.e) {
             // Une solution vue, ni refaite ni expliquée à la visite d'avant : la suite de l'écran
@@ -12049,8 +12081,58 @@ if (age &lt; 12) {
             if (reprise) ex.dataset.reprise = 'oui'
             appliquer(ex, c, garde.e, garde.v)
             if (reprise) apresSolution(ex, c)
-            else if (garde.e === 'vu') proposerVariante(ex, c)
+            else {
+              // L'explication déjà écrite revient avec sa correction, et l'autre cas refait avec sa
+              // réponse : sans cela, l'exercice redemande ce qui est fait.
+              if (traces[cle]) expliquer(ex, c.solution(), consigneExplication(ex, garde.e))
+              if (garde.e === 'vu' && garde.variante && c.variante)
+                remonterVariante(ex, c, garde.variante)
+              else if (garde.e === 'vu') proposerVariante(ex, c)
+            }
           }
+          return c
+        }
+
+        /** La consigne d'une explication déjà demandée, pour la remontrer telle qu'elle a été posée. */
+        function consigneExplication(ex, etat) {
+          if (etat === 'vu') return fr(POUR_CONTINUER)
+          if (ex.dataset.justifier && !ex.dataset.variante) return fr(ex.dataset.justifier)
+          return undefined
+        }
+
+        /** L'autre cas d'un exercice du cours, refait à la visite d'avant : il revient fini. */
+        function remonterVariante(ex, c, garde) {
+          const nouveau = c.variante()
+          if (!nouveau) return proposerVariante(ex, c)
+          for (const n of Array.from(ex.children)) n.hidden = true
+          nouveau.dataset.variante = 'oui'
+          nouveau.dataset.remonte = 'oui'
+          if (ex.dataset.id) nouveau.dataset.origine = ex.dataset.id
+          ex.append(el('div', { class: 'refaire' }, nouveau))
+          const cv = monterEx(nouveau)
+          if (!cv) return
+          appliquer(nouveau, cv, garde.e, garde.v)
+          delete nouveau.dataset.remonte
+          // Réussi, l'autre cas demande toujours son explication (comme à la réponse) ; vu, elle est faite.
+          if (garde.e !== 'vu' || traces['explique:' + cleExplication(nouveau)])
+            expliquer(nouveau, cv.solution(), consigneExplication(nouveau, garde.e))
+        }
+
+        /**
+         * Un item de pratique déjà réussi revient avec sa réponse, et son explication avec ses
+         * corrections (ou son champ, si elle attend encore) : l'apprenant ne refait pas ce qu'il a fait.
+         * Sauf réussi avec de l'aide un autre jour : il se refait sans aide pour compter, l'outil repart
+         * à neuf. Le gabarit donne l'état des items dans `fiche:rendu` (`detail.pratique`).
+         */
+        function remonterItem(ex, c) {
+          const id = ex.closest('.item')?.dataset.item
+          const garde = id && traces['item:' + id]
+          const fait = id && pratique[id]
+          if (!garde || !fait?.reussi || garde.cas !== (montre[id] ?? 'origine')) return
+          if (garde.e !== 'ok' && garde.e !== 'ok1') return
+          if (fait.aide > 0 && fait.aideLe !== jourCle()) return
+          appliquer(ex, c, garde.e, garde.v)
+          expliquerApres(ex, c, garde.cran ?? 0)
         }
 
         /**
@@ -12649,9 +12731,18 @@ if (age &lt; 12) {
           for (const boite of $$('#contenu .item[data-item]')) {
             const id = boite.dataset.item
             const variante = $('template[data-variante="' + id + '"]')
+            // Sans choix fait sur cette page (un rechargement), le cas se lit dans la trace de l'item :
+            // celui qui a été réussi revient ; après une solution vue, c'est l'autre.
+            const garde = traces['item:' + id]
+            const autre = (cas) => (cas === 'variante' ? 'origine' : 'variante')
+            const selonTrace = garde?.cas
+              ? garde.e === 'vu'
+                ? autre(garde.cas)
+                : garde.cas
+              : 'variante'
             const choix =
               variante && boite.hasAttribute('data-solution-vue')
-                ? (prochain[id] ?? 'variante')
+                ? (prochain[id] ?? selonTrace)
                 : 'origine'
             if (choix === 'variante')
               $('.enonce', boite).replaceChildren(variante.content.cloneNode(true))
@@ -12660,8 +12751,11 @@ if (age &lt; 12) {
         }
 
         const montes = new WeakSet()
+        /** L'état des items de pratique que le gabarit a noté (réussi, aide, jour), à chaque rendu. */
+        let pratique = {}
         document.addEventListener('fiche:rendu', (evenement) => {
           for (const [cle, val] of Object.entries(evenement.detail?.traces ?? {})) traces[cle] = val
+          pratique = evenement.detail?.pratique ?? {}
           poserLaVariante()
           // Les outils d'abord (le guichet décide si le pari paraît), puis les exercices.
           for (const n of $$('#contenu [data-widget]')) {
@@ -12946,7 +13040,10 @@ if (age &lt; 12) {
             attendu: [String(solution ?? ''), retour].filter(Boolean).join(' '),
           }
         }
-        const ancienne = etat.traces?.['explique:' + cle]
+        // Une explication déclarée ratée a montré la solution : l'outil ne la redemande qu'une fois
+        // l'item refait sans regarder, et elle repart à neuf. Sinon l'item ne pourrait plus réussir.
+        const gardee = etat.traces?.['explique:' + cle]
+        const ancienne = declaree && gardee?.fin === 'ratee' ? undefined : gardee
         const essais = Array.isArray(ancienne?.essais) ? ancienne.essais : []
         const zone = creer('div', { className: 'expliquer' })
         zone.setAttribute('aria-live', 'polite')
@@ -13041,7 +13138,9 @@ if (age &lt; 12) {
                 reponse: lireChamp(),
                 confiance: choisie.value,
                 relance: '',
-                support: { colle, retour_cours: etat.retourCours },
+                // « Revenir au cours » ne marque que les réponses données pendant la restitution
+                // commencée : pas une explication de la pratique faite après, la série finie.
+                support: { colle, retour_cours: etat.retourCours && serieEnCours() !== undefined },
                 ...(declaree ? {} : { libre: libre() }),
               })
               noterReperees('explique:' + cle, correction.erreurs_critiques)
@@ -13071,7 +13170,10 @@ if (age &lt; 12) {
               if (fin === null) zone.append(formulaire(rang + 1))
               if (fin === 'ratee') {
                 const raison =
-                  'Ton explication n’est pas encore Solide\u00a0: voici la solution de l’item, puis tu le refais sur un autre cas.'
+                  (correction.niveau === 'solide'
+                    ? 'Ton explication est Solide, mais elle ne compte pas'
+                    : 'Ton explication n’est pas encore Solide') +
+                  '\u00a0: voici la solution de l’item, puis tu le refais sur un autre cas.'
                 zone.append(creer('p', { className: 'discret', textContent: raison }))
                 exercice.dispatchEvent(
                   new CustomEvent('fiche:explication-ratee', {
@@ -14674,6 +14776,8 @@ if (age &lt; 12) {
             // La dernière réponse est là : le cours se rouvre à la prochaine étape affichée.
             if (etat.enCours?.[serie]) {
               etat.enCours = { ...etat.enCours, [serie]: false }
+              // Le retour au cours ne valait que pour cette série.
+              etat.retourCours = false
               enregistrer()
             }
             // Une réponse vient d'être envoyée : la série se redessine avec toutes ses corrections.
@@ -15252,7 +15356,13 @@ if (age &lt; 12) {
         // Les traces gardées (fiche:trace) lui reviennent avec.
         document.dispatchEvent(
           new CustomEvent('fiche:rendu', {
-            detail: { etape, traces: { ...(etat.traces ?? {}) }, aisance: [...aisanceServeur] },
+            detail: {
+              etape,
+              traces: { ...(etat.traces ?? {}) },
+              aisance: [...aisanceServeur],
+              // L'état noté des items de pratique : un outil y lit qu'un item est réussi, pour le remontrer.
+              pratique: JSON.parse(JSON.stringify(etat.pratique ?? {})),
+            },
           }),
         )
         // Les outils montés, les essais déjà notés se figent et la série finie montre sa correction ;
