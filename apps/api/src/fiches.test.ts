@@ -38,7 +38,7 @@ type Manifeste = {
   contexte_ia: string
   sources: { id: string; titre: string }[]
   erreurs_critiques: { id: string; libelle: string; etape: string }[]
-  restitution: { id: string; question: string; attendu: string }[]
+  restitution: { id: string; question: string; attendu: string; saisie?: unknown }[]
   explication?: { id: string; item: string; question: string; attendu: string; erreurs: string[] }[]
   rappel: { id: string; question: string; attendu: string; erreurs: string[] }[]
   differees: { id: string; consigne: string; attendu: string }[]
@@ -377,6 +377,78 @@ describe('vérification des fiches du dépôt', () => {
           'restitution R1 : la question demande 3 choses ; une question de restitution, une tâche, deux sous-questions au plus',
         ),
       ])
+    })
+
+    describe('une table de vérité se déclare en grille', () => {
+      const TABLE = 'Sans le cours, remplis la table de vérité de A OU NON B.'
+      const GRILLE = { type: 'table', entrees: ['A', 'B'], colonnes: ['NON B', 'A OU NON B'] }
+
+      it('refuse une question de restitution qui fait remplir une table sans sa grille', async () => {
+        await poser(
+          'X00.html',
+          avecManifeste(fiche, (m) => {
+            m.restitution = m.restitution.map((q, i) => (i === 0 ? { ...q, question: TABLE } : q))
+          }),
+        )
+
+        expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+          expect.stringContaining(
+            'restitution R1 : la question fait remplir une table de vérité ; déclare-la en grille',
+          ),
+        ])
+      })
+
+      it('accepte la même question avec sa grille, et une question qui parle d’une table sans la faire remplir', async () => {
+        await poser(
+          'X00.html',
+          avecManifeste(fiche, (m) => {
+            m.restitution = m.restitution.map((q, i) =>
+              i === 0 ? { ...q, question: TABLE, saisie: GRILLE } : q,
+            )
+            m.rappel = m.rappel.map((q, i) =>
+              i === 0
+                ? { ...q, question: 'Combien de lignes a la table de vérité de cinq faits ?' }
+                : q,
+            )
+          }),
+        )
+
+        expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+      })
+
+      it('refuse une table à remplir au rappel ou en différée, que l’appli pose en texte libre', async () => {
+        await poser(
+          'X00.html',
+          avecManifeste(fiche, (m) => {
+            m.rappel = m.rappel.map((q, i) => (i === 0 ? { ...q, question: TABLE } : q))
+            m.differees = m.differees.map((d, i) =>
+              i === 0 ? { ...d, consigne: 'Écris la table de vérité de NON A ET B.' } : d,
+            )
+          }),
+        )
+
+        expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+          expect.stringMatching(/rappel \S+ : la question fait remplir une table de vérité/),
+          expect.stringMatching(/differees \S+ : la question fait remplir une table de vérité/),
+        ])
+      })
+
+      it('refuse une grille de plus de trois faits d’entrée', async () => {
+        await poser(
+          'X00.html',
+          avecManifeste(fiche, (m) => {
+            m.restitution = m.restitution.map((q, i) =>
+              i === 0
+                ? { ...q, question: TABLE, saisie: { ...GRILLE, entrees: ['A', 'B', 'C', 'D'] } }
+                : q,
+            )
+          }),
+        )
+
+        expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+          expect.stringContaining('restitution[0].saisie.entrees'),
+        ])
+      })
     })
   })
 

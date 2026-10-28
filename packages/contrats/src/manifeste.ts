@@ -38,6 +38,30 @@ const Question = z.strictObject({
 export type Question = z.infer<typeof Question>
 
 /**
+ * Une réponse en table de vérité : les faits d'entrée (`entrees`), que la page range comme on compte
+ * en binaire (FAUX avant VRAI, le premier fait change le moins souvent), et les colonnes que
+ * l'apprenant remplit, VRAI ou FAUX par case. La réponse part en texte, une ligne par cas :
+ * « A FAUX, B FAUX : NON B VRAI ; A OU NON B VRAI ». Trois faits au plus (huit lignes).
+ */
+export const SaisieTable = z.strictObject({
+  type: z.literal('table'),
+  entrees: z.array(Texte).min(1).max(3),
+  colonnes: z.array(Texte).min(1).max(3),
+})
+export type SaisieTable = z.infer<typeof SaisieTable>
+
+/**
+ * Une question de restitution. `saisie` : la forme de la réponse, quand ce n'est pas un texte libre
+ * (une table de vérité). Seule la page sait la dessiner : le rappel et les différées, posés par
+ * l'appli, restent en texte.
+ */
+const QuestionRestitution = z.strictObject({
+  ...Question.shape,
+  saisie: SaisieTable.optional(),
+})
+export type QuestionRestitution = z.infer<typeof QuestionRestitution>
+
+/**
  * Une explication demandée dans un item de pratique (`data-justifier`), que l'IA juge sur `attendu`.
  * `id` est la clé de l'explication dans la page : l'item (`PR7-1`), ou l'item suivi de `:variante`
  * quand la variante a la sienne. L'item ne compte réussi qu'avec une explication jugée Solide.
@@ -109,7 +133,7 @@ export const Manifeste = z.strictObject({
   erreurs_critiques: z.array(
     z.strictObject({ id: Identifiant, libelle: Texte, etape: Identifiant.optional() }),
   ),
-  restitution: z.array(Question),
+  restitution: z.array(QuestionRestitution),
   /** Les explications des items de pratique, jugées par l'IA. Absent des manifestes d'avant : aucune. */
   explication: z.array(Explication).default([]),
   rappel: z.array(Question),
