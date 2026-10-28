@@ -5463,7 +5463,7 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 49,
+        "version": 50,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
@@ -11298,7 +11298,10 @@
             attendu: [String(solution ?? ''), retour].filter(Boolean).join(' '),
           }
         }
-        const ancienne = etat.traces?.['explique:' + cle]
+        // Une explication déclarée ratée a montré la solution : l'outil ne la redemande qu'une fois
+        // l'item refait sans regarder, et elle repart à neuf. Sinon l'item ne pourrait plus réussir.
+        const gardee = etat.traces?.['explique:' + cle]
+        const ancienne = declaree && gardee?.fin === 'ratee' ? undefined : gardee
         const essais = Array.isArray(ancienne?.essais) ? ancienne.essais : []
         const zone = creer('div', { className: 'expliquer' })
         zone.setAttribute('aria-live', 'polite')
@@ -11393,7 +11396,9 @@
                 reponse: lireChamp(),
                 confiance: choisie.value,
                 relance: '',
-                support: { colle, retour_cours: etat.retourCours },
+                // « Revenir au cours » ne marque que les réponses données pendant la restitution
+                // commencée : pas une explication de la pratique faite après, la série finie.
+                support: { colle, retour_cours: etat.retourCours && serieEnCours() !== undefined },
                 ...(declaree ? {} : { libre: libre() }),
               })
               noterReperees('explique:' + cle, correction.erreurs_critiques)
@@ -11423,7 +11428,10 @@
               if (fin === null) zone.append(formulaire(rang + 1))
               if (fin === 'ratee') {
                 const raison =
-                  'Ton explication n’est pas encore Solide\u00a0: voici la solution de l’item, puis tu le refais sur un autre cas.'
+                  (correction.niveau === 'solide'
+                    ? 'Ton explication est Solide, mais elle ne compte pas'
+                    : 'Ton explication n’est pas encore Solide') +
+                  '\u00a0: voici la solution de l’item, puis tu le refais sur un autre cas.'
                 zone.append(creer('p', { className: 'discret', textContent: raison }))
                 exercice.dispatchEvent(
                   new CustomEvent('fiche:explication-ratee', {
@@ -13026,6 +13034,8 @@
             // La dernière réponse est là : le cours se rouvre à la prochaine étape affichée.
             if (etat.enCours?.[serie]) {
               etat.enCours = { ...etat.enCours, [serie]: false }
+              // Le retour au cours ne valait que pour cette série.
+              etat.retourCours = false
               enregistrer()
             }
             // Une réponse vient d'être envoyée : la série se redessine avec toutes ses corrections.
@@ -13604,7 +13614,13 @@
         // Les traces gardées (fiche:trace) lui reviennent avec.
         document.dispatchEvent(
           new CustomEvent('fiche:rendu', {
-            detail: { etape, traces: { ...(etat.traces ?? {}) }, aisance: [...aisanceServeur] },
+            detail: {
+              etape,
+              traces: { ...(etat.traces ?? {}) },
+              aisance: [...aisanceServeur],
+              // L'état noté des items de pratique : un outil y lit qu'un item est réussi, pour le remontrer.
+              pratique: JSON.parse(JSON.stringify(etat.pratique ?? {})),
+            },
           }),
         )
         // Les outils montés, les essais déjà notés se figent et la série finie montre sa correction ;
