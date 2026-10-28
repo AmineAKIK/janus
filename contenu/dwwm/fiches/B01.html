@@ -13238,7 +13238,7 @@
                   ? aRefermer +
                     ' erreurs critiques sont cochées dans ton bilan. Pour chacune, réponds'
                   : 'Une erreur critique est cochée dans ton bilan. Réponds') +
-                ' de nouveau à une question marquée «\u00a0À reprendre\u00a0»\u00a0: une réponse solide la referme.',
+                ' de nouveau à une question marquée «\u00a0À reprendre\u00a0»\u00a0: une réponse solide, écrite sans aide, la referme.',
             }),
           )
         else if (finie)
@@ -13374,6 +13374,16 @@
                       LIBELLES_RAISON[correction.raison_non_compte] ??
                       correction.raison_non_compte),
                 }),
+                // Juste mais sans effet : sans cette ligne, « Solide » laisse croire que l'erreur est refermée.
+                ...(correction.niveau === 'solide'
+                  ? [
+                      creer('p', {
+                        className: 'discret',
+                        textContent:
+                          'Juste, mais sans effet sur ton statut\u00a0: elle ne referme aucune erreur.',
+                      }),
+                    ]
+                  : []),
               ]
             : []),
         )
@@ -13908,7 +13918,7 @@
           creer('p', {
             className: 'discret',
             textContent:
-              'Coche celles que tu as faites et que tu dois encore revoir. Une erreur cochée met le bloc «\u00a0À reprendre\u00a0», quel que soit le reste. Une erreur cochée, ou repérée dans tes réponses, reste cochée\u00a0: seule une réponse solide à une question qui la touche la referme.',
+              'Coche celles que tu as faites et que tu dois encore revoir. Une erreur cochée met le bloc «\u00a0À reprendre\u00a0», quel que soit le reste. Une erreur cochée, ou repérée dans tes réponses, reste cochée\u00a0: seule une réponse solide, écrite sans aide, à une question qui la touche la referme.',
           }),
           ...manifeste.erreurs_critiques.map((erreur, k) =>
             creer(
