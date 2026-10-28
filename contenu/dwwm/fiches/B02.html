@@ -653,6 +653,33 @@
         opacity: 0.65;
         cursor: not-allowed;
       }
+      /* Une table de vérité à remplir : les faits donnés, puis VRAI ou FAUX à choisir dans chaque case. */
+      .table-saisie {
+        display: table;
+        width: 100%;
+        white-space: normal;
+      }
+      .table-saisie th,
+      .table-saisie td {
+        padding: var(--espacement-4);
+        text-align: center;
+        vertical-align: middle;
+      }
+      .table-saisie td.entree {
+        color: var(--couleur-texte-secondaire);
+      }
+      .table-saisie td.valeur {
+        font-weight: 600;
+      }
+      .table-saisie .choix {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--espacement-4);
+      }
+      .table-saisie .choix label {
+        min-height: 44px;
+        padding-inline: var(--espacement-4);
+      }
 
       /* L'option choisie d'un essai : marquée, la correction viendra à la fin de l'étape. */
       [data-essai] button[aria-pressed='true']:disabled {
@@ -7154,7 +7181,7 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 39,
+        "version": 40,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 conditions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 3 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
@@ -7291,9 +7318,14 @@ if (age &lt; 12) {
         ],
         "restitution": [
           {
-            "id": "B02-R40",
-            "question": "Écris de mémoire la table de vérité de A OU NON B, ses lignes rangées comme on compte en binaire, de FAUX FAUX à VRAI VRAI (A, puis B) : pour chaque ligne, la valeur de NON B, puis celle de la condition.",
-            "attendu": "La condition n’est FAUSSE que sur la ligne A FAUX, B VRAI : NON B y vaut FAUX, et FAUX OU FAUX donne FAUX. Sur les trois autres lignes elle est VRAIE, VRAI OU VRAI compris, car le OU est inclusif : donner FAUX pour VRAI OU VRAI, c’est l’erreur E1 ; les notations 1 et 0 sont acceptées. Déduit de l’étape 5.",
+            "id": "B02-R46",
+            "question": "Sans le cours, remplis la table de vérité de A OU NON B.",
+            "saisie": {
+              "type": "table",
+              "entrees": ["A", "B"],
+              "colonnes": ["NON B", "A OU NON B"]
+            },
+            "attendu": "La condition n’est FAUSSE que sur la ligne A FAUX, B VRAI : NON B y vaut FAUX, et FAUX OU FAUX donne FAUX. Sur les trois autres lignes elle est VRAIE, VRAI OU VRAI compris, car le OU est inclusif : donner FAUX pour VRAI OU VRAI, c’est l’erreur E1. La réponse donne une ligne par cas, puis NON B et la condition. Déduit de l’étape 5.",
             "erreurs": ["E1"]
           },
           {
@@ -7680,7 +7712,7 @@ if (age &lt; 12) {
             "notion": "Réciter les tables de vérité de NON, ET et OU, et dire que le OU logique est inclusif (VRAI OU VRAI donne VRAI) ; dire pourquoi deux faits donnent quatre lignes",
             "montree": ["ET5"],
             "pratiquee": ["PR1", "ET11"],
-            "questions": ["B02-R40", "B02-C29", "B02-Q18", "B02-Q6", "B02-K2", "B02-K3"]
+            "questions": ["B02-R46", "B02-C29", "B02-Q18", "B02-Q6", "B02-K2", "B02-K3"]
           },
           {
             "id": "N3",
@@ -14896,10 +14928,7 @@ if (age &lt; 12) {
           'div',
           { className: 'item', dataset: { fait: 'oui' } },
           creer('strong', { textContent: question.question }),
-          creer('p', {
-            className: 'reponse-envoyee',
-            textContent: etat.envoyees[question.id].reponse,
-          }),
+          reponseLue(question, etat.envoyees[question.id].reponse),
         )
         const gardee = etat.corrigees?.[question.id]
         if (serieEnCours() === serie) {
@@ -14915,7 +14944,7 @@ if (age &lt; 12) {
         carte.append(sortie)
         if (gardee.relance)
           carte.append(
-            creer('p', { className: 'reponse-envoyee', textContent: gardee.relance.reponse }),
+            reponseLue(question, gardee.relance.reponse),
             bulleCorrection(gardee.relance.correction),
             ...accordSur(gardee.relance.correction),
           )
@@ -15162,6 +15191,207 @@ if (age &lt; 12) {
       }
 
       /**
+       * Une table de vérité à remplir (`saisie: { type: "table", entrees, colonnes }` dans le manifeste) :
+       * les cas, rangés comme on compte en binaire (le premier fait change le moins souvent, FAUX avant
+       * VRAI), et la réponse en texte, une ligne par cas, que lit le correcteur sans rien deviner :
+       * « A FAUX, B FAUX : NON B VRAI ; A OU NON B VRAI ».
+       */
+      function casDeLaTable(entrees) {
+        const nombre = entrees.length
+        return Array.from({ length: 2 ** nombre }, (_, rang) =>
+          entrees.map((_, place) => ((rang >> (nombre - 1 - place)) & 1) === 1),
+        )
+      }
+      const enMot = (valeur) => (valeur ? 'VRAI' : 'FAUX')
+      const casEnMots = (saisie, cas) =>
+        saisie.entrees.map((entree, place) => entree + ' ' + enMot(cas[place])).join(', ')
+      const texteDeLaTable = (saisie, valeurs) =>
+        casDeLaTable(saisie.entrees)
+          .map(
+            (cas, ligne) =>
+              casEnMots(saisie, cas) +
+              ' : ' +
+              saisie.colonnes
+                .map((colonne, place) => colonne + ' ' + enMot(valeurs[ligne][place]))
+                .join(' ; '),
+          )
+          .join('\n')
+      /** Les valeurs d'une réponse déjà envoyée, relues dans son texte ; `null` si elle n'en vient pas. */
+      function lireLaTable(saisie, texte) {
+        const lignes = String(texte ?? '')
+          .split('\n')
+          .map((ligne) => ligne.replace(/\s+/g, ' ').trim())
+        const valeurs = casDeLaTable(saisie.entrees).map((cas) => {
+          const debut = casEnMots(saisie, cas) + ' : '
+          const ligne = lignes.find((l) => l.startsWith(debut))
+          if (ligne === undefined) return null
+          const morceaux = ligne.slice(debut.length).split(' ; ')
+          return saisie.colonnes.map((colonne, place) => {
+            const morceau = morceaux[place]
+            if (morceau === colonne + ' VRAI') return true
+            if (morceau === colonne + ' FAUX') return false
+            return null
+          })
+        })
+        return valeurs.every((ligne) => ligne !== null && ligne.every((v) => v !== null))
+          ? valeurs
+          : null
+      }
+      /** Ce que dit « Écouter » de la table : son rangement et ce qu'il faut y choisir. */
+      const lectureDeLaTable = (saisie) => {
+        const cas = casDeLaTable(saisie.entrees)
+        return (
+          'Une table à remplir, une ligne par cas, de ' +
+          casEnMots(saisie, cas[0]) +
+          ' à ' +
+          casEnMots(saisie, cas[cas.length - 1]) +
+          '. Pour chaque ligne, choisis VRAI ou FAUX pour ' +
+          saisie.colonnes.join(', puis pour ') +
+          '.'
+        )
+      }
+
+      /**
+       * La table : les faits d'entrée déjà remplis, puis, pour chaque colonne demandée, un choix VRAI ou
+       * FAUX par case (des radios, au clavier par les flèches). `valeurs` la préremplit ; `lue` la montre
+       * en lecture seule, sans radio (une réponse envoyée).
+       */
+      function tableDeVerite(saisie, nom, valeurs, { lue = false } = {}) {
+        const table = creer(
+          'table',
+          { className: 'table-saisie', dataset: { lecture: lectureDeLaTable(saisie) } },
+          creer(
+            'thead',
+            {},
+            creer(
+              'tr',
+              {},
+              ...[...saisie.entrees, ...saisie.colonnes].map((titre, place) =>
+                creer('th', {
+                  scope: 'col',
+                  textContent: titre,
+                  className: place < saisie.entrees.length ? 'entree' : '',
+                }),
+              ),
+            ),
+          ),
+        )
+        const corps = creer('tbody')
+        casDeLaTable(saisie.entrees).forEach((cas, ligne) => {
+          const rangee = creer(
+            'tr',
+            {},
+            ...cas.map((valeur) =>
+              creer('td', { className: 'entree', textContent: enMot(valeur) }),
+            ),
+          )
+          saisie.colonnes.forEach((colonne, place) => {
+            const valeur = valeurs?.[ligne]?.[place]
+            if (lue) {
+              rangee.append(
+                creer('td', {
+                  className: 'valeur',
+                  textContent: valeur === undefined || valeur === null ? '' : enMot(valeur),
+                }),
+              )
+              return
+            }
+            const groupe = creer(
+              'div',
+              { className: 'choix' },
+              ...[true, false].map((possible) =>
+                creer(
+                  'label',
+                  {},
+                  creer('input', {
+                    type: 'radio',
+                    name: nom + '-' + ligne + '-' + place,
+                    value: possible ? 'vrai' : 'faux',
+                    checked: valeur === possible,
+                  }),
+                  enMot(possible),
+                ),
+              ),
+            )
+            groupe.setAttribute('role', 'radiogroup')
+            groupe.setAttribute('aria-label', casEnMots(saisie, cas) + ' : ' + colonne)
+            rangee.append(creer('td', {}, groupe))
+          })
+          corps.append(rangee)
+        })
+        table.append(corps)
+        return table
+      }
+
+      /**
+       * Le champ d'une question : une zone de texte, ou la table que le manifeste déclare. Il rend
+       * l'élément, son intitulé, ce qui manque avant l'envoi, la réponse en texte et de quoi le figer.
+       */
+      function champDeReponse(question, cle, depart) {
+        const saisie = question.saisie
+        if (saisie?.type !== 'table') {
+          const zone = creer('textarea', { id: cle, value: depart })
+          return {
+            element: zone,
+            intitule: (proprietes, ...enfants) =>
+              creer('label', { htmlFor: zone.id, ...proprietes }, ...enfants),
+            manque: () => (zone.value.trim() === '' ? 'Écris une réponse avant d’envoyer.' : ''),
+            valeur: () => zone.value,
+            figer: () => {
+              zone.disabled = true
+            },
+          }
+        }
+        const table = tableDeVerite(saisie, cle, depart ? lireLaTable(saisie, depart) : null)
+        table.id = cle
+        const intituleId = cle + '-question'
+        table.setAttribute('aria-labelledby', intituleId)
+        const groupes = () => Array.from(table.querySelectorAll('[role="radiogroup"]'))
+        const choisie = (groupe) => groupe.querySelector('input:checked')
+        return {
+          element: table,
+          intitule: (proprietes, ...enfants) =>
+            creer('p', { id: intituleId, ...proprietes }, ...enfants),
+          manque: ({ montrer = false } = {}) => {
+            const vides = groupes().filter((groupe) => !choisie(groupe))
+            if (vides.length === 0) return ''
+            if (montrer) vides[0].querySelector('input')?.focus()
+            return vides.length === 1
+              ? 'Choisis VRAI ou FAUX dans la dernière case vide avant d’envoyer.'
+              : 'Choisis VRAI ou FAUX dans chaque case avant d’envoyer\u00a0: il en reste ' +
+                  vides.length +
+                  '.'
+          },
+          valeur: () => {
+            const cases = groupes().map((groupe) => choisie(groupe)?.value === 'vrai')
+            const largeur = saisie.colonnes.length
+            return texteDeLaTable(
+              saisie,
+              casDeLaTable(saisie.entrees).map((_, ligne) =>
+                cases.slice(ligne * largeur, (ligne + 1) * largeur),
+              ),
+            )
+          },
+          figer: () => {
+            for (const entree of table.querySelectorAll('input')) entree.disabled = true
+          },
+        }
+      }
+
+      /** Une réponse envoyée, lisible : dans sa table quand la question en a une, sinon en texte. */
+      function reponseLue(question, texte) {
+        const valeurs =
+          question.saisie?.type === 'table' ? lireLaTable(question.saisie, texte) : null
+        if (valeurs === null)
+          return creer('p', { className: 'reponse-envoyee', textContent: texte })
+        const table = tableDeVerite(question.saisie, '', valeurs, { lue: true })
+        table.classList.add('reponse-envoyee')
+        // « Écouter » lit la réponse telle qu'elle est partie, une ligne par cas.
+        table.dataset.lecture = 'Ta réponse\u00a0: ' + texte.split('\n').join('. ') + '.'
+        return table
+      }
+
+      /**
        * Une question de la série, à répondre. `reprise` : elle a déjà sa réponse mais touche une erreur
        * critique ouverte ; on y répond de nouveau, depuis zéro (nouvelle tentative, premier tour).
        * Pendant la série, une réponse envoyée n'affiche pas sa correction (règle M01) : la page la garde
@@ -15178,13 +15408,19 @@ if (age &lt; 12) {
       ) {
         const premiere = etat.corrigees?.[question.id]?.premiere
         const cle = (relance ? 'relance-' : 'rep-') + question.id
-        const zone = creer('textarea', {
-          id: cle,
-          value: relance ? etat.envoyees[question.id].reponse : '',
-        })
+        const champ = champDeReponse(
+          question,
+          cle,
+          relance ? etat.envoyees[question.id].reponse : '',
+        )
+        const zone = champ.element
         let colle = false
         zone.addEventListener('paste', () => {
           colle = true
+        })
+        // Ce qui manquait se met à jour à mesure que l'apprenant remplit (les cases d'une table).
+        zone.addEventListener('change', () => {
+          if (message.dataset.cause === 'champ') message.textContent = champ.manque()
         })
         const radios = [
           ['sur', 'Sûr'],
@@ -15209,21 +15445,23 @@ if (age &lt; 12) {
           textContent: relance ? 'Envoyer le complément' : 'Envoyer',
         })
         const figer = () => {
-          zone.disabled = true
+          champ.figer()
           for (const { entree } of radios) entree.disabled = true
         }
         bouton.addEventListener('click', async () => {
           const choisie = confiance.querySelector('input:checked')
-          if (zone.value.trim() === '')
-            return void (message.textContent = 'Écris une réponse avant d’envoyer.')
+          const manque = champ.manque({ montrer: true })
+          message.dataset.cause = manque ? 'champ' : ''
+          if (manque) return void (message.textContent = manque)
           if (!choisie) return void (message.textContent = 'Choisis ta confiance avant d’envoyer.')
           message.textContent = ''
           bouton.disabled = true
+          const reponse = champ.valeur()
           try {
             const correction = await pont.demanderCorrection({
               serie,
               question: question.id,
-              reponse: zone.value,
+              reponse,
               confiance: choisie.value,
               relance: relance ? premiere.message : '',
               support: { colle, retour_cours: etat.retourCours },
@@ -15240,7 +15478,7 @@ if (age &lt; 12) {
                 ...etat.corrigees,
                 [question.id]: {
                   ...etat.corrigees[question.id],
-                  relance: { reponse: zone.value, correction: gardee },
+                  relance: { reponse, correction: gardee },
                 },
               }
               enregistrer()
@@ -15251,7 +15489,7 @@ if (age &lt; 12) {
               ...(etat.corrigees ?? {}),
               [question.id]: { premiere: resumeCorrection(correction), relance: null },
             }
-            etat.envoyees[question.id] = { reponse: zone.value, confiance: choisie.value }
+            etat.envoyees[question.id] = { reponse, confiance: choisie.value }
             enregistrer()
             sortie.replaceChildren(
               creer('p', {
@@ -15273,8 +15511,7 @@ if (age &lt; 12) {
           return creer(
             'div',
             { className: 'relance' },
-            creer('label', {
-              htmlFor: zone.id,
+            champ.intitule({
               textContent:
                 'Complète ta réponse, d’après sa correction. Ce complément ne compte pas pour le statut.',
             }),
@@ -15299,7 +15536,7 @@ if (age &lt; 12) {
                 }),
               ]
             : []),
-          creer('label', { htmlFor: zone.id }, creer('strong', { textContent: question.question })),
+          champ.intitule({}, creer('strong', { textContent: question.question })),
           zone,
           confiance,
           creer('div', { className: 'actions' }, bouton),

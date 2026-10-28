@@ -1,4 +1,4 @@
-import { Alignement } from '@janus/contrats'
+import { Alignement, lectureDeLaTable, modeleDeLigne } from '@janus/contrats'
 import type { Manifeste, TypeEtape, TypeRelation } from '@janus/contrats'
 import { blocJson } from './fiches.ts'
 
@@ -410,7 +410,8 @@ export const CE_QUE_FAIT_LE_GABARIT: readonly string[] = [
   'Toute aide garde son jour : refait le même jour, un item part avec l’aide la plus forte reçue ce jour-là (« Tu as eu de l’aide aujourd’hui : refais-le un autre jour, sans aide, pour qu’il compte. ») ; un autre jour, il repart sans aide.',
   'L’appli ne tient un exercice de pratique pour fait que quand le nombre d’items demandé (`reussite` dans le manifeste) est réussi sans aide, et le bloc ne devient pas « acquis provisoirement » sans toute sa pratique.',
   'Restitution, sans support : la série commence sur « Commencer » (« dès que tu commences, il est masqué jusqu’à ta dernière réponse »), avant toute question ; de ce clic à la dernière réponse, tout le reste de la fiche est masqué (« Cette étape s’ouvrira après ta dernière réponse ») : le cours (perception, pré-test, explications), la carte, la pratique, l’atelier, l’aisance, l’ensemble et le bilan. Une erreur rouverte se reprend de même, sur « Commencer ». « Revenir au cours » le rouvre ; une réponse donnée ensuite, ou collée, ne compte pas pour le statut (« Ne compte pas · Avec support »).',
-  'Restitution : une question à la fois, la suivante paraît quand la précédente est envoyée ; les réponses envoyées restent lisibles au-dessus, sans leur correction (« Corrigée à la fin de la série. »). Chaque question a un champ libre, puis « Ta confiance » (Sûr, Hésitant, Au hasard), à choisir avant d’envoyer. Les corrections s’affichent toutes après la dernière réponse (« Envoyée. Sa correction s’affichera à la fin de la série, pour ne pas souffler les questions suivantes. »).',
+  'Restitution : une question à la fois, la suivante paraît quand la précédente est envoyée ; les réponses envoyées restent lisibles au-dessus, sans leur correction (« Corrigée à la fin de la série. »). Chaque question a un champ libre, ou une table de vérité quand le manifeste la déclare (`saisie`), puis « Ta confiance » (Sûr, Hésitant, Au hasard), à choisir avant d’envoyer. Les corrections s’affichent toutes après la dernière réponse (« Envoyée. Sa correction s’affichera à la fin de la série, pour ne pas souffler les questions suivantes. »).',
+  'Une table de vérité (`saisie: { type: "table" }`) montre les faits d’entrée déjà remplis, une ligne par cas, rangés comme on compte en binaire, et pour chaque colonne demandée VRAI ou FAUX à choisir dans chaque case ; l’envoi attend que chaque case ait sa valeur (« Choisis VRAI ou FAUX dans chaque case avant d’envoyer »). La réponse part au correcteur en texte, une ligne par cas (« A FAUX, B FAUX : NON B VRAI ; A OU NON B VRAI »), et se relit ensuite dans la même table.',
   'La correction de l’appli compare la réponse à l’attendu du manifeste, avec le contexte du correcteur (`contexte_ia`) : un niveau (Solide, Partiel, Fragile, Pas encore) et un message qui dit ce que la réponse montre de compris, ce qu’elle mélange et ce qui manque. Une réponse à moitié juste est à moitié juste ; un correcteur qui n’est pas sûr de son jugement le dit, et la réponse ne compte pas (« Ne compte pas · Non vérifiée »). Une erreur critique présente dans la réponse la met au plus à Fragile, à Pas encore si l’apprenant s’était dit sûr.',
   'Chaque correction dit d’où vient ce qu’elle corrige : du support (avec sa référence, une des `sources` du manifeste, qui désignent des étapes de la fiche), déduit du support, ou ajouté par le correcteur. Les questions que pose l’appli (rappel, vérifications) l’affichent sous la correction : « D’après le cours », « Déduit du cours » ou « Ajouté hors du cours », puis « Source · Fiche », le bloc et la référence.',
   'La série finie, une réponse qui n’est pas Solide peut se compléter une fois, après sa correction (« Compléter ma réponse », « Ce complément ne compte pas pour le statut ») ; seule la première réponse compte pour le statut. Une correction tirée au sort demande « D’accord avec ce niveau ? ». Le Suivi de l’appli compare la confiance déclarée aux résultats.',
@@ -663,7 +664,14 @@ export function texteDeLaFiche(
   }
   liste(
     'Restitution',
-    manifeste.restitution.map(({ id, question }) => ({ id, texte: question })),
+    manifeste.restitution.map(({ id, question, saisie }) => ({
+      id,
+      // La grille dit ce que la question ne redit plus : le rangement des cas, les colonnes à remplir.
+      texte:
+        saisie === undefined
+          ? question
+          : `${question} ${lectureDeLaTable(saisie)} Réponds une ligne par cas : « ${modeleDeLigne(saisie)} ».`,
+    })),
   )
   liste(
     'Rappel',

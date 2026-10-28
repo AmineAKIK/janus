@@ -15,6 +15,8 @@ export interface Question {
   readonly question: string
   readonly attendu: string
   readonly erreurs?: readonly string[]
+  /** Une table de vérité à remplir dans la page, au lieu d'un texte. */
+  readonly saisie?: { readonly type: 'table' }
 }
 export interface Explication extends Question {
   /** L'item de pratique que l'explication conclut. */
@@ -282,19 +284,30 @@ export async function jouerLaRestitution(
   }
   await fiche.getByRole('button', { name: 'Commencer' }).click()
   for (let rang = 0; rang < aPoser.length; rang += 1) {
-    const active = fiche.locator('.item').filter({ has: fiche.locator('textarea:enabled') })
+    // Une question à répondre : sa zone de texte, ou sa table de vérité, attend encore.
+    const champ = 'textarea, .table-saisie input'
+    const active = fiche
+      .locator('.item')
+      .filter({ has: fiche.locator('textarea:enabled, .table-saisie input:enabled') })
     await expect(active).toHaveCount(1)
-    const libelle = await active.locator('label strong').first().innerText()
+    const libelle = await active.locator('label strong, p strong').first().innerText()
     const question = aPoser.find((q) => q.question === libelle)
     if (question === undefined) throw new Error(`Question inconnue : ${libelle}`)
     // Envoyée, la question fige sa zone de réponse : on la retient par son texte, pas par son état.
-    const item = fiche.locator('.item').filter({ has: fiche.locator('textarea'), hasText: libelle })
+    const item = fiche.locator('.item').filter({ has: fiche.locator(champ), hasText: libelle })
     if (options.reprise !== undefined) {
       await expect(item.locator('.item-reprise')).toContainText(
         `À reprendre : ${options.reprise.libelle}`,
       )
     }
-    await item.locator('textarea').fill(reponse(question))
+    if (question.saisie?.type === 'table') {
+      // La table se remplit case par case : FAUX partout pour une réponse fausse, VRAI sinon. Le faux
+      // correcteur ne compare que des mots : il ne la juge pas solide.
+      const mot = reponse(question) === REPONSE_FAUSSE ? 'FAUX' : 'VRAI'
+      const groupes = item.getByRole('radiogroup')
+      for (let rangCase = 0; rangCase < (await groupes.count()); rangCase += 1)
+        await groupes.nth(rangCase).getByLabel(mot, { exact: true }).check()
+    } else await item.locator('textarea').fill(reponse(question))
     await item.getByLabel('Sûr').check()
     await item.getByRole('button', { name: 'Envoyer', exact: true }).click()
     // La question suivante n'arrive qu'avec la correction de celle-ci ; la dernière réponse redessine la

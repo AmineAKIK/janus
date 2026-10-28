@@ -314,6 +314,35 @@ function verifierRestitution(manifeste: Manifeste, signaler: (message: string) =
   }
 }
 
+/** Une question qui fait remplir une table de vérité (« Remplis la table de vérité de… »). */
+const DEMANDE_UNE_TABLE =
+  /(?<!\p{L})(?:remplis|écris|complète|dresse|construis|donne)(?!\p{L})[^.?!]*\btables? de vérité(?!\p{L})/iu
+
+/**
+ * Une question qui demande une table de vérité se déclare en grille (`saisie`, type `table`) : en
+ * texte libre, l'apprenant inventait un format pour quatre lignes et deux colonnes, et le correcteur
+ * le devinait (B02-R40, version 39). Seule la restitution a cette grille : le rappel et les
+ * différées, que pose l'appli, ne savent pas la dessiner.
+ */
+function verifierTablesEnGrille(manifeste: Manifeste, signaler: (message: string) => void): void {
+  for (const question of manifeste.restitution) {
+    if (DEMANDE_UNE_TABLE.test(question.question) && question.saisie === undefined)
+      signaler(
+        `restitution ${question.id} : la question fait remplir une table de vérité ; déclare-la en grille (\`saisie: { type: "table", entrees, colonnes }\`), pour que la page dessine les cas et que la réponse parte sans format à inventer.`,
+      )
+  }
+  const posees = [
+    ...manifeste.rappel.map(({ id, question }) => ({ id, texte: question, liste: 'rappel' })),
+    ...manifeste.differees.map(({ id, consigne }) => ({ id, texte: consigne, liste: 'differees' })),
+  ]
+  for (const { id, texte, liste } of posees) {
+    if (DEMANDE_UNE_TABLE.test(texte))
+      signaler(
+        `${liste} ${id} : la question fait remplir une table de vérité, mais l’appli ne pose le rappel et les différées qu’en texte libre ; pose-la en restitution, avec sa grille.`,
+      )
+  }
+}
+
 /**
  * Une adresse qui sort de la page (`http(s)://…` ou `//…`) là où le navigateur la chargerait ou la
  * suivrait : un attribut `src`, `href`, `srcset`, `poster`, `action`, `formaction`, `data` ou `ping`,
@@ -1080,6 +1109,7 @@ export async function verifierLesFiches({
       verifierPratique(resultat.manifeste, fiche.html, signaler)
       verifierErreursCritiques(resultat.manifeste, signaler)
       verifierRestitution(resultat.manifeste, signaler)
+      verifierTablesEnGrille(resultat.manifeste, signaler)
       verifierOrdreDuCycle(resultat.manifeste, signaler)
       verifierAdressesExternes(fiche.html, signaler)
       verifierRenvoisAuxEssais(fiche.html, signaler)

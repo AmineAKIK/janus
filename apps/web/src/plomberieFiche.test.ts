@@ -3,6 +3,7 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { texteDeLaTable } from '@janus/contrats'
 
 // Le gabarit est une fiche complète (bloc X00). Ces tests font tourner sa plomberie, telle que l'appli
 // la charge dans son iframe, contre un pont simulé.
@@ -642,6 +643,186 @@ function pontAutonome(etat: Record<string, unknown>) {
     },
   }
 }
+
+describe('une table de vérité à remplir', () => {
+  const GRILLE = { type: 'table', entrees: ['A', 'B'], colonnes: ['NON B', 'A OU NON B'] } as const
+  /** Le gabarit dont la question R1 fait remplir la table de A OU NON B. */
+  const avecTable = GABARIT.replace(
+    '"question": "À REMPLACER : question R1.",',
+    `"question": "Sans le cours, remplis la table de vérité de A OU NON B.", "saisie": ${JSON.stringify(GRILLE)},`,
+  )
+  /** La réponse juste : NON B, puis A OU NON B, pour chaque cas. */
+  const JUSTE = [
+    [true, true],
+    [false, false],
+    [true, true],
+    [false, true],
+  ]
+  const correction = {
+    id: '0199f5a0-0000-7000-8000-000000000003',
+    echantillon: false,
+    question: 'R1',
+    tour: 1,
+    message: 'Il manque une ligne.',
+    niveau: 'partiel',
+    erreurs_critiques: [],
+    source: 'deduit',
+    ref: 'R1',
+    certitude: 'sur',
+    compte: true,
+  }
+
+  /** Choisit VRAI ou FAUX dans chaque case de la table, ligne par ligne. */
+  function remplir(table: HTMLElement, valeurs: readonly (readonly boolean[])[]) {
+    const groupes = within(table).getAllByRole('radiogroup')
+    groupes.forEach((groupe, rang) => {
+      const valeur = valeurs[Math.floor(rang / 2)]?.[rang % 2]
+      if (valeur === undefined) return
+      fireEvent.click(within(groupe).getByRole('radio', { name: valeur ? 'VRAI' : 'FAUX' }))
+    })
+  }
+
+  it('montre les cas rangés comme on compte en binaire, et une case VRAI ou FAUX par colonne demandée', async () => {
+    const { pont } = pontSimule(aLEtape('ET4'), correction)
+    monter(avecTable, pont)
+    fireEvent.click(await screen.findByRole('button', { name: 'Commencer' }))
+    const table = await screen.findByRole('table', {
+      name: 'Sans le cours, remplis la table de vérité de A OU NON B.',
+    })
+
+    expect(screen.queryAllByRole('textbox')).toHaveLength(0)
+    expect(
+      within(table)
+        .getAllByRole('columnheader')
+        .map((th) => th.textContent),
+    ).toEqual(['A', 'B', 'NON B', 'A OU NON B'])
+    const lignes = within(table).getAllByRole('row').slice(1)
+    expect(
+      lignes.map((ligne) =>
+        Array.from(ligne.querySelectorAll('td.entree'), (td) => td.textContent).join(' '),
+      ),
+    ).toEqual(['FAUX FAUX', 'FAUX VRAI', 'VRAI FAUX', 'VRAI VRAI'])
+    const groupes = within(table).getAllByRole('radiogroup')
+    expect(groupes.map((groupe) => groupe.getAttribute('aria-label'))).toEqual([
+      'A FAUX, B FAUX : NON B',
+      'A FAUX, B FAUX : A OU NON B',
+      'A FAUX, B VRAI : NON B',
+      'A FAUX, B VRAI : A OU NON B',
+      'A VRAI, B FAUX : NON B',
+      'A VRAI, B FAUX : A OU NON B',
+      'A VRAI, B VRAI : NON B',
+      'A VRAI, B VRAI : A OU NON B',
+    ])
+    for (const groupe of groupes)
+      expect(
+        within(groupe)
+          .getAllByRole('radio')
+          .map((radio) => radio.closest('label')?.textContent),
+      ).toEqual(['VRAI', 'FAUX'])
+    // « Écouter » la dit par sa phrase, sans lire chaque case.
+    expect(table.dataset['lecture']).toBe(
+      'Une table à remplir, une ligne par cas, de A FAUX, B FAUX à A VRAI, B VRAI. Pour chaque ligne, choisis VRAI ou FAUX pour NON B, puis pour A OU NON B.',
+    )
+  })
+
+  it('n’envoie rien tant qu’une case est vide, puis envoie une ligne par cas', async () => {
+    const { pont, demandes } = pontSimule(aLEtape('ET4'), correction)
+    monter(avecTable, pont)
+    fireEvent.click(await screen.findByRole('button', { name: 'Commencer' }))
+    const table = await screen.findByRole('table')
+    const question = table.closest('.item')
+    if (!(question instanceof HTMLElement)) throw new Error('Une table hors de sa carte')
+    fireEvent.click(within(question).getByRole('radio', { name: 'Sûr' }))
+
+    const envoyer = within(question).getByRole('button', { name: 'Envoyer' })
+    fireEvent.click(envoyer)
+    expect(within(question).getByRole('alert')).toHaveTextContent(
+      'Choisis VRAI ou FAUX dans chaque case avant d’envoyer : il en reste 8.',
+    )
+    remplir(table, JUSTE.slice(0, 3))
+    fireEvent.click(envoyer)
+    expect(within(question).getByRole('alert')).toHaveTextContent('il en reste 2.')
+    expect(document.activeElement).toBe(
+      within(table).getAllByRole('radiogroup')[6]?.querySelector('input'),
+    )
+    expect(demandes).toHaveLength(0)
+
+    remplir(table, JUSTE)
+    // Ce qui manquait s'efface quand la dernière case est remplie.
+    expect(within(question).getByRole('alert')).toBeEmptyDOMElement()
+    fireEvent.click(envoyer)
+    await waitFor(() => {
+      expect(demandes).toHaveLength(1)
+    })
+    expect(demandes[0]?.['reponse']).toBe(texteDeLaTable(GRILLE, JUSTE))
+    expect(demandes[0]?.['reponse']).toBe(
+      [
+        'A FAUX, B FAUX : NON B VRAI ; A OU NON B VRAI',
+        'A FAUX, B VRAI : NON B FAUX ; A OU NON B FAUX',
+        'A VRAI, B FAUX : NON B VRAI ; A OU NON B VRAI',
+        'A VRAI, B VRAI : NON B FAUX ; A OU NON B VRAI',
+      ].join('\n'),
+    )
+    await waitFor(() => {
+      for (const radio of within(table).getAllByRole('radio')) expect(radio).toBeDisabled()
+    })
+  })
+
+  it('la série finie, la réponse se relit dans la table, rechargement compris, et se complète dans la table', async () => {
+    const { pont, demandes, sauvees } = pontSimule(aLEtape('ET4'), correction)
+    monter(avecTable, pont)
+    fireEvent.click(await screen.findByRole('button', { name: 'Commencer' }))
+    const table = await screen.findByRole('table')
+    const question = table.closest('.item')
+    if (!(question instanceof HTMLElement)) throw new Error('Une table hors de sa carte')
+    remplir(table, JUSTE)
+    fireEvent.click(within(question).getByRole('radio', { name: 'Sûr' }))
+    fireEvent.click(within(question).getByRole('button', { name: 'Envoyer' }))
+    await waitFor(() => {
+      expect(screen.getAllByRole('textbox').length).toBeGreaterThan(0)
+    })
+    await repondreATout()
+
+    /** La table lue d'une carte : ses valeurs, ligne par ligne. */
+    const valeursLues = (carte: HTMLElement) =>
+      Array.from(carte.querySelectorAll('table.table-saisie tbody tr'), (ligne) =>
+        Array.from(ligne.querySelectorAll('td.valeur'), (td) => td.textContent),
+      )
+    const LUES = [
+      ['VRAI', 'VRAI'],
+      ['FAUX', 'FAUX'],
+      ['VRAI', 'VRAI'],
+      ['FAUX', 'VRAI'],
+    ]
+    const carteR1 = () => {
+      const carte = screen
+        .getByText('Sans le cours, remplis la table de vérité de A OU NON B.')
+        .closest('.item')
+      if (!(carte instanceof HTMLElement)) throw new Error('Pas de carte pour R1')
+      return carte
+    }
+    expect(valeursLues(carteR1())).toEqual(LUES)
+    expect(within(carteR1()).getAllByText('Il manque une ligne.').length).toBeGreaterThan(0)
+
+    // Rechargement : la page repart de l'état sauvé.
+    const { pont: pontRecharge } = pontSimule(sauvees.at(-1) ?? {}, correction)
+    monter(avecTable, pontRecharge)
+    await waitFor(() => {
+      expect(valeursLues(carteR1())).toEqual(LUES)
+    })
+    expect(within(carteR1()).getByText('Il manque une ligne.')).toBeInTheDocument()
+
+    // Le complément se fait dans la table, préremplie de la première réponse.
+    fireEvent.click(within(carteR1()).getByRole('button', { name: 'Compléter ma réponse' }))
+    const complement = within(carteR1()).getByRole('table', { name: /Complète ta réponse/ })
+    const cochees = Array.from(
+      complement.querySelectorAll<HTMLInputElement>('input:checked'),
+      (radio) => radio.value,
+    )
+    expect(cochees).toEqual(['vrai', 'vrai', 'faux', 'faux', 'vrai', 'vrai', 'faux', 'vrai'])
+    expect(demandes).toHaveLength(5)
+  })
+})
 
 describe('la correction simulée, hors de l’appli', () => {
   it('ne dit jamais « solide », même à une réponse qui reprend les mots de l’attendu', async () => {

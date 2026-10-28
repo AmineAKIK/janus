@@ -147,6 +147,28 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
     }
   })
 
+  it('décrit la grille d’une table de vérité, que la question ne redit pas', () => {
+    const resultat = validerManifeste(JSON.parse(extraireManifeste(html) ?? 'null'))
+    if (!resultat.ok) throw new Error('Le gabarit rempli doit rester valide.')
+    const [r1, ...autres] = resultat.manifeste.restitution
+    if (r1 === undefined) throw new Error('gabarit')
+    const avecGrille = texteDeLaFiche(html, {
+      ...resultat.manifeste,
+      restitution: [
+        {
+          ...r1,
+          question: 'Sans le cours, remplis la table de vérité de A OU NON B.',
+          saisie: { type: 'table', entrees: ['A', 'B'], colonnes: ['NON B', 'A OU NON B'] },
+        },
+        ...autres,
+      ],
+    })
+
+    expect(avecGrille).toContain(
+      '- R1 : Sans le cours, remplis la table de vérité de A OU NON B. Une table à remplir, une ligne par cas, de A FAUX, B FAUX à A VRAI, B VRAI. Pour chaque ligne, choisis VRAI ou FAUX pour NON B, puis pour A OU NON B. Réponds une ligne par cas : « A FAUX, B FAUX : NON B VRAI ou FAUX ; A OU NON B VRAI ou FAUX ».',
+    )
+  })
+
   it('lit la perception, le pré-test, l’aisance et l’ensemble à leur place, l’objectif replié dans la carte', () => {
     const texteManifeste = extraireManifeste(html) ?? ''
     const manifeste = JSON.parse(texteManifeste) as {
@@ -411,6 +433,7 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
       'D’accord avec ce niveau ?',
       'Repérée dans tes réponses',
       'À reprendre',
+      'Choisis VRAI ou FAUX dans chaque case avant d’envoyer',
     ]) {
       expect(faits, libelle).toContain(libelle.trim())
       expect(gabarit.replaceAll('\u00a0', ' '), libelle).toContain(libelle)
