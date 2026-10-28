@@ -1765,6 +1765,9 @@
        * finie, pour l'outil qui attend la suite.
        */
       const ESSAIS_D_EXPLICATION = 2
+      /** Dit dès le collage ce qu'il coûte, plutôt qu'après la correction. */
+      const AVERTIR_COLLE =
+        'Réponse collée\u00a0: elle sera corrigée, mais ne comptera pas. Écris-la ici pour qu’elle compte.'
       const explicationDeclaree = (cle) => (manifeste.explication ?? []).find((e) => e.id === cle)
       /** L'item n'a pas d'explication à donner, ou elle est faite. */
       const explicationFaite = (item) =>
@@ -1881,6 +1884,7 @@
           let colle = false
           champ.addEventListener('paste', () => {
             colle = true
+            message.textContent = AVERTIR_COLLE
           })
           const radios = [
             ['sur', 'Sûr'],
@@ -1930,6 +1934,7 @@
               return void (message.textContent = 'Choisis ta confiance avant d’envoyer.')
             message.textContent = ''
             bouton.disabled = true
+            let support
             try {
               const correction = await pont.demanderCorrection({
                 serie: 'explication',
@@ -1939,7 +1944,10 @@
                 relance: '',
                 // « Revenir au cours » ne marque que les réponses données pendant la restitution
                 // commencée : pas une explication de la pratique faite après, la série finie.
-                support: { colle, retour_cours: etat.retourCours && serieEnCours() !== undefined },
+                support: (support = {
+                  colle,
+                  retour_cours: etat.retourCours && serieEnCours() !== undefined,
+                }),
                 // Une explication libre suit une solution vue (avec support), sauf quand l'outil dit
                 // le contraire (`apresSolution: false`, un schéma refait de mémoire).
                 ...(declaree
@@ -1952,7 +1960,7 @@
                     }),
               })
               noterReperees('explique:' + cle, correction.erreurs_critiques)
-              essais.push({ texte: lireChamp(), correction: resumeCorrection(correction) })
+              essais.push({ texte: lireChamp(), correction: resumeCorrection(correction, support) })
               const fin =
                 mode === 'autonome'
                   ? 'simulee'
@@ -3751,6 +3759,12 @@
        * La correction d'une réponse : BulleCorrection de l'appli, et son badge quand la réponse ne
        * compte pas pour le statut (une réponse recopiée ne referme pas d'erreur, par exemple).
        */
+      /** « Avec support » dit lequel, quand la page le sait : la réponse collée, ou le cours rouvert. */
+      const LIBELLES_SUPPORT = {
+        colle: 'Réponse collée',
+        cours: 'Cours rouvert pendant la série',
+      }
+
       function bulleCorrection(correction) {
         return creer(
           'div',
@@ -3768,7 +3782,11 @@
                   className: 'badge-compte',
                   textContent:
                     'Ne compte pas · ' +
-                    (LIBELLES_RAISON[correction.raison_non_compte] ?? correction.raison_non_compte),
+                    ((correction.raison_non_compte === 'avec_support'
+                      ? LIBELLES_SUPPORT[correction.support]
+                      : undefined) ??
+                      LIBELLES_RAISON[correction.raison_non_compte] ??
+                      correction.raison_non_compte),
                 }),
               ]
             : []),
@@ -3776,7 +3794,7 @@
       }
 
       /** Ce que la page garde d'une correction pour l'afficher plus tard, même après un rechargement. */
-      const resumeCorrection = (correction) => ({
+      const resumeCorrection = (correction, support) => ({
         id: correction.id,
         niveau: correction.niveau,
         message: correction.message,
@@ -3784,6 +3802,8 @@
         raison_non_compte: correction.raison_non_compte ?? null,
         tour: correction.tour,
         echantillon: Boolean(correction.echantillon),
+        // Le support envoyé avec la réponse, pour nommer « Avec support » dans le badge.
+        support: support?.colle ? 'colle' : support?.retour_cours ? 'cours' : null,
       })
 
       /**
@@ -4055,6 +4075,8 @@
         let colle = false
         zone.addEventListener('paste', () => {
           colle = true
+          message.dataset.cause = ''
+          message.textContent = AVERTIR_COLLE
         })
         // Ce qui manquait se met à jour à mesure que l'apprenant remplit (les cases d'une table).
         zone.addEventListener('change', () => {
@@ -4104,6 +4126,7 @@
               relance: relance ? premiere.message : '',
               support: { colle, retour_cours: etat.retourCours },
             })
+            const support = { colle, retour_cours: etat.retourCours }
             // Une réponse nouvelle remplace ce que la précédente avait fait repérer sur cette
             // question ; un complément s'y ajoute.
             if (!relance) remplacerReperees(question.id)
@@ -4111,7 +4134,7 @@
             figer()
             bouton.hidden = true
             if (relance) {
-              const gardee = resumeCorrection(correction)
+              const gardee = resumeCorrection(correction, support)
               etat.corrigees = {
                 ...etat.corrigees,
                 [question.id]: {
@@ -4125,7 +4148,7 @@
             }
             etat.corrigees = {
               ...(etat.corrigees ?? {}),
-              [question.id]: { premiere: resumeCorrection(correction), relance: null },
+              [question.id]: { premiere: resumeCorrection(correction, support), relance: null },
             }
             etat.envoyees[question.id] = { reponse, confiance: choisie.value }
             enregistrer()
