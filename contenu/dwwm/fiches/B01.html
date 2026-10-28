@@ -867,7 +867,10 @@
         flex-direction: column;
         gap: var(--espacement-8);
       }
-      /* Le schéma refait de mémoire (JanusGabarit.schema) : boîtes et flèches, l'une sous l'autre. */
+      /*
+       * Le schéma construit pour un cas (JanusGabarit.schema) : boîtes et flèches, l'une sous l'autre ;
+       * une case posée se lit, une case à écrire porte sa question au-dessus du champ.
+       */
       .schema-libre {
         display: flex;
         flex-direction: column;
@@ -881,22 +884,42 @@
         padding: 0;
         list-style: none;
       }
+      .schema-chaine li {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--espacement-4) var(--espacement-8);
+        margin: 0;
+      }
+      .schema-chaine label {
+        flex: 1 0 100%;
+        color: var(--couleur-texte-secondaire);
+      }
       .schema-chaine input[type='text'] {
-        width: 100%;
+        flex: 1 1 12rem;
+        min-width: 0;
         max-width: 24rem;
       }
       .schema-boite input[type='text'] {
         font-family: inherit;
         font-weight: 600;
       }
+      .schema-donne {
+        padding: var(--espacement-4) var(--espacement-8);
+        border: 1px solid var(--couleur-ligne);
+        border-radius: var(--rayon-option);
+        background: var(--couleur-surface-douce);
+        font-weight: 600;
+      }
       .schema-fleche {
-        display: flex;
-        align-items: center;
-        gap: var(--espacement-8);
+        position: relative;
         padding-inline-start: var(--espacement-20);
       }
       .schema-fleche::before {
         content: '↓';
+        position: absolute;
+        inset-inline-start: var(--espacement-4);
+        top: 0;
         color: var(--couleur-texte-secondaire);
       }
       .schema-fleche input[type='text'] {
@@ -3745,6 +3768,25 @@
             </li>
           </ul>
         </div>
+        <p>Le schéma du bloc, pour cette photo :</p>
+        <figure
+          class="chaine-fixe"
+          data-lecture="Le schéma du bloc, pour la photo. Des bits, les 72 octets des pixels, lus par un programme, la visionneuse, qui lit d’abord l’en-tête, avec un codage, RGB, trois octets par pixel, donnent un sens : une image de 24 pixels, 6 par ligne."
+        >
+          <span class="boite-fixe">des bits<small>les 72 octets des pixels</small></span>
+          <span class="fleche">lus par</span>
+          <span class="boite-fixe"
+            >un programme<small>la visionneuse, qui lit l’en-tête</small></span
+          >
+          <span class="fleche">avec</span>
+          <span class="boite-fixe">un codage<small>RGB, trois octets par pixel</small></span>
+          <span class="fleche">donnent</span>
+          <span class="boite-fixe">un sens<small>une image de 24 pixels, 6 par ligne</small></span>
+        </figure>
+        <p>
+          C’est la chaîne de la lettre L, avec un autre programme et un autre codage. Le fichier du
+          début n’avait pas d’en-tête : la visionneuse a dû supposer sa largeur.
+        </p>
       </div>
       <div data-ecran="La taille d’une photo">
         <p class="accroche">
@@ -4230,22 +4272,48 @@
       <div class="outil" data-widget="aisance"></div>
     </template>
 
-    <!-- ET14, ensemble : le schéma de mémoire, le pari repris, puis le fichier du début lu de quatre façons. -->
+    <!-- ET14, ensemble : le schéma construit pour un autre fichier, le pari repris, puis le fichier du début lu de quatre façons. -->
     <template data-etape="ET14">
-      <div data-ecran="Le schéma, de mémoire">
+      <div data-ecran="Le schéma, pour note.dat">
         <p class="accroche">
-          Tu as vu les quatre lectures. Avant de revenir au point de départ, refais le schéma de
-          mémoire.
+          Tu as vu les quatre lectures. Avant de revenir au fichier du début, fais tourner le schéma
+          du bloc sur un autre fichier : note.dat, deux octets,
+          <span class="mono">01001000 01101001</span>, que tu ouvres avec le Bloc-notes.
         </p>
         <p class="discret">
-          Ça ne compte pas dans ta note : c’est un essai de mémoire. Tu as deux essais, puis le
-          schéma du cours s’affiche.
+          Ça ne compte pas dans ta note : c’est un essai pour voir si tu sais suivre ce que fait la
+          machine, pas pour réciter un dessin. Tes mots et ton nombre de boîtes peuvent différer du
+          cours. Tu as deux essais, puis le schéma du cours s’affiche, pour comparer.
         </p>
-        <div class="ex" data-widget="schema" data-id="f2">
+        <div class="cadre pour-lire">
+          <p class="discret">La table ASCII, pour lire :</p>
+          <ul>
+            <li>72 code H, et 104 code h.</li>
+            <li>105 code i, et 73 code I.</li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-widget="schema"
+          data-id="f2"
+          data-regles="Avec d’autres règles, les mêmes bits donnent autre chose. Lesquelles connais-tu, et que donne chacune ?"
+          data-cas="Pour note.dat, 01001000 01101001, ouvert avec le Bloc-notes, la chaîne juste : les bits sont lus par un programme, le Bloc-notes, avec un codage de caractères, la table ASCII (ou UTF-8, qui reprend ses numéros), qui leur donne un sens : le binaire, lui aussi un codage, en fait les nombres 72 et 105, et la table les lettres H et i ; la fenêtre affiche « Hi ». Les mêmes bits, lus par un autre programme avec un autre codage, donneraient autre chose. Un programme ou un codage qui manque, ou des bits qui auraient un sens tout seuls, est une erreur."
+        >
           <p class="q">
-            Refais de mémoire le schéma du bloc, avec tes mots : écris ses boîtes, et sur chaque
-            flèche ce qu’elle fait. Ajoute autant de boîtes qu’il en faut.
+            Fais passer note.dat dans le schéma, avec tes mots : remplis chaque boîte, et sur chaque
+            flèche, écris ce qu’elle fait. Ajoute ou retire des boîtes s’il le faut.
           </p>
+          <ol class="depart" hidden>
+            <li class="boite" data-pose>Les bits de note.dat : 01001000 01101001</li>
+            <li class="fleche">Qu’arrive-t-il à ces bits quand tu ouvres le fichier ?</li>
+            <li class="boite">Qui s’en charge, ici ?</li>
+            <li class="fleche">De quoi a-t-il besoin pour leur donner un sens ?</li>
+            <li class="boite">Quelle règle suit-il, ici ?</li>
+            <li class="fleche">Qu’est-ce que cette règle fait des bits ?</li>
+            <li class="boite" data-pose data-champ="Qu’affiche la fenêtre ?">
+              ce qu’affiche la fenêtre du Bloc-notes
+            </li>
+          </ol>
           <div class="modele" hidden>
             <div
               class="chaine"
@@ -5454,11 +5522,17 @@
           registre et l’écran.
         </li>
         <li>
-          Le schéma de l’étape 14 se redessine de mémoire, sans charpente : l’apprenant écrit chaque
-          boîte, et sur chaque flèche ce qu’elle fait, puis les règles qu’il connaît et ce que
-          chacune donne. L’IA le juge sur le schéma du cours, sans que ça compte pour le statut ;
-          pas Solide, il se reprend une fois, d’après la correction ; puis le schéma du cours
-          paraît, pour comparer.
+          Le schéma de l’étape 14 se construit pour un fichier nouveau, note.dat, deux octets
+          (01001000 01101001) ouverts avec le Bloc-notes, l’extrait de la table ASCII redonné
+          au-dessus. La première boîte porte ses bits, la dernière est posée (« ce qu’affiche la
+          fenêtre du Bloc-notes », avec un champ pour le texte) ; les cases du milieu et les flèches
+          portent chacune une question qui aide sans donner le terme. L’apprenant écrit chaque case,
+          en ajoute ou en retire, puis les autres règles qu’il connaît et ce que chacune donne. L’IA
+          juge la chaîne pour note.dat (data-cas), pas la ressemblance au cours : le nombre de
+          boîtes et les mots peuvent différer ; une étape qui manque ou une relation fausse est une
+          erreur. Ça ne compte pas pour le statut ; pas Solide, il se reprend une fois, d’après la
+          correction ; puis le schéma du cours paraît, pour comparer. Le schéma, montré en ET7 pour
+          la lettre L, reparaît rempli en ET10 pour la photo, lue par la visionneuse.
         </li>
       </ul>
     </template>
@@ -5467,7 +5541,7 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 52,
+        "version": 53,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
@@ -10123,8 +10197,9 @@
             return c
           },
           schema(ex) {
-            // Le schéma refait de mémoire, jugé par l'IA (règle C08) : l'éditeur et le modèle caché
-            // sont ceux du gabarit. Solide, il est réussi ; sinon, après deux essais, le modèle paraît.
+            // Le schéma construit pour un cas nouveau, jugé par l'IA sur la chaîne (règle C08) : l'éditeur
+            // et le modèle caché sont ceux du gabarit. Solide, il est réussi ; sinon, après deux essais,
+            // le schéma du cours paraît, pour comparer.
             const schema = window.JanusGabarit.schema(ex)
             const cle = 'ex:' + ex.dataset.id
             const c = {
@@ -10152,7 +10227,7 @@
                 null,
                 solide
                   ? 'Ton schéma est Solide. Voici celui du cours, pour comparer.'
-                  : 'Voici le schéma du cours\u00a0: compare-le au tien, boîte par boîte, flèche par flèche.',
+                  : 'Voici le schéma du cours\u00a0: compare-le au tien, étape par étape. Tes mots et ton nombre de boîtes peuvent différer.',
               )
             })
             queueMicrotask(() =>
@@ -10162,10 +10237,10 @@
                   detail: {
                     cle,
                     solution: schema.attendu,
-                    consigne: 'Ton schéma, de mémoire\u00a0:',
+                    consigne: 'Ton schéma\u00a0:',
                     question: schema.question,
                     saisie: schema.saisie,
-                    // Refait de mémoire, sans solution vue : pas « avec support ».
+                    // Construit sans solution vue : pas « avec support ».
                     apresSolution: false,
                     essais: 2,
                     envoyer: 'Faire juger mon schéma',
@@ -12009,16 +12084,23 @@
         }
       }
       /**
-       * Le schéma du bloc refait de mémoire (règle C08), le même pour toutes les fiches : l'apprenant
-       * écrit les boîtes et, sur chaque flèche, ce qu'elle fait ; il ajoute ou retire des boîtes, rien
-       * n'est donné. Le schéma du cours est dans l'exercice, caché (`.modele`) : des `.boite` et des
+       * Le schéma du bloc, construit pour un cas nouveau (règle C08), le même pour toutes les fiches :
+       * l'apprenant fait tourner le système sur ce cas, avec ses mots. Le départ est dans l'exercice
+       * (`ol.depart`, caché) : des `li.boite` et des `li.fleche` dans l'ordre ; une boîte `data-pose`
+       * est donnée (la première, remplie des données du cas en mots, et la dernière, posée sans sa
+       * valeur) ; les autres `li` portent une question qui aide sans donner le terme. L'apprenant
+       * remplit les cases, en ajoute ou en retire. `data-cas` dit la chaîne juste pour ce cas, pour le
+       * correcteur. Le schéma du cours est dans l'exercice, caché (`.modele`) : des `.boite` et des
        * `.fleche` dans une `.chaine`, et peut-être des `.lecture` (ce que donne chaque règle) ; avec
-       * des lectures, un champ demande de les écrire aussi. Rend la saisie que `fiche:expliquer` pose
-       * à la place de son champ (`element`, `lire`, `manque`), l'attendu pour le correcteur, la
-       * question qui se comprend sans l'écran, `montrer()` qui dévoile le modèle et `bloquer()`.
+       * des lectures, un champ demande de les écrire aussi (sa question : `data-regles`). Il ne sert qu'à comparer : le correcteur
+       * juge la chaîne pour le cas, pas la ressemblance. Sans départ, deux boîtes vides. Rend la
+       * saisie que `fiche:expliquer` pose à la place de son champ (`element`, `lire`, `manque`),
+       * l'attendu pour le correcteur, la question qui se comprend sans l'écran, `montrer()` qui
+       * dévoile le modèle et `bloquer()`.
        */
       function schema(ex) {
         const modele = ex.querySelector(':scope > .modele')
+        const depart = ex.querySelector(':scope > .depart')
         const morceaux = modele ? [...modele.querySelectorAll(':scope .chaine > *')] : []
         const enTexte = (noeud) => noeud.textContent.replace(/\s+/g, ' ').trim()
         const ecrire = (boites, fleches) =>
@@ -12031,24 +12113,45 @@
         const boitesModele = morceaux.filter((m) => m.classList.contains('boite')).map(enTexte)
         const flechesModele = morceaux.filter((m) => m.classList.contains('fleche')).map(enTexte)
         const lectures = modele ? [...modele.querySelectorAll('.lecture')].map(enTexte) : []
-        const attendu =
+        const cours =
           ecrire(boitesModele, flechesModele) +
           (lectures.length ? '. Les règles\u00a0: ' + lectures.join('\u00a0; ') : '') +
           '.'
+        const cas = (ex.dataset.cas ?? '').trim()
+        const attendu = cas ? cas + ' Le schéma du cours, pour comparer\u00a0: ' + cours : cours
+        const pieces = depart
+          ? [...depart.querySelectorAll(':scope > li')].map((li) => ({
+              type: li.classList.contains('fleche') ? 'fleche' : 'boite',
+              pose: li.hasAttribute('data-pose'),
+              texte: enTexte(li),
+              champ: li.dataset.champ ?? '',
+            }))
+          : [
+              { type: 'boite', pose: false, texte: '' },
+              { type: 'fleche', pose: false, texte: '' },
+              { type: 'boite', pose: false, texte: '' },
+            ]
+        const posees = pieces.filter((p) => p.pose).map((p) => '« ' + p.texte + ' »')
+        const consigne = ex.querySelector(':scope > .q')
         const question =
-          'Refais de mémoire le schéma du bloc, avec tes mots\u00a0: ses boîtes, et sur chaque flèche ce qu’elle fait. L’apprenant l’écrit [boîte] —flèche→ [boîte], dans l’ordre' +
+          (cas && consigne
+            ? 'L’apprenant construit le schéma du bloc pour un cas nouveau, avec ses mots\u00a0: ' +
+              enTexte(consigne) +
+              (posees.length
+                ? ' Ces boîtes lui sont données\u00a0: ' + posees.join(', ') + '.'
+                : '')
+            : 'L’apprenant construit le schéma du bloc, avec ses mots\u00a0: ses boîtes, et sur chaque flèche ce qu’elle fait.') +
+          ' Il l’écrit [boîte] —flèche→ [boîte], dans l’ordre' +
           (lectures.length ? ', puis les règles qu’il connaît et ce que chacune donne' : '') +
-          '. Le schéma est juste s’il dit les mêmes relations, dans le même ordre, avec des mots équivalents\u00a0; une boîte ou une flèche qui manque, en trop ou à la mauvaise place est une erreur.'
+          '. Le schéma est juste s’il enchaîne correctement les étapes du fonctionnement pour ce cas, avec ses mots\u00a0; le nombre de boîtes et les mots peuvent différer du schéma du cours. Une étape qui manque ou une relation fausse est une erreur.'
         const chaine = creer('ol', { className: 'schema-chaine' })
+        const fin = pieces.length > 0 && pieces[pieces.length - 1].pose
         const boutonAjouter = creer('button', {
           type: 'button',
           className: 'bouton secondaire petit',
-          textContent: 'Ajouter une flèche et une boîte',
-        })
-        const boutonRetirer = creer('button', {
-          type: 'button',
-          className: 'bouton secondaire petit',
-          textContent: 'Retirer la dernière boîte',
+          textContent: fin
+            ? 'Ajouter une boîte avant la dernière'
+            : 'Ajouter une flèche et une boîte',
         })
         const regles = lectures.length
           ? creer('textarea', { rows: 3, id: 'schema-regles-' + (ex.dataset.id ?? '') })
@@ -12057,53 +12160,95 @@
           'div',
           { className: 'schema-libre' },
           chaine,
-          creer('div', { className: 'actions' }, boutonAjouter, boutonRetirer),
+          creer('div', { className: 'actions' }, boutonAjouter),
           ...(regles
             ? [
                 creer('label', {
                   htmlFor: regles.id,
-                  textContent: 'Les règles que tu connais, et ce que chacune donne\u00a0:',
+                  textContent:
+                    ex.dataset.regles ||
+                    'Les règles que tu connais, et ce que chacune donne\u00a0:',
                 }),
                 regles,
               ]
             : []),
         )
         const champs = () => [...chaine.querySelectorAll('input')]
-        function ajouter(type) {
-          const rang = chaine.querySelectorAll('.schema-' + type).length + 1
+        let numero = 0
+        const boites = () => [...chaine.querySelectorAll(':scope > .schema-boite')]
+        /** Une case : posée (son texte), ou à écrire, sous la question qui aide. */
+        function piece({ type, pose, texte, champ = '' }) {
+          const li = creer('li', { className: 'schema-' + type + (pose ? ' schema-pose' : '') })
+          numero += 1
           const entree = creer('input', {
             type: 'text',
             autocomplete: 'off',
             spellcheck: false,
+            id: 'schema-' + (ex.dataset.id ?? '') + '-' + numero,
           })
-          entree.setAttribute(
-            'aria-label',
-            type === 'boite' ? 'Boîte ' + rang : 'Flèche ' + rang + '\u00a0: ce qu’elle fait',
-          )
-          entree.placeholder = type === 'boite' ? 'Boîte ' + rang : 'ce que fait la flèche'
-          chaine.append(creer('li', { className: 'schema-' + type }, entree))
-          return entree
+          if (pose) {
+            // Posée : son texte ; avec `data-champ`, un champ pour sa valeur, sous la question.
+            li.append(creer('span', { className: 'schema-donne', textContent: texte }))
+            if (champ) li.append(creer('label', { htmlFor: entree.id, textContent: champ }), entree)
+            return li
+          }
+          if (texte) {
+            li.append(creer('label', { htmlFor: entree.id, textContent: texte }))
+          } else {
+            entree.setAttribute(
+              'aria-label',
+              type === 'boite' ? 'Une boîte' : 'Une flèche\u00a0: ce qu’elle fait',
+            )
+            entree.placeholder = type === 'boite' ? 'une boîte' : 'ce que fait la flèche'
+          }
+          li.append(entree)
+          if (type === 'boite') {
+            const retirer = creer('button', {
+              type: 'button',
+              className: 'bouton secondaire petit schema-retirer',
+              textContent: 'Retirer',
+            })
+            retirer.setAttribute('aria-label', 'Retirer cette boîte et sa flèche')
+            retirer.addEventListener('click', () => {
+              if (boites().length <= 2) return
+              // La flèche qui y mène part avec elle ; pour la première boîte, celle qui en part.
+              const fleche =
+                li.previousElementSibling?.classList.contains('schema-fleche') === true
+                  ? li.previousElementSibling
+                  : li.nextElementSibling
+              fleche?.remove()
+              li.remove()
+              majBoutons()
+            })
+            li.append(retirer)
+          }
+          return li
         }
         function majBoutons() {
-          boutonRetirer.disabled = chaine.querySelectorAll('.schema-boite').length <= 2
+          const seules = boites().length <= 2
+          for (const b of chaine.querySelectorAll('.schema-retirer')) b.hidden = seules
         }
-        ajouter('boite')
-        ajouter('fleche')
-        ajouter('boite')
+        for (const p of pieces) chaine.append(piece(p))
         majBoutons()
         boutonAjouter.addEventListener('click', () => {
-          ajouter('fleche')
-          ajouter('boite').focus()
-          majBoutons()
-        })
-        boutonRetirer.addEventListener('click', () => {
-          if (chaine.querySelectorAll('.schema-boite').length <= 2) return
-          chaine.lastElementChild?.remove()
-          chaine.lastElementChild?.remove()
+          const fleche = piece({ type: 'fleche', pose: false, texte: '' })
+          const boite = piece({ type: 'boite', pose: false, texte: '' })
+          // Avant la dernière flèche quand la dernière boîte est posée ; sinon, au bout.
+          const derniereFleche = fin
+            ? [...chaine.querySelectorAll(':scope > .schema-fleche')].pop()
+            : null
+          if (derniereFleche) derniereFleche.before(fleche, boite)
+          else chaine.append(fleche, boite)
+          boite.querySelector('input')?.focus()
           majBoutons()
         })
         const valeurs = (type) =>
-          [...chaine.querySelectorAll('.schema-' + type + ' input')].map((i) => i.value.trim())
+          [...chaine.querySelectorAll(':scope > .schema-' + type)].map((li) => {
+            const valeur = (li.querySelector('input')?.value ?? '').trim()
+            if (!li.classList.contains('schema-pose')) return valeur
+            const donne = enTexte(li.querySelector('.schema-donne'))
+            return li.querySelector('input') ? donne + '\u00a0: ' + valeur : donne
+          })
         return {
           saisie: {
             element,

@@ -867,7 +867,10 @@
         flex-direction: column;
         gap: var(--espacement-8);
       }
-      /* Le schéma refait de mémoire (JanusGabarit.schema) : boîtes et flèches, l'une sous l'autre. */
+      /*
+       * Le schéma construit pour un cas (JanusGabarit.schema) : boîtes et flèches, l'une sous l'autre ;
+       * une case posée se lit, une case à écrire porte sa question au-dessus du champ.
+       */
       .schema-libre {
         display: flex;
         flex-direction: column;
@@ -881,22 +884,42 @@
         padding: 0;
         list-style: none;
       }
+      .schema-chaine li {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--espacement-4) var(--espacement-8);
+        margin: 0;
+      }
+      .schema-chaine label {
+        flex: 1 0 100%;
+        color: var(--couleur-texte-secondaire);
+      }
       .schema-chaine input[type='text'] {
-        width: 100%;
+        flex: 1 1 12rem;
+        min-width: 0;
         max-width: 24rem;
       }
       .schema-boite input[type='text'] {
         font-family: inherit;
         font-weight: 600;
       }
+      .schema-donne {
+        padding: var(--espacement-4) var(--espacement-8);
+        border: 1px solid var(--couleur-ligne);
+        border-radius: var(--rayon-option);
+        background: var(--couleur-surface-douce);
+        font-weight: 600;
+      }
       .schema-fleche {
-        display: flex;
-        align-items: center;
-        gap: var(--espacement-8);
+        position: relative;
         padding-inline-start: var(--espacement-20);
       }
       .schema-fleche::before {
         content: '↓';
+        position: absolute;
+        inset-inline-start: var(--espacement-4);
+        top: 0;
         color: var(--couleur-texte-secondaire);
       }
       .schema-fleche input[type='text'] {
@@ -2475,16 +2498,23 @@
         }
       }
       /**
-       * Le schéma du bloc refait de mémoire (règle C08), le même pour toutes les fiches : l'apprenant
-       * écrit les boîtes et, sur chaque flèche, ce qu'elle fait ; il ajoute ou retire des boîtes, rien
-       * n'est donné. Le schéma du cours est dans l'exercice, caché (`.modele`) : des `.boite` et des
+       * Le schéma du bloc, construit pour un cas nouveau (règle C08), le même pour toutes les fiches :
+       * l'apprenant fait tourner le système sur ce cas, avec ses mots. Le départ est dans l'exercice
+       * (`ol.depart`, caché) : des `li.boite` et des `li.fleche` dans l'ordre ; une boîte `data-pose`
+       * est donnée (la première, remplie des données du cas en mots, et la dernière, posée sans sa
+       * valeur) ; les autres `li` portent une question qui aide sans donner le terme. L'apprenant
+       * remplit les cases, en ajoute ou en retire. `data-cas` dit la chaîne juste pour ce cas, pour le
+       * correcteur. Le schéma du cours est dans l'exercice, caché (`.modele`) : des `.boite` et des
        * `.fleche` dans une `.chaine`, et peut-être des `.lecture` (ce que donne chaque règle) ; avec
-       * des lectures, un champ demande de les écrire aussi. Rend la saisie que `fiche:expliquer` pose
-       * à la place de son champ (`element`, `lire`, `manque`), l'attendu pour le correcteur, la
-       * question qui se comprend sans l'écran, `montrer()` qui dévoile le modèle et `bloquer()`.
+       * des lectures, un champ demande de les écrire aussi (sa question : `data-regles`). Il ne sert qu'à comparer : le correcteur
+       * juge la chaîne pour le cas, pas la ressemblance. Sans départ, deux boîtes vides. Rend la
+       * saisie que `fiche:expliquer` pose à la place de son champ (`element`, `lire`, `manque`),
+       * l'attendu pour le correcteur, la question qui se comprend sans l'écran, `montrer()` qui
+       * dévoile le modèle et `bloquer()`.
        */
       function schema(ex) {
         const modele = ex.querySelector(':scope > .modele')
+        const depart = ex.querySelector(':scope > .depart')
         const morceaux = modele ? [...modele.querySelectorAll(':scope .chaine > *')] : []
         const enTexte = (noeud) => noeud.textContent.replace(/\s+/g, ' ').trim()
         const ecrire = (boites, fleches) =>
@@ -2497,24 +2527,45 @@
         const boitesModele = morceaux.filter((m) => m.classList.contains('boite')).map(enTexte)
         const flechesModele = morceaux.filter((m) => m.classList.contains('fleche')).map(enTexte)
         const lectures = modele ? [...modele.querySelectorAll('.lecture')].map(enTexte) : []
-        const attendu =
+        const cours =
           ecrire(boitesModele, flechesModele) +
           (lectures.length ? '. Les règles\u00a0: ' + lectures.join('\u00a0; ') : '') +
           '.'
+        const cas = (ex.dataset.cas ?? '').trim()
+        const attendu = cas ? cas + ' Le schéma du cours, pour comparer\u00a0: ' + cours : cours
+        const pieces = depart
+          ? [...depart.querySelectorAll(':scope > li')].map((li) => ({
+              type: li.classList.contains('fleche') ? 'fleche' : 'boite',
+              pose: li.hasAttribute('data-pose'),
+              texte: enTexte(li),
+              champ: li.dataset.champ ?? '',
+            }))
+          : [
+              { type: 'boite', pose: false, texte: '' },
+              { type: 'fleche', pose: false, texte: '' },
+              { type: 'boite', pose: false, texte: '' },
+            ]
+        const posees = pieces.filter((p) => p.pose).map((p) => '« ' + p.texte + ' »')
+        const consigne = ex.querySelector(':scope > .q')
         const question =
-          'Refais de mémoire le schéma du bloc, avec tes mots\u00a0: ses boîtes, et sur chaque flèche ce qu’elle fait. L’apprenant l’écrit [boîte] —flèche→ [boîte], dans l’ordre' +
+          (cas && consigne
+            ? 'L’apprenant construit le schéma du bloc pour un cas nouveau, avec ses mots\u00a0: ' +
+              enTexte(consigne) +
+              (posees.length
+                ? ' Ces boîtes lui sont données\u00a0: ' + posees.join(', ') + '.'
+                : '')
+            : 'L’apprenant construit le schéma du bloc, avec ses mots\u00a0: ses boîtes, et sur chaque flèche ce qu’elle fait.') +
+          ' Il l’écrit [boîte] —flèche→ [boîte], dans l’ordre' +
           (lectures.length ? ', puis les règles qu’il connaît et ce que chacune donne' : '') +
-          '. Le schéma est juste s’il dit les mêmes relations, dans le même ordre, avec des mots équivalents\u00a0; une boîte ou une flèche qui manque, en trop ou à la mauvaise place est une erreur.'
+          '. Le schéma est juste s’il enchaîne correctement les étapes du fonctionnement pour ce cas, avec ses mots\u00a0; le nombre de boîtes et les mots peuvent différer du schéma du cours. Une étape qui manque ou une relation fausse est une erreur.'
         const chaine = creer('ol', { className: 'schema-chaine' })
+        const fin = pieces.length > 0 && pieces[pieces.length - 1].pose
         const boutonAjouter = creer('button', {
           type: 'button',
           className: 'bouton secondaire petit',
-          textContent: 'Ajouter une flèche et une boîte',
-        })
-        const boutonRetirer = creer('button', {
-          type: 'button',
-          className: 'bouton secondaire petit',
-          textContent: 'Retirer la dernière boîte',
+          textContent: fin
+            ? 'Ajouter une boîte avant la dernière'
+            : 'Ajouter une flèche et une boîte',
         })
         const regles = lectures.length
           ? creer('textarea', { rows: 3, id: 'schema-regles-' + (ex.dataset.id ?? '') })
@@ -2523,53 +2574,95 @@
           'div',
           { className: 'schema-libre' },
           chaine,
-          creer('div', { className: 'actions' }, boutonAjouter, boutonRetirer),
+          creer('div', { className: 'actions' }, boutonAjouter),
           ...(regles
             ? [
                 creer('label', {
                   htmlFor: regles.id,
-                  textContent: 'Les règles que tu connais, et ce que chacune donne\u00a0:',
+                  textContent:
+                    ex.dataset.regles ||
+                    'Les règles que tu connais, et ce que chacune donne\u00a0:',
                 }),
                 regles,
               ]
             : []),
         )
         const champs = () => [...chaine.querySelectorAll('input')]
-        function ajouter(type) {
-          const rang = chaine.querySelectorAll('.schema-' + type).length + 1
+        let numero = 0
+        const boites = () => [...chaine.querySelectorAll(':scope > .schema-boite')]
+        /** Une case : posée (son texte), ou à écrire, sous la question qui aide. */
+        function piece({ type, pose, texte, champ = '' }) {
+          const li = creer('li', { className: 'schema-' + type + (pose ? ' schema-pose' : '') })
+          numero += 1
           const entree = creer('input', {
             type: 'text',
             autocomplete: 'off',
             spellcheck: false,
+            id: 'schema-' + (ex.dataset.id ?? '') + '-' + numero,
           })
-          entree.setAttribute(
-            'aria-label',
-            type === 'boite' ? 'Boîte ' + rang : 'Flèche ' + rang + '\u00a0: ce qu’elle fait',
-          )
-          entree.placeholder = type === 'boite' ? 'Boîte ' + rang : 'ce que fait la flèche'
-          chaine.append(creer('li', { className: 'schema-' + type }, entree))
-          return entree
+          if (pose) {
+            // Posée : son texte ; avec `data-champ`, un champ pour sa valeur, sous la question.
+            li.append(creer('span', { className: 'schema-donne', textContent: texte }))
+            if (champ) li.append(creer('label', { htmlFor: entree.id, textContent: champ }), entree)
+            return li
+          }
+          if (texte) {
+            li.append(creer('label', { htmlFor: entree.id, textContent: texte }))
+          } else {
+            entree.setAttribute(
+              'aria-label',
+              type === 'boite' ? 'Une boîte' : 'Une flèche\u00a0: ce qu’elle fait',
+            )
+            entree.placeholder = type === 'boite' ? 'une boîte' : 'ce que fait la flèche'
+          }
+          li.append(entree)
+          if (type === 'boite') {
+            const retirer = creer('button', {
+              type: 'button',
+              className: 'bouton secondaire petit schema-retirer',
+              textContent: 'Retirer',
+            })
+            retirer.setAttribute('aria-label', 'Retirer cette boîte et sa flèche')
+            retirer.addEventListener('click', () => {
+              if (boites().length <= 2) return
+              // La flèche qui y mène part avec elle ; pour la première boîte, celle qui en part.
+              const fleche =
+                li.previousElementSibling?.classList.contains('schema-fleche') === true
+                  ? li.previousElementSibling
+                  : li.nextElementSibling
+              fleche?.remove()
+              li.remove()
+              majBoutons()
+            })
+            li.append(retirer)
+          }
+          return li
         }
         function majBoutons() {
-          boutonRetirer.disabled = chaine.querySelectorAll('.schema-boite').length <= 2
+          const seules = boites().length <= 2
+          for (const b of chaine.querySelectorAll('.schema-retirer')) b.hidden = seules
         }
-        ajouter('boite')
-        ajouter('fleche')
-        ajouter('boite')
+        for (const p of pieces) chaine.append(piece(p))
         majBoutons()
         boutonAjouter.addEventListener('click', () => {
-          ajouter('fleche')
-          ajouter('boite').focus()
-          majBoutons()
-        })
-        boutonRetirer.addEventListener('click', () => {
-          if (chaine.querySelectorAll('.schema-boite').length <= 2) return
-          chaine.lastElementChild?.remove()
-          chaine.lastElementChild?.remove()
+          const fleche = piece({ type: 'fleche', pose: false, texte: '' })
+          const boite = piece({ type: 'boite', pose: false, texte: '' })
+          // Avant la dernière flèche quand la dernière boîte est posée ; sinon, au bout.
+          const derniereFleche = fin
+            ? [...chaine.querySelectorAll(':scope > .schema-fleche')].pop()
+            : null
+          if (derniereFleche) derniereFleche.before(fleche, boite)
+          else chaine.append(fleche, boite)
+          boite.querySelector('input')?.focus()
           majBoutons()
         })
         const valeurs = (type) =>
-          [...chaine.querySelectorAll('.schema-' + type + ' input')].map((i) => i.value.trim())
+          [...chaine.querySelectorAll(':scope > .schema-' + type)].map((li) => {
+            const valeur = (li.querySelector('input')?.value ?? '').trim()
+            if (!li.classList.contains('schema-pose')) return valeur
+            const donne = enTexte(li.querySelector('.schema-donne'))
+            return li.querySelector('input') ? donne + '\u00a0: ' + valeur : donne
+          })
         return {
           saisie: {
             element,
