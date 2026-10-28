@@ -1596,7 +1596,7 @@ describe('une explication jugée par l’IA', () => {
     expect(await screen.findByText('Réussi')).toBeInTheDocument()
   })
 
-  it('un schéma refait de mémoire : boîtes et flèches écrites, jugées par l’IA sur le schéma du cours, deux essais', async () => {
+  it('un schéma sans départ : boîtes et flèches écrites, jugées par l’IA sur la chaîne, deux essais', async () => {
     const { outil, demandes, sauvees } = await ouvrir([
       correction('partiel', false),
       correction('solide', false),
@@ -1623,7 +1623,7 @@ describe('une explication jugée par l’IA', () => {
         detail: {
           cle: 'ex:f2',
           solution: attendu,
-          consigne: 'Ton schéma, de mémoire :',
+          consigne: 'Ton schéma :',
           question,
           saisie,
           essais: 2,
@@ -1655,9 +1655,17 @@ describe('une explication jugée par l’IA', () => {
       ),
     ).toBeInTheDocument()
     expect(demandes).toHaveLength(0)
+    // Deux boîtes : rien à retirer ; une de plus s'ajoute au bout, et se retire.
+    expect(
+      within(ex).queryByRole('button', { name: 'Retirer cette boîte et sa flèche' }),
+    ).toBeNull()
     fireEvent.click(within(ex).getByRole('button', { name: 'Ajouter une flèche et une boîte' }))
     expect(within(ex).getAllByRole('textbox')).toHaveLength(5)
-    fireEvent.click(within(ex).getByRole('button', { name: 'Retirer la dernière boîte' }))
+    const retirer = within(ex).getAllByRole('button', { name: 'Retirer cette boîte et sa flèche' })
+    expect(retirer).toHaveLength(3)
+    const derniere = retirer.at(-1)
+    if (derniere) fireEvent.click(derniere)
+    expect(within(ex).getAllByRole('textbox')).toHaveLength(3)
 
     const premier = envoyerSchema(['les bits', 'donnent', 'un sens'])
     await waitFor(() => {
@@ -1669,7 +1677,11 @@ describe('une explication jugée par l’IA', () => {
       reponse: '[les bits] —donnent→ [un sens]',
       libre: { attendu: '[des bits] —lus par→ [un programme].' },
     })
-    expect(JSON.stringify(demandes.at(-1))).toContain('Refais de mémoire le schéma du bloc')
+    // Le correcteur juge la chaîne, pas la ressemblance au schéma du cours.
+    expect(JSON.stringify(demandes.at(-1))).toContain(
+      'le nombre de boîtes et les mots peuvent différer du schéma du cours',
+    )
+    expect(JSON.stringify(demandes.at(-1))).not.toContain('de mémoire')
     expect(within(ex).getByText('Reprends-le, d’après la correction :')).toBeInTheDocument()
 
     const second = envoyerSchema(['des bits', 'lus par', 'un programme'])
@@ -1680,6 +1692,86 @@ describe('une explication jugée par l’IA', () => {
     expect(etat.traces['explique:ex:f2']).toMatchObject({ fin: 'jugee' })
     expect(etat.traces['explique:ex:f2']?.essais).toHaveLength(2)
     expect(within(ex).queryByRole('button', { name: 'Faire juger mon schéma' })).toBeNull()
+  })
+
+  it('un schéma construit pour un cas : boîtes posées, questions d’aide, jugé sur la chaîne du cas', async () => {
+    const { outil, demandes } = await ouvrir([correction('solide', false)])
+    const ex = document.createElement('div')
+    ex.dataset.id = 'f1'
+    ex.dataset.cas = 'Pour Léna, la chaîne juste : 10 €.'
+    ex.innerHTML =
+      '<p class="q">Fais passer Léna dans le schéma.</p>' +
+      '<ol class="depart" hidden><li class="boite" data-pose>Les données de Léna</li>' +
+      '<li class="fleche">Que fait le guichet avec ces données ?</li>' +
+      '<li class="boite">Qu’est-ce que le guichet en tire ?</li>' +
+      '<li class="fleche">Comment choisit-il ?</li>' +
+      '<li class="boite" data-pose data-champ="Combien paie Léna ?">le prix affiché</li></ol>' +
+      '<div class="modele" hidden><div class="chaine"><span class="boite">les données</span>' +
+      '<span class="fleche">donnent</span><span class="boite">une branche</span></div></div>'
+    outil.append(ex)
+    const gabarit: unknown = Reflect.get(window, 'JanusGabarit')
+    const fabrique: unknown =
+      typeof gabarit === 'object' && gabarit !== null ? Reflect.get(gabarit, 'schema') : undefined
+    if (typeof fabrique !== 'function') throw new Error('Le gabarit n’expose pas son schéma')
+    const schema: unknown = Reflect.apply(fabrique, undefined, [ex])
+    if (typeof schema !== 'object' || schema === null) throw new Error('Aucun schéma')
+    const attendu: unknown = Reflect.get(schema, 'attendu')
+    const question: unknown = Reflect.get(schema, 'question')
+    const saisie: unknown = Reflect.get(schema, 'saisie')
+    expect(attendu).toBe(
+      'Pour Léna, la chaîne juste : 10 €. Le schéma du cours, pour comparer\u00a0: [les données] —donnent→ [une branche].',
+    )
+    ex.dispatchEvent(
+      new CustomEvent('fiche:expliquer', {
+        bubbles: true,
+        detail: {
+          cle: 'ex:f1',
+          solution: attendu,
+          consigne: 'Ton schéma :',
+          question: question,
+          saisie: saisie,
+          essais: 2,
+          envoyer: 'Faire juger mon schéma',
+        },
+      }),
+    )
+    // Les boîtes posées se lisent ; chaque case à écrire porte sa question ; la dernière, un champ.
+    const editeur = ex.querySelector('.schema-chaine')
+    if (!(editeur instanceof HTMLElement)) throw new Error('Aucun éditeur de schéma')
+    expect(within(editeur).getByText('Les données de Léna')).toBeVisible()
+    expect(within(editeur).getByText('le prix affiché')).toBeVisible()
+    expect(within(ex).getByLabelText('Que fait le guichet avec ces données ?')).toBeInTheDocument()
+    expect(within(ex).getByLabelText('Qu’est-ce que le guichet en tire ?')).toBeInTheDocument()
+    expect(within(ex).getAllByRole('textbox')).toHaveLength(4)
+    // Une boîte s'ajoute avant la dernière, qui reste posée.
+    fireEvent.click(within(ex).getByRole('button', { name: 'Ajouter une boîte avant la dernière' }))
+    expect(within(ex).getAllByRole('textbox')).toHaveLength(6)
+    expect(editeur.lastElementChild).toHaveTextContent('le prix affiché')
+    const retirer = within(ex).getAllByRole('button', { name: 'Retirer cette boîte et sa flèche' })
+    const ajoutee = retirer.at(-1)
+    if (ajoutee) fireEvent.click(ajoutee)
+    expect(within(ex).getAllByRole('textbox')).toHaveLength(4)
+
+    const champs = within(ex).getAllByRole('textbox')
+    ;['lues ou comparées', 'des faits', 'aucune VRAIE, le SINON', '10 €'].forEach((v, i) => {
+      const champ = champs[i]
+      if (champ) fireEvent.input(champ, { target: { value: v } })
+    })
+    const essai = ex.querySelector('.expliquer-essai')
+    if (!(essai instanceof HTMLElement)) throw new Error('Aucun essai ouvert')
+    fireEvent.click(within(essai).getByRole('radio', { name: 'Sûr' }))
+    fireEvent.click(within(essai).getByRole('button', { name: 'Faire juger mon schéma' }))
+    await waitFor(() => {
+      expect(demandes).toHaveLength(1)
+    })
+    expect(demandes.at(-1)).toMatchObject({
+      reponse:
+        '[Les données de Léna] —lues ou comparées→ [des faits] —aucune VRAIE, le SINON→ [le prix affiché\u00a0: 10 €]',
+    })
+    const envoi = JSON.stringify(demandes.at(-1))
+    expect(envoi).toContain('Fais passer Léna dans le schéma.')
+    expect(envoi).toContain('« Les données de Léna », « le prix affiché »')
+    expect(envoi).toContain('Une étape qui manque ou une relation fausse est une erreur.')
   })
 })
 

@@ -31,7 +31,9 @@ async function ficheRemplie(): Promise<string> {
         '  ><span class="boite-fixe">Un sens<small>A</small',
         '  ></span></div>',
         '  <details><summary>Un coup de pouce</summary><p>150 − 128 = 22</p></details>',
-        '  <div data-widget="schema"><p class="q">Refais le schéma.</p><div class="modele" hidden>',
+        '  <div data-widget="schema" data-cas="La chaîne secrète du cas." data-regles="Les autres règles ?"><p class="q">Refais le schéma.</p>',
+        '    <ol class="depart" hidden><li class="boite" data-pose>Les bits du cas</li><li class="fleche">Qu’arrive-t-il aux bits ?</li>',
+        '    <li class="boite" data-pose data-champ="Que vois-tu ?">ce qu’affiche la fenêtre</li></ol><div class="modele" hidden>',
         '    <div class="chaine"><span class="boite">des bits</span><span class="fleche">lus par</span',
         '    ><span class="boite">un programme secret</span></div></div></div>',
         '  <p data-si-essai="c2:faux|passe">Tu avais compté <span data-essai-rappel="c2">autre chose</span> valeurs.</p>',
@@ -101,16 +103,30 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
     expect(texte).toContain('[outil interactif : octet]')
   })
 
-  it('tait le schéma du cours caché dans le schéma à refaire, et le donne avec ce qui vient après', () => {
-    expect(texte).toContain('[outil interactif : schema]\nRefais le schéma.')
+  it('tait le schéma du cours caché dans le schéma à construire, et le donne avec ce qui vient après', () => {
+    expect(texte).toContain(
+      '[outil interactif : schema]\nSous le schéma, un champ : « Les autres règles ? »\nRefais le schéma.',
+    )
+    // Le départ se lit : les boîtes posées, et la question de chaque case à écrire.
+    expect(texte).toContain(
+      [
+        '- Boîte donnée : Les bits du cas',
+        '- Flèche à écrire, sous la question : Qu’arrive-t-il aux bits ?',
+        '- Boîte donnée (à compléter : « Que vois-tu ? ») : ce qu’affiche la fenêtre',
+      ].join('\n'),
+    )
     expect(texte).not.toContain('un programme secret')
+    expect(texte).not.toContain('La chaîne secrète du cas.')
     const resultat = validerManifeste(JSON.parse(extraireManifeste(html) ?? 'null'))
     if (!resultat.ok) throw new Error('Le gabarit rempli doit rester valide.')
     const gardien = texteDeLaFiche(html, resultat.manifeste, { conception: true })
     const [avant = '', apres = ''] = gardien.split('## Ce que la page montre après une tentative')
     expect(avant).not.toContain('un programme secret')
     expect(apres).toContain(
-      '- Schéma du cours, montré une fois le schéma refait de mémoire jugé par l’IA : des bits lus par un programme secret',
+      '- Schéma juste pour ce cas, que l’IA vérifie (la chaîne, pas la ressemblance au cours) : La chaîne secrète du cas.',
+    )
+    expect(apres).toContain(
+      '- Schéma du cours, montré une fois le schéma construit jugé par l’IA : des bits lus par un programme secret',
     )
   })
 
