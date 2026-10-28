@@ -238,7 +238,9 @@ describe('le bilan de la fiche', () => {
     expect(premiere).toBeChecked()
     expect(premiere).toBeDisabled()
     expect(
-      screen.getByText(/seule une réponse solide à une question qui la touche la referme/),
+      screen.getByText(
+        /seule une réponse solide, écrite sans aide, à une question qui la touche la referme/,
+      ),
     ).toBeInTheDocument()
     // L'appli dit E1 encore ouverte : la case reste cochée et verrouillée.
     direStatut({ statut: 'a_reprendre', manque: [{ code: 'erreur_ouverte', erreurs: ['E1'] }] })
