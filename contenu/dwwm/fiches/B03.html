@@ -1992,13 +1992,11 @@
         </li>
       </ul>
       <p>
-        Ce bloc repose sur le bloc L’information en bits : les composants rangent des octets, des
-        paquets de 8 bits, comptés en Mo et en Go, et le processeur exécute du code machine, les
-        instructions qu’il sait lire, elles aussi faites d’octets. Le bloc suivant s’en sert : il
-        montre comment un programme devient ce code machine. Plus loin, tu installeras WSL 2, un
-        outil qui fait tourner Linux sous Windows : le bloc Installer un environnement UNIX te fera
-        d’abord vérifier que ton processeur sait faire tourner un second système à côté du sien. Le
-        bloc sur l’éditeur de code te fera choisir la version d’un logiciel qui va à ton processeur.
+        Ce bloc repose sur le bloc L’information en bits : les composants rangent et calculent des
+        octets, des paquets de 8 bits. Le bloc suivant montre comment un programme devient les
+        instructions que le processeur exécute. Plus loin, ce bloc te servira à chaque installation
+        d’un outil de développeur : choisir la version qui va à ton processeur, vérifier que ton
+        ordinateur peut le faire tourner.
       </p>
       <h3>À quoi ça sert</h3>
       <p>
@@ -2010,28 +2008,23 @@
       <h3>À la fin, tu sauras</h3>
       <ul>
         <li>
-          dire ce que fait chaque composant : le stockage, la RAM, le processeur, la carte mère, la
-          carte graphique et le refroidissement ;
+          dire à quoi sert chaque partie d’un ordinateur, et suivre un programme du disque jusqu’au
+          processeur ;
         </li>
-        <li>suivre un programme du disque jusqu’au processeur, quand tu le lances ;</li>
+        <li>choisir la version d’un logiciel qui va à ton processeur ;</li>
         <li>
-          reconnaître la famille de son processeur, et télécharger la version d’un logiciel qui lui
-          va ;
+          relever ce qu’a ton ordinateur, et vérifier qu’il peut faire tourner tes outils de
+          développeur ;
         </li>
-        <li>relever ces caractéristiques sur ton ordinateur ;</li>
-        <li>trouver la cause d’une lenteur simple : mémoire pleine, disque lent, surchauffe ;</li>
+        <li>ouvrir en quelques secondes l’outil qui décrit ton ordinateur ;</li>
         <li>
-          lire si ton processeur peut faire tourner un second système, comme le demande WSL 2 ;
+          trouver pourquoi un ordinateur rame : mémoire pleine, processeur occupé, surchauffe ;
         </li>
-        <li>entretenir ta machine : la poussière des grilles, les mises à jour de sécurité ;</li>
-        <li>dire si un ordinateur convient pour développer, et ce qu’il faudrait y changer ;</li>
-        <li>ouvrir en quelques secondes l’outil qui décrit ta machine.</li>
+        <li>entretenir ton ordinateur : la poussière, les mises à jour ;</li>
+        <li>dire si un ordinateur convient pour développer, et ce qu’il faudrait y changer.</li>
       </ul>
       <p class="discret">
-        Il te suffit d’avoir fait le bloc L’information en bits. Il te faut ton ordinateur pour les
-        exercices « Ma machine » de l’Entraînement, pour « Sur ta machine » et pour « Vite,
-        l’outil ». Les tâches orales des vérifications, plus tard, te demandent ton téléphone, pour
-        t’enregistrer.
+        Il te faudra ton ordinateur, et plus tard ton téléphone, pour t’enregistrer.
       </p>
     </template>
 
@@ -2533,6 +2526,7 @@
             </li>
             <li
               data-option="somme"
+              data-erreur="E1"
               data-retour="La RAM ne range pas de fichiers : elle n’en tient qu’une copie, le temps de s’en servir. Où les photos restent-elles, ordinateur éteint ?"
             >
               Les deux ensemble, 528 Go
@@ -3155,6 +3149,7 @@ Total          8 500 Mo</code></pre>
           <p class="discret">Les GHz, pour lire :</p>
           <ul>
             <li>1 GHz, c’est un milliard de cycles par seconde.</li>
+            <li>Les instructions finies à chaque cycle changent d’une génération à l’autre.</li>
           </ul>
         </div>
         <p class="accroche">
@@ -3269,6 +3264,7 @@ Total          8 500 Mo</code></pre>
             </li>
             <li
               data-option="disque"
+              data-erreur="E4"
               data-retour="Le processeur ne lit pas directement sur le disque. Où a-t-il gardé la donnée ?"
             >
               Sur le disque.
@@ -3521,7 +3517,14 @@ Total          8 500 Mo</code></pre>
           son PC Windows. Elle hésite entre l’Explorateur de fichiers, les Paramètres et le
           navigateur.
         </p>
-        <div class="ex" data-widget="choix" data-id="r36" data-reponse="parametres" data-prediction>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="r36"
+          data-aide1="Qu’est-ce qui, dans Windows, décrit la machine elle-même ?"
+          data-reponse="parametres"
+          data-prediction
+        >
           <p class="q">Où la trouvera-t-elle ?</p>
           <ul class="options">
             <li
@@ -3564,8 +3567,9 @@ Total          8 500 Mo</code></pre>
       </div>
       <div data-ecran="La ligne de Thomas">
         <p class="accroche">
-          « 64 bits » dit la taille des nombres que le processeur traite d’un coup. x64 et ARM64
-          sont tous les deux en 64 bits : pour télécharger, c’est la famille qui compte.
+          « 64 bits » dit la taille des nombres que le processeur traite d’un coup : 64 bits, soit 8
+          octets. x64 et ARM64 sont tous les deux en 64 bits : pour télécharger, c’est la famille
+          qui compte.
         </p>
         <div
           class="ex"
@@ -3623,8 +3627,9 @@ Total          8 500 Mo</code></pre>
           Avec un emplacement vide, Yasmine peut ajouter une barrette. Une barrette enfichée se
           retire aussi : on peut la remplacer par une plus grande. Sur beaucoup de portables fins,
           la RAM est
-          <strong>soudée</strong> à la carte mère : on ne peut rien ajouter, et la quantité choisie
-          à l’achat reste celle de toute la vie de l’ordinateur.
+          <strong>soudée</strong> à la carte mère, sans emplacement où enficher une barrette : on ne
+          peut rien ajouter, et la quantité choisie à l’achat reste celle de toute la vie de
+          l’ordinateur.
         </p>
         <p>
           Pour te le représenter : la carte mère est le plan d’une ville. Ses rues relient les
@@ -3835,6 +3840,7 @@ Total          8 500 Mo</code></pre>
           class="ex"
           data-widget="choix"
           data-id="r34"
+          data-aide1="Lequel de ces onglets parle des composants eux-mêmes, et non des programmes ?"
           data-reponse="performance"
           data-prediction
         >
@@ -4030,7 +4036,14 @@ Total          8 500 Mo</code></pre>
             </div>
           </dl>
         </div>
-        <div class="ex" data-widget="choix" data-id="r42" data-reponse="non" data-prediction>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="r42"
+          data-aide1="Lis-tu, dans ces trois lignes, le mot disque, SSD ou stockage ?"
+          data-reponse="non"
+          data-prediction
+        >
           <p class="q">
             Yasmine veut aussi savoir si son stockage est un disque dur ou un SSD. Cet écran le lui
             dit-il ?
@@ -4038,6 +4051,7 @@ Total          8 500 Mo</code></pre>
           <ul class="options">
             <li
               data-option="ram"
+              data-erreur="E1"
               data-retour="La RAM tient prêt ce qui tourne ; elle ne garde pas les fichiers. Quelle ligne parlerait du disque ?"
             >
               Oui : la ligne Mémoire RAM installée.
@@ -4207,7 +4221,14 @@ Total          8 500 Mo</code></pre>
         <p>
           Cette fenêtre résume la machine : la puce et la RAM. Il manque à Lucie le nombre de cœurs.
         </p>
-        <div class="ex" data-widget="choix" data-id="r35" data-reponse="rapport" data-prediction>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="r35"
+          data-aide1="Quel bouton de cette fenêtre mène au détail du matériel ?"
+          data-reponse="rapport"
+          data-prediction
+        >
           <p class="q">Où Lucie va-t-elle le chercher ?</p>
           <ul class="options">
             <li data-option="rapport">Plus d’infos, puis Rapport système, rubrique Matériel</li>
@@ -4232,11 +4253,18 @@ Total          8 500 Mo</code></pre>
           Stockage ; un Mac à puce Apple a toujours un SSD.
         </p>
       </div>
-      <div data-ecran="La mémoire sur un Mac">
+      <div data-ecran="L’outil de Lucie">
         <p class="accroche">
           Lucie veut savoir si sa RAM suffit, en direct, pendant qu’elle travaille.
         </p>
-        <div class="ex" data-widget="choix" data-id="r43" data-reponse="moniteur" data-prediction>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="r43"
+          data-aide1="Quel outil suit ce qui tourne en ce moment, comme le gestionnaire des tâches sous Windows ?"
+          data-reponse="moniteur"
+          data-prediction
+        >
           <p class="q">Quel outil de son Mac ouvre-t-elle ?</p>
           <ul class="options">
             <li
@@ -4259,10 +4287,13 @@ Total          8 500 Mo</code></pre>
           il suit ce qui tourne en ce moment, et tient sur un Mac le rôle du gestionnaire des
           tâches.
         </p>
+      </div>
+      <div data-ecran="La mémoire sur un Mac">
+        <p class="accroche">Lucie ouvre le Moniteur d’activité pour savoir si sa RAM suffit.</p>
         <p>
-          Il a un onglet Mémoire. La ligne Mémoire physique y donne la RAM. Sa courbe de pression de
-          la mémoire, verte, jaune ou rouge, dit si la RAM suffit ; la ligne Mémoire d’échange
-          utilisée dit ce que le Mac a dû ranger sur son SSD.
+          Le Moniteur d’activité a un onglet Mémoire. La ligne Mémoire physique y donne la RAM. Sa
+          courbe de pression de la mémoire, verte, jaune ou rouge, dit si la RAM suffit ; la ligne
+          Mémoire d’échange utilisée dit ce que le Mac a dû ranger sur son SSD.
         </p>
         <div
           class="ex"
@@ -4306,7 +4337,8 @@ Total          8 500 Mo</code></pre>
         <p>
           Cette capacité du processeur s’appelle la virtualisation, et l’ordinateur qu’elle fait
           tourner, une machine virtuelle. Mais cet ordinateur-là n’a aucun composant à lui : la
-          machine virtuelle prend une part du processeur et de la RAM de la vraie machine.
+          machine virtuelle prend une part du processeur et de la RAM de la vraie machine. Elle ne
+          change donc pas la famille du processeur : sur un Mac à puce Apple, elle reste ARM64.
         </p>
         <p>
           Sous Windows, Docker s’appuie sur WSL 2, un outil de Windows qui fait tourner Linux, un
@@ -4391,9 +4423,7 @@ Total          8 500 Mo</code></pre>
         >
           <p class="q">Qu’a-t-il oublié ?</p>
           <ul class="options">
-            <li data-option="performance">
-              Passer à l’onglet Performance : dans Processus, Processeur n’est qu’une colonne.
-            </li>
+            <li data-option="performance">Passer à l’onglet Performance.</li>
             <li
               data-option="bios"
               data-retour="Le BIOS sert à activer la virtualisation, pas à lire si elle l’est. Dans quel onglet sont les panneaux des composants ?"
@@ -4678,24 +4708,22 @@ Total          8 500 Mo</code></pre>
         >
           <p class="q">Fais les temps 2 à 4 : que lui conseilles-tu ?</p>
           <ul class="options">
-            <li data-option="lent">
-              Le disque dur, lent, travaille pour le démarrage : patienter, et à terme passer à un
-              SSD.
-            </li>
+            <li data-option="lent">Patienter ; à terme, passer à un SSD.</li>
             <li data-option="ram" data-retour="La mémoire est à 45 % : est-elle pleine ?">
-              La RAM est pleine : fermer des programmes.
+              Fermer des programmes : la RAM est pleine.
             </li>
             <li
               data-option="plein"
               data-retour="Que dit une jauge du disque à 100 % : qu’il est plein, ou qu’il travaille sans arrêt ?"
             >
-              Le disque est plein : effacer des fichiers.
+              Effacer des fichiers : le disque est plein.
             </li>
           </ul>
         </div>
         <p>
           Le disque dur est lent : au démarrage, Windows lit des milliers de fichiers, à environ
-          10 ms chacun. Avec un SSD, le même démarrage prendrait quelques secondes.
+          10 ms chacun. Nadia patiente, et passera à terme à un SSD. Avec un SSD, le même démarrage
+          prendrait quelques secondes.
         </p>
       </div>
       <div data-ecran="Le PC de Karim">
@@ -4735,10 +4763,7 @@ Total          8 500 Mo</code></pre>
         >
           <p class="q">Que doit faire Karim ?</p>
           <ul class="options">
-            <li data-option="processus">
-              Chercher dans l’onglet Processus le programme qui occupe le processeur, et y faire Fin
-              de tâche.
-            </li>
+            <li data-option="processus">Fermer de force le programme qui occupe le processeur.</li>
             <li
               data-option="ram"
               data-retour="La mémoire est à 40 % : est-ce elle qui est au maximum ?"
@@ -4755,14 +4780,134 @@ Total          8 500 Mo</code></pre>
         </div>
         <p>
           Dans l’onglet Processus, trié par Processeur, un seul programme prend presque tout : une
-          fois fermé, le processeur redescend. Si ce programme avait travaillé pour Karim, une
-          longue conversion par exemple, il l’aurait laissé finir.
+          fois fermé par Fin de tâche, le processeur redescend. Si ce programme avait travaillé pour
+          Karim, une longue conversion par exemple, il l’aurait laissé finir.
+        </p>
+      </div>
+      <div data-ecran="La température de Yasmine">
+        <p class="accroche">
+          Après une heure de jeu, le portable de Yasmine ralentit, et son ventilateur souffle fort.
+          Pour savoir si c’est la chaleur, elle lit la température de son processeur dans HWMonitor,
+          un outil gratuit pour Windows.
+        </p>
+        <p>
+          Elle l’ouvre. Sous le nom de son processeur, la rubrique Temperatures a une ligne
+          Package : la température du processeur entier. La colonne Value dit la température du
+          moment, et la colonne Max la plus haute depuis l’ouverture de l’outil : c’est elle qui dit
+          si le processeur a trop chauffé pendant le jeu.
+        </p>
+        <div
+          class="ecran-simule"
+          data-lecture="HWMonitor, sur le portable de Yasmine : processeur Intel Core i5, rubrique Temperatures, ligne Package : Value 48 °C, Max 97 °C."
+        >
+          <p class="titre-simule">HWMonitor · Intel Core i5 · Temperatures</p>
+          <dl>
+            <div>
+              <dt>Package, Value</dt>
+              <dd>48 °C</dd>
+            </div>
+            <div>
+              <dt>Package, Max</dt>
+              <dd>97 °C</dd>
+            </div>
+          </dl>
+        </div>
+        <div class="cadre pour-lire">
+          <p class="discret">Les températures d’un processeur, pour lire :</p>
+          <ul>
+            <li>Au repos, souvent de 30 à 50 °C ; sous charge, 70 à 90 °C sont courants.</li>
+            <li>Vers 95 °C et plus, il baisse sa fréquence pour se protéger.</li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="r46"
+          data-reponse="chaleur"
+          data-aide1="Lequel des deux nombres dit ce qui s’est passé pendant le jeu, et que fait un processeur vers 95 °C ?"
+        >
+          <p class="q">Que dit ce relevé du ralentissement de Yasmine ?</p>
+          <ul class="options">
+            <li data-option="chaleur">
+              Il a chauffé jusqu’à 97 °C pendant le jeu : il a baissé sa fréquence pour se protéger.
+            </li>
+            <li
+              data-option="normal"
+              data-retour="48 °C, c’est maintenant, au repos. Quel nombre dit la température pendant le jeu ?"
+            >
+              Rien d’anormal : 48 °C, c’est une température de repos.
+            </li>
+            <li
+              data-option="ram"
+              data-retour="HWMonitor parle ici de la température du processeur, pas de la RAM. Que fait un processeur trop chaud ?"
+            >
+              Sa RAM est pleine.
+            </li>
+          </ul>
+        </div>
+        <p>
+          La chaleur : 97 °C pendant le jeu, et le processeur a baissé sa fréquence. Le geste
+          suivant est de laisser la chaleur partir, par ses grilles. Sur un Mac, macOS n’affiche pas
+          cette température : la vitesse qui baisse reste le signe à lire.
+        </p>
+      </div>
+      <div data-ecran="Les grilles de Yasmine">
+        <p class="accroche">
+          Yasmine regarde les grilles d’aération de son portable, dessous et sur le côté : elles
+          sont grises de poussière, et l’air chaud passe mal.
+        </p>
+        <ol>
+          <li>
+            Elle éteint son portable et le débranche : on ne nettoie pas un appareil sous tension.
+          </li>
+          <li>
+            Elle retire la poussière de l’extérieur des grilles, avec un chiffon sec : l’eau abîme
+            l’électronique.
+          </li>
+          <li>
+            Elle n’ouvre pas la machine : la poussière de l’intérieur se fait retirer par un
+            réparateur.
+          </li>
+          <li>Elle travaille sur une table, pas sur un coussin, qui boucherait les grilles.</li>
+        </ol>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="r47"
+          data-reponse="chiffon"
+          data-aide1="Qu’est-ce qui retire la poussière sans risque, ni pour la machine ni pour toi ?"
+        >
+          <p class="q">
+            Léo a éteint et débranché son PC portable. Ses grilles sont grises de poussière. Que
+            fait-il ensuite ?
+          </p>
+          <ul class="options">
+            <li data-option="chiffon">
+              Il retire la poussière de l’extérieur, avec un chiffon sec.
+            </li>
+            <li
+              data-option="ouvrir"
+              data-retour="L’intérieur se confie à un réparateur. Que peut-il faire, lui, de l’extérieur ?"
+            >
+              Il ouvre le portable pour nettoyer le ventilateur.
+            </li>
+            <li
+              data-option="eau"
+              data-retour="L’eau abîme l’électronique. Avec quoi retirer la poussière sans risque ?"
+            >
+              Il passe une éponge mouillée sur les grilles.
+            </li>
+          </ul>
+        </div>
+        <p>
+          Un chiffon sec, de l’extérieur. Puis il pose son portable sur une surface dure pour
+          travailler : les grilles dégagées, la chaleur part, et le processeur garde sa fréquence.
         </p>
       </div>
       <div data-ecran="L’entretien">
         <p class="accroche">
-          Yasmine dégage déjà les grilles de son portable : la chaleur part, et le processeur garde
-          sa fréquence. Un second geste d’entretien lui évite bien des ennuis.
+          Ses grilles dégagées, Yasmine passe au second geste d’entretien, celui qui lui évite bien
+          des ennuis.
         </p>
         <p>
           Installer les mises à jour du système. Elles corrigent des
@@ -4792,10 +4937,7 @@ Total          8 500 Mo</code></pre>
             risque-t-elle à attendre un mois ?
           </p>
           <ul class="options">
-            <li data-option="faille">
-              Qu’un programme malveillant exploite la faille, connue de tous, que cette mise à jour
-              corrige.
-            </li>
+            <li data-option="faille">Qu’un programme malveillant entre par la faille.</li>
             <li
               data-option="vitesse"
               data-retour="Une mise à jour de sécurité corrige un défaut, pas la vitesse. Que permet ce défaut tant qu’il reste ?"
@@ -4811,13 +4953,21 @@ Total          8 500 Mo</code></pre>
           </ul>
         </div>
         <p>
-          Une mise à jour de sécurité s’installe au plus tôt, même sur une machine qui marche bien :
-          la faille, elle, ne se voit pas.
+          Un programme malveillant peut entrer par la faille, connue de tous, que cette mise à jour
+          corrige. Une mise à jour de sécurité s’installe donc au plus tôt, même sur une machine qui
+          marche bien : la faille, elle, ne se voit pas.
         </p>
       </div>
-      <div data-ecran="Les mises à jour de Yasmine">
+      <div data-ecran="Où chercher les mises à jour">
         <p class="accroche">Yasmine veut installer les mises à jour de sécurité de Windows.</p>
-        <div class="ex" data-widget="choix" data-id="r44" data-reponse="parametres" data-prediction>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="r44"
+          data-aide1="Quelle partie de Windows règle l’ordinateur lui-même ?"
+          data-reponse="parametres"
+          data-prediction
+        >
           <p class="q">Où les cherche-t-elle ?</p>
           <ul class="options">
             <li
@@ -4838,7 +4988,12 @@ Total          8 500 Mo</code></pre>
         <p>
           Dans les Paramètres, qui règlent l’ordinateur. Yasmine ouvre Paramètres, puis Windows
           Update, la page des mises à jour de Windows, et clique sur Rechercher des mises à jour :
-          Windows demande alors s’il en existe de nouvelles. La page affiche :
+          Windows demande alors s’il en existe de nouvelles.
+        </p>
+      </div>
+      <div data-ecran="Les mises à jour de Yasmine">
+        <p class="accroche">
+          Yasmine a cliqué sur Rechercher des mises à jour. La page Windows Update affiche :
         </p>
         <div
           class="ecran-simule"
@@ -5133,20 +5288,19 @@ Serveur de test   1 000 Mo</code></pre>
         >
           <p class="q">Que faut-il changer à son portable, pour développer ?</p>
           <ul class="options">
-            <li data-option="ssd-ram">
-              Le disque dur, par un SSD ; et, pour avoir de la marge, passer de 8 à 16 Go de RAM.
-            </li>
+            <li data-option="ssd-ram">Un SSD, puis 16 Go de RAM.</li>
             <li
               data-option="processeur"
-              data-retour="4 cœurs atteignent le minimum. Quel repère son portable n’atteint-il pas du tout ?"
+              data-erreur="E2"
+              data-retour="Les GHz seuls ne disent pas la vitesse, et 4 cœurs atteignent le minimum. Quel repère son portable n’atteint-il pas du tout ?"
             >
-              Le processeur, pour plus de GHz.
+              Un processeur à plus de GHz.
             </li>
             <li
               data-option="rien"
               data-retour="Le stockage atteint-il le minimum ? Un disque dur est-il un SSD ?"
             >
-              Rien : il atteint le minimum partout.
+              Rien : tout atteint le minimum.
             </li>
           </ul>
         </div>
@@ -5221,7 +5375,8 @@ Serveur de test   1 000 Mo</code></pre>
             <li data-option="b">Le portable B.</li>
             <li
               data-option="a"
-              data-retour="Plus de cœurs et de GHz, oui. Mais A a un disque dur, sous le minimum, et 8 Go soudés qu’on ne pourra jamais augmenter. Où B en est-il, sur ces deux lignes ?"
+              data-erreur="E2"
+              data-retour="Plus de GHz, mais de 2019 : ses instructions par cycle ne sont pas celles de 2024. Et A a un disque dur, sous le minimum, et 8 Go soudés qu’on ne pourra jamais augmenter. Où B en est-il, sur ces deux lignes ?"
             >
               Le portable A : plus de cœurs et plus de GHz.
             </li>
@@ -5279,9 +5434,9 @@ Serveur de test   1 000 Mo</code></pre>
       </div>
       <div data-ecran="Les températures">
         <p class="accroche">
-          Dans « Autour du processeur », le portable qui chauffe baissait sa fréquence. Ici, tu vois
-          si le tien chauffe trop sous un travail lourd. Sur un Mac, macOS ne l’affiche pas : passe
-          à l’écran suivant.
+          Dans « Diagnostiquer », Yasmine lisait la température de son processeur dans HWMonitor.
+          Ici, tu vois si le tien chauffe trop sous un travail lourd. Sur un Mac, macOS ne l’affiche
+          pas : passe à l’écran suivant.
         </p>
         <ol>
           <li>
@@ -5319,7 +5474,7 @@ Serveur de test   1 000 Mo</code></pre>
       </div>
       <div data-ecran="Les grilles">
         <p class="accroche">
-          Dans « L’entretien », Yasmine dégageait les grilles de son portable : la poussière y
+          Dans « Diagnostiquer », Yasmine dépoussiérait les grilles de son portable : la poussière y
           bloque l’air qui refroidit le processeur. Fais-le sur ta machine.
         </p>
         <ol>
@@ -5542,9 +5697,7 @@ Serveur de test   1 000 Mo</code></pre>
             Pour son travail, Sofia veut 30 onglets ouverts avec VS Code. Que peut-elle faire ?
           </p>
           <ul class="options">
-            <li data-option="moins">
-              Garder moins d’onglets ouverts à la fois, et prévoir 16 Go pour son prochain portable.
-            </li>
+            <li data-option="moins">Ouvrir moins d’onglets à la fois.</li>
             <li
               data-option="ajouter"
               data-retour="Une RAM soudée laisse-t-elle un emplacement pour une barrette ?"
@@ -5555,14 +5708,14 @@ Serveur de test   1 000 Mo</code></pre>
               data-option="ssd"
               data-retour="Avec un SSD, le fichier d’échange irait plus vite. Mais la RAM serait-elle moins pleine ?"
             >
-              Passer à un SSD : sa RAM ne sera plus pleine.
+              Passer à un SSD.
             </li>
           </ul>
         </div>
         <p>
           Avec la RAM soudée, Sofia ne peut agir que sur ce qu’elle ouvre : 26 onglets au plus avec
           VS Code. Un SSD rendrait le fichier d’échange moins lent, sans vider la RAM. Pour son
-          prochain portable, la RAM se choisit à l’achat.
+          prochain portable, la RAM se choisit à l’achat : 16 Go.
         </p>
       </div>
       <div data-ecran="À retenir">
@@ -5765,6 +5918,7 @@ Serveur de test   1 000 Mo</code></pre>
           </li>
           <li
             data-option="somme"
+            data-erreur="E1"
             data-retour="Le stockage ne tient pas les programmes ouverts : il garde leur exemplaire. Lequel des deux les tient prêts ?"
           >
             Les deux ensemble
@@ -6108,9 +6262,7 @@ Serveur de test   1 000 Mo</code></pre>
         </div>
         <p class="q">Le PC de Hugo rame. Que doit-il faire ?</p>
         <ul class="options">
-          <li data-option="programme">
-            Chercher dans l’onglet Processus le programme qui occupe le processeur.
-          </li>
+          <li data-option="programme">Trouver le programme qui occupe le processeur.</li>
           <li
             data-option="ram"
             data-retour="La mémoire est à 35 % : est-ce elle qui est au maximum ?"
@@ -6720,8 +6872,9 @@ Serveur de test   1 000 Mo</code></pre>
           data-aide1 et data-aide2, l’étape détaillée data-aide3 quand l’exercice l’a (r22, r22b),
           puis la solution. Après une solution vue, l’apprenant refait sur un autre cas
           (data-variante-…), ou explique la solution avec ses mots ; l’IA juge son explication. Une
-          prédiction (data-prediction : r10, r34, r35, r36) montre la bonne réponse sans explication
-          à écrire, car le texte qui suit l’explique.
+          prédiction (data-prediction : r3p, r3e, r7b, r10, r15a, r15b, r26b, r26c, r30c, r34, r35,
+          r36, r42, r43, r44, chacune avec sa question qui oriente) montre la bonne réponse sans
+          explication à écrire, car le texte qui suit l’explique.
         </li>
         <li>
           Dans la pratique, après une solution vue, l’item se refait sur sa variante, puis
@@ -6750,7 +6903,7 @@ Serveur de test   1 000 Mo</code></pre>
         "objectif": "Fiche « ma machine » (CPU, cœurs, fréquence, RAM, stockage, architecture) relevée avec les outils système, dont la virtualisation que demandent WSL 2 et Docker ; expliquer sans support le trajet stockage, RAM, CPU au lancement d’un programme, et le rôle du CPU (cœurs, horloge, cache), de la RAM (volatile), du stockage (HDD, SSD), de la carte mère, du GPU et du refroidissement ; reconnaître l’architecture d’un processeur (x64 ou ARM64) et choisir la version d’un logiciel qui lui correspond ; diagnostiquer 3 symptômes simples (lenteur, mémoire pleine, surchauffe) ; entretenir sa machine (poussière, mises à jour de sécurité) ; juger si la machine convient au développement web. Aisance : ouvrir l’outil qui décrit sa machine et y lire une caractéristique en moins de 10 s.",
         "prerequis": ["B01"],
         "pont": 5,
-        "contexte_ia": "Bloc B03 du module « Écosystème et outils du développeur » (DWWM), troisième bloc de la partie La machine. Le modèle du bloc : le stockage (SSD ou disque dur) garde les fichiers et les logiciels, même éteint ; au lancement, ce qu’il garde est copié dans la RAM, volatile, qui tient prêt ce qui tourne ; le processeur l’y lit, par son cache, et l’exécute sur ses cœurs ; la carte graphique dessine l’image, que l’écran affiche ; la carte mère relie le tout, et le refroidissement évacue la chaleur. Ordres de grandeur du bloc : RAM 0,0001 ms, SSD 0,1 ms, disque dur 10 ms par accès ; 1 Go compté comme 1 000 Mo ; Windows 3 000 Mo, VS Code 1 000 Mo, un onglet 150 Mo, une journée de développement environ 8 000 Mo. La RAM pleine, une partie part dans le fichier d’échange, sur le disque, et tout ralentit. Les GHz comptent les cycles par seconde ; les instructions par seconde sont les GHz multipliés par les instructions par cycle, qui changent d’une génération à l’autre. Deux familles de processeurs : x64 (Intel, AMD) et ARM64 (puces M d’Apple, certains PC) ; un logiciel se prend dans la version de sa famille ; un Mac ARM fait tourner une version Intel traduite par Rosetta 2, moins vite, et un PC Windows ARM une version x64 traduite par Windows ; sur un PC x64 ou un Mac Intel, une version ARM64 ne se lance pas ; « 64 bits » ne dit pas la famille ; la famille s’appelle aussi l’architecture ; les processeurs Snapdragon sont ARM64. Diagnostic : la jauge au maximum du gestionnaire des tâches (processeur, mémoire, disque) désigne la cause ; un disque à 100 % est occupé, pas plein ; un processeur à 100 % est occupé par un travail lourd (le laisser finir, sans rien lancer à côté) ou par un programme bloqué (Fin de tâche) ; un portable qui chauffe baisse sa fréquence, et sa vitesse affichée tombe ; la vitesse du moment peut dépasser la vitesse de base quand le processeur reste frais. À génération et conception égales, plus de GHz veut bien dire plus rapide. Une carte graphique dédiée sert aux jeux, à la 3D et au montage vidéo. Repères pour développer : RAM 8 Go au minimum, 16 Go à l’aise ; un SSD, 256 Go au minimum, 512 Go à l’aise ; 4 cœurs au minimum, 6 à l’aise ; x64 ou ARM64 ; carte graphique intégrée. Notations à accepter comme équivalentes : CPU et processeur, GPU et carte graphique, HDD et disque dur, mémoire vive et RAM ; x64, x86-64 et AMD64 ; ARM64, Arm64 et AArch64 ; Apple silicon et puce M. Accepte des ordres de grandeur voisins (un SSD de 0,05 à 0,1 ms, par exemple) et une conversion de 1 Go en 1 024 Mo. Virtualisation : la capacité du processeur à faire tourner un second système à côté du sien, une machine virtuelle ; WSL 2 et Docker en ont besoin ; « Désactivé » dans le gestionnaire des tâches veut dire éteinte dans le BIOS ou l’UEFI de la carte mère, où elle s’active ; sur un Mac, elle est toujours en service. Entretien : retirer la poussière des grilles ; installer au plus tôt les mises à jour de sécurité, qui corrigent des failles connues de tous une fois corrigées. Températures, relevées dans HWMonitor (facultatif, sous Windows) : souvent 30 à 50 °C au repos, 70 à 90 °C sous charge ; vers 95 °C et plus, le processeur baisse sa fréquence. La fiche n’enseigne ni comment créer une machine virtuelle, ni les tests de performance, ni les générations de RAM (DDR4, DDR5) ni les types de SSD (NVMe, SATA), ni Linux, ni les portes logiques : ne pénalise pas leur absence, et accepte une réponse juste qui les emploie. Pièges à repérer : E1, confondre RAM et stockage (prendre 512 Go de SSD pour de la mémoire vive, croire que la RAM garde ce qui n’est pas enregistré ou qu’elle range les fichiers) ; E2, croire que plus de GHz veut toujours dire plus rapide ; E3, ignorer la famille du processeur au téléchargement (x64 pour une puce ARM64, ARM64 pour un processeur Intel ou AMD), ou croire que « 64 bits » dit la famille ; E4, faire lire ou écrire au processeur un programme ou un fichier directement sur le stockage, sans la copie en RAM. Accepté sans être exigé : proposer l’action qui agit sur la cause d’une lenteur (fermer des programmes, laisser finir un travail lourd, dégager les grilles) ; nommer le cache ou les cœurs dans un trajet ; donner aussi le temps du SSD (0,6 s pour 6 000 fichiers) ; comparer deux processeurs de la même génération par leurs GHz ; évoquer, sans la détailler, une machine virtuelle pour faire tourner Windows sur un Mac. Pour PR2-2 : sans les quatre relevés, la réponse n’est pas réussie ; des relevés qui montent, ou un palier expliqué (un navigateur qui met des onglets en veille et les recharge, ce qui libère de la RAM), sont justes, et les deux observations, ralenti ou non, sont justes si l’explication va avec. Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Pour examiner une explication, la grille de compréhension : l’idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d’application, le terme exact, la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Chaque attendu vient de la fiche : les étapes 3 à 12 et 14 (sources S1 à S11) ; ce qui est marqué « D’après » y est écrit ; ce qui est marqué « Déduit » s’obtient en appliquant une règle de la fiche à un autre cas. Les conventions dont une question se sert (1 GHz, les Mo d’une journée) sont redonnées avec elle : ce qui compte, c’est le raisonnement, pas de réciter les nombres.",
+        "contexte_ia": "Bloc B03 du module « Écosystème et outils du développeur » (DWWM), troisième bloc de la partie La machine. Le modèle du bloc : le stockage (SSD ou disque dur) garde les fichiers et les logiciels, même éteint ; au lancement, ce qu’il garde est copié dans la RAM, volatile, qui tient prêt ce qui tourne ; le processeur l’y lit, par son cache, et l’exécute sur ses cœurs ; la carte graphique dessine l’image, que l’écran affiche ; la carte mère relie le tout, et le refroidissement évacue la chaleur. Ordres de grandeur du bloc : RAM 0,0001 ms, SSD 0,1 ms, disque dur 10 ms par accès ; 1 Go compté comme 1 000 Mo ; Windows 3 000 Mo, VS Code 1 000 Mo, un onglet 150 Mo, une journée de développement environ 8 000 Mo. La RAM pleine, une partie part dans le fichier d’échange, sur le disque, et tout ralentit. Les GHz comptent les cycles par seconde ; les instructions par seconde sont les GHz multipliés par les instructions par cycle, qui changent d’une génération à l’autre. Deux familles de processeurs : x64 (Intel, AMD) et ARM64 (puces M d’Apple, certains PC) ; un logiciel se prend dans la version de sa famille ; un Mac ARM fait tourner une version Intel traduite par Rosetta 2, moins vite, et un PC Windows ARM une version x64 traduite par Windows ; sur un PC x64 ou un Mac Intel, une version ARM64 ne se lance pas ; « 64 bits » ne dit pas la famille ; la famille s’appelle aussi l’architecture ; les processeurs Snapdragon sont ARM64. Diagnostic : la jauge au maximum du gestionnaire des tâches (processeur, mémoire, disque) désigne la cause ; un disque à 100 % est occupé, pas plein ; un processeur à 100 % est occupé par un travail lourd (le laisser finir, sans rien lancer à côté) ou par un programme bloqué (Fin de tâche) ; un portable qui chauffe baisse sa fréquence, et sa vitesse affichée tombe ; la vitesse du moment peut dépasser la vitesse de base quand le processeur reste frais. À génération et conception égales, plus de GHz veut bien dire plus rapide. Une carte graphique dédiée sert aux jeux, à la 3D et au montage vidéo. Repères pour développer : RAM 8 Go au minimum, 16 Go à l’aise ; un SSD, 256 Go au minimum, 512 Go à l’aise ; 4 cœurs au minimum, 6 à l’aise ; x64 ou ARM64 ; carte graphique intégrée. Notations à accepter comme équivalentes : CPU et processeur, GPU et carte graphique, HDD et disque dur, mémoire vive et RAM ; x64, x86-64 et AMD64 ; ARM64, Arm64 et AArch64 ; Apple silicon et puce M. Accepte des ordres de grandeur voisins (un SSD de 0,05 à 0,1 ms, par exemple) et une conversion de 1 Go en 1 024 Mo. Virtualisation : la capacité du processeur à faire tourner un second système à côté du sien, une machine virtuelle ; WSL 2 et Docker en ont besoin ; « Désactivé » dans le gestionnaire des tâches veut dire éteinte dans le BIOS ou l’UEFI de la carte mère, où elle s’active ; sur un Mac, elle est toujours en service. Entretien : retirer la poussière des grilles ; installer au plus tôt les mises à jour de sécurité, qui corrigent des failles connues de tous une fois corrigées. Températures, relevées dans HWMonitor sous Windows (macOS ne les affiche pas) : souvent 30 à 50 °C au repos, 70 à 90 °C sous charge ; vers 95 °C et plus, le processeur baisse sa fréquence. La fiche n’enseigne ni comment créer une machine virtuelle, ni les tests de performance, ni les générations de RAM (DDR4, DDR5) ni les types de SSD (NVMe, SATA), ni Linux, ni les portes logiques : ne pénalise pas leur absence, et accepte une réponse juste qui les emploie. Pièges à repérer : E1, confondre RAM et stockage (prendre 512 Go de SSD pour de la mémoire vive, croire que la RAM garde ce qui n’est pas enregistré ou qu’elle range les fichiers) ; E2, croire que plus de GHz veut toujours dire plus rapide ; E3, ignorer la famille du processeur au téléchargement (x64 pour une puce ARM64, ARM64 pour un processeur Intel ou AMD), ou croire que « 64 bits » dit la famille ; E4, faire lire ou écrire au processeur un programme ou un fichier directement sur le stockage, sans la copie en RAM. Accepté sans être exigé : proposer l’action qui agit sur la cause d’une lenteur (fermer des programmes, laisser finir un travail lourd, dégager les grilles) ; nommer le cache ou les cœurs dans un trajet ; donner aussi le temps du SSD (0,6 s pour 6 000 fichiers) ; comparer deux processeurs de la même génération par leurs GHz ; évoquer, sans la détailler, une machine virtuelle pour faire tourner Windows sur un Mac. Pour PR2-2 : sans les quatre relevés, la réponse n’est pas réussie ; des relevés qui montent, ou un palier expliqué (un navigateur qui met des onglets en veille et les recharge, ce qui libère de la RAM), sont justes, et les deux observations, ralenti ou non, sont justes si l’explication va avec. Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Pour examiner une explication, la grille de compréhension : l’idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d’application, le terme exact, la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Chaque attendu vient de la fiche : les étapes 3 à 12 et 14 (sources S1 à S11) ; ce qui est marqué « D’après » y est écrit ; ce qui est marqué « Déduit » s’obtient en appliquant une règle de la fiche à un autre cas. Les conventions dont une question se sert (1 GHz, les Mo d’une journée) sont redonnées avec elle : ce qui compte, c’est le raisonnement, pas de réciter les nombres.",
         "sources": [
           {
             "id": "S1",
@@ -7003,7 +7156,7 @@ Serveur de test   1 000 Mo</code></pre>
         "rappel": [
           {
             "id": "B03-Q1",
-            "question": "Tu as enregistré ton texte à 10 h, puis tu as écrit jusqu’à 11 h sans enregistrer. La batterie se vide, et ton portable s’éteint d’un coup. Que retrouves-tu au redémarrage, et pourquoi ?",
+            "question": "Tu as enregistré ton texte à 10 h, puis tu as écrit jusqu’à 11 h sans enregistrer. La batterie se vide : plus de courant, et ton portable s’éteint d’un coup. Que retrouves-tu au redémarrage, et pourquoi ?",
             "attendu": "La version de 10 h : l’enregistrement l’a copiée sur le stockage, qui garde tout sans courant. Ce qui a été écrit après n’était que dans la RAM, qui s’est vidée. Erreur à repérer : croire que la RAM garde le travail. Déduit de l’étape 4.",
             "erreurs": ["E1"]
           },
@@ -7033,7 +7186,7 @@ Serveur de test   1 000 Mo</code></pre>
           },
           {
             "id": "B03-Q6",
-            "question": "Pour lire : un disque dur trouve un fichier en environ 10 ms, un SSD en environ 0,1 ms ; 1 000 ms font 1 s. Un jeu charge un niveau fait de 6 000 petits fichiers. Combien de secondes faut-il, rien que pour les trouver, sur un disque dur ? Pourquoi un SSD irait-il bien plus vite ?",
+            "question": "Pour lire : un disque dur trouve un fichier en environ 10 ms, un SSD en environ 0,1 ms ; 1 000 ms font 1 s. Un jeu charge un niveau fait de 6 000 petits fichiers. Combien de secondes faut-il, rien que pour les trouver, sur un disque dur ? Qu’est-ce qui, dans un disque dur, prend ces 10 ms, et qu’un SSD n’a pas ?",
             "attendu": "6 000 × 10 ms = 60 000 ms, soit 60 secondes sur le disque dur, dont la tête doit se placer sur un plateau qui tourne pour chaque fichier, alors que le SSD, sans pièce mobile, en trouve un en 0,1 ms. Déduit de l’étape 5.",
             "erreurs": []
           },
@@ -7063,7 +7216,7 @@ Serveur de test   1 000 Mo</code></pre>
           },
           {
             "id": "B03-Q11",
-            "question": "L’installation de Docker s’arrête sur le PC Windows de Camille, qui a quatre ans : « la virtualisation n’est pas activée ». Que se passe-t-il, et que fait Camille ?",
+            "question": "Pour lire : la virtualisation se règle dans le BIOS ou l’UEFI, le logiciel de la carte mère qui s’ouvre au démarrage. L’installation de Docker s’arrête sur le PC Windows de Camille, qui a quatre ans : « la virtualisation n’est pas activée ». Que se passe-t-il, et que fait Camille ?",
             "attendu": "Docker s’appuie sur WSL 2, qui fait tourner Linux dans une machine virtuelle : il lui faut la virtualisation du processeur. Son processeur en est très probablement capable, mais elle est éteinte dans le BIOS ou l’UEFI de la carte mère : Camille l’y active, sans changer d’ordinateur. Déduit de l’étape 10.",
             "erreurs": []
           },
@@ -7071,6 +7224,12 @@ Serveur de test   1 000 Mo</code></pre>
             "id": "B03-Q12",
             "question": "Pendant un long export, le gestionnaire des tâches d’Ilan affiche « Vitesse de base 2,0 GHz » et « Vitesse 1,3 GHz » ; le ventilateur souffle à fond. Qu’est-ce qui distingue ces deux nombres ? Pourquoi le second est-il sous le premier ?",
             "attendu": "La vitesse de base est celle de la fiche du processeur, fixe ; la vitesse du moment est celle que le gestionnaire des tâches affiche, qui change sans arrêt selon le travail et la chaleur. Trop chaud, le processeur baisse sa fréquence pour se protéger : c’est ce qui arrive à Ilan, dont la vitesse du moment est tombée sous la vitesse de base. Déduit des étapes 9 et 10.",
+            "erreurs": []
+          },
+          {
+            "id": "B03-Q13",
+            "question": "Ton ami dit : « La carte mère n’est qu’un support, et la carte graphique ne sert qu’aux jeux. » Qu’est-ce qui est faux dans chacune de ses deux phrases ?",
+            "attendu": "La carte mère relie tous les composants : elle porte leurs emplacements, et toute copie du disque vers la RAM, puis vers le processeur, passe par elle. La carte graphique dessine tout ce qui s’affiche, des millions de pixels redessinés sans cesse ; intégrée, elle suffit pour développer, et une carte dédiée sert aux jeux, à la 3D, au montage. Déduit de l’étape 9.",
             "erreurs": []
           }
         ],
@@ -7144,8 +7303,8 @@ Serveur de test   1 000 Mo</code></pre>
             "id": "B03-T6",
             "type": "transfert",
             "forme": "choisir_methode",
-            "consigne": "Le PC de Timéo rame après une heure de jeu, posé sur un coussin. Ventilateur à fond ; processeur à 30 % ; mémoire à 40 % ; vitesse affichée sous la vitesse de base. Qu’est-ce qui le freine, et pourquoi ?",
-            "attendu": "La chaleur : le coussin bouche les grilles, le processeur chauffe et baisse sa fréquence pour se protéger, jusque sous sa vitesse de base. Déduit des étapes 9 et 11.",
+            "consigne": "Le PC fixe de Timéo, rangé dans un placard fermé, ralentit en fin d’après-midi. Ventilateur très bruyant ; processeur à 30 % ; mémoire à 40 % ; vitesse affichée sous la vitesse de base. Qu’est-ce qui le freine, et pourquoi ?",
+            "attendu": "La chaleur : dans le placard fermé, l’air chaud ne part pas, le processeur chauffe et baisse sa fréquence pour se protéger, jusque sous sa vitesse de base. Il faut laisser l’air circuler autour de ses grilles. Déduit des étapes 9 et 11.",
             "erreurs": []
           },
           {
@@ -7242,38 +7401,38 @@ Serveur de test   1 000 Mo</code></pre>
         "cartes": [
           {
             "id": "B03-K1",
-            "recto": "Un programme est déjà sur le stockage : pourquoi est-il copié dans la RAM pour tourner ?",
-            "verso": "La RAM est bien plus rapide : le processeur y lit ce qui tourne sans attendre le stockage. Mais elle est volatile : sans courant, elle se vide, et c’est le stockage qui garde l’exemplaire. D’après « Garder et tenir prêt »."
+            "recto": "Ton portable a 8 Go de RAM et un SSD de 512 Go. Tu ouvres une vidéo de 2 Go rangée sur le SSD. Où est-elle ensuite, en combien d’exemplaires, et où le processeur la lit-il ?",
+            "verso": "En deux exemplaires : l’original reste sur le SSD, et une copie est dans la RAM, où elle prend 2 des 8 Go. Le processeur la lit dans la RAM : le stockage est bien trop lent pour lui. D’après « Garder et tenir prêt »."
           },
           {
             "id": "B03-K2",
-            "recto": "Le courant coupe pendant que tu écris un devoir pas encore enregistré : que perds-tu, que gardes-tu, et pourquoi ?",
-            "verso": "Tu perds le devoir, qui n’était que dans la RAM : elle est volatile. Tu gardes les fichiers enregistrés et les logiciels : le stockage, SSD ou disque dur, ne se vide pas sans courant. D’après « Garder et tenir prêt »."
+            "recto": "Tu modifies un tableau ouvert depuis ton SSD, sans enregistrer, puis tu le fermes en répondant « Ne pas enregistrer ». Que deviennent tes modifications, et la version du SSD ?",
+            "verso": "Les modifications n’étaient que dans la RAM : la fermeture libère cette place, et elles sont perdues. La version du SSD n’a pas changé, car rien n’y a été copié. D’après « Garder et tenir prêt »."
           },
           {
             "id": "B03-K3",
-            "recto": "Par où passe un programme, de son lancement à son exécution ?",
-            "verso": "Il est lu sur le stockage, copié dans la RAM, puis le processeur l’y lit et l’exécute. Le stockage garde son exemplaire. D’après « Garder et tenir prêt »."
+            "recto": "Un ordinateur passe d’un disque dur à un SSD. Au lancement d’un programme, quelle étape du trajet va plus vite, et laquelle ne change pas ?",
+            "verso": "La copie du stockage vers la RAM va bien plus vite : le SSD trouve chaque donnée en environ 0,1 ms au lieu de 10. L’exécution ne change pas : le processeur lit toujours le programme dans la RAM. D’après « Garder et tenir prêt » et « Le disque »."
           },
           {
             "id": "B03-K4",
-            "recto": "RAM, SSD, disque dur : range-les du plus rapide au plus lent pour trouver une donnée, et dis ce qui ralentit le dernier.",
-            "verso": "La RAM, de loin ; puis le SSD, sans rien qui bouge ; puis le disque dur, dont la tête doit se déplacer sur un plateau qui tourne. D’après « Garder et tenir prêt » et « Le disque »."
+            "recto": "Ton PC démarre lentement sur son disque dur de 1 To. Le démarrage ira-t-il plus vite avec un disque dur de 2 To ? Et avec un SSD de 512 Go ? Pourquoi ?",
+            "verso": "Pas avec le disque dur de 2 To : la taille dit la place, pas la vitesse, et sa tête doit toujours se déplacer pour chaque fichier. Avec le SSD, oui : sans rien qui bouge, il trouve chaque fichier bien plus vite, même plus petit. D’après « Le disque »."
           },
           {
             "id": "B03-K5",
-            "recto": "Ta RAM est pleine : que fait le système, et pourquoi tout ralentit-il ?",
-            "verso": "Il range une partie de la RAM sur le disque, dans le fichier d’échange. Le disque étant bien plus lent, ce qui y est rangé fait attendre le processeur quand il resert. D’après « La RAM pleine »."
+            "recto": "Pour lire : ce bloc compte 1 Go pour 1 000 Mo, et un onglet lourd environ 150 Mo. Ta RAM de 8 Go a déjà 6 500 Mo occupés. Combien d’onglets lourds peux-tu ouvrir avant que le fichier d’échange travaille, et que se passe-t-il ensuite ?",
+            "verso": "Dix : il reste 1 500 Mo, et 1 500 ÷ 150 = 10. Au-delà, le système range sur le disque ce qui n’a pas servi, et revenir à ces onglets fait attendre le disque. D’après « La RAM pleine »."
           },
           {
             "id": "B03-K6",
-            "recto": "Pourquoi les GHz ne suffisent-ils pas à comparer deux processeurs ?",
-            "verso": "Les GHz comptent les cycles par seconde ; les instructions finies à chaque cycle changent d’une génération à l’autre. Il faut les deux. D’après « Le processeur »."
+            "recto": "Pour lire : 1 GHz, c’est un milliard de cycles par seconde. Un processeur à 2 GHz finit 4 instructions par cycle ; un autre, à 3 GHz, en finit 2. Lequel finit le plus d’instructions par seconde ?",
+            "verso": "Celui à 2 GHz : 2 × 4 = 8 milliards d’instructions par seconde, contre 3 × 2 = 6 milliards. Les GHz comptent les cycles ; il faut aussi les instructions par cycle. D’après « Le processeur »."
           },
           {
             "id": "B03-K7",
-            "recto": "Pourquoi un programme qui ne se découpe pas en plusieurs suites d’instructions ne va-t-il pas plus vite avec 4 cœurs ?",
-            "verso": "Une suite d’instructions avance sur un cœur, une unité de calcul complète du processeur. Un programme en une seule suite n’occupe donc qu’un cœur, comme un client n’occupe qu’une caisse ; les autres cœurs restent libres pour ce qui tourne à côté. D’après « Le processeur »."
+            "recto": "Un logiciel de montage se découpe en 8 suites d’instructions. Combien en avancent en même temps sur un processeur à 4 cœurs, puis à 8 cœurs ? Et un programme en une seule suite, sur 8 cœurs ?",
+            "verso": "4, puis 8 : une suite d’instructions avance sur un cœur. Un programme en une seule suite n’occupe qu’un cœur, même sur 8 ; les autres restent libres pour ce qui tourne à côté. D’après « Le processeur »."
           },
           {
             "id": "B03-K8",
@@ -7282,43 +7441,43 @@ Serveur de test   1 000 Mo</code></pre>
           },
           {
             "id": "B03-K9",
-            "recto": "Pourquoi un même logiciel se télécharge-t-il en version x64 ou en version ARM64 ?",
-            "verso": "Un logiciel est du code machine, écrit pour le jeu d’instructions d’une famille de processeurs : son architecture, x64 ou ARM64. On télécharge la version de la sienne. D’après « x64 ou ARM »."
+            "recto": "Pour lire : les puces Snapdragon sont de la famille ARM64. Sur un PC Windows à puce Snapdragon, quelle version d’un logiciel prends-tu, et que se passe-t-il avec la version x64 ?",
+            "verso": "Windows ARM64 : la version écrite pour la famille de son processeur. La version x64 se lance quand même, traduite par Windows, mais moins vite. D’après « x64 ou ARM »."
           },
           {
             "id": "B03-K10",
-            "recto": "La ligne Type de système dit « Système d’exploitation 64 bits, processeur x64 ». Que dit « 64 bits », et que ne dit-il pas ?",
-            "verso": "La taille des nombres que le processeur traite d’un coup. Il ne dit pas l’architecture : x64 et ARM64 sont tous deux en 64 bits ; c’est « processeur x64 » ou « processeur ARM » qui la dit. D’après « x64 ou ARM »."
+            "recto": "La ligne Type de système d’un PC dit « Système d’exploitation 64 bits, processeur ARM ». Ton ami en conclut : « 64 bits, donc je prends la version x64. » Qu’est-ce qui cloche ?",
+            "verso": "« 64 bits » dit la taille des nombres que le processeur traite d’un coup, pas sa famille : x64 et ARM64 sont tous deux en 64 bits. C’est « processeur ARM » qui dit la famille : il faut la version ARM64. D’après « x64 ou ARM »."
           },
           {
             "id": "B03-K11",
-            "recto": "Pourquoi ne pourra-t-on jamais ajouter de RAM à un portable dont la RAM est soudée ?",
-            "verso": "La carte mère relie les composants et porte leurs emplacements. Une RAM soudée y est fixée sans emplacement : il n’y a nulle part où en ajouter. D’après « Autour du processeur »."
+            "recto": "Deux portables ont 8 Go de RAM. L’un a deux emplacements, dont un libre ; l’autre a sa RAM soudée. Lequel pourra passer à 16 Go, et pourquoi ?",
+            "verso": "Celui qui a un emplacement libre : on y ajoute une barrette de 8 Go. La RAM soudée est fixée sur la carte mère, sans emplacement où enficher une barrette : on ne pourra jamais en ajouter. D’après « Autour du processeur »."
           },
           {
             "id": "B03-K12",
-            "recto": "Pourquoi un portable qui chauffe ralentit-il ?",
-            "verso": "Pour ne pas surchauffer, le processeur baisse sa fréquence. Des grilles bouchées ou un coussin empêchent la chaleur de partir. D’après « Autour du processeur »."
+            "recto": "Un portable calcule vite au début d’un long rendu, puis ralentit au bout de vingt minutes, alors que rien d’autre ne tourne. Pourquoi, et que montrerait sa vitesse ?",
+            "verso": "Il chauffe : pour ne pas surchauffer, le processeur baisse sa fréquence, et sa vitesse affichée tombe, parfois sous sa vitesse de base. Grilles dégagées et surface dure aident la chaleur à partir. D’après « Autour du processeur »."
           },
           {
             "id": "B03-K13",
-            "recto": "Pourquoi WSL 2 et Docker ne tournent-ils pas quand la virtualisation est désactivée ?",
-            "verso": "Ils font tourner un second système dans une machine virtuelle, et c’est la virtualisation, une capacité du processeur, qui le permet. Désactivée, elle s’active dans le BIOS ou l’UEFI. D’après « Ta machine »."
+            "recto": "Un ami veut faire tourner Linux à côté de Windows, dans une machine virtuelle. De quoi son processeur a-t-il besoin, et d’où la machine virtuelle tire-t-elle sa RAM ?",
+            "verso": "De la virtualisation, une capacité du processeur. La machine virtuelle n’a aucun composant à elle : elle prend une part du processeur et de la RAM de la vraie machine. D’après « Ta machine »."
           },
           {
             "id": "B03-K14",
-            "recto": "Pourquoi installer une mise à jour de sécurité au plus tôt ?",
-            "verso": "Elle corrige une faille, un défaut qu’un programme malveillant peut exploiter. Une fois corrigée, la faille est connue de tous : une machine pas à jour reste exposée. D’après « Diagnostiquer »."
+            "recto": "Le vieux PC de ton oncle marche bien, mais il n’a reçu aucune mise à jour de sécurité depuis deux ans. Il dit : « Il ne lui manque rien. » Qu’est-ce qui le menace, et pourquoi ?",
+            "verso": "Les failles corrigées depuis deux ans sont connues de tous : un programme malveillant peut les exploiter sur son PC, resté exposé. Que le PC marche bien n’y change rien. D’après « Diagnostiquer »."
           },
           {
             "id": "B03-K15",
-            "recto": "Ton PC rame : quel est ton premier geste, et pourquoi ?",
-            "verso": "Ouvrir l’outil qui le décrit : sous Windows, Ctrl+Maj+Échap, onglet Performance ; sur un Mac, le Moniteur d’activité. Une jauge au maximum, ou une vitesse sous la vitesse de base, dit ce qui le freine. D’après « Ta machine » et « Diagnostiquer »."
+            "recto": "Le PC de Lina rame juste après le démarrage. Son gestionnaire des tâches montre : disque à 100 %, mémoire à 50 %, processeur à 20 %. Quelle est la cause, et le remède à terme ?",
+            "verso": "Le disque, un disque dur lent, au maximum : la mémoire et le processeur sont normaux. Patienter, et à terme passer à un SSD. Le premier geste reste d’ouvrir le gestionnaire des tâches et de chercher la jauge au maximum. D’après « Ta machine » et « Diagnostiquer »."
           },
           {
             "id": "B03-K16",
-            "recto": "Pourquoi une mise à jour du système demande-t-elle de redémarrer ?",
-            "verso": "Elle remplace des fichiers du système sur le stockage. Le système tourne depuis sa copie en RAM, faite au démarrage : il faut redémarrer pour que la version corrigée soit copiée et exécutée. D’après « Diagnostiquer »."
+            "recto": "Tu installes une mise à jour de sécurité du système, mais tu repousses le redémarrage d’une semaine. Ta machine est-elle protégée pendant cette semaine ? Pourquoi ?",
+            "verso": "Pas encore : la mise à jour a remplacé des fichiers sur le stockage, mais le système tourne depuis sa copie en RAM, faite au démarrage. La version corrigée ne s’exécute qu’après le redémarrage. D’après « Diagnostiquer »."
           }
         ]
       }
@@ -7382,7 +7541,16 @@ Serveur de test   1 000 Mo</code></pre>
             "notion": "Dire le rôle de la carte mère (emplacements, RAM soudée), de la carte graphique (intégrée ou dédiée) et du refroidissement (la fréquence qui baisse)",
             "montree": ["ET9"],
             "pratiquee": ["PR1"],
-            "questions": ["B03-Q7", "B03-Q8", "B03-Q9", "B03-Q12", "B03-T4", "B03-K11", "B03-K12"]
+            "questions": [
+              "B03-Q7",
+              "B03-Q8",
+              "B03-Q9",
+              "B03-Q12",
+              "B03-Q13",
+              "B03-T4",
+              "B03-K11",
+              "B03-K12"
+            ]
           },
           {
             "id": "N8",
