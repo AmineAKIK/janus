@@ -133,9 +133,10 @@ for (const manifeste of fichesDuDepot()) {
       expect(etat.statut).toBe('acquis_provisoirement')
       expect(etat.preuves.faire_seul).not.toBeNull()
 
-      // Vitesse : un palier par jour ; deux séries le même jour n'en valident qu'un.
+      // Vitesse : un palier par jour ; deux séries le même jour n'en valident qu'un. Une fiche sans
+      // cible d'aisance n'a pas de Vitesse : la preuve est « non requise » dès le départ.
       const paliers = manifeste.aisance?.paliers_s ?? []
-      expect(paliers.length).toBeGreaterThan(0)
+      if (paliers.length === 0) expect(etat.preuves.aisance).toBe('non_requis')
       for (const [rang, palier] of paliers.entries()) {
         if (rang > 0) await lendemain(page, request)
         await reussirLaVitesse(request, manifeste, palier)
