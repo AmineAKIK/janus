@@ -27,6 +27,8 @@ export interface Differee {
   readonly type: 'explication' | 'tache' | 'transfert'
   readonly consigne: string
   readonly attendu: string
+  /** Une tâche par constat : des critères à cocher, au lieu d'un texte à écrire. */
+  readonly verification?: { readonly mode: string }
 }
 export interface Manifeste {
   readonly bloc: string
@@ -395,6 +397,12 @@ async function repondreALaPartie(
   const differee = manifeste.differees.find((partie) => partie.consigne === consigne)
   if (differee === undefined) throw new Error(`Partie inconnue : ${consigne ?? ''}`)
 
+  if (differee.type === 'tache' && differee.verification?.mode === 'constat') {
+    // Bien : chaque critère coché, sans aide ; mal : aucun.
+    if (!mal) for (const critere of await page.getByRole('checkbox').all()) await critere.check()
+    await page.getByRole('button', { name: 'Envoyer la tâche' }).click()
+    return consigne ?? ''
+  }
   if (differee.type === 'tache') {
     await page
       .getByRole('textbox', { name: /^(Ton code|Ta réponse)$/ })
