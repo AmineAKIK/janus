@@ -1128,6 +1128,19 @@
         flex-direction: column;
       }
 
+      /* Le constat de l'atelier : ce que l'apprenant a fait hors de la page. */
+      .constat {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-8);
+        margin-block-start: var(--espacement-24);
+        padding-block-start: var(--espacement-16);
+        border-top: 1px solid var(--couleur-ligne);
+      }
+      .constat h3 {
+        margin: 0;
+      }
+
       /* Pratique : un item à la fois. */
       .exo-titre {
         font-size: 1.125rem;
@@ -1826,6 +1839,49 @@
         margin-top: 0;
       }
       .bilan-machine > li:last-child {
+        font-weight: 600;
+      }
+
+      /* L'aisance : les trois niveaux, la série en cours. */
+      .niveaux {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-8);
+        padding: 0;
+        list-style: none;
+      }
+      section .niveaux > li + li {
+        margin-top: 0;
+      }
+      .niveaux > li {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: var(--espacement-4) var(--espacement-16);
+        padding: var(--espacement-8) var(--espacement-12);
+        border: 1px solid var(--couleur-ligne);
+        border-radius: var(--rayon-champ);
+      }
+      .niveaux > li.courant {
+        border-color: var(--couleur-accent);
+        background: var(--couleur-accent-douce);
+      }
+      .etat {
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+      .etat.solide {
+        color: var(--couleur-succes);
+      }
+      .etat.attente {
+        color: var(--couleur-texte-secondaire);
+      }
+      .zone-vitesse:empty {
+        display: none;
+      }
+      .temps {
+        font-variant-numeric: tabular-nums;
+        font-size: 1.5rem;
         font-weight: 600;
       }
     </style>
@@ -4005,6 +4061,54 @@ Total          8 500 Mo</code></pre>
           rapide, mais toujours bien plus qu’avec assez de RAM.
         </p>
       </div>
+      <div data-ecran="La virtualisation">
+        <p class="accroche">
+          Dans le panneau Processeur du gestionnaire des tâches, une ligne dit : Virtualisation,
+          Activé ou Désactivé. Plus tard, sous Windows, tu installeras WSL 2, qui fait tourner Linux
+          à côté de Windows, et Docker, qui s’appuie dessus. Tous deux demandent au processeur cette
+          capacité.
+        </p>
+        <p>
+          La virtualisation permet au processeur de faire tourner un second système à côté du sien,
+          comme un ordinateur dans l’ordinateur : une machine virtuelle. Presque tous les
+          processeurs d’aujourd’hui en sont capables, mais elle peut être désactivée dans le
+          logiciel de la carte mère, le BIOS ou l’UEFI, qui s’ouvre au démarrage. Sur un Mac, elle
+          est toujours en service.
+        </p>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="r32"
+          data-reponse="plus-tard"
+          data-aide1="« Désactivé » dit-il que le processeur n’en est pas capable, ou qu’elle est éteinte dans un réglage ?"
+        >
+          <p class="q">
+            Le gestionnaire des tâches de Sami affiche « Virtualisation : Désactivé ». Que fait-il ?
+          </p>
+          <ul class="options">
+            <li data-option="plus-tard">
+              Il l’activera dans le BIOS ou l’UEFI, au moment d’installer WSL 2.
+            </li>
+            <li
+              data-option="acheter"
+              data-retour="Presque tous les processeurs d’aujourd’hui en sont capables. « Désactivé » dit-il qu’elle manque, ou qu’elle est éteinte ?"
+            >
+              Il change d’ordinateur : son processeur ne sait pas virtualiser.
+            </li>
+            <li
+              data-option="arm"
+              data-retour="La famille du processeur décide de la version des logiciels. Où la virtualisation s’active-t-elle ?"
+            >
+              Il installe la version ARM64 de WSL 2.
+            </li>
+          </ul>
+        </div>
+        <p>
+          « Désactivé » veut dire éteinte dans un réglage, pas absente : rien à acheter, et rien à
+          changer avant d’installer WSL 2. La famille du processeur, elle, ne décide que de la
+          version des logiciels.
+        </p>
+      </div>
     </template>
 
     <!-- ET11, explication : diagnostiquer une lenteur, par la jauge au maximum : démonstration, à compléter, seul. -->
@@ -4287,6 +4391,49 @@ Total          8 500 Mo</code></pre>
           Dans l’onglet Processus, trié par Processeur, un seul programme prend presque tout : une
           fois fermé, le processeur redescend. Si ce programme avait travaillé pour Karim, une
           longue conversion par exemple, il l’aurait laissé finir.
+        </p>
+      </div>
+      <div data-ecran="L’entretien">
+        <p class="accroche">
+          Deux gestes évitent bien des lenteurs et des ennuis. Le premier, tu le connais : dégager
+          les grilles de leur poussière, pour que la chaleur parte et que le processeur garde sa
+          fréquence.
+        </p>
+        <p>
+          Le second : installer les mises à jour du système. Elles corrigent des failles de
+          sécurité, des défauts par lesquels un programme malveillant peut entrer. Une faille
+          corrigée devient connue de tous : une machine pas à jour lui reste ouverte.
+        </p>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="r33"
+          data-reponse="faille"
+          data-aide1="Ce qu’une mise à jour de sécurité corrige, et ce qui arrive à une faille une fois corrigée."
+        >
+          <p class="q">Pourquoi installer une mise à jour de sécurité au plus tôt ?</p>
+          <ul class="options">
+            <li data-option="faille">
+              Elle corrige une faille désormais connue, que des programmes malveillants peuvent
+              utiliser.
+            </li>
+            <li
+              data-option="vitesse"
+              data-retour="Une mise à jour de sécurité corrige un défaut. Que permet ce défaut tant qu’il reste ?"
+            >
+              Elle rend le processeur plus rapide.
+            </li>
+            <li
+              data-option="ram"
+              data-retour="Ce qui libère la RAM, c’est fermer des programmes. Que corrige une mise à jour de sécurité ?"
+            >
+              Elle libère de la RAM.
+            </li>
+          </ul>
+        </div>
+        <p>
+          Une mise à jour de sécurité s’installe au plus tôt, même sur une machine qui marche bien :
+          la faille, elle, ne se voit pas.
         </p>
       </div>
     </template>
@@ -4592,6 +4739,126 @@ Total             8 000 Mo</code></pre>
       </div>
     </template>
 
+    <!-- ET16, atelier : sur sa machine, la virtualisation, les températures (facultatif, Windows), les mises à jour ; puis le constat. -->
+    <template data-etape="ET16">
+      <div data-ecran="La virtualisation">
+        <p class="discret">Tu es ici : trois vérifications sur ta machine, avant de développer.</p>
+        <p class="accroche">
+          Dans « Ta machine », tu as vu ce que demandent WSL 2 et Docker : la virtualisation. Lis-la
+          sur ton ordinateur.
+        </p>
+        <p class="discret">Sous Windows :</p>
+        <ol>
+          <li>
+            Ctrl+Maj+Échap ouvre le gestionnaire des tâches ; onglet Performance, puis Processeur.
+          </li>
+          <li>
+            Sous la courbe, avec Cœurs et Processeurs logiques, lis la ligne Virtualisation : Activé
+            ou Désactivé. Note-la.
+          </li>
+        </ol>
+        <details data-cran="1">
+          <summary>Un coup de pouce</summary>
+          <p>
+            Si le gestionnaire s’ouvre en petit, clique sur Plus de détails. Si tu lis « Un
+            hyperviseur a été détecté » à la place de la ligne, la virtualisation est déjà en
+            service : c’est bon.
+          </p>
+        </details>
+        <p class="discret">Sur un Mac :</p>
+        <p>Rien à lire : elle y est toujours en service. Note-le.</p>
+        <p>
+          Si tu lis Désactivé, ne change rien aujourd’hui : tu l’activeras dans le BIOS ou l’UEFI
+          quand tu installeras WSL 2.
+        </p>
+      </div>
+      <div data-ecran="Les températures">
+        <p class="discret">Facultatif : sous Windows seulement, et hors de ton constat.</p>
+        <p class="accroche">
+          Dans « Autour du processeur », le portable qui chauffe baissait sa fréquence. Ici, tu lis
+          la température de ton propre processeur.
+        </p>
+        <ol>
+          <li>
+            Télécharge
+            <a data-lien="https://www.cpuid.com/softwares/hwmonitor.html">HWMonitor</a>, sur le site
+            de son éditeur, CPUID, et seulement là. Si la page propose une version x64 et une
+            version ARM64, prends celle de ta famille de processeur.
+          </li>
+          <li>
+            Ouvre-le. Sous le nom de ton processeur, dans la rubrique Temperatures, relève la ligne
+            Package (Tctl/Tdie sur un processeur AMD), colonne Value : c’est la température au
+            repos.
+          </li>
+          <li>
+            Lance un travail lourd pendant cinq minutes, une vidéo en très haute définition ou un
+            jeu, puis relève la colonne Max de la même ligne.
+          </li>
+        </ol>
+        <details data-cran="1">
+          <summary>Un coup de pouce</summary>
+          <p>
+            La liste se déplie par des petits triangles. Ton processeur porte le nom que tu as
+            relevé dans ta fiche « Ma machine », comme Intel Core i5 ou AMD Ryzen 5.
+          </p>
+        </details>
+        <p>
+          Au repos, un processeur est souvent entre 30 et 50 °C ; sous charge, 70 à 90 °C sont
+          courants, surtout sur un portable. Vers 95 °C et plus, il baisse sa fréquence pour se
+          protéger : dans le gestionnaire des tâches, sa vitesse tombe.
+        </p>
+      </div>
+      <div data-ecran="Les mises à jour">
+        <p class="accroche">
+          Dans « Diagnostiquer », tu as vu pourquoi installer au plus tôt les mises à jour de
+          sécurité. Fais-le sur ton ordinateur.
+        </p>
+        <p class="discret">Sur ta machine :</p>
+        <ul>
+          <li>Windows 11 : Paramètres, puis Windows Update.</li>
+          <li>Windows 10 : Paramètres, puis Mise à jour et sécurité, puis Windows Update.</li>
+          <li>
+            Mac : menu Pomme, puis Réglages Système, puis Général, puis Mise à jour de logiciels ;
+            sur un macOS plus ancien, Préférences Système, puis Mise à jour de logiciels.
+          </li>
+        </ul>
+        <p>
+          Recherche les mises à jour, puis installe celles qui restent. L’installation peut demander
+          un redémarrage : enregistre ton travail avant. Tu peux envoyer ton constat plus tard, une
+          fois fini.
+        </p>
+        <details data-cran="1">
+          <summary>Un coup de pouce</summary>
+          <p>
+            Le bouton s’appelle Rechercher des mises à jour sous Windows. Sur un Mac, la recherche
+            se fait seule à l’ouverture de la page. Une mise à jour en attente de redémarrage est
+            installée une fois l’ordinateur redémarré.
+          </p>
+        </details>
+      </div>
+    </template>
+
+    <!-- ET18, aisance : ouvrir l'outil qui décrit sa machine et y lire sa RAM, en 20, 15 puis 10 secondes. -->
+    <template data-etape="ET18">
+      <p class="accroche">
+        Quand une machine rame, le premier geste est d’ouvrir l’outil qui la décrit. Ce geste doit
+        devenir un réflexe, comme passer une vitesse en voiture.
+      </p>
+      <ol>
+        <li>Appuie sur Prêt : le chrono part.</li>
+        <li>
+          Sous Windows, Ctrl+Maj+Échap, onglet Performance, puis Mémoire ; sur un Mac, menu Pomme,
+          puis À propos de ce Mac.
+        </li>
+        <li>Lis la RAM, reviens ici et écris-la : le chrono s’arrête quand tu valides.</li>
+      </ol>
+      <p>
+        Lis-la à chaque fois, sans la taper de mémoire : c’est l’ouverture que tu entraînes. Une
+        série, ce sont 3 ouvertures ; chaque niveau se réussit un jour différent.
+      </p>
+      <div data-widget="ouvrir"></div>
+    </template>
+
     <!-- ET13, pratique : les items sont dans des <template data-item>. -->
 
     <!-- ET14, ensemble : le pari repris, le schéma construit pour Malo, la correction du pari, la RAM soudée, ce qui suit. -->
@@ -4860,12 +5127,8 @@ Total             8 000 Mo</code></pre>
         <h3>À explorer plus tard</h3>
         <ul>
           <li>
-            Les températures du processeur, et les logiciels qui les affichent, comme HWMonitor sous
-            Windows.
-          </li>
-          <li>
-            La virtualisation : faire tourner un second système, Linux par exemple, dans son
-            ordinateur. Elle demande de la RAM, et un réglage du processeur.
+            Créer une machine virtuelle et y faire tourner un second système : tu le feras sous
+            Windows en installant WSL 2, qui y fait tourner Linux.
           </li>
           <li>
             Les tests de performance, qui mesurent la vitesse réelle d’un processeur, et les noms
@@ -5624,14 +5887,26 @@ Total             8 000 Mo</code></pre>
     <template data-item="PR2-2">
       <div class="ex">
         <p class="cas">
-          Sur ton ordinateur, observe la RAM. Sous Windows, ouvre le gestionnaire des tâches, onglet
-          Performance, puis Mémoire ; sur un Mac, le Moniteur d’activité, onglet Mémoire.
+          Sur ton ordinateur, remplis ta RAM pour de vrai. Sous Windows, ouvre le gestionnaire des
+          tâches, onglet Performance, puis Mémoire ; sur un Mac, le Moniteur d’activité, onglet
+          Mémoire.
         </p>
         <ol>
-          <li>Note la mémoire utilisée.</li>
+          <li>
+            Note la mémoire utilisée ; sur un Mac, la couleur de la pression et la mémoire
+            d’échange.
+          </li>
           <li>Réponds à la question sous ces étapes.</li>
-          <li>Ouvre 20 onglets dans ton navigateur, chacun sur un site différent.</li>
-          <li>Note de nouveau la mémoire utilisée, et compare.</li>
+          <li>
+            Ouvre 30 onglets dans ton navigateur, chacun sur un site lourd et différent : vidéos,
+            cartes, journaux pleins d’images.
+          </li>
+          <li>Note de nouveau ce que tu as noté au début, et compare.</li>
+          <li>
+            Reviens à l’un des premiers onglets ouverts : s’affiche-t-il tout de suite, ou après une
+            attente ? Sous Windows, regarde aussi la jauge du disque à ce moment.
+          </li>
+          <li>Écris ce que tu as vu, et pourquoi, dans la case qui s’ouvre sous ta réponse.</li>
         </ol>
         <div
           class="ex"
@@ -5639,9 +5914,10 @@ Total             8 000 Mo</code></pre>
           data-reponse="monte"
           data-melanger="non"
           data-aide1="Où chaque onglet ouvert est-il tenu prêt ?"
-          data-explication="C’est réussi si tu as relevé la mémoire utilisée avant et après les 20 onglets, et vu l’écart. Ferme ensuite les onglets : elle redescend."
+          data-explication="C’est réussi si tu as relevé la mémoire utilisée avant et après les 30 onglets, et vu l’écart. Ferme ensuite les onglets : elle redescend."
+          data-justifier="Avec tes 30 onglets ouverts, ta machine a-t-elle ralenti au retour sur l’un des premiers ? Dis ce que tu as vu, et pourquoi."
         >
-          <p class="q">Quand tu auras ouvert les 20 onglets, que fera la mémoire utilisée ?</p>
+          <p class="q">Quand tu auras ouvert les 30 onglets, que fera la mémoire utilisée ?</p>
           <ul class="options">
             <li data-option="monte">Elle va monter.</li>
             <li
@@ -5829,14 +6105,14 @@ Total             8 000 Mo</code></pre>
       {
         "schema": 2,
         "bloc": "B03",
-        "type": "systemes",
-        "version": 2,
+        "type": ["systemes", "procedures"],
+        "version": 3,
         "titre": "L’ordinateur et ses composants",
         "titre_court": "Les composants",
-        "objectif": "Expliquer le rôle du CPU (cœurs, horloge, cache), de la RAM (volatile), du stockage (HDD, SSD), de la carte mère, du GPU et du refroidissement, et le trajet d’un programme du stockage à la RAM puis au CPU ; reconnaître l’architecture d’un processeur (x64 ou ARM64) et choisir la version d’un logiciel qui lui correspond ; relever ces caractéristiques sur sa machine ; diagnostiquer un symptôme simple (lenteur, mémoire pleine, surchauffe) ; juger si la machine convient au développement web.",
+        "objectif": "Expliquer le rôle du CPU (cœurs, horloge, cache), de la RAM (volatile), du stockage (HDD, SSD), de la carte mère, du GPU et du refroidissement, et le trajet d’un programme du stockage à la RAM puis au CPU ; reconnaître l’architecture d’un processeur (x64 ou ARM64) et choisir la version d’un logiciel qui lui correspond ; relever ces caractéristiques sur sa machine, dont la virtualisation que demandent WSL 2 et Docker, et ouvrir l’outil qui les montre en moins de 10 secondes ; diagnostiquer un symptôme simple (lenteur, mémoire pleine, surchauffe) ; entretenir sa machine (poussière, mises à jour de sécurité) ; juger si la machine convient au développement web.",
         "prerequis": ["B01"],
         "pont": 5,
-        "contexte_ia": "Bloc B03 du module « Écosystème et outils du développeur » (DWWM), troisième bloc de la partie La machine. Le modèle du bloc : le stockage (SSD ou disque dur) garde les fichiers et les logiciels, même éteint ; au lancement, ce qu’il garde est copié dans la RAM, volatile, qui tient prêt ce qui tourne ; le processeur l’y lit, par son cache, et l’exécute sur ses cœurs ; la carte graphique dessine l’image, que l’écran affiche ; la carte mère relie le tout, et le refroidissement évacue la chaleur. Ordres de grandeur du bloc : RAM 0,0001 ms, SSD 0,1 ms, disque dur 10 ms par accès ; 1 Go compté comme 1 000 Mo ; Windows 3 000 Mo, VS Code 1 000 Mo, un onglet 150 Mo, une journée de développement environ 8 000 Mo. La RAM pleine, une partie part dans le fichier d’échange, sur le disque, et tout ralentit. Les GHz comptent les cycles par seconde ; les instructions par seconde sont les GHz multipliés par les instructions par cycle, qui changent d’une génération à l’autre. Deux familles de processeurs : x64 (Intel, AMD) et ARM64 (puces M d’Apple, certains PC) ; un logiciel se prend dans la version de sa famille ; un Mac ARM fait tourner une version Intel traduite par Rosetta 2, moins vite, et un PC Windows ARM une version x64 traduite par Windows ; sur un PC x64 ou un Mac Intel, une version ARM64 ne se lance pas ; « 64 bits » ne dit pas la famille ; la famille s’appelle aussi l’architecture ; les processeurs Snapdragon sont ARM64. Diagnostic : la jauge au maximum du gestionnaire des tâches (processeur, mémoire, disque) désigne la cause ; un disque à 100 % est occupé, pas plein ; un processeur à 100 % est occupé par un travail lourd (le laisser finir, sans rien lancer à côté) ou par un programme bloqué (Fin de tâche) ; un portable qui chauffe baisse sa fréquence, et sa vitesse affichée tombe ; la vitesse du moment peut dépasser la vitesse de base quand le processeur reste frais. À génération et conception égales, plus de GHz veut bien dire plus rapide. Une carte graphique dédiée sert aux jeux, à la 3D et au montage vidéo. Repères pour développer : RAM 8 Go au minimum, 16 Go à l’aise ; un SSD, 256 Go au minimum, 512 Go à l’aise ; 4 cœurs au minimum, 6 à l’aise ; x64 ou ARM64 ; carte graphique intégrée. Notations à accepter comme équivalentes : CPU et processeur, GPU et carte graphique, HDD et disque dur, mémoire vive et RAM ; x64, x86-64 et AMD64 ; ARM64, Arm64 et AArch64 ; Apple silicon et puce M. Accepte des ordres de grandeur voisins (un SSD de 0,05 à 0,1 ms, par exemple) et une conversion de 1 Go en 1 024 Mo. La fiche n’enseigne ni les températures ni les logiciels qui les mesurent, ni la virtualisation, ni les tests de performance, ni les générations de RAM (DDR4, DDR5) ni les types de SSD (NVMe, SATA), ni Linux, ni les portes logiques : ne pénalise pas leur absence, et accepte une réponse juste qui les emploie. Pièges à repérer : E1, confondre RAM et stockage (prendre 512 Go de SSD pour de la mémoire vive, croire que la RAM garde ce qui n’est pas enregistré) ; E2, croire que plus de GHz veut toujours dire plus rapide ; E3, ignorer la famille du processeur au téléchargement, ou lire « 64 bits » comme x64 ; E4, faire lire au processeur un programme ou un fichier directement sur le stockage, sans la copie en RAM. Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Pour examiner une explication, la grille de compréhension : l’idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d’application, le terme exact, la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Chaque attendu vient de la fiche : les étapes 3 à 12 et 14 (sources S1 à S11) ; ce qui est marqué « D’après » y est écrit ; ce qui est marqué « Déduit » s’obtient en appliquant une règle de la fiche à un autre cas. Les conventions dont une question se sert (1 GHz, les Mo d’une journée) sont redonnées avec elle : ce qui compte, c’est le raisonnement, pas de réciter les nombres.",
+        "contexte_ia": "Bloc B03 du module « Écosystème et outils du développeur » (DWWM), troisième bloc de la partie La machine. Le modèle du bloc : le stockage (SSD ou disque dur) garde les fichiers et les logiciels, même éteint ; au lancement, ce qu’il garde est copié dans la RAM, volatile, qui tient prêt ce qui tourne ; le processeur l’y lit, par son cache, et l’exécute sur ses cœurs ; la carte graphique dessine l’image, que l’écran affiche ; la carte mère relie le tout, et le refroidissement évacue la chaleur. Ordres de grandeur du bloc : RAM 0,0001 ms, SSD 0,1 ms, disque dur 10 ms par accès ; 1 Go compté comme 1 000 Mo ; Windows 3 000 Mo, VS Code 1 000 Mo, un onglet 150 Mo, une journée de développement environ 8 000 Mo. La RAM pleine, une partie part dans le fichier d’échange, sur le disque, et tout ralentit. Les GHz comptent les cycles par seconde ; les instructions par seconde sont les GHz multipliés par les instructions par cycle, qui changent d’une génération à l’autre. Deux familles de processeurs : x64 (Intel, AMD) et ARM64 (puces M d’Apple, certains PC) ; un logiciel se prend dans la version de sa famille ; un Mac ARM fait tourner une version Intel traduite par Rosetta 2, moins vite, et un PC Windows ARM une version x64 traduite par Windows ; sur un PC x64 ou un Mac Intel, une version ARM64 ne se lance pas ; « 64 bits » ne dit pas la famille ; la famille s’appelle aussi l’architecture ; les processeurs Snapdragon sont ARM64. Diagnostic : la jauge au maximum du gestionnaire des tâches (processeur, mémoire, disque) désigne la cause ; un disque à 100 % est occupé, pas plein ; un processeur à 100 % est occupé par un travail lourd (le laisser finir, sans rien lancer à côté) ou par un programme bloqué (Fin de tâche) ; un portable qui chauffe baisse sa fréquence, et sa vitesse affichée tombe ; la vitesse du moment peut dépasser la vitesse de base quand le processeur reste frais. À génération et conception égales, plus de GHz veut bien dire plus rapide. Une carte graphique dédiée sert aux jeux, à la 3D et au montage vidéo. Repères pour développer : RAM 8 Go au minimum, 16 Go à l’aise ; un SSD, 256 Go au minimum, 512 Go à l’aise ; 4 cœurs au minimum, 6 à l’aise ; x64 ou ARM64 ; carte graphique intégrée. Notations à accepter comme équivalentes : CPU et processeur, GPU et carte graphique, HDD et disque dur, mémoire vive et RAM ; x64, x86-64 et AMD64 ; ARM64, Arm64 et AArch64 ; Apple silicon et puce M. Accepte des ordres de grandeur voisins (un SSD de 0,05 à 0,1 ms, par exemple) et une conversion de 1 Go en 1 024 Mo. Virtualisation : la capacité du processeur à faire tourner un second système à côté du sien, une machine virtuelle ; WSL 2 et Docker en ont besoin ; « Désactivé » dans le gestionnaire des tâches veut dire éteinte dans le BIOS ou l’UEFI de la carte mère, où elle s’active ; sur un Mac, elle est toujours en service. Entretien : retirer la poussière des grilles ; installer au plus tôt les mises à jour de sécurité, qui corrigent des failles connues de tous une fois corrigées. Températures, relevées dans HWMonitor (facultatif, sous Windows) : souvent 30 à 50 °C au repos, 70 à 90 °C sous charge ; vers 95 °C et plus, le processeur baisse sa fréquence. La fiche n’enseigne ni comment créer une machine virtuelle, ni les tests de performance, ni les générations de RAM (DDR4, DDR5) ni les types de SSD (NVMe, SATA), ni Linux, ni les portes logiques : ne pénalise pas leur absence, et accepte une réponse juste qui les emploie. Pièges à repérer : E1, confondre RAM et stockage (prendre 512 Go de SSD pour de la mémoire vive, croire que la RAM garde ce qui n’est pas enregistré) ; E2, croire que plus de GHz veut toujours dire plus rapide ; E3, ignorer la famille du processeur au téléchargement, ou lire « 64 bits » comme x64 ; E4, faire lire au processeur un programme ou un fichier directement sur le stockage, sans la copie en RAM. Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Pour examiner une explication, la grille de compréhension : l’idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d’application, le terme exact, la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Chaque attendu vient de la fiche : les étapes 3 à 12 et 14 (sources S1 à S11) ; ce qui est marqué « D’après » y est écrit ; ce qui est marqué « Déduit » s’obtient en appliquant une règle de la fiche à un autre cas. Les conventions dont une question se sert (1 GHz, les Mo d’une journée) sont redonnées avec elle : ce qui compte, c’est le raisonnement, pas de réciter les nombres.",
         "sources": [
           {
             "id": "S1",
@@ -5950,6 +6226,16 @@ Total             8 000 Mo</code></pre>
             "type": "pratique"
           },
           {
+            "id": "ET16",
+            "titre": "Sur ta machine",
+            "type": "atelier"
+          },
+          {
+            "id": "ET18",
+            "titre": "Vite, l’outil",
+            "type": "aisance"
+          },
+          {
             "id": "ET14",
             "titre": "Le portable de Yasmine, enfin",
             "type": "ensemble"
@@ -6008,8 +6294,8 @@ Total             8 000 Mo</code></pre>
           },
           {
             "id": "B03-R4",
-            "question": "Le PC d’Adam rame pendant qu’il exporte une longue vidéo, un travail qu’il a lancé exprès. Son gestionnaire des tâches affiche : processeur 100 %, mémoire 40 %, disque 3 %. Qu’est-ce qui le freine, et que lui conseilles-tu ?",
-            "attendu": "Le processeur, à 100 %, occupé par l’export : la RAM et le disque ont de la marge. Adam vérifie dans l’onglet Processus que c’est bien l’export, puis le laisse finir sans rien lancer à côté ; plus de RAM ou un SSD n’y changeraient rien. Déduit de l’étape 11.",
+            "question": "Trois PC rament. Adam exporte une longue vidéo, lancée exprès : processeur 100 %, mémoire 40 %, disque 3 %. Rayan a beaucoup d’onglets ouverts : processeur 15 %, mémoire 97 %, disque dur 100 %. Chloé joue depuis vingt minutes : ventilateur à fond, grilles grises de poussière, vitesse affichée tombée de 3,8 à 1,4 GHz. Pour chacun, qu’est-ce qui le freine, et que lui conseilles-tu ?",
+            "attendu": "Adam : le processeur, occupé par l’export, un travail lourd et voulu ; il le laisse finir sans rien lancer à côté, plus de RAM ou un SSD n’y changeraient rien. Rayan : la RAM, pleine ; le disque travaille pour le fichier d’échange ; il ferme des onglets, et à terme ajoute de la RAM. Chloé : la chaleur ; la poussière bouche les grilles, et le processeur baisse sa fréquence pour se protéger ; elle fait retirer la poussière. Déduit des étapes 9 et 11.",
             "erreurs": []
           },
           {
@@ -6059,6 +6345,13 @@ Total             8 000 Mo</code></pre>
             "item": "PR1-7",
             "question": "Malik exporte une longue vidéo. Le ventilateur de son portable souffle à fond, et l’export ralentit ; la vitesse de base de son processeur est de 2,0 GHz, la vitesse affichée passe de 3,8 GHz à 1,2 GHz en vingt minutes : il chauffe trop. Si Malik relançait le même export, portable posé sur son lit, que deviendrait la vitesse affichée ? Pourquoi ?",
             "attendu": "Elle baisserait encore, et plus tôt : le tissu bouche les grilles, l’air chaud sort moins bien, et le processeur chauffe plus vite. Trop chaud, il baisse sa fréquence pour se protéger. Déduit de l’étape 9.",
+            "erreurs": []
+          },
+          {
+            "id": "PR2-2",
+            "item": "PR2-2",
+            "question": "Sur ton ordinateur, tu as ouvert 30 onglets lourds en relevant la mémoire utilisée avant et après (sur un Mac, la pression et la mémoire d’échange), puis rouvert l’un des premiers. Ta machine a-t-elle ralenti à ce retour ? Dis ce que tu as vu, et pourquoi.",
+            "attendu": "Chaque onglet est tenu prêt dans la RAM : la mémoire utilisée a monté. Si la RAM s’est remplie, une partie est partie dans le fichier d’échange (sur un Mac, la mémoire d’échange, avec la pression qui passe au jaune ou au rouge), sur le disque, bien plus lent : le premier onglet s’affiche après une attente, le temps d’être relu, et sous Windows le disque travaille. S’il restait assez de RAM, rien n’a ralenti : rien n’est parti sur le disque. Les deux observations sont justes si l’explication va avec ; un navigateur qui a mis l’onglet en veille et le recharge libère aussi de la RAM, une réponse qui le dit est juste. Déduit des étapes 6 et 10.",
             "erreurs": []
           },
           {
@@ -6123,6 +6416,18 @@ Total             8 000 Mo</code></pre>
             "question": "Ton portable a quatre ans. Posé sur une table, il ralentit après vingt minutes de travail ; son ventilateur souffle fort, et ses grilles sont grises de poussière. Que se passe-t-il, et que fais-tu ?",
             "attendu": "La poussière bouche les grilles : la chaleur ne part plus, et le processeur baisse sa fréquence pour se protéger. On fait retirer la poussière, pour dégager les grilles. Déduit de l’étape 9.",
             "erreurs": []
+          },
+          {
+            "id": "B03-Q10",
+            "question": "Ton ordinateur te propose une mise à jour de sécurité depuis deux semaines. Tu la repousses : « mon PC marche très bien ». Que risques-tu, et pourquoi ?",
+            "attendu": "Une faille de sécurité, un défaut par lequel un programme malveillant peut entrer : celle que la mise à jour corrige est connue de tous depuis sa correction. Tant qu’elle n’est pas installée, la machine lui reste ouverte, même si elle marche bien. Il faut l’installer au plus tôt. D’après l’étape 11.",
+            "erreurs": []
+          },
+          {
+            "id": "B03-Q11",
+            "question": "L’installation de Docker s’arrête sur le PC Windows de Camille, qui a quatre ans : « la virtualisation n’est pas activée ». Que se passe-t-il, et que fait Camille ?",
+            "attendu": "Docker, comme WSL 2, fait tourner un système dans une machine virtuelle : il demande au processeur la virtualisation. Son processeur en est très probablement capable, mais elle est éteinte dans le BIOS ou l’UEFI de la carte mère : Camille l’y active, sans changer d’ordinateur. D’après l’étape 10.",
+            "erreurs": []
           }
         ],
         "differees": [
@@ -6155,6 +6460,51 @@ Total             8 000 Mo</code></pre>
             "erreurs": ["E4"]
           },
           {
+            "id": "B03-O1",
+            "type": "tache",
+            "consigne": "Sans la fiche ni tes notes, enregistre-toi sur ton téléphone : explique à voix haute ce qui se passe quand tu lances VS Code, rangé sur ton SSD. Par où passe le programme, du stockage jusqu’au processeur, et pourquoi chaque étape ? Puis réécoute-toi, et compare au schéma de « Trois places ».",
+            "attendu": "VS Code, rangé sur le SSD, y est lu puis copié dans la RAM ; le processeur l’y lit, par son cache, et l’exécute sur ses cœurs ; le SSD garde son exemplaire. Le processeur ne lit pas sur le SSD : bien plus lent que la RAM, il le ferait attendre à chaque donnée. Le dire lu directement sur le SSD, c’est l’erreur E4. Déduit de l’étape 4.",
+            "erreurs": ["E4"],
+            "verification": {
+              "mode": "constat",
+              "criteres": [
+                "J’ai enregistré mon explication sur mon téléphone, sans regarder la fiche ni mes notes.",
+                "À chaque étape, j’ai dit où se trouve ce qui est lancé ou ouvert, et pourquoi il y passe.",
+                "En réécoutant, puis en comparant au schéma de « Trois places », je n’ai trouvé ni étape manquante ni erreur."
+              ]
+            }
+          },
+          {
+            "id": "B03-O2",
+            "type": "tache",
+            "consigne": "Sans la fiche ni tes notes, enregistre-toi sur ton téléphone : explique à voix haute ce qui se passe quand tu ouvres une photo rangée sur un disque dur, pour la retoucher, puis fermes sans enregistrer. Par où passe la photo, et que garde le disque ? Puis réécoute-toi, et compare au schéma de « Trois places ».",
+            "attendu": "La photo, rangée sur le disque dur, y est lue, lentement, puis copiée dans la RAM, où le processeur la lit et la traite. Les retouches ne sont que dans la copie en RAM, libérée à la fermeture : le disque garde la photo d’origine. Croire que les retouches sont allées sur le disque, c’est l’erreur E4 ; croire que la RAM les garde après la fermeture, l’erreur E1. Déduit des étapes 4 et 5.",
+            "erreurs": ["E1", "E4"],
+            "verification": {
+              "mode": "constat",
+              "criteres": [
+                "J’ai enregistré mon explication sur mon téléphone, sans regarder la fiche ni mes notes.",
+                "À chaque étape, j’ai dit où se trouve ce qui est lancé ou ouvert, et pourquoi il y passe.",
+                "En réécoutant, puis en comparant au schéma de « Trois places », je n’ai trouvé ni étape manquante ni erreur."
+              ]
+            }
+          },
+          {
+            "id": "B03-O3",
+            "type": "tache",
+            "consigne": "Sans la fiche ni tes notes, enregistre-toi sur ton téléphone : explique à voix haute ce qui se passe quand tu lances ton navigateur, rangé sur ton stockage, puis ouvres des onglets jusqu’à remplir ta RAM. Par où passe le navigateur, et que change la RAM pleine ? Puis réécoute-toi, et compare au schéma de « Trois places ».",
+            "attendu": "Le navigateur, rangé sur le stockage, y est lu puis copié dans la RAM, où le processeur le lit et l’exécute ; chaque onglet y est tenu prêt. La RAM pleine, le système range une partie dans le fichier d’échange, sur le disque, bien plus lent : revenir à un onglet rangé là attend sa relecture. Le dire lu directement sur le stockage, c’est l’erreur E4. Déduit des étapes 4 et 6.",
+            "erreurs": ["E4"],
+            "verification": {
+              "mode": "constat",
+              "criteres": [
+                "J’ai enregistré mon explication sur mon téléphone, sans regarder la fiche ni mes notes.",
+                "À chaque étape, j’ai dit où se trouve ce qui est lancé ou ouvert, et pourquoi il y passe.",
+                "En réécoutant, puis en comparant au schéma de « Trois places », je n’ai trouvé ni étape manquante ni erreur."
+              ]
+            }
+          },
+          {
             "id": "B03-T1",
             "type": "transfert",
             "forme": "choisir_methode",
@@ -6175,7 +6525,7 @@ Total             8 000 Mo</code></pre>
             "type": "transfert",
             "forme": "hors_champ",
             "consigne": "Pour lire : les puces Apple M2 sont de la famille ARM64. Ilyès a un Mac à puce M2. Un logiciel de son école n’existe qu’en version Windows x64. Peut-il l’installer sur son Mac ? Pourquoi ?",
-            "attendu": "Pas tel quel : une version écrite pour un autre système ne se lance pas, et celle-ci est pour Windows, sur x64. Comment s’en servir quand même, en faisant tourner Windows sur le Mac, est hors du bloc (la virtualisation, nommée dans « À explorer plus tard ») : une réponse qui le dit sans le détailler est juste. Déduit de l’étape 8.",
+            "attendu": "Pas tel quel : une version écrite pour un autre système ne se lance pas, et celle-ci est pour Windows, sur x64. Comment s’en servir quand même, en faisant tourner Windows dans une machine virtuelle sur le Mac, dépasse le bloc, qui ne dit que ce qu’est la virtualisation : une réponse qui l’évoque sans le détailler est juste. Déduit de l’étape 8.",
             "erreurs": []
           },
           {
@@ -6239,6 +6589,18 @@ Total             8 000 Mo</code></pre>
             "reussite": 2
           }
         ],
+        "atelier": {
+          "id": "AT1",
+          "reussite_aide_max": 0,
+          "criteres": [
+            "J’ai noté si la virtualisation est en service sur ma machine : sous Windows, d’après la ligne Virtualisation du gestionnaire des tâches.",
+            "J’ai ouvert la page des mises à jour de mon système, recherché les mises à jour, et installé celles qui restaient."
+          ]
+        },
+        "aisance": {
+          "libelle": "Ouvrir l’outil qui décrit sa machine et y lire sa RAM",
+          "paliers_s": [20, 15, 10]
+        },
         "cartes": [
           {
             "id": "B03-K1",
@@ -6299,6 +6661,16 @@ Total             8 000 Mo</code></pre>
             "id": "B03-K12",
             "recto": "Pourquoi un portable qui chauffe ralentit-il ?",
             "verso": "Pour ne pas surchauffer, le processeur baisse sa fréquence. Des grilles bouchées ou un coussin empêchent la chaleur de partir. D’après « Autour du processeur »."
+          },
+          {
+            "id": "B03-K13",
+            "recto": "Qu’est-ce que la virtualisation, et qui en a besoin ?",
+            "verso": "La capacité du processeur à faire tourner un second système à côté du sien : une machine virtuelle. WSL 2 et Docker en ont besoin ; désactivée, elle s’active dans le BIOS ou l’UEFI. D’après « Ta machine »."
+          },
+          {
+            "id": "B03-K14",
+            "recto": "Pourquoi installer une mise à jour de sécurité au plus tôt ?",
+            "verso": "Elle corrige une faille, un défaut par lequel un programme malveillant peut entrer. Une fois corrigée, la faille est connue de tous : une machine pas à jour lui reste ouverte. D’après « Diagnostiquer »."
           }
         ]
       }
@@ -6327,7 +6699,7 @@ Total             8 000 Mo</code></pre>
             "notion": "Décrire le trajet d’un programme ou d’un fichier du stockage à la RAM puis au processeur, et dire pourquoi le processeur ne lit pas sur le stockage",
             "montree": ["ET4"],
             "pratiquee": ["PR1"],
-            "questions": ["B03-R1", "B03-C4", "B03-K3"]
+            "questions": ["B03-R1", "B03-C4", "B03-K3", "B03-O1", "B03-O2", "B03-O3"]
           },
           {
             "id": "N3",
@@ -6341,7 +6713,7 @@ Total             8 000 Mo</code></pre>
             "notion": "Expliquer ce qui se passe quand la RAM est pleine (le fichier d’échange) et compter ce qu’une journée de travail y demande",
             "montree": ["ET6"],
             "pratiquee": ["PR1", "PR2"],
-            "questions": ["B03-Q4", "B03-T2", "B03-K5"]
+            "questions": ["B03-Q4", "B03-T2", "B03-K5", "B03-O3"]
           },
           {
             "id": "N5",
@@ -6368,7 +6740,7 @@ Total             8 000 Mo</code></pre>
             "id": "N8",
             "notion": "Relever sur sa machine le processeur, ses cœurs, la RAM, le type et la taille du stockage, et la famille du processeur",
             "montree": ["ET10"],
-            "pratiquee": ["PR2"],
+            "pratiquee": ["PR2", "AT1"],
             "questions": ["B03-T4", "B03-K10"]
           },
           {
@@ -6384,6 +6756,27 @@ Total             8 000 Mo</code></pre>
             "montree": ["ET12"],
             "pratiquee": ["PR1"],
             "questions": ["B03-R6"]
+          },
+          {
+            "id": "N11",
+            "notion": "Dire ce qu’est la virtualisation, qui en a besoin (WSL 2, Docker), lire si elle est activée sur sa machine et où elle s’active (BIOS ou UEFI)",
+            "montree": ["ET10"],
+            "pratiquee": ["AT1"],
+            "questions": ["B03-Q11", "B03-T3", "B03-K13"]
+          },
+          {
+            "id": "N12",
+            "notion": "Entretenir sa machine : retirer la poussière des grilles, installer au plus tôt les mises à jour de sécurité, et dire pourquoi",
+            "montree": ["ET9", "ET11"],
+            "pratiquee": ["AT1"],
+            "questions": ["B03-Q9", "B03-Q10", "B03-K14"]
+          },
+          {
+            "id": "N13",
+            "notion": "Ouvrir l’outil qui décrit sa machine (gestionnaire des tâches, À propos de ce Mac) et y lire une caractéristique en moins de 10 secondes",
+            "montree": ["ET10"],
+            "pratiquee": ["PR2"],
+            "questions": ["B03-O1", "B03-O2", "B03-O3"]
           }
         ],
         "relations": [
@@ -6498,6 +6891,22 @@ Total             8 000 Mo</code></pre>
             "type": "composition",
             "montree": "ET10",
             "questions": ["B03-T4"]
+          },
+          {
+            "id": "L15",
+            "de": "N11",
+            "vers": "N5",
+            "type": "condition",
+            "montree": "ET10",
+            "questions": ["B03-Q11", "B03-K13"]
+          },
+          {
+            "id": "L16",
+            "de": "N12",
+            "vers": "N7",
+            "type": "cause",
+            "montree": "ET11",
+            "questions": ["B03-Q9"]
           }
         ],
         "ensemble": {
@@ -6506,8 +6915,8 @@ Total             8 000 Mo</code></pre>
           "questions": ["B03-R1", "B03-R6", "B03-T1"]
         },
         "hors_objectif": [
-          "Les températures et les logiciels qui les mesurent (HWMonitor) : nommés dans « À explorer plus tard » (étape 14), jamais interrogés ; la surchauffe se lit à la fréquence qui baisse",
-          "La virtualisation et les machines virtuelles : nommées dans « À explorer plus tard », jamais interrogées ; B03-T2 parle d’un logiciel qui occupe de la RAM, sans le nommer ; B03-T3 ne demande pas comment faire tourner Windows sur un Mac",
+          "Créer et régler une machine virtuelle, installer WSL 2 ou Docker : un bloc suivant (Installer un environnement UNIX) ; ici, la virtualisation se lit et se définit, et B03-T3 ne demande pas comment faire tourner Windows sur un Mac",
+          "Les températures (HWMonitor) : relevées dans l’atelier, facultatives et sous Windows seulement, comme le plan le prévoit ; jamais interrogées, la surchauffe se lit à la fréquence qui baisse",
           "Les tests de performance (benchmarks) : nommés dans « À explorer plus tard », jamais interrogés ; la comparaison des processeurs passe par les instructions par cycle",
           "Les générations de RAM (DDR4, DDR5) et les types de SSD (NVMe, SATA) : nommés dans « À explorer plus tard », jamais interrogés",
           "Linux et la commande qui donne la famille du processeur : le bloc relève sur Windows et macOS",
@@ -8653,7 +9062,6 @@ Total             8 000 Mo</code></pre>
     -->
     <script id="outils-bloc">
       /* Outils interactifs de la fiche B03 : montés quand le gabarit a dessiné une étape. */
-      /* Outils interactifs de la fiche B02 : montés quand le gabarit a dessiné une étape. */
       ;(function () {
         'use strict'
         const $ = (s, r = document) => r.querySelector(s)
@@ -9836,12 +10244,284 @@ Total             8 000 Mo</code></pre>
           n.textContent = fr('Au début, tu avais répondu : « ' + option.textContent.trim() + ' »')
         }
 
+        /**
+         * L'aisance : ouvrir l'outil qui décrit sa machine, vite. Une série, ce sont 3 ouvertures :
+         * « Prêt » lance le chrono, l'apprenant ouvre l'outil, y lit sa RAM et l'écrit ici ; le chrono
+         * s'arrête quand il valide. La RAM se compare à sa fiche « Ma machine » (trace machine). Trois
+         * niveaux, les paliers du manifeste ; un niveau se réussit avec 3 ouvertures justes dans le
+         * temps, un jour différent du précédent. Chaque série finie part au pont (aisance.resultat),
+         * avec la durée de la plus lente.
+         */
+        const NIVEAUX = JSON.parse(document.getElementById('bloc-manifest').textContent).aisance
+          .paliers_s
+        const PAR_SERIE = 3
+        /** Les séries d'aisance réussies que le serveur garde (fiche:rendu, detail.aisance). */
+        let aisanceServeur = []
+        function dateCourte(cle) {
+          const [a, m, j] = cle.split('-').map(Number)
+          return new Date(a, m - 1, j).toLocaleDateString('fr-FR', {
+            day: 'numeric',
+            month: 'long',
+          })
+        }
+        /** Les niveaux relus dans les séries réussies du serveur : la même règle que le moteur. */
+        function niveauxDuServeur() {
+          const niveaux = []
+          for (const serie of aisanceServeur) {
+            if (niveaux.length >= NIVEAUX.length) break
+            const jour = jourCle(new Date(serie.le))
+            if (serie.duree_s > NIVEAUX[niveaux.length]) continue
+            if (niveaux.at(-1)?.jour === jour) continue
+            niveaux.push({ niveau: niveaux.length + 1, jour })
+          }
+          return niveaux
+        }
+        /** Un nombre de Go écrit par l'apprenant (« 16 », « 15,8 », « 16 Go ») ; sinon NaN. */
+        function go(s) {
+          const t = String(s).replace(/\s|go/gi, '').replace(',', '.')
+          return /^\d+(\.\d+)?$/.test(t) ? Number(t) : NaN
+        }
+        function ouvrir(n) {
+          const machine = traces.machine
+          if (!machine || typeof machine !== 'object' || Number.isNaN(Number(machine.ram))) {
+            n.append(
+              el('p', {
+                class: 'retour',
+                text: 'Remplis d’abord ta fiche « Ma machine », dans « Entraînement » : c’est là que la page lit ta RAM.',
+              }),
+            )
+            return
+          }
+          const ram = Number(machine.ram)
+          const locaux = Array.isArray(traces.ouvrir)
+            ? traces.ouvrir.filter((x) => x && typeof x.jour === 'string')
+            : []
+          // Le serveur l'emporte quand il en sait plus : après un recommencement, les traces sont vides.
+          const duServeur = niveauxDuServeur()
+          const reussis = duServeur.length > locaux.length ? duServeur : locaux
+          const liste = el('ol', { class: 'niveaux' })
+          const info = el('p', { class: 'discret' })
+          const zone = el('div', { class: 'zone-vitesse' })
+          const lancer = el('button', { type: 'button', class: 'bouton' })
+          const aujourdhui = () => reussis.some((x) => x.jour === jourCle())
+          const limite = () => NIVEAUX[Math.min(reussis.length, NIVEAUX.length - 1)]
+          function majInfo() {
+            liste.replaceChildren(
+              ...NIVEAUX.map((s, k) => {
+                const r = reussis[k]
+                return el(
+                  'li',
+                  { class: r ? 'reussi' : k === reussis.length ? 'courant' : '' },
+                  el('span', { text: 'Niveau ' + (k + 1) + ' : ' + s + ' secondes par ouverture' }),
+                  el('span', {
+                    class: 'etat ' + (r ? 'solide' : 'attente'),
+                    text: r
+                      ? 'réussi le ' + dateCourte(r.jour)
+                      : k === reussis.length
+                        ? 'à réussir'
+                        : 'plus tard',
+                  }),
+                )
+              }),
+            )
+            if (reussis.length >= NIVEAUX.length)
+              info.textContent = fr(
+                'Les ' +
+                  NIVEAUX.length +
+                  ' niveaux sont réussis. Tu peux continuer à t’entraîner, à ' +
+                  limite() +
+                  ' secondes.',
+              )
+            else if (aujourdhui())
+              info.textContent = fr(
+                'Niveau ' +
+                  reussis.length +
+                  ' réussi aujourd’hui. Le niveau ' +
+                  (reussis.length + 1) +
+                  ' compte à partir de demain : d’ici là, tes séries servent d’entraînement, à ' +
+                  limite() +
+                  ' secondes.',
+              )
+            else
+              info.textContent = fr(
+                'Ta prochaine série compte pour le niveau ' +
+                  (reussis.length + 1) +
+                  ' : ' +
+                  PAR_SERIE +
+                  ' ouvertures justes, en ' +
+                  limite() +
+                  ' secondes chacune au plus.',
+              )
+            lancer.textContent =
+              'Lancer une série de ' + PAR_SERIE + ', à ' + limite() + ' secondes'
+          }
+          let k = 0
+          let justes = 0
+          let plusLente = 0
+          let s = NIVEAUX[0]
+          let compte = false
+          function finSerie() {
+            const reussie = justes === PAR_SERIE
+            window.JanusPont?.envoyer('aisance.resultat', {
+              reussi: reussie,
+              duree_s: Math.round(plusLente * 10) / 10,
+            })
+            let texte =
+              'Série : ' +
+              justes +
+              ' sur ' +
+              PAR_SERIE +
+              '. Un niveau se réussit avec ' +
+              PAR_SERIE +
+              ' sur ' +
+              PAR_SERIE +
+              ' : refais-en une.'
+            if (reussie && compte) {
+              reussis.push({ niveau: reussis.length + 1, jour: jourCle() })
+              tracer('ouvrir', reussis.slice())
+              texte =
+                'Série réussie : ' +
+                PAR_SERIE +
+                ' sur ' +
+                PAR_SERIE +
+                '. Niveau ' +
+                reussis.length +
+                ' réussi.'
+            } else if (reussie)
+              texte =
+                'Série réussie : ' +
+                PAR_SERIE +
+                ' sur ' +
+                PAR_SERIE +
+                '. Elle compte comme entraînement.'
+            majInfo()
+            return el('p', { class: reussie ? 'retour bon' : 'discret', text: texte })
+          }
+          /** Une ouverture : d'abord « Prêt », l'outil fermé ; puis le chrono, jusqu'à la RAM validée. */
+          function pret() {
+            const go1 = el('button', {
+              type: 'button',
+              class: 'bouton',
+              text: 'Prêt : je lance le chrono',
+            })
+            zone.replaceChildren(
+              el(
+                'div',
+                { class: 'ex' },
+                el('p', {
+                  class: 'discret',
+                  text:
+                    'Ouverture ' + (k + 1) + ' sur ' + PAR_SERIE + ' · ' + s + ' secondes au plus',
+                }),
+                el('p', { text: 'Ferme d’abord l’outil s’il est ouvert, puis appuie sur Prêt.' }),
+                el('div', { class: 'saisie' }, go1),
+              ),
+            )
+            go1.focus()
+            go1.addEventListener('click', chrono)
+          }
+          function chrono() {
+            const debut = performance.now()
+            const temps = el('p', { class: 'temps', 'aria-hidden': 'true', text: '0 s' })
+            const id = uid('ouvrir-ram')
+            const champ = el('input', {
+              type: 'text',
+              id,
+              inputmode: 'decimal',
+              autocomplete: 'off',
+            })
+            const valider = el('button', { type: 'button', class: 'bouton', text: 'Valider' })
+            const retour = el('p', { class: 'retour', 'aria-live': 'polite' })
+            const bloc = el(
+              'div',
+              { class: 'ex' },
+              el('p', {
+                class: 'discret',
+                text: 'Ouverture ' + (k + 1) + ' sur ' + PAR_SERIE + ' · le chrono tourne',
+              }),
+              temps,
+              el('label', { for: id, text: 'La RAM que l’outil affiche, en Go' }),
+              el('div', { class: 'saisie' }, champ, valider),
+              retour,
+            )
+            zone.replaceChildren(bloc)
+            const minuteur = setInterval(() => {
+              if (!n.isConnected) return void clearInterval(minuteur)
+              temps.textContent = Math.floor((performance.now() - debut) / 1000) + ' s'
+            }, 250)
+            let termine = false
+            function finir() {
+              if (termine) return
+              const lu = go(champ.value)
+              if (Number.isNaN(lu)) {
+                retour.className = 'retour'
+                retour.textContent = fr('Écris un nombre, comme 16 ou 15,8.')
+                return
+              }
+              termine = true
+              clearInterval(minuteur)
+              const t = (performance.now() - debut) / 1000
+              plusLente = Math.max(plusLente, t)
+              temps.textContent = Math.max(1, Math.round(t)) + ' s'
+              champ.disabled = valider.disabled = true
+              const juste = Math.abs(lu - ram) <= 0.5
+              if (juste && t <= s) {
+                justes += 1
+                retour.className = 'retour bon'
+                retour.textContent = fr('Juste, en ' + Math.max(1, Math.round(t)) + ' s.')
+              } else {
+                retour.className = 'retour faux'
+                retour.textContent = fr(
+                  juste
+                    ? 'Juste, mais en ' + Math.round(t) + ' s : plus de ' + s + ' secondes.'
+                    : 'Ta fiche « Ma machine » dit ' +
+                        ram +
+                        ' Go. Relis la RAM dans l’outil, ou corrige ta fiche dans « Entraînement » si elle se trompe.',
+                )
+              }
+              k += 1
+              if (k === PAR_SERIE) bloc.append(finSerie())
+              const suite = el('button', {
+                type: 'button',
+                class: 'bouton secondaire',
+                text: k < PAR_SERIE ? 'Ouverture suivante' : 'Terminer la série',
+              })
+              suite.addEventListener('click', () => {
+                if (k < PAR_SERIE) pret()
+                else {
+                  zone.replaceChildren()
+                  lancer.hidden = false
+                  lancer.focus()
+                }
+              })
+              bloc.append(el('div', { class: 'saisie' }, suite))
+              setTimeout(() => suite.focus(), 0)
+            }
+            valider.addEventListener('click', finir)
+            champ.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter') finir()
+            })
+          }
+          lancer.addEventListener('click', () => {
+            k = 0
+            justes = 0
+            plusLente = 0
+            s = limite()
+            compte = reussis.length < NIVEAUX.length && !aujourdhui()
+            lancer.hidden = true
+            pret()
+          })
+          n.append(liste, info, zone, el('div', { class: 'rangee' }, lancer))
+          majInfo()
+        }
+
         const OUTILS = {
           lancement,
           mamachine,
           pari,
           'rappel-pari': rappelPari,
           'bilan-pari': bilanPari,
+          ouvrir,
         }
 
         /**
@@ -9880,6 +10560,7 @@ Total             8 000 Mo</code></pre>
         document.addEventListener('fiche:rendu', (evenement) => {
           for (const [cle, val] of Object.entries(evenement.detail?.traces ?? {})) traces[cle] = val
           pratique = evenement.detail?.pratique ?? {}
+          if (Array.isArray(evenement.detail?.aisance)) aisanceServeur = evenement.detail.aisance
           poserLaVariante()
           // Les outils d'abord (le guichet décide si le pari paraît), puis les exercices.
           for (const n of $$('#contenu [data-widget]')) {
@@ -9922,7 +10603,14 @@ Total             8 000 Mo</code></pre>
       /** Les types d'étape que le gabarit sait dessiner : chacun a son moment. */
       const ETAPES_FICHE = MOMENTS.flatMap((moment) => moment.types)
       /** Les étapes à lire, dessinées depuis leur `<template data-etape>`. */
-      const ETAPES_LIBRES = ['perception', 'pretest', 'explication', 'ensemble', 'aisance']
+      const ETAPES_LIBRES = [
+        'perception',
+        'pretest',
+        'explication',
+        'ensemble',
+        'atelier',
+        'aisance',
+      ]
       const LIBELLES_STATUT = {
         non_commence: 'Non commencé',
         en_cours: 'En cours',
@@ -10713,6 +11401,8 @@ Total             8 000 Mo</code></pre>
             '.'
           )
         }
+        if (etape.type === 'atelier')
+          return etat.atelier ? '' : 'Envoie ton constat avant de passer à la suite.'
         if (etape.type !== 'restitution') return ''
         if (!serieOuverte[etape.type]) return ''
         const total = questions(etape.type).length
@@ -11449,9 +12139,12 @@ Total             8 000 Mo</code></pre>
         const modele = document.querySelector('template[data-etape="' + etape.id + '"]')
         const section = creer('section', {}, creer('h2', { textContent: etape.titre }))
         if (etape.type === 'pretest') majEssais = () => essaisDe(section)
+        // L'atelier finit sur son constat : ce que l'apprenant a fait hors de la page.
+        const constat = etape.type === 'atelier' ? constatAtelier(section) : null
         if (!modele) {
           section.append(
             creer('p', { className: 'discret', textContent: 'Rien à lire dans cette étape.' }),
+            ...(constat ? [constat, ...piedEtape(etape)] : []),
           )
           return section
         }
@@ -11460,6 +12153,7 @@ Total             8 000 Mo</code></pre>
         if (ecrans.length < 2) {
           // Un seul écran : tout le template d'un bloc, avec « Écouter ».
           const { ecran, lu } = ecranUnique(modele)
+          if (constat) (ecran.querySelector('[data-ecran]') ?? ecran).append(constat)
           section.append(barreEcoute(lu), ecran)
           activerLiens(section)
           section.append(...piedEtape(etape, 'Étape suivante', ecran))
@@ -11467,6 +12161,7 @@ Total             8 000 Mo</code></pre>
           return section
         }
         // Plusieurs écrans : un seul visible à la fois, les autres restent dans la page (outils déjà montés).
+        if (constat) ecrans[ecrans.length - 1].append(constat)
         const suivante = etapes[etapes.findIndex((e) => e.id === etape.id) + 1]
         const titre = creer('p', { className: 'ecran-titre' })
         const compte = creer('span', { className: 'ecran-compte' })
@@ -11851,53 +12546,140 @@ Total             8 000 Mo</code></pre>
         )
       }
 
-      function afficherAtelier() {
-        const section = creer(
-          'section',
-          {},
-          creer('h2', { textContent: 'Atelier' }),
-          creer('p', {
-            className: 'discret',
-            textContent: 'Dis si tu as réussi l’atelier, sans aide ou avec le cran d’aide utilisé.',
+      /**
+       * Le constat de l'atelier : ce que l'apprenant a fait hors de la page (sur sa machine, dans un
+       * autre logiciel), que la page ne voit pas. Les critères sont fixés d'avance dans le manifeste
+       * (`atelier.criteres`) ; il coche ceux qu'il a atteints et dit l'aide prise, de 0 (aucune) à 4
+       * (la solution entière). Un coup de pouce ouvert dans l'atelier (`<details data-cran="2">`)
+       * fixe l'aide au moins à son cran : elle ne se déclare pas plus basse. Réussi quand chaque
+       * critère est coché ; il ne compte qu'à l'aide 0 (moteur). Il se renvoie autant de fois qu'il
+       * le faut, et l'étape suivante attend un premier envoi.
+       */
+      const AIDES_ATELIER = [
+        'Aucune aide',
+        'Un indice',
+        'Une piste détaillée',
+        'Une partie de la solution',
+        'La solution entière',
+      ]
+      function constatAtelier(section) {
+        const criteres = manifeste.atelier?.criteres ?? ['J’ai fait l’atelier en entier.']
+        const brouillon = () => etat.traces?.['atelier:constat'] ?? { coches: [], cran: 0 }
+        const garder = (suite) => {
+          etat.traces = { ...(etat.traces ?? {}), 'atelier:constat': { ...brouillon(), ...suite } }
+          enregistrer()
+        }
+        const cases = criteres.map((_, k) =>
+          creer('input', {
+            type: 'checkbox',
+            name: 'critere',
+            value: String(k),
+            checked: brouillon().coches.includes(k),
           }),
         )
-        const resultat = creer('p', {
-          className: 'discret',
-          textContent: etat.atelier
-            ? 'Envoyé\u00a0: ' +
-              (etat.atelier.reussi ? 'réussi' : 'non réussi') +
-              ', aide ' +
-              etat.atelier.aide
-            : '',
-        })
-        const envoyer = (reussi, aide) => {
-          pont.envoyer('atelier.resultat', { reussi, predictions_justes: reussi ? 3 : 0, aide })
-          etat.atelier = { reussi, aide }
-          enregistrer()
-          resultat.textContent =
-            'Envoyé\u00a0: ' + (reussi ? 'réussi' : 'non réussi') + ', aide ' + aide
-        }
-        section.append(
-          creer(
-            'div',
-            { className: 'actions' },
-            creer('button', {
-              type: 'button',
-              className: 'bouton',
-              textContent: 'Atelier réussi sans aide',
-              onclick: () => envoyer(true, 0),
-            }),
-            creer('button', {
-              type: 'button',
-              className: 'bouton secondaire',
-              textContent: 'Atelier pas réussi',
-              onclick: () => envoyer(false, 0),
-            }),
-          ),
-          resultat,
-          ...piedEtape(etapes.find((e) => e.type === 'atelier')),
+        const radios = AIDES_ATELIER.map((_, aide) =>
+          creer('input', { type: 'radio', name: 'aide-atelier', value: String(aide) }),
         )
-        return section
+        const note = creer('p', { className: 'discret', hidden: true })
+        const bouton = creer('button', {
+          type: 'button',
+          className: 'bouton',
+          textContent: 'Envoyer mon constat',
+        })
+        const resultat = creer('p', { className: 'retour', role: 'status' })
+        const choisie = () => radios.findIndex((r) => r.checked)
+        const maj = () => {
+          const cran = brouillon().cran
+          radios.forEach((r, aide) => {
+            r.disabled = aide < cran
+            if (r.disabled) r.checked = false
+          })
+          note.hidden = cran === 0
+          note.textContent =
+            'Tu as ouvert un coup de pouce\u00a0: ton aide part au moins à «\u00a0' +
+            AIDES_ATELIER[cran] +
+            '\u00a0».'
+          bouton.disabled = choisie() < 0
+        }
+        const dire = (envoye) => {
+          resultat.textContent = !envoye
+            ? ''
+            : !envoye.reussi
+              ? 'Envoyé\u00a0: pas encore réussi. Refais ce qui manque, puis renvoie ton constat.'
+              : envoye.aide === 0
+                ? 'Envoyé\u00a0: réussi sans aide.'
+                : 'Envoyé\u00a0: réussi, aide ' +
+                  envoye.aide +
+                  '. Refais-le un autre jour sans aide\u00a0: c’est là qu’il compte.'
+        }
+        for (const c of cases)
+          c.addEventListener('change', () => {
+            garder({ coches: cases.flatMap((x, k) => (x.checked ? [k] : [])) })
+          })
+        for (const r of radios) r.addEventListener('change', maj)
+        // Un coup de pouce ouvert relève l'aide au moins à son cran, même refermé ensuite.
+        section.addEventListener(
+          'toggle',
+          (evenement) => {
+            const details = evenement.target
+            if (!(details instanceof HTMLDetailsElement) || !details.open) return
+            const cran = Math.min(Math.max(Number(details.dataset.cran) || 0, 0), 4)
+            if (cran > brouillon().cran) {
+              garder({ cran })
+              maj()
+            }
+          },
+          true,
+        )
+        bouton.addEventListener('click', () => {
+          const aide = choisie()
+          if (aide < 0) return
+          const reussi = cases.every((c) => c.checked)
+          const coches = cases.flatMap((x, k) => (x.checked ? [k] : []))
+          pont.envoyer('atelier.resultat', { reussi, predictions_justes: reussi ? 3 : 0, aide })
+          etat.atelier = { reussi, aide, coches }
+          enregistrer()
+          dire(etat.atelier)
+          majPied()
+        })
+        if (etat.atelier && etat.atelier.aide >= brouillon().cran)
+          radios[etat.atelier.aide].checked = true
+        maj()
+        dire(etat.atelier)
+        const panneau = creer(
+          'div',
+          {
+            className: 'constat',
+            dataset: {
+              lecture:
+                'Ton constat\u00a0: coche ce que tu as fait, dis l’aide que tu as prise, puis envoie.',
+            },
+          },
+          creer('h3', { textContent: 'Ton constat' }),
+          creer('p', {
+            className: 'discret',
+            textContent:
+              'La page ne voit pas ta machine\u00a0: c’est toi qui dis ce que tu as fait. Coche ce qui est vrai, et rien d’autre.',
+          }),
+          creer(
+            'fieldset',
+            { className: 'cases' },
+            creer('legend', { textContent: 'Ce que tu as fait' }),
+            ...criteres.map((critere, k) =>
+              creer('label', {}, cases[k], creer('span', { textContent: critere })),
+            ),
+          ),
+          creer(
+            'fieldset',
+            { className: 'choix' },
+            creer('legend', { textContent: 'L’aide que tu as prise' }),
+            ...AIDES_ATELIER.map((libelle, aide) => creer('label', {}, radios[aide], libelle)),
+          ),
+          note,
+          creer('div', { className: 'actions' }, bouton),
+          resultat,
+        )
+        return panneau
       }
 
       /**
@@ -12850,7 +13632,6 @@ Total             8 000 Mo</code></pre>
               : {
                   carte: () => afficherCarte(etape),
                   pratique: afficherPratique,
-                  atelier: afficherAtelier,
                   restitution: () => afficherSerie('restitution', 'Restitution'),
                   bilan: afficherBilan,
                 }[etape.type])?.() ??
