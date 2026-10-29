@@ -1987,16 +1987,17 @@
         </li>
         <li>
           <strong>Du langage machine aux langages de haut niveau</strong> : un programme, écrit dans
-          un langage, devient des instructions que ces composants exécutent.
+          un langage, devient des instructions que ces composants exécutent : c’est là que le
+          processeur de ce bloc et les décisions du bloc Décider se rejoignent.
         </li>
       </ul>
       <p>
         Ce bloc repose sur le bloc L’information en bits : les composants rangent des octets, des
         paquets de 8 bits, comptés en Mo et en Go, et le processeur exécute du code machine, les
         instructions qu’il sait lire, elles aussi faites d’octets. Le bloc suivant s’en sert : il
-        montre comment un programme devient ce code machine. Plus loin, le bloc Installer un
-        environnement UNIX te fera vérifier que ton processeur sait faire tourner un second système
-        à côté du sien, comme le demande WSL 2, un outil qui fait tourner Linux sous Windows ; le
+        montre comment un programme devient ce code machine. Plus loin, tu installeras WSL 2, un
+        outil qui fait tourner Linux sous Windows : le bloc Installer un environnement UNIX te fera
+        d’abord vérifier que ton processeur sait faire tourner un second système à côté du sien. Le
         bloc sur l’éditeur de code te fera choisir la version d’un logiciel qui va à ton processeur.
       </p>
       <h3>À quoi ça sert</h3>
@@ -2019,7 +2020,12 @@
         </li>
         <li>relever ces caractéristiques sur ton ordinateur ;</li>
         <li>trouver la cause d’une lenteur simple : mémoire pleine, disque lent, surchauffe ;</li>
-        <li>dire si un ordinateur convient pour développer, et ce qu’il faudrait y changer.</li>
+        <li>
+          lire si ton processeur peut faire tourner un second système, comme le demande WSL 2 ;
+        </li>
+        <li>entretenir ta machine : la poussière des grilles, les mises à jour de sécurité ;</li>
+        <li>dire si un ordinateur convient pour développer, et ce qu’il faudrait y changer ;</li>
+        <li>ouvrir en quelques secondes l’outil qui décrit ta machine.</li>
       </ul>
       <p class="discret">
         Il te suffit d’avoir fait le bloc L’information en bits. Il te faut ton ordinateur pour les
@@ -2568,7 +2574,8 @@
           poser au bon endroit d’un disque qui tourne ; un SSD, à un mur de casiers qui s’ouvrent
           d’un coup, sans rien déplacer. Où l’image s’arrête : un tourne-disque lit dans l’ordre,
           alors qu’un disque dur saute sans cesse d’un endroit à l’autre, et chaque saut coûte ses
-          10 ms.
+          10 ms. Et un casier s’ouvre en un instant, alors qu’un SSD met encore environ 0,1 ms :
+          mille fois plus que la RAM.
         </p>
         <table
           class="table-disques"
@@ -3078,9 +3085,9 @@ Total          8 500 Mo</code></pre>
           dépend de la conception du processeur, la façon dont il est construit à l’intérieur : il
           augmente d’une génération à l’autre, c’est-à-dire d’une série de processeurs à la
           suivante, sortie quelques années plus tard, et aucune annonce ne l’affiche. Entre deux
-          processeurs de la même conception et de la même génération, par exemple deux Core i5
-          sortis la même année, il est à peu près le même : là, plus de GHz veut bien dire plus
-          rapide.
+          processeurs de la même conception et de la même génération, par exemple deux processeurs
+          d’une même série d’Intel, sortis la même année, il est à peu près le même : là, plus de
+          GHz veut bien dire plus rapide.
         </p>
         <table
           class="table-frequence"
@@ -3297,9 +3304,10 @@ Total          8 500 Mo</code></pre>
         <p>
           Dans le bloc L’information en bits, chaque famille de processeurs avait son jeu
           d’instructions : la table qui dit ce que fait chaque instruction. Un logiciel est du code
-          machine, écrit pour un jeu d’instructions. Le même octet n’y veut pas dire la même chose :
-          une version écrite pour une famille n’est, pour l’autre, qu’une suite d’octets sans sens.
-          Sur les ordinateurs d’aujourd’hui, deux familles dominent :
+          machine : une suite d’octets, des paquets de 8 bits, que le processeur lit comme des
+          instructions de son jeu. Le même octet n’y veut pas dire la même chose : une version
+          écrite pour une famille n’est, pour l’autre, qu’une suite d’octets sans sens. Sur les
+          ordinateurs d’aujourd’hui, deux familles dominent :
         </p>
         <ul>
           <li><strong>x64</strong> : les processeurs Intel et AMD de la plupart des PC ;</li>
@@ -3473,6 +3481,7 @@ Total          8 500 Mo</code></pre>
           <div class="cadre pour-lire">
             <p class="discret">La page de téléchargement, pour lire :</p>
             <ul>
+              <li>Une puce Apple M (M1, M2, M3…) : la famille ARM64.</li>
               <li>macOS Apple silicon : la version de la famille ARM64.</li>
               <li>macOS Intel : la version de la famille x64.</li>
               <li>Windows x64 et Windows ARM64 : pour les PC Windows.</li>
@@ -3989,10 +3998,10 @@ Total          8 500 Mo</code></pre>
           <p class="q">Combien d’emplacements de RAM restent libres sur son portable ?</p>
         </div>
         <p>
-          Tout le schéma y est. La mémoire : la RAM, ce qui en est occupé, et ses emplacements. Le
-          disque : son type, HDD pour un disque dur ou SSD, et sa taille : 931 Go pour un disque
-          vendu 1 To, car Windows ne compte pas comme le vendeur. Le stockage d’Anaïs, plus loin,
-          montre pourquoi.
+          Le stockage, la RAM et le processeur du schéma y sont. La mémoire : la RAM, ce qui en est
+          occupé, et ses emplacements. Le disque : son type, HDD pour un disque dur ou SSD, et sa
+          taille : 931 Go pour un disque vendu 1 To, car Windows ne compte pas comme le vendeur. Le
+          stockage d’Anaïs, plus loin, montre pourquoi.
         </p>
       </div>
       <div data-ecran="Les Informations système">
@@ -4021,9 +4030,30 @@ Total          8 500 Mo</code></pre>
             </div>
           </dl>
         </div>
+        <div class="ex" data-widget="choix" data-id="r42" data-reponse="non" data-prediction>
+          <p class="q">
+            Yasmine veut aussi savoir si son stockage est un disque dur ou un SSD. Cet écran le lui
+            dit-il ?
+          </p>
+          <ul class="options">
+            <li
+              data-option="ram"
+              data-retour="La RAM tient prêt ce qui tourne ; elle ne garde pas les fichiers. Quelle ligne parlerait du disque ?"
+            >
+              Oui : la ligne Mémoire RAM installée.
+            </li>
+            <li
+              data-option="type"
+              data-retour="Type de système dit le système et la famille du processeur. Quelle ligne parlerait du disque ?"
+            >
+              Oui : la ligne Type de système.
+            </li>
+            <li data-option="non">Non : aucune ligne ne parle du stockage.</li>
+          </ul>
+        </div>
         <p>
-          Cet écran donne la RAM et la famille du processeur, mais pas le type de stockage : c’est
-          le gestionnaire des tâches qui dit HDD ou SSD.
+          Non : cet écran donne la RAM et la famille du processeur, mais pas le type de stockage :
+          c’est le gestionnaire des tâches, panneau Disque, qui dit HDD ou SSD.
         </p>
         <p>
           La ligne Type de système, déjà lue dans « x64 ou ARM », dit « processeur x64 » : Yasmine
@@ -4204,9 +4234,30 @@ Total          8 500 Mo</code></pre>
       </div>
       <div data-ecran="La mémoire sur un Mac">
         <p class="accroche">
-          Pour savoir si sa RAM suffit, Lucie ouvre le Moniteur d’activité, dans Applications puis
-          Utilitaires, le dossier des outils du Mac : sur un Mac, il tient le rôle du gestionnaire
-          des tâches, qui montre la RAM en direct.
+          Lucie veut savoir si sa RAM suffit, en direct, pendant qu’elle travaille.
+        </p>
+        <div class="ex" data-widget="choix" data-id="r43" data-reponse="moniteur" data-prediction>
+          <p class="q">Quel outil de son Mac ouvre-t-elle ?</p>
+          <ul class="options">
+            <li
+              data-option="apropos"
+              data-retour="À propos de ce Mac dit la RAM installée, pas ce qui en est occupé en ce moment. Quel outil suit ce qui tourne ?"
+            >
+              À propos de ce Mac
+            </li>
+            <li data-option="moniteur">Le Moniteur d’activité</li>
+            <li
+              data-option="stockage"
+              data-retour="Stockage dit la place occupée sur le disque. Quel outil suit ce qui tourne dans la RAM ?"
+            >
+              Réglages Système, puis Stockage
+            </li>
+          </ul>
+        </div>
+        <p>
+          Le Moniteur d’activité, dans Applications puis Utilitaires, le dossier des outils du Mac :
+          il suit ce qui tourne en ce moment, et tient sur un Mac le rôle du gestionnaire des
+          tâches.
         </p>
         <p>
           Il a un onglet Mémoire. La ligne Mémoire physique y donne la RAM. Sa courbe de pression de
@@ -4264,7 +4315,8 @@ Total          8 500 Mo</code></pre>
         </p>
         <p>
           Presque tous les processeurs d’aujourd’hui en sont capables, mais elle peut être éteinte
-          dans un réglage de l’ordinateur. Sur un Mac, elle est toujours en service.
+          dans un réglage de l’ordinateur : le BIOS ou l’UEFI, le logiciel de la carte mère qui
+          s’ouvre au démarrage. Sur un Mac, elle est toujours en service.
         </p>
       </div>
       <div data-ecran="La ligne de Yasmine">
@@ -4764,10 +4816,29 @@ Total          8 500 Mo</code></pre>
         </p>
       </div>
       <div data-ecran="Les mises à jour de Yasmine">
-        <p class="accroche">
-          Yasmine installe ses mises à jour. Elle ouvre Paramètres, qui règlent l’ordinateur, puis
-          Windows Update, la page des mises à jour de Windows, et clique sur Rechercher des mises à
-          jour : Windows demande alors s’il en existe de nouvelles :
+        <p class="accroche">Yasmine veut installer les mises à jour de sécurité de Windows.</p>
+        <div class="ex" data-widget="choix" data-id="r44" data-reponse="parametres" data-prediction>
+          <p class="q">Où les cherche-t-elle ?</p>
+          <ul class="options">
+            <li
+              data-option="gestionnaire"
+              data-retour="Le gestionnaire des tâches montre ce que font les composants. Quelle partie de Windows règle l’ordinateur ?"
+            >
+              Dans le gestionnaire des tâches
+            </li>
+            <li data-option="parametres">Dans les Paramètres</li>
+            <li
+              data-option="site"
+              data-retour="Un site inconnu peut cacher un programme malveillant. Quelle partie de Windows règle l’ordinateur lui-même ?"
+            >
+              Sur un site qui propose des mises à jour
+            </li>
+          </ul>
+        </div>
+        <p>
+          Dans les Paramètres, qui règlent l’ordinateur. Yasmine ouvre Paramètres, puis Windows
+          Update, la page des mises à jour de Windows, et clique sur Rechercher des mises à jour :
+          Windows demande alors s’il en existe de nouvelles. La page affiche :
         </p>
         <div
           class="ecran-simule"
@@ -4865,8 +4936,20 @@ Total          8 500 Mo</code></pre>
         <pre class="calcul"><code>Windows           3 000 Mo
 VS Code           1 000 Mo
 20 onglets        20 × 150 = 3 000 Mo
-Serveur de test   1 000 Mo
-Total             8 000 Mo</code></pre>
+Serveur de test   1 000 Mo</code></pre>
+        <div
+          class="ex"
+          data-widget="nombre"
+          data-id="r45"
+          data-reponse="8000"
+          data-sinon="Pas encore. Ajoute les quatre lignes, les onglets comptés à 20 × 150 Mo."
+          data-solution="3 000 + 1 000 + 3 000 + 1 000 = 8 000 Mo"
+          data-aide1="Combien de Mo prennent les 20 onglets ?"
+          data-aide2="Les 20 onglets prennent 20 × 150 = 3 000 Mo. Ajoute Windows, VS Code et le serveur."
+          data-aide3="3 000 + 1 000 + 3 000 + 1 000 = ? Mo"
+        >
+          <p class="q">Combien de Mo de RAM demande cette journée ?</p>
+        </div>
         <p>
           8 000 Mo : ses 8 Go sont pleins dès le matin. C’est pour ça que 8 Go sont un minimum : la
           journée tient tout juste, sans marge, et un onglet de plus fait travailler le fichier
@@ -5158,13 +5241,10 @@ Total             8 000 Mo</code></pre>
       </div>
     </template>
 
-    <!-- ET16, atelier : sur sa machine, la virtualisation, les températures (facultatif, Windows), les mises à jour ; puis le constat. -->
+    <!-- ET16, atelier : sur sa machine, la virtualisation, les températures, les grilles d'aération, les mises à jour ; puis le constat. -->
     <template data-etape="ET16">
       <div data-ecran="La virtualisation">
-        <p class="discret">
-          Tu es ici : deux vérifications sur ta machine, avant de développer, et une mesure
-          facultative.
-        </p>
+        <p class="discret">Tu es ici : quatre gestes sur ta machine, avant de développer.</p>
         <p class="accroche">
           Dans « Ta machine », tu as vu ce que demandent WSL 2 et Docker : la virtualisation.
         </p>
@@ -5173,16 +5253,16 @@ Total             8 000 Mo</code></pre>
           lire : elle y est toujours en service.
         </p>
         <details data-cran="1">
-          <summary>Une question pour t’orienter</summary>
+          <summary>Un indice</summary>
           <p>
             La virtualisation est une capacité du processeur : quel outil de Windows montre ton
             processeur en direct ?
           </p>
           <details data-cran="2">
-            <summary>Un indice</summary>
+            <summary>Une piste détaillée</summary>
             <p>Le gestionnaire des tâches : son onglet Performance a un panneau par composant.</p>
-            <details data-cran="3">
-              <summary>Le chemin pas à pas</summary>
+            <details data-cran="4">
+              <summary>La solution entière</summary>
               <p>
                 Ctrl+Maj+Échap, l’onglet Performance, puis le panneau Processeur : sous la courbe,
                 la ligne Virtualisation. Si le gestionnaire s’ouvre en petit, clique sur Plus de
@@ -5198,10 +5278,10 @@ Total             8 000 Mo</code></pre>
         </p>
       </div>
       <div data-ecran="Les températures">
-        <p class="discret">Facultatif : sous Windows seulement, et hors de ton constat.</p>
         <p class="accroche">
-          Dans « Autour du processeur », le portable qui chauffe baissait sa fréquence. Ici, tu lis
-          la température de ton propre processeur.
+          Dans « Autour du processeur », le portable qui chauffe baissait sa fréquence. Ici, tu vois
+          si le tien chauffe trop sous un travail lourd. Sur un Mac, macOS ne l’affiche pas : passe
+          à l’écran suivant.
         </p>
         <ol>
           <li>
@@ -5223,7 +5303,7 @@ Total             8 000 Mo</code></pre>
           </li>
         </ol>
         <details data-cran="1">
-          <summary>Un coup de pouce</summary>
+          <summary>Un indice</summary>
           <p>
             La liste se déplie par des petits triangles. Ton processeur porte le nom que le
             gestionnaire des tâches affiche en haut du panneau Processeur, comme Intel Core i5 ou
@@ -5233,8 +5313,37 @@ Total             8 000 Mo</code></pre>
         <p>
           Au repos, un processeur est souvent entre 30 et 50 °C ; sous charge, 70 à 90 °C sont
           courants, surtout sur un portable. Vers 95 °C et plus, il baisse sa fréquence pour se
-          protéger : dans le gestionnaire des tâches, sa vitesse tombe.
+          protéger : dans le gestionnaire des tâches, sa vitesse tombe. Si ta valeur Max en
+          approche, regarde ses grilles d’aération : c’est l’écran suivant.
         </p>
+      </div>
+      <div data-ecran="Les grilles">
+        <p class="accroche">
+          Dans « L’entretien », Yasmine dégageait les grilles de son portable : la poussière y
+          bloque l’air qui refroidit le processeur. Fais-le sur ta machine.
+        </p>
+        <ol>
+          <li>Éteins ton ordinateur et débranche-le.</li>
+          <li>
+            Repère ses grilles d’aération : dessous, sur les côtés ou à l’arrière. Un MacBook Air
+            n’en a pas : passe au dernier point.
+          </li>
+          <li>
+            Si elles sont grises de poussière, retire-la de l’extérieur, avec un chiffon sec ou un
+            pinceau propre. N’ouvre pas la machine : la poussière de l’intérieur se fait retirer par
+            un réparateur.
+          </li>
+          <li>
+            Pour travailler, pose-le sur une surface dure, jamais sur un coussin ou une couverture.
+          </li>
+        </ol>
+        <details data-cran="1">
+          <summary>Un indice</summary>
+          <p>
+            Les grilles sont là où l’air chaud sort : où sens-tu un souffle tiède quand ton
+            ordinateur travaille fort ?
+          </p>
+        </details>
       </div>
       <div data-ecran="Les mises à jour">
         <p class="accroche">
@@ -5247,16 +5356,16 @@ Total             8 000 Mo</code></pre>
           envoyer ton constat plus tard, une fois fini.
         </p>
         <details data-cran="1">
-          <summary>Une question pour t’orienter</summary>
+          <summary>Un indice</summary>
           <p>Quelle partie de ton système règle l’ordinateur lui-même ?</p>
           <details data-cran="2">
-            <summary>Un indice</summary>
+            <summary>Une piste détaillée</summary>
             <p>
               Les Paramètres sous Windows, les Réglages Système sur un Mac : la page des mises à
               jour s’y trouve.
             </p>
-            <details data-cran="3">
-              <summary>Le chemin pas à pas</summary>
+            <details data-cran="4">
+              <summary>La solution entière</summary>
               <p>
                 Windows 11 : Paramètres, puis Windows Update, puis Rechercher des mises à jour.
                 Windows 10 : Paramètres, puis Mise à jour et sécurité, puis Windows Update. Mac :
@@ -5287,7 +5396,7 @@ Total             8 000 Mo</code></pre>
       </ol>
       <details>
         <summary>Si tu as oublié le chemin</summary>
-        <p>Quel outil as-tu ouvert, dans « Ma machine », pour lire ta RAM et tes cœurs ?</p>
+        <p>Quel outil de ta machine décrit ses composants : sa RAM, ses cœurs, sa puce ?</p>
         <details>
           <summary>Le chemin pas à pas</summary>
           <p>
@@ -5505,7 +5614,7 @@ Total             8 000 Mo</code></pre>
             <dd>Un stockage en mémoire flash, sans rien qui bouge : environ 0,1 ms.</dd>
           </div>
           <div>
-            <dt>Fichier d’échange, ou swap</dt>
+            <dt>Fichier d’échange</dt>
             <dd>Là où le système range sur le disque ce qui ne tient plus dans la RAM pleine.</dd>
           </div>
           <div>
@@ -5608,12 +5717,12 @@ Total             8 000 Mo</code></pre>
           <ul>
             <li>La RAM d’un portable : de 8 à 32 Go.</li>
             <li>Son stockage : de 256 Go à quelques To.</li>
+            <li>Les pouces d’une annonce : la taille de l’écran.</li>
           </ul>
         </div>
         <p class="q">
-          Une annonce dit seulement : « Portable 15 pouces · 12 Go · 256 Go » ; 15 pouces, c’est la
-          taille de l’écran. Les photos et les projets de Léna font 300 Go. Tiendront-ils sur ce
-          portable ?
+          Une annonce dit seulement : « Portable 15 pouces · 12 Go · 256 Go ». Les photos et les
+          projets de Léna font 300 Go. Tiendront-ils sur ce portable ?
         </p>
         <ul class="options">
           <li data-option="non">Non : son stockage, 256 Go, est trop petit.</li>
@@ -6307,10 +6416,10 @@ Total             8 000 Mo</code></pre>
       <div class="ex" data-widget="mamachine">
         <p class="cas">
           Relève les composants de ton ordinateur, celui sur lequel tu apprends, et écris-les dans
-          la fiche ci-dessous.
+          la fiche ci-dessous. Puis juge ce qu’il faudrait y changer en premier pour développer.
         </p>
         <div class="cadre pour-lire">
-          <p class="discret">Les outils et les familles, pour lire :</p>
+          <p class="discret">Les outils, les familles et les repères, pour lire :</p>
           <ul>
             <li>
               Sous Windows : le gestionnaire des tâches et les Informations système. Sur un Mac : À
@@ -6321,6 +6430,14 @@ Total             8 000 Mo</code></pre>
             </li>
             <li>
               Sur une puce Apple, la vitesse de base n’est pas affichée : coche « Non affichée ».
+            </li>
+            <li>
+              La virtualisation se lit sous Windows dans le panneau Processeur ; sur un Mac, elle
+              est toujours en service.
+            </li>
+            <li>
+              Les repères pour développer : RAM, 8 Go au minimum, 16 à l’aise ; stockage, un SSD de
+              256 Go au minimum, 512 à l’aise ; processeur, 4 cœurs au minimum.
             </li>
           </ul>
         </div>
@@ -6333,9 +6450,9 @@ Total             8 000 Mo</code></pre>
           <details data-cran="2">
             <summary>Le chemin pas à pas</summary>
             <p>
-              Windows : Ctrl+Maj+Échap, onglet Performance ; Processeur pour les Cœurs et la Vitesse
-              de base, Mémoire pour la taille, Disque 0 pour le Type et la taille. Puis Paramètres,
-              Système, Informations système : la ligne Type de système.
+              Windows : Ctrl+Maj+Échap, onglet Performance ; Processeur pour les Cœurs, la Vitesse
+              de base et la Virtualisation, Mémoire pour la taille, Disque 0 pour le Type et la
+              taille. Puis Paramètres, Système, Informations système : la ligne Type de système.
             </p>
             <p>
               Mac : menu Pomme, À propos de ce Mac, pour la puce ou le processeur et la mémoire ;
@@ -6353,40 +6470,17 @@ Total             8 000 Mo</code></pre>
     <template data-item="PR2-2">
       <div class="ex">
         <p class="cas">
-          Sur ton ordinateur, remplis ta RAM pour de vrai. Sous Windows, ouvre le gestionnaire des
-          tâches, onglet Performance, puis Mémoire ; sur un Mac, le Moniteur d’activité, onglet
-          Mémoire.
+          Sur ton ordinateur, tu vas remplir ta RAM pour de vrai, en ouvrant jusqu’à 30 onglets.
+          Sous Windows, tu suivras le gestionnaire des tâches, onglet Performance, puis Mémoire ;
+          sur un Mac, le Moniteur d’activité, onglet Mémoire.
         </p>
-        <ol>
-          <li>
-            Note la mémoire utilisée ; sur un Mac, la couleur de la pression et la mémoire
-            d’échange.
-          </li>
-          <li>Réponds à la question sous ces étapes.</li>
-          <li>
-            Ouvre 10 onglets dans ton navigateur, chacun sur un site lourd et différent : vidéos,
-            cartes, journaux pleins d’images. Note de nouveau ce que tu as noté au début.
-          </li>
-          <li>
-            Recommence deux fois : 20 onglets, puis 30, en notant à chaque fois. Compare tes quatre
-            relevés.
-          </li>
-          <li>
-            Reviens à l’un des premiers onglets ouverts : s’affiche-t-il tout de suite, ou après une
-            attente ? Sous Windows, regarde aussi la jauge du disque à ce moment.
-          </li>
-          <li>
-            Écris tes relevés, ce que tu as vu, et pourquoi, dans la case qui s’ouvre sous ta
-            réponse. Puis ferme les onglets.
-          </li>
-        </ol>
         <div
           class="ex"
           data-widget="choix"
           data-reponse="monte"
           data-melanger="non"
           data-aide1="Où chaque onglet ouvert est-il tenu prêt ?"
-          data-explication="Ouvre maintenant les onglets, 10 par 10, en notant la mémoire à chaque fois. Puis reviens ici, et écris dans la case ce que tu as relevé."
+          data-explication="Fais maintenant les étapes ci-dessous, en notant la mémoire à chaque fois. Puis écris dans la case ce que tu as relevé."
           data-justifier="Écris tes quatre relevés. Au retour sur l’un des premiers onglets, qu’as-tu vu, et pourquoi ?"
         >
           <p class="q">Quand tu auras ouvert les 30 onglets, que fera la mémoire utilisée ?</p>
@@ -6406,6 +6500,28 @@ Total             8 000 Mo</code></pre>
             </li>
           </ul>
         </div>
+        <ol>
+          <li>
+            Note la mémoire utilisée ; sur un Mac, la couleur de la pression et la mémoire
+            d’échange.
+          </li>
+          <li>
+            Ouvre 10 onglets dans ton navigateur, chacun sur un site lourd et différent : vidéos,
+            cartes, journaux pleins d’images. Note de nouveau ce que tu as noté au début.
+          </li>
+          <li>
+            Recommence deux fois : 20 onglets, puis 30, en notant à chaque fois. Compare tes quatre
+            relevés.
+          </li>
+          <li>
+            Reviens à l’un des premiers onglets ouverts : s’affiche-t-il tout de suite, ou après une
+            attente ? Sous Windows, regarde aussi la jauge du disque à ce moment.
+          </li>
+          <li>
+            Écris tes relevés, ce que tu as vu, et pourquoi, dans la case ouverte sous ta réponse.
+            Puis ferme les onglets.
+          </li>
+        </ol>
       </div>
     </template>
 
@@ -6508,39 +6624,46 @@ Total             8 000 Mo</code></pre>
       <ul>
         <li>
           PR2-1 est déclaré : la page ne voit pas la machine. L’apprenant relève, avec l’encadré des
-          outils et des familles, huit champs : système, processeur ou puce, nombre de cœurs,
-          vitesse de base en GHz (ou « Non affichée », la case que coche un Mac), RAM en Go, sorte
-          de stockage, taille du stockage en Go, famille du processeur. « Enregistrer ma fiche »
-          refuse un champ vide (« Il manque : … ») ou un nombre mal écrit, puis garde la fiche
-          (trace machine) et finit l’item. La page compare alors chaque relevé aux repères de
-          l’étape 12, une ligne chacun (« RAM, 8 Go : le minimum ; 16 Go te mettraient à l’aise. »),
-          et finit par « À changer en premier : … » : le disque dur d’abord, puis une RAM sous 8 Go,
-          puis moins de 4 cœurs. Un SSD affiché sous 238 Go compte sous le minimum de 256 Go, et
-          sous 476 Go comme le minimum, car Windows affiche moins que l’annonce. La fiche revient
-          remplie aux visites suivantes.
+          outils, des familles et des repères, neuf champs : système, processeur ou puce, nombre de
+          cœurs, vitesse de base en GHz (ou « Non affichée », la case que coche un Mac), RAM en Go,
+          sorte de stockage, taille du stockage en Go, famille du processeur, virtualisation
+          (Activé, Désactivé, ou Mac, toujours en service). Puis il juge lui-même ce qu’il faudrait
+          changer en premier pour développer (rien d’obligatoire, le stockage, la RAM ou le
+          processeur). « Enregistrer ma fiche » refuse un champ vide (« Il manque : … ») ou un
+          nombre mal écrit, puis garde la fiche (trace machine) et finit l’item. La page compare
+          alors chaque relevé aux repères de l’étape 12, une ligne chacun (« RAM, 8 Go : le
+          minimum ; 16 Go te mettraient à l’aise. »), dit ce que la virtualisation permet
+          (désactivée : rien à acheter, elle s’active dans le BIOS ou l’UEFI), et finit par « À
+          changer en premier : … » : le disque dur d’abord, puis une RAM sous 8 Go, puis un SSD sous
+          le minimum, puis moins de 4 cœurs ; puis elle compare ce jugement à celui de l’apprenant.
+          Un SSD affiché sous 238 Go compte sous le minimum de 256 Go, et sous 476 Go comme le
+          minimum, car Windows affiche moins que l’annonce. La fiche revient remplie aux visites
+          suivantes.
         </li>
         <li>
-          PR2-2 est déclaré aussi : l’apprenant prédit ce que fera sa RAM (un choix, avant d’ouvrir
-          les onglets), puis la relève au début et après chaque dizaine d’onglets, jusqu’à 30 ; la
-          page ne peut pas vérifier les valeurs. Il dit ensuite, dans la case qui s’ouvre
-          (data-justifier), ses quatre relevés, puis ce qu’il a vu au retour sur l’un des premiers
-          onglets, et pourquoi ; l’IA juge l’explication, et refuse une réponse sans les relevés. Le
-          message qui suit la prédiction ne dit pas le résultat : il dit d’ouvrir les onglets, puis
-          de revenir écrire.
+          PR2-2 est déclaré aussi : l’apprenant prédit ce que fera sa RAM (un choix, posé en
+          premier, avant les étapes), puis la relève au début et après chaque dizaine d’onglets,
+          jusqu’à 30 ; la page ne peut pas vérifier les valeurs. Il dit ensuite, dans la case qui
+          s’ouvre (data-justifier), ses quatre relevés, puis ce qu’il a vu au retour sur l’un des
+          premiers onglets, et pourquoi ; l’IA juge l’explication, et refuse une réponse sans les
+          relevés. Le message qui suit la prédiction ne dit pas le résultat : il dit de faire les
+          étapes, puis d’écrire.
         </li>
       </ul>
       <h3>Sur ta machine (atelier, AT1)</h3>
       <ul>
         <li>
           L’atelier se fait sur la machine de l’apprenant, hors de la page : lire la ligne
-          Virtualisation, relever les températures (facultatif, Windows seulement, hors du constat),
-          installer les mises à jour. À la fin de l’étape, le gabarit affiche le constat : les deux
-          critères du manifeste (atelier.criteres) à cocher, et le niveau d’aide reçu. L’aide se
-          monte cran par cran, chaque cran replié dans le précédent : une question pour s’orienter
-          (data-cran 1), un indice (2), le chemin pas à pas (3) ; un cran ouvert fixe l’aide au
-          moins à son niveau. L’atelier n’est réussi qu’avec les deux critères cochés, sans aide
-          (reussite_aide_max 0). Le lien de HWMonitor est un lien externe (data-lien), montré tel
-          quel : la fiche ne charge rien.
+          Virtualisation, relever les températures au repos et sous charge (HWMonitor, sous
+          Windows ; un Mac ne les affiche pas), repérer les grilles d’aération et en retirer la
+          poussière de l’extérieur, installer les mises à jour. À la fin de l’étape, le gabarit
+          affiche le constat : les quatre critères du manifeste (atelier.criteres) à cocher, et le
+          niveau d’aide reçu. L’aide se monte cran par cran, chaque cran replié dans le précédent :
+          titrés comme les niveaux du constat : « Un indice », une question qui oriente (data-cran
+          1), « Une piste détaillée » (2), « La solution entière », le chemin pas à pas (4) ; un
+          cran ouvert fixe l’aide au moins à son niveau. L’atelier n’est réussi qu’avec les quatre
+          critères cochés, sans aide (reussite_aide_max 0). Le lien de HWMonitor est un lien externe
+          (data-lien), montré tel quel : la fiche ne charge rien.
         </li>
       </ul>
       <h3>Vite, l’outil (aisance, ET18)</h3>
@@ -6620,7 +6743,7 @@ Total             8 000 Mo</code></pre>
       {
         "schema": 2,
         "bloc": "B03",
-        "type": ["systemes", "procedures"],
+        "type": "systemes",
         "version": 3,
         "titre": "L’ordinateur et ses composants",
         "titre_court": "Les composants",
@@ -6635,7 +6758,7 @@ Total             8 000 Mo</code></pre>
           },
           {
             "id": "S2",
-            "titre": "La fiche, « Trois places »"
+            "titre": "La fiche, « Garder et tenir prêt »"
           },
           {
             "id": "S3",
@@ -6692,7 +6815,7 @@ Total             8 000 Mo</code></pre>
           },
           {
             "id": "ET4",
-            "titre": "Trois places",
+            "titre": "Garder et tenir prêt",
             "type": "explication"
           },
           {
@@ -6792,13 +6915,13 @@ Total             8 000 Mo</code></pre>
           {
             "id": "B03-R1",
             "question": "Manon double-clique sur une vidéo rangée sur le SSD de son PC, pour la monter. Décris le chemin de la vidéo jusqu’au processeur, composant par composant. Puis le courant est coupé avant qu’elle ait enregistré son montage : qu’est-ce qui est perdu ?",
-            "attendu": "Lue sur le SSD, la vidéo est copiée dans la RAM, où le processeur la lit et la traite. À la coupure, la RAM se vide : le montage non enregistré est perdu, le SSD garde la vidéo d’origine. Faire lire la vidéo au processeur directement sur le SSD, c’est l’erreur E4 ; croire que la RAM garde le travail, l’erreur E1. Déduit de l’étape 4.",
+            "attendu": "Lue sur le SSD, la vidéo est copiée dans la RAM, où le processeur la lit et la traite. À la coupure, la RAM se vide : le montage non enregistré est perdu, le SSD garde la vidéo d’origine. Erreurs à repérer : le processeur qui lit la vidéo directement sur le SSD, ou la RAM qui garderait le travail. Déduit de l’étape 4.",
             "erreurs": ["E1", "E4"]
           },
           {
             "id": "B03-R3",
             "question": "Pour lire : 1 GHz veut dire un milliard de cycles par seconde. Victor hésite entre deux processeurs. L’un, de 2013, tourne à 3,5 GHz et finit 2 instructions par cycle ; l’autre, de 2023, tourne à 3,0 GHz et en finit 4. Il prend celui de 2013 : « plus de GHz, donc plus rapide ». Combien d’instructions par seconde finit chacun, et a-t-il raison ?",
-            "attendu": "Celui de 2013 : 3,5 × 2 = 7 milliards d’instructions par seconde ; celui de 2023 : 3,0 × 4 = 12 milliards. Victor a tort : les GHz comptent les cycles, pas les instructions finies à chaque cycle, qui ont augmenté d’une génération à l’autre. Juger aux seuls GHz, c’est l’erreur E2. Déduit de l’étape 7.",
+            "attendu": "Celui de 2013 : 3,5 × 2 = 7 milliards d’instructions par seconde ; celui de 2023 : 3,0 × 4 = 12 milliards. Victor a tort : les GHz comptent les cycles, pas les instructions finies à chaque cycle, qui ont augmenté d’une génération à l’autre. Erreur à repérer : juger aux seuls GHz. Déduit de l’étape 7.",
             "erreurs": ["E2"]
           },
           {
@@ -6816,7 +6939,7 @@ Total             8 000 Mo</code></pre>
           {
             "id": "B03-R5",
             "question": "Pour lire : Intel est x64 ; Apple silicon, ce sont les puces Apple M, ARM64. Le Mac de Hamza a un « Processeur 2,3 GHz Intel Core i5 ». La page d’un éditeur de code propose macOS Intel et macOS Apple silicon. Laquelle prend-il, et que se passerait-il avec l’autre ?",
-            "attendu": "macOS Intel : un processeur Intel est de la famille x64. La version Apple silicon, écrite pour ARM64, ne se lancerait pas : sur un Mac Intel, rien ne la traduit. Ignorer la famille du processeur, c’est l’erreur E3. Déduit de l’étape 8.",
+            "attendu": "macOS Intel : un processeur Intel est de la famille x64. La version Apple silicon, écrite pour ARM64, ne se lancerait pas : sur un Mac Intel, rien ne la traduit. Erreur à repérer : ignorer la famille du processeur. Déduit de l’étape 8.",
             "erreurs": ["E3"]
           },
           {
@@ -6831,7 +6954,7 @@ Total             8 000 Mo</code></pre>
             "id": "PR1-5",
             "item": "PR1-5",
             "question": "Julie double-clique sur photo.jpg, rangée sur son SSD, pour la retoucher : la photo passe par le SSD, puis la RAM, puis le processeur. Julie ferme son logiciel sans enregistrer ses retouches. Que contient alors la photo de son SSD, et pourquoi ?",
-            "attendu": "La photo d’origine, sans les retouches. Ses retouches n’étaient que dans la copie de la photo en RAM, libérée à la fermeture. L’ouverture avait copié la photo, pas déplacé : le SSD garde son exemplaire, que rien n’a modifié. Croire que les retouches sont allées sur le SSD, c’est l’erreur E4. Déduit de l’étape 4.",
+            "attendu": "La photo d’origine, sans les retouches. Ses retouches n’étaient que dans la copie de la photo en RAM, libérée à la fermeture. L’ouverture avait copié la photo, pas déplacé : le SSD garde son exemplaire, que rien n’a modifié. Erreur à repérer : croire que les retouches sont allées sur le SSD. Déduit de l’étape 4.",
             "erreurs": ["E4"]
           },
           {
@@ -6881,19 +7004,19 @@ Total             8 000 Mo</code></pre>
           {
             "id": "B03-Q1",
             "question": "Tu as enregistré ton texte à 10 h, puis tu as écrit jusqu’à 11 h sans enregistrer. La batterie se vide, et ton portable s’éteint d’un coup. Que retrouves-tu au redémarrage, et pourquoi ?",
-            "attendu": "La version de 10 h : l’enregistrement l’a copiée sur le stockage, qui garde tout sans courant. Ce qui a été écrit après n’était que dans la RAM, qui s’est vidée. Croire que la RAM garde le travail, c’est l’erreur E1. Déduit de l’étape 4.",
+            "attendu": "La version de 10 h : l’enregistrement l’a copiée sur le stockage, qui garde tout sans courant. Ce qui a été écrit après n’était que dans la RAM, qui s’est vidée. Erreur à repérer : croire que la RAM garde le travail. Déduit de l’étape 4.",
             "erreurs": ["E1"]
           },
           {
             "id": "B03-Q2",
             "question": "Pour lire : 1 GHz veut dire un milliard de cycles par seconde. Un cœur tourne à 3,6 GHz et finit 1 instruction par cycle ; un autre tourne à 2,4 GHz et en finit 2. Lequel exécute le plus d’instructions par seconde ?",
-            "attendu": "Le second : 2,4 × 2 = 4,8 milliards d’instructions par seconde, contre 3,6 × 1 = 3,6 milliards. Juger aux seuls GHz, c’est l’erreur E2. Déduit de l’étape 7.",
+            "attendu": "Le second : 2,4 × 2 = 4,8 milliards d’instructions par seconde, contre 3,6 × 1 = 3,6 milliards. Erreur à repérer : juger aux seuls GHz. Déduit de l’étape 7.",
             "erreurs": ["E2"]
           },
           {
             "id": "B03-Q3",
             "question": "Sur un PC dont la ligne Type de système dit « Système d’exploitation 64 bits, processeur x64 », un camarade veut la version Windows ARM64 : « ARM64 finit par 64, comme mon système. » Qu’en dis-tu, et que se passera-t-il ?",
-            "attendu": "Il se trompe : « 64 bits » ne dit pas la famille, x64 et ARM64 sont tous deux en 64 bits. Son processeur est x64 : la version ARM64 ne se lancera pas, et il lui faut Windows x64. Lire « 64 bits » comme une famille, c’est l’erreur E3. Déduit de l’étape 8.",
+            "attendu": "Il se trompe : « 64 bits » ne dit pas la famille, x64 et ARM64 sont tous deux en 64 bits. Son processeur est x64 : la version ARM64 ne se lancera pas, et il lui faut Windows x64. Erreur à repérer : lire « 64 bits » comme une famille. Déduit de l’étape 8.",
             "erreurs": ["E3"]
           },
           {
@@ -6956,84 +7079,73 @@ Total             8 000 Mo</code></pre>
             "id": "B03-C1",
             "type": "explication",
             "consigne": "Un camarade hésite entre deux portables : A, « 8 Go, SSD 1 To » ; B, « 16 Go, SSD 256 Go ». Il prend A : « Avec 1 To de mémoire, mes 60 onglets de travail ne rameront jamais. » Qu’est-ce qui ne va pas dans son raisonnement, et lequel tiendra mieux ses onglets ?",
-            "attendu": "Il confond les deux sens de « mémoire » : le 1 To de A est le stockage, qui garde les fichiers ; les onglets ouverts sont tenus dans la RAM, 8 Go sur A, 16 Go sur B, qui fixe combien il peut en ouvrir avant que le fichier d’échange travaille. B tiendra mieux ses onglets. C’est l’erreur E1. Déduit des étapes 4 et 6.",
+            "attendu": "Il confond les deux sens de « mémoire » : le 1 To de A est le stockage, qui garde les fichiers ; les onglets ouverts sont tenus dans la RAM, 8 Go sur A, 16 Go sur B, qui fixe combien il peut en ouvrir avant que le fichier d’échange travaille. B tiendra mieux ses onglets. Juger à la taille du SSD, c’est confondre RAM et stockage. Déduit des étapes 4 et 6.",
             "erreurs": ["E1"]
           },
           {
             "id": "B03-C2",
             "type": "explication",
             "consigne": "Trois portables ont 4 cœurs. A et B ont chacun un Core i5 sorti en 2024, même conception et même génération, à 2,8 et 3,4 GHz ; C, de 2016, tourne à 3,8 GHz. Un camarade dit : « C est le plus rapide des trois : il a le plus de GHz. » Qu’en dis-tu ?",
-            "attendu": "Il se trompe : C est d’une autre génération, et ses GHz ne suffisent pas à le comparer à A ou B, qui peuvent finir plus d’instructions par cycle. Juger aux seuls GHz entre deux générations, c’est l’erreur E2. Déduit de l’étape 7.",
+            "attendu": "Il se trompe : C est d’une autre génération, et ses GHz ne suffisent pas à le comparer à A ou B, qui peuvent finir plus d’instructions par cycle. Erreur à repérer : juger aux seuls GHz entre deux générations. Déduit de l’étape 7.",
             "erreurs": ["E2"]
           },
           {
             "id": "B03-C3",
             "type": "explication",
             "consigne": "Pour lire : les processeurs Snapdragon sont de la famille ARM64, les processeurs Intel de la famille x64. Un outil de test n’existe qu’en une version : Windows ARM64. Léa a un PC Windows à processeur Snapdragon ; Noah, un PC Windows à processeur Intel. Pourra-t-il tourner chez chacun ? Explique.",
-            "attendu": "Chez Léa, oui : son processeur est ARM64, la famille pour laquelle la version est écrite. Chez Noah, non : un processeur Intel est x64, il ne lit pas le jeu d’instructions ARM64, et sur un PC x64 rien ne traduit une version ARM64 ; elle ne se lance pas. Ignorer la famille du processeur, c’est l’erreur E3. Déduit de l’étape 8.",
+            "attendu": "Chez Léa, oui : son processeur est ARM64, la famille pour laquelle la version est écrite. Chez Noah, non : un processeur Intel est x64, il ne lit pas le jeu d’instructions ARM64, et sur un PC x64 rien ne traduit une version ARM64 ; elle ne se lance pas. Erreur à repérer : ignorer la famille du processeur. Déduit de l’étape 8.",
             "erreurs": ["E3"]
           },
           {
             "id": "B03-C4",
             "type": "explication",
             "consigne": "Pour lire : un SSD très rapide trouve une donnée en environ 0,02 ms, la RAM en 0,0001 ms. Un camarade dit : « Avec un SSD aussi rapide, plus besoin de copier les programmes en RAM : le processeur n’a qu’à les lire sur le SSD. » A-t-il raison ? Pourquoi ?",
-            "attendu": "Non : 0,02 ms, c’est encore 200 fois plus lent que la RAM, et le processeur, qui lit sans cesse, attendrait à chaque donnée. La RAM reste nécessaire pour tenir près de lui ce qui tourne ; faire lire le processeur sur le stockage, c’est l’erreur E4. Déduit de l’étape 4.",
+            "attendu": "Non : 0,02 ms, c’est encore 200 fois plus lent que la RAM, et le processeur, qui lit sans cesse, attendrait à chaque donnée. La RAM reste nécessaire pour tenir près de lui ce qui tourne. Erreur à repérer : faire lire le processeur sur le stockage. Déduit de l’étape 4.",
             "erreurs": ["E4"]
           },
           {
             "id": "B03-O1",
-            "type": "tache",
-            "consigne": "Sans la fiche ni tes notes, enregistre-toi sur ton téléphone : explique à voix haute ce qui se passe quand tu lances ton lecteur de musique puis écoutes une chanson, tous deux rangés sur le stockage de ton ordinateur. Par où passent le programme et la chanson, jusqu’au processeur, et pourquoi chaque étape ? Puis réécoute-toi, et coche ce que tu as fait.",
-            "attendu": "Le lecteur puis la chanson sont lus sur le stockage et copiés dans la RAM, où le processeur les lit, parce que le stockage, qui garde tout, est bien trop lent pour lui ; le stockage garde son exemplaire. Le dire lu directement sur le stockage, c’est l’erreur E4. Déduit de l’étape 4.",
-            "erreurs": ["E4"],
-            "verification": {
-              "mode": "constat",
-              "criteres": [
-                "J’ai enregistré mon explication sur mon téléphone, sans regarder la fiche ni mes notes.",
-                "J’ai suivi ce qui est lancé ou ouvert de l’endroit où il est gardé jusqu’au processeur, sans sauter de place.",
-                "Pour chaque place nommée, j’ai dit pourquoi il y passe.",
-                "J’ai réécouté mon enregistrement jusqu’au bout, et corrigé à voix haute chaque oubli entendu."
-              ]
-            }
+            "type": "explication",
+            "consigne": "Sans la fiche ni tes notes, enregistre-toi sur ton téléphone : explique à voix haute ce qui se passe quand tu lances ton lecteur de musique, puis écoutes une chanson, tous deux rangés sur ton stockage. Par où passent-ils jusqu’au processeur, et pourquoi ? Réécoute-toi, puis écris ici ce que tu as dit, sans le corriger.",
+            "attendu": "Le lecteur puis la chanson sont lus sur le stockage et copiés dans la RAM, où le processeur les lit, parce que le stockage, qui garde tout, est bien trop lent pour lui ; le stockage garde son exemplaire. Erreur à repérer : le dire lu directement sur le stockage. Déduit de l’étape 4.",
+            "erreurs": ["E4"]
           },
           {
             "id": "B03-O2",
-            "type": "tache",
-            "consigne": "Sans la fiche ni tes notes, enregistre-toi sur ton téléphone : explique à voix haute ce qui se passe quand tu lances un traitement de texte, rangé sur un disque dur, que tu y tapes une page, puis que tu fermes sans enregistrer. Par où passe le programme, et où est ta page jusqu’à la fermeture ? Puis réécoute-toi, et coche ce que tu as fait.",
-            "attendu": "Le traitement de texte est lu sur le disque dur et copié dans la RAM, où le processeur l’exécute ; la page tapée n’est que dans la RAM, et la fermeture sans enregistrer la perd, le disque ne gardant que le programme. Dire le programme exécuté directement sur le disque, c’est l’erreur E4 ; croire que la page reste quelque part sans enregistrement, l’erreur E1. Déduit des étapes 4 et 5.",
-            "erreurs": ["E1", "E4"],
-            "verification": {
-              "mode": "constat",
-              "criteres": [
-                "J’ai enregistré mon explication sur mon téléphone, sans regarder la fiche ni mes notes.",
-                "J’ai suivi ce qui est lancé ou ouvert de l’endroit où il est gardé jusqu’au processeur, sans sauter de place.",
-                "Pour chaque place nommée, j’ai dit pourquoi il y passe.",
-                "J’ai réécouté mon enregistrement jusqu’au bout, et corrigé à voix haute chaque oubli entendu."
-              ]
-            }
+            "type": "explication",
+            "consigne": "Sans la fiche ni tes notes, enregistre-toi sur ton téléphone : explique à voix haute ce qui se passe quand tu lances un traitement de texte rangé sur un disque dur, y tapes une page, puis fermes sans enregistrer. Par où passe le programme, et où est ta page ? Réécoute-toi, puis écris ici ce que tu as dit, sans le corriger.",
+            "attendu": "Le traitement de texte est lu sur le disque dur et copié dans la RAM, où le processeur l’exécute ; la page tapée n’est que dans la RAM, et la fermeture sans enregistrer la perd, le disque ne gardant que le programme. Erreurs à repérer : le programme exécuté directement sur le disque, ou la page restée quelque part sans enregistrement. Déduit des étapes 4 et 5.",
+            "erreurs": ["E1", "E4"]
           },
           {
             "id": "B03-O3",
-            "type": "tache",
-            "consigne": "Sans la fiche ni tes notes, enregistre-toi sur ton téléphone : explique à voix haute ce qui se passe quand tu lances un logiciel de montage, rangé sur un disque dur, alors que ta RAM est déjà presque pleine. Par où passe le logiciel, et que change la RAM pleine ? Puis réécoute-toi, et coche ce que tu as fait.",
-            "attendu": "Le logiciel est lu sur le disque dur et copié dans la RAM, où le processeur l’exécute ; la RAM pleine, le système en range une partie dans le fichier d’échange, sur le disque, bien plus lent, et le processeur attend ce qui doit y être relu. Le dire lu directement sur le disque, c’est l’erreur E4. Déduit des étapes 4, 5 et 6.",
-            "erreurs": ["E4"],
-            "verification": {
-              "mode": "constat",
-              "criteres": [
-                "J’ai enregistré mon explication sur mon téléphone, sans regarder la fiche ni mes notes.",
-                "J’ai suivi ce qui est lancé ou ouvert de l’endroit où il est gardé jusqu’au processeur, sans sauter de place.",
-                "Pour chaque place nommée, j’ai dit pourquoi il y passe.",
-                "J’ai réécouté mon enregistrement jusqu’au bout, et corrigé à voix haute chaque oubli entendu."
-              ]
-            }
+            "type": "explication",
+            "consigne": "Sans la fiche ni tes notes, enregistre-toi sur ton téléphone : explique à voix haute ce qui se passe quand tu lances un logiciel de montage rangé sur un disque dur, ta RAM déjà presque pleine. Par où passe le logiciel, et que change la RAM pleine ? Réécoute-toi, puis écris ici ce que tu as dit, sans le corriger.",
+            "attendu": "Le logiciel est lu sur le disque dur et copié dans la RAM, où le processeur l’exécute ; la RAM pleine, le système en range une partie dans le fichier d’échange, sur le disque, bien plus lent, et le processeur attend ce qui doit y être relu. Erreur à repérer : le dire lu directement sur le disque. Déduit des étapes 4, 5 et 6.",
+            "erreurs": ["E4"]
           },
           {
             "id": "B03-T1",
             "type": "transfert",
             "forme": "choisir_methode",
-            "consigne": "Trois PC rament. Marius : 16 Go de RAM, 15,7 Go utilisés, processeur 25 %, disque dur 100 %. Aya, pendant une mise à jour de Windows : processeur 100 %, mémoire 35 %, disque 4 %. Timéo, après une heure de jeu sur un coussin : ventilateur à fond, processeur 30 %, mémoire 40 %, vitesse affichée sous la vitesse de base. Pour chacun, qu’est-ce qui le freine ?",
-            "attendu": "Marius : la RAM, pleine, qui fait travailler le disque pour le fichier d’échange. Aya : le processeur, occupé par la mise à jour, un travail lourd et non bloqué. Timéo : la chaleur, le coussin bouchant les grilles, qui fait baisser la fréquence du processeur. Déduit des étapes 9 et 11.",
+            "consigne": "Le PC de Marius rame. Son gestionnaire des tâches montre : 16 Go de RAM, dont 15,7 Go utilisés ; processeur à 25 % ; disque dur à 100 %. Qu’est-ce qui le freine, et pourquoi ?",
+            "attendu": "La RAM, pleine : le système range une partie de ce qui tourne dans le fichier d’échange, sur le disque dur, bien plus lent, d’où le disque à 100 % et l’attente. Déduit de l’étape 11.",
+            "erreurs": []
+          },
+          {
+            "id": "B03-T5",
+            "type": "transfert",
+            "forme": "choisir_methode",
+            "consigne": "Le PC d’Aya rame pendant une mise à jour de Windows. Son gestionnaire des tâches montre : processeur à 100 % ; mémoire à 35 % ; disque à 4 %. Qu’est-ce qui le freine, et pourquoi ?",
+            "attendu": "Le processeur, occupé à 100 % par la mise à jour : un travail lourd, pas un programme bloqué. Il faut la laisser finir, sans rien lancer à côté. Déduit de l’étape 11.",
+            "erreurs": []
+          },
+          {
+            "id": "B03-T6",
+            "type": "transfert",
+            "forme": "choisir_methode",
+            "consigne": "Le PC de Timéo rame après une heure de jeu, posé sur un coussin. Ventilateur à fond ; processeur à 30 % ; mémoire à 40 % ; vitesse affichée sous la vitesse de base. Qu’est-ce qui le freine, et pourquoi ?",
+            "attendu": "La chaleur : le coussin bouche les grilles, le processeur chauffe et baisse sa fréquence pour se protéger, jusque sous sa vitesse de base. Déduit des étapes 9 et 11.",
             "erreurs": []
           },
           {
@@ -7118,6 +7230,8 @@ Total             8 000 Mo</code></pre>
           "reussite_aide_max": 0,
           "criteres": [
             "J’ai lu sur ma machine si la virtualisation est en service : sous Windows, dans le panneau Processeur du gestionnaire des tâches ; sur un Mac, elle l’est toujours.",
+            "Sous Windows, j’ai relevé dans HWMonitor la température de mon processeur au repos, puis sa valeur Max après cinq minutes de travail lourd ; sur un Mac, qui ne l’affiche pas, je coche sans relever.",
+            "Machine éteinte, j’ai repéré ses grilles d’aération et retiré de l’extérieur la poussière visible (un MacBook Air n’en a pas), et je la pose sur une surface dure pour travailler.",
             "J’ai ouvert la page des mises à jour de mon système, recherché les mises à jour, et installé celles qui restaient."
           ]
         },
@@ -7128,23 +7242,23 @@ Total             8 000 Mo</code></pre>
         "cartes": [
           {
             "id": "B03-K1",
-            "recto": "Que fait la RAM ?",
-            "verso": "Elle tient prêt ce qui tourne : les programmes ouverts et leurs données, copiés depuis le stockage. Elle est très rapide et volatile : sans courant, elle se vide. D’après « Trois places »."
+            "recto": "Un programme est déjà sur le stockage : pourquoi est-il copié dans la RAM pour tourner ?",
+            "verso": "La RAM est bien plus rapide : le processeur y lit ce qui tourne sans attendre le stockage. Mais elle est volatile : sans courant, elle se vide, et c’est le stockage qui garde l’exemplaire. D’après « Garder et tenir prêt »."
           },
           {
             "id": "B03-K2",
-            "recto": "Que fait le stockage, SSD ou disque dur ?",
-            "verso": "Il garde les fichiers et les logiciels, même sans courant : il est non volatile. Il se compte en centaines de Go ou en To, et il est bien plus lent que la RAM. D’après « Trois places »."
+            "recto": "Le courant coupe pendant que tu écris un devoir pas encore enregistré : que perds-tu, que gardes-tu, et pourquoi ?",
+            "verso": "Tu perds le devoir, qui n’était que dans la RAM : elle est volatile. Tu gardes les fichiers enregistrés et les logiciels : le stockage, SSD ou disque dur, ne se vide pas sans courant. D’après « Garder et tenir prêt »."
           },
           {
             "id": "B03-K3",
             "recto": "Par où passe un programme, de son lancement à son exécution ?",
-            "verso": "Il est lu sur le stockage, copié dans la RAM, puis le processeur l’y lit et l’exécute. Le stockage garde son exemplaire. D’après « Trois places »."
+            "verso": "Il est lu sur le stockage, copié dans la RAM, puis le processeur l’y lit et l’exécute. Le stockage garde son exemplaire. D’après « Garder et tenir prêt »."
           },
           {
             "id": "B03-K4",
             "recto": "RAM, SSD, disque dur : range-les du plus rapide au plus lent pour trouver une donnée, et dis ce qui ralentit le dernier.",
-            "verso": "La RAM, de loin ; puis le SSD, sans rien qui bouge ; puis le disque dur, dont la tête doit se déplacer sur un plateau qui tourne. D’après « Le disque »."
+            "verso": "La RAM, de loin ; puis le SSD, sans rien qui bouge ; puis le disque dur, dont la tête doit se déplacer sur un plateau qui tourne. D’après « Garder et tenir prêt » et « Le disque »."
           },
           {
             "id": "B03-K5",
@@ -7158,8 +7272,8 @@ Total             8 000 Mo</code></pre>
           },
           {
             "id": "B03-K7",
-            "recto": "Pourquoi un programme qui ne se partage pas ne va-t-il pas plus vite avec 4 cœurs ?",
-            "verso": "Un cœur, une unité de calcul complète du processeur, suit une seule suite d’instructions à la fois. Plusieurs cœurs font plusieurs travaux en même temps ; un programme qui ne se partage pas n’en utilise qu’un, et les autres restent libres pour ce qui tourne à côté. D’après « Le processeur »."
+            "recto": "Pourquoi un programme qui ne se découpe pas en plusieurs suites d’instructions ne va-t-il pas plus vite avec 4 cœurs ?",
+            "verso": "Une suite d’instructions avance sur un cœur, une unité de calcul complète du processeur. Un programme en une seule suite n’occupe donc qu’un cœur, comme un client n’occupe qu’une caisse ; les autres cœurs restent libres pour ce qui tourne à côté. D’après « Le processeur »."
           },
           {
             "id": "B03-K8",
@@ -7168,8 +7282,8 @@ Total             8 000 Mo</code></pre>
           },
           {
             "id": "B03-K9",
-            "recto": "Qu’est-ce que l’architecture d’un processeur, et pourquoi compte-t-elle au téléchargement ?",
-            "verso": "Sa famille, avec son jeu d’instructions : x64 ou ARM64. Un logiciel est du code machine écrit pour une architecture : on télécharge la version de la sienne. D’après « x64 ou ARM »."
+            "recto": "Pourquoi un même logiciel se télécharge-t-il en version x64 ou en version ARM64 ?",
+            "verso": "Un logiciel est du code machine, écrit pour le jeu d’instructions d’une famille de processeurs : son architecture, x64 ou ARM64. On télécharge la version de la sienne. D’après « x64 ou ARM »."
           },
           {
             "id": "B03-K10",
@@ -7178,8 +7292,8 @@ Total             8 000 Mo</code></pre>
           },
           {
             "id": "B03-K11",
-            "recto": "À quoi sert la carte mère ?",
-            "verso": "Elle relie tous les composants et porte leurs emplacements. Une RAM soudée y est fixée, sans emplacement : on ne pourra jamais en ajouter. D’après « Autour du processeur »."
+            "recto": "Pourquoi ne pourra-t-on jamais ajouter de RAM à un portable dont la RAM est soudée ?",
+            "verso": "La carte mère relie les composants et porte leurs emplacements. Une RAM soudée y est fixée sans emplacement : il n’y a nulle part où en ajouter. D’après « Autour du processeur »."
           },
           {
             "id": "B03-K12",
@@ -7188,8 +7302,8 @@ Total             8 000 Mo</code></pre>
           },
           {
             "id": "B03-K13",
-            "recto": "Qu’est-ce que la virtualisation, et qui en a besoin ?",
-            "verso": "La capacité du processeur à faire tourner un second système à côté du sien : une machine virtuelle. WSL 2 et Docker en ont besoin ; désactivée, elle s’active dans le BIOS ou l’UEFI. D’après « Ta machine »."
+            "recto": "Pourquoi WSL 2 et Docker ne tournent-ils pas quand la virtualisation est désactivée ?",
+            "verso": "Ils font tourner un second système dans une machine virtuelle, et c’est la virtualisation, une capacité du processeur, qui le permet. Désactivée, elle s’active dans le BIOS ou l’UEFI. D’après « Ta machine »."
           },
           {
             "id": "B03-K14",
@@ -7199,7 +7313,7 @@ Total             8 000 Mo</code></pre>
           {
             "id": "B03-K15",
             "recto": "Ton PC rame : quel est ton premier geste, et pourquoi ?",
-            "verso": "Ouvrir l’outil qui le décrit : sous Windows, Ctrl+Maj+Échap, onglet Performance ; sur un Mac, le Moniteur d’activité. La jauge au maximum dit ce qui le freine. D’après « Ta machine » et « Diagnostiquer »."
+            "verso": "Ouvrir l’outil qui le décrit : sous Windows, Ctrl+Maj+Échap, onglet Performance ; sur un Mac, le Moniteur d’activité. Une jauge au maximum, ou une vitesse sous la vitesse de base, dit ce qui le freine. D’après « Ta machine » et « Diagnostiquer »."
           },
           {
             "id": "B03-K16",
@@ -7282,7 +7396,7 @@ Total             8 000 Mo</code></pre>
             "notion": "Diagnostiquer une lenteur simple par la jauge au maximum (processeur, mémoire, disque) et proposer l’action qui agit sur la cause",
             "montree": ["ET11"],
             "pratiquee": ["PR1"],
-            "questions": ["B03-R4", "B03-R7", "B03-T1"]
+            "questions": ["B03-R4", "B03-R7", "B03-T1", "B03-T5", "B03-T6"]
           },
           {
             "id": "N10",
@@ -7392,7 +7506,7 @@ Total             8 000 Mo</code></pre>
             "vers": "N5",
             "type": "condition",
             "montree": "ET11",
-            "questions": ["B03-T1", "B03-R4"]
+            "questions": ["B03-T5", "B03-R4"]
           },
           {
             "id": "L11",
@@ -7400,7 +7514,7 @@ Total             8 000 Mo</code></pre>
             "vers": "N7",
             "type": "condition",
             "montree": "ET11",
-            "questions": ["B03-Q9", "B03-R7", "B03-T1"]
+            "questions": ["B03-Q9", "B03-R7", "B03-T6"]
           },
           {
             "id": "L12",
@@ -7462,11 +7576,10 @@ Total             8 000 Mo</code></pre>
         "ensemble": {
           "montree": "ET1",
           "rappelee": "ET14",
-          "questions": ["B03-R1", "B03-R6", "B03-T1"]
+          "questions": ["B03-R1", "B03-R6", "B03-T1", "B03-T5", "B03-T6"]
         },
         "hors_objectif": [
           "Créer et régler une machine virtuelle, installer WSL 2 ou Docker : un bloc suivant (Installer un environnement UNIX) ; ici, la virtualisation se lit et se définit, et B03-T3 ne demande pas comment faire tourner Windows sur un Mac",
-          "Les températures (HWMonitor) : relevées dans l’atelier, facultatives et sous Windows seulement, comme le plan le prévoit ; jamais interrogées, la surchauffe se lit à la fréquence qui baisse",
           "Les tests de performance (benchmarks) : nommés dans « À explorer plus tard », jamais interrogés ; la comparaison des processeurs passe par les instructions par cycle",
           "Les générations de RAM (DDR4, DDR5) et les types de SSD (NVMe, SATA) : nommés dans « À explorer plus tard », jamais interrogés",
           "Linux et la commande qui donne la famille du processeur : le bloc relève sur Windows et macOS",
@@ -10584,7 +10697,26 @@ Total             8 000 Mo</code></pre>
           { cle: 'stockage', label: 'Sorte de stockage', options: ['SSD', 'Disque dur'] },
           { cle: 'taille', label: 'Taille du stockage, en Go', type: 'entier' },
           { cle: 'famille', label: 'Famille du processeur', options: ['x64', 'ARM64'] },
+          {
+            cle: 'virtualisation',
+            label: 'Virtualisation',
+            options: ['Activé', 'Désactivé', 'Mac : toujours en service'],
+          },
+          {
+            cle: 'jugement',
+            label: 'Pour développer, à changer en premier',
+            options: ['Rien d’obligatoire', 'Le stockage', 'La RAM', 'Le processeur'],
+          },
         ]
+        /** Ce que les repères du bloc font changer en premier : la même règle que la page dit. */
+        function premierAChanger(v) {
+          const ram = Number(v.ram)
+          if (v.stockage === 'Disque dur') return 'Le stockage'
+          if (ram < 8) return 'La RAM'
+          if (Number(v.taille) < 238) return 'Le stockage'
+          if (Number(v.coeurs) < 4) return 'Le processeur'
+          return 'Rien d’obligatoire'
+        }
         function bilanMachine(v) {
           const lignes = []
           const ram = Number(v.ram)
@@ -10623,17 +10755,32 @@ Total             8 000 Mo</code></pre>
               ? 'Famille ARM64 : prends les versions ARM64 de tes logiciels, Apple silicon sur un Mac.'
               : 'Famille x64 : prends les versions x64 de tes logiciels, Intel sur un Mac.',
           )
+          if (v.virtualisation)
+            lignes.push(
+              v.virtualisation === 'Désactivé'
+                ? 'Virtualisation désactivée : rien à acheter ; tu l’activeras dans le BIOS ou l’UEFI quand tu installeras WSL 2.'
+                : 'Virtualisation en service : WSL 2 et Docker pourront tourner.',
+            )
+          const cle = premierAChanger(v)
           const premier =
-            v.stockage === 'Disque dur'
-              ? 'le disque dur, par un SSD'
-              : ram < 8
+            cle === 'Le stockage'
+              ? v.stockage === 'Disque dur'
+                ? 'le disque dur, par un SSD'
+                : 'le stockage, pour un SSD d’au moins 256 Go'
+              : cle === 'La RAM'
                 ? 'la RAM, pour au moins 8 Go'
-                : coeurs < 4
+                : cle === 'Le processeur'
                   ? 'le processeur'
                   : ram < 16
                     ? 'rien d’obligatoire ; 16 Go de RAM te mettraient à l’aise'
                     : 'rien : ta machine convient pour développer'
           lignes.push('À changer en premier : ' + premier + '.')
+          if (v.jugement)
+            lignes.push(
+              v.jugement === cle
+                ? 'Ton jugement, « ' + v.jugement + ' », est celui des repères.'
+                : 'Tu avais jugé « ' + v.jugement + ' » : relis chaque ligne face à son minimum.',
+            )
           return lignes
         }
         function mamachine(ex) {
