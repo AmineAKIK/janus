@@ -5486,14 +5486,14 @@ if (age &lt; 12) {
 
     <!-- ET10, pratique : les items sont dans des <template data-item>. -->
 
-    <!-- ET11, aisance : les tables NON, ET et OU, dix lignes en 25 secondes au plus. -->
+    <!-- ET11, aisance : les tables ET et OU, huit lignes en moins de 20 secondes. -->
     <template data-etape="ET11">
       <p class="accroche">
-        Les tables de NON, de ET et de OU doivent venir sans réfléchir. Une série : leurs 10 lignes,
-        dans le désordre. Pour chacune, tu touches VRAI ou FAUX, ou tu tapes V ou F au clavier.
+        Les tables de ET et de OU doivent venir sans réfléchir. Une série : leurs 8 lignes, dans le
+        désordre. Pour chacune, tu touches VRAI ou FAUX, ou tu tapes V ou F au clavier.
       </p>
       <p>
-        Une série est réussie quand ses 10 lignes sont justes, sans erreur, en 25 secondes au plus.
+        Une série est réussie quand ses 8 lignes sont justes, sans erreur, en moins de 20 secondes.
         Il faut plusieurs séries réussies, chacune un jour différent : la liste sous ce texte montre
         celles qui sont faites et celles qui restent. Tu peux faire autant de séries que tu veux, et
         continuer le bloc sans attendre : reviens ici les jours suivants. La dernière série réussie,
@@ -6554,7 +6554,7 @@ if (age &lt; 12) {
         data-widget="trace"
         data-verifie
         data-chaine="points ≥ 1000 =&gt; or | points ≥ 500 =&gt; argent | points ≥ 100 =&gt; bronze | SINON =&gt; aucun"
-        data-cas="points=99 | points=100 | points=500"
+        data-cas="points=99 | points=100 | points=499 | points=500 | points=1000"
       >
         <p class="cas">
           Un site marchand donne un niveau de fidélité selon les points du client : « aucun » sous
@@ -6583,8 +6583,8 @@ if (age &lt; 12) {
           </ul>
         </div>
         <p class="q">
-          Trace la chaîne pour trois de ses valeurs limites : 99, 100 et 500. Pour chaque ligne,
-          choisis VRAI, FAUX ou « pas testée ».
+          Trace la chaîne pour cinq de ses valeurs limites : 99, 100, 499, 500 et 1000. Pour chaque
+          ligne, choisis VRAI, FAUX ou « pas testée ».
         </p>
       </div>
     </template>
@@ -6593,25 +6593,25 @@ if (age &lt; 12) {
         class="ex"
         data-widget="trace"
         data-verifie
-        data-chaine="points ≥ 1000 =&gt; or | points ≥ 500 =&gt; argent | points ≥ 100 =&gt; bronze | SINON =&gt; aucun"
-        data-cas="points=499 | points=1000"
+        data-chaine="score ≥ 800 =&gt; expert | score ≥ 400 =&gt; confirmé | score ≥ 50 =&gt; débutant | SINON =&gt; nouveau"
+        data-cas="score=49 | score=50 | score=399 | score=400 | score=800"
       >
         <p class="cas">
-          Un site marchand donne un niveau de fidélité selon les points du client : « aucun » sous
-          100 points, « bronze » à partir de 100, « argent » à partir de 500, « or » à partir de
-          1000. Les points sont des nombres entiers.
+          Un jeu donne un rang selon le score : « nouveau » sous 50, « débutant » à partir de 50,
+          « confirmé » à partir de 400, « expert » à partir de 800. Les scores sont des nombres
+          entiers.
         </p>
         <pre
           class="pseudo"
-          data-pseudo="points"
-        ><code><span class="l" data-l="1"><b>SI</b> points ≥ 1000 :</span>
-<span class="l br" data-l="1">  afficher « or »</span>
-<span class="l" data-l="2"><b>SINON SI</b> points ≥ 500 :</span>
-<span class="l br" data-l="2">  afficher « argent »</span>
-<span class="l" data-l="3"><b>SINON SI</b> points ≥ 100 :</span>
-<span class="l br" data-l="3">  afficher « bronze »</span>
+          data-pseudo="score"
+        ><code><span class="l" data-l="1"><b>SI</b> score ≥ 800 :</span>
+<span class="l br" data-l="1">  afficher « expert »</span>
+<span class="l" data-l="2"><b>SINON SI</b> score ≥ 400 :</span>
+<span class="l br" data-l="2">  afficher « confirmé »</span>
+<span class="l" data-l="3"><b>SINON SI</b> score ≥ 50 :</span>
+<span class="l br" data-l="3">  afficher « débutant »</span>
 <span class="l" data-l="4"><b>SINON</b> :</span>
-<span class="l br" data-l="4">  afficher « aucun »</span></code></pre>
+<span class="l br" data-l="4">  afficher « nouveau »</span></code></pre>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
           <ul>
@@ -6623,8 +6623,8 @@ if (age &lt; 12) {
           </ul>
         </div>
         <p class="q">
-          Trace la chaîne pour deux autres de ses valeurs limites : 499 et 1000. Pour chaque ligne,
-          choisis VRAI, FAUX ou « pas testée ».
+          Trace la chaîne pour cinq de ses valeurs limites : 49, 50, 399, 400 et 800. Pour chaque
+          ligne, choisis VRAI, FAUX ou « pas testée ».
         </p>
       </div>
     </template>
@@ -7177,13 +7177,13 @@ if (age &lt; 12) {
       <h3>La vitesse (étape 11)</h3>
       <ul>
         <li>
-          Une série : les 10 lignes des tables NON, ET et OU, dans le désordre, une à la fois, VRAI
-          ou FAUX au toucher ou avec les touches V et F. Un chronomètre de 25 secondes court sur
-          toute la série. Réussie avec 10 justes sur 10 en 25 secondes au plus. Il en faut autant
-          que de paliers dans le manifeste (aisance.paliers_s), chacune un jour différent ; une
-          série réussie le jour d’une autre compte comme entraînement. À la fin, chaque ligne fausse
-          est redite avec sa raison : « VRAI OU VRAI donne VRAI, pas FAUX : le OU accepte les deux à
-          la fois. » Chaque série finie part à l’appli (aisance.resultat), réussie ou non, avec sa
+          Une série : les 8 lignes des tables ET et OU, dans le désordre, une à la fois, VRAI ou
+          FAUX au toucher ou avec les touches V et F. Un chronomètre de 20 secondes court sur toute
+          la série. Réussie avec 8 justes sur 8 en moins de 20 secondes. Il en faut autant que de
+          paliers dans le manifeste (aisance.paliers_s), chacune un jour différent ; une série
+          réussie le jour d’une autre compte comme entraînement. À la fin, chaque ligne fausse est
+          redite avec sa raison : « VRAI OU VRAI donne VRAI, pas FAUX : le OU accepte les deux à la
+          fois. » Chaque série finie part à l’appli (aisance.resultat), réussie ou non, avec sa
           durée.
         </li>
       </ul>
@@ -7194,10 +7194,10 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 42,
+        "version": 43,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
-        "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 conditions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 3 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
+        "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 conditions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables ET et OU remplies sans erreur en moins de 20 s.",
         "prerequis": ["B01"],
         "pont": 5,
         "contexte_ia": "Bloc B02 du module « Écosystème et outils du développeur » (DWWM), deuxième bloc de la partie La machine. Le modèle du bloc : des données, lues ou comparées, donnent des faits qui valent VRAI ou FAUX ; combinés par NON, ET et OU, dans l’ordre de calcul fixé (parenthèses, comparaisons, NON, ET, OU), ils donnent une condition, une seule valeur ; dans une chaîne SI / SINON SI / SINON, la première condition VRAIE, de haut en bas, choisit la seule branche exécutée, et SINON prend les cas où aucune ne l’est. Notations à accepter comme équivalentes : VRAI et FAUX, 1 et 0, true et false ; ET et &&, OU et ||, NON et ! ; en pseudo-code, = compare et ≥, ≤, ≠ s’écrivent ainsi ; en JavaScript, = range une valeur dans une variable (affectation), === compare (égalité stricte), et >=, <=, !== remplacent ≥, ≤, ≠. Le OU logique est inclusif (VRAI OU VRAI = VRAI) ; le ou exclusif s’écrit (A OU B) ET NON (A ET B). Les valeurs limites d’une comparaison sur des entiers : de part et d’autre du seuil, la dernière valeur avant le changement et la première après (17 et 18 pour âge ≥ 18, 18 et 19 pour âge > 18). Quand le « ou » d’une phrase ne permet pas de trancher, la bonne réponse est de demander à l’auteur de la règle. La fiche n’enseigne ni l’opérateur XOR, ni les lois de De Morgan, ni le SI imbriqué, ni ==, ni switch : ne pénalise pas leur absence, et accepte une réponse juste qui les emploie. Pièges à repérer : E1, traiter OU comme exclusif (VRAI OU VRAI jugé FAUX) ; E2, calculer le OU avant le ET (A ET B OU C lu A ET (B OU C)) ; E3, croire que plusieurs branches d’une chaîne s’exécutent, ou que les lignes qui suivent la première VRAIE sont encore testées ; E4, confondre = (affectation), === (égalité stricte) et && (le ET). Une erreur de calcul isolée sur une comparaison n’est pas E2. Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Pour examiner une explication, la grille de compréhension : l’idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d’application, le terme exact, la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Chaque attendu vient de la fiche : les étapes 3 à 9 et 12 (sources S1 à S8) ; ce qui est marqué « D’après » y est écrit ; ce qui est marqué « Déduit » s’obtient en appliquant une règle de la fiche à un autre cas. L’ordre de calcul et les signes de JavaScript sont redonnés avec chaque question qui s’en sert : ce qui compte, c’est de repérer l’opération qui passe en premier et de transcrire une condition, pas de réciter la liste.",
@@ -7644,8 +7644,8 @@ if (age &lt; 12) {
           }
         ],
         "aisance": {
-          "libelle": "Les tables NON, ET et OU, leurs 10 lignes dans le désordre, 10 justes sur 10 en 25 s au plus, trois jours différents",
-          "paliers_s": [25, 25, 25]
+          "libelle": "Les tables ET et OU, leurs 8 lignes dans le désordre, 8 justes sur 8 en moins de 20 s, trois jours différents",
+          "paliers_s": [20, 20, 20]
         },
         "cartes": [
           {
@@ -12625,12 +12625,12 @@ if (age &lt; 12) {
         }
 
         /**
-         * L'aisance (étape 11) : les 10 lignes des tables NON, ET et OU, dans le désordre, VRAI ou FAUX
-         * au toucher ou au clavier (V, F). Une série est réussie avec 10 justes sur 10 en 25 secondes au
-         * plus. Il en faut une par palier du manifeste, chacune un jour différent. Chaque série finie part
+         * L'aisance (étape 11) : les 8 lignes des tables ET et OU, dans le désordre, VRAI ou FAUX au
+         * toucher ou au clavier (V, F). Une série est réussie avec 8 justes sur 8 en moins de 20
+         * secondes. Il en faut une par palier du manifeste, chacune un jour différent. Chaque série finie part
          * au pont (aisance.resultat).
          */
-        const LIGNES_AISANCE = [false, true].map((a) => ({ op: 'NON', a, v: !a }))
+        const LIGNES_AISANCE = []
         for (const op of ['ET', 'OU'])
           for (const a of [false, true])
             for (const b of [false, true])
@@ -12686,25 +12686,22 @@ if (age &lt; 12) {
                   N_AISANCE +
                   ' justes sur ' +
                   N_AISANCE +
-                  ', en ' +
+                  ', en moins de ' +
                   limite() +
-                  ' secondes au plus.',
+                  ' secondes.',
               )
           }
           const raison = (L) =>
-            L.op === 'NON'
-              ? 'NON inverse la valeur'
-              : L.op === 'ET'
-                ? L.v
-                  ? 'les deux sont VRAI'
-                  : 'il suffit d’un FAUX'
-                : L.a && L.b
-                  ? 'le OU accepte les deux à la fois'
-                  : L.v
-                    ? 'il suffit d’un VRAI'
-                    : 'aucun des deux n’est VRAI'
-          const enonce = (L) =>
-            L.op === 'NON' ? 'NON ' + VF(L.a) : VF(L.a) + ' ' + L.op + ' ' + VF(L.b)
+            L.op === 'ET'
+              ? L.v
+                ? 'les deux sont VRAI'
+                : 'il suffit d’un FAUX'
+              : L.a && L.b
+                ? 'le OU accepte les deux à la fois'
+                : L.v
+                  ? 'il suffit d’un VRAI'
+                  : 'aucun des deux n’est VRAI'
+          const enonce = (L) => VF(L.a) + ' ' + L.op + ' ' + VF(L.b)
           let serie = []
           let reponses = []
           let debut = 0
@@ -12752,7 +12749,7 @@ if (age &lt; 12) {
             const t = (performance.now() - debut) / 1000
             const s = nombre(Math.round(t * 10) / 10)
             const justes = reponses.filter((r, i) => r === serie[i].v).length
-            const reussie = !ecoule && justes === N_AISANCE && t <= duree
+            const reussie = !ecoule && justes === N_AISANCE && t < duree
             window.JanusPont?.envoyer('aisance.resultat', {
               reussi: reussie,
               duree_s: Math.round(Math.min(t, 600) * 10) / 10,
@@ -12805,9 +12802,9 @@ if (age &lt; 12) {
                 N_AISANCE +
                 ', mais en ' +
                 s +
-                ' s : il faut ' +
+                ' s : il faut moins de ' +
                 duree +
-                ' secondes au plus. Refais-en une.'
+                ' secondes. Refais-en une.'
             else
               texteFin =
                 justes +
