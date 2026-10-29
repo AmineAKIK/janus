@@ -1932,9 +1932,10 @@
         </li>
       </ul>
       <p>
-        Ce bloc repose sur le bloc L’information en bits : les composants rangent des octets,
-        comptés en Mo et en Go, et le processeur exécute du code machine, lui aussi fait d’octets.
-        Le bloc suivant s’en sert : il montre comment un programme devient ce code machine.
+        Ce bloc repose sur le bloc L’information en bits : les composants rangent des octets, des
+        paquets de 8 bits, comptés en Mo et en Go, et le processeur exécute du code machine, lui
+        aussi fait d’octets. Le bloc suivant s’en sert : il montre comment un programme devient ce
+        code machine.
       </p>
       <h3>À quoi ça sert</h3>
       <p>
@@ -2327,7 +2328,8 @@
       <div data-ecran="Pourquoi la RAM">
         <p class="accroche">
           Pourquoi le processeur ne travaille-t-il pas directement sur le disque ? Voici le temps
-          qu’il faut pour trouver une donnée, environ :
+          qu’il faut pour trouver une donnée, environ, en millisecondes (ms, des millièmes de
+          seconde) :
         </p>
         <table
           class="table-vitesses"
@@ -2869,11 +2871,11 @@ Total          8 500 Mo</code></pre>
         </p>
         <div
           class="schema-bloc"
-          data-lecture="Le schéma du bloc, pour les 30 onglets de Yasmine sur 8 Go. Le stockage, le disque dur, garde le navigateur, et le fichier d’échange, où la RAM a rangé les 500 Mo qu’elle ne pouvait pas tenir. Le navigateur est copié vers la RAM au lancement, et ce qui est dans le fichier d’échange y est relu à chaque retour sur un onglet déplacé, à 10 ms par accès. La RAM est pleine, à 8 000 Mo. Le processeur lit dans la RAM, et attend à chaque fois qu’elle relise le disque. Il confie l’image à la carte graphique, qui l’envoie à l’écran : des fenêtres qui mettent des secondes à répondre."
+          data-lecture="Le schéma du bloc, pour les 30 onglets de Yasmine sur 8 Go. Le stockage, le disque dur, garde le navigateur, et le fichier d’échange, où Windows a rangé les 500 Mo qu’elle ne pouvait pas tenir. Le navigateur est copié vers la RAM au lancement, et ce qui est dans le fichier d’échange y est relu à chaque retour sur un onglet déplacé, à 10 ms par accès. La RAM est pleine, à 8 000 Mo. Le processeur lit dans la RAM, et attend à chaque fois qu’elle relise le disque. Il confie l’image à la carte graphique, qui l’envoie à l’écran : des fenêtres qui mettent des secondes à répondre."
         >
           <span class="boite-fixe"
             >Le stockage<small
-              >le disque dur : le navigateur, et le fichier d’échange, où la RAM a rangé
+              >le disque dur : le navigateur, et le fichier d’échange, où Windows a rangé
               500 Mo</small
             ></span
           ><span class="fleche"
@@ -2955,18 +2957,18 @@ Total          8 500 Mo</code></pre>
           class="ex"
           data-widget="choix"
           data-id="r12"
-          data-reponse="un"
-          data-aide1="Un programme qui ne se découpe pas, c’est une seule suite d’instructions. Combien de cœurs peut-elle occuper à la fois ?"
+          data-reponse="deux"
+          data-aide1="Une suite d’instructions occupe un cœur à la fois. Combien de suites ce programme a-t-il ?"
         >
           <p class="q">
-            Yasmine lance un programme qui ne se découpe pas en plusieurs suites d’instructions.
+            Yasmine lance un programme découpé en 2 suites d’instructions ; rien d’autre ne tourne.
             Combien de ses cœurs travaillent pour lui ?
           </p>
           <ul class="options">
-            <li data-option="un">Un seul.</li>
+            <li data-option="deux">2.</li>
             <li
               data-option="quatre"
-              data-retour="Ce programme ne se découpe pas : combien de suites d’instructions a-t-il ? Quatre caisses, comme quatre cœurs, servent-elles un seul client plus vite ?"
+              data-retour="Combien de suites d’instructions ce programme a-t-il ? Quatre caisses, comme quatre cœurs, servent-elles plus vite deux clients seulement ?"
             >
               Les 4.
             </li>
@@ -2979,8 +2981,8 @@ Total          8 500 Mo</code></pre>
           </ul>
         </div>
         <p>
-          Un seul : ce programme n’a qu’une suite d’instructions. Les 3 autres cœurs restent libres
-          pour le navigateur, VS Code et Windows.
+          2 : une suite d’instructions par cœur. Les 2 autres cœurs restent libres pour le
+          navigateur, VS Code et Windows.
         </p>
       </div>
       <div data-ecran="La fréquence">
@@ -3152,31 +3154,33 @@ Total          8 500 Mo</code></pre>
           class="ex"
           data-widget="choix"
           data-id="r15"
-          data-reponse="ram"
-          data-aide1="Dans le tableau, quelle place vient juste après le cache ?"
+          data-reponse="cache"
+          data-aide1="Après être allé la chercher dans la RAM, que fait le cœur de cette donnée ?"
         >
           <p class="q">
-            Un cœur a besoin d’une donnée qui n’est pas dans son cache. Où va-t-il la chercher ?
+            Un cœur vient d’aller chercher une donnée dans la RAM. Il en a de nouveau besoin un
+            instant plus tard : où la trouve-t-il ?
           </p>
           <ul class="options">
-            <li data-option="ram">Dans la RAM.</li>
+            <li data-option="cache">Dans son cache.</li>
             <li
-              data-option="disque"
-              data-retour="Le processeur ne lit pas directement sur le disque. Quelle place vient juste après le cache, dans le tableau ?"
+              data-option="ram"
+              data-retour="Elle y est encore, mais le cœur l’a gardée plus près de lui. Où ?"
             >
-              Sur le disque.
+              De nouveau dans la RAM.
             </li>
             <li
-              data-option="arret"
-              data-retour="Il lui faut cette donnée pour continuer. Où sont les données des programmes qui tournent ?"
+              data-option="disque"
+              data-retour="Le processeur ne lit pas directement sur le disque. Où a-t-il gardé la donnée ?"
             >
-              Nulle part : il passe à l’instruction suivante.
+              Sur le disque.
             </li>
           </ul>
         </div>
         <p>
-          Dans la RAM, puis il la garde dans son cache. Le cache, la RAM et le stockage forment une
-          chaîne : plus une place est proche du processeur, plus elle est rapide et petite.
+          Dans son cache, en quelques cycles : il l’y a gardée en revenant de la RAM. Le cache, la
+          RAM et le stockage forment une chaîne : plus une place est proche du processeur, plus elle
+          est rapide et petite.
         </p>
       </div>
     </template>
@@ -3554,8 +3558,7 @@ Total          8 500 Mo</code></pre>
           la RAM, comme chez Yasmine ; soit <strong>dédiée</strong> : une carte à part, avec sa
           propre mémoire, plus puissante, plus chère, et qui chauffe plus. Pour développer des
           sites, une carte intégrée suffit : afficher des pages, même animées, lui demande peu. Une
-          carte dédiée sert aux jeux, à la 3D, au montage vidéo. Quand on développe, ce qui fait
-          attendre chaque jour, ce sont la RAM et le disque.
+          carte dédiée sert aux jeux, à la 3D, au montage vidéo.
         </p>
         <div
           class="ex"
@@ -3726,6 +3729,7 @@ Total          8 500 Mo</code></pre>
         >
           <p class="q">Combien de cœurs a le processeur de Yasmine ?</p>
         </div>
+        <p>4 cœurs : la ligne Cœurs. Les 8 processeurs logiques ne sont pas 8 cœurs.</p>
         <div
           class="ex"
           data-widget="nombre"
@@ -3745,7 +3749,6 @@ Total          8 500 Mo</code></pre>
           931 Go pour un disque vendu 1 To, car Windows ne compte pas comme le vendeur. Le stockage
           d’Anaïs, plus loin, montre pourquoi.
         </p>
-        <p>4 cœurs : la ligne Cœurs. Les 8 processeurs logiques ne sont pas 8 cœurs.</p>
       </div>
       <div data-ecran="Les Informations système">
         <p class="accroche">
@@ -3997,9 +4000,9 @@ Total          8 500 Mo</code></pre>
           </ul>
         </div>
         <p>
-          Sa RAM est pleine : comme le fichier d’échange de Yasmine, sa mémoire d’échange déborde
-          sur le SSD. Lucie ralentira moins que Yasmine, car un SSD est cent fois plus rapide qu’un
-          disque dur, mais toujours bien plus lentement qu’en RAM.
+          Sa RAM est pleine : comme le fichier d’échange sous Windows, sa mémoire d’échange déborde
+          sur le SSD. Lucie ralentira moins qu’avec un disque dur, car un SSD est cent fois plus
+          rapide, mais toujours bien plus qu’avec assez de RAM.
         </p>
       </div>
     </template>
@@ -4024,9 +4027,10 @@ Total          8 500 Mo</code></pre>
           </ul>
         </div>
         <p>
-          Une lenteur a souvent une seule cause, et une jauge au maximum la montre. La méthode, en
-          quatre temps : repérer la jauge au maximum ; chercher dans le tableau ce que ce maximum
-          veut dire ; vérifier avec ce que faisait l’ordinateur ; agir sur la cause.
+          Une lenteur a souvent une seule cause : une jauge au maximum la montre, ou, pour la
+          surchauffe, la vitesse du processeur qui baisse. La méthode, en quatre temps : repérer ce
+          qui sort de la normale ; chercher dans le tableau ce que cela veut dire ; vérifier avec ce
+          que faisait l’ordinateur ; agir sur la cause.
         </p>
         <table
           class="table-symptomes"
@@ -4159,8 +4163,10 @@ Total          8 500 Mo</code></pre>
         <div class="cadre pour-lire">
           <p class="discret">La méthode, pour lire :</p>
           <ol>
-            <li>repérer la jauge au maximum ;</li>
-            <li>chercher ce que ce maximum veut dire, dans les lignes ci-dessous ;</li>
+            <li>
+              repérer ce qui sort de la normale : une jauge au maximum, ou la vitesse qui baisse ;
+            </li>
+            <li>chercher ce que cela veut dire, dans les lignes ci-dessous ;</li>
             <li>vérifier avec ce que faisait l’ordinateur ;</li>
             <li>agir sur la cause.</li>
           </ol>
@@ -4242,8 +4248,10 @@ Total          8 500 Mo</code></pre>
         <div class="cadre pour-lire">
           <p class="discret">La méthode, pour lire :</p>
           <ol>
-            <li>repérer la jauge au maximum ;</li>
-            <li>chercher ce que ce maximum veut dire ;</li>
+            <li>
+              repérer ce qui sort de la normale : une jauge au maximum, ou la vitesse qui baisse ;
+            </li>
+            <li>chercher ce que cela veut dire ;</li>
             <li>vérifier avec ce que faisait l’ordinateur ;</li>
             <li>agir sur la cause.</li>
           </ol>
@@ -5158,7 +5166,7 @@ Total             8 000 Mo</code></pre>
         data-reponse="ssd-ram-proc"
         data-melanger="non"
         data-aide1="Où la photo est-elle rangée au départ, et où le processeur lit-il ce qu’il traite ?"
-        data-justifier="Julie ferme son logiciel sans enregistrer ses retouches. Pourquoi la photo de son SSD n’a-t-elle pas changé ?"
+        data-justifier="Julie ferme son logiciel sans enregistrer ses retouches. Que contient alors la photo de son SSD, et pourquoi ?"
       >
         <p class="q">
           Julie double-clique sur photo.jpg, rangée sur son SSD, pour la retoucher. Dans quel ordre
@@ -5190,7 +5198,7 @@ Total             8 000 Mo</code></pre>
         data-reponse="dd-ram-proc"
         data-melanger="non"
         data-aide1="Où la vidéo est-elle rangée au départ, et où le processeur lit-il ce qu’il traite ?"
-        data-justifier="Le portable de Yasmine s’éteint pendant la vidéo. Pourquoi la retrouve-t-elle entière sur son disque au redémarrage ?"
+        data-justifier="Le portable de Yasmine s’éteint pendant la vidéo. Que retrouve-t-elle sur son disque au redémarrage, et pourquoi ?"
       >
         <p class="q">
           Yasmine ouvre une vidéo rangée sur son disque dur, pour la regarder. Dans quel ordre la
@@ -5222,7 +5230,7 @@ Total             8 000 Mo</code></pre>
         data-verifie
         data-reponse="ram"
         data-aide1="Son disque est déjà un SSD. Pourquoi travaille-t-il autant, avec une mémoire à 96 % ?"
-        data-justifier="Un camarade a les mêmes jauges qu’Eva, mais avec un disque dur à 100 %. Un SSD l’aiderait-il plus que de la RAM ? Pourquoi ?"
+        data-justifier="Un camarade a processeur 18 %, mémoire 96 %, et un disque dur à 100 %. Un SSD l’aiderait-il plus que de la RAM ? Pourquoi ?"
       >
         <div
           class="ecran-simule"
@@ -6021,21 +6029,21 @@ Total             8 000 Mo</code></pre>
           {
             "id": "PR1-5",
             "item": "PR1-5",
-            "question": "Julie double-clique sur photo.jpg, rangée sur son SSD, pour la retoucher : la photo passe par le SSD, puis la RAM, puis le processeur. Julie ferme son logiciel sans enregistrer ses retouches. Pourquoi la photo de son SSD n’a-t-elle pas changé ?",
-            "attendu": "Ses retouches n’étaient que dans la copie de la photo en RAM, libérée à la fermeture. L’ouverture avait copié la photo, pas déplacé : le SSD garde son exemplaire, que rien n’a modifié. Croire que les retouches sont allées sur le SSD, c’est l’erreur E4. Déduit de l’étape 4.",
+            "question": "Julie double-clique sur photo.jpg, rangée sur son SSD, pour la retoucher : la photo passe par le SSD, puis la RAM, puis le processeur. Julie ferme son logiciel sans enregistrer ses retouches. Que contient alors la photo de son SSD, et pourquoi ?",
+            "attendu": "La photo d’origine, sans les retouches. Ses retouches n’étaient que dans la copie de la photo en RAM, libérée à la fermeture. L’ouverture avait copié la photo, pas déplacé : le SSD garde son exemplaire, que rien n’a modifié. Croire que les retouches sont allées sur le SSD, c’est l’erreur E4. Déduit de l’étape 4.",
             "erreurs": ["E4"]
           },
           {
             "id": "PR1-5:variante",
             "item": "PR1-5",
-            "question": "Yasmine ouvre une vidéo rangée sur son disque dur, pour la regarder : la vidéo passe par le disque dur, puis la RAM, puis le processeur. Le portable de Yasmine s’éteint pendant la vidéo. Pourquoi la retrouve-t-elle entière sur son disque au redémarrage ?",
-            "attendu": "Le disque dur est non volatile : il garde la vidéo sans courant, et elle n’en avait été que copiée vers la RAM. La RAM, volatile, s’est vidée, mais elle ne tenait qu’une copie. Déduit de l’étape 4.",
+            "question": "Yasmine ouvre une vidéo rangée sur son disque dur, pour la regarder : la vidéo passe par le disque dur, puis la RAM, puis le processeur. Le portable de Yasmine s’éteint pendant la vidéo. Que retrouve-t-elle sur son disque au redémarrage, et pourquoi ?",
+            "attendu": "La vidéo entière. Le disque dur est non volatile : il garde la vidéo sans courant, et elle n’en avait été que copiée vers la RAM. La RAM, volatile, s’est vidée, mais elle ne tenait qu’une copie. Déduit de l’étape 4.",
             "erreurs": ["E1"]
           },
           {
             "id": "PR1-6",
             "item": "PR1-6",
-            "question": "Le PC d’Eva rame quand elle a beaucoup d’onglets ouverts : processeur 18 %, mémoire 96 %, son SSD à 85 %. Plus de RAM l’aidera le plus. Un camarade a les mêmes jauges qu’Eva, mais avec un disque dur à 100 %. Un SSD l’aiderait-il plus que de la RAM ? Pourquoi ?",
+            "question": "Le PC d’Eva rame quand elle a beaucoup d’onglets ouverts : processeur 18 %, mémoire 96 %, son SSD à 85 %. Plus de RAM l’aidera le plus. Un camarade a processeur 18 %, mémoire 96 %, et un disque dur à 100 %. Un SSD l’aiderait-il plus que de la RAM ? Pourquoi ?",
             "attendu": "Non, la RAM d’abord : pleine, elle oblige Windows à en ranger une partie dans le fichier d’échange, et c’est pour lui que le disque travaille. Un SSD rendrait cet échange moins lent, mais toujours bien plus lent que la RAM ; avec plus de RAM, le disque n’a plus à le faire. Déduit des étapes 6 et 11.",
             "erreurs": []
           },
@@ -6129,7 +6137,7 @@ Total             8 000 Mo</code></pre>
             "id": "B03-C2",
             "type": "explication",
             "consigne": "Trois portables ont 4 cœurs. A et B ont chacun un Core i5 sorti en 2024, même conception et même génération, à 2,8 et 3,4 GHz ; C, de 2016, tourne à 3,8 GHz. Un camarade dit : « C est le plus rapide des trois : il a le plus de GHz. » Qu’en dis-tu ?",
-            "attendu": "Entre A et B, de même conception et de même génération, les instructions par cycle sont à peu près les mêmes : B, à 3,4 GHz, va plus vite que A. C est d’une autre génération : ses GHz ne suffisent pas à le comparer à B, qui peut aller plus vite. Juger aux seuls GHz entre deux générations, c’est l’erreur E2. Déduit de l’étape 7.",
+            "attendu": "Il se trompe : C est d’une autre génération, et ses GHz ne suffisent pas à le comparer à A ou B, qui peuvent aller plus vite. Comparer en plus A et B (même génération, B à 3,4 GHz va plus vite) est juste, sans être exigé. Juger aux seuls GHz entre deux générations, c’est l’erreur E2. Déduit de l’étape 7.",
             "erreurs": ["E2"]
           },
           {
@@ -6279,8 +6287,8 @@ Total             8 000 Mo</code></pre>
           },
           {
             "id": "B03-K10",
-            "recto": "Où lire l’architecture de son processeur sous Windows ?",
-            "verso": "Dans les Informations système, à la ligne Type de système : « processeur x64 » ou « processeur ARM ». « 64 bits » ne dit pas la famille. D’après « x64 ou ARM »."
+            "recto": "Sur la ligne Type de système, que dit « 64 bits », et que ne dit-il pas ?",
+            "verso": "La taille des nombres que le processeur traite d’un coup. Il ne dit pas l’architecture : x64 et ARM64 sont tous deux en 64 bits ; c’est « processeur x64 » ou « processeur ARM » qui la dit. D’après « x64 ou ARM »."
           },
           {
             "id": "B03-K11",
