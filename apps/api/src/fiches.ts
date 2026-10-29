@@ -73,6 +73,7 @@ const ETAPES_A_TEMPLATE: ReadonlySet<TypeEtape> = new Set<TypeEtape>([
   'pretest',
   'explication',
   'ensemble',
+  'atelier',
   'aisance',
 ])
 
@@ -129,6 +130,32 @@ function verifierTemplates(
         )
       }
     }
+  }
+}
+
+/**
+ * Faire hors de la page (Amine, 13 et 29 octobre 2026) : ce que la page ne voit pas (une manipulation
+ * sur sa machine, dans un autre logiciel) ne sort pas de l'objectif, il se fait dans l'atelier. Son
+ * template guide le geste, et son constat liste d'avance ce que l'apprenant coche. B03 avait retiré ses
+ * travaux pratiques parce que l'atelier du gabarit n'affichait rien et ne demandait aucun critère.
+ */
+function verifierAtelier(manifeste: Manifeste, signaler: (message: string) => void): void {
+  const etapes = manifeste.etapes.filter(({ type }) => type === 'atelier')
+  if (etapes.length > 1) {
+    signaler('la fiche a plusieurs étapes atelier : une seule porte le constat du manifeste.')
+  }
+  if (etapes.length > 0 && manifeste.atelier === undefined) {
+    signaler(
+      'l’étape atelier n’a pas de constat : ajoute au manifeste `atelier` avec ses `criteres`, ce que l’apprenant coche.',
+    )
+  }
+  if (etapes.length === 0 && manifeste.atelier !== undefined) {
+    signaler('le manifeste déclare un atelier, mais aucune étape de type atelier ne le montre.')
+  }
+  if (manifeste.atelier !== undefined && manifeste.atelier.criteres === undefined) {
+    signaler(
+      'l’atelier n’a pas de `criteres` : chaque geste fait hors de la page se constate sur un critère fixé d’avance.',
+    )
   }
 }
 
@@ -1108,6 +1135,7 @@ export async function verifierLesFiches({
       verifierTemplates(resultat.manifeste, fiche.html, signaler)
       verifierPratique(resultat.manifeste, fiche.html, signaler)
       verifierErreursCritiques(resultat.manifeste, signaler)
+      verifierAtelier(resultat.manifeste, signaler)
       verifierRestitution(resultat.manifeste, signaler)
       verifierTablesEnGrille(resultat.manifeste, signaler)
       verifierOrdreDuCycle(resultat.manifeste, signaler)

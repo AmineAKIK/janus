@@ -9,7 +9,7 @@ const Entier = z.number().int()
  * Les types d'étape d'une fiche, dans l'ordre du cycle de la méthode (percevoir, tenter, modéliser,
  * faire, recevoir un retour, ajuster). Les étapes de cours (`carte`, `perception`, `pretest`,
  * `explication`, `pratique`, `atelier`, `aisance`, `ensemble`) sont masquées pendant la restitution ;
- * `perception`, `pretest`, `explication`, `ensemble` et `aisance` lisent leur contenu dans un
+ * `perception`, `pretest`, `explication`, `ensemble`, `atelier` et `aisance` lisent leur contenu dans un
  * `<template data-etape>` de la page. Les quatre moments qui les regroupent sont dans `moments.ts`.
  */
 export const TypeEtape = z.enum([
@@ -139,7 +139,18 @@ export const Manifeste = z.strictObject({
   rappel: z.array(Question),
   differees: z.array(Differee),
   pratique: z.array(Pratique),
-  atelier: z.strictObject({ id: Identifiant, reussite_aide_max: z.literal(0) }).optional(),
+  /**
+   * L'atelier : ce qui se fait hors de la page (sur sa machine, dans un autre logiciel), guidé par
+   * son `<template data-etape>`, puis constaté par l'apprenant sur des critères fixés d'avance, avec
+   * l'aide prise. Absent des manifestes d'avant : un seul critère, l'atelier fait en entier.
+   */
+  atelier: z
+    .strictObject({
+      id: Identifiant,
+      reussite_aide_max: z.literal(0),
+      criteres: z.array(Texte).min(1).optional(),
+    })
+    .optional(),
   /**
    * La cible d'aisance : des paliers, une durée maximale en secondes par série réussie, dans l'ordre.
    * Une série réussie dans le temps du palier courant le valide ; un palier par jour au plus ; la
