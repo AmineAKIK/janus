@@ -6,6 +6,8 @@ Chaque règle a un `id` (une lettre pour la section, deux chiffres), un `statut`
 
 Le 28 octobre 2026, le schéma de fin de bloc a changé (C08, P02, R02). Il se refaisait de mémoire, devant des cases vides, et se jugeait sur sa ressemblance au schéma vu une fois tôt dans le cours : pour un apprenant qui fait le bloc en plusieurs séances, l'exercice mesurait la mémoire d'un dessin et poussait au par cœur. Il se construit désormais pour un cas nouveau (un client, un fichier) : la première boîte porte les données du cas en mots, la dernière est posée sans sa valeur, les autres cases et les flèches ont une question qui aide sans donner le terme, et l'apprenant ajoute ou retire des boîtes. Le correcteur juge la chaîne pour ce cas : le nombre de boîtes et les mots peuvent différer du cours, une étape qui manque ou une relation fausse est une erreur. Le schéma reparaît aussi rempli au milieu du bloc, pour un autre cas. Le doc de la méthode garde sa version 3.3 tant qu'Amine ne l'a pas repris.
 
+Le 29 octobre 2026, F06 traduit ce que la méthode dit déjà (« J'apprends en faisant », section Pratique) en règle qu'une fiche doit tenir : chaque travail pratique, l'automatisme et la preuve que le plan donne au bloc se font, dans la page ou dans l'atelier, jamais retirés parce que la page ne les voit pas. B01, B02 et B03 en avaient sauté.
+
 Les règles de séance (journal, révisions dues, répétition espacée) ne sont pas ici : elles sont tenues par Amine et par l'appli, pas par une fiche.
 
 ## La grille d'une fiche
