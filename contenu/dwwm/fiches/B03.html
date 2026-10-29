@@ -1952,8 +1952,8 @@
         </li>
         <li>suivre un programme du disque jusqu’au processeur, quand tu le lances ;</li>
         <li>
-          reconnaître la famille du processeur, x64 ou ARM, et télécharger la version d’un logiciel
-          qui lui va ;
+          reconnaître la famille de son processeur, et télécharger la version d’un logiciel qui lui
+          va ;
         </li>
         <li>relever ces caractéristiques sur ton ordinateur ;</li>
         <li>trouver la cause d’une lenteur simple : mémoire pleine, disque lent, surchauffe ;</li>
@@ -2253,9 +2253,35 @@
       </div>
       <div data-ecran="Le trajet d’un fichier">
         <p class="accroche">
-          Yasmine ouvre son fichier index.html dans VS Code, y ajoute un titre, puis enregistre. Le
-          fichier fait trois trajets :
+          Yasmine ouvre son fichier index.html dans VS Code, y ajoute un titre, puis enregistre. À
+          l’ouverture, le fichier est copié du disque dur vers la RAM.
         </p>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="r3p"
+          data-prediction
+          data-reponse="ram"
+          data-aide1="Le processeur travaille sur ce qui est tenu prêt. Où est la copie du fichier ?"
+        >
+          <p class="q">Elle ajoute le titre. Où le processeur l’écrit-il ?</p>
+          <ul class="options">
+            <li data-option="ram">Dans la copie de la RAM.</li>
+            <li
+              data-option="disque"
+              data-retour="Le fichier a été copié à l’ouverture. Sur quelle copie le processeur travaille-t-il ?"
+            >
+              Dans le fichier du disque dur.
+            </li>
+            <li
+              data-option="deux"
+              data-retour="Écrire sur le disque, c’est enregistrer. Yasmine a-t-elle déjà enregistré ?"
+            >
+              Dans les deux à la fois.
+            </li>
+          </ul>
+        </div>
+        <p>Le fichier fait donc trois trajets :</p>
         <ol>
           <li>Ouvrir : le fichier est copié du disque dur vers la RAM.</li>
           <li>
@@ -2414,11 +2440,7 @@
         </div>
         <p>
           512 Go : c’est le stockage qui garde les photos. Les 16 Go de RAM disent combien de
-          programmes et d’onglets tiennent ouverts à la fois. Une fois sous Windows, ce SSD
-          s’affichera environ 477 Go, et le disque de 1 To de Yasmine s’affiche 931 Go : le vendeur
-          compte par 1 000, Windows par 1 024 à chaque étage (1 Ko = 1 024 octets, 1 Mo = 1 024 Ko,
-          1 Go = 1 024 Mo) : son Go est environ 7 % plus gros. C’est une autre convention, celle du
-          bloc L’information en bits. Les octets sont les mêmes ; seul le compte change.
+          programmes et d’onglets tiennent ouverts à la fois.
         </p>
         <p data-si-essai="p2:faux">
           Pour l’annonce « Portable, 512 Go de mémoire », tu avais répondu
@@ -2851,9 +2873,10 @@ Total          8 500 Mo</code></pre>
         </p>
         <p>
           Pour te le représenter : les caisses d’un supermarché, où 4 caisses servent 4 clients à la
-          fois. Où l’image s’arrête : un seul client ne passe pas plus vite parce qu’il y a 4
-          caisses ; de même, un programme qui ne se découpe pas en plusieurs suites d’instructions
-          n’occupe qu’un cœur.
+          fois. Comme un seul client ne passe pas plus vite parce qu’il y a 4 caisses, un programme
+          qui ne se découpe pas en plusieurs suites d’instructions n’occupe qu’un cœur. Où l’image
+          s’arrête : une caisse sert un client à la fois, alors qu’un cœur peut alterner entre deux
+          suites d’instructions.
         </p>
         <p>
           Windows affiche aussi des <strong>processeurs logiques</strong> : 8 pour les 4 cœurs de
@@ -3198,6 +3221,12 @@ Total          8 500 Mo</code></pre>
             >
               ARM64
             </li>
+            <li
+              data-option="les-deux"
+              data-retour="Un processeur n’a qu’une architecture. Dans l’encadré, laquelle regroupe Intel ?"
+            >
+              Les deux
+            </li>
           </ul>
         </div>
         <p>Intel, c’est l’architecture x64 : elle prend Windows x64.</p>
@@ -3247,8 +3276,10 @@ Total          8 500 Mo</code></pre>
         </p>
         <ul>
           <li>
-            Sur un PC x64 ou un Mac Intel, une version ARM64 ne se lance pas : rien ne la traduit,
-            et le système affiche un message d’erreur.
+            Une version écrite pour une autre architecture ne se lance que si un programme la
+            traduit. Deux traductions existent, dans un seul sens : de x64 vers ARM64. Dans l’autre
+            sens, rien ne traduit : la version ne se lance pas, et le système affiche un message
+            d’erreur.
           </li>
           <li>
             Sur un Mac à puce Apple, une version macOS Intel se lance, traduite à la volée par un
@@ -3261,8 +3292,8 @@ Total          8 500 Mo</code></pre>
             Windows, moins vite.
           </li>
           <li>
-            Une version écrite pour un autre système ne se lance pas : une version Windows ne
-            s’installe pas sur un Mac, ni une version macOS sur un PC Windows.
+            Une version écrite pour un autre système, Windows ou macOS, ne se lance pas, quelle que
+            soit l’architecture.
           </li>
         </ul>
         <p>Dans tous les cas, la bonne version est celle de la famille de ton processeur.</p>
@@ -3311,7 +3342,7 @@ Total          8 500 Mo</code></pre>
       </div>
       <div data-ecran="Où le lire">
         <p class="accroche">
-          Pour choisir, il faut connaître la famille de son processeur. Yasmine la trouve dans
+          Pour choisir, il faut connaître l’architecture de son processeur. Yasmine la trouve dans
           Paramètres, puis Système, puis Informations système, à la ligne Type de système :
         </p>
         <div
@@ -3333,9 +3364,7 @@ Total          8 500 Mo</code></pre>
         </p>
         <p>
           « 64 bits » dit la taille des nombres que le processeur traite d’un coup. x64 et ARM64
-          sont tous les deux en 64 bits : pour télécharger, c’est la famille qui compte. Tu liras
-          aussi x86-64 ou AMD64 pour x64, et Arm64 ou AArch64 pour ARM64 : ce sont les mêmes
-          familles.
+          sont tous les deux en 64 bits : pour télécharger, c’est la famille qui compte.
         </p>
         <div
           class="ex"
@@ -3495,13 +3524,13 @@ Total          8 500 Mo</code></pre>
           puce, et un ventilateur qui pousse l’air chaud par les grilles d’aération.
         </p>
         <p>
-          Le processeur de Yasmine a une vitesse de base de 1,6 GHz, et il monte jusqu’à 3,4 GHz
-          quand il a beaucoup à faire et qu’il reste assez frais. S’il chauffe trop, il baisse sa
-          fréquence pour se protéger, parfois bien sous sa vitesse de base : tout ralentit. Un long
-          calcul suffit à le faire chauffer quand le refroidissement n’évacue pas assez. Sur un lit,
-          le tissu bouche les grilles ; la poussière fait de même, avec les années. Les remèdes :
-          poser le portable sur une surface dure, dégager les grilles, en faire retirer la
-          poussière.
+          Un processeur a une <strong>vitesse de base</strong>, celle de sa fiche, et il monte
+          au-dessus quand il a beaucoup à faire et qu’il reste assez frais : celui de Yasmine, de
+          base 1,6 GHz, monte jusqu’à 3,4 GHz. S’il chauffe trop, il baisse sa fréquence pour se
+          protéger, parfois bien sous sa vitesse de base : tout ralentit. Un long calcul suffit à le
+          faire chauffer quand le refroidissement n’évacue pas assez. Sur un lit, le tissu bouche
+          les grilles ; la poussière fait de même, avec les années. Les remèdes : poser le portable
+          sur une surface dure, dégager les grilles, en faire retirer la poussière.
         </p>
         <div
           class="ex"
@@ -3609,13 +3638,6 @@ Total          8 500 Mo</code></pre>
             </div>
           </div>
         </div>
-        <p>
-          Tout le schéma y est. Le processeur : ses cœurs, sa vitesse de base, celle de sa fiche, et
-          sa vitesse du moment, qui bouge sans arrêt. La mémoire : la RAM, ce qui en est occupé, et
-          ses emplacements. Le disque : son type, HDD pour un disque dur ou SSD, et sa taille,
-          comptée par 1 024 à chaque étage, octets, Ko, Mo, Go : son Go est environ 7 % plus gros
-          que celui du vendeur, et Windows affiche un peu moins que la taille vendue.
-        </p>
         <div
           class="ex"
           data-widget="nombre"
@@ -3628,6 +3650,13 @@ Total          8 500 Mo</code></pre>
         >
           <p class="q">Combien de cœurs a le processeur de Yasmine ?</p>
         </div>
+        <p>
+          Tout le schéma y est. Le processeur : ses cœurs, sa vitesse de base, celle de sa fiche, et
+          sa vitesse du moment, qui bouge sans arrêt. La mémoire : la RAM, ce qui en est occupé, et
+          ses emplacements. Le disque : son type, HDD pour un disque dur ou SSD, et sa taille,
+          comptée par 1 024 à chaque étage, octets, Ko, Mo, Go : son Go est environ 7 % plus gros
+          que celui du vendeur, et Windows affiche un peu moins que la taille vendue.
+        </p>
         <p>4 cœurs : la ligne Cœurs. Les 8 processeurs logiques ne sont pas 8 cœurs.</p>
       </div>
       <div data-ecran="Les Informations système">
@@ -3771,9 +3800,10 @@ Total          8 500 Mo</code></pre>
           <p class="discret">Les tailles, pour lire :</p>
           <ul>
             <li>
-              Windows compte par 1 024 à chaque étage, son Go est donc environ 7 % plus gros : un
-              disque vendu 1 To y affiche environ 931 Go, un SSD vendu 256 Go environ 238 Go. Plus
-              l’affichage est petit, plus le disque vendu l’est.
+              le vendeur compte par 1 000, Windows par 1 024 à chaque étage : c’est une autre
+              convention, et le Go de Windows est environ 7 % plus gros. Un disque vendu 1 To y
+              affiche donc environ 931 Go, un SSD vendu 256 Go environ 238 Go. Plus l’affichage est
+              petit, plus le disque vendu l’est.
             </li>
           </ul>
         </div>
@@ -3785,8 +3815,7 @@ Total          8 500 Mo</code></pre>
           data-aide1="Windows affiche moins que la taille vendue : 238 Go pour 256, 931 pour 1 000. Entre lesquels tombe 477 ?"
         >
           <p class="q">
-            Dernière ligne de la fiche : son SSD affiche 477 Go. Quelle taille était écrite sur sa
-            fiche de vente ?
+            Son SSD affiche 477 Go. Quelle taille était écrite sur sa fiche de vente ?
           </p>
           <ul class="options">
             <li
@@ -4032,7 +4061,7 @@ Total          8 500 Mo</code></pre>
           data-reponse="lent"
           data-aide1="La mémoire est à 45 % : la RAM est-elle pleine ? Alors, quelle ligne de l’encadré reste ?"
         >
-          <p class="q">Fais les temps 2 à 4 : quelle est la cause, et que lui conseilles-tu ?</p>
+          <p class="q">Fais les temps 2 à 4 : que lui conseilles-tu ?</p>
           <ul class="options">
             <li data-option="lent">
               Le disque dur, lent, travaille pour le démarrage : patienter, et à terme passer à un
@@ -4119,9 +4148,9 @@ Total          8 500 Mo</code></pre>
       <div data-ecran="Une journée de travail">
         <p class="discret">Tu es ici : se servir du schéma pour juger une machine.</p>
         <p class="accroche">
-          Une journée de Yasmine, développeuse : VS Code, un navigateur avec une vingtaine d’onglets
-          pour tester son site et lire de la documentation, et un serveur de test, un programme qui
-          fait tourner son site sur son propre ordinateur.
+          Une journée de travail, quand Yasmine sera développeuse : VS Code, un navigateur avec une
+          vingtaine d’onglets pour tester son site et lire de la documentation, et un serveur de
+          test, un programme qui fait tourner son site sur son propre ordinateur.
         </p>
         <pre class="calcul"><code>Windows           3 000 Mo
 VS Code           1 000 Mo
@@ -4260,6 +4289,12 @@ Total             8 000 Mo</code></pre>
               data-retour="1 To, c’est grand. Mais le repère demande-t-il une taille, ou d’abord une sorte de stockage ?"
             >
               À l’aise : 1 To, c’est plus que 512 Go.
+            </li>
+            <li
+              data-option="minimum"
+              data-retour="Le repère du stockage demande d’abord une sorte : un SSD. Un disque dur l’atteint-il ?"
+            >
+              Au minimum : 1 To suffit.
             </li>
           </ul>
         </div>
@@ -4432,8 +4467,7 @@ Total             8 000 Mo</code></pre>
         <div class="cadre pour-lire">
           <p class="discret">Le PC de Malo, pour lire :</p>
           <ul>
-            <li>Un SSD de 1 To, où le jeu est rangé.</li>
-            <li>16 Go de RAM ; un processeur à 6 cœurs ; une carte graphique dédiée.</li>
+            <li>Son jeu, de 40 Go, est rangé sur son SSD de 1 To.</li>
           </ul>
         </div>
         <div
@@ -4454,7 +4488,7 @@ Total             8 000 Mo</code></pre>
             <li class="boite">
               Que fait ce composant des instructions du jeu, et où garde-t-il ce qui resert ?
             </li>
-            <li class="fleche">Pour l’image du jeu, quel composant prend le relais ?</li>
+            <li class="fleche">Que fait-il de l’image du jeu ?</li>
             <li class="boite">Que fait ce composant de l’image ?</li>
             <li class="fleche">Où l’image va-t-elle ensuite ?</li>
             <li class="boite" data-pose data-champ="Que voit Malo ?">ce qu’affiche l’écran</li>
@@ -4611,7 +4645,8 @@ Total             8 000 Mo</code></pre>
             <dt>Architecture</dt>
             <dd>
               La famille d’un processeur, avec son jeu d’instructions : x64 ou ARM64, les deux
-              architectures des ordinateurs d’aujourd’hui.
+              architectures des ordinateurs d’aujourd’hui. Tu liras aussi x86-64 ou AMD64 pour x64,
+              et Arm64 ou AArch64 pour ARM64.
             </dd>
           </div>
           <div>
@@ -4683,8 +4718,15 @@ Total             8 000 Mo</code></pre>
         data-widget="choix"
         data-verifie
         data-reponse="non"
-        data-aide1="L’annonce ne dit ni RAM ni SSD : en dizaines de Go au plus, ou en centaines, lequel des deux nombres est le stockage ?"
+        data-aide1="L’annonce ne dit ni RAM ni SSD. Dans l’encadré, lequel des deux nombres a la taille d’un stockage ?"
       >
+        <div class="cadre pour-lire">
+          <p class="discret">Les tailles habituelles, pour lire :</p>
+          <ul>
+            <li>La RAM d’un portable : de 8 à 32 Go.</li>
+            <li>Son stockage : de 256 Go à quelques To.</li>
+          </ul>
+        </div>
         <p class="q">
           Une annonce dit seulement : « Portable 15 pouces · 12 Go · 256 Go ». Les photos et les
           projets de Léna font 300 Go. Tiendront-ils sur ce portable ?
@@ -4912,14 +4954,14 @@ Total             8 000 Mo</code></pre>
         data-aide3="11 500 ÷ 200 = 57,5 : un onglet ne se coupe pas en deux."
       >
         <div class="cadre pour-lire">
-          <p class="discret">Le PC d’Anaïs, pour lire :</p>
+          <p class="discret">Le PC d’Elsa, pour lire :</p>
           <ul>
             <li>16 Go de RAM, soit environ 16 000 Mo.</li>
             <li>Windows en occupe 3 500 Mo, VS Code 1 000 Mo, chaque onglet environ 200 Mo.</li>
           </ul>
         </div>
         <p class="q">
-          Combien d’onglets Anaïs peut-elle ouvrir, au plus, avec VS Code, sans dépasser sa RAM ?
+          Combien d’onglets Elsa peut-elle ouvrir, au plus, avec VS Code, sans dépasser sa RAM ?
         </p>
       </div>
     </template>
@@ -4936,14 +4978,14 @@ Total             8 000 Mo</code></pre>
         data-aide3="4 000 ÷ 300 ≈ 13,3 : un onglet ne se coupe pas."
       >
         <div class="cadre pour-lire">
-          <p class="discret">Le PC de Mehdi, pour lire :</p>
+          <p class="discret">Le PC de Gabin, pour lire :</p>
           <ul>
             <li>8 Go de RAM, soit environ 8 000 Mo.</li>
             <li>Windows en occupe 3 000 Mo, son éditeur 1 000 Mo, chaque onglet environ 300 Mo.</li>
           </ul>
         </div>
         <p class="q">
-          Combien d’onglets Mehdi peut-il ouvrir, au plus, avec son éditeur, sans dépasser sa RAM ?
+          Combien d’onglets Gabin peut-il ouvrir, au plus, avec son éditeur, sans dépasser sa RAM ?
         </p>
       </div>
     </template>
@@ -4956,10 +4998,10 @@ Total             8 000 Mo</code></pre>
         data-reponse="ssd-ram-proc"
         data-melanger="non"
         data-aide1="Où la photo est-elle rangée au départ, et où le processeur lit-il ce qu’il traite ?"
-        data-justifier="Quand Anaïs ferme son logiciel de retouche, que deviennent la copie de la photo dans la RAM, et celle du SSD ? Pourquoi ?"
+        data-justifier="Julie ferme son logiciel sans enregistrer ses retouches. Pourquoi la photo de son SSD n’a-t-elle pas changé ?"
       >
         <p class="q">
-          Anaïs double-clique sur photo.jpg, rangée sur son SSD, pour la retoucher. Dans quel ordre
+          Julie double-clique sur photo.jpg, rangée sur son SSD, pour la retoucher. Dans quel ordre
           la photo passe-t-elle par les composants ?
         </p>
         <ul class="options">
@@ -4988,7 +5030,7 @@ Total             8 000 Mo</code></pre>
         data-reponse="dd-ram-proc"
         data-melanger="non"
         data-aide1="Où la vidéo est-elle rangée au départ, et où le processeur lit-il ce qu’il traite ?"
-        data-justifier="Si le portable de Yasmine s’éteint pendant la vidéo, que reste-t-il de la vidéo, dans la RAM et sur le disque ? Pourquoi ?"
+        data-justifier="Le portable de Yasmine s’éteint pendant la vidéo. Pourquoi la retrouve-t-elle entière sur son disque au redémarrage ?"
       >
         <p class="q">
           Yasmine ouvre une vidéo rangée sur son disque dur, pour la regarder. Dans quel ordre la
@@ -5058,7 +5100,7 @@ Total             8 000 Mo</code></pre>
         data-verifie
         data-reponse="programme"
         data-aide1="Quelle jauge est au maximum, et que fait-on pour elle ?"
-        data-justifier="Si la mémoire de Hugo était à 98 % et son processeur à 20 %, que ferait-il plutôt ? Pourquoi ?"
+        data-justifier="Si la mémoire de Hugo était à 98 %, son SSD à 80 % et son processeur à 20 %, que ferait-il plutôt ? Pourquoi ?"
       >
         <div
           class="ecran-simule"
@@ -5785,8 +5827,8 @@ Total             8 000 Mo</code></pre>
           },
           {
             "id": "B03-R2",
-            "question": "Une annonce dit : « Portable, 1 To de mémoire, 8 Go ». Kenza en conclut qu’il pourra garder beaucoup de programmes ouverts à la fois. Dis ce que désigne chaque nombre, puis si Kenza a raison.",
-            "attendu": "1 To est le stockage, qui garde les fichiers ; 8 Go est la RAM, qui tient prêt ce qui tourne et fixe combien de programmes restent ouverts sans ralentir. Kenza se trompe : avec 8 Go, peu de programmes tiennent à la fois ; ce qui tranche, c’est l’ordre de grandeur, dizaines de Go au plus pour la RAM. Prendre le To pour de la RAM, c’est l’erreur E1. Déduit de l’étape 4.",
+            "question": "Pour lire : la RAM d’un portable va de 8 à 32 Go ; son stockage, de 256 Go à quelques To. Une annonce dit : « Portable, 1 To de mémoire, 8 Go ». Kenza en conclut qu’il pourra garder beaucoup de programmes ouverts à la fois. Dis ce que désigne chaque nombre, puis si Kenza a raison.",
+            "attendu": "1 To est le stockage, qui garde les fichiers ; 8 Go est la RAM, qui tient prêt ce qui tourne et fixe combien de programmes restent ouverts sans ralentir. Kenza se trompe : avec 8 Go, peu de programmes tiennent à la fois. Prendre le To pour de la RAM, c’est l’erreur E1. Déduit de l’étape 4.",
             "erreurs": ["E1"]
           },
           {
@@ -5809,8 +5851,8 @@ Total             8 000 Mo</code></pre>
           },
           {
             "id": "B03-R6",
-            "question": "Pour lire : pour développer, il faut au minimum 8 Go de RAM, un SSD de 256 Go et 4 cœurs ; une carte intégrée suffit. Élise veut un portable pour développer. On lui propose : 8 Go de RAM soudée, un disque dur de 1 To, 4 cœurs x64, une carte graphique intégrée. Qu’est-ce qui ne va pas dans cette offre, et pourquoi ?",
-            "attendu": "Deux points : le disque dur, sous le minimum (un SSD), fera attendre tout ce qui lit des fichiers ; les 8 Go de RAM sont le minimum, sans marge, et soudés, ils ne pourront jamais passer à 16 Go. 4 cœurs, x64 et la carte intégrée conviennent. Déduit des étapes 9 et 12.",
+            "question": "Pour lire, les repères : RAM, 8 Go au minimum, 16 à l’aise ; SSD, 256 Go au minimum ; 4 cœurs ; x64 ou ARM64 ; carte intégrée. Élise veut développer. On lui propose : 12 Go de RAM, SSD de 128 Go, 4 cœurs ARM64, carte intégrée. Qu’est-ce qui ne va pas, et pourquoi ?",
+            "attendu": "Le SSD : 128 Go, c’est sous le minimum de 256 Go ; ses projets et ses outils n’y tiendront pas longtemps. 12 Go de RAM dépassent le minimum, sans être à l’aise ; 4 cœurs, ARM64 avec les bonnes versions et la carte intégrée conviennent. Déduit de l’étape 12.",
             "erreurs": []
           }
         ],
@@ -5818,15 +5860,15 @@ Total             8 000 Mo</code></pre>
           {
             "id": "PR1-5",
             "item": "PR1-5",
-            "question": "Anaïs double-clique sur photo.jpg, rangée sur son SSD, pour la retoucher : la photo passe par le SSD, puis la RAM, puis le processeur. Quand Anaïs ferme son logiciel de retouche, que deviennent la copie de la photo dans la RAM, et celle du SSD ? Pourquoi ?",
-            "attendu": "La copie dans la RAM est libérée : la RAM ne tient prêt que ce qui tourne, et le logiciel est fermé. Le SSD garde son exemplaire, car l’ouverture avait copié la photo, pas déplacé ; ce qu’elle a enregistré y est aussi. Déduit de l’étape 4.",
+            "question": "Julie double-clique sur photo.jpg, rangée sur son SSD, pour la retoucher : la photo passe par le SSD, puis la RAM, puis le processeur. Julie ferme son logiciel sans enregistrer ses retouches. Pourquoi la photo de son SSD n’a-t-elle pas changé ?",
+            "attendu": "Ses retouches n’étaient que dans la copie de la photo en RAM, libérée à la fermeture. L’ouverture avait copié la photo, pas déplacé : le SSD garde son exemplaire, que rien n’a modifié. Déduit de l’étape 4.",
             "erreurs": ["E1"]
           },
           {
             "id": "PR1-5:variante",
             "item": "PR1-5",
-            "question": "Yasmine ouvre une vidéo rangée sur son disque dur, pour la regarder : la vidéo passe par le disque dur, puis la RAM, puis le processeur. Si le portable de Yasmine s’éteint pendant la vidéo, que reste-t-il de la vidéo, dans la RAM et sur le disque ? Pourquoi ?",
-            "attendu": "Rien dans la RAM : elle est volatile et se vide sans courant. Le disque dur garde la vidéo entière : il est non volatile, et la vidéo n’avait été que copiée vers la RAM. Déduit de l’étape 4.",
+            "question": "Yasmine ouvre une vidéo rangée sur son disque dur, pour la regarder : la vidéo passe par le disque dur, puis la RAM, puis le processeur. Le portable de Yasmine s’éteint pendant la vidéo. Pourquoi la retrouve-t-elle entière sur son disque au redémarrage ?",
+            "attendu": "Le disque dur est non volatile : il garde la vidéo sans courant, et elle n’en avait été que copiée vers la RAM. La RAM, volatile, s’est vidée, mais elle ne tenait qu’une copie. Déduit de l’étape 4.",
             "erreurs": ["E1"]
           },
           {
@@ -5839,7 +5881,7 @@ Total             8 000 Mo</code></pre>
           {
             "id": "PR1-6:variante",
             "item": "PR1-6",
-            "question": "Le PC de Hugo rame : processeur 100 %, mémoire 35 %, son SSD à 2 %. Il doit chercher dans l’onglet Processus le programme qui occupe le processeur. Si la mémoire de Hugo était à 98 % et son processeur à 20 %, que ferait-il plutôt ? Pourquoi ?",
+            "question": "Le PC de Hugo rame : processeur 100 %, mémoire 35 %, son SSD à 2 %. Il doit chercher dans l’onglet Processus le programme qui occupe le processeur. Si la mémoire de Hugo était à 98 %, son SSD à 80 % et son processeur à 20 %, que ferait-il plutôt ? Pourquoi ?",
             "attendu": "Fermer des programmes, et à terme ajouter de la RAM : à 98 %, la RAM est pleine, et le disque travaille pour le fichier d’échange. Le processeur, à 20 %, ne serait plus en cause. Déduit de l’étape 11.",
             "erreurs": []
           },
@@ -5892,7 +5934,7 @@ Total             8 000 Mo</code></pre>
           {
             "id": "B03-Q6",
             "question": "Pourquoi un SSD démarre-t-il un ordinateur bien plus vite qu’un disque dur de même taille ?",
-            "attendu": "Le démarrage lit des milliers de petits fichiers : pour chacun, le disque dur doit amener sa tête au bon endroit du plateau, environ 10 ms, quand le SSD, sans pièce mobile, répond en environ 0,1 ms. La taille ne change pas ce temps. Déduit de l’étape 5.",
+            "attendu": "Le démarrage lit des milliers de petits fichiers : pour chacun, le disque dur doit amener sa tête au bon endroit d’un plateau qui tourne, quand le SSD, sans pièce mobile, répond bien plus vite. La taille ne change pas ce temps. Déduit de l’étape 5.",
             "erreurs": []
           },
           {
@@ -5947,8 +5989,8 @@ Total             8 000 Mo</code></pre>
             "id": "B03-T1",
             "type": "transfert",
             "forme": "choisir_methode",
-            "consigne": "Deux PC rament. Celui de Marius a 16 Go de RAM, dont 15,7 Go utilisés ; processeur 25 %, disque dur 100 %. Celui d’Aya, juste après une mise à jour de Windows : processeur 100 %, mémoire 35 %, disque 4 %, et l’onglet Processus montre la mise à jour en tête. Pour chacun, qu’est-ce qui le freine, et que faire ?",
-            "attendu": "Marius : 15,7 Go sur 16, la RAM est pleine, et le disque travaille pour le fichier d’échange ; fermer des programmes, à terme plus de RAM. Aya : le processeur, occupé par la mise à jour, un travail lourd et non bloqué ; la laisser finir sans rien lancer à côté. Déduit de l’étape 11.",
+            "consigne": "Deux PC rament. Celui de Marius a 16 Go de RAM, dont 15,7 Go utilisés ; processeur 25 %, disque dur 100 %. Celui d’Aya, juste après une mise à jour de Windows : processeur 100 %, mémoire 35 %, disque 4 %, et l’onglet Processus montre la mise à jour en tête. Pour chacun, qu’est-ce qui le freine ?",
+            "attendu": "Marius : 15,7 Go sur 16, la RAM est pleine, et le disque travaille pour le fichier d’échange ; fermer des programmes aiderait. Aya : le processeur, occupé par la mise à jour, un travail lourd et non bloqué ; la laisser finir. Déduit de l’étape 11.",
             "erreurs": []
           },
           {
@@ -6071,12 +6113,12 @@ Total             8 000 Mo</code></pre>
           },
           {
             "id": "B03-K9",
-            "recto": "x64 et ARM64, qu’est-ce que c’est ?",
-            "verso": "Les deux familles de processeurs des ordinateurs d’aujourd’hui, chacune avec son jeu d’instructions : x64 pour Intel et AMD, ARM64 pour les puces M d’Apple et certains PC. Un logiciel se télécharge dans la version de sa famille. D’après « x64 ou ARM »."
+            "recto": "Qu’est-ce que l’architecture d’un processeur, et pourquoi compte-t-elle au téléchargement ?",
+            "verso": "Sa famille, avec son jeu d’instructions : x64 ou ARM64. Un logiciel est du code machine écrit pour une architecture : on télécharge la version de la sienne. D’après « x64 ou ARM »."
           },
           {
             "id": "B03-K10",
-            "recto": "Où lire la famille de son processeur sous Windows ?",
+            "recto": "Où lire l’architecture de son processeur sous Windows ?",
             "verso": "Dans les Informations système, à la ligne Type de système : « processeur x64 » ou « processeur ARM ». « 64 bits » ne dit pas la famille. D’après « x64 ou ARM »."
           },
           {
