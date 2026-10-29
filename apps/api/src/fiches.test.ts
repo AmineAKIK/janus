@@ -223,7 +223,10 @@ describe('vérification des fiches du dépôt', () => {
 
     describe('faire hors de la page, dans l’atelier', () => {
       /** Le gabarit, avec une étape atelier (ET7) après la pratique, son template et son constat. */
-      const avecAtelier = (atelier: string, template = '<template data-etape="ET7"><p>Le geste.</p></template>') =>
+      const avecAtelier = (
+        atelier: string,
+        template = '<template data-etape="ET7"><p>Le geste.</p></template>',
+      ) =>
         fiche
           .replace(
             '"id": "ET3",\n            "titre": "Pratique",\n            "type": "pratique"\n          },',

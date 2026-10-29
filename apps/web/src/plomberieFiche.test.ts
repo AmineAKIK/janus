@@ -2339,7 +2339,9 @@ describe('l’atelier : faire hors de la page', () => {
     fireEvent.click(screen.getByRole('radio', { name: 'Une piste détaillée' }))
     fireEvent.click(screen.getByRole('button', { name: 'Envoyer mon constat' }))
     expect(envoisAtelier(envois)).toEqual([{ reussi: true, predictions_justes: 3, aide: 2 }])
-    expect(screen.getByText(/réussi, aide 2\. Refais-le un autre jour sans aide/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/réussi, aide 2\. Refais-le un autre jour sans aide/),
+    ).toBeInTheDocument()
   })
 })
 
