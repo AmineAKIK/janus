@@ -2488,14 +2488,24 @@
        * `data-aide1` à `data-aide3` de l'exercice, sinon dans `crans` (des textes, ou des fonctions
        * qui rendent le texte à l'ouverture) ; sans cran, la solution attend deux réponses fausses.
        * `restantes()` (un choix) : le nombre d'options encore à choisir ; « Voir la solution » ne paraît
-       * pas quand il ne pourrait jamais servir (la dernière option se montre d'office).
+       * pas quand il ne pourrait jamais servir (la dernière option se montre d'office). Un choix
+       * (`enchaine`) n'a qu'une ou deux tentatives avant que la dernière option se montre : après la
+       * première réponse fausse, ses crans s'ouvrent l'un après l'autre à la demande (l'indice, puis
+       * l'étape détaillée), sans attendre une autre réponse, qui ne laisserait plus rien à choisir.
+       * `toutOuvrir()` ouvre les crans qui restent, avant une solution montrée d'office.
        * `fini()` dit que l'exercice est fini, `surSolution()` montre la solution. Rend la zone à poser
        * dans l'exercice, `tentative()` à appeler à chaque réponse fausse, `cran()` (4 : solution vue)
        * et `maj()`.
        */
       function echelle(
         ex,
-        { crans = [], fini = () => false, surSolution = () => {}, restantes } = {},
+        {
+          crans = [],
+          fini = () => false,
+          surSolution = () => {},
+          restantes,
+          enchaine = false,
+        } = {},
       ) {
         const ecrits = [ex.dataset.aide1, ex.dataset.aide2, ex.dataset.aide3].filter(Boolean)
         const textes = ecrits.length > 0 ? ecrits : crans
@@ -2534,7 +2544,7 @@
               creer('li', { textContent: typeof texte === 'function' ? texte() : String(texte) }),
             )
             cran += 1
-            depuis = 0
+            if (!enchaine) depuis = 0
             maj()
             return
           }
@@ -2551,6 +2561,16 @@
             maj()
           },
           cran: () => (vue ? 4 : cran),
+          toutOuvrir() {
+            if (vue) return
+            for (; cran < textes.length; cran += 1) {
+              const texte = textes[cran]
+              liste.append(
+                creer('li', { textContent: typeof texte === 'function' ? texte() : String(texte) }),
+              )
+            }
+            maj()
+          },
           maj,
         }
       }

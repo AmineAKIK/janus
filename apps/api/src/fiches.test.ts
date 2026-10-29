@@ -525,7 +525,7 @@ describe('vérification des fiches du dépôt', () => {
     })
   })
 
-  describe('l’échelle d’aide d’un choix en pratique', () => {
+  describe('l’échelle d’aide d’un choix, au cours comme en pratique', () => {
     /** L'item PR1-1 du gabarit changé en choix, avec les attributs donnés. */
     const avecChoix = (attributs: string) =>
       fiche.replace(
@@ -538,29 +538,42 @@ describe('vérification des fiches du dépôt', () => {
 
       expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
         expect.stringContaining(
-          'l’item PR1-1 a un choix sans ses coups de pouce (data-aide1 manque)',
+          'l’item PR1-1 a un choix sans ses coups de pouce (data-aide1, data-aide2 manquent)',
         ),
       ])
     })
 
-    it('demande autant de crans que de réponses fausses possibles avant la dernière option', async () => {
-      await poser(
-        'X00.html',
-        avecChoix('data-aide1="Que demande-t-on ?"').replace(
-          '<li data-option="c">C</li>',
-          '<li data-option="c">C</li><li data-option="d">D</li>',
-        ),
-      )
+    it('demande l’étape détaillée après l’indice, même à trois options', async () => {
+      await poser('X00.html', avecChoix('data-aide1="Que demande-t-on ?"'))
 
       expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
         expect.stringContaining('(data-aide2 manque)'),
       ])
     })
 
-    it('accepte un choix à trois options qui a son coup de pouce, le seul qu’on atteint', async () => {
-      await poser('X00.html', avecChoix('data-aide1="Que demande-t-on ?"'))
+    it('accepte un choix qui a son indice et son étape détaillée', async () => {
+      await poser(
+        'X00.html',
+        avecChoix('data-aide1="Que demande-t-on ?" data-aide2="On compare A, B et C à la règle."'),
+      )
 
       expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+
+    it('le demande aussi dans le cours, mais pas dans la tentative, qui n’aide pas', async () => {
+      const choix = (attributs: string) =>
+        `<div class="ex" data-widget="choix" data-id="c1" data-reponse="a" ${attributs}><p class="q">Laquelle ?</p><ul class="options"><li data-option="a">A</li><li data-option="b">B</li></ul></div>`
+      await poser(
+        'X00.html',
+        avecChoix('data-aide1="Que demande-t-on ?" data-aide2="On compare A, B et C."').replace(
+          '<template data-etape="ET2">',
+          `<template data-etape="ET2">${choix('')}${choix('data-essai')}`,
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('l’étape ET2 a un choix (c1) sans ses coups de pouce'),
+      ])
     })
   })
 
