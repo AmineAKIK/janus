@@ -2666,8 +2666,8 @@
           data-id="c9"
           data-reponse="deux"
           data-explication="Deux écritures pour un même nombre, c’est une valeur gâchée. Avec un poids de 9, à l’inverse, le nombre 8 ne pourrait pas s’écrire. En doublant, chaque nombre a exactement une écriture."
-          data-aide1="Avec les poids 1, 2, 4 et 7, chaque nombre garde-t-il une seule écriture ?"
-          data-aide2="Avec 1, 2 et 4, on écrit déjà tous les nombres de 0 à 7. Ajoute un poids 7 : demande-toi combien d’écritures le nombre 7 reçoit alors."
+          data-aide1="Un nombre vaut la somme des poids de ses bits à 1. Avec 1, 2 et 4 seuls, tu écris déjà tous les nombres de 0 à 7."
+          data-aide2="Ajoute le poids 7. Pour chaque nombre de 0 à 8, cherche toutes les sommes de poids qui le donnent : le poids 7 te fait-il écrire un nombre nouveau, ou un nombre que tu savais déjà écrire ?"
         >
           <p class="q">
             Pourquoi les poids doublent-ils ? Imagine des poids 1, 2, 4, puis 7 au lieu de 8. Que se
@@ -2676,7 +2676,7 @@
           <ul class="options">
             <li
               data-option="rien"
-              data-retour="Regarde le nombre 7 : avec ces poids, il s’écrit 4 + 2 + 1, mais aussi 7 seul."
+              data-retour="Les nombres ne changeraient pas seulement : essaie d’écrire chaque nombre de 0 à 8 avec les poids 1, 2, 4 et 7."
             >
               Rien de gênant : on écrirait juste d’autres nombres.
             </li>
@@ -3306,13 +3306,16 @@
           <code>rgb(rouge, vert, bleu)</code>. L’ordre rouge, vert, bleu est une convention : chaque
           programme qui lit la couleur suit le même.
         </p>
+        <div class="outil" data-widget="melangeur">
+          <p class="outil-titre">Mélangeur de lumières</p>
+        </div>
         <div
           class="ex"
           data-widget="choix"
           data-id="k1"
           data-reponse="jaune"
-          data-aide1="Ici, des lumières s’ajoutent : lesquelles sont allumées ?"
-          data-aide2="Le rouge et le vert sont à 255, le bleu à 0. Règle le mélangeur ainsi, ou imagine une lumière rouge et une verte sur le même point."
+          data-aide1="Sur le mélangeur, chaque curseur règle une seule lumière, de 0 (éteinte) à 255 (à fond)."
+          data-aide2="Pousse le curseur rouge et le curseur vert au bout, laisse le bleu à 0, puis regarde la couleur du point."
         >
           <p class="q">
             Rouge à fond, vert à fond, bleu éteint : <code>rgb(255, 255, 0)</code>. Quelle couleur ?
@@ -3332,9 +3335,6 @@
               Blanc
             </li>
           </ul>
-        </div>
-        <div class="outil" data-widget="melangeur">
-          <p class="outil-titre">Mélangeur de lumières</p>
         </div>
         <p>
           Les lumières s’ajoutent : rouge et vert donnent du jaune, les trois à fond du blanc, les
@@ -4242,12 +4242,12 @@
           data-widget="choix"
           data-id="p3"
           data-reponse="autre"
-          data-aide1="Qu’est-ce qu’un processeur consulte pour savoir quoi faire d’un octet ?"
-          data-aide2="L’autre processeur reçoit les mêmes 6 octets, mais il les cherche dans son propre jeu d’instructions, pas dans celui du premier. Rien n’oblige les deux tables à dire la même chose."
+          data-aide1="Un octet seul ne dit pas quoi faire : c’est le jeu d’instructions du processeur, sa table, qui le dit."
+          data-aide2="Dans la table du premier processeur, 1 veut dire « range ». Imagine une table où 1 veut dire « affiche » : que ferait 1 5 ?"
         >
           <p class="q">
-            Un autre processeur, avec un autre jeu d’instructions, reçoit les 6 octets du premier
-            programme. Que se passe-t-il ?
+            Le premier programme, 1 5 2 3 3 0, affiche 8 avec la table de ce processeur. Un autre
+            processeur, avec un autre jeu d’instructions, reçoit ces 6 octets. Que se passe-t-il ?
           </p>
           <ul class="options">
             <li
@@ -5110,7 +5110,7 @@
         data-verifie
         data-reponse="depend"
         data-justifier="Explique ce qui, en dehors des octets eux-mêmes, décide de leur sens."
-        data-aide2="Lus en RGB, 255, 136 et 0 règlent trois lumières ; lus avec une table de caractères, ce sont trois numéros de caractères. Les octets n’ont pas bougé : qu’est-ce qui a changé ?"
+        data-aide2="Lus en binaire, ce sont trois nombres ; lus en RGB, ils règlent trois lumières. Les octets n’ont pas bougé : qu’est-ce qui a changé ?"
       >
         <p class="q">Un fichier contient trois octets : 255, 136 et 0. Que sont-ils ?</p>
         <ul class="options">
@@ -5118,7 +5118,7 @@
           <li
             data-option="couleur"
             data-erreur="E2"
-            data-retour="C’est une couleur seulement pour un programme qui lit ces octets en RGB. Lus avec une table de caractères, ce sont trois caractères."
+            data-retour="C’est une couleur seulement pour un programme qui lit ces octets en RGB."
           >
             Une couleur orange, puisque c’est rgb(255, 136, 0).
           </li>

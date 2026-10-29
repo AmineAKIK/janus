@@ -3634,8 +3634,8 @@
           data-id="t11"
           data-reponse="trois"
           data-prediction
-          data-aide1="Quels morceaux de la phrase peuvent être VRAI ou FAUX pour un client ?"
-          data-aide2="Reprends la phrase morceau par morceau : « les étudiants », « les moins de 26 ans », « sauf le samedi », « tarif réduit ». Pour chacun, demande-toi s’il se teste sur le client ou si la règle le décide."
+          data-aide1="La règle regarde des choses, sur le client ou sur le jour, avant de décider. Dans la phrase, lesquelles regarde-t-elle, et laquelle est sa décision ?"
+          data-aide2="Prends chaque morceau : « les étudiants », « les moins de 26 ans », « le samedi », « tarif réduit ». Pour chacun, dis si le guichet le connaît avant de calculer, ou s’il ne le sait qu’à la fin."
         >
           <p class="q">Quels sont les faits de cette phrase ?</p>
           <ul class="options">
@@ -4710,8 +4710,8 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
           data-id="b18"
           data-reponse="quatre"
           data-prediction
-          data-aide1="Quelles sont les valeurs limites de âge &lt; 26, et le fait étudiant peut-il cacher le seuil ?"
-          data-aide2="Un mardi, calcule la ligne 2 à 25 et à 26 ans, une fois pour un étudiant, une fois pour un client qui ne l’est pas. Regarde dans quel cas le seuil change le résultat."
+          data-aide1="Quelles sont les valeurs limites de âge &lt; 26 ? Pour un étudiant, la ligne 2 dépend-elle encore de l’âge ?"
+          data-aide2="Un mardi, calcule la ligne 2 pour un client qui n’est pas étudiant, à 25 puis à 26 ans : change-t-elle de valeur ? Fais de même pour un étudiant. Si le guichet avait écrit ≤ 26 au lieu de &lt; 26, lequel de ces clients le montrerait ?"
         >
           <p class="q">
             À ton avis, quels clients le gérant doit-il faire passer, un mardi, pour tester ce
@@ -4828,8 +4828,8 @@ condition : (étudiant <b>OU</b> âge &lt; 26) <b>ET NON</b> samedi</code></pre
           data-widget="choix"
           data-id="j25"
           data-reponse="egal"
-          data-aide1="Lequel de ces signes compare, sans rien ranger ni combiner ?"
-          data-aide2="Sur cet écran, = range une valeur, &amp;&amp; combine deux conditions, et === compare deux valeurs. Relis la consigne : faut-il ranger, combiner ou comparer ?"
+          data-aide1="« nom égal à 'Paul' » : le if doit-il changer ce que contient nom, ou poser une question sur ce qu’il contient ?"
+          data-aide2="Relis la phrase de cet écran sur Léo : pour tester si age contient 12, quel signe écrit-elle entre age et 12 ? Écris la même chose avec nom et 'Paul'."
         >
           <p class="q">
             Le guichet range le prénom du client dans la variable nom. Dans un if, comment écrit-on
@@ -5082,8 +5082,8 @@ let samedi = false</code></pre>
           data-id="j6"
           data-reponse="if"
           data-prediction
-          data-aide1="Par quel mot commence une chaîne en JavaScript, et quels signes entourent la condition et la branche ?"
-          data-aide2="Ouvre la table des mots : SI c s’écrit avec if, c entre parenthèses, puis la branche entre accolades. Applique-la à âge &lt; 12, la première ligne de la chaîne."
+          data-aide1="La ligne 1 commence-t-elle la chaîne, ou en continue-t-elle une ? Quel mot de JavaScript le dit ?"
+          data-aide2="Ouvre « Les deux tables de JavaScript » et lis, dans la première table, la ligne SI c. Remplace c par age &lt; 12 et la branche par la ligne afficher de la même table, puis compare avec les options."
         >
           <p class="q">Comment s’écrit la ligne 1, SI âge &lt; 12 : afficher « 5 € » ?</p>
           <ul class="options">
@@ -5391,7 +5391,7 @@ if (age &lt; 12) {
           data-melanger="non"
           data-prediction
           data-aide1="Cette ligne compare-t-elle, ou range-t-elle une valeur ?"
-          data-aide2="D’après l’encadré, let crée age et y range 23, sans rien comparer ni calculer. true viendrait d’une comparaison, 23 d’un calcul : que reste-t-il pour une ligne qui ne calcule rien ?"
+          data-aide2="Sur l’écran d’avant, la console répondait false à 26 &lt; 26 : une ligne qui calcule répond par sa valeur. D’après l’encadré, let age = 23 crée age et y range 23. Cette ligne calcule-t-elle une valeur à montrer ?"
         >
           <p class="q">Que va répondre la console à <code>let age = 23</code> ?</p>
           <ul class="options">
@@ -5503,8 +5503,8 @@ if (age &lt; 12) {
           data-id="j19"
           data-reponse="dix"
           data-melanger="non"
-          data-aide1="Teste les conditions de haut en bas : age vaut 26, etudiant et samedi valent false. Quelle est la première condition VRAIE ?"
-          data-aide2="Dans la deuxième condition, calcule d’abord la parenthèse. Attention : &lt; est strict."
+          data-aide1="Calcule chaque condition de haut en bas, avec age à 26, etudiant et samedi à false : true ou false ? Arrête-toi à la première true, s’il y en a une."
+          data-aide2="Dans la deuxième condition, remplace les variables : (false || 26 &lt; 26) &amp;&amp; !false. Calcule 26 &lt; 26, puis le ||, puis le &amp;&amp;. Fais de même pour la troisième, 26 &gt;= 65."
         >
           <p class="q">Que va afficher la console ?</p>
           <pre><code>let age = 26
@@ -5785,9 +5785,9 @@ if (age &lt; 12) {
           class="ex"
           data-widget="choix"
           data-id="f4"
-          data-aide1="Pour un étudiant de 70 ans venu un mardi, quelle ligne est aujourd’hui VRAIE la première ? Où faut-il donc tester âge ≥ 65 ?"
+          data-aide1="Dans une chaîne, la première ligne VRAIE gagne. Pour qu’un client de 65 ans ou plus paie 8 € tous les jours, que doit trouver le guichet avant d’arriver à la ligne de la réduction ?"
           data-reponse="ordre"
-          data-aide2="Un étudiant de 70 ans, un mardi : la ligne 1 est FAUSSE, la ligne 2 VRAIE, et la chaîne s’arrête là sans tester âge ≥ 65. Demande-toi comment faire tester cette ligne plus tôt."
+          data-aide2="Essaie chaque changement sur deux clients : un étudiant de 70 ans un mardi, qui doit payer 8 €, et un étudiant de 30 ans un mardi, qui doit garder ses 7 €. Garde le changement qui donne ces deux prix."
         >
           <p class="q">
             Le cinéma veut que les 65 ans et plus paient 8 €, même s’ils sont étudiants, quel que
@@ -6182,14 +6182,14 @@ if (age &lt; 12) {
     </template>
     <template data-variante="PR1-5">
       <div
-        data-aide1="Un colis peut-il partir à deux adresses à la fois ? Que demande le mot « choisis » ?"
+        data-aide1="Les deux à la fois, c’est permis ? Qu’est-ce qui peut le dire : un mot de la phrase, ou ce que tout le monde sait d’une livraison ?"
         class="ex"
         data-widget="choix"
         data-verifie
         data-reponse="exclusif"
         data-justifier="Dis ce qui arriverait à une commande qui demande les deux livraisons si le code utilisait le OU inclusif, domicile OU relais."
         data-solution="Non : « choisis » fait choisir, et un colis ne part qu’à une adresse. Ce « ou » est exclusif : (domicile OU relais) ET NON (domicile ET relais)"
-        data-aide2="Un colis part vers une seule adresse, et la phrase commence par un mot qui fait choisir. Avec ces deux indices, vois si domicile et relais peuvent être VRAI ensemble."
+        data-aide2="Imagine une commande qui coche domicile et point relais : le livreur peut-il faire les deux avec un seul colis ? Que devrait répondre le site à ce client ?"
       >
         <p class="q">
           « Choisis ta livraison : à domicile ou en point relais. » Une commande peut-elle être
@@ -6443,13 +6443,13 @@ if (age &lt; 12) {
     </template>
     <template data-item="PR1-8">
       <div
-        data-aide1="Que contient la variable juste après le signe = ? Que vaut alors ce qui est entre les parenthèses du if ?"
+        data-aide1="En JavaScript, = et === font-ils la même chose ? Lequel des deux ce if emploie-t-il ?"
         class="ex"
         data-widget="choix"
         data-verifie
         data-reponse="affecte"
         data-solution="if (code === 1234) : === compare code à 1234 et donne true ou false ; = rangeait 1234 dans code"
-        data-aide2="D’après l’encadré, = range : code reçoit 1234, quelle que soit sa valeur avant. Le if teste alors 1234, un nombre autre que 0 ; lis dans l’encadré comment il compte un tel nombre."
+        data-aide2="Fais tourner la ligne quand code vaut 0 : d’après l’encadré, que fait le signe = à code, et quelle valeur y a-t-il ensuite entre les parenthèses du if ? Lis dans l’encadré comment le if compte cette valeur."
       >
         <div class="cadre pour-lire">
           <p class="discret">Le JavaScript, pour lire :</p>
@@ -6494,13 +6494,13 @@ if (age &lt; 12) {
     </template>
     <template data-variante="PR1-8">
       <div
-        data-aide1="Que contient la variable juste après le signe = ? Que vaut alors ce qui est entre les parenthèses du if ?"
+        data-aide1="En JavaScript, = et === font-ils la même chose ? Lequel des deux ce if emploie-t-il ?"
         class="ex"
         data-widget="choix"
         data-verifie
         data-reponse="affecte"
         data-solution="if (stock === 0) : === compare stock à 0 ; = rangeait 0 dans stock, et 0 compte comme FAUX, d’où « en stock » à chaque fois"
-        data-aide2="D’après l’encadré, = range : stock reçoit 0, quelle que soit sa valeur avant. Le if teste alors 0 ; lis dans l’encadré comment il compte ce nombre, et quelle branche en découle."
+        data-aide2="Fais tourner la ligne quand stock vaut 3 : d’après l’encadré, que fait le signe = à stock, et quelle valeur y a-t-il ensuite entre les parenthèses du if ? Lis dans l’encadré comment le if compte cette valeur."
       >
         <div class="cadre pour-lire">
           <p class="discret">Le JavaScript, pour lire :</p>
