@@ -90,7 +90,10 @@ for (const manifeste of fichesDuDepot()) {
       await expect(fiche.locator('#statut')).toHaveText('Statut : Vu')
       let etat = await detail()
       expect(etat.statut).toBe('vu')
-      expect(etat.manque.map((m) => m.code)).toEqual(['pratique_aide'])
+      expect(etat.manque.map((m) => m.code)).toEqual([
+        'pratique_aide',
+        ...(manifeste.atelier === undefined ? [] : ['atelier_manquant']),
+      ])
       expect(etat.serie_ouverte.restitution).toBe(false)
 
       // La pratique réussie sans aide, comme la fiche l'envoie : acquis provisoirement.

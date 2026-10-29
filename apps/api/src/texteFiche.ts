@@ -250,7 +250,8 @@ function cachesDuTemplate(contenu: string): string[] {
     }
     const enCase = lire('data-case')
     if (enCase !== undefined) lignes.push(`- Case à remplir de mémoire : « ${enCase} »`)
-    const lien = lire('data-lien')
+    // Un lien externe (`<a data-lien="https://…">`) est montré tel quel : ce n'est pas un lien de schéma.
+    const lien = /^<a\b/i.test(balise[0]) ? undefined : lire('data-lien')
     if (lien !== undefined) {
       const choix = lire('data-choix')
       lignes.push(

@@ -259,6 +259,7 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
           '<div data-case="Bit" data-accepte="bit|bits" data-indice="deux états.">Case 1</div>',
           '<p data-lien="qui donne" data-choix="qui donne|qui lit">Lien</p>',
           '<p data-lien="qui est lu par" data-mots="lu|lit|lire;par|avec">Lien</p></div>',
+          '<p>Télécharge <a data-lien="https://exemple.fr/outil">l’outil</a>.</p>',
           '<div data-widget="pari" data-apres="C’est noté, sans note.">Ton pari</div>',
           '<div data-widget="nombre" data-reponse="15" data-variante-enonce="avec 3 bits ?"',
           ' data-variante-reponse="7" data-variante-aide1="Par où commencer ?" data-variante-solution="De 0 à 7."',
@@ -299,6 +300,8 @@ describe('texteDeLaFiche : ce que lit l’apprenant neuf', () => {
     const conception = pourLeGardien.slice(
       pourLeGardien.indexOf('## Ce que la page montre après une tentative'),
     )
+    // Un lien externe n'est pas un lien de schéma à écrire de mémoire.
+    expect(conception).not.toContain('https://exemple.fr/outil')
     expect(conception).toContain(
       [
         '### PR1-2',
