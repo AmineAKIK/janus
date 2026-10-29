@@ -1128,6 +1128,19 @@
         flex-direction: column;
       }
 
+      /* Le constat de l'atelier : ce que l'apprenant a fait hors de la page. */
+      .constat {
+        display: flex;
+        flex-direction: column;
+        gap: var(--espacement-8);
+        margin-block-start: var(--espacement-24);
+        padding-block-start: var(--espacement-16);
+        border-top: 1px solid var(--couleur-ligne);
+      }
+      .constat h3 {
+        margin: 0;
+      }
+
       /* Pratique : un item à la fois. */
       .exo-titre {
         font-size: 1.125rem;
@@ -7181,7 +7194,7 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 41,
+        "version": 42,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 conditions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 3 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables NON, ET et OU remplies sans erreur en 25 s au plus.",
@@ -12947,7 +12960,14 @@ if (age &lt; 12) {
       /** Les types d'étape que le gabarit sait dessiner : chacun a son moment. */
       const ETAPES_FICHE = MOMENTS.flatMap((moment) => moment.types)
       /** Les étapes à lire, dessinées depuis leur `<template data-etape>`. */
-      const ETAPES_LIBRES = ['perception', 'pretest', 'explication', 'ensemble', 'aisance']
+      const ETAPES_LIBRES = [
+        'perception',
+        'pretest',
+        'explication',
+        'ensemble',
+        'atelier',
+        'aisance',
+      ]
       const LIBELLES_STATUT = {
         non_commence: 'Non commencé',
         en_cours: 'En cours',
@@ -13738,6 +13758,8 @@ if (age &lt; 12) {
             '.'
           )
         }
+        if (etape.type === 'atelier')
+          return etat.atelier ? '' : 'Envoie ton constat avant de passer à la suite.'
         if (etape.type !== 'restitution') return ''
         if (!serieOuverte[etape.type]) return ''
         const total = questions(etape.type).length
@@ -14474,9 +14496,12 @@ if (age &lt; 12) {
         const modele = document.querySelector('template[data-etape="' + etape.id + '"]')
         const section = creer('section', {}, creer('h2', { textContent: etape.titre }))
         if (etape.type === 'pretest') majEssais = () => essaisDe(section)
+        // L'atelier finit sur son constat : ce que l'apprenant a fait hors de la page.
+        const constat = etape.type === 'atelier' ? constatAtelier(section) : null
         if (!modele) {
           section.append(
             creer('p', { className: 'discret', textContent: 'Rien à lire dans cette étape.' }),
+            ...(constat ? [constat, ...piedEtape(etape)] : []),
           )
           return section
         }
@@ -14485,6 +14510,7 @@ if (age &lt; 12) {
         if (ecrans.length < 2) {
           // Un seul écran : tout le template d'un bloc, avec « Écouter ».
           const { ecran, lu } = ecranUnique(modele)
+          if (constat) (ecran.querySelector('[data-ecran]') ?? ecran).append(constat)
           section.append(barreEcoute(lu), ecran)
           activerLiens(section)
           section.append(...piedEtape(etape, 'Étape suivante', ecran))
@@ -14492,6 +14518,7 @@ if (age &lt; 12) {
           return section
         }
         // Plusieurs écrans : un seul visible à la fois, les autres restent dans la page (outils déjà montés).
+        if (constat) ecrans[ecrans.length - 1].append(constat)
         const suivante = etapes[etapes.findIndex((e) => e.id === etape.id) + 1]
         const titre = creer('p', { className: 'ecran-titre' })
         const compte = creer('span', { className: 'ecran-compte' })
@@ -14876,53 +14903,140 @@ if (age &lt; 12) {
         )
       }
 
-      function afficherAtelier() {
-        const section = creer(
-          'section',
-          {},
-          creer('h2', { textContent: 'Atelier' }),
-          creer('p', {
-            className: 'discret',
-            textContent: 'Dis si tu as réussi l’atelier, sans aide ou avec le cran d’aide utilisé.',
+      /**
+       * Le constat de l'atelier : ce que l'apprenant a fait hors de la page (sur sa machine, dans un
+       * autre logiciel), que la page ne voit pas. Les critères sont fixés d'avance dans le manifeste
+       * (`atelier.criteres`) ; il coche ceux qu'il a atteints et dit l'aide prise, de 0 (aucune) à 4
+       * (la solution entière). Un coup de pouce ouvert dans l'atelier (`<details data-cran="2">`)
+       * fixe l'aide au moins à son cran : elle ne se déclare pas plus basse. Réussi quand chaque
+       * critère est coché ; il ne compte qu'à l'aide 0 (moteur). Il se renvoie autant de fois qu'il
+       * le faut, et l'étape suivante attend un premier envoi.
+       */
+      const AIDES_ATELIER = [
+        'Aucune aide',
+        'Un indice',
+        'Une piste détaillée',
+        'Une partie de la solution',
+        'La solution entière',
+      ]
+      function constatAtelier(section) {
+        const criteres = manifeste.atelier?.criteres ?? ['J’ai fait l’atelier en entier.']
+        const brouillon = () => etat.traces?.['atelier:constat'] ?? { coches: [], cran: 0 }
+        const garder = (suite) => {
+          etat.traces = { ...(etat.traces ?? {}), 'atelier:constat': { ...brouillon(), ...suite } }
+          enregistrer()
+        }
+        const cases = criteres.map((_, k) =>
+          creer('input', {
+            type: 'checkbox',
+            name: 'critere',
+            value: String(k),
+            checked: brouillon().coches.includes(k),
           }),
         )
-        const resultat = creer('p', {
-          className: 'discret',
-          textContent: etat.atelier
-            ? 'Envoyé\u00a0: ' +
-              (etat.atelier.reussi ? 'réussi' : 'non réussi') +
-              ', aide ' +
-              etat.atelier.aide
-            : '',
-        })
-        const envoyer = (reussi, aide) => {
-          pont.envoyer('atelier.resultat', { reussi, predictions_justes: reussi ? 3 : 0, aide })
-          etat.atelier = { reussi, aide }
-          enregistrer()
-          resultat.textContent =
-            'Envoyé\u00a0: ' + (reussi ? 'réussi' : 'non réussi') + ', aide ' + aide
-        }
-        section.append(
-          creer(
-            'div',
-            { className: 'actions' },
-            creer('button', {
-              type: 'button',
-              className: 'bouton',
-              textContent: 'Atelier réussi sans aide',
-              onclick: () => envoyer(true, 0),
-            }),
-            creer('button', {
-              type: 'button',
-              className: 'bouton secondaire',
-              textContent: 'Atelier pas réussi',
-              onclick: () => envoyer(false, 0),
-            }),
-          ),
-          resultat,
-          ...piedEtape(etapes.find((e) => e.type === 'atelier')),
+        const radios = AIDES_ATELIER.map((_, aide) =>
+          creer('input', { type: 'radio', name: 'aide-atelier', value: String(aide) }),
         )
-        return section
+        const note = creer('p', { className: 'discret', hidden: true })
+        const bouton = creer('button', {
+          type: 'button',
+          className: 'bouton',
+          textContent: 'Envoyer mon constat',
+        })
+        const resultat = creer('p', { className: 'retour', role: 'status' })
+        const choisie = () => radios.findIndex((r) => r.checked)
+        const maj = () => {
+          const cran = brouillon().cran
+          radios.forEach((r, aide) => {
+            r.disabled = aide < cran
+            if (r.disabled) r.checked = false
+          })
+          note.hidden = cran === 0
+          note.textContent =
+            'Tu as ouvert un coup de pouce\u00a0: ton aide part au moins à «\u00a0' +
+            AIDES_ATELIER[cran] +
+            '\u00a0».'
+          bouton.disabled = choisie() < 0
+        }
+        const dire = (envoye) => {
+          resultat.textContent = !envoye
+            ? ''
+            : !envoye.reussi
+              ? 'Envoyé\u00a0: pas encore réussi. Refais ce qui manque, puis renvoie ton constat.'
+              : envoye.aide === 0
+                ? 'Envoyé\u00a0: réussi sans aide.'
+                : 'Envoyé\u00a0: réussi, aide ' +
+                  envoye.aide +
+                  '. Refais-le un autre jour sans aide\u00a0: c’est là qu’il compte.'
+        }
+        for (const c of cases)
+          c.addEventListener('change', () => {
+            garder({ coches: cases.flatMap((x, k) => (x.checked ? [k] : [])) })
+          })
+        for (const r of radios) r.addEventListener('change', maj)
+        // Un coup de pouce ouvert relève l'aide au moins à son cran, même refermé ensuite.
+        section.addEventListener(
+          'toggle',
+          (evenement) => {
+            const details = evenement.target
+            if (!(details instanceof HTMLDetailsElement) || !details.open) return
+            const cran = Math.min(Math.max(Number(details.dataset.cran) || 0, 0), 4)
+            if (cran > brouillon().cran) {
+              garder({ cran })
+              maj()
+            }
+          },
+          true,
+        )
+        bouton.addEventListener('click', () => {
+          const aide = choisie()
+          if (aide < 0) return
+          const reussi = cases.every((c) => c.checked)
+          const coches = cases.flatMap((x, k) => (x.checked ? [k] : []))
+          pont.envoyer('atelier.resultat', { reussi, predictions_justes: reussi ? 3 : 0, aide })
+          etat.atelier = { reussi, aide, coches }
+          enregistrer()
+          dire(etat.atelier)
+          majPied()
+        })
+        if (etat.atelier && etat.atelier.aide >= brouillon().cran)
+          radios[etat.atelier.aide].checked = true
+        maj()
+        dire(etat.atelier)
+        const panneau = creer(
+          'div',
+          {
+            className: 'constat',
+            dataset: {
+              lecture:
+                'Ton constat\u00a0: coche ce que tu as fait, dis l’aide que tu as prise, puis envoie.',
+            },
+          },
+          creer('h3', { textContent: 'Ton constat' }),
+          creer('p', {
+            className: 'discret',
+            textContent:
+              'La page ne voit pas ta machine\u00a0: c’est toi qui dis ce que tu as fait. Coche ce qui est vrai, et rien d’autre.',
+          }),
+          creer(
+            'fieldset',
+            { className: 'cases' },
+            creer('legend', { textContent: 'Ce que tu as fait' }),
+            ...criteres.map((critere, k) =>
+              creer('label', {}, cases[k], creer('span', { textContent: critere })),
+            ),
+          ),
+          creer(
+            'fieldset',
+            { className: 'choix' },
+            creer('legend', { textContent: 'L’aide que tu as prise' }),
+            ...AIDES_ATELIER.map((libelle, aide) => creer('label', {}, radios[aide], libelle)),
+          ),
+          note,
+          creer('div', { className: 'actions' }, bouton),
+          resultat,
+        )
+        return panneau
       }
 
       /**
@@ -15875,7 +15989,6 @@ if (age &lt; 12) {
               : {
                   carte: () => afficherCarte(etape),
                   pratique: afficherPratique,
-                  atelier: afficherAtelier,
                   restitution: () => afficherSerie('restitution', 'Restitution'),
                   bilan: afficherBilan,
                 }[etape.type])?.() ??
