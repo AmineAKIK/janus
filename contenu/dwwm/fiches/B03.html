@@ -1602,10 +1602,12 @@
         }
       }
 
-      /* La machine de Yasmine : le disque, la RAM, le processeur, côte à côte ; empilés sur un téléphone. */
+      /* La machine de Yasmine : quatre boîtes et trois flèches sur une ligne (sept colonnes) ; empilées sous 720 px. */
       .machine {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+        grid-template-columns:
+          minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr) auto
+          minmax(0, 1fr);
         align-items: stretch;
         gap: var(--espacement-8);
       }
@@ -1614,7 +1616,7 @@
         flex-direction: column;
         gap: var(--espacement-4);
         min-width: 0;
-        padding: var(--espacement-12);
+        padding: var(--espacement-8);
         border: 1px solid var(--couleur-accent);
         border-radius: var(--rayon-champ);
         background: var(--couleur-surface);
@@ -1623,6 +1625,8 @@
         margin-top: 0;
       }
       section .nom-composant {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
         font-weight: 600;
       }
       section .etat-composant {
@@ -1639,15 +1643,22 @@
       }
       .fleche-composant {
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
+        width: min-content;
+        margin-inline: auto;
         color: var(--couleur-texte-secondaire);
         font-size: 0.8125rem;
+        line-height: 1rem;
         text-align: center;
       }
+      .composant .mono {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+      }
       .fleche-composant::after {
-        content: ' →';
-        white-space: pre;
+        content: '→';
       }
       .composant progress,
       .jauges progress {
@@ -1670,12 +1681,15 @@
       section .journal > li + li {
         margin-top: 0;
       }
-      @media (max-width: 560px) {
+      @media (max-width: 720px) {
         .machine {
           grid-template-columns: minmax(0, 1fr);
         }
+        .fleche-composant {
+          width: auto;
+        }
         .fleche-composant::after {
-          content: ' ↓';
+          content: '↓';
         }
       }
 
