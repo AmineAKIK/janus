@@ -2274,6 +2274,77 @@ describe('une erreur critique repérée par un outil', () => {
   })
 })
 
+describe('l’atelier : faire hors de la page', () => {
+  /** Le gabarit, avec un atelier (ET7) après la pratique : un guide, un coup de pouce, deux critères. */
+  const avecAtelier = GABARIT.replace(
+    '"id": "ET3",\n            "titre": "Pratique",\n            "type": "pratique"\n          },',
+    '"id": "ET3",\n            "titre": "Pratique",\n            "type": "pratique"\n          },\n          { "id": "ET7", "titre": "Sur ta machine", "type": "atelier" },',
+  )
+    .replace(
+      '"pratique": [',
+      '"atelier": { "id": "AT1", "reussite_aide_max": 0, "criteres": ["J’ai relevé la RAM.", "J’ai relevé le disque."] }, "pratique": [',
+    )
+    .replace(
+      '<template data-etape="ET2">',
+      '<template data-etape="ET7"><p>Ouvre le gestionnaire des tâches.</p><details data-cran="2"><summary>Un coup de pouce</summary><p>Ctrl+Maj+Échap.</p></details></template>\n    <template data-etape="ET2">',
+    )
+  const envoisAtelier = (envois: readonly Envoi[]) =>
+    envois.filter(({ type }) => type === 'atelier.resultat').map(({ donnees }) => donnees)
+
+  it('montre son guide, puis le constat : chaque critère coché, l’aide dite', async () => {
+    expect(avecAtelier).not.toBe(GABARIT)
+    const { pont, envois } = pontSimule(aLEtape('ET7'))
+    monter(avecAtelier, pont)
+
+    expect(await screen.findByText('Ouvre le gestionnaire des tâches.')).toBeInTheDocument()
+    const envoyer = screen.getByRole('button', { name: 'Envoyer mon constat' })
+    expect(envoyer).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Étape suivante' })).toBeDisabled()
+    expect(screen.getByText('Envoie ton constat avant de passer à la suite.')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('checkbox', { name: 'J’ai relevé la RAM.' }))
+    fireEvent.click(screen.getByRole('radio', { name: 'Aucune aide' }))
+    fireEvent.click(envoyer)
+    // Un critère manque : pas réussi, et l'étape suivante s'ouvre quand même.
+    expect(envoisAtelier(envois)).toEqual([{ reussi: false, predictions_justes: 0, aide: 0 }])
+    expect(screen.getByText(/pas encore réussi/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Étape suivante' })).toBeEnabled()
+
+    fireEvent.click(screen.getByRole('checkbox', { name: 'J’ai relevé le disque.' }))
+    fireEvent.click(envoyer)
+    expect(envoisAtelier(envois).at(-1)).toEqual({ reussi: true, predictions_justes: 3, aide: 0 })
+    expect(screen.getByText('Envoyé : réussi sans aide.')).toBeInTheDocument()
+  })
+
+  it('un coup de pouce ouvert fixe l’aide au moins à son cran, même au retour', async () => {
+    const { pont, sauvees } = pontSimule(aLEtape('ET7'))
+    monter(avecAtelier, pont)
+    await screen.findByText('Ouvre le gestionnaire des tâches.')
+
+    const details = document.querySelector('details[data-cran]')
+    if (!(details instanceof HTMLDetailsElement)) throw new Error('Pas de coup de pouce')
+    details.open = true
+    details.dispatchEvent(new Event('toggle'))
+    expect(screen.getByRole('radio', { name: 'Aucune aide' })).toBeDisabled()
+    expect(screen.getByRole('radio', { name: 'Un indice' })).toBeDisabled()
+    expect(screen.getByRole('radio', { name: 'Une piste détaillée' })).toBeEnabled()
+
+    document.body.replaceChildren()
+    const { pont: retour, envois } = pontSimule(sauvees.at(-1) ?? {})
+    monter(avecAtelier, retour)
+    await screen.findByText('Ouvre le gestionnaire des tâches.')
+    expect(screen.getByRole('radio', { name: 'Aucune aide' })).toBeDisabled()
+    for (const nom of ['J’ai relevé la RAM.', 'J’ai relevé le disque.'])
+      fireEvent.click(screen.getByRole('checkbox', { name: nom }))
+    fireEvent.click(screen.getByRole('radio', { name: 'Une piste détaillée' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Envoyer mon constat' }))
+    expect(envoisAtelier(envois)).toEqual([{ reussi: true, predictions_justes: 3, aide: 2 }])
+    expect(
+      screen.getByText(/réussi, aide 2\. Refais-le un autre jour sans aide/),
+    ).toBeInTheDocument()
+  })
+})
+
 describe('l’échelle d’aide, la même pour toutes les fiches', () => {
   type Echelle = { zone: HTMLElement; tentative: () => void; cran: () => number; maj: () => void }
   /** L'échelle du gabarit, posée sur un exercice de la page. */

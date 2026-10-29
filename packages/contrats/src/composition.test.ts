@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { reservesDuType, TypeDeContenu } from './composition.ts'
+import { reservesDuType, TypeDeContenu, TypeDuBloc } from './composition.ts'
 
 describe('les réserves exigées selon le type de contenu', () => {
   it('connaît les quatre types de la méthode', () => {
@@ -29,6 +29,16 @@ describe('les réserves exigées selon le type de contenu', () => {
 
   it('conventions : une explication courte, aucun transfert', () => {
     expect(reservesDuType('conventions')).toEqual({ parties: ['explication'], formes: [] })
+  })
+
+  it('un bloc qui mêle deux types tire l’union de leurs réserves, dans l’ordre du cadrage', () => {
+    expect(reservesDuType(['systemes', 'procedures'])).toEqual({
+      parties: ['explication', 'tache', 'transfert'],
+      formes: ['choisir_methode', 'adapter_condition', 'trouver_erreur', 'hors_champ'],
+    })
+    expect(reservesDuType(['conventions', 'regles_cas'])).toEqual(reservesDuType('regles_cas'))
+    expect(TypeDuBloc.safeParse(['systemes']).success).toBe(false)
+    expect(TypeDuBloc.safeParse('systemes').success).toBe(true)
   })
 
   it('sans type : la composition complète du cadrage d’origine', () => {

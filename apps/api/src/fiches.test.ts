@@ -221,6 +221,47 @@ describe('vérification des fiches du dépôt', () => {
       expect(problemes[0]).toContain('data-lien')
     })
 
+    describe('faire hors de la page, dans l’atelier', () => {
+      /** Le gabarit, avec une étape atelier (ET7) après la pratique, son template et son constat. */
+      const avecAtelier = (
+        atelier: string,
+        template = '<template data-etape="ET7"><p>Le geste.</p></template>',
+      ) =>
+        fiche
+          .replace(
+            '"id": "ET3",\n            "titre": "Pratique",\n            "type": "pratique"\n          },',
+            '"id": "ET3",\n            "titre": "Pratique",\n            "type": "pratique"\n          },\n          { "id": "ET7", "titre": "Atelier", "type": "atelier" },',
+          )
+          .replace('"pratique": [', `${atelier}"pratique": [`)
+          .replace('<template data-etape="ET2">', `${template}\n    <template data-etape="ET2">`)
+
+      it('accepte un atelier guidé par son template, avec ses critères', async () => {
+        const html = avecAtelier(
+          '"atelier": { "id": "AT1", "reussite_aide_max": 0, "criteres": ["J’ai relevé la RAM."] },\n  ',
+        )
+        expect(html).not.toBe(fiche)
+        await poser('X00.html', html)
+
+        expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+      })
+
+      it('refuse un atelier sans template, sans critères ou sans constat', async () => {
+        await poser(
+          'X00.html',
+          avecAtelier('"atelier": { "id": "AT1", "reussite_aide_max": 0 },\n  ', ''),
+        )
+        expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+          expect.stringContaining('l’étape ET7 (atelier) n’a pas de <template data-etape="ET7">'),
+          expect.stringContaining('l’atelier n’a pas de `criteres`'),
+        ])
+
+        await poser('X00.html', avecAtelier(''))
+        expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+          expect.stringContaining('l’étape atelier n’a pas de constat'),
+        ])
+      })
+    })
+
     it('ne compte pas les adresses du pont de l’appli', async () => {
       await poser(
         'X00.html',

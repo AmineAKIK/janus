@@ -250,7 +250,8 @@ function cachesDuTemplate(contenu: string): string[] {
     }
     const enCase = lire('data-case')
     if (enCase !== undefined) lignes.push(`- Case à remplir de mémoire : « ${enCase} »`)
-    const lien = lire('data-lien')
+    // Un lien externe (`<a data-lien="https://…">`) est montré tel quel : ce n'est pas un lien de schéma.
+    const lien = /^<a\b/i.test(balise[0]) ? undefined : lire('data-lien')
     if (lien !== undefined) {
       const choix = lire('data-choix')
       lignes.push(
@@ -400,6 +401,7 @@ function varianteDuCours(lire: (nom: string) => string | undefined): string[] {
  * guillemets sont ceux de la page.
  */
 export const CE_QUE_FAIT_LE_GABARIT: readonly string[] = [
+  'Atelier, ce qui se fait hors de la page (sur ta machine, dans un autre logiciel) : le guide de l’étape, puis « Ton constat » au bas de son dernier écran. L’apprenant coche chaque critère qu’il a atteint et dit l’aide prise (« Aucune aide » à « La solution entière ») ; un coup de pouce ouvert dans l’atelier fixe l’aide au moins à son cran (« Tu as ouvert un coup de pouce : ton aide part au moins à … »). Chaque critère coché : réussi, mais il ne compte pour le statut qu’à « Aucune aide » (« Refais-le un autre jour sans aide : c’est là qu’il compte. ») ; un critère manquant : « pas encore réussi ». Il se renvoie autant qu’il faut ; « Étape suivante » attend un premier envoi (« Envoie ton constat avant de passer à la suite. »). Le bilan dit « Atelier : réussi » ou « pas réussi ».',
   'Le fil groupe les étapes en quatre moments : Découvrir (perception, puis carte, qui vient après le pari), Comprendre (pré-test, explication), S’entraîner (pratique, atelier, aisance, ensemble), Prouver (restitution, bilan).',
   'Une étape à plusieurs écrans les montre un par un, avec Retour et Suivant ; chaque écran a « Écouter », qui le lit à voix haute.',
   'Échelle d’aide, la même dans chaque fiche, au cours comme en pratique : rien avant une réponse fausse ; puis « Un coup de pouce », puis « Un autre coup de pouce », chacun ouvert après une nouvelle réponse fausse ; au bout, « Voir la solution » (sans cran, après deux réponses fausses). Dans un choix, chaque option fausse est retirée ; quand une seule reste, elle est marquée comme solution vue.',
@@ -590,6 +592,16 @@ function etapeEnTexte(
   contenu: string | undefined,
   manifeste: Manifeste,
 ): string[] {
+  if (etape.type === 'atelier')
+    return [
+      contenu === undefined ? 'Rien à lire dans cette étape.' : enTexte(contenu),
+      'Ton constat. La page ne voit pas ta machine : c’est toi qui dis ce que tu as fait. Coche ce qui est vrai, et rien d’autre.',
+      'Ce que tu as fait :',
+      ...(manifeste.atelier?.criteres ?? ['J’ai fait l’atelier en entier.']).map(
+        (critere) => `- [ ] ${critere}`,
+      ),
+      'L’aide que tu as prise : Aucune aide, Un indice, Une piste détaillée, Une partie de la solution, La solution entière.',
+    ]
   if (ETAPES_LUES.has(etape.type))
     return [contenu === undefined ? 'Rien à lire dans cette étape.' : enTexte(contenu)]
   switch (etape.type) {
@@ -602,8 +614,6 @@ function etapeEnTexte(
         objectifReplie(manifeste),
         'Les exercices, un item à la fois : plus bas, dans « Ce qu’on te demande », partie Pratique.',
       ]
-    case 'atelier':
-      return ['Tu dis si tu as réussi l’atelier, sans aide ou non.']
     case 'restitution':
       return [
         'Les questions, une à la fois : plus bas, dans « Ce qu’on te demande », partie Restitution. Elle se fait sans le cours : dès que tu commences, il est masqué jusqu’à ta dernière réponse, comme le reste de la fiche. Tes réponses sont corrigées à la fin de la série, pour qu’une correction ne souffle pas la question suivante.',

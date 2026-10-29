@@ -5,6 +5,13 @@ import { FormeTransfert, TypeDifferee } from './enums.ts'
 export const TypeDeContenu = z.enum(['systemes', 'procedures', 'regles_cas', 'conventions'])
 export type TypeDeContenu = z.infer<typeof TypeDeContenu>
 
+/**
+ * Le type d'un bloc : un seul, ou plusieurs quand le bloc les mêle (B03 : un système, et les gestes
+ * pour relever sa machine). Plusieurs types tirent l'union de leurs réserves.
+ */
+export const TypeDuBloc = z.union([TypeDeContenu, z.array(TypeDeContenu).min(2)])
+export type TypeDuBloc = z.infer<typeof TypeDuBloc>
+
 export interface Reserves {
   /** Les types de questions différées que la vérification, le retest et l'entretien tirent, dans l'ordre. */
   readonly parties: readonly TypeDifferee[]
@@ -31,7 +38,17 @@ const RESERVES_COMPLETES: Reserves = {
   formes: FormeTransfert.options,
 }
 
-/** Les réserves exigées pour un type de contenu, et donc la composition d'une vérification. */
-export function reservesDuType(type: TypeDeContenu | undefined): Reserves {
-  return type === undefined ? RESERVES_COMPLETES : RESERVES[type]
+/**
+ * Les réserves exigées pour un type de contenu, et donc la composition d'une vérification. Plusieurs
+ * types : l'union de leurs parties et de leurs formes, dans l'ordre du cadrage.
+ */
+export function reservesDuType(type: TypeDuBloc | undefined): Reserves {
+  if (type === undefined) return RESERVES_COMPLETES
+  if (typeof type === 'string') return RESERVES[type]
+  const parties = new Set(type.flatMap((t) => RESERVES[t].parties))
+  const formes = new Set(type.flatMap((t) => RESERVES[t].formes))
+  return {
+    parties: TypeDifferee.options.filter((partie) => parties.has(partie)),
+    formes: FormeTransfert.options.filter((forme) => formes.has(forme)),
+  }
 }
