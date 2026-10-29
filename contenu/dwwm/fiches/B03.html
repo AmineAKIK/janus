@@ -2277,11 +2277,9 @@
         </p>
         <p>
           Dans la cuisine, où le stockage est le placard, la RAM est le plan de travail : ce qu’on
-          prépare y est à portée de main, mais on le débarrasse le soir. Le processeur est le
-          cuisinier, qui ne travaille que sur le plan de travail. Où l’image s’arrête : un
+          prépare y est à portée de main, mais on le débarrasse le soir. Où l’image s’arrête : un
           ingrédient sorti du placard n’y est plus ; un programme lancé, lui, est copié, et le
-          disque garde son exemplaire. Et le cuisinier choisit sa recette, alors que le processeur
-          ne choisit rien : il exécute, une à une, les instructions du programme.
+          disque garde son exemplaire.
         </p>
         <p data-si-essai="p1:faux">
           Pour le texte que Yasmine tapait sans enregistrer, au moment de la coupure, tu avais
@@ -2348,6 +2346,11 @@
             </li>
           </ul>
         </div>
+        <p>
+          Dans la cuisine, le processeur est le cuisinier, qui ne travaille que sur le plan de
+          travail. Où l’image s’arrête : le cuisinier choisit sa recette, alors que le processeur ne
+          choisit rien : il exécute, une à une, les instructions du programme.
+        </p>
         <p>Le fichier fait trois trajets. Les deux premiers :</p>
         <ol>
           <li>Ouvrir : le fichier est copié du disque dur vers la RAM.</li>
@@ -2502,7 +2505,7 @@
           </tbody>
         </table>
         <p>
-          Pour savoir de quoi parle une annonce, lis le mot qui suit le chiffre : « SSD » ou
+          Pour savoir de quoi parle une annonce, lis le mot qui accompagne le chiffre : « SSD » ou
           « disque », c’est le stockage ; « RAM » ou « mémoire vive », c’est la RAM. Sans ce mot, la
           taille aide : la RAM se compte en dizaines de Go au plus, le stockage en centaines de Go
           ou en To.
@@ -3152,6 +3155,10 @@ Total          8 500 Mo</code></pre>
           <p class="discret">Les GHz, pour lire :</p>
           <ul>
             <li>1 GHz, c’est un milliard de cycles par seconde.</li>
+            <li>
+              Ce qu’un cœur finit d’instructions à chaque cycle dépend de sa conception et de sa
+              génération : il change d’un processeur à l’autre.
+            </li>
           </ul>
         </div>
         <p class="accroche">
@@ -3277,6 +3284,11 @@ Total          8 500 Mo</code></pre>
           Dans son cache, en quelques cycles : il l’y a gardée en revenant de la RAM. Le cache, la
           RAM et le stockage forment une chaîne : plus une place est proche du processeur, plus elle
           est rapide et petite.
+        </p>
+        <p>
+          Mais le cache ne garde que ce qui tient dans sa taille. Des données qui resservent et qui
+          tiennent dans ses 6 Mo restent tout près ; des données plus grosses que lui n’y tiennent
+          pas : chaque nouvelle donnée chasse une ancienne, et le cœur retourne sans cesse à la RAM.
         </p>
       </div>
     </template>
@@ -3450,9 +3462,10 @@ Total          8 500 Mo</code></pre>
         <ul>
           <li>
             Une version écrite pour une autre architecture ne se lance que si un programme la
-            traduit. Deux traductions existent, dans un seul sens : de x64 vers ARM64. Dans l’autre
-            sens, rien ne traduit : la version ne se lance pas, et le système affiche un message
-            d’erreur.
+            traduit. Deux traductions existent, dans un seul sens : de x64 vers ARM64. Elles ont été
+            écrites pour que les ordinateurs à puce ARM, plus récents, gardent les logiciels x64
+            déjà écrits. Dans l’autre sens, aucun traducteur n’est fourni : la version ne se lance
+            pas, et le système affiche un message d’erreur.
           </li>
           <li>
             Sur un Mac à puce Apple, une version macOS Intel se lance, traduite à la volée par un
@@ -3601,10 +3614,19 @@ Total          8 500 Mo</code></pre>
       </div>
       <div data-ecran="La ligne de Thomas">
         <p class="accroche">
-          « 64 bits » dit la taille des nombres que le processeur traite d’un coup : 64 bits, soit 8
-          octets. x64 et ARM64 sont tous les deux en 64 bits : pour télécharger, c’est la famille
-          qui compte.
+          Thomas veut un logiciel proposé en Windows x64 et en Windows ARM64. Sur son PC, la ligne
+          dit : « Type de système : Système d’exploitation 64 bits, processeur ARM ».
         </p>
+        <div class="cadre pour-lire">
+          <p class="discret">La ligne, pour lire :</p>
+          <ul>
+            <li>« processeur ARM » : la famille ARM64 ; « processeur x64 » : la famille x64.</li>
+            <li>
+              « 64 bits » dit la taille des nombres que le processeur traite d’un coup. x64 et ARM64
+              sont tous les deux en 64 bits.
+            </li>
+          </ul>
+        </div>
         <div
           class="ex"
           data-widget="choix"
@@ -3612,11 +3634,7 @@ Total          8 500 Mo</code></pre>
           data-reponse="arm"
           data-aide1="Dans cette ligne, quel mot dit la famille du processeur ?"
         >
-          <p class="q">
-            Thomas veut un logiciel proposé en Windows x64 et en Windows ARM64. Sur son PC, la ligne
-            dit : « Type de système : Système d’exploitation 64 bits, processeur ARM ». Quelle
-            version prend-il ?
-          </p>
+          <p class="q">Quelle version prend-il ?</p>
           <ul class="options">
             <li data-option="arm">Windows ARM64</li>
             <li
@@ -3836,8 +3854,8 @@ Total          8 500 Mo</code></pre>
           data-aide1="Que disent le ventilateur à fond, le coussin, et un ralentissement qui vient après vingt minutes ?"
         >
           <p class="q">
-            Le portable de Bilal ralentit après vingt minutes de jeu, posé sur un coussin,
-            ventilateur à fond. Quelle est la cause la plus probable ?
+            Le portable de Bilal ralentit après vingt minutes de jeu, sans rien ouvrir d’autre, posé
+            sur un coussin, ventilateur à fond. Quelle est la cause la plus probable ?
           </p>
           <ul class="options">
             <li data-option="chaleur">La chaleur : son processeur baisse sa fréquence.</li>
@@ -4043,7 +4061,8 @@ Total          8 500 Mo</code></pre>
           stockage, la RAM et le processeur du schéma y sont. La mémoire : la RAM, ce qui en est
           occupé, et ses emplacements. Le disque : son type, HDD pour un disque dur ou SSD, et sa
           taille : 931 Go pour un disque vendu 1 To, car Windows ne compte pas comme le vendeur. Le
-          stockage d’Anaïs, plus loin, montre pourquoi.
+          stockage d’Anaïs, plus loin, montre pourquoi. La RAM, elle, affiche bien 8,0 Go : une
+          barrette se vend déjà comptée comme Windows compte.
         </p>
       </div>
       <div data-ecran="Les Informations système">
@@ -4413,16 +4432,17 @@ Total          8 500 Mo</code></pre>
       <div data-ecran="La ligne de Yasmine">
         <p class="accroche">
           Sous Windows, Docker s’appuie sur WSL 2, un outil de Windows qui fait tourner Linux, un
-          autre système, dans une machine virtuelle légère. Yasmine veut savoir si la virtualisation
-          est en service sur son portable. Son gestionnaire des tâches, onglet Performance, a trois
-          panneaux : Processeur, Mémoire et Disque.
+          autre système, dans une machine virtuelle légère. Yasmine veut savoir si la
+          virtualisation, une capacité du processeur, est en service sur son portable. Son
+          gestionnaire des tâches, onglet Performance, a trois panneaux : Processeur, Mémoire et
+          Disque.
         </p>
         <div
           class="ex"
           data-widget="choix"
           data-id="r37"
           data-reponse="processeur"
-          data-aide1="La virtualisation est une capacité : de quel composant ?"
+          data-aide1="La virtualisation est une capacité du processeur : lequel des trois panneaux décrit ce composant ?"
         >
           <p class="q">Dans quel panneau Yasmine lit-elle si la virtualisation est en service ?</p>
           <ul class="options">
@@ -4488,9 +4508,9 @@ Total          8 500 Mo</code></pre>
             <li data-option="performance">Passer à l’onglet Performance.</li>
             <li
               data-option="bios"
-              data-retour="Le BIOS sert à activer la virtualisation, pas à lire si elle l’est. Dans quel onglet sont les panneaux des composants ?"
+              data-retour="Redémarrer ne montre rien de plus. Dans quel onglet sont les panneaux des composants ?"
             >
-              Redémarrer dans le BIOS pour la lire.
+              Redémarrer l’ordinateur pour la lire.
             </li>
             <li
               data-option="infos"
@@ -4791,7 +4811,8 @@ Total          8 500 Mo</code></pre>
       <div data-ecran="Le PC de Karim">
         <p class="accroche">
           Sur le PC de Karim, un programme s’est figé : sa fenêtre ne répond plus, et tout le reste
-          est lent. Il ouvre son gestionnaire des tâches :
+          est lent. Le PC est froid au toucher, son ventilateur calme. Il ouvre son gestionnaire des
+          tâches :
         </p>
         <div
           class="ecran-simule"
@@ -4834,7 +4855,7 @@ Total          8 500 Mo</code></pre>
             </li>
             <li
               data-option="poussiere"
-              data-retour="La surchauffe vient au bout d’un moment, avec la chaleur. Ici, rien n’a chauffé : quelle jauge est au maximum ?"
+              data-retour="La surchauffe vient au bout d’un moment, avec la chaleur. Le PC de Karim est froid : quelle jauge est au maximum ?"
             >
               Retirer la poussière.
             </li>
@@ -4852,6 +4873,12 @@ Total          8 500 Mo</code></pre>
           Elle pense à la chaleur. Son processeur a une vitesse de base de 1,60 GHz, et le
           gestionnaire des tâches affiche sa vitesse du moment.
         </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>Trop chaud, un processeur baisse sa fréquence pour se protéger.</li>
+          </ul>
+        </div>
         <div
           class="ex"
           data-widget="choix"
@@ -4924,6 +4951,10 @@ Total          8 500 Mo</code></pre>
             <li>vérifier avec ce que faisait l’ordinateur ;</li>
             <li>agir sur la cause.</li>
           </ol>
+          <p>
+            La chaleur sort par les grilles d’aération ; ce qui les bouche, poussière ou tissu, la
+            garde dans la machine.
+          </p>
         </div>
         <div
           class="ex"
@@ -4992,6 +5023,15 @@ Total          8 500 Mo</code></pre>
         </p>
       </div>
       <div data-ecran="Le portable d’Enzo">
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              L’air chaud sort par les grilles ; un tissu mou s’enfonce dans ce qui s’y appuie, et
+              les bouche.
+            </li>
+          </ul>
+        </div>
         <div
           class="ex"
           data-widget="choix"
@@ -5021,7 +5061,8 @@ Total          8 500 Mo</code></pre>
         </div>
         <p>
           Sur une surface dure : rien ne bouche les grilles du dessous, la chaleur part, et le
-          processeur garde sa fréquence.
+          processeur garde sa fréquence. Une tour de PC de bureau a aussi ses grilles : enfermée
+          dans un meuble, elle garde sa chaleur de même.
         </p>
       </div>
       <div data-ecran="L’entretien">
@@ -5075,11 +5116,17 @@ Total          8 500 Mo</code></pre>
         <p>
           Un programme malveillant peut entrer par la faille, connue de tous, que cette mise à jour
           corrige. Une mise à jour de sécurité s’installe donc au plus tôt, même sur une machine qui
-          marche bien : la faille, elle, ne se voit pas.
+          marche bien : la faille, elle, ne se voit pas. Les logiciels, comme le navigateur, ont
+          aussi leurs failles et leurs mises à jour : on les installe de même, dès qu’ils les
+          proposent.
         </p>
       </div>
       <div data-ecran="Où chercher les mises à jour">
-        <p class="accroche">Yasmine veut installer les mises à jour de sécurité de Windows.</p>
+        <p class="accroche">
+          Yasmine veut installer les mises à jour de sécurité de Windows. Dans Windows, les
+          Paramètres règlent l’ordinateur ; le gestionnaire des tâches montre ce que font ses
+          composants.
+        </p>
         <div
           class="ex"
           data-widget="choix"
@@ -5115,6 +5162,14 @@ Total          8 500 Mo</code></pre>
         <p class="accroche">
           Yasmine a cliqué sur Rechercher des mises à jour. La page Windows Update affiche :
         </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              Redémarrer éteint la machine un instant : ce qui n’est que dans la RAM est perdu.
+            </li>
+          </ul>
+        </div>
         <div
           class="ecran-simule"
           data-lecture="La page Windows Update de Yasmine : des mises à jour sont disponibles ; mise à jour de sécurité cumulative pour Windows 11 ; un redémarrage sera nécessaire ; boutons Télécharger et installer, et Suspendre pendant 1 semaine."
@@ -5226,9 +5281,9 @@ Serveur de test   1 000 Mo</code></pre>
           <p class="q">Combien de Mo de RAM demande cette journée ?</p>
         </div>
         <p>
-          8 000 Mo : ses 8 Go sont pleins dès le matin. C’est pour ça que 8 Go sont un minimum : la
-          journée tient tout juste, sans marge, et un onglet de plus fait travailler le fichier
-          d’échange.
+          8 000 Mo : la journée remplit ses 8 Go tout juste. C’est pour ça que 8 Go sont un
+          minimum : la journée tient tout juste, sans marge, et un onglet de plus fait travailler le
+          fichier d’échange.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Avec 16 Go, pour lire :</p>
@@ -5304,7 +5359,9 @@ Serveur de test   1 000 Mo</code></pre>
         </p>
         <p>
           Juger une machine, c’est la juger composant par composant : chaque ligne face à son
-          repère, puis ce qui manque, et ce qu’on pourra changer plus tard.
+          repère, puis ce qui manque, et ce qu’on pourra changer plus tard. Ces repères jugent une
+          machine pour tous les jours ; une lenteur du moment, elle, se soigne par sa cause, que
+          montre le gestionnaire des tâches.
         </p>
       </div>
       <div data-ecran="Le portable de Yasmine, jugé">
@@ -5430,8 +5487,9 @@ Serveur de test   1 000 Mo</code></pre>
           SSD : sous le minimum, le disque dur fait attendre tout ce qui lit des fichiers, à chaque
           lancement, alors que 8 Go, au minimum, ne ralentissent que quand la RAM déborde. Puis
           16 Go, avec une seconde barrette dans l’emplacement libre. La règle : on change d’abord ce
-          qui est sous son minimum ; si plusieurs le sont, le stockage, puis la RAM, puis le
-          processeur.
+          qui est sous son minimum ; si plusieurs le sont, un disque dur d’abord, car il fait
+          attendre tout ce qui lit des fichiers ; puis la RAM, qui déborde sur le disque ; puis un
+          SSD trop petit, qui manque de place sans ralentir ; puis le processeur.
         </p>
       </div>
       <div data-ecran="Deux annonces">
@@ -5557,13 +5615,15 @@ Serveur de test   1 000 Mo</code></pre>
       </div>
       <div data-ecran="La chaleur">
         <p class="accroche">
-          Dans « Diagnostiquer », tu as vu à quoi se lit la chaleur chez Yasmine. Sur ta machine,
-          vois si ton processeur chauffe trop pendant cinq minutes de travail lourd, une vidéo en
-          très haute définition ou un jeu.
+          Un processeur trop chaud baisse sa fréquence pour se protéger. Sur ta machine, vois si le
+          tien chauffe trop pendant cinq minutes de travail lourd, une vidéo en très haute
+          définition ou un jeu.
         </p>
         <details data-cran="1">
           <summary>Un indice</summary>
-          <p>Chez Yasmine, quelle ligne a montré la chaleur, et à quoi l’a-t-on comparée ?</p>
+          <p>
+            Quelle ligne du panneau Processeur montre sa vitesse du moment, et à quoi la comparer ?
+          </p>
           <details data-cran="2">
             <summary>Une piste détaillée</summary>
             <p>
@@ -5586,13 +5646,15 @@ Serveur de test   1 000 Mo</code></pre>
       </div>
       <div data-ecran="Les grilles">
         <p class="accroche">
-          Dans « Diagnostiquer », Yasmine dépoussiérait les grilles de son portable : la poussière y
-          bloque l’air qui refroidit le processeur. Fais-le sur ta machine, puis choisis où la poser
-          pour travailler.
+          La poussière des grilles d’aération bloque l’air qui refroidit le processeur. Fais-le sur
+          ta machine, puis choisis où la poser pour travailler.
         </p>
         <details data-cran="1">
           <summary>Un indice</summary>
-          <p>Par quoi Yasmine a-t-elle commencé, et avec quoi a-t-elle retiré la poussière ?</p>
+          <p>
+            Que faut-il couper avant de toucher à un appareil électrique ? Et l’eau est-elle bonne
+            pour l’électronique ?
+          </p>
           <details data-cran="2">
             <summary>Une piste détaillée</summary>
             <p>
@@ -5953,11 +6015,12 @@ Serveur de test   1 000 Mo</code></pre>
       </div>
       <div data-ecran="La suite">
         <p class="accroche">
-          Yasmine sait maintenant pourquoi son portable rame, et ce qu’elle changera en premier. Le
-          bloc suivant suit un programme jusqu’au processeur : comment le code qu’on écrit dans un
-          langage, en JavaScript par exemple, devient le code machine que ses cœurs exécutent, pour
-          une architecture, x64 ou ARM64. Plus loin, le bloc sur l’empreinte du numérique montrera
-          que fabriquer ces composants pèse plus, pour la planète, que s’en servir.
+          Yasmine sait maintenant pourquoi son portable rame à 30 onglets, et ce qu’elle changera
+          pour développer. Le bloc suivant suit un programme jusqu’au processeur : comment le code
+          qu’on écrit dans un langage, en JavaScript par exemple, devient le code machine que ses
+          cœurs exécutent, pour une architecture, x64 ou ARM64. Plus loin, le bloc sur l’empreinte
+          du numérique montrera que fabriquer ces composants pèse plus, pour la planète, que s’en
+          servir.
         </p>
         <h3>À explorer plus tard</h3>
         <ul>
@@ -6330,7 +6393,7 @@ Serveur de test   1 000 Mo</code></pre>
         data-verifie
         data-reponse="ram"
         data-aide1="Son disque est déjà un SSD. Pourquoi travaille-t-il autant, avec une mémoire à 96 % ?"
-        data-justifier="Un camarade a processeur 18 %, mémoire 96 %, et un disque dur à 100 %. Un SSD l’aiderait-il plus que de la RAM ? Pourquoi ?"
+        data-justifier="Un camarade, avec beaucoup d’onglets, a processeur 18 %, mémoire 96 %, et un disque dur à 100 %. Pour cette lenteur-là, un SSD l’aiderait-il plus que de la RAM ? Pourquoi ?"
       >
         <div
           class="ecran-simule"
@@ -6454,7 +6517,7 @@ Serveur de test   1 000 Mo</code></pre>
           <li data-option="frequence">Il baisse sa fréquence, parce qu’il chauffe trop.</li>
           <li
             data-option="cache"
-            data-retour="Le cache ne se remplit pas de poussière. Que fait un processeur trop chaud ?"
+            data-retour="Le cache garde ce qui vient de servir : il ne fait pas ralentir au bout de dix minutes. Que fait un processeur trop chaud ?"
           >
             Il vide son cache, plein après dix minutes.
           </li>
@@ -6778,8 +6841,8 @@ Serveur de test   1 000 Mo</code></pre>
         </div>
         <ol>
           <li>
-            Note la mémoire utilisée ; sur un Mac, la couleur de la pression et la mémoire
-            d’échange.
+            Note la mémoire utilisée, sur une feuille ou dans un fichier : la page ne la garde pas.
+            Sur un Mac, note la couleur de la pression et la mémoire d’échange.
           </li>
           <li>
             Ouvre 10 onglets dans ton navigateur, chacun sur un site lourd et différent : vidéos,
@@ -7193,7 +7256,7 @@ Serveur de test   1 000 Mo</code></pre>
           {
             "id": "B03-R1",
             "question": "Manon double-clique sur une vidéo rangée sur le SSD de son PC, pour la monter. Décris le chemin de la vidéo jusqu’au processeur, composant par composant. Puis le courant est coupé avant qu’elle ait enregistré son montage : qu’est-ce qui est perdu ?",
-            "attendu": "Lue sur le SSD, la vidéo est copiée dans la RAM, où le processeur la lit et la traite. À la coupure, la RAM se vide : le montage non enregistré est perdu, le SSD garde la vidéo d’origine. Erreurs à repérer : le processeur qui lit la vidéo directement sur le SSD, ou la RAM qui garderait le travail. Déduit de l’étape 4.",
+            "attendu": "Du SSD, la vidéo est copiée dans la RAM, où le processeur la traite. À la coupure, la RAM se vide : le montage est perdu, le SSD garde la vidéo d’origine. Erreurs à repérer : le processeur qui lit la vidéo directement sur le SSD, ou la RAM qui garderait le travail. Déduit de l’étape 4.",
             "erreurs": ["E1", "E4"]
           },
           {
@@ -7216,7 +7279,7 @@ Serveur de test   1 000 Mo</code></pre>
           },
           {
             "id": "B03-R5",
-            "question": "Pour lire : Intel est x64 ; Apple silicon, ce sont les puces Apple M, ARM64. Le Mac de Hamza a un « Processeur 2,3 GHz Intel Core i5 ». La page d’un éditeur de code propose macOS Intel et macOS Apple silicon. Laquelle prend-il, et que se passerait-il avec l’autre ?",
+            "question": "Pour lire : Intel est x64 ; Apple silicon, ce sont les puces Apple M, ARM64 ; un processeur ARM64 traduit une version x64 ; un processeur x64 ne fait tourner aucune version ARM64. Le Mac de Hamza a un « Processeur 2,3 GHz Intel Core i5 ». Un éditeur de code propose macOS Intel et macOS Apple silicon. Laquelle prend-il, et que se passerait-il avec l’autre ?",
             "attendu": "macOS Intel : un processeur Intel est de la famille x64. La version Apple silicon, écrite pour ARM64, ne se lancerait pas : sur un Mac Intel, rien ne la traduit. Erreur à repérer : ignorer la famille du processeur. Déduit de l’étape 8.",
             "erreurs": ["E3"]
           },
@@ -7245,8 +7308,8 @@ Serveur de test   1 000 Mo</code></pre>
           {
             "id": "PR1-6",
             "item": "PR1-6",
-            "question": "Le PC d’Eva rame quand elle a beaucoup d’onglets ouverts : processeur 18 %, mémoire 96 %, son SSD à 85 %. Plus de RAM l’aidera le plus. Un camarade a processeur 18 %, mémoire 96 %, et un disque dur à 100 %. Un SSD l’aiderait-il plus que de la RAM ? Pourquoi ?",
-            "attendu": "Non, la RAM d’abord : pleine, elle oblige Windows à en ranger une partie dans le fichier d’échange, et c’est pour lui que le disque travaille. Un SSD rendrait cet échange moins lent, mais toujours bien plus lent que la RAM ; avec plus de RAM, le disque n’a plus à le faire. Déduit des étapes 6 et 11.",
+            "question": "Le PC d’Eva rame quand elle a beaucoup d’onglets ouverts : processeur 18 %, mémoire 96 %, son SSD à 85 %. Plus de RAM l’aidera le plus. Un camarade, avec beaucoup d’onglets, a processeur 18 %, mémoire 96 %, et un disque dur à 100 %. Pour cette lenteur-là, un SSD l’aiderait-il plus que de la RAM ? Pourquoi ?",
+            "attendu": "Non, la RAM d’abord : pleine, elle oblige Windows à en ranger une partie dans le fichier d’échange, et c’est pour lui que le disque travaille. Un SSD rendrait cet échange moins lent, mais toujours bien plus lent que la RAM ; avec plus de RAM, le disque n’a plus à le faire. S’il ajoute que, pour juger la machine, le disque dur est aussi à remplacer, c’est juste. Déduit des étapes 6, 11 et 12.",
             "erreurs": []
           },
           {
@@ -7293,7 +7356,7 @@ Serveur de test   1 000 Mo</code></pre>
           },
           {
             "id": "B03-Q3",
-            "question": "Sur un PC dont la ligne Type de système dit « Système d’exploitation 64 bits, processeur x64 », un camarade veut la version Windows ARM64 : « ARM64 finit par 64, comme mon système. » Qu’en dis-tu, et que se passera-t-il ?",
+            "question": "Pour lire : un processeur ARM64 traduit une version x64 ; un processeur x64 ne fait tourner aucune version ARM64. Sur un PC dont la ligne Type de système dit « Système d’exploitation 64 bits, processeur x64 », un camarade veut la version Windows ARM64 : « ARM64 finit par 64, comme mon système. » Qu’en dis-tu, et que se passera-t-il ?",
             "attendu": "Il se trompe : « 64 bits » ne dit pas la famille, x64 et ARM64 sont tous deux en 64 bits. Son processeur est x64 : la version ARM64 ne se lancera pas, et il lui faut Windows x64. Erreur à repérer : lire « 64 bits » comme une famille. Déduit de l’étape 8.",
             "erreurs": ["E3"]
           },
@@ -7306,7 +7369,7 @@ Serveur de test   1 000 Mo</code></pre>
           {
             "id": "B03-Q5",
             "question": "Un tableur recalcule sans cesse la même petite feuille ; un lecteur vidéo lit un long film une seule fois, du début à la fin. De quoi dépend l’aide que le cache leur apporte, et lequel aide-t-il le plus ?",
-            "attendu": "Elle dépend de ce que le programme relit. Le tableur : le cache garde ce qui vient de servir, et sa feuille, relue sans cesse, y est retrouvée en quelques cycles au lieu d’aller dans la RAM. Le lecteur vidéo lit chaque morceau du film une fois : ce morceau n’est pas encore dans le cache, il va le chercher dans la RAM. Déduit de l’étape 7.",
+            "attendu": "De ce que le programme relit : le cache garde ce qui vient de servir. Il aide le tableur, dont la petite feuille relue y reste ; pas le lecteur, qui lit chaque morceau du film une seule fois, et va le chercher dans la RAM. Déduit de l’étape 7.",
             "erreurs": []
           },
           {
@@ -7341,32 +7404,32 @@ Serveur de test   1 000 Mo</code></pre>
           },
           {
             "id": "B03-Q17",
-            "question": "Pour lire : le BIOS ou l’UEFI est le logiciel de la carte mère qui s’ouvre au démarrage. L’installation de Docker s’arrête sur le PC Windows de Camille, qui a quatre ans : « la virtualisation n’est pas activée ». Que se passe-t-il, et que fait Camille ?",
-            "attendu": "Docker s’appuie sur WSL 2, qui fait tourner Linux dans une machine virtuelle : il lui faut la virtualisation du processeur. Son processeur en est très probablement capable, mais elle est éteinte dans un réglage : Camille l’active dans le BIOS ou l’UEFI, sans changer d’ordinateur. Déduit de l’étape 10.",
+            "question": "Pour lire : le BIOS ou l’UEFI est le logiciel de la carte mère qui s’ouvre au démarrage. L’installation de Docker s’arrête sur le PC Windows de Camille, qui a quatre ans : « la virtualisation n’est pas activée ». Un ami lui dit : « Ton processeur est trop vieux, change d’ordinateur. » Que vérifie-t-elle d’abord, et où ? Que fait-elle ensuite ?",
+            "attendu": "Elle lit la ligne Virtualisation du panneau Processeur, dans l’onglet Performance du gestionnaire des tâches. « Désactivé » veut dire éteinte dans un réglage, pas absente : elle l’active dans le BIOS ou l’UEFI, sans changer d’ordinateur. Déduit de l’étape 10.",
             "erreurs": []
           },
           {
             "id": "B03-Q12",
             "question": "Pendant un long export, le gestionnaire des tâches d’Ilan affiche « Vitesse de base 2,0 GHz » et « Vitesse 1,3 GHz » ; le ventilateur souffle à fond. Qu’est-ce qui distingue ces deux nombres ? Pourquoi le second est-il sous le premier ?",
-            "attendu": "La vitesse de base est celle de la fiche du processeur, fixe ; la vitesse du moment est celle que le gestionnaire des tâches affiche, qui change sans arrêt selon le travail et la chaleur. Trop chaud, le processeur baisse sa fréquence pour se protéger : c’est ce qui arrive à Ilan, dont la vitesse du moment est tombée sous la vitesse de base. Déduit des étapes 9 et 10.",
+            "attendu": "La vitesse de base est celle de la fiche, fixe ; la vitesse du moment change selon le travail et la chaleur. Trop chaud, le processeur d’Ilan baisse sa fréquence pour se protéger, jusque sous sa vitesse de base. Déduit des étapes 9 et 10.",
             "erreurs": []
           },
           {
             "id": "B03-Q18",
-            "question": "Sur le Mac de ta sœur, tu veux lire vite sa puce et sa RAM, puis voir si sa RAM suffit pendant qu’elle travaille. Quel outil ouvres-tu pour chacune, et pourquoi pas le même ?",
-            "attendu": "À propos de ce Mac, dans le menu Pomme, pour la puce et la RAM installée : il résume la machine. Le Moniteur d’activité, dans Applications puis Utilitaires, pour la RAM pendant le travail : il suit ce qui tourne en ce moment, avec la pression de la mémoire. Déduit de l’étape 10.",
+            "question": "Ta sœur vend son Mac : elle doit écrire dans l’annonce sa puce et sa RAM installée. Elle se demande aussi si sa RAM suffit quand elle monte ses vidéos. Quel outil ouvre-t-elle pour l’annonce ? Et pour ses vidéos ?",
+            "attendu": "Pour l’annonce, À propos de ce Mac, dans le menu Pomme : il résume la machine. Pour ses vidéos, le Moniteur d’activité, pendant qu’elle monte : sa pression de la mémoire dit si la RAM suffit. Déduit de l’étape 10.",
             "erreurs": []
           },
           {
             "id": "B03-Q14",
-            "question": "Ton ami dit : « La carte mère n’est qu’un support. » Qu’en dis-tu ?",
-            "attendu": "Elle fait plus que porter : elle relie tous les composants, porte leurs emplacements, et toute copie du disque vers la RAM, puis vers le processeur, passe par elle. Déduit de l’étape 9.",
+            "question": "Le réparateur de Paul lui dit : « La carte mère de votre portable est en panne ; le SSD, la RAM et le processeur, eux, marchent. » Pourquoi le portable ne peut-il plus rien lancer ?",
+            "attendu": "La carte mère relie les composants : la copie d’un programme du SSD vers la RAM, puis vers le processeur, passe par elle. Sans elle, rien ne circule entre eux. Déduit de l’étape 9.",
             "erreurs": []
           },
           {
             "id": "B03-Q15",
-            "question": "Ton ami dit : « La carte graphique ne sert qu’aux jeux. » Qu’en dis-tu ?",
-            "attendu": "Elle dessine tout ce qui s’affiche, des millions de pixels redessinés sans cesse, le bureau et les pages compris ; intégrée, elle suffit pour développer, et une carte dédiée sert aux jeux, mais aussi à la 3D et au montage. Déduit de l’étape 9.",
+            "question": "Le portable de ton ami a 8 Go de RAM et une carte graphique intégrée. Pendant un jeu lourd, sa RAM se remplit plus vite que ne l’expliquent les programmes ouverts. D’où vient ce surplus ? Que changerait une carte dédiée ?",
+            "attendu": "Intégrée à la puce du processeur, sa carte graphique se sert de la RAM pour ses images : c’est elle qui en prend. Une carte dédiée a sa propre mémoire, et laisserait la RAM aux programmes. Déduit de l’étape 9.",
             "erreurs": []
           }
         ],
@@ -7375,7 +7438,7 @@ Serveur de test   1 000 Mo</code></pre>
             "id": "B03-C1",
             "type": "explication",
             "consigne": "Un camarade hésite entre deux portables : A, « 8 Go, SSD 1 To » ; B, « 16 Go, SSD 256 Go ». Il prend A : « Avec 1 To de mémoire, mes 60 onglets de travail ne rameront jamais. » Qu’est-ce qui ne va pas dans son raisonnement, et lequel tiendra mieux ses onglets ?",
-            "attendu": "Il confond les deux sens de « mémoire » : le 1 To de A est le stockage, qui garde les fichiers ; les onglets ouverts sont tenus dans la RAM, 8 Go sur A, 16 Go sur B, qui fixe combien il peut en ouvrir avant que le fichier d’échange travaille. B tiendra mieux ses onglets. Juger à la taille du SSD, c’est confondre RAM et stockage. Déduit des étapes 4 et 6.",
+            "attendu": "Le 1 To de A est le stockage ; les onglets ouverts tiennent dans la RAM, 8 Go sur A contre 16 sur B : B les tiendra mieux. Erreur à repérer : confondre RAM et stockage, les deux sens de « mémoire ». Déduit des étapes 4 et 6.",
             "erreurs": ["E1"]
           },
           {
@@ -7388,7 +7451,7 @@ Serveur de test   1 000 Mo</code></pre>
           {
             "id": "B03-C3",
             "type": "explication",
-            "consigne": "Pour lire : les processeurs Snapdragon sont de la famille ARM64, les processeurs Intel de la famille x64. Un outil de test n’existe qu’en une version : Windows ARM64. Léa a un PC Windows à processeur Snapdragon ; Noah, un PC Windows à processeur Intel. Pourra-t-il tourner chez chacun ? Explique.",
+            "consigne": "Pour lire : les processeurs Snapdragon sont de la famille ARM64, les processeurs Intel de la famille x64 ; un processeur ARM64 traduit une version x64 ; un processeur x64 ne fait tourner aucune version ARM64. Un outil de test n’existe qu’en une version : Windows ARM64. Léa a un PC Windows à processeur Snapdragon ; Noah, un PC Windows à processeur Intel. Pourra-t-il tourner chez chacun ? Explique.",
             "attendu": "Chez Léa, oui : son processeur est ARM64, la famille pour laquelle la version est écrite. Chez Noah, non : un processeur Intel est x64, il ne lit pas le jeu d’instructions ARM64, et sur un PC x64 rien ne traduit une version ARM64 ; elle ne se lance pas. Erreur à repérer : ignorer la famille du processeur. Déduit de l’étape 8.",
             "erreurs": ["E3"]
           },
@@ -7409,7 +7472,7 @@ Serveur de test   1 000 Mo</code></pre>
           {
             "id": "B03-O2",
             "type": "explication",
-            "consigne": "Sans la fiche ni tes notes, enregistre-toi avec ton ordinateur (l’Enregistreur vocal sous Windows, Dictaphone sur un Mac) : explique à voix haute ce qui se passe quand tu lances un traitement de texte rangé sur un disque dur, y tapes une page, puis fermes sans enregistrer. Par où passe le programme, et où est ta page ? Réécoute-toi, puis écris ici ce que tu as dit, sans le corriger.",
+            "consigne": "Sans la fiche ni tes notes, enregistre-toi avec ton ordinateur (l’Enregistreur vocal sous Windows, Dictaphone sur un Mac) : explique à voix haute ce qui se passe quand tu lances un traitement de texte rangé sur un disque dur, y tapes une page, puis fermes sans enregistrer. Par où passe le programme, et que devient ta page ? Réécoute-toi, puis écris ici ce que tu as dit, sans le corriger.",
             "attendu": "Le traitement de texte est lu sur le disque dur et copié dans la RAM, où le processeur l’exécute ; la page tapée n’est que dans la RAM, et la fermeture sans enregistrer la perd, le disque ne gardant que le programme. Erreurs à repérer : le programme exécuté directement sur le disque, ou la page restée quelque part sans enregistrement. Déduit des étapes 4 et 5.",
             "erreurs": ["E1", "E4"]
           },
@@ -7464,8 +7527,8 @@ Serveur de test   1 000 Mo</code></pre>
             "id": "B03-T4",
             "type": "transfert",
             "forme": "trouver_erreur",
-            "consigne": "La fiche du processeur d’une camarade annonce une vitesse de base de 2,4 GHz. Pendant un long calcul, son gestionnaire des tâches affiche « Vitesse 4,1 GHz ». Elle dit : « Mon processeur dépasse sa vitesse, il est en panne. » Trouve l’erreur dans son raisonnement.",
-            "attendu": "Les 2,4 GHz sont la vitesse de base ; le gestionnaire affiche la vitesse du moment. Un processeur monte au-dessus de sa vitesse de base quand il a beaucoup à faire et reste assez frais : c’est prévu, pas une panne. Déduit des étapes 9 et 10.",
+            "consigne": "Le portable d’une camarade est posé sur son bureau, froid et silencieux ; rien ne tourne. Son gestionnaire des tâches affiche « Vitesse de base 2,4 GHz » et « Vitesse 0,8 GHz ». Elle dit : « Sous sa vitesse de base : il surchauffe. » Trouve l’erreur dans son raisonnement.",
+            "attendu": "La vitesse du moment change selon le travail : sans rien à faire, le processeur tourne lentement. La chaleur se reconnaît à une vitesse qui tombe pendant un travail lourd, machine chaude et ventilateur à fond : rien de cela ici. Déduit des étapes 9 et 10.",
             "erreurs": []
           }
         ],
@@ -7578,13 +7641,13 @@ Serveur de test   1 000 Mo</code></pre>
           },
           {
             "id": "B03-K22",
-            "recto": "Un site propose « Windows x64 » et « Windows ARM64 ». Ton camarade a un PC portable à processeur AMD Ryzen 5. Laquelle prend-il, et pourquoi ?",
-            "verso": "Windows x64 : un processeur AMD, comme un Intel, est de la famille x64, celle pour laquelle cette version est écrite. ARM64 est pour les processeurs ARM, comme les Snapdragon ou les puces Apple M. D’après « x64 ou ARM »."
+            "recto": "Pour lire : les processeurs Intel et AMD sont de la famille x64 ; les puces Apple M et les Snapdragon, de la famille ARM64. Un site propose « Windows x64 » et « Windows ARM64 ». Ton camarade, sur son PC à processeur AMD, prend ARM64 : « c’est la plus récente ». Qu’est-ce qui cloche ?",
+            "verso": "La version se choisit d’après la famille du processeur, pas d’après sa date : un AMD est x64, il lui faut Windows x64. La version ARM64 ne se lancerait pas. D’après « x64 ou ARM »."
           },
           {
             "id": "B03-K23",
-            "recto": "Le Mac de ton amie dit « Puce : Apple M2 ». Un site propose « macOS, processeur Intel » et « macOS, puce Apple ». Elle prend la version Intel : « Intel, c’est le plus répandu. » Qu’est-ce qui cloche ?",
-            "verso": "La version se choisit d’après la famille de son processeur, pas d’après la marque la plus répandue : une puce Apple M2 est de la famille ARM64, il lui faut la version « puce Apple ». La version Intel, écrite pour x64, ne tournerait que traduite par Rosetta 2, moins vite. D’après « x64 ou ARM »."
+            "recto": "Pour lire : un processeur ARM64 traduit une version x64 ; un processeur x64 ne fait tourner aucune version ARM64. Le Mac de ton amie dit « Processeur 2,6 GHz Intel Core i7 ». Un site propose « macOS, processeur Intel » et « macOS, puce Apple ». Elle prend « puce Apple » : « Apple, c’est la marque de mon Mac. » Qu’est-ce qui cloche ?",
+            "verso": "La version se choisit d’après la famille de son processeur, pas d’après la marque du Mac : son processeur Intel est x64, il lui faut « macOS, processeur Intel ». La version « puce Apple », écrite pour ARM64, ne se lancerait pas. D’après « x64 ou ARM »."
           },
           {
             "id": "B03-K24",
