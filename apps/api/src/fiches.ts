@@ -207,6 +207,44 @@ function templatesDesItems(html: string): ReadonlyMap<string, string> {
 }
 
 /**
+ * L'échelle d'un choix (règle F03) : après la première réponse fausse, une question qui oriente (le
+ * retour de l'option), puis un indice et l'étape détaillée, que le gabarit ouvre l'un après l'autre
+ * (`enchaine`), puis la solution. Chaque choix du cours et de la pratique écrit donc ses deux crans,
+ * `data-aide1` et `data-aide2` ; la tentative de l'étape 3 (`data-essai`) n'aide pas, elle note.
+ */
+function verifierCoupsDePouce(html: string, signaler: (message: string) => void): void {
+  for (const [, attributs, corps] of sansScriptsNiCommentaires(html).matchAll(
+    /<template\b([^>]*)>([\s\S]*?)<\/template\s*>/gi,
+  )) {
+    const etape = /\bdata-etape\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
+    const item = /\bdata-item\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
+    const variante = /\bdata-variante\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
+    const ou =
+      etape !== undefined
+        ? `l’étape ${etape}`
+        : item !== undefined
+          ? `l’item ${item}`
+          : variante !== undefined
+            ? `la variante de ${variante}`
+            : undefined
+    if (ou === undefined) continue
+    for (const [balise] of (corps ?? '').matchAll(
+      /<[a-z][^>]*\bdata-widget\s*=\s*["']choix["'][^>]*>/gi,
+    )) {
+      if (/\bdata-essai\b/i.test(balise)) continue
+      const manquent = ['data-aide1', 'data-aide2'].filter(
+        (nom) => !new RegExp(`\\b${nom}\\s*=\\s*["'][^"']`, 'i').test(balise),
+      )
+      if (manquent.length === 0) continue
+      const nom = /\bdata-id\s*=\s*["']([^"']*)["']/i.exec(balise)?.[1]
+      signaler(
+        `${ou} a un choix${nom === undefined ? '' : ` (${nom})`} sans ses coups de pouce (${manquent.join(', ')} ${manquent.length > 1 ? 'manquent' : 'manque'}) : après une réponse fausse, l’indice puis l’étape détaillée viennent avant la solution (règle F03).`,
+      )
+    }
+  }
+}
+
+/**
  * Leçons du B01 (AGENTS.md) : on n'explique que ce que l'écran ne montre pas, au plus un tiers des
  * items demandent une explication en prose (`data-justifier`) ; et chaque erreur critique a un item
  * de pratique qui la révèle (`data-erreur="E…"` sur l'option ou l'outil qui la repère), sinon elle
@@ -233,25 +271,6 @@ function verifierPratique(
   for (const [, genre, id, corps] of sansScriptsNiCommentaires(html).matchAll(
     /<template\b[^>]*\bdata-(item|variante)\s*=\s*["']([^"']*)["'][^>]*>([\s\S]*?)<\/template\s*>/gi,
   )) {
-    // Un choix sans crans écrits n'aurait que la solution après ses réponses fausses (règle F03).
-    // Chaque réponse fausse retire une option, et un cran attend une réponse fausse (F04) : les crans
-    // utiles sont ceux qu'on atteint avant qu'il ne reste qu'une option, un au moins, trois au plus.
-    const choix = Array.from(
-      (corps ?? '').matchAll(/<[a-z][^>]*\bdata-widget\s*=\s*["']choix["'][^>]*>/gi),
-      ([balise]) => balise,
-    )
-    const options = ((corps ?? '').match(/\bdata-option\s*=/gi) ?? []).length
-    for (const balise of choix) {
-      const attendus = Math.min(3, Math.max(1, Math.round(options / choix.length) - 2))
-      const manquent = ['data-aide1', 'data-aide2', 'data-aide3']
-        .slice(0, attendus)
-        .filter((nom) => !new RegExp(`\\b${nom}\\s*=\\s*["'][^"']`, 'i').test(balise))
-      if (manquent.length > 0) {
-        signaler(
-          `pratique : ${genre === 'variante' ? 'la variante de ' : 'l’item '}${String(id)} a un choix sans ses coups de pouce (${manquent.join(', ')} ${manquent.length > 1 ? 'manquent' : 'manque'}) : après une réponse fausse, l’apprenant n’aurait que la solution (règle F03).`,
-        )
-      }
-    }
     const qui = `${genre === 'variante' ? 'la variante de ' : 'l’item '}${String(id)}`
     for (const [balise] of (corps ?? '').matchAll(/<[a-z][^>]*\bdata-justifier\s*=[^>]*>/gi)) {
       const cle = `${String(id)}${genre === 'variante' ? ':variante' : ''}`
@@ -1134,6 +1153,7 @@ export async function verifierLesFiches({
       }
       verifierTemplates(resultat.manifeste, fiche.html, signaler)
       verifierPratique(resultat.manifeste, fiche.html, signaler)
+      verifierCoupsDePouce(fiche.html, signaler)
       verifierErreursCritiques(resultat.manifeste, signaler)
       verifierAtelier(resultat.manifeste, signaler)
       verifierRestitution(resultat.manifeste, signaler)

@@ -2346,7 +2346,13 @@ describe('l’atelier : faire hors de la page', () => {
 })
 
 describe('l’échelle d’aide, la même pour toutes les fiches', () => {
-  type Echelle = { zone: HTMLElement; tentative: () => void; cran: () => number; maj: () => void }
+  type Echelle = {
+    zone: HTMLElement
+    tentative: () => void
+    cran: () => number
+    maj: () => void
+    toutOuvrir: () => void
+  }
   /** L'échelle du gabarit, posée sur un exercice de la page. */
   const echelleDe = (
     ex: HTMLElement,
@@ -2355,6 +2361,7 @@ describe('l’échelle d’aide, la même pour toutes les fiches', () => {
       fini?: () => boolean
       surSolution?: () => void
       restantes?: () => number
+      enchaine?: boolean
     },
   ): Echelle => {
     const gabarit: unknown = Reflect.get(window, 'JanusGabarit')
@@ -2370,7 +2377,9 @@ describe('l’échelle d’aide, la même pour toutes les fiches', () => {
     typeof valeur === 'object' &&
     valeur !== null &&
     Reflect.get(valeur, 'zone') instanceof HTMLElement &&
-    ['tentative', 'cran', 'maj'].every((nom) => typeof Reflect.get(valeur, nom) === 'function')
+    ['tentative', 'cran', 'maj', 'toutOuvrir'].every(
+      (nom) => typeof Reflect.get(valeur, nom) === 'function',
+    )
   const pose = async () => {
     const { pont } = pontSimule(aLEtape('ET2'))
     monter(GABARIT, pont)
@@ -2409,6 +2418,38 @@ describe('l’échelle d’aide, la même pour toutes les fiches', () => {
     fireEvent.click(within(echelle.zone).getByRole('button', { name: 'Voir la solution' }))
     expect(solution).toBe(1)
     expect(echelle.cran()).toBe(4)
+  })
+
+  it('un choix enchaîne ses crans après la première réponse fausse, la solution s’il reste à choisir', async () => {
+    const ex = await pose()
+    Object.assign(ex.dataset, { aide1: 'Que compare-t-on ?', aide2: 'Compare 3 à 2, puis à 4.' })
+    const restantes = 2
+    let solution = 0
+    const echelle = echelleDe(ex, {
+      enchaine: true,
+      restantes: () => restantes,
+      surSolution: () => (solution += 1),
+    })
+    echelle.tentative()
+    fireEvent.click(within(echelle.zone).getByRole('button', { name: 'Un coup de pouce' }))
+    fireEvent.click(within(echelle.zone).getByRole('button', { name: 'Un autre coup de pouce' }))
+    expect(within(echelle.zone).getByText('Compare 3 à 2, puis à 4.')).toBeInTheDocument()
+    expect(echelle.cran()).toBe(2)
+    fireEvent.click(within(echelle.zone).getByRole('button', { name: 'Voir la solution' }))
+    expect(solution).toBe(1)
+    expect(echelle.cran()).toBe(4)
+  })
+
+  it('une solution montrée d’office ouvre d’abord les crans qui restent', async () => {
+    const ex = await pose()
+    Object.assign(ex.dataset, { aide1: 'Que compare-t-on ?', aide2: 'Compare 3 à 2, puis à 4.' })
+    const echelle = echelleDe(ex, { enchaine: true, restantes: () => 1 })
+    echelle.tentative()
+    echelle.toutOuvrir()
+    expect(within(echelle.zone).getByText('Que compare-t-on ?')).toBeInTheDocument()
+    expect(within(echelle.zone).getByText('Compare 3 à 2, puis à 4.')).toBeInTheDocument()
+    expect(echelle.cran()).toBe(2)
+    expect(within(echelle.zone).queryByRole('button')).toBeNull()
   })
 
   it('prend les crans de l’outil quand la fiche n’en écrit pas, et rend un cran calculé à l’ouverture', async () => {
