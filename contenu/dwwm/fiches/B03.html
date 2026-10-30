@@ -1574,12 +1574,19 @@
         overflow-x: auto;
       }
 
-      /* Le schéma du bloc : quatre boîtes ; celles que l'étape n'éclaire pas encore restent pâles. */
+      /* Le schéma du bloc : les boîtes en colonne, une flèche légendée entre deux ; celles que l'étape n'éclaire pas encore restent pâles. */
       .schema-bloc {
         display: flex;
-        flex-wrap: wrap;
-        align-items: center;
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--espacement-4);
+      }
+      .schema-bloc .fleche {
+        display: flex;
+        align-items: baseline;
         gap: var(--espacement-8);
+        padding-inline: var(--espacement-12);
+        line-height: 1.25rem;
       }
       .schema-bloc .boite-fixe.eteinte {
         border-color: var(--couleur-ligne);
@@ -1588,18 +1595,10 @@
       .schema-bloc .boite-fixe.eteinte small {
         color: var(--couleur-texte-discret);
       }
-      .schema-bloc .fleche::after {
-        content: ' →';
-        white-space: pre;
-      }
-      @media (max-width: 560px) {
-        .schema-bloc {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-        .schema-bloc .fleche::after {
-          content: ' ↓';
-        }
+      .schema-bloc .fleche::before {
+        content: '↓';
+        flex: none;
+        color: var(--couleur-accent);
       }
 
       /* La machine de Yasmine : quatre boîtes et trois flèches sur une ligne (sept colonnes) ; empilées sous 720 px. */
@@ -7266,7 +7265,7 @@ Serveur de test   1 000 Mo</code></pre>
         "schema": 2,
         "bloc": "B03",
         "type": "systemes",
-        "version": 5,
+        "version": 6,
         "titre": "L’ordinateur et ses composants",
         "titre_court": "Les composants",
         "objectif": "Fiche « ma machine » (CPU, cœurs, fréquence, RAM, stockage, architecture) relevée avec les outils système, dont la virtualisation que demandent WSL 2 et Docker ; expliquer sans support le trajet stockage, RAM, CPU au lancement d’un programme, et le rôle du CPU (cœurs, horloge, cache), de la RAM (volatile), du stockage (HDD, SSD), de la carte mère, du GPU et du refroidissement ; reconnaître l’architecture d’un processeur (x64 ou ARM64) et choisir la version d’un logiciel qui lui correspond ; diagnostiquer 3 symptômes simples (lenteur, mémoire pleine, surchauffe) ; entretenir sa machine (poussière, mises à jour de sécurité) ; juger si la machine convient au développement web. Aisance : ouvrir l’outil qui décrit sa machine et y lire une caractéristique en moins de 10 s.",
