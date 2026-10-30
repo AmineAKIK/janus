@@ -360,9 +360,11 @@ export function useHoteFiche(
         const resultat = filtrerMessage(evenement, { fenetreFiche: fenetre, bloc, version })
         if (resultat.accepte && resultat.message.type === 'etat.sauver') traiter(resultat.message)
       }
-      window.addEventListener('message', dernierEtat)
+      // La fenêtre est gardée : le minuteur peut survivre à la page (les tests démontent `window`).
+      const hote = window
+      hote.addEventListener('message', dernierEtat)
       setTimeout(() => {
-        window.removeEventListener('message', dernierEtat)
+        hote.removeEventListener('message', dernierEtat)
       }, DELAI_DERNIER_ETAT_MS)
     }
   }, [appliquerStatut, boite, envoyerInit, iframe, vers])
