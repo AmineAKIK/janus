@@ -7266,7 +7266,7 @@ Serveur de test   1 000 Mo</code></pre>
         "schema": 2,
         "bloc": "B03",
         "type": "systemes",
-        "version": 4,
+        "version": 5,
         "titre": "L’ordinateur et ses composants",
         "titre_court": "Les composants",
         "objectif": "Fiche « ma machine » (CPU, cœurs, fréquence, RAM, stockage, architecture) relevée avec les outils système, dont la virtualisation que demandent WSL 2 et Docker ; expliquer sans support le trajet stockage, RAM, CPU au lancement d’un programme, et le rôle du CPU (cœurs, horloge, cache), de la RAM (volatile), du stockage (HDD, SSD), de la carte mère, du GPU et du refroidissement ; reconnaître l’architecture d’un processeur (x64 ou ARM64) et choisir la version d’un logiciel qui lui correspond ; diagnostiquer 3 symptômes simples (lenteur, mémoire pleine, surchauffe) ; entretenir sa machine (poussière, mises à jour de sécurité) ; juger si la machine convient au développement web. Aisance : ouvrir l’outil qui décrit sa machine et y lire une caractéristique en moins de 10 s.",
@@ -11084,6 +11084,15 @@ Serveur de test   1 000 Mo</code></pre>
           const fleche = (t) =>
             el('p', { class: 'fleche-composant', 'aria-hidden': 'true', text: t })
           const journal = el('ol', { class: 'journal', 'aria-live': 'polite' })
+          // Tant que le pari n'est pas fait, dire pourquoi les onglets attendent.
+          const consigne = el('p', {
+            class: 'discret',
+            hidden: true,
+            text: 'Parie d’abord, juste en dessous : les onglets s’ouvriront ensuite.',
+          })
+          const direConsigne = () => {
+            consigne.hidden = !(lance && avecOnglets && pari && perception && !pariFait())
+          }
           const bLancer = el('button', { type: 'button', class: 'bouton', text: 'Lancer VS Code' })
           const bOnglets = el('button', {
             type: 'button',
@@ -11186,6 +11195,7 @@ Serveur de test   1 000 Mo</code></pre>
                 auRepos()
                 dire('La carte graphique dessine la fenêtre de VS Code, et l’écran l’affiche.')
                 bOnglets.disabled = !avecOnglets || !pariFait()
+                direConsigne()
                 if (pari && perception) {
                   pari.hidden = false
                   tracer('lancement', true)
@@ -11235,6 +11245,7 @@ Serveur de test   1 000 Mo</code></pre>
             onglets = 0
             bLancer.disabled = false
             bOnglets.disabled = true
+            consigne.hidden = true
             journal.replaceChildren()
             auRepos()
             peindre()
@@ -11256,6 +11267,7 @@ Serveur de test   1 000 Mo</code></pre>
             ),
             ecranTexte,
             el('div', { class: 'rangee' }, bLancer, avecOnglets ? bOnglets : null, bRecommencer),
+            consigne,
             journal,
           )
           auRepos()
@@ -11264,6 +11276,7 @@ Serveur de test   1 000 Mo</code></pre>
           // Le pari fait, les onglets s'ouvrent.
           document.addEventListener('fiche:trace', () => {
             if (lance && avecOnglets && onglets < ONGLETS_MAX) bOnglets.disabled = !pariFait()
+            direConsigne()
           })
         }
 
