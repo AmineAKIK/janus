@@ -15,6 +15,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('schéma : les faits et le rôle
   let userId = ''
   let blocId = ''
   let ficheVersionId = ''
+  let moduleId = ''
 
   beforeAll(async () => {
     base = await creerBaseDeTest(URL_SERVEUR_TEST ?? '')
@@ -23,6 +24,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('schéma : les faits et le rôle
     ficheVersionId = id()
     const formation = id()
     const module = id()
+    moduleId = module
     await base.db.insert(t.users).values({
       id: userId,
       nomUtilisateur: 'amine',
@@ -237,7 +239,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('schéma : les faits et le rôle
   })
 
   describe('corrections', () => {
-    it('refuse le même (utilisateur, question, série, tentative, tour)', async () => {
+    it('refuse le même (utilisateur, bloc, question, série, tentative, tour)', async () => {
       await base.db.insert(t.corrections).values(correction({ questionId: 'U1' }))
 
       const echec = await refus(
@@ -251,7 +253,19 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)('schéma : les faits et le rôle
       await base.db.insert(t.corrections).values(correction({ questionId: 'U1', tentative: 2 }))
       await base.db.insert(t.corrections).values(correction({ questionId: 'U1', serie: 'rappel' }))
 
-      expect(echec.contrainte).toBe('corrections_user_question_serie_tentative_tour')
+      expect(echec.contrainte).toBe('corrections_user_bloc_question_serie_tentative_tour')
+    })
+
+    it('accepte la même question dans un autre bloc : « PR1-5 » existe dans B02 et dans B03', async () => {
+      const autreBloc = id()
+      await base.db
+        .insert(t.blocs)
+        .values({ id: autreBloc, moduleId, code: 'B02', titre: 'B', ordre: 2 })
+      await base.db.insert(t.corrections).values(correction({ questionId: 'PR1-5' }))
+
+      await base.db
+        .insert(t.corrections)
+        .values(correction({ questionId: 'PR1-5', blocId: autreBloc }))
     })
 
     it.each([
