@@ -77,6 +77,10 @@ export function causeDeRefus(erreur: unknown): {
   if (erreur instanceof ErreurApi && (erreur.status === 429 || erreur.status === 503)) {
     return { code: 'correction_indisponible', detail: 'correction indisponible' }
   }
+  // Une erreur interne du serveur : la réponse attend, à renvoyer une fois la panne réparée.
+  if (erreur instanceof ErreurApi && erreur.status === 500) {
+    return { code: 'correction_indisponible', detail: 'erreur du serveur' }
+  }
   return { code: 'message_refuse', detail: 'message refusé' }
 }
 
