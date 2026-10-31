@@ -34,9 +34,9 @@ const REGLAGES: ReglagesDeepseek = {
 }
 
 describe('la consigne', () => {
-  it('est le fichier prompts/correction/v3.md, avec son empreinte SHA-256', () => {
+  it('est le fichier prompts/correction/v4.md, avec son empreinte SHA-256', () => {
     const fichier = readFileSync(
-      new URL('../../../../../prompts/correction/v3.md', import.meta.url),
+      new URL('../../../../../prompts/correction/v4.md', import.meta.url),
       'utf8',
     )
 
