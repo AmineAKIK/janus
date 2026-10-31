@@ -1,0 +1,2 @@
+ALTER TABLE "corrections" DROP CONSTRAINT "corrections_user_question_serie_tentative_tour";--> statement-breakpoint
+ALTER TABLE "corrections" ADD CONSTRAINT "corrections_user_bloc_question_serie_tentative_tour" UNIQUE("user_id","bloc_id","question_id","serie","tentative","tour");

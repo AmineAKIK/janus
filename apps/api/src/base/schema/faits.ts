@@ -125,8 +125,10 @@ export const corrections = pgTable(
     dateServeur: instant('date_serveur').notNull(),
   },
   (table) => [
-    unique('corrections_user_question_serie_tentative_tour').on(
+    // Un identifiant de question n'a de sens que dans son bloc : « PR1-5 » existe dans B02 et dans B03.
+    unique('corrections_user_bloc_question_serie_tentative_tour').on(
       table.userId,
+      table.blocId,
       table.questionId,
       table.serie,
       table.tentative,
