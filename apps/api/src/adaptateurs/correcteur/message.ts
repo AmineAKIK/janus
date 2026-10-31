@@ -6,7 +6,7 @@ import type { RequeteCorrection } from './correcteur.ts'
  * La consigne fixe : `prompts/correction/<version>.md`, lue une fois, avec son empreinte gardée à chaque
  * correction. Les versions précédentes restent dans le dossier : l'empreinte d'une ancienne correction s'y retrouve.
  */
-export const VERSION_CONSIGNE = 'v3'
+export const VERSION_CONSIGNE = 'v4'
 const FICHIER_CONSIGNE = new URL(
   `../../../../../prompts/correction/${VERSION_CONSIGNE}.md`,
   import.meta.url,
