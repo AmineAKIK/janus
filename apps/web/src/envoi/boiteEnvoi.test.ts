@@ -154,7 +154,7 @@ describe('boîte d’envoi', () => {
     expect(surRefus).toHaveBeenCalledOnce()
   })
 
-  it.each([429, 503])(
+  it.each([429, 500, 503])(
     'une correction que l’IA ne peut pas rendre (%i) est rendue à la page, pas réessayée',
     async (status) => {
       const { boite, stockage, appels } = monter([

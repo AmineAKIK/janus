@@ -16,6 +16,10 @@ describe('causeDeRefus', () => {
 
   it('une panne de l’IA est une correction indisponible, un autre refus un message refusé', () => {
     expect(causeDeRefus(erreur(503, 'erreur_interne')).code).toBe('correction_indisponible')
+    expect(causeDeRefus(erreur(500, 'erreur_interne'))).toEqual({
+      code: 'correction_indisponible',
+      detail: 'erreur du serveur',
+    })
     expect(causeDeRefus(erreur(400, 'donnees_invalides')).code).toBe('message_refuse')
     expect(causeDeRefus(new Error('réseau')).code).toBe('message_refuse')
   })

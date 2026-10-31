@@ -149,12 +149,14 @@ export function creerBoiteEnvoi(options: OptionsBoiteEnvoi, ecouteurs: Ecouteurs
         rappel?.surConflit?.()
         return 'continuer'
       }
-      // Une correction que l'IA ne peut pas rendre (plafond, panne) est rendue à la page, qui garde sa réponse.
+      // Une correction que l'IA ne peut pas rendre (plafond, panne) est rendue à la page, qui garde sa
+      // réponse. Une erreur interne (500) aussi, tout de suite : la renvoyer dix fois ne la change pas,
+      // et la page attendrait six minutes sans rien voir.
       const correctionImpossible =
         (entree.route === 'POST /corrections' ||
           entree.route === 'POST /verifications/:id/reponses') &&
         erreur instanceof ErreurApi &&
-        (erreur.status === 429 || erreur.status === 503)
+        (erreur.status === 429 || erreur.status === 500 || erreur.status === 503)
       const refuse =
         correctionImpossible ||
         erreur instanceof ErreurDonnees ||
