@@ -24,6 +24,7 @@ afterEach(() => {
   Reflect.deleteProperty(globalThis.navigator, 'storage')
   vi.unstubAllGlobals()
   vi.restoreAllMocks()
+  vi.useRealTimers()
 })
 
 describe('Rappels', () => {
@@ -61,6 +62,9 @@ describe('Rappels', () => {
   })
 
   it('met les rappels en pause jusqu’à une date, puis les reprend', async () => {
+    // Le calendrier s'ouvre sur le jour courant à Paris : le temps est figé en octobre 2026, pour
+    // que « Mois suivant » mène toujours à novembre.
+    vi.useFakeTimers({ toFake: ['Date'], now: Date.parse('2026-10-15T10:00:00Z') })
     const utilisateur = userEvent.setup()
     const banc = await afficher('rappels')
     const champ = await screen.findByRole('button', { name: /Pause jusqu’au/ })
