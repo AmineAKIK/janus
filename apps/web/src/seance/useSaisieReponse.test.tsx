@@ -54,4 +54,30 @@ describe('useSaisieReponse', () => {
 
     expect(etat()).toBe(attendu(null, 'copié', true, false))
   })
+
+  it('oublie le collage quand le champ est vidé puis réécrit à la main', async () => {
+    const utilisateur = userEvent.setup()
+    render(<Essai />)
+    const zone = screen.getByLabelText('Ta réponse')
+
+    await utilisateur.click(zone)
+    await utilisateur.paste('copié')
+    await utilisateur.clear(zone)
+    expect(etat()).toBe(attendu(null, '', false, true))
+
+    await utilisateur.type(zone, 'écrit')
+    expect(etat()).toBe(attendu(null, 'écrit', false, false))
+  })
+
+  it('garde le collage tant qu’il en reste dans le champ', async () => {
+    const utilisateur = userEvent.setup()
+    render(<Essai />)
+    const zone = screen.getByLabelText('Ta réponse')
+
+    await utilisateur.click(zone)
+    await utilisateur.paste('copié')
+    await utilisateur.type(zone, ' et complété')
+
+    expect(etat()).toBe(attendu(null, 'copié et complété', true, false))
+  })
 })

@@ -27,7 +27,10 @@ export function useSaisieReponse(
       value: reponse,
       maxLength: TAILLE_MAX_REPONSE,
       onChange: (evenement: ChangeEvent<HTMLTextAreaElement>) => {
-        setReponse(evenement.currentTarget.value)
+        const valeur = evenement.currentTarget.value
+        setReponse(valeur)
+        // Le collage s’efface quand l’élève vide le champ pour écrire lui-même.
+        if (valeur.trim() === '') setColle(false)
       },
       onPaste: () => {
         setColle(true)

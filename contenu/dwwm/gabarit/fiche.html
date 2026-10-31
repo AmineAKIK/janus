@@ -1906,6 +1906,12 @@
             colle = true
             message.textContent = AVERTIR_COLLE
           })
+          // Le collage s’efface quand l’apprenant vide le champ pour écrire lui-même.
+          champ.addEventListener('input', () => {
+            if (!colle || lireChamp().trim() !== '') return
+            colle = false
+            if (message.textContent === AVERTIR_COLLE) message.textContent = ''
+          })
           const radios = [
             ['sur', 'Sûr'],
             ['hesitant', 'Hésitant'],
@@ -4221,6 +4227,12 @@
           colle = true
           message.dataset.cause = ''
           message.textContent = AVERTIR_COLLE
+        })
+        // Le collage s’efface quand l’apprenant vide le champ pour écrire lui-même.
+        zone.addEventListener('input', () => {
+          if (!colle || (zone.value ?? '').trim() !== '') return
+          colle = false
+          if (message.textContent === AVERTIR_COLLE) message.textContent = ''
         })
         // Ce qui manquait se met à jour à mesure que l'apprenant remplit (les cases d'une table).
         zone.addEventListener('change', () => {

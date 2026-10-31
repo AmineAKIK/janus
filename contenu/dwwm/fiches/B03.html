@@ -7265,7 +7265,7 @@ Serveur de test   1 000 Mo</code></pre>
         "schema": 2,
         "bloc": "B03",
         "type": "systemes",
-        "version": 6,
+        "version": 7,
         "titre": "L’ordinateur et ses composants",
         "titre_court": "Les composants",
         "objectif": "Fiche « ma machine » (CPU, cœurs, fréquence, RAM, stockage, architecture) relevée avec les outils système, dont la virtualisation que demandent WSL 2 et Docker ; expliquer sans support le trajet stockage, RAM, CPU au lancement d’un programme, et le rôle du CPU (cœurs, horloge, cache), de la RAM (volatile), du stockage (HDD, SSD), de la carte mère, du GPU et du refroidissement ; reconnaître l’architecture d’un processeur (x64 ou ARM64) et choisir la version d’un logiciel qui lui correspond ; diagnostiquer 3 symptômes simples (lenteur, mémoire pleine, surchauffe) ; entretenir sa machine (poussière, mises à jour de sécurité) ; juger si la machine convient au développement web. Aisance : ouvrir l’outil qui décrit sa machine et y lire une caractéristique en moins de 10 s.",
@@ -12313,6 +12313,12 @@ Serveur de test   1 000 Mo</code></pre>
             colle = true
             message.textContent = AVERTIR_COLLE
           })
+          // Le collage s’efface quand l’apprenant vide le champ pour écrire lui-même.
+          champ.addEventListener('input', () => {
+            if (!colle || lireChamp().trim() !== '') return
+            colle = false
+            if (message.textContent === AVERTIR_COLLE) message.textContent = ''
+          })
           const radios = [
             ['sur', 'Sûr'],
             ['hesitant', 'Hésitant'],
@@ -14628,6 +14634,12 @@ Serveur de test   1 000 Mo</code></pre>
           colle = true
           message.dataset.cause = ''
           message.textContent = AVERTIR_COLLE
+        })
+        // Le collage s’efface quand l’apprenant vide le champ pour écrire lui-même.
+        zone.addEventListener('input', () => {
+          if (!colle || (zone.value ?? '').trim() !== '') return
+          colle = false
+          if (message.textContent === AVERTIR_COLLE) message.textContent = ''
         })
         // Ce qui manquait se met à jour à mesure que l'apprenant remplit (les cases d'une table).
         zone.addEventListener('change', () => {
