@@ -58,7 +58,7 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
       const { rows } = await base.pool.query<{ n: string }>(
         'SELECT count(*) AS n FROM drizzle.__drizzle_migrations',
       )
-      expect(Number(rows[0]?.n)).toBe(19)
+      expect(Number(rows[0]?.n)).toBe(20)
     })
 
     it('indexe les lectures par bloc, par date et par type, sans le temps actif', async () => {
