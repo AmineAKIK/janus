@@ -229,9 +229,22 @@ describe('les messages de l’appli vers la page', () => {
     expect(MessageAppli.safeParse({ ...base, serie_ouverte: {} }).success).toBe(false)
     expect(MessageAppli.safeParse({ ...base, bloc: 'b' }).success).toBe(false)
     expect(MessageAppli.safeParse({ ...base, version: 0 }).success).toBe(false)
-    for (const champ of ['bloc', 'version', 'etat', 'statut', 'serie_ouverte']) {
+    for (const champ of ['bloc', 'version', 'etat', 'statut', 'serie_ouverte', 'pratique']) {
       expect(MessageAppli.safeParse(sans(base, champ)).success, champ).toBe(false)
     }
+  })
+
+  it('la pratique du bloc : des résultats datés du jour, avec leur aide et leur cas', () => {
+    const base = EXEMPLES_APPLI['statut.maj']
+    const resultat = base.pratique.resultats[0]
+    const avec = (pratique: unknown) => MessageAppli.safeParse({ ...base, pratique }).success
+    expect(avec({ ...base.pratique, resultats: [] })).toBe(true)
+    expect(avec({ ...base.pratique, aujourdhui: '1er juin' })).toBe(false)
+    expect(avec({ ...base.pratique, resultats: [{ ...resultat, jour: '2026-6-1' }] })).toBe(false)
+    expect(avec({ ...base.pratique, resultats: [{ ...resultat, aide: 5 }] })).toBe(false)
+    expect(avec({ ...base.pratique, resultats: [{ ...resultat, cas: 'autre' }] })).toBe(false)
+    expect(avec({ ...base.pratique, resultats: [{ ...resultat, brute: undefined }] })).toBe(false)
+    expect(avec(sans(base.pratique, 'expliques'))).toBe(false)
   })
 
   it('restitution.correction : niveau, source, certitude et raison de non-compte', () => {
@@ -275,6 +288,7 @@ describe('les messages de l’appli vers la page', () => {
     ).toBe(false)
     expect(MessageAppli.safeParse({ ...base, statut: 'bientot' }).success).toBe(false)
     expect(MessageAppli.safeParse(sans(base, 'manque')).success).toBe(false)
+    expect(MessageAppli.safeParse(sans(base, 'pratique')).success).toBe(false)
   })
 
   it('erreur : un code connu et un détail', () => {

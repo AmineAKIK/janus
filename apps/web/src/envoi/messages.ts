@@ -1,5 +1,5 @@
 import { ROUTES } from '@janus/contrats'
-import type { Avancement, Manque, MessagePage, Statut } from '@janus/contrats'
+import type { Avancement, Manque, MessagePage, PratiqueDuBloc, Statut } from '@janus/contrats'
 
 /** Ce qu'il faut garder pour envoyer un message de la page : la route, ses paramètres et son corps. */
 export interface EnvoiDeMessage {
@@ -61,27 +61,39 @@ export function statutDeReponse(
   readonly statut: Statut
   readonly manque: readonly Manque[]
   readonly avancement: Avancement
+  readonly pratique: PratiqueDuBloc
 } | null {
   if (route === 'POST /evenements') {
     const { statut } = ROUTES['POST /evenements'].reponse.parse(reponse)
     return statut === null
       ? null
-      : { statut: statut.statut, manque: statut.manque, avancement: statut.avancement }
+      : {
+          statut: statut.statut,
+          manque: statut.manque,
+          avancement: statut.avancement,
+          pratique: statut.pratique,
+        }
   }
   if (route === 'POST /blocs/:id/erreurs') {
-    const { statut, manque, avancement } = ROUTES['POST /blocs/:id/erreurs'].reponse.parse(reponse)
-    return { statut, manque, avancement }
+    const { statut, manque, avancement, pratique } =
+      ROUTES['POST /blocs/:id/erreurs'].reponse.parse(reponse)
+    return { statut, manque, avancement, pratique }
   }
   if (route === 'PUT /blocs/:id/etat-page') {
     const { statut } = ROUTES['PUT /blocs/:id/etat-page'].reponse.parse(reponse)
     return statut === undefined
       ? null
-      : { statut: statut.statut, manque: statut.manque, avancement: statut.avancement }
+      : {
+          statut: statut.statut,
+          manque: statut.manque,
+          avancement: statut.avancement,
+          pratique: statut.pratique,
+        }
   }
   if (route === 'POST /corrections/:id/trancher') {
-    const { statut, manque, avancement } =
+    const { statut, manque, avancement, pratique } =
       ROUTES['POST /corrections/:id/trancher'].reponse.parse(reponse)
-    return { statut, manque, avancement }
+    return { statut, manque, avancement, pratique }
   }
   return null
 }

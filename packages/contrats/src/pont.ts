@@ -42,6 +42,32 @@ export const Manque = z.strictObject({
 })
 export type Manque = z.infer<typeof Manque>
 
+/** Un jour `AAAA-MM-JJ`. */
+const JourIso = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
+
+/**
+ * La pratique du bloc telle que le serveur la garde : ses résultats depuis la fiche recommencée (ou
+ * la mise à reprendre), dans l'ordre, et les items dont l'explication est Solide. La page en relit
+ * chaque item avec `suivreLaPratique` (`pratique.ts`), la même règle que le moteur : elle n'en garde
+ * aucune copie. `aujourdhui` est le jour de l'appli (fuseau et heure de bascule).
+ */
+export const PratiqueDuBloc = z.strictObject({
+  aujourdhui: JourIso,
+  resultats: z.array(
+    z.strictObject({
+      id: Identifiant,
+      item: Identifiant,
+      reussi: z.boolean(),
+      aide: Aide,
+      brute: z.boolean(),
+      jour: JourIso,
+      cas: z.enum(['origine', 'variante']).nullable(),
+    }),
+  ),
+  expliques: z.array(Identifiant),
+})
+export type PratiqueDuBloc = z.infer<typeof PratiqueDuBloc>
+
 /** L'état d'une page : un objet JSON de 200 ko au plus. */
 /**
  * Ce que le serveur calcule et que la page lit (etat.init, statut.maj), jamais ne sauve. Leçon du
@@ -148,8 +174,11 @@ export const MessagePage = z.discriminatedUnion('type', [
     exercice: Identifiant,
     item: Identifiant,
     reussi: z.boolean(),
+    /** L'aide de cet essai seul : le serveur y ajoute l'aide que l'item garde (`RejeuPratique`). */
     aide: Aide,
     essais: z.number().int().min(1),
+    /** Le cas sur lequel l'item a été fait, quand l'outil le dit. */
+    cas: z.enum(['origine', 'variante']).optional(),
   }),
   z.strictObject({
     ...communPage,
@@ -251,6 +280,7 @@ export const MessageAppli = z.discriminatedUnion('type', [
      * recommencement qui a vidé son état.
      */
     aisance: z.array(z.strictObject({ le: InstantUtc, duree_s: z.number().min(0) })),
+    pratique: PratiqueDuBloc,
     /** Le thème choisi dans l'appli : la fiche s'y aligne (une fiche sans ce champ suit le réglage du téléphone). */
     theme: z.enum(['clair', 'sombre', 'systeme']).optional(),
   }),
@@ -259,6 +289,7 @@ export const MessageAppli = z.discriminatedUnion('type', [
     type: z.literal('statut.maj'),
     statut: Statut,
     manque: z.array(Manque),
+    pratique: PratiqueDuBloc,
   }),
   z.strictObject({
     type: z.literal('erreur'),

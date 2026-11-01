@@ -121,6 +121,23 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
         expect(Number(rows[0]?.n)).toBe(1)
       })
 
+      it('rend la pratique du bloc : le résultat, son aide brute, son cas et son jour', async () => {
+        const aide = { ...commun(), type: 'pratique.resultat', exercice: 'PR1', item: 'PR1-1' }
+        await envoyer({ ...aide, reussi: true, aide: 2, essais: 1, cas: 'origine' })
+        // Refait aussitôt sans aide : l'aide gardée compte, l'item ne passe pas sans aide.
+        const refait = { ...commun(), type: 'pratique.resultat', exercice: 'PR1', item: 'PR1-1' }
+        const reponse = await envoyer({ ...refait, reussi: true, aide: 0, essais: 2 })
+
+        const { pratique } = reponse.json<{
+          statut: { pratique: { aujourdhui: string; resultats: Record<string, unknown>[] } }
+        }>().statut
+        expect(pratique.resultats).toEqual([
+          expect.objectContaining({ item: 'PR1-1', aide: 2, brute: true, cas: 'origine' }),
+          expect.objectContaining({ id: refait.id, aide: 0, brute: true, cas: null }),
+        ])
+        expect(pratique.resultats[0]?.['jour']).toBe(pratique.aujourdhui)
+      })
+
       it('ignore un doublon : même identifiant, même contenu', async () => {
         const message = { ...commun(), type: 'etape.vue', etape: 'ET2' }
         const premiere = await envoyer(message)

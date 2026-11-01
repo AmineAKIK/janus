@@ -1,5 +1,12 @@
-import { reservesDuType } from '@janus/contrats'
-import type { CodeManque, Manifeste, Reglages, Statut, TypeDifferee } from '@janus/contrats'
+import { RejeuPratique, reservesDuType } from '@janus/contrats'
+import type {
+  CodeManque,
+  EssaiPratique,
+  Manifeste,
+  Reglages,
+  Statut,
+  TypeDifferee,
+} from '@janus/contrats'
 import type { Fait, ReponseVerification } from './faits.ts'
 import { ajouterJours, instantEnMs, jourDe } from './temps.ts'
 import type { Jour } from './temps.ts'
@@ -41,6 +48,15 @@ export interface ResultatBloc {
   readonly descendu: boolean
   /** Les étapes de la fiche déjà affichées (`etape_vue`), dans l'ordre de leur première vue. */
   readonly etapesVues: readonly string[]
+  /**
+   * La pratique telle que la page la relit (`suivreLaPratique`) : le jour de l'appli, les résultats
+   * depuis la fiche recommencée et les items expliqués.
+   */
+  readonly pratique: {
+    readonly aujourdhui: Jour
+    readonly essais: readonly EssaiPratique[]
+    readonly expliques: readonly string[]
+  }
   /** Les dates qui alimentent le panneau « Cinq preuves » ; la file du jour s'en sert aussi pour les échéances. */
   readonly preuves: {
     /** Première explication solide, au premier tour et qui compte, d'une vérification valable. */
@@ -153,10 +169,15 @@ interface Exercice {
 export interface ResultatPratique {
   readonly incompletes: readonly string[]
   readonly date: string | null
+  /** Les résultats depuis la fiche recommencée, dans l'ordre : la page en relit ses items. */
+  readonly essais: readonly EssaiPratique[]
+  /** Les items dont l'explication déclarée est Solide et compte. */
+  readonly expliques: readonly string[]
 }
 
 /**
- * Un exercice de pratique est fini quand `reussite` de ses items sont réussis à l'aide 0. Un item qui
+ * Un exercice de pratique est fini quand `reussite` de ses items sont réussis à l'aide 0, l'aide que
+ * l'item garde comprise (`RejeuPratique`, la règle que la page applique aussi). Un item qui
  * demande une explication (`explication` du manifeste) n'est réussi qu'avec, en plus, une explication
  * jugée Solide qui compte (après le tranchage d'Amine, s'il y en a un) : il l'est à la plus tardive
  * des deux dates.
@@ -170,9 +191,14 @@ export class SuiviPratique {
   /** Les corrections d'explication de chaque item. */
   readonly #explications = new Map<string, Correction[]>()
   readonly #tranchages = new Map<string, TranchageCorrection>()
+  readonly #reglages: Pick<Reglages, 'fuseau' | 'heureBascule'>
+  readonly #rejeu = new RejeuPratique()
+  /** Les résultats depuis la fiche recommencée. */
+  #essais: EssaiPratique[] = []
   #connu: ResultatPratique | undefined
 
-  constructor(manifeste: Manifeste) {
+  constructor(manifeste: Manifeste, reglages: Pick<Reglages, 'fuseau' | 'heureBascule'>) {
+    this.#reglages = reglages
     this.#exercices = manifeste.pratique.map((exercice) => ({
       id: exercice.id,
       reussite: exercice.reussite,
@@ -182,13 +208,29 @@ export class SuiviPratique {
   }
 
   avancer(fait: Fait): void {
-    if (fait.type === 'pratique_resultat' && fait.reussi && fait.aide === 0) {
+    if (fait.type === 'pratique_resultat') {
+      const essai: EssaiPratique = {
+        id: fait.id,
+        item: fait.item,
+        reussi: fait.reussi,
+        aide: fait.aide,
+        brute: fait.brute === true,
+        jour: jourDe(fait.date, this.#reglages.fuseau, this.#reglages.heureBascule),
+        cas: fait.cas ?? null,
+      }
+      const aide = this.#rejeu.noter(essai)
+      this.#essais.push(essai)
+      this.#connu = undefined
       const reussites = this.#reussites.get(fait.exercice) ?? new Map<string, string>()
-      if (!reussites.has(fait.item)) {
+      if (fait.reussi && aide === 0 && !reussites.has(fait.item)) {
         reussites.set(fait.item, fait.date)
         this.#reussites.set(fait.exercice, reussites)
-        this.#connu = undefined
       }
+    } else if (fait.type === 'fiche_recommencee') {
+      // La page repart de zéro : plus d'aide gardée, et ses items se relisent depuis ici.
+      this.#rejeu.couper()
+      this.#essais = []
+      this.#connu = undefined
     } else if (fait.type === 'correction' && fait.serie === 'explication') {
       const item = this.#itemDeLExplication.get(fait.question)
       if (item === undefined) return
@@ -238,6 +280,10 @@ export class SuiviPratique {
       this.#connu = {
         incompletes: fins.filter(({ date }) => date === undefined).map(({ id }) => id),
         date: plusTard(fins.flatMap(({ date }) => (date === undefined ? [] : [date]))),
+        essais: [...this.#essais],
+        expliques: [...new Set(this.#itemDeLExplication.values())].filter(
+          (item) => this.#expliqueLe(item) !== undefined,
+        ),
       }
     }
     return this.#connu
@@ -782,6 +828,11 @@ export function assembler(
     echecsConsecutifs: verifications?.echecs ?? 0,
     descendu: reprise !== null && verifications?.palier !== 'acquis',
     etapesVues: [...etapes.etapesVues],
+    pratique: {
+      aujourdhui: jour(maintenant),
+      essais: pratique.essais,
+      expliques: pratique.expliques,
+    },
     preuves: {
       explication: etapes.explication,
       pratique:
@@ -898,7 +949,7 @@ export function construireEtat(
     tranchages,
     corrections: new Map(),
     restitution: new SuiviRestitution(manifeste),
-    pratique: new SuiviPratique(manifeste),
+    pratique: new SuiviPratique(manifeste, reglages),
     atelier: new SuiviAtelier(manifeste),
     aisance: new SuiviAisance(manifeste.aisance, reglages),
     explication: new SuiviPartie('explication'),

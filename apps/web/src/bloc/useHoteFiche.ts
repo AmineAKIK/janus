@@ -1,5 +1,13 @@
 import { CorrectionRendue, ErreurApi, nouvelId, pourLaPage } from '@janus/contrats'
-import type { Avancement, Manque, MessageAppli, MessagePage, Niveau, Statut } from '@janus/contrats'
+import type {
+  Avancement,
+  Manque,
+  MessageAppli,
+  MessagePage,
+  Niveau,
+  PratiqueDuBloc,
+  Statut,
+} from '@janus/contrats'
 import { lireTheme } from '@janus/ui'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
@@ -21,6 +29,8 @@ export interface DonneesFiche {
   readonly manque: readonly Manque[]
   /** L'avancement du bloc d'après les faits enregistrés : ce que le fil d'étapes coche. */
   readonly avancement: Avancement
+  /** La pratique du bloc que le serveur garde : la page en relit ses items, sans en garder de copie. */
+  readonly pratique: PratiqueDuBloc
   readonly serieOuverte: { readonly restitution: boolean }
   /** L'état de page sauvegardé et sa version (0 s'il n'y en a pas). */
   readonly etatPage: { readonly version: number; readonly etat: EtatDePage } | null
@@ -63,6 +73,7 @@ export interface ReponseStatut {
   readonly statut: Statut
   readonly manque: readonly Manque[]
   readonly avancement: Avancement
+  readonly pratique: PratiqueDuBloc
 }
 
 /** Ce que la page apprend d'un message refusé : le plafond, la panne de l'IA, ou un simple refus. */
@@ -117,6 +128,7 @@ export function useHoteFiche(
     statut: donnees.statut,
     manque: donnees.manque,
     avancement: donnees.avancement,
+    pratique: donnees.pratique,
   })
   const [bilanFait, setBilanFait] = useState(() => bilanDansLEtat(donnees.etatPage?.etat))
   const [conflit, setConflit] = useState(false)
@@ -154,7 +166,12 @@ export function useHoteFiche(
     (reponse: ReponseStatut) => {
       setStatut(reponse)
       dernieres.current.statut = reponse
-      vers({ type: 'statut.maj', statut: reponse.statut, manque: [...reponse.manque] })
+      vers({
+        type: 'statut.maj',
+        statut: reponse.statut,
+        manque: [...reponse.manque],
+        pratique: reponse.pratique,
+      })
     },
     [vers],
   )
@@ -169,6 +186,7 @@ export function useHoteFiche(
       statut: courant.statut,
       serie_ouverte: courantes.serieOuverte,
       aisance: [...courantes.aisanceReussies],
+      pratique: courant.pratique,
       theme: lireTheme(),
     })
   }, [vers])
@@ -183,7 +201,7 @@ export function useHoteFiche(
   }, [restitutionOuverte, phase, envoyerInit])
 
   // Le serveur a recalculé le statut (après une correction, ou en relisant le bloc).
-  const cleStatut = `${donnees.statut}:${JSON.stringify(donnees.manque)}:${JSON.stringify(donnees.avancement)}`
+  const cleStatut = `${donnees.statut}:${JSON.stringify(donnees.manque)}:${JSON.stringify(donnees.avancement)}:${JSON.stringify(donnees.pratique)}`
   const statutAvant = useRef(cleStatut)
   useEffect(() => {
     if (statutAvant.current === cleStatut) return
@@ -192,6 +210,7 @@ export function useHoteFiche(
       statut: dernieres.current.donnees.statut,
       manque: dernieres.current.donnees.manque,
       avancement: dernieres.current.donnees.avancement,
+      pratique: dernieres.current.donnees.pratique,
     })
   }, [cleStatut, appliquerStatut])
 
@@ -210,6 +229,7 @@ export function useHoteFiche(
             type: 'statut.maj',
             statut: dernieres.current.statut.statut,
             manque: [...dernieres.current.statut.manque],
+            pratique: dernieres.current.statut.pratique,
           })
           if (etapeAMontrer.current !== undefined) {
             vers({ type: 'etape.aller', etape: etapeAMontrer.current })

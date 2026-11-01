@@ -2,6 +2,32 @@ import type { MessageAppli, MessagePage } from './pont.ts'
 
 // Un exemple valide de chaque message du pont, pour les tests et pour la fiche de démonstration.
 
+/** La pratique d'un bloc, telle que le serveur la rend : un item réussi avec de l'aide, puis refait. */
+export const EXEMPLE_PRATIQUE = {
+  aujourdhui: '2026-06-01',
+  resultats: [
+    {
+      id: '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2a',
+      item: 'PR1-2',
+      reussi: true,
+      aide: 1,
+      brute: true,
+      jour: '2026-06-01',
+      cas: 'origine',
+    },
+    {
+      id: '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2b',
+      item: 'PR1-2',
+      reussi: true,
+      aide: 0,
+      brute: true,
+      jour: '2026-06-01',
+      cas: null,
+    },
+  ],
+  expliques: [],
+} as const
+
 const commun = {
   id: '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2b',
   bloc: 'D01',
@@ -26,6 +52,7 @@ export const EXEMPLES_PAGE = {
     reussi: true,
     aide: 0,
     essais: 2,
+    cas: 'variante',
   },
   'atelier.resultat': {
     ...commun,
@@ -86,6 +113,7 @@ export const EXEMPLES_APPLI = {
     statut: 'en_cours',
     serie_ouverte: { restitution: true },
     aisance: [{ le: '2026-06-01T10:00:00Z', duree_s: 24.5 }],
+    pratique: EXEMPLE_PRATIQUE,
     theme: 'sombre',
   },
   'restitution.correction': { type: 'restitution.correction', ...EXEMPLE_CORRECTION },
@@ -93,6 +121,7 @@ export const EXEMPLES_APPLI = {
     type: 'statut.maj',
     statut: 'vu',
     manque: [{ code: 'pratique_aide', exercices: ['PR1'] }],
+    pratique: EXEMPLE_PRATIQUE,
   },
   erreur: {
     type: 'erreur',

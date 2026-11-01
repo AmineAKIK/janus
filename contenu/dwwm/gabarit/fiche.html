@@ -1317,7 +1317,7 @@
         "titre_court": "À REMPLACER",
         "objectif": "À REMPLACER : ce que tu sauras faire à la fin, vérifiable en une phrase.",
         "prerequis": [],
-        "pont": 5,
+        "pont": 6,
         "contexte_ia": "À REMPLACER : ce que le correcteur doit savoir du bloc (1 500 mots au plus) : notions, vocabulaire, pièges.",
         "sources": [
           {
@@ -1726,7 +1726,7 @@
       // --- État de la page ---
       let mode = 'autonome'
       let serieOuverte = { restitution: true }
-      let etat = { etape: etapes[0].id, envoyees: {}, retourCours: false, pratique: {} }
+      let etat = { etape: etapes[0].id, envoyees: {}, retourCours: false }
       const pont = window.JanusPont
       if (window.parent !== window) document.documentElement.dataset.integree = ''
       /** Le dernier statut reçu de l'appli : `manque` dit, entre autres, les erreurs encore ouvertes. */
@@ -1735,6 +1735,8 @@
       let majPied = () => {}
       /** Remet à jour le bilan affiché quand un statut arrive. */
       let majBilan = () => {}
+      /** Remet à jour l'item de pratique affiché quand la pratique du serveur arrive, sans le redessiner. */
+      let majPratique = () => {}
       /** La tentative de l'étape `pretest` affichée : ses essais notés se figent, la série finie se corrige. */
       let majEssais = () => {}
       /** Le dernier bilan envoyé depuis cette page : son identifiant, pour reconnaître un refus. */
@@ -1745,6 +1747,17 @@
        * pour qu'il relise ses niveaux même quand l'état de la page a été vidé. Vide hors de l'appli.
        */
       let aisanceServeur = []
+      /*
+       * La pratique : ses résultats sont sa seule mémoire. Dans l'appli, c'est le serveur qui les garde
+       * (`pratique` de `etat.init`, puis de chaque `statut.maj`) ; la page relit chaque item avec la
+       * règle du moteur (`JanusPratique.suivre`, embarquée dans le pont) et n'en garde aucune copie.
+       * Seuls les résultats et les explications notés depuis le dernier statut attendent ici, le temps
+       * que l'appli réponde. Hors de l'appli, la page est seule : ils vont dans son état
+       * (`etat.pratiqueLocale`).
+       */
+      let pratiqueServeur = null
+      const essaisEnAttente = []
+      const expliquesEnAttente = new Set()
 
       /**
        * L'état part à l'appli tout de suite : une réponse, une trace ou un résultat ne se perd pas si
@@ -1791,10 +1804,9 @@
       const explicationDeclaree = (cle) => (manifeste.explication ?? []).find((e) => e.id === cle)
       /** L'item n'a pas d'explication à donner, ou elle est faite. */
       const explicationFaite = (item) =>
-        !(manifeste.explication ?? []).some((e) => e.item === item) ||
-        etat.pratique[item]?.explique === true
+        !(manifeste.explication ?? []).some((e) => e.item === item) || itemExplique(item)
       /** Un item de pratique réussi : sa réponse, puis son explication quand il en demande une. */
-      const itemReussi = (item) => Boolean(etat.pratique[item]?.reussi) && explicationFaite(item)
+      const itemReussi = (item) => itemPratique(item).etat !== 'a_faire' && explicationFaite(item)
       // Sur #contenu, qui porte tous les exercices de la page.
       $('contenu').addEventListener('fiche:expliquer', (evenement) => {
         const {
@@ -1876,12 +1888,7 @@
         ]
         /** L'explication est finie : la trace part, l'outil et l'item lisent la suite. */
         const finir = (fin) => {
-          if (declaree && (fin === 'solide' || fin === 'simulee')) {
-            etat.pratique[declaree.item] = {
-              ...(etat.pratique[declaree.item] ?? {}),
-              explique: true,
-            }
-          }
+          if (declaree && (fin === 'solide' || fin === 'simulee')) noterExplique(declaree.item)
           exercice.dispatchEvent(
             new CustomEvent('fiche:trace', {
               bubbles: true,
@@ -2354,45 +2361,83 @@
         const deux = (nombre) => String(nombre).padStart(2, '0')
         return date.getFullYear() + '-' + deux(date.getMonth() + 1) + '-' + deux(date.getDate())
       }
-      /*
-       * Refaire après une aide (règle F03) : ce qui fausse la preuve, c'est la réponse encore sous les
-       * yeux, pas l'heure. Chaque résultat de pratique prend un rang (`rang`, le compteur
-       * `etat.rangPratique`) ; une aide reçue garde le sien (`aideRang`), une réussite aussi
-       * (`rangReussi`, gardé jusqu'à la réussite suivante de l'item). Un autre item réussi depuis
-       * l'éloigne (un « Pas réussi » ne suffit pas : il ne prouve aucun effort) : l'item se refait alors le jour même, sur un autre cas (la variante,
-       * quand l'outil en a une), et compte sans aide. Une aide d'avant ce rang (sans `aideRang`) ou
-       * d'un autre jour est éloignée aussi.
-       */
-      function aideEloignee(id) {
-        const fait = etat.pratique?.[id]
-        if (!fait || fait.aideLe !== aujourdhui()) return true
-        if (typeof fait.aideRang !== 'number') return true
-        return Object.entries(etat.pratique).some(
-          ([autre, note]) => autre !== id && (note?.rangReussi ?? -1) > fait.aideRang,
-        )
-      }
-      /** Réussi avec de l'aide, l'aide éloignée : l'item se refait sur un autre cas, sans aide, pour compter. */
-      const aRefaireAilleurs = (id) =>
-        Boolean(etat.pratique?.[id]?.reussi) &&
-        (etat.pratique[id].aide ?? 0) > 0 &&
-        aideEloignee(id)
-      /*
-       * Le relais (décision d'Amine du 1er novembre 2026) : une aide qui ne s'éloigne pas faute d'autre
-       * item à réussir (chacun est déjà réussi, et ne se refait pas) n'attend pas le lendemain. Les
-       * items réussis sans aide se rouvrent alors sur leur autre cas ; en réussir un éloigne l'aide.
-       * Un résultat de relais ne touche pas l'état de l'item : il reste réussi, quoi qu'il arrive.
-       */
+      /** Le cas d'origine, la variante : ce que la page envoie avec un résultat. */
+      const CAS = ['origine', 'variante']
       const idsPratique = () =>
         (manifeste.pratique ?? []).flatMap((exercice) => exercice.items.map((item) => item.id))
-      const sansAide = (id) =>
-        Boolean(etat.pratique?.[id]?.reussi) && (etat.pratique[id].aide ?? 0) === 0
-      const faisable = (id) => !etat.pratique?.[id]?.reussi || aRefaireAilleurs(id)
-      const bloque = (id) =>
-        Boolean(etat.pratique?.[id]) &&
-        !aideEloignee(id) &&
-        idsPratique().every((autre) => autre === id || !faisable(autre))
-      const enRelais = (id) =>
-        sansAide(id) && idsPratique().some((autre) => autre !== id && bloque(autre))
+      /** Hors de l'appli, la page garde elle-même ses résultats et ses explications. */
+      function pratiqueLocale() {
+        const locale = etat.pratiqueLocale
+        if (locale && Array.isArray(locale.resultats) && Array.isArray(locale.expliques))
+          return locale
+        etat.pratiqueLocale = { resultats: [], expliques: [] }
+        return etat.pratiqueLocale
+      }
+      /** Les résultats de la pratique dans l'ordre : ceux du serveur, puis ceux qui l'attendent. */
+      function essaisPratique() {
+        if (pratiqueServeur === null) return pratiqueLocale().resultats
+        const connus = new Set(pratiqueServeur.resultats.map((resultat) => resultat.id))
+        return [
+          ...pratiqueServeur.resultats,
+          ...essaisEnAttente.filter((resultat) => !connus.has(resultat.id)),
+        ]
+      }
+      /** Le jour de l'appli (son fuseau, son heure de bascule) ; hors de l'appli, celui de l'appareil. */
+      const jourPratique = () => pratiqueServeur?.aujourdhui ?? aujourdhui()
+      /**
+       * Chaque item, relu de ses résultats par la règle du moteur (`suivreLaPratique` dans
+       * `@janus/contrats`) : son état (à faire, réussi avec de l'aide, réussi), l'aide qu'il garde,
+       * s'il se refait sur l'autre cas, les items qui débloquent son aide, le relais.
+       */
+      function itemsPratique() {
+        return window.JanusPratique.suivre(idsPratique(), essaisPratique(), jourPratique())
+      }
+      const itemPratique = (id) => itemsPratique().get(id)
+      function itemExplique(item) {
+        if (pratiqueServeur === null) return pratiqueLocale().expliques.includes(item)
+        return pratiqueServeur.expliques.includes(item) || expliquesEnAttente.has(item)
+      }
+      function noterExplique(item) {
+        if (pratiqueServeur !== null) expliquesEnAttente.add(item)
+        else if (!pratiqueLocale().expliques.includes(item)) pratiqueLocale().expliques.push(item)
+      }
+      /** La pratique que le serveur garde : ce qu'elle contient n'attend plus ici. */
+      function recevoirPratique(pratique) {
+        if (!pratique) return
+        pratiqueServeur = pratique
+        const connus = new Set(pratique.resultats.map((resultat) => resultat.id))
+        for (let k = essaisEnAttente.length - 1; k >= 0; k -= 1) {
+          if (connus.has(essaisEnAttente[k].id)) essaisEnAttente.splice(k, 1)
+        }
+        for (const item of pratique.expliques) expliquesEnAttente.delete(item)
+      }
+      /*
+       * L'état d'avant la refonte gardait sa copie des items (`etat.pratique`). Dans l'appli, le serveur
+       * a leurs résultats : la copie s'efface. Hors de l'appli, elle devient les résultats de la page :
+       * un item réussi le reste, avec l'aide notée.
+       */
+      function reprendreAnciennePratique() {
+        const ancienne = etat.pratique
+        delete etat.pratique
+        delete etat.rangPratique
+        if (pratiqueServeur !== null || !ancienne || typeof ancienne !== 'object') return
+        const locale = pratiqueLocale()
+        for (const [item, note] of Object.entries(ancienne)) {
+          if (note?.reussi === true) {
+            locale.resultats.push({
+              id: 'avant-' + item,
+              item,
+              reussi: true,
+              aide: [0, 1, 2, 3, 4].includes(note.aide) ? note.aide : 0,
+              brute: false,
+              jour: typeof note.aideLe === 'string' ? note.aideLe : '1970-01-01',
+              cas: null,
+            })
+          }
+          if (note?.explique === true && !locale.expliques.includes(item))
+            locale.expliques.push(item)
+        }
+      }
 
       const questions = (serie) => (serie === 'restitution' ? manifeste.restitution : [])
       const reponsesFinies = (serie) => questions(serie).filter((q) => etat.envoyees[q.id]).length
@@ -2403,7 +2448,8 @@
       function decomptePratique() {
         const items = manifeste.pratique.flatMap((exercice) => exercice.items)
         const reussis = items.filter((item) => itemReussi(item.id))
-        const avecAide = reussis.filter((item) => (etat.pratique[item.id]?.aide ?? 0) > 0).length
+        const etats = itemsPratique()
+        const avecAide = reussis.filter((item) => etats.get(item.id).etat === 'aide').length
         return (
           reussis.length +
           ' sur\u00a0' +
@@ -3361,64 +3407,37 @@
           className: 'bouton secondaire',
           hidden: true,
         })
-        const solutionVue = () => Boolean(etat.pratique[item.id]?.solutionVue)
-        // La solution vue garde son jour, pour le dire : « Tu as vu la solution ».
-        const vueAujourdhui = () => etat.pratique[item.id]?.solutionVue === aujourdhui()
-        // Toute aide reste tant qu'elle n'est pas éloignée : refait dans la foulée, la réponse encore
-        // sous les yeux, l'item part avec l'aide la plus forte reçue depuis. Un autre item réussi entre-temps
-        // l'éloigne (aideEloignee) : il repart sans aide, sur un autre cas.
-        const aideDuJour = () => (aideEloignee(item.id) ? 0 : (etat.pratique[item.id].aideMax ?? 0))
-        /** Note un résultat ; `vue` : l'outil vient de montrer la solution, et l'item s'en souvient. */
+        /**
+         * Note un résultat avec l'aide de cet essai seul : la règle du moteur y ajoute l'aide que
+         * l'item garde (`aideGardee`), ici comme sur le serveur. `vue` : l'outil vient de montrer la
+         * solution (aide 4). Le cas vient de l'outil (`data-cas` sur la boîte), quand il en a un.
+         */
         const noter = (ok, aideUtilisee, vue = false) => {
-          const avant = etat.pratique[item.id]
-          const essais = (avant?.essais ?? 0) + 1
-          const aideNotee = Math.max(aideUtilisee, aideDuJour(), vue ? 4 : 0)
-          // Une aide reçue à l'instant (pas seulement gardée) prend le rang de ce résultat.
-          const rang = (etat.rangPratique ?? 0) + 1
-          etat.rangPratique = rang
-          const aideNouvelle = aideUtilisee > 0 || vue
-          // Réussi sans aide, l'item le reste (comme pour l'appli, qui garde la première réussite sans
-          // aide) : refait en relais ou par erreur, son résultat ne change que ses rangs.
-          const relais = sansAide(item.id)
-          pont.envoyer('pratique.resultat', {
+          const cas = CAS.includes(boite.dataset.cas) ? boite.dataset.cas : null
+          const aideBrute = Math.max(aideUtilisee, vue ? 4 : 0)
+          const id = pont.envoyer('pratique.resultat', {
             exercice: exercice.id,
             item: item.id,
             reussi: ok,
-            aide: aideNotee,
-            essais,
+            aide: aideBrute,
+            essais: itemPratique(item.id).essais + 1,
+            ...(cas === null ? {} : { cas }),
           })
-          if (relais) {
-            etat.pratique[item.id] = { ...avant, essais, ...(ok ? { rangReussi: rang } : {}) }
-            enregistrer()
-            return
-          }
-          etat.pratique[item.id] = {
+          if (id === null) return
+          const resultat = {
+            id,
+            item: item.id,
             reussi: ok,
-            aide: aideNotee,
-            essais,
-            solutionVue: vue ? aujourdhui() : (avant?.solutionVue ?? false),
-            // Une explication déjà jugée Solide le reste : l'item refait ne la redemande pas.
-            ...(avant?.explique === true ? { explique: true } : {}),
-            rang,
-            ...(ok
-              ? { rangReussi: rang }
-              : typeof avant?.rangReussi === 'number'
-                ? { rangReussi: avant.rangReussi }
-                : {}),
-            ...(aideNotee > 0
-              ? {
-                  aideLe: aujourdhui(),
-                  aideMax: aideNotee,
-                  aideRang:
-                    aideNouvelle || typeof avant?.aideRang !== 'number' ? rang : avant.aideRang,
-                }
-              : {
-                  aideLe: avant?.aideLe ?? null,
-                  aideMax: avant?.aideMax ?? 0,
-                  ...(typeof avant?.aideRang === 'number' ? { aideRang: avant.aideRang } : {}),
-                }),
+            aide: aideBrute,
+            brute: true,
+            jour: jourPratique(),
+            cas,
           }
-          enregistrer()
+          if (pratiqueServeur !== null) essaisEnAttente.push(resultat)
+          else {
+            pratiqueLocale().resultats.push(resultat)
+            enregistrer()
+          }
         }
         const envoyer = (ok) => {
           noter(ok, aide)
@@ -3461,18 +3480,17 @@
           })
           return b
         })
-        // Après une solution montrée, l'outil de la fiche le lit (`data-solution-vue` sur la boîte de
-        // l'item) pour proposer une variante : on refait un cas comparable, pas celui qu'on a vu.
-        // `data-item` nomme l'item : l'outil le donne quand il repère une erreur (`fiche:erreur`).
+        // Après une solution montrée, ou quand l'item se refait, l'outil de la fiche le lit
+        // (`data-solution-vue` sur la boîte de l'item) : il ne remontre pas la réponse, et le cas à
+        // montrer lui vient de `detail.pratique` (`cas`). `data-item` nomme l'item : l'outil le donne
+        // quand il repère une erreur (`fiche:erreur`).
         const boite = creer(
           'div',
           {
             className: 'item',
             dataset: {
               item: item.id,
-              ...(solutionVue() || aRefaireAilleurs(item.id) || enRelais(item.id)
-                ? { solutionVue: '' }
-                : {}),
+              ...(itemPratique(item.id).marque ? { solutionVue: '' } : {}),
             },
           },
           creer(
@@ -3522,10 +3540,11 @@
         }
         /** Le compteur, les points, l'état de l'item et la ligne du résultat, d'après l'état noté. */
         const majItem = () => {
-          const fait = etat.pratique[item.id]
+          const etats = itemsPratique()
+          const fait = etats.get(item.id)
           // Réussi avec de l'aide : l'appli ne le compte pas encore. La page le compte à part, pour ne
           // pas dire « réussi » et « ne compte pas » du même item.
-          const avecAide = (entree) => reussi(entree) && etat.pratique[entree.item.id].aide > 0
+          const avecAide = (entree) => reussi(entree) && etats.get(entree.item.id).etat === 'aide'
           compteur.textContent = decomptePratique() + '.'
           liste.forEach((entree, k) => {
             const p = points.children[k]
@@ -3541,32 +3560,31 @@
           })
           boite.dataset.fait = reussi({ item }) ? 'oui' : 'non'
           majPied()
-          // La solution a été montrée et l'item n'est pas refait : on le dit, à la place du résultat.
-          const aRefaire = Boolean(fait?.solutionVue) && !fait.reussi
+          // La solution a été montrée et l'item n'est pas réussi depuis : on le dit, à la place du résultat.
+          const aRefaire = fait.solutionVue && fait.etat !== 'reussi'
           // Réussi, mais l'explication qu'il demande n'est pas encore Solide.
-          const aExpliquer = Boolean(fait?.reussi) && !explicationFaite(item.id)
-          etatItem.textContent = fait
-            ? aExpliquer
-              ? 'Explication attendue'
-              : fait.reussi
-                ? fait.aide > 0
-                  ? 'Réussi avec de l’aide'
-                  : 'Réussi'
-                : aRefaire
-                  ? 'Solution vue'
-                  : 'À refaire'
-            : ''
+          const aExpliquer = fait.etat !== 'a_faire' && !explicationFaite(item.id)
+          etatItem.textContent =
+            fait.dernier === null
+              ? ''
+              : aExpliquer
+                ? 'Explication attendue'
+                : fait.etat === 'reussi'
+                  ? 'Réussi'
+                  : fait.etat === 'aide'
+                    ? 'Réussi avec de l’aide'
+                    : aRefaire
+                      ? 'Solution vue'
+                      : 'À refaire'
           resultat.className = aRefaire ? 'item-refaire' : 'discret'
-          // Les items qui débloquent celui-ci, par leur numéro : d'autres à réussir, ou des relais.
-          const enAttente = Boolean(fait?.reussi) && fait.aide > 0 && !aideEloignee(item.id)
+          // Les items qui débloquent l'aide de celui-ci, par leur numéro : d'autres à réussir, ou des
+          // relais (chacun déjà réussi sans aide, rouvert sur son autre cas).
+          const enAttente = fait.etat === 'aide' && fait.aideGardee > 0
           const cibles = enAttente
-            ? liste.flatMap((entree, k) =>
-                entree.item.id !== item.id &&
-                (bloque(item.id) ? enRelais(entree.item.id) : faisable(entree.item.id))
-                  ? [k]
-                  : [],
-              )
+            ? liste.flatMap((entree, k) => (fait.debloquePar.includes(entree.item.id) ? [k] : []))
             : []
+          const parRelais =
+            cibles.length > 0 && cibles.every((k) => etats.get(liste[k].item.id).relais)
           const numeros = cibles.map((k) => String(k + 1))
           const lesItems =
             numeros.length < 2
@@ -3580,11 +3598,11 @@
           }
           // Réussi avec de l'aide : l'appli ne le compte pas encore, la page dit comment il comptera.
           const pourCompter =
-            !fait?.reussi || fait.aide === 0
+            fait.etat !== 'aide'
               ? ''
-              : !aideEloignee(item.id)
-                ? (vueAujourdhui() ? '. Tu as vu la solution' : '. Tu as eu de l’aide') +
-                  (bloque(item.id)
+              : enAttente
+                ? (fait.aideGardee >= 4 ? '. Tu as vu la solution' : '. Tu as eu de l’aide') +
+                  (parRelais
                     ? '\u00a0: les autres items sont tous réussis. Refais ' +
                       lesItems +
                       ' sur un autre cas (il reste réussi quoi qu’il arrive), puis reviens refaire celui-ci sans aide, sur un autre cas, pour qu’il compte.'
@@ -3592,20 +3610,23 @@
                       lesItems +
                       ' (même avec de l’aide), puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte. D’ici là, le refaire ici garde ton aide.')
                 : '. Refais-le maintenant sans aide, sur un autre cas, pour qu’il compte.'
-          resultat.textContent = enRelais(item.id)
+          resultat.textContent = fait.relais
             ? 'Réussi. Refais-le sur un autre cas pour qu’un item aidé compte\u00a0: celui-ci reste réussi quoi qu’il arrive.'
             : aRefaire
               ? 'Tu as vu la solution. Refais-la sans la regarder.'
               : aExpliquer
                 ? 'Réussi. Explique-le maintenant\u00a0: l’item compte quand ton explication est Solide.'
-                : fait
-                  ? 'Envoyé\u00a0: ' +
-                    (fait.reussi ? 'réussi' : 'non réussi') +
-                    ', aide ' +
-                    fait.aide +
-                    pourCompter
-                  : ''
+                : fait.etat === 'reussi'
+                  ? 'Réussi sans aide\u00a0: il compte.'
+                  : fait.dernier !== null
+                    ? 'Envoyé\u00a0: ' +
+                      (fait.dernier.reussi ? 'réussi' : 'non réussi') +
+                      ', aide ' +
+                      fait.dernier.aide +
+                      pourCompter
+                    : ''
         }
+        majPratique = majItem
         majItem()
         // L'outil émet fiche:verification à chaque réponse vérifiée. L'item se met à jour sans être
         // redessiné : la réponse et le message de l'outil restent à l'écran. Sauf quand l'outil a montré
@@ -3613,7 +3634,7 @@
         // neuf (l'outil se remonte sur fiche:rendu, son aide repart de zéro), pour être refait sans la
         // regarder. Avec `garder: true`, l'outil montre la solution à l'instant : l'item la note tout de
         // suite, sans se redessiner, et se redessine quand l'outil émet fiche:refaire (« je refais »).
-        // Tant que l'aide reçue n'est pas éloignée (aideEloignee), chaque résultat de l'item part avec elle.
+        // Tant que l'item garde une aide (`aideGardee`), la règle du moteur la compte à chaque résultat.
         const redessiner = () => {
           etat.itemCourant = index
           enregistrer()
@@ -3636,7 +3657,7 @@
         })
         consigne.addEventListener('fiche:explique', () => majItem())
         consigne.addEventListener('fiche:refaire', () => {
-          if (solutionVue()) redessiner()
+          if (itemPratique(item.id).solutionVue) redessiner()
         })
         return creer(
           'section',
@@ -4533,7 +4554,8 @@
         const items = manifeste.pratique.flatMap((exercice) => exercice.items)
         if (items.length > 0) {
           const reussis = items.filter((item) => itemReussi(item.id))
-          const sansAide = reussis.filter((item) => etat.pratique[item.id].aide === 0).length
+          const etats = itemsPratique()
+          const sansAide = reussis.filter((item) => etats.get(item.id).etat === 'reussi').length
           lignes.push(
             ligne(
               reussis.length === items.length && sansAide === items.length,
@@ -4718,6 +4740,7 @@
         majPied = () => {}
         majBilan = () => {}
         majEssais = () => {}
+        majPratique = () => {}
         afficherEtapes()
         const etape = etapes.find((e) => e.id === etat.etape) ?? etapes[0]
         let vue
@@ -4778,12 +4801,21 @@
               etape,
               traces: { ...(etat.traces ?? {}) },
               aisance: [...aisanceServeur],
-              // L'état noté des items de pratique : un outil y lit qu'un item est réussi, pour le remontrer.
-              // `refaire` : réussi avec une aide éloignée, l'item se refait sur un autre cas.
+              // L'état des items de pratique : un outil y lit qu'un item est réussi, pour le remontrer
+              // avec sa réponse, et sur quel cas le montrer (`cas`). `refaire` : il se refait sur l'autre
+              // cas (réussi avec une aide éloignée, ou en relais), et ne se remontre pas.
               pratique: Object.fromEntries(
-                Object.entries(JSON.parse(JSON.stringify(etat.pratique ?? {}))).map(
-                  ([id, note]) => [id, { ...note, refaire: aRefaireAilleurs(id) || enRelais(id) }],
-                ),
+                [...itemsPratique()].map(([id, item]) => [
+                  id,
+                  {
+                    reussi: item.etat !== 'a_faire',
+                    aide: item.etat === 'reussi' ? 0 : (item.dernier?.aide ?? 0),
+                    explique: itemExplique(id),
+                    solutionVue: item.solutionVue,
+                    refaire: item.refaire || item.relais,
+                    cas: item.cas,
+                  },
+                ]),
               ),
             },
           }),
@@ -4801,14 +4833,22 @@
           $('mode').textContent = 'Pont indisponible'
           return
         }
-        pont.surStatut(({ statut, manque }) => {
+        pont.surStatut(({ statut, manque, pratique }) => {
           dernierStatut = { statut, manque }
+          recevoirPratique(pratique)
+          majPratique()
           $('statut').textContent = 'Statut\u00a0: ' + (LIBELLES_STATUT[statut] ?? statut)
           if (bilanEnvoye !== null && bilanEnvoye.statut === null) bilanEnvoye.statut = statut
           majBilan()
         })
         pont.surErreur((erreur) => {
           $('statut').textContent = 'Erreur\u00a0: ' + erreur.detail
+          // Un résultat de pratique refusé n'est pas gardé par le serveur : il n'attend plus.
+          const refuse = essaisEnAttente.findIndex((resultat) => resultat.id === erreur.message_id)
+          if (erreur.code === 'message_refuse' && refuse >= 0) {
+            essaisEnAttente.splice(refuse, 1)
+            majPratique()
+          }
           if (bilanEnvoye !== null && erreur.message_id === bilanEnvoye.id) {
             bilanEnvoye.refus = erreur.detail
             majBilan()
@@ -4841,6 +4881,7 @@
         if (mode !== 'appli') delete document.documentElement.dataset.integree
         $('mode').textContent = mode === 'appli' ? 'Dans l’appli' : 'Mode autonome'
         if (depart.init) {
+          recevoirPratique(depart.init.pratique)
           serieOuverte = depart.init.serie_ouverte
           aisanceServeur = depart.init.aisance ?? []
           dernierStatut ??= { statut: depart.init.statut, manque: null }
@@ -4849,6 +4890,7 @@
         }
         pont.surInit((init) => {
           aisanceServeur = init.aisance ?? []
+          recevoirPratique(init.pratique)
           const serieChangee = serieOuverte.restitution !== init.serie_ouverte.restitution
           serieOuverte = init.serie_ouverte
           // Redessiner efface une réponse en cours d'écriture : seulement quand une série s'ouvre ou
@@ -4860,6 +4902,7 @@
           }
         })
         if (depart.etat && typeof depart.etat === 'object') etat = { ...etat, ...depart.etat }
+        reprendreAnciennePratique()
         afficher()
         // L'étape montrée à l'ouverture est vue, comme celle où l'on va (la première, sinon jamais cochée).
         noterVue()
