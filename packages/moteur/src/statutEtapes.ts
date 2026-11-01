@@ -1,6 +1,7 @@
-import { RejeuPratique, reservesDuType } from '@janus/contrats'
+import { RejeuAtelier, RejeuPratique, reservesDuType } from '@janus/contrats'
 import type {
   CodeManque,
+  ConstatAtelier,
   EssaiPratique,
   Manifeste,
   Reglages,
@@ -50,12 +51,13 @@ export interface ResultatBloc {
   readonly etapesVues: readonly string[]
   /**
    * La pratique telle que la page la relit (`suivreLaPratique`) : le jour de l'appli, les résultats
-   * depuis la fiche recommencée et les items expliqués.
+   * depuis la fiche recommencée, les items expliqués et les constats d'atelier (`suivreLAtelier`).
    */
   readonly pratique: {
     readonly aujourdhui: Jour
     readonly essais: readonly EssaiPratique[]
     readonly expliques: readonly string[]
+    readonly constats: readonly ConstatAtelier[]
   }
   /** Les dates qui alimentent le panneau « Cinq preuves » ; la file du jour s'en sert aussi pour les échéances. */
   readonly preuves: {
@@ -290,29 +292,46 @@ export class SuiviPratique {
   }
 }
 
-/** Le premier résultat d'atelier réussi à l'aide 0, quand le manifeste en a un. */
+export interface ResultatAtelier {
+  readonly ok: boolean
+  readonly date: string | null
+  /** Les constats lus, dans l'ordre : la page en relit l'atelier (`suivreLAtelier`). */
+  readonly constats: readonly ConstatAtelier[]
+}
+
+/**
+ * Le premier constat d'atelier réussi à l'aide 0, l'aide gardée du jour comprise (`RejeuAtelier`, la
+ * règle que la page applique aussi), quand le manifeste a un atelier.
+ */
 export class SuiviAtelier {
   readonly #requis: boolean
+  readonly #reglages: Pick<Reglages, 'fuseau' | 'heureBascule'>
+  readonly #rejeu = new RejeuAtelier()
+  readonly #constats: ConstatAtelier[] = []
   #date: string | null = null
 
-  constructor(manifeste: Manifeste) {
+  constructor(manifeste: Manifeste, reglages: Pick<Reglages, 'fuseau' | 'heureBascule'>) {
     this.#requis = manifeste.atelier !== undefined
+    this.#reglages = reglages
   }
 
   avancer(fait: Fait): void {
-    if (
-      this.#requis &&
-      this.#date === null &&
-      fait.type === 'atelier_resultat' &&
-      fait.reussi &&
-      fait.aide === 0
-    ) {
-      this.#date = fait.date
+    if (!this.#requis || fait.type !== 'atelier_resultat') return
+    const constat: ConstatAtelier = {
+      id: fait.id,
+      reussi: fait.reussi,
+      aide: fait.aide,
+      jour: jourDe(fait.date, this.#reglages.fuseau, this.#reglages.heureBascule),
     }
+    const aide = this.#rejeu.noter(constat)
+    this.#constats.push(constat)
+    if (this.#date === null && fait.reussi && aide === 0) this.#date = fait.date
   }
 
-  resultat(): { readonly ok: boolean; readonly date: string | null } {
-    return this.#requis ? { ok: this.#date !== null, date: this.#date } : { ok: true, date: null }
+  resultat(): ResultatAtelier {
+    return this.#requis
+      ? { ok: this.#date !== null, date: this.#date, constats: [...this.#constats] }
+      : { ok: true, date: null, constats: [] }
   }
 }
 
@@ -725,7 +744,7 @@ export interface Etapes {
   readonly vide: boolean
   readonly restitution: Restitution
   readonly pratique: ResultatPratique
-  readonly atelier: { readonly ok: boolean; readonly date: string | null }
+  readonly atelier: ResultatAtelier
   readonly aisance: { readonly ok: boolean; readonly date: string | null }
   /** `null` tant que le bloc n'est pas « acquis provisoirement » : les vérifications ne comptent pas encore. */
   readonly verifications: SuiviVerifications | null
@@ -832,6 +851,7 @@ export function assembler(
       aujourdhui: jour(maintenant),
       essais: pratique.essais,
       expliques: pratique.expliques,
+      constats: atelier.constats,
     },
     preuves: {
       explication: etapes.explication,
@@ -950,7 +970,7 @@ export function construireEtat(
     corrections: new Map(),
     restitution: new SuiviRestitution(manifeste),
     pratique: new SuiviPratique(manifeste, reglages),
-    atelier: new SuiviAtelier(manifeste),
+    atelier: new SuiviAtelier(manifeste, reglages),
     aisance: new SuiviAisance(manifeste.aisance, reglages),
     explication: new SuiviPartie('explication'),
     transfert: new SuiviPartie('transfert'),

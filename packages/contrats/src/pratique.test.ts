@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { RejeuPratique, suivreLaPratique } from './pratique.ts'
+import { RejeuAtelier, RejeuPratique, suivreLAtelier, suivreLaPratique } from './pratique.ts'
 import type { CasItem, EssaiPratique } from './pratique.ts'
 
 const JOUR = '2026-11-01'
@@ -232,5 +232,50 @@ describe('suivreLaPratique', () => {
 
   it("un item réussi sans aide ne nomme aucun item, même s'il garde une aide", () => {
     expect(etat([r('A', true, 0), r('A', false, 2)], 'A').debloquePar).toEqual([])
+  })
+})
+
+describe('suivreLAtelier', () => {
+  let numero = 0
+  const constat = (reussi: boolean, aide: number, jour = JOUR) => {
+    numero += 1
+    return { id: 'a' + String(numero), reussi, aide, jour }
+  }
+
+  it('rien avant le premier constat', () => {
+    expect(suivreLAtelier([], JOUR)).toEqual({ reussi: false, dernier: null, aideGardee: 0 })
+  })
+
+  it('réussi sans aide : il compte', () => {
+    expect(suivreLAtelier([constat(true, 0)], JOUR).reussi).toBe(true)
+  })
+
+  it("le même jour, un constat part avec l'aide déjà déclarée", () => {
+    const etat = suivreLAtelier([constat(true, 2), constat(true, 0)], JOUR)
+    expect(etat.reussi).toBe(false)
+    expect(etat.dernier).toEqual({ reussi: true, aide: 2 })
+    expect(etat.aideGardee).toBe(2)
+  })
+
+  it("un autre jour, l'atelier refait sans aide compte : il se rattrape", () => {
+    const aide = [constat(true, 4)]
+    expect(suivreLAtelier(aide, LENDEMAIN).aideGardee).toBe(0)
+    const etat = suivreLAtelier([...aide, constat(true, 0, LENDEMAIN)], LENDEMAIN)
+    expect(etat.reussi).toBe(true)
+    expect(etat.dernier).toEqual({ reussi: true, aide: 0 })
+  })
+
+  it('réussi sans aide, il le reste, même raté ou aidé ensuite', () => {
+    const etat = suivreLAtelier([constat(true, 0), constat(false, 3)], JOUR)
+    expect(etat.reussi).toBe(true)
+    expect(etat.dernier).toEqual({ reussi: false, aide: 3 })
+  })
+
+  it('garde la plus forte aide du jour', () => {
+    const rejeu = new RejeuAtelier()
+    rejeu.noter(constat(false, 3))
+    expect(rejeu.noter(constat(false, 1))).toBe(3)
+    expect(rejeu.aideGardee(JOUR)).toBe(3)
+    expect(rejeu.aideGardee(LENDEMAIN)).toBe(0)
   })
 })

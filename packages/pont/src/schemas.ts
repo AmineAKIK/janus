@@ -46,6 +46,7 @@ const pratique = z.strictObject({
     }),
   ),
   expliques: z.array(identifiant()),
+  atelier: z.array(z.strictObject({ id: identifiant(), reussi: z.boolean(), aide, jour: jour() })),
 })
 const codeManque = z.enum([
   'restitution_incomplete',

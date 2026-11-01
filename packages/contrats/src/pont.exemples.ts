@@ -26,6 +26,9 @@ export const EXEMPLE_PRATIQUE = {
     },
   ],
   expliques: [],
+  atelier: [
+    { id: '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2c', reussi: true, aide: 2, jour: '2026-05-31' },
+  ],
 } as const
 
 const commun = {
