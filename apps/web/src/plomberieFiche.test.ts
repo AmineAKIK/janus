@@ -1360,12 +1360,15 @@ describe('la pratique', () => {
     expect(envois.at(-1)?.donnees).toMatchObject({ reussi: true, aide: 2 })
     expect(
       screen.getByText(
-        'Envoyé : réussi, aide 2. Tu as eu de l’aide : réussis un autre item, puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte.',
+        'Envoyé : réussi, aide 2. Tu as eu de l’aide : réussis d’abord l’item 2 ou 3 (même avec de l’aide), puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte. D’ici là, le refaire ici garde ton aide.',
       ),
     ).toBeInTheDocument()
     expect(screen.getByText('Outil de la fiche').closest('.item')).not.toHaveAttribute(
       'data-solution-vue',
     )
+    // Un bouton mène à l'item qui le débloque.
+    fireEvent.click(screen.getByRole('button', { name: 'Aller à l’item 2' }))
+    expect(await screen.findByRole('button', { name: 'J’ai réussi' })).toBeInTheDocument()
   })
 
   it('après un autre item réussi, le même jour, l’item aidé se refait sur un autre cas et compte sans aide', async () => {
@@ -1482,7 +1485,7 @@ describe('la pratique', () => {
     const boite = (await screen.findByText('Outil de la fiche')).closest('.item')
 
     expect(boite).not.toHaveAttribute('data-solution-vue')
-    expect(screen.getByText(/réussis un autre item, puis reviens/)).toBeInTheDocument()
+    expect(screen.getByText(/réussis d’abord l’item .*, puis reviens/)).toBeInTheDocument()
     verifier({ juste: true })
     expect(envois.at(-1)?.donnees).toMatchObject({ item: 'PR1-1', reussi: true, aide: 2 })
   })
@@ -1502,7 +1505,7 @@ describe('la pratique', () => {
     expect(envois.at(-1)?.donnees).toMatchObject({ item: 'PR1-1', reussi: true, aide: 1 })
     verifier({ juste: true })
     expect(envois.at(-1)?.donnees).toMatchObject({ item: 'PR1-1', reussi: true, aide: 1 })
-    expect(screen.getByText(/réussis un autre item, puis reviens/)).toBeInTheDocument()
+    expect(screen.getByText(/réussis d’abord l’item .*, puis reviens/)).toBeInTheDocument()
   })
 
   it('une aide notée sans rang (d’avant cette règle) est tenue pour éloignée', async () => {
@@ -1594,7 +1597,7 @@ describe('la pratique', () => {
     expect(screen.getByText('1 sur 3, dont 1 avec de l’aide.')).toBeInTheDocument()
     expect(
       screen.getByText(
-        'Envoyé : réussi, aide 4. Tu as vu la solution : réussis un autre item, puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte.',
+        'Envoyé : réussi, aide 4. Tu as vu la solution : réussis d’abord l’item 2 ou 3 (même avec de l’aide), puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte. D’ici là, le refaire ici garde ton aide.',
       ),
     ).toBeInTheDocument()
     expect(rendus).toBe(1)
