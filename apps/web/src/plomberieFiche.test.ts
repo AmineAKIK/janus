@@ -1404,6 +1404,72 @@ describe('la pratique', () => {
     document.removeEventListener('fiche:rendu', lire)
   })
 
+  it('dernier item aidé : un item réussi se rouvre en relais, sans perdre son vert', async () => {
+    const d = new Date()
+    const jour = [d.getFullYear(), d.getMonth() + 1, d.getDate()]
+      .map((n, k) => (k ? String(n).padStart(2, '0') : String(n)))
+      .join('-')
+    const vert = (rang: number) => ({
+      reussi: true,
+      aide: 0,
+      essais: 1,
+      solutionVue: false,
+      rang,
+      rangReussi: rang,
+      aideLe: null,
+      aideMax: 0,
+    })
+    const { pont, envois } = pontSimule(
+      auPratique({
+        itemCourant: 0,
+        rangPratique: 3,
+        pratique: {
+          'PR1-2': vert(1),
+          'PR1-3': vert(2),
+          'PR1-1': {
+            reussi: true,
+            aide: 2,
+            essais: 1,
+            solutionVue: false,
+            rang: 3,
+            rangReussi: 3,
+            aideLe: jour,
+            aideMax: 2,
+            aideRang: 3,
+          },
+        },
+      }),
+    )
+    monter(avecOutil, pont)
+    await screen.findByText('Outil de la fiche')
+    expect(screen.getByText(/les autres items sont tous réussis/)).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: /^Item 2 sur 3/ }))
+    await screen.findByRole('button', { name: 'Pas réussi' })
+    expect(document.querySelector('.item[data-item="PR1-2"]')).toHaveAttribute('data-solution-vue')
+    expect(screen.getByText(/celui-ci reste réussi quoi qu’il arrive/)).toBeInTheDocument()
+    // Raté en relais : il reste réussi, et l'aide de l'item 1 reste.
+    fireEvent.click(screen.getByRole('button', { name: 'Pas réussi' }))
+    expect(envois.at(-1)?.donnees).toMatchObject({ item: 'PR1-2', reussi: false })
+    expect(screen.getByRole('button', { name: 'Item 2 sur 3, réussi' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'J’ai réussi' }))
+    expect(envois.filter(({ type }) => type === 'pratique.resultat').at(-1)?.donnees).toMatchObject(
+      { item: 'PR1-2', reussi: true, aide: 0 },
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: /^Item 1 sur 3/ }))
+    const boite = (await screen.findByText('Outil de la fiche')).closest('.item')
+    expect(boite).toHaveAttribute('data-solution-vue')
+    verifier({ juste: true })
+    expect(envois.at(-1)?.donnees).toMatchObject({ item: 'PR1-1', reussi: true, aide: 0 })
+    // Plus rien de bloqué : l'item 2 n'est plus en relais.
+    fireEvent.click(screen.getByRole('button', { name: /^Item 2 sur 3/ }))
+    await screen.findByRole('button', { name: 'J’ai réussi' })
+    expect(document.querySelector('.item[data-item="PR1-2"]')).not.toHaveAttribute(
+      'data-solution-vue',
+    )
+  })
+
   it('un « Pas réussi » sur un autre item ne suffit pas : l’aide reste', async () => {
     const { pont, envois } = pontSimule(auPratique())
     monter(avecOutil, pont)

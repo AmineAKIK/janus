@@ -8507,6 +8507,7 @@ console.log(facture.total)</pre>
          */
         const prochain = {}
         const montre = {}
+        const enRefaire = {}
         function poserLaVariante() {
           for (const boite of $$('#contenu .item[data-item]')) {
             const id = boite.dataset.item
@@ -8521,12 +8522,20 @@ console.log(facture.total)</pre>
                 : garde.cas
               : 'variante'
             // Réussi avec de l'aide, à refaire : sur l'autre cas que celui qui a été aidé.
-            if (pratique[id]?.refaire && !(id in prochain))
-              prochain[id] = autre(garde?.cas ?? 'origine')
+            // Au début de chaque reprise (`refaire` qui s'allume), une seule fois.
+            const refaire = Boolean(pratique[id]?.refaire)
+            if (refaire && !enRefaire[id]) prochain[id] = autre(garde?.cas ?? 'origine')
+            enRefaire[id] = refaire
             const choix =
               variante && boite.hasAttribute('data-solution-vue')
                 ? (prochain[id] ?? selonTrace)
-                : 'origine'
+                : // Réussi, il revient sur le cas réussi, avec sa réponse (après un relais, l'autre cas).
+                  variante &&
+                    pratique[id]?.reussi &&
+                    garde?.cas === 'variante' &&
+                    (garde.e === 'ok' || garde.e === 'ok1')
+                  ? 'variante'
+                  : 'origine'
             if (choix === 'variante')
               $('.enonce', boite).replaceChildren(variante.content.cloneNode(true))
             montre[id] = choix
@@ -9359,6 +9368,23 @@ console.log(facture.total)</pre>
         Boolean(etat.pratique?.[id]?.reussi) &&
         (etat.pratique[id].aide ?? 0) > 0 &&
         aideEloignee(id)
+      /*
+       * Le relais (décision d'Amine du 1er novembre 2026) : une aide qui ne s'éloigne pas faute d'autre
+       * item à réussir (chacun est déjà réussi, et ne se refait pas) n'attend pas le lendemain. Les
+       * items réussis sans aide se rouvrent alors sur leur autre cas ; en réussir un éloigne l'aide.
+       * Un résultat de relais ne touche pas l'état de l'item : il reste réussi, quoi qu'il arrive.
+       */
+      const idsPratique = () =>
+        (manifeste.pratique ?? []).flatMap((exercice) => exercice.items.map((item) => item.id))
+      const sansAide = (id) =>
+        Boolean(etat.pratique?.[id]?.reussi) && (etat.pratique[id].aide ?? 0) === 0
+      const faisable = (id) => !etat.pratique?.[id]?.reussi || aRefaireAilleurs(id)
+      const bloque = (id) =>
+        Boolean(etat.pratique?.[id]) &&
+        !aideEloignee(id) &&
+        idsPratique().every((autre) => autre === id || !faisable(autre))
+      const enRelais = (id) =>
+        sansAide(id) && idsPratique().some((autre) => autre !== id && bloque(autre))
 
       const questions = (serie) => (serie === 'restitution' ? manifeste.restitution : [])
       const reponsesFinies = (serie) => questions(serie).filter((q) => etat.envoyees[q.id]).length
@@ -10337,6 +10363,9 @@ console.log(facture.total)</pre>
           const rang = (etat.rangPratique ?? 0) + 1
           etat.rangPratique = rang
           const aideNouvelle = aideUtilisee > 0 || vue
+          // Réussi sans aide, l'item le reste (comme pour l'appli, qui garde la première réussite sans
+          // aide) : refait en relais ou par erreur, son résultat ne change que ses rangs.
+          const relais = sansAide(item.id)
           pont.envoyer('pratique.resultat', {
             exercice: exercice.id,
             item: item.id,
@@ -10344,6 +10373,11 @@ console.log(facture.total)</pre>
             aide: aideNotee,
             essais,
           })
+          if (relais) {
+            etat.pratique[item.id] = { ...avant, essais, ...(ok ? { rangReussi: rang } : {}) }
+            enregistrer()
+            return
+          }
           etat.pratique[item.id] = {
             reussi: ok,
             aide: aideNotee,
@@ -10422,7 +10456,9 @@ console.log(facture.total)</pre>
             className: 'item',
             dataset: {
               item: item.id,
-              ...(solutionVue() || aRefaireAilleurs(item.id) ? { solutionVue: '' } : {}),
+              ...(solutionVue() || aRefaireAilleurs(item.id) || enRelais(item.id)
+                ? { solutionVue: '' }
+                : {}),
             },
           },
           creer(
@@ -10512,19 +10548,23 @@ console.log(facture.total)</pre>
               ? ''
               : !aideEloignee(item.id)
                 ? (vueAujourdhui() ? '. Tu as vu la solution' : '. Tu as eu de l’aide') +
-                  '\u00a0: réussis un autre item, puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte.'
+                  (bloque(item.id)
+                    ? '\u00a0: les autres items sont tous réussis. Refais l’un d’eux sur un autre cas (il reste réussi quoi qu’il arrive), puis reviens refaire celui-ci sans aide, sur un autre cas, pour qu’il compte.'
+                    : '\u00a0: réussis un autre item, puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte.')
                 : '. Refais-le maintenant sans aide, sur un autre cas, pour qu’il compte.'
-          resultat.textContent = aRefaire
-            ? 'Tu as vu la solution. Refais-la sans la regarder.'
-            : aExpliquer
-              ? 'Réussi. Explique-le maintenant\u00a0: l’item compte quand ton explication est Solide.'
-              : fait
-                ? 'Envoyé\u00a0: ' +
-                  (fait.reussi ? 'réussi' : 'non réussi') +
-                  ', aide ' +
-                  fait.aide +
-                  pourCompter
-                : ''
+          resultat.textContent = enRelais(item.id)
+            ? 'Réussi. Refais-le sur un autre cas pour qu’un item aidé compte\u00a0: celui-ci reste réussi quoi qu’il arrive.'
+            : aRefaire
+              ? 'Tu as vu la solution. Refais-la sans la regarder.'
+              : aExpliquer
+                ? 'Réussi. Explique-le maintenant\u00a0: l’item compte quand ton explication est Solide.'
+                : fait
+                  ? 'Envoyé\u00a0: ' +
+                    (fait.reussi ? 'réussi' : 'non réussi') +
+                    ', aide ' +
+                    fait.aide +
+                    pourCompter
+                  : ''
         }
         majItem()
         // L'outil émet fiche:verification à chaque réponse vérifiée. L'item se met à jour sans être
@@ -11702,7 +11742,7 @@ console.log(facture.total)</pre>
               // `refaire` : réussi avec une aide éloignée, l'item se refait sur un autre cas.
               pratique: Object.fromEntries(
                 Object.entries(JSON.parse(JSON.stringify(etat.pratique ?? {}))).map(
-                  ([id, note]) => [id, { ...note, refaire: aRefaireAilleurs(id) }],
+                  ([id, note]) => [id, { ...note, refaire: aRefaireAilleurs(id) || enRelais(id) }],
                 ),
               ),
             },
