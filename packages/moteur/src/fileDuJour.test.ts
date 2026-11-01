@@ -120,6 +120,38 @@ describe('fileDuJour', () => {
     expect(seconde).toMatchObject({ erreur: 'E9', libelle: 'E9', lien: '/blocs/B01' })
   })
 
+  it('propose de finir sans aide la pratique d’un autre bloc, vers son étape de pratique', () => {
+    const etape = MANIFESTE.etapes.find(({ type }) => type === 'pratique')?.id
+    expect(etape).toBeDefined()
+    const blocs = [
+      bloc('B01', [], (f) => jusquaProvisoire(f, [2, 0])),
+      bloc('B02', [], (f) => f.restitution(apres(DEBUT, 1))),
+    ]
+    const taches = fileDuJour(entree(blocs)).taches
+    const pratique = taches.find(({ type }) => type === 'pratique')
+    expect(pratique).toEqual({
+      type: 'pratique',
+      bloc: 'B01',
+      exercices: blocs[0]?.etat.manque.find(({ code }) => code === 'pratique_aide')?.exercices,
+      lien: `/blocs/B01?etape=${String(etape)}`,
+    })
+    expect(pratique?.type === 'pratique' && pratique.exercices.length).toBeGreaterThan(0)
+    // Avant le bloc en cours, après les cartes.
+    expect(taches.map(({ type }) => type).slice(-2)).toEqual(['pratique', 'bloc'])
+  })
+
+  it('ne double pas le bloc en cours d’une tâche de pratique, ni un bloc dont la pratique est faite', () => {
+    const blocs = [
+      bloc('B01', [], (f) => jusquaProvisoire(f)),
+      bloc('B02', [], (f) =>
+        jusquaProvisoire(f, [2, 0]).map((x) => ({ ...x, date: apres(x.date, 1) })),
+      ),
+    ]
+    expect(blocs[1]?.etat.manque.map(({ code }) => code)).toContain('pratique_aide')
+    expect(fileDuJour(entree(blocs)).taches.at(-1)).toEqual({ type: 'bloc', bloc: 'B02' })
+    expect(types(entree(blocs))).not.toContain('pratique')
+  })
+
   it('propose le premier bloc non commencé quand rien n’est en cours', () => {
     const blocs = [
       bloc('B01', [], (f) => jusquaProvisoire(f).concat(f.verification(apres(DEBUT, 4)))),

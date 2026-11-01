@@ -7334,7 +7334,7 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 46,
+        "version": 47,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 conditions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables ET et OU remplies sans erreur en moins de 20 s.",
@@ -12414,8 +12414,8 @@ if (age &lt; 12) {
         /**
          * Un item de pratique déjà réussi revient avec sa réponse, et son explication avec ses
          * corrections (ou son champ, si elle attend encore) : l'apprenant ne refait pas ce qu'il a fait.
-         * Sauf réussi avec de l'aide un autre jour : il se refait sans aide pour compter, l'outil repart
-         * à neuf. Le gabarit donne l'état des items dans `fiche:rendu` (`detail.pratique`).
+         * Sauf réussi avec de l'aide et à refaire (`refaire`, dès qu'un autre item a été fait depuis) : il
+         * se refait sans aide, sur l'autre cas, pour compter, et l'outil repart à neuf. Le gabarit donne l'état des items dans `fiche:rendu` (`detail.pratique`).
          */
         function remonterItem(ex, c) {
           const id = ex.closest('.item')?.dataset.item
@@ -12423,7 +12423,8 @@ if (age &lt; 12) {
           const fait = id && pratique[id]
           if (!garde || !fait?.reussi || garde.cas !== (montre[id] ?? 'origine')) return
           if (garde.e !== 'ok' && garde.e !== 'ok1') return
-          if (fait.aide > 0 && fait.aideLe !== jourCle()) return
+          // `refaire` vient du gabarit ; sans lui (gabarit plus ancien), l'ancienne règle du jour.
+          if (fait.refaire ?? (fait.aide > 0 && fait.aideLe !== jourCle())) return
           appliquer(ex, c, garde.e, garde.v)
           expliquerApres(ex, c, garde.cran ?? 0)
         }
@@ -13045,6 +13046,9 @@ if (age &lt; 12) {
                 ? autre(garde.cas)
                 : garde.cas
               : 'variante'
+            // Réussi avec de l'aide, à refaire : sur l'autre cas que celui qui a été aidé.
+            if (pratique[id]?.refaire && !(id in prochain))
+              prochain[id] = autre(garde?.cas ?? 'origine')
             const choix =
               variante && boite.hasAttribute('data-solution-vue')
                 ? (prochain[id] ?? selonTrace)
@@ -13855,6 +13859,27 @@ if (age &lt; 12) {
         const deux = (nombre) => String(nombre).padStart(2, '0')
         return date.getFullYear() + '-' + deux(date.getMonth() + 1) + '-' + deux(date.getDate())
       }
+      /*
+       * Refaire après une aide (règle F03) : ce qui fausse la preuve, c'est la réponse encore sous les
+       * yeux, pas l'heure. Chaque résultat de pratique prend un rang (`rang`, le compteur
+       * `etat.rangPratique`) ; une aide reçue garde le sien (`aideRang`). Un résultat noté depuis sur
+       * un autre item l'éloigne : l'item se refait alors le jour même, sur un autre cas (la variante,
+       * quand l'outil en a une), et compte sans aide. Une aide d'avant ce rang (sans `aideRang`) ou
+       * d'un autre jour est éloignée aussi.
+       */
+      function aideEloignee(id) {
+        const fait = etat.pratique?.[id]
+        if (!fait || fait.aideLe !== aujourdhui()) return true
+        if (typeof fait.aideRang !== 'number') return true
+        return Object.entries(etat.pratique).some(
+          ([autre, note]) => autre !== id && (note?.rang ?? -1) > fait.aideRang,
+        )
+      }
+      /** Réussi avec de l'aide, l'aide éloignée : l'item se refait sur un autre cas, sans aide, pour compter. */
+      const aRefaireAilleurs = (id) =>
+        Boolean(etat.pratique?.[id]?.reussi) &&
+        (etat.pratique[id].aide ?? 0) > 0 &&
+        aideEloignee(id)
 
       const questions = (serie) => (serie === 'restitution' ? manifeste.restitution : [])
       const reponsesFinies = (serie) => questions(serie).filter((q) => etat.envoyees[q.id]).length
@@ -14818,20 +14843,21 @@ if (age &lt; 12) {
         const etatItem = creer('span', { className: 'item-etat' })
         const resultat = creer('p', { className: 'discret' })
         const solutionVue = () => Boolean(etat.pratique[item.id]?.solutionVue)
-        // La solution vue garde son jour : ce jour-là, l'item ne peut pas compter sans aide ; un autre
-        // jour, il repart sans aide (une marque d'avant, sans jour, ne retient plus rien).
+        // La solution vue garde son jour, pour le dire : « Tu as vu la solution ».
         const vueAujourdhui = () => etat.pratique[item.id]?.solutionVue === aujourdhui()
-        // Toute aide garde de même son jour : refait le même jour, l'item part avec l'aide la plus forte
-        // reçue ce jour-là. On ne le refait pas sans aide dans la foulée, la réponse encore sous les yeux.
-        const aideDuJour = () =>
-          etat.pratique[item.id]?.aideLe === aujourdhui()
-            ? (etat.pratique[item.id].aideMax ?? 0)
-            : 0
+        // Toute aide reste tant qu'elle n'est pas éloignée : refait dans la foulée, la réponse encore
+        // sous les yeux, l'item part avec l'aide la plus forte reçue depuis. Un autre item fait entre-temps
+        // l'éloigne (aideEloignee) : il repart sans aide, sur un autre cas.
+        const aideDuJour = () => (aideEloignee(item.id) ? 0 : (etat.pratique[item.id].aideMax ?? 0))
         /** Note un résultat ; `vue` : l'outil vient de montrer la solution, et l'item s'en souvient. */
         const noter = (ok, aideUtilisee, vue = false) => {
           const avant = etat.pratique[item.id]
           const essais = (avant?.essais ?? 0) + 1
           const aideNotee = Math.max(aideUtilisee, aideDuJour(), vue ? 4 : 0)
+          // Une aide reçue à l'instant (pas seulement gardée) prend le rang de ce résultat.
+          const rang = (etat.rangPratique ?? 0) + 1
+          etat.rangPratique = rang
+          const aideNouvelle = aideUtilisee > 0 || vue
           pont.envoyer('pratique.resultat', {
             exercice: exercice.id,
             item: item.id,
@@ -14846,9 +14872,19 @@ if (age &lt; 12) {
             solutionVue: vue ? aujourdhui() : (avant?.solutionVue ?? false),
             // Une explication déjà jugée Solide le reste : l'item refait ne la redemande pas.
             ...(avant?.explique === true ? { explique: true } : {}),
+            rang,
             ...(aideNotee > 0
-              ? { aideLe: aujourdhui(), aideMax: aideNotee }
-              : { aideLe: avant?.aideLe ?? null, aideMax: avant?.aideMax ?? 0 }),
+              ? {
+                  aideLe: aujourdhui(),
+                  aideMax: aideNotee,
+                  aideRang:
+                    aideNouvelle || typeof avant?.aideRang !== 'number' ? rang : avant.aideRang,
+                }
+              : {
+                  aideLe: avant?.aideLe ?? null,
+                  aideMax: avant?.aideMax ?? 0,
+                  ...(typeof avant?.aideRang === 'number' ? { aideRang: avant.aideRang } : {}),
+                }),
           }
           enregistrer()
         }
@@ -14900,7 +14936,10 @@ if (age &lt; 12) {
           'div',
           {
             className: 'item',
-            dataset: { item: item.id, ...(solutionVue() ? { solutionVue: '' } : {}) },
+            dataset: {
+              item: item.id,
+              ...(solutionVue() || aRefaireAilleurs(item.id) ? { solutionVue: '' } : {}),
+            },
           },
           creer(
             'div',
@@ -14987,11 +15026,10 @@ if (age &lt; 12) {
           const pourCompter =
             !fait?.reussi || fait.aide === 0
               ? ''
-              : vueAujourdhui()
-                ? '. Tu as vu la solution aujourd’hui\u00a0: refais-le un autre jour, sans aide, pour qu’il compte.'
-                : aideDuJour() > 0
-                  ? '. Tu as eu de l’aide aujourd’hui\u00a0: refais-le un autre jour, sans aide, pour qu’il compte.'
-                  : '. Refais-le sans aide pour qu’il compte.'
+              : !aideEloignee(item.id)
+                ? (vueAujourdhui() ? '. Tu as vu la solution' : '. Tu as eu de l’aide') +
+                  '\u00a0: fais un autre item, puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte.'
+                : '. Refais-le maintenant sans aide, sur un autre cas, pour qu’il compte.'
           resultat.textContent = aRefaire
             ? 'Tu as vu la solution. Refais-la sans la regarder.'
             : aExpliquer
@@ -15011,7 +15049,7 @@ if (age &lt; 12) {
         // neuf (l'outil se remonte sur fiche:rendu, son aide repart de zéro), pour être refait sans la
         // regarder. Avec `garder: true`, l'outil montre la solution à l'instant : l'item la note tout de
         // suite, sans se redessiner, et se redessine quand l'outil émet fiche:refaire (« je refais »).
-        // Le jour où une aide est reçue, chaque résultat de l'item part avec l'aide la plus forte du jour.
+        // Tant que l'aide reçue n'est pas éloignée (aideEloignee), chaque résultat de l'item part avec elle.
         const redessiner = () => {
           etat.itemCourant = index
           enregistrer()
@@ -16177,7 +16215,12 @@ if (age &lt; 12) {
               traces: { ...(etat.traces ?? {}) },
               aisance: [...aisanceServeur],
               // L'état noté des items de pratique : un outil y lit qu'un item est réussi, pour le remontrer.
-              pratique: JSON.parse(JSON.stringify(etat.pratique ?? {})),
+              // `refaire` : réussi avec une aide éloignée, l'item se refait sur un autre cas.
+              pratique: Object.fromEntries(
+                Object.entries(JSON.parse(JSON.stringify(etat.pratique ?? {}))).map(
+                  ([id, note]) => [id, { ...note, refaire: aRefaireAilleurs(id) }],
+                ),
+              ),
             },
           }),
         )

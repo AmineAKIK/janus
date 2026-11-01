@@ -23,6 +23,7 @@ import { blocsReportes } from './verifications.ts'
 function lienDeLaTache(tache: Tache): string {
   switch (tache.type) {
     case 'reprendre_erreur':
+    case 'pratique':
       return tache.lien
     case 'questions_debut':
       return '/questions'

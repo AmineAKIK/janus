@@ -46,8 +46,9 @@ export function enRetard(
 /**
  * La file de l'écran Aujourd'hui, toujours dans le même ordre : 1. erreurs critiques à reprendre ;
  * 2. questions de début de séance ; 3. vérifications et retests dus, d'abord ceux des prérequis du bloc
- * en cours (en retard, précédés de la reprise de ces prérequis) ; 4. cartes ; 5. le bloc en cours ou
- * le suivant. Le nouveau contenu passe toujours après le retard.
+ * en cours (en retard, précédés de la reprise de ces prérequis) ; 4. cartes ; 5. la pratique à finir
+ * sans aide des autres blocs (l'item réussi avec de l'aide se refait sur un autre cas) ; 6. le bloc en
+ * cours ou le suivant. Le nouveau contenu passe toujours après le retard.
  */
 export function fileDuJour(entree: EntreeFile): { enRetard: boolean; taches: Tache[] } {
   const { blocs, maintenant, reglages } = entree
@@ -98,6 +99,23 @@ export function fileDuJour(entree: EntreeFile): { enRetard: boolean; taches: Tac
     .map(({ manifeste }) => manifeste.bloc)
   const cartes = entree.cartes.dues.length + entree.cartes.nouvelles.length
 
+  // Le bloc en cours mène déjà à sa pratique : seuls les autres blocs ont leur tâche.
+  const pratiques = blocs.flatMap(({ manifeste, etat }): Tache[] => {
+    if (manifeste.bloc === enCours) return []
+    const exercices = etat.manque.find(({ code }) => code === 'pratique_aide')?.exercices ?? []
+    if (exercices.length === 0) return []
+    const etape = manifeste.etapes.find(({ type }) => type === 'pratique')?.id
+    const base = `/blocs/${manifeste.bloc}`
+    return [
+      {
+        type: 'pratique',
+        bloc: manifeste.bloc,
+        exercices: [...exercices],
+        lien: etape === undefined ? base : `${base}?etape=${etape}`,
+      },
+    ]
+  })
+
   return {
     enRetard: retard,
     taches: [
@@ -118,6 +136,7 @@ export function fileDuJour(entree: EntreeFile): { enRetard: boolean; taches: Tac
             } satisfies Tache,
           ]
         : []),
+      ...pratiques,
       ...(enCours === null ? [] : [{ type: 'bloc', bloc: enCours } satisfies Tache]),
     ],
   }

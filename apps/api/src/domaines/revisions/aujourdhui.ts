@@ -23,6 +23,7 @@ export function estVerification(tache: Tache): tache is Tache & { type: TypeVeri
 export function lienDeLaTache(tache: Tache): string {
   switch (tache.type) {
     case 'reprendre_erreur':
+    case 'pratique':
       return tache.lien
     case 'questions_debut':
       return '/questions'
