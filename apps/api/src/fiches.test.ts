@@ -45,7 +45,10 @@ type Manifeste = {
   etapes: { id: string; titre: string; type: string }[]
 }
 
-type Alignement = { notions: { id: string; questions: string[] }[] }
+type Alignement = {
+  notions: { id: string; montree: string[]; pratiquee: string[]; questions: string[] }[]
+  ensemble?: { montree: string; rappelee: string; questions: string[] }
+}
 
 /** La fiche avec son manifeste modifié (le texte JSON est remplacé dans la page). */
 function avecManifeste(html: string, modifier: (manifeste: Manifeste) => void): string {
@@ -574,6 +577,178 @@ describe('vérification des fiches du dépôt', () => {
       expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
         expect.stringContaining('l’étape ET2 a un choix (c1) sans ses coups de pouce'),
       ])
+    })
+  })
+
+  describe('ce qui redonne la réponse : retours, coups de pouce, « Pour lire » (ticket #315)', () => {
+    /** L'item PR1-1 du gabarit changé en choix dont l'option « a » est la bonne. */
+    const avecChoix = (attributs: string, retourDeB = 'Relis la règle.') =>
+      fiche.replace(
+        '<p data-erreur="E1">À REMPLACER : item PR1-1 (E1).</p>',
+        `<div class="ex" data-widget="choix" data-id="c1" data-reponse="a" data-aide1="Que demande-t-on ?" ${attributs}><p class="q">Laquelle ?</p><ul class="options"><li data-option="a">Le poids de chaque bit à 1 fait la somme.</li><li data-option="b" data-erreur="E1" data-retour="${retourDeB}">B</li><li data-option="c">C</li></ul></div>`,
+      )
+
+    it('refuse le retour d’une option fausse qui recopie cinq mots de la bonne option', async () => {
+      await poser(
+        'X00.html',
+        avecChoix(
+          'data-aide2="Compte les bits."',
+          'Non : le poids de chaque bit à 1 compte, pas sa place.',
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'l’item PR1-1, le choix c1 : le retour de l’option « b » redonne la bonne option (« le poids de chaque bit ») : oriente par une question',
+        ),
+      ])
+    })
+
+    it('refuse un coup de pouce qui recopie la solution, mais laisse l’étape détaillée et l’explication libres', async () => {
+      const solution = 'data-solution="Le registre reçoit le nombre qui suit."'
+      await poser(
+        'X00.html',
+        avecChoix(`${solution} data-aide2="Cherche 1 : le registre reçoit le nombre qui suit."`),
+      )
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'le coup de pouce data-aide2 redonne la solution (« le registre reçoit le nombre »)',
+        ),
+      ])
+
+      await poser(
+        'X00.html',
+        avecChoix(
+          `${solution} data-aide2="Que fait l’octet 1 ?" data-aide3="Le registre reçoit le nombre qui suit : lis la table." data-explication="Oui : le registre reçoit le nombre qui suit."`,
+        ),
+      )
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+
+    it('refuse un « Pour lire » qui redonne la bonne option ou l’attendu de l’explication de son item', async () => {
+      const pourLire = (texte: string) =>
+        `<div class="cadre pour-lire"><p class="discret">Pour lire :</p><ul><li>${texte}</li></ul></div>`
+      const choix = avecChoix('data-aide2="Compte les bits."').replace(
+        '<div class="ex" data-widget="choix" data-id="c1"',
+        `${pourLire('Un bit vaut 0 ou 1 ; le poids de chaque bit à 1 fait la somme.')}<div class="ex" data-widget="choix" data-id="c1"`,
+      )
+      await poser('X00.html', choix)
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'l’item PR1-1 : l’encadré « Pour lire » redonne la bonne option (« le poids de chaque bit »)',
+        ),
+      ])
+
+      await poser(
+        'X00.html',
+        avecManifeste(
+          avecChoix('data-aide2="Compte les bits." data-justifier="Pourquoi ?"').replace(
+            '<div class="ex" data-widget="choix" data-id="c1"',
+            `${pourLire('Un bit vaut 0 ou 1 ; un octet, c’est huit bits qui font un nombre.')}<div class="ex" data-widget="choix" data-id="c1"`,
+          ),
+          (manifeste) => {
+            manifeste.explication = [
+              {
+                id: 'PR1-1',
+                item: 'PR1-1',
+                question: 'Pourquoi ?',
+                attendu: 'Huit bits qui font un nombre entre 0 et 255.',
+                erreurs: [],
+              },
+            ]
+          },
+        ),
+      )
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'l’encadré « Pour lire » redonne l’attendu de son explication (« huit bits qui font un »)',
+        ),
+      ])
+
+      await poser(
+        'X00.html',
+        avecChoix('data-aide2="Compte les bits."').replace(
+          '<div class="ex" data-widget="choix" data-id="c1"',
+          `${pourLire('Un bit vaut 0 ou 1.')}<div class="ex" data-widget="choix" data-id="c1"`,
+        ),
+      )
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+  })
+
+  describe('les mots de la conception (ticket #315)', () => {
+    const avecTexte = (texte: string) =>
+      fiche.replace("<p>À REMPLACER : l'explication du bloc.</p>", texte)
+
+    it('refuse un renvoi à un temps numéroté de la méthode, que l’écran ne montre pas', async () => {
+      await poser('X00.html', avecTexte('<p>Reprends ce que tu as fait aux temps 2 à 4.</p>'))
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'laisse voir la conception (« temps 2 à 4 » dans le texte affiché) : les temps de la méthode ne sont pas numérotés à l’écran',
+        ),
+      ])
+    })
+
+    it('refuse « l’accroche » dans le texte, mais pas la classe du gabarit', async () => {
+      await poser(
+        'X00.html',
+        avecTexte('<p class="accroche">Relis l’accroche : que dit Yasmine ?</p>'),
+      )
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'laisse voir la conception (« accroche » dans le texte affiché) : c’est un mot de la conception',
+        ),
+      ])
+
+      await poser('X00.html', avecTexte('<p class="accroche">Que dit Yasmine ?</p>'))
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+  })
+
+  describe('l’ordre de l’alignement : montrer avant d’interroger (ticket #315)', () => {
+    it('refuse une notion entraînée dans une étape qui précède celle qui la montre', async () => {
+      await poser(
+        'X00.html',
+        avecAlignement(
+          avecManifeste(
+            fiche.replace(
+              '<template data-etape="ET2">',
+              '<template data-etape="ET7"><p>Vite.</p></template><template data-etape="ET2">',
+            ),
+            (manifeste) => {
+              manifeste.etapes.splice(1, 0, { id: 'ET7', titre: 'Vite', type: 'aisance' })
+            },
+          ),
+          (alignement) => {
+            const notion = alignement.notions.find((n) => n.id === 'N2')
+            if (notion) notion.pratiquee = ['ET7']
+          },
+        ),
+      )
+
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'alignement : la notion N2 est entraînée en ET7, avant l’étape qui la montre (ET2)',
+        ),
+      ])
+    })
+
+    it('refuse un tout refait de mémoire avant d’avoir été montré, accepte l’ordre du gabarit', async () => {
+      await poser(
+        'X00.html',
+        avecAlignement(fiche, (alignement) => {
+          if (alignement.ensemble) alignement.ensemble.rappelee = 'ET1'
+        }),
+      )
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'alignement : le tout se refait de mémoire en ET1, avant l’étape qui le montre (ET2)',
+        ),
+      ])
+
+      await poser('X00.html', fiche)
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
     })
   })
 
@@ -1338,6 +1513,34 @@ describe('vérification des fiches du dépôt', () => {
       expect(await verifier()).toEqual([
         expect.stringContaining(
           'grille : la ligne 8 cite « À l’étape 3, le thermostat affichait », qui ne se lit plus dans la page',
+        ),
+      ])
+    })
+
+    it('refuse un compte de la grille plus grand que la liste du manifeste, pas un compte partiel', async () => {
+      await poser('X00.html', modifiee)
+      const avec = (c02: string) =>
+        grille(
+          [
+            '| C01 | appliquée | ET1 à ET6 : le cycle entier |',
+            `| C02 | appliquée | ET2 : ${c02} |`,
+            '| C11 | écartée | rien à mettre en répétition espacée dans ce bloc |',
+            '| A01 | appliquée | PR1-2, et le manifeste fixe la réussite |',
+          ],
+          '# Grille de la méthode : X00, version 2',
+        )
+      const verifier = () =>
+        verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => fiche })
+
+      await poserGrille(avec('deux cartes sur trois, 6 rappels, 3 items, 5 étapes'))
+      expect(await verifier()).toEqual([])
+      await poserGrille(avec('9 cartes, sept rappels et 2 erreurs critiques'))
+      expect(await verifier()).toEqual([
+        expect.stringContaining(
+          'grille : la ligne 8 compte « 9 cartes », mais le manifeste en a 3 : la grille décrit la fiche telle qu’elle est',
+        ),
+        expect.stringContaining(
+          'grille : la ligne 8 compte « sept rappels », mais le manifeste en a 6',
         ),
       ])
     })
