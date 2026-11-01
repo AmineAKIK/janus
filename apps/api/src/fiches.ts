@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process'
 import { readdir, readFile } from 'node:fs/promises'
 import { join, relative } from 'node:path'
 import { Catalogue, validerAlignement, validerManifeste } from '@janus/contrats'
-import type { Manifeste, TypeEtape } from '@janus/contrats'
+import type { Alignement, Manifeste, TypeEtape } from '@janus/contrats'
 import {
   BLOCS_FIXES,
   blocsFixes,
@@ -240,6 +240,171 @@ function verifierCoupsDePouce(html: string, signaler: (message: string) => void)
       signaler(
         `${ou} a un choix${nom === undefined ? '' : ` (${nom})`} sans ses coups de pouce (${manquent.join(', ')} ${manquent.length > 1 ? 'manquent' : 'manque'}) : après une réponse fausse, l’indice puis l’étape détaillée viennent avant la solution (règle F03).`,
       )
+    }
+  }
+}
+
+/**
+ * Un retour ou un coup de pouce ne redonne pas la réponse (ticket #315 : B01 hx16, i1, i2, B03 r41) :
+ * le retour d'une option fausse ou un indice (`data-aide1`, `data-aide2`) qui recopie une suite de mots
+ * de la bonne option, de la réponse attendue (`data-reponse`, `data-accepte`) ou de la solution
+ * (`data-solution`) la désigne au lieu d'orienter (règle F03 : une question qui oriente, un indice sur
+ * la notion). Un encadré « Pour lire » qui recopie la bonne option, la solution ou l'attendu de
+ * l'explication de son item donne la règle que l'exercice vérifie (B03 : « Le vendeur », Enzo, Jade).
+ * L'étape détaillée (`data-aide3`) et ce que l'outil montre après la réponse (`data-explication`,
+ * `data-succes`) restent libres : ils viennent quand la solution est due ou acquise. Les textes se
+ * comparent par suites de MOTS_REDONNES mots, après `pourComparer`.
+ */
+const MOTS_REDONNES = 5
+
+/** Les suites de MOTS_REDONNES mots d'un texte, en minuscules ; « d'écrire » est un mot. */
+function suitesDeMots(texte: string): ReadonlySet<string> {
+  const mots =
+    pourComparer(texte.replace(/<[^>]+>/g, ' ')).match(/[\p{L}\p{N}]+(?:'[\p{L}\p{N}]+)*/gu) ?? []
+  const suites = new Set<string>()
+  for (let debut = 0; debut + MOTS_REDONNES <= mots.length; debut += 1) {
+    suites.add(mots.slice(debut, debut + MOTS_REDONNES).join(' '))
+  }
+  return suites
+}
+
+/** La première suite de MOTS_REDONNES mots que les deux textes partagent, s'il y en a une. */
+function suiteCommune(texte: string, cible: string): string | undefined {
+  const suites = suitesDeMots(cible)
+  for (const suite of suitesDeMots(texte)) if (suites.has(suite)) return suite
+  return undefined
+}
+
+/** La valeur d'un attribut d'une balise ouvrante, telle qu'elle est écrite. */
+function attributDe(balise: string, nom: string): string | undefined {
+  return new RegExp(`\\b${nom}\\s*=\\s*"([^"]*)"`, 'i').exec(balise)?.[1]
+}
+
+/** Un outil de la page : sa balise ouvrante, son texte (jusqu'à l'outil suivant) et de quoi le nommer. */
+type Outil = { readonly balise: string; readonly corps: string; readonly nom: string }
+
+/** Les outils (`data-widget`) d'un morceau de page, dans l'ordre. */
+function outilsDe(html: string): readonly Outil[] {
+  const debuts = Array.from(
+    html.matchAll(/<[a-z][^>]*\bdata-widget\s*=\s*["'][^"']*["'][^>]*>/gi),
+    (trouve) => ({ index: trouve.index, balise: trouve[0] }),
+  )
+  return debuts.map(({ index, balise }, rang) => {
+    const corps = html.slice(index + balise.length, debuts[rang + 1]?.index ?? html.length)
+    const identifiant = attributDe(balise, 'data-id')
+    const question = /<p\b[^>]*\bclass\s*=\s*["']q["'][^>]*>([\s\S]*?)<\/p>/i.exec(corps)?.[1]
+    const nom =
+      identifiant !== undefined
+        ? `le choix ${identifiant}`
+        : question !== undefined
+          ? `l’exercice « ${pourComparer(question.replace(/<[^>]+>/g, ' '))
+              .split(' ')
+              .slice(0, 6)
+              .join(' ')}… »`
+          : `l’outil ${attributDe(balise, 'data-widget') ?? ''}`
+    return { balise, corps, nom }
+  })
+}
+
+/** Les options d'un choix : `data-option`, le texte affiché, le retour de l'option fausse. */
+function optionsDe(outil: Outil): readonly { cle: string; texte: string; retour?: string }[] {
+  return Array.from(
+    outil.corps.matchAll(/<li\b([^>]*)>([\s\S]*?)<\/li>/gi),
+    ([, attributs = '', texte = '']) => {
+      const retour = attributDe(attributs, 'data-retour')
+      return {
+        cle: attributDe(attributs, 'data-option') ?? '',
+        texte,
+        ...(retour === undefined ? {} : { retour }),
+      }
+    },
+  ).filter(({ cle }) => cle !== '')
+}
+
+/** Ce qu'un outil attend : la bonne option d'un choix, la réponse ou la solution écrite en attribut. */
+function reponsesDe(outil: Outil): readonly { quoi: string; texte: string }[] {
+  const reponses: { quoi: string; texte: string }[] = []
+  const attendue = attributDe(outil.balise, 'data-reponse')
+  if (attendue !== undefined) {
+    const option = optionsDe(outil).find(({ cle }) => cle === attendue)
+    if (option !== undefined) reponses.push({ quoi: 'la bonne option', texte: option.texte })
+    else reponses.push({ quoi: 'la réponse attendue', texte: attendue })
+  }
+  const acceptees = attributDe(outil.balise, 'data-accepte')
+  if (acceptees !== undefined) reponses.push({ quoi: 'la réponse attendue', texte: acceptees })
+  const solution = attributDe(outil.balise, 'data-solution')
+  if (solution !== undefined) reponses.push({ quoi: 'la solution', texte: solution })
+  return reponses
+}
+
+function verifierCeQuiRedonneLaReponse(
+  manifeste: Manifeste,
+  html: string,
+  signaler: (message: string) => void,
+): void {
+  const attendusDesItems = new Map<string, string[]>()
+  for (const { item, attendu } of manifeste.explication) {
+    attendusDesItems.set(item, [...(attendusDesItems.get(item) ?? []), attendu])
+  }
+  for (const [, attributs, corps] of sansScriptsNiCommentaires(html).matchAll(
+    /<template\b([^>]*)>([\s\S]*?)<\/template\s*>/gi,
+  )) {
+    const etape = /\bdata-etape\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
+    const item = /\bdata-item\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
+    const variante = /\bdata-variante\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
+    const ou =
+      etape !== undefined
+        ? `l’étape ${etape}`
+        : item !== undefined
+          ? `l’item ${item}`
+          : variante !== undefined
+            ? `la variante de ${variante}`
+            : undefined
+    if (ou === undefined) continue
+    // Un écran à la fois (`data-ecran`), quand l'étape en a plusieurs : un « Pour lire » ne regarde
+    // que les exercices de son écran.
+    const ecrans = (corps ?? '').split(/(?=<div\b[^>]*\bdata-ecran\s*=)/i)
+    for (const ecran of ecrans) {
+      const outils = outilsDe(ecran)
+      const reponsesDeLEcran = outils.flatMap((outil) => reponsesDe(outil))
+      if (item !== undefined) {
+        for (const attendu of attendusDesItems.get(item) ?? [])
+          reponsesDeLEcran.push({ quoi: 'l’attendu de son explication', texte: attendu })
+      }
+      for (const [, pourLire = ''] of ecran.matchAll(
+        /<div\b[^>]*\bclass\s*=\s*["'][^"']*\bpour-lire\b[^"']*["'][^>]*>([\s\S]*?)<\/div>/gi,
+      )) {
+        for (const { quoi, texte } of reponsesDeLEcran) {
+          const commun = suiteCommune(pourLire, texte)
+          if (commun === undefined) continue
+          signaler(
+            `${ou} : l’encadré « Pour lire » redonne ${quoi} (« ${commun} ») : il redit une convention, pas la règle que l’exercice vérifie.`,
+          )
+        }
+      }
+      for (const outil of outils) {
+        const reponses = reponsesDe(outil)
+        if (reponses.length === 0) continue
+        const bonne = attributDe(outil.balise, 'data-reponse')
+        const textes: { source: string; texte: string }[] = []
+        for (const cran of ['data-aide1', 'data-aide2']) {
+          const texte = attributDe(outil.balise, cran)
+          if (texte !== undefined) textes.push({ source: `le coup de pouce ${cran}`, texte })
+        }
+        for (const { cle, retour } of optionsDe(outil)) {
+          if (retour !== undefined && cle !== bonne)
+            textes.push({ source: `le retour de l’option « ${cle} »`, texte: retour })
+        }
+        for (const { source, texte } of textes) {
+          for (const { quoi, texte: reponse } of reponses) {
+            const commun = suiteCommune(texte, reponse)
+            if (commun === undefined) continue
+            signaler(
+              `${ou}, ${outil.nom} : ${source} redonne ${quoi} (« ${commun} ») : oriente par une question ou un indice sur la notion, sans recopier la réponse (règle F03).`,
+            )
+          }
+        }
+      }
     }
   }
 }
@@ -514,6 +679,20 @@ const COULISSES: readonly { motif: RegExp; pourquoi: string }[] = [
     // B02 v33 : un script d'édition a laissé deux fois « RAW: » devant un paragraphe affiché.
     motif: /\bRAW:/gu,
     pourquoi: 'c’est un reste d’un script d’édition : retire-le',
+  },
+  {
+    // B03 (ticket #315) : « temps 2 à 4 » renvoyait aux temps numérotés de la méthode, que l'écran
+    // ne montre pas ; l'apprenant ne sait pas de quoi on parle.
+    motif: /(?<![\p{L}\p{N}])temps\s+\d+(?:\s+(?:à|et)\s+\d+)?(?![\p{L}\p{N}])/giu,
+    pourquoi:
+      'les temps de la méthode ne sont pas numérotés à l’écran : redis ce que l’apprenant a fait (« quand tu as relevé les chiffres »)',
+  },
+  {
+    // B03 (ticket #315) : « l'accroche » est le nom d'une classe du gabarit, pas un mot pour l'apprenant.
+    // La classe du gabarit (`class="accroche"`) n'est pas visible : le mot l'est.
+    motif: /(?<![\p{L}\p{N}-]|\bclass\s*=\s*"[^"]*)accroches?(?![\p{L}\p{N}-])/giu,
+    pourquoi:
+      'c’est un mot de la conception (une classe du gabarit) : dis la situation ou l’histoire',
   },
 ]
 
@@ -864,6 +1043,78 @@ export function verifierCitationsDeLaGrille(
   })
 }
 
+/**
+ * La grille compte vrai (ticket #315) : « 16 cartes », « 15 rappels » dans une ligne appliquée se
+ * confrontent au manifeste. Un compte plus grand que la liste est périmé (la fiche a changé, la grille
+ * non) ; un compte plus petit peut en citer une partie (« 8 items sur 13 »), on ne le juge pas.
+ */
+const NOMBRES_EN_MOTS: Readonly<Record<string, number>> = {
+  zéro: 0,
+  un: 1,
+  une: 1,
+  deux: 2,
+  trois: 3,
+  quatre: 4,
+  cinq: 5,
+  six: 6,
+  sept: 7,
+  huit: 8,
+  neuf: 9,
+  dix: 10,
+  onze: 11,
+  douze: 12,
+  treize: 13,
+  quatorze: 14,
+  quinze: 15,
+  seize: 16,
+  'dix-sept': 17,
+  'dix-huit': 18,
+  'dix-neuf': 19,
+  vingt: 20,
+}
+const COMPTES_DE_LA_GRILLE: readonly {
+  motif: RegExp
+  total: (manifeste: Manifeste) => number
+}[] = [
+  { motif: /^cartes?$/i, total: (m) => m.cartes.length },
+  {
+    motif: /^questions?$/i,
+    total: (m) => m.restitution.length + m.rappel.length + m.differees.length,
+  },
+  { motif: /^rappels?$/i, total: (m) => m.rappel.length },
+  { motif: /^différées?$/i, total: (m) => m.differees.length },
+  { motif: /^étapes?$/i, total: (m) => m.etapes.length },
+  { motif: /^erreurs?\s+critiques?$/i, total: (m) => m.erreurs_critiques.length },
+  { motif: /^sources?$/i, total: (m) => m.sources.length },
+  {
+    motif: /^items?$/i,
+    total: (m) => m.pratique.reduce((somme, exercice) => somme + exercice.items.length, 0),
+  },
+]
+
+export function verifierComptesDeLaGrille(
+  grille: string,
+  manifeste: Manifeste,
+  signaler: (message: string) => void,
+): void {
+  const compte =
+    /(?<![\p{L}\p{N}-])(\d+|zéro|une?|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|onze|douze|treize|quatorze|quinze|seize|dix-sept|dix-huit|dix-neuf|vingt)\s+(cartes?|questions?|rappels?|différées?|étapes?|erreurs?\s+critiques?|sources?|items?)(?![\p{L}\p{N}-])/giu
+  grille.split(/\r?\n/).forEach((ligne, index) => {
+    if (!ligne.trim().startsWith('|') || !/\|\s*appliquée\s*\|/i.test(ligne)) return
+    for (const [trouve, nombre = '', quoi = ''] of ligne.matchAll(compte)) {
+      const valeur = /^\d+$/.test(nombre) ? Number(nombre) : NOMBRES_EN_MOTS[nombre.toLowerCase()]
+      if (valeur === undefined) continue
+      const liste = COMPTES_DE_LA_GRILLE.find(({ motif }) => motif.test(quoi.replace(/\s+/g, ' ')))
+      if (liste === undefined) continue
+      const total = liste.total(manifeste)
+      if (valeur <= total) continue
+      signaler(
+        `grille : la ligne ${String(index + 1)} compte « ${trouve.replace(/\s+/g, ' ')} », mais le manifeste en a ${String(total)} : la grille décrit la fiche telle qu’elle est, recompte.`,
+      )
+    }
+  })
+}
+
 /** Le texte JSON d'un `<script type="application/json" id="…">` de la page. */
 export function blocJson(html: string, id: string): string | undefined {
   for (const [, attributs, contenu] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
@@ -894,8 +1145,44 @@ function verifierAlignement(
     signaler('le tableau d’alignement n’est pas du JSON valide.')
     return
   }
-  for (const { chemin, message } of validerAlignement(brut, manifeste)) {
+  const problemes = validerAlignement(brut, manifeste)
+  for (const { chemin, message } of problemes) {
     signaler(chemin === '' ? `alignement : ${message}` : `alignement.${chemin} : ${message}`)
+  }
+  if (problemes.length === 0) verifierOrdreDeLAlignement(brut as Alignement, manifeste, signaler)
+}
+
+/**
+ * On n'interroge pas une règle avant de l'avoir écrite (« Dans quel ordre on l'écrit », AGENTS.md ;
+ * ticket #315) : une notion entraînée dans une étape du cours (`pratiquee`) vient après l'étape qui la
+ * montre (`montree`), et le tout se refait de mémoire (`ensemble.rappelee`) après avoir été montré.
+ * L'ordre est celui des étapes du manifeste. Les exercices de pratique (PR…) viennent après le cours :
+ * rien à vérifier.
+ */
+function verifierOrdreDeLAlignement(
+  alignement: Alignement,
+  manifeste: Manifeste,
+  signaler: (message: string) => void,
+): void {
+  const rang = new Map(manifeste.etapes.map(({ id }, index) => [id, index]))
+  for (const notion of alignement.notions) {
+    const montree = Math.min(...notion.montree.map((etape) => rang.get(etape) ?? Infinity))
+    for (const ou of notion.pratiquee) {
+      const place = rang.get(ou)
+      if (place === undefined || place >= montree) continue
+      signaler(
+        `alignement : la notion ${notion.id} est entraînée en ${ou}, avant l’étape qui la montre (${notion.montree.join(', ')}) : on n’interroge pas une règle avant de l’avoir écrite.`,
+      )
+    }
+  }
+  const ensemble = alignement.ensemble
+  if (ensemble === undefined) return
+  const montre = rang.get(ensemble.montree)
+  const rappele = rang.get(ensemble.rappelee)
+  if (montre !== undefined && rappele !== undefined && rappele < montre) {
+    signaler(
+      `alignement : le tout se refait de mémoire en ${ensemble.rappelee}, avant l’étape qui le montre (${ensemble.montree}) : on le montre d’abord.`,
+    )
   }
 }
 
@@ -1154,6 +1441,7 @@ export async function verifierLesFiches({
       verifierTemplates(resultat.manifeste, fiche.html, signaler)
       verifierPratique(resultat.manifeste, fiche.html, signaler)
       verifierCoupsDePouce(fiche.html, signaler)
+      verifierCeQuiRedonneLaReponse(resultat.manifeste, fiche.html, signaler)
       verifierErreursCritiques(resultat.manifeste, signaler)
       verifierAtelier(resultat.manifeste, signaler)
       verifierRestitution(resultat.manifeste, signaler)
@@ -1180,6 +1468,7 @@ export async function verifierLesFiches({
         if (grille !== undefined) {
           verifierGrille(grille, regles, resultat.manifeste, signaler)
           verifierCitationsDeLaGrille(grille, fiche.html, signaler)
+          verifierComptesDeLaGrille(grille, resultat.manifeste, signaler)
         } else if (
           contenuDeReference !== undefined &&
           (avant === undefined ||
