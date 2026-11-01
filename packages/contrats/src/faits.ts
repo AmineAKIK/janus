@@ -58,6 +58,13 @@ export const Fait = z.discriminatedUnion('type', [
     item: Identifiant,
     reussi: z.boolean(),
     aide: Aide,
+    /**
+     * L'aide de cet essai seul : le moteur y ajoute l'aide que l'item garde (`RejeuPratique`). Sans
+     * lui (les faits d'avant), l'aide gardée y est déjà comptée.
+     */
+    brute: z.literal(true).optional(),
+    /** Le cas sur lequel l'item a été fait, quand l'outil le dit. */
+    cas: z.enum(['origine', 'variante']).optional(),
   }),
   z.strictObject({
     ...commun,

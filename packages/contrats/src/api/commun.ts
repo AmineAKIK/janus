@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { Statut } from '../enums.ts'
 import { InstantUtc } from '../faits.ts'
-import { Identifiant, Manque } from '../pont.ts'
+import { Identifiant, Manque, PratiqueDuBloc } from '../pont.ts'
 
 export {
   Identifiant,
@@ -66,6 +66,7 @@ export const StatutBloc = z.strictObject({
   /** Identifiants des erreurs critiques ouvertes. */
   erreurs_ouvertes: z.array(Identifiant),
   avancement: Avancement,
+  pratique: PratiqueDuBloc,
 })
 export type StatutBloc = z.infer<typeof StatutBloc>
 

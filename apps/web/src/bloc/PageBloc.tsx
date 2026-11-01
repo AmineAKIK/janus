@@ -391,6 +391,7 @@ export function PageBloc({
           statut: detail.statut,
           manque: detail.manque,
           avancement: detail.avancement,
+          pratique: detail.pratique,
           serieOuverte: detail.serie_ouverte,
           etatPage: detail.etat_page,
           aisanceReussies: detail.aisance_reussies,

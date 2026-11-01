@@ -103,6 +103,7 @@ test.describe('fiche de démonstration', () => {
               statut: 'vu',
               serie_ouverte: { restitution: false },
               aisance: [],
+              pratique: { aujourdhui: '2026-11-01', resultats: [], expliques: [] },
             },
             '*',
           )

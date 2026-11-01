@@ -73,7 +73,12 @@ describe('page d’un bloc', () => {
     expect(recu).toHaveBeenCalledTimes(2)
     expect(recu).toHaveBeenNthCalledWith(
       2,
-      { type: 'statut.maj', statut: 'en_cours', manque: expect.any(Array) as unknown },
+      {
+        type: 'statut.maj',
+        statut: 'en_cours',
+        manque: expect.any(Array) as unknown,
+        pratique: expect.objectContaining({ resultats: expect.any(Array) as unknown }) as unknown,
+      },
       '*',
     )
     expect(recu).toHaveBeenNthCalledWith(
@@ -85,6 +90,10 @@ describe('page d’un bloc', () => {
         etat: null,
         statut: 'en_cours',
         serie_ouverte: { restitution: true },
+        // La pratique que le serveur garde : la page en relit ses items.
+        pratique: expect.objectContaining({
+          resultats: [expect.objectContaining({ item: 'PR1-1', reussi: true, aide: 0 })],
+        }) as unknown,
         theme: 'systeme',
       }),
       '*',

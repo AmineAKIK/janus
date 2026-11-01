@@ -13,7 +13,7 @@ import type { Fabrique } from './fabrique.ts'
 import { accesBloc, calculerBloc } from './statut.ts'
 import { jourDe } from './temps.ts'
 import { Fait as SchemaFait } from '@janus/contrats'
-import type { Niveau } from '@janus/contrats'
+import type { Aide, Niveau } from '@janus/contrats'
 import type { Fait, ReponseVerification } from './faits.ts'
 
 function calcul(faits: readonly Fait[], maintenant: string = apres(DEBUT, 60)) {
@@ -312,6 +312,82 @@ describe('la pratique et l’atelier', () => {
     ).toContain('atelier_manquant')
     expect(codes([...base, f.atelier(DEBUT)])).not.toContain('atelier_manquant')
   })
+
+  describe('l’aide que l’item garde (la règle de la page, `RejeuPratique`)', () => {
+    const resultat = (
+      f: Fabrique,
+      date: string,
+      item: string,
+      aide: Aide,
+      reste: { reussi?: boolean; brute?: true; cas?: 'origine' | 'variante' } = {},
+    ) =>
+      f.fait(date, {
+        type: 'pratique_resultat',
+        exercice: 'PR1',
+        item,
+        reussi: reste.reussi ?? true,
+        aide,
+        ...(reste.brute === undefined ? {} : { brute: reste.brute }),
+        ...(reste.cas === undefined ? {} : { cas: reste.cas }),
+      })
+    const fin = (f: Fabrique) => [f.atelier(DEBUT), ...f.restitution(apres(DEBUT, 0, 30))]
+
+    it('un item refait aussitôt après une aide garde cette aide : il ne compte pas encore', () => {
+      const f = fabrique()
+      const faits = [
+        resultat(f, apres(DEBUT, 0, 1), 'PR1-1', 1, { brute: true }),
+        resultat(f, apres(DEBUT, 0, 2), 'PR1-1', 0, { brute: true }),
+        resultat(f, apres(DEBUT, 0, 3), 'PR1-2', 0, { brute: true }),
+        ...fin(f),
+      ]
+      expect(calcul(faits).manque).toContainEqual({ code: 'pratique_aide', exercices: ['PR1'] })
+      // Un autre item réussi a éloigné l'aide : refait sans aide, l'item compte.
+      const refait = resultat(f, apres(DEBUT, 0, 4), 'PR1-1', 0, { brute: true, cas: 'variante' })
+      expect(codes([...faits, refait])).not.toContain('pratique_aide')
+    })
+
+    it('un résultat d’avant cette règle compte avec l’aide qu’il porte', () => {
+      const f = fabrique()
+      const faits = [
+        resultat(f, apres(DEBUT, 0, 1), 'PR1-1', 1),
+        resultat(f, apres(DEBUT, 0, 2), 'PR1-1', 0),
+        resultat(f, apres(DEBUT, 0, 3), 'PR1-2', 0),
+        ...fin(f),
+      ]
+      expect(codes(faits)).not.toContain('pratique_aide')
+    })
+
+    it('la fiche recommencée lâche l’aide gardée, et la page relit ses items depuis là', () => {
+      const f = fabrique()
+      const avant = resultat(f, apres(DEBUT, 0, 1), 'PR1-1', 2, { brute: true })
+      const apresCoupure = resultat(f, apres(DEBUT, 0, 3), 'PR1-1', 0, { brute: true })
+      const faits = [
+        avant,
+        f.recommencement(apres(DEBUT, 0, 2)),
+        apresCoupure,
+        resultat(f, apres(DEBUT, 0, 4), 'PR1-2', 0, { brute: true, cas: 'variante' }),
+        ...fin(f),
+      ]
+      const calcule = calcul(faits)
+      expect(calcule.manque.map(({ code }) => code)).not.toContain('pratique_aide')
+      expect(calcule.pratique).toEqual({
+        aujourdhui: jourDe(apres(DEBUT, 60), REGLAGES.fuseau, REGLAGES.heureBascule),
+        essais: [
+          {
+            id: apresCoupure.id,
+            item: 'PR1-1',
+            reussi: true,
+            aide: 0,
+            brute: true,
+            jour: jourDe(DEBUT, REGLAGES.fuseau, REGLAGES.heureBascule),
+            cas: null,
+          },
+          expect.objectContaining({ item: 'PR1-2', cas: 'variante' }),
+        ],
+        expliques: [],
+      })
+    })
+  })
 })
 
 describe('l’explication d’un item de pratique', () => {
@@ -343,6 +419,8 @@ describe('l’explication d’un item de pratique', () => {
     expect(calculer([...base, partielle, solide]).manque.map(({ code }) => code)).not.toContain(
       'pratique_aide',
     )
+    expect(calculer([...base, partielle]).pratique.expliques).toEqual([])
+    expect(calculer([...base, partielle, solide]).pratique.expliques).toEqual(['PR1-1'])
   })
 
   it('l’explication de la variante conclut aussi l’item', () => {

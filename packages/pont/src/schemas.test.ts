@@ -4,6 +4,7 @@ import {
   Confiance,
   CorrectionRecue as CorrectionContrats,
   EXEMPLES_PAGE,
+  EXEMPLE_PRATIQUE,
   MessageAppli as MessageAppliContrats,
   MessagePage as MessagePageContrats,
   Niveau,
@@ -39,6 +40,7 @@ const MESSAGES_APPLI = [
     statut: 'en_cours',
     serie_ouverte: { restitution: true },
     aisance: [],
+    pratique: { aujourdhui: '2026-06-01', resultats: [], expliques: [] },
   },
   {
     type: 'etat.init',
@@ -48,6 +50,7 @@ const MESSAGES_APPLI = [
     statut: 'vu',
     serie_ouverte: { restitution: true },
     aisance: [{ le: '2026-06-01T10:00:00Z', duree_s: 12.3 }],
+    pratique: EXEMPLE_PRATIQUE,
   },
   { type: 'restitution.correction', ...CORRECTION },
   { type: 'restitution.correction', ...CORRECTION, compte: false, raison_non_compte: 'relance' },
@@ -55,6 +58,7 @@ const MESSAGES_APPLI = [
     type: 'statut.maj',
     statut: 'acquis',
     manque: [{ code: 'retest_a_venir', apres: '2026-10-05' }],
+    pratique: EXEMPLE_PRATIQUE,
   },
   { type: 'erreur', code: 'plafond_atteint', detail: 'Plafond atteint.', message_id: ID },
   { type: 'erreur', code: 'correction_indisponible', detail: 'Indisponible.' },
@@ -191,7 +195,14 @@ describe('parité avec packages/contrats', () => {
     ) => options.every((option) => schema.safeParse(option).success)
     // Chaque valeur des contrats est acceptée par le schéma du pont, dans un message complet.
     for (const statut of Statut.options) {
-      expect(MessageAppli.safeParse({ type: 'statut.maj', statut, manque: [] }).success).toBe(true)
+      expect(
+        MessageAppli.safeParse({
+          type: 'statut.maj',
+          statut,
+          manque: [],
+          pratique: EXEMPLE_PRATIQUE,
+        }).success,
+      ).toBe(true)
     }
     for (const niveau of Niveau.options)
       expect(CorrectionRecue.safeParse({ ...CORRECTION, niveau }).success).toBe(true)

@@ -30,6 +30,23 @@ const source = z.enum(['support', 'deduit', 'ajoute'])
 const certitude = z.enum(['sur', 'non_verifie'])
 const raisonNonCompte = z.enum(['relance', 'avec_support', 'recopiee', 'non_verifiee'])
 const aide = z.literal([0, 1, 2, 3, 4])
+const cas = z.enum(['origine', 'variante'])
+const jour = () => z.string().check(z.regex(/^\d{4}-\d{2}-\d{2}$/))
+const pratique = z.strictObject({
+  aujourdhui: jour(),
+  resultats: z.array(
+    z.strictObject({
+      id: identifiant(),
+      item: identifiant(),
+      reussi: z.boolean(),
+      aide,
+      brute: z.boolean(),
+      jour: jour(),
+      cas: z.nullable(cas),
+    }),
+  ),
+  expliques: z.array(identifiant()),
+})
 const codeManque = z.enum([
   'restitution_incomplete',
   'pratique_aide',
@@ -101,6 +118,7 @@ export const MessagePage = z.discriminatedUnion('type', [
     reussi: z.boolean(),
     aide,
     essais: entierMin(1),
+    cas: z.optional(cas),
   }),
   z.strictObject({
     ...communPage,
@@ -178,10 +196,11 @@ export const MessageAppli = z.discriminatedUnion('type', [
     statut,
     serie_ouverte: z.strictObject({ restitution: z.boolean() }),
     aisance: z.array(z.strictObject({ le: z.iso.datetime(), duree_s: z.number().check(z.gte(0)) })),
+    pratique,
     theme: z.optional(z.enum(['clair', 'sombre', 'systeme'])),
   }),
   z.strictObject({ type: z.literal('restitution.correction'), ...champsCorrection }),
-  z.strictObject({ type: z.literal('statut.maj'), statut, manque: z.array(manque) }),
+  z.strictObject({ type: z.literal('statut.maj'), statut, manque: z.array(manque), pratique }),
   z.strictObject({
     type: z.literal('erreur'),
     code: z.enum(['correction_indisponible', 'plafond_atteint', 'message_refuse']),

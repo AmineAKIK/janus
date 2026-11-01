@@ -35,7 +35,7 @@ describe('enregistrementDe', () => {
     [
       'pratique.resultat',
       'pratique_resultat',
-      { exercice: 'PR1', item: 'PR1-2', reussi: true, aide: 0 },
+      { exercice: 'PR1', item: 'PR1-2', reussi: true, aide: 0, brute: true, cas: 'variante' },
       0,
       true,
     ],
@@ -56,6 +56,18 @@ describe('enregistrementDe', () => {
       donnees,
       aide,
       changeLeStatut: change,
+    })
+  })
+
+  it('garde un résultat de pratique sans cas quand la page ne le dit pas', () => {
+    const avecCas: Record<string, unknown> = { ...EXEMPLES_PAGE['pratique.resultat'] }
+    delete avecCas['cas']
+    expect(enregistrementDe(MessagePage.parse(avecCas)).donnees).toEqual({
+      exercice: 'PR1',
+      item: 'PR1-2',
+      reussi: true,
+      aide: 0,
+      brute: true,
     })
   })
 

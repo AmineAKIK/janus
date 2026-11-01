@@ -46,6 +46,9 @@ export function enregistrementDe(message: Message): Enregistrement {
           item: message.item,
           reussi: message.reussi,
           aide: message.aide,
+          // La page note l'aide de cet essai seul : le moteur y ajoute l'aide que l'item garde.
+          brute: true,
+          ...(message.cas === undefined ? {} : { cas: message.cas }),
         },
         aide: message.aide,
         changeLeStatut: true,

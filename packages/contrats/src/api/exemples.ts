@@ -1,5 +1,5 @@
 import demo from '../../fixtures/manifeste-demo.json' with { type: 'json' }
-import { EXEMPLES_PAGE, EXEMPLE_CORRECTION } from '../pont.exemples.ts'
+import { EXEMPLES_PAGE, EXEMPLE_CORRECTION, EXEMPLE_PRATIQUE } from '../pont.exemples.ts'
 import { Reglages } from '../reglages.ts'
 import type { CleRoute } from './index.ts'
 
@@ -20,6 +20,7 @@ const statutBloc = {
     atelier: null,
     aisance: null,
   },
+  pratique: EXEMPLE_PRATIQUE,
 }
 
 const correction = { ...EXEMPLE_CORRECTION, id: ID, modele: 'claude-haiku-5-5', secours: false }

@@ -32,6 +32,11 @@ export function statutDuBloc(resultat: ResultatBloc): StatutBloc {
       ...(manque.apres === undefined ? {} : { apres: manque.apres }),
     })),
     erreurs_ouvertes: [...resultat.erreursOuvertes],
+    pratique: {
+      aujourdhui: resultat.pratique.aujourdhui,
+      resultats: resultat.pratique.essais.map((essai) => ({ ...essai })),
+      expliques: [...resultat.pratique.expliques],
+    },
   })
 }
 

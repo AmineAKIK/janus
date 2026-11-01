@@ -3,7 +3,8 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { texteDeLaTable } from '@janus/contrats'
+import { suivreLaPratique, texteDeLaTable } from '@janus/contrats'
+import type { PratiqueDuBloc } from '@janus/contrats'
 
 // Le gabarit est une fiche complète (bloc X00). Ces tests font tourner sa plomberie, telle que l'appli
 // la charge dans son iframe, contre un pont simulé.
@@ -12,6 +13,19 @@ const GABARIT = readFileSync(join(process.cwd(), '../../contenu/dwwm/gabarit/fic
 const OBJECTIF = 'À REMPLACER : ce que tu sauras faire à la fin, vérifiable en une phrase.'
 /** Une page ouverte sur une étape, rien d'envoyé. */
 const aLEtape = (etape: string) => ({ etape, envoyees: {}, pratique: {}, retourCours: false })
+
+/** Le jour de l'appareil, AAAA-MM-JJ, comme le gabarit le lit hors de l'appli. */
+function jourLocal(date = new Date()): string {
+  const deux = (nombre: number) => String(nombre).padStart(2, '0')
+  return String(date.getFullYear()) + '-' + deux(date.getMonth() + 1) + '-' + deux(date.getDate())
+}
+const AUJOURDHUI = jourLocal()
+/** La pratique que le serveur garde, vide par défaut. */
+const pratiqueVide = (): PratiqueDuBloc => ({
+  aujourdhui: AUJOURDHUI,
+  resultats: [],
+  expliques: [],
+})
 
 type Rappel = (valeur: unknown) => void
 type Envoi = { type: string; donnees: unknown }
@@ -22,6 +36,7 @@ function pontSimule(
   correction?: Record<string, unknown>,
   serieOuverte = { restitution: true },
   aisance: readonly { le: string; duree_s: number }[] = [],
+  pratique: PratiqueDuBloc = pratiqueVide(),
 ) {
   const envois: Envoi[] = []
   /** Chaque demande de correction de la page. */
@@ -41,7 +56,7 @@ function pontSimule(
       Promise.resolve({
         mode: 'appli',
         etat,
-        init: { statut: 'vu', serie_ouverte: serieOuverte, aisance },
+        init: { statut: 'vu', serie_ouverte: serieOuverte, aisance, pratique },
       }),
     envoyer: (type: string, donnees: unknown) => {
       envois.push({ type, donnees })
@@ -82,7 +97,7 @@ function pontSimule(
   /** L'appli renvoie un etat.init (le serveur a relu le bloc : une série s'ouvre ou se ferme). */
   const direInit = (init: Record<string, unknown>) => {
     for (const rappel of inits)
-      rappel({ statut: 'vu', serie_ouverte: serieOuverte, aisance, ...init })
+      rappel({ statut: 'vu', serie_ouverte: serieOuverte, aisance, pratique, ...init })
   }
   /** L'appli refuse le dernier message envoyé. */
   const refuserDernier = (detail: string) => {
@@ -125,7 +140,8 @@ const CLES_DE_LA_PAGE = new Set([
   'corrigees',
   'enCours',
   'retourCours',
-  'pratique',
+  // Hors de l'appli seulement : la page y garde ses résultats de pratique.
+  'pratiqueLocale',
   'atelier',
   'bilan',
   'aCocher',
@@ -141,7 +157,8 @@ function monter(fiche: string, pont: object) {
   document.body.replaceChildren(
     ...Array.from(page.body.childNodes, (noeud) => document.importNode(noeud, true)),
   )
-  Object.assign(window, { JanusPont: pont })
+  // Le pont embarque la règle de la pratique, celle du moteur.
+  Object.assign(window, { JanusPont: pont, JanusPratique: { suivre: suivreLaPratique } })
   window.eval(plomberie)
 }
 
@@ -1305,6 +1322,32 @@ describe('la pratique', () => {
     outil.dispatchEvent(new CustomEvent('fiche:verification', { bubbles: true, detail }))
     return outil
   }
+  /** Un résultat que le serveur garde, noté aujourd'hui par défaut, avec l'aide de son essai seul. */
+  let numero = 0
+  const resultat = (
+    item: string,
+    reussi: boolean,
+    aide: 0 | 1 | 2 | 3 | 4,
+    reste: { jour?: string; cas?: 'origine' | 'variante'; brute?: boolean } = {},
+  ): PratiqueDuBloc['resultats'][number] => {
+    numero += 1
+    return {
+      id: 'serveur-' + String(numero),
+      item,
+      reussi,
+      aide,
+      brute: reste.brute ?? true,
+      jour: reste.jour ?? AUJOURDHUI,
+      cas: reste.cas ?? null,
+    }
+  }
+  const serveur = (...resultats: PratiqueDuBloc['resultats']): PratiqueDuBloc => ({
+    ...pratiqueVide(),
+    resultats,
+  })
+  /** Le pont simulé, la page à la pratique, et ce que le serveur garde de la pratique. */
+  const avecServeur = (pratique: PratiqueDuBloc, suite: Record<string, unknown> = {}) =>
+    pontSimule(auPratique({ itemCourant: 0, ...suite }), undefined, undefined, [], pratique)
 
   it('un item que la fiche vérifie ne demande pas « J’ai réussi » : l’outil dit juste ou faux', async () => {
     expect(avecOutil).not.toBe(GABARIT)
@@ -1349,20 +1392,22 @@ describe('la pratique', () => {
     expect(envois).toHaveLength(avant)
   })
 
-  it('une aide reçue reste dans la foulée : refait sans autre item entre-temps, l’item part avec elle', async () => {
+  it('une aide reçue reste dans la foulée : refait sans autre item entre-temps, l’item garde son aide', async () => {
     const { pont, envois } = pontSimule(auPratique())
     monter(avecOutil, pont)
     await screen.findByText('Outil de la fiche')
 
     verifier({ juste: true, aide: 2 })
     expect(envois.at(-1)?.donnees).toMatchObject({ reussi: true, aide: 2 })
+    // La page envoie l'aide de cet essai seul : le serveur, comme elle, y ajoute l'aide gardée.
     verifier({ juste: true })
-    expect(envois.at(-1)?.donnees).toMatchObject({ reussi: true, aide: 2 })
+    expect(envois.at(-1)?.donnees).toMatchObject({ reussi: true, aide: 0 })
     expect(
       screen.getByText(
         'Envoyé : réussi, aide 2. Tu as eu de l’aide : réussis d’abord l’item 2 ou 3 (même avec de l’aide), puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte. D’ici là, le refaire ici garde ton aide.',
       ),
     ).toBeInTheDocument()
+    expect(screen.getByText('Réussi avec de l’aide')).toBeInTheDocument()
     expect(screen.getByText('Outil de la fiche').closest('.item')).not.toHaveAttribute(
       'data-solution-vue',
     )
@@ -1370,7 +1415,6 @@ describe('la pratique', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Aller à l’item 2' }))
     expect(await screen.findByRole('button', { name: 'J’ai réussi' })).toBeInTheDocument()
   })
-
   it('après un autre item réussi, le même jour, l’item aidé se refait sur un autre cas et compte sans aide', async () => {
     const { pont, envois } = pontSimule(auPratique())
     monter(avecOutil, pont)
@@ -1408,40 +1452,8 @@ describe('la pratique', () => {
   })
 
   it('dernier item aidé : un item réussi se rouvre en relais, sans perdre son vert', async () => {
-    const d = new Date()
-    const jour = [d.getFullYear(), d.getMonth() + 1, d.getDate()]
-      .map((n, k) => (k ? String(n).padStart(2, '0') : String(n)))
-      .join('-')
-    const vert = (rang: number) => ({
-      reussi: true,
-      aide: 0,
-      essais: 1,
-      solutionVue: false,
-      rang,
-      rangReussi: rang,
-      aideLe: null,
-      aideMax: 0,
-    })
-    const { pont, envois } = pontSimule(
-      auPratique({
-        itemCourant: 0,
-        rangPratique: 3,
-        pratique: {
-          'PR1-2': vert(1),
-          'PR1-3': vert(2),
-          'PR1-1': {
-            reussi: true,
-            aide: 2,
-            essais: 1,
-            solutionVue: false,
-            rang: 3,
-            rangReussi: 3,
-            aideLe: jour,
-            aideMax: 2,
-            aideRang: 3,
-          },
-        },
-      }),
+    const { pont, envois } = avecServeur(
+      serveur(resultat('PR1-2', true, 0), resultat('PR1-3', true, 0), resultat('PR1-1', true, 2)),
     )
     monter(avecOutil, pont)
     await screen.findByText('Outil de la fiche')
@@ -1465,6 +1477,7 @@ describe('la pratique', () => {
     expect(boite).toHaveAttribute('data-solution-vue')
     verifier({ juste: true })
     expect(envois.at(-1)?.donnees).toMatchObject({ item: 'PR1-1', reussi: true, aide: 0 })
+    expect(screen.getByText('Réussi')).toBeInTheDocument()
     // Plus rien de bloqué : l'item 2 n'est plus en relais.
     fireEvent.click(screen.getByRole('button', { name: /^Item 2 sur 3/ }))
     await screen.findByRole('button', { name: 'J’ai réussi' })
@@ -1472,7 +1485,6 @@ describe('la pratique', () => {
       'data-solution-vue',
     )
   })
-
   it('un « Pas réussi » sur un autre item ne suffit pas : l’aide reste', async () => {
     const { pont, envois } = pontSimule(auPratique())
     monter(avecOutil, pont)
@@ -1487,9 +1499,9 @@ describe('la pratique', () => {
     expect(boite).not.toHaveAttribute('data-solution-vue')
     expect(screen.getByText(/réussis d’abord l’item .*, puis reviens/)).toBeInTheDocument()
     verifier({ juste: true })
-    expect(envois.at(-1)?.donnees).toMatchObject({ item: 'PR1-1', reussi: true, aide: 2 })
+    expect(envois.at(-1)?.donnees).toMatchObject({ item: 'PR1-1', reussi: true, aide: 0 })
+    expect(screen.getByText(/^Envoyé : réussi, aide 2\. Tu as eu de l’aide/)).toBeInTheDocument()
   })
-
   it('un item aidé raté sur l’autre cas reste à refaire, sans aide après un autre item', async () => {
     const { pont, envois } = pontSimule(auPratique())
     monter(avecOutil, pont)
@@ -1504,50 +1516,77 @@ describe('la pratique', () => {
     verifier({ juste: true, aide: 1 })
     expect(envois.at(-1)?.donnees).toMatchObject({ item: 'PR1-1', reussi: true, aide: 1 })
     verifier({ juste: true })
-    expect(envois.at(-1)?.donnees).toMatchObject({ item: 'PR1-1', reussi: true, aide: 1 })
+    expect(envois.at(-1)?.donnees).toMatchObject({ item: 'PR1-1', reussi: true, aide: 0 })
+    expect(screen.getByText(/^Envoyé : réussi, aide 1\./)).toBeInTheDocument()
     expect(screen.getByText(/réussis d’abord l’item .*, puis reviens/)).toBeInTheDocument()
   })
 
-  it('une aide notée sans rang (d’avant cette règle) est tenue pour éloignée', async () => {
-    const d = new Date()
-    const jour = [d.getFullYear(), d.getMonth() + 1, d.getDate()]
-      .map((n, k) => (k ? String(n).padStart(2, '0') : String(n)))
-      .join('-')
-    const { pont, envois } = pontSimule(
-      auPratique({
-        itemCourant: 0,
-        pratique: {
-          'PR1-1': {
-            reussi: true,
-            aide: 2,
-            essais: 1,
-            solutionVue: false,
-            aideLe: jour,
-            aideMax: 2,
-          },
-        },
-      }),
-    )
+  it('dans l’appli, la copie des items que la page gardait s’efface : le serveur décide', async () => {
+    const { pont, sauvees } = avecServeur(serveur(), {
+      rangPratique: 3,
+      pratique: { 'PR1-1': { reussi: true, aide: 0, essais: 1 } },
+    })
     monter(avecOutil, pont)
-    const boite = (await screen.findByText('Outil de la fiche')).closest('.item')
+    await screen.findByText('Outil de la fiche')
 
-    expect(boite).toHaveAttribute('data-solution-vue')
-    verifier({ juste: true })
-    expect(envois.at(-1)?.donnees).toMatchObject({ reussi: true, aide: 0 })
+    // Le serveur n'a aucun résultat : l'item est à faire, quoi que dise l'ancienne copie.
+    expect(screen.getByText('0 sur 3.')).toBeInTheDocument()
+    // Dans l'appli, un résultat ne passe pas par l'état de la page : seul le déplacement s'y garde.
+    verifier({ juste: false })
+    expect(sauvees).toHaveLength(0)
+    fireEvent.click(screen.getByRole('button', { name: /^Item 2 sur 3/ }))
+    expect(sauvees.at(-1)).toMatchObject({ itemCourant: 1 })
+    expect(sauvees.at(-1)).not.toHaveProperty('pratique')
+    expect(sauvees.at(-1)).not.toHaveProperty('rangPratique')
   })
 
+  it('un item que le serveur sait réussi reste vert, même si la page n’en gardait rien', async () => {
+    // L'état de la page perdu (un autre appareil, un conflit) : la couleur vient des résultats.
+    const { pont } = avecServeur(
+      serveur(resultat('PR1-2', true, 1), resultat('PR1-1', true, 0), resultat('PR1-2', true, 0)),
+      { pratique: undefined },
+    )
+    monter(avecOutil, pont)
+    await screen.findByText('Outil de la fiche')
+
+    expect(screen.getByText('Réussi')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Item 1 sur 3, réussi' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Item 2 sur 3, réussi' })).toBeInTheDocument()
+    expect(screen.getByText('2 sur 3.')).toBeInTheDocument()
+  })
+
+  it('un statut qui arrive met l’item affiché à jour, sans le redessiner', async () => {
+    const { pont, direStatut } = avecServeur(serveur())
+    monter(avecOutil, pont)
+    const outil = await screen.findByText('Outil de la fiche')
+
+    direStatut({ statut: 'vu', manque: [], pratique: serveur(resultat('PR1-1', true, 0)) })
+    expect(screen.getByText('Réussi')).toBeInTheDocument()
+    expect(screen.getByText('Outil de la fiche')).toBe(outil)
+  })
+
+  it('un résultat que l’appli refuse n’attend plus : l’item revient à ce que sait le serveur', async () => {
+    const { pont, refuserDernier } = avecServeur(serveur())
+    monter(avecOutil, pont)
+    await screen.findByText('Outil de la fiche')
+
+    verifier({ juste: true })
+    expect(screen.getByText('Réussi')).toBeInTheDocument()
+    refuserDernier('message refusé')
+    expect(screen.queryByText('Réussi')).toBeNull()
+    expect(screen.getByText('0 sur 3.')).toBeInTheDocument()
+  })
   it('une aide d’un autre jour ne retient plus rien', async () => {
-    const hier = { reussi: false, aide: 3, essais: 1, solutionVue: false }
-    const { pont, envois } = pontSimule(
-      auPratique({ pratique: { 'PR1-1': { ...hier, aideLe: '2020-01-01', aideMax: 3 } } }),
+    const { pont, envois } = avecServeur(
+      serveur(resultat('PR1-1', false, 3, { jour: '2020-01-01' })),
     )
     monter(avecOutil, pont)
     await screen.findByText('Outil de la fiche')
 
     verifier({ juste: true })
     expect(envois.at(-1)?.donnees).toMatchObject({ reussi: true, aide: 0 })
+    expect(screen.getByText('Réussi')).toBeInTheDocument()
   })
-
   it('une solution montrée à l’instant (garder) se note tout de suite, et l’item se redessine sur fiche:refaire', async () => {
     const { pont, envois } = pontSimule(auPratique())
     monter(avecOutil, pont)
@@ -1587,11 +1626,12 @@ describe('la pratique', () => {
     expect(screen.getByText('Outil de la fiche')).not.toBe(outil)
     expect(rendus).toBe(1)
     expect(screen.getByRole('button', { name: 'Aide 4' })).toHaveAttribute('aria-pressed', 'false')
-    // Refaite sans la regarder : l'item est réussi, et le pont le sait avec l'aide 4.
+    // Refaite sans la regarder : l'item est réussi, avec l'aide 4 que la règle garde (la page envoie
+    // l'aide de cet essai seul).
     verifier({ juste: true })
     expect(envois.at(-1)).toEqual({
       type: 'pratique.resultat',
-      donnees: { exercice: 'PR1', item: 'PR1-1', reussi: true, aide: 4, essais: 2 },
+      donnees: { exercice: 'PR1', item: 'PR1-1', reussi: true, aide: 0, essais: 2 },
     })
     expect(screen.getByText('Réussi avec de l’aide')).toBeInTheDocument()
     expect(screen.getByText('1 sur 3, dont 1 avec de l’aide.')).toBeInTheDocument()
@@ -1604,33 +1644,54 @@ describe('la pratique', () => {
     document.removeEventListener('fiche:rendu', compter)
   })
 
-  // Une solution vue un jour passé, et une marque d'avant, sans jour.
-  it.each(['2020-01-01', true])(
-    'un autre jour (%s), l’item dont la solution a été vue repart sans aide, sur sa variante',
-    async (solutionVue) => {
-      const { pont, envois } = pontSimule(
-        auPratique({
-          itemCourant: 0,
-          pratique: { 'PR1-1': { reussi: true, aide: 4, essais: 2, solutionVue } },
-        }),
-      )
-      monter(avecOutil, pont)
-      const boite = (await screen.findByText('Outil de la fiche')).closest('.item')
+  it('un autre jour, l’item dont la solution a été vue repart sans aide, sur l’autre cas', async () => {
+    const { pont, envois } = avecServeur(
+      serveur(
+        resultat('PR1-1', false, 4, { jour: '2020-01-01', cas: 'origine' }),
+        resultat('PR1-1', true, 0, { jour: '2020-01-01', cas: 'variante' }),
+      ),
+    )
+    monter(avecOutil, pont)
+    const boite = (await screen.findByText('Outil de la fiche')).closest('.item')
 
-      expect(boite).toHaveAttribute('data-solution-vue')
-      expect(
-        screen.getByText(
-          'Envoyé : réussi, aide 4. Refais-le maintenant sans aide, sur un autre cas, pour qu’il compte.',
-        ),
-      ).toBeInTheDocument()
-      verifier({ juste: true })
-      expect(envois.at(-1)).toEqual({
-        type: 'pratique.resultat',
-        donnees: { exercice: 'PR1', item: 'PR1-1', reussi: true, aide: 0, essais: 3 },
-      })
-      expect(screen.getByText('Envoyé : réussi, aide 0')).toBeInTheDocument()
-    },
-  )
+    expect(boite).toHaveAttribute('data-solution-vue')
+    expect(
+      screen.getByText(
+        'Envoyé : réussi, aide 4. Refais-le maintenant sans aide, sur un autre cas, pour qu’il compte.',
+      ),
+    ).toBeInTheDocument()
+    verifier({ juste: true })
+    expect(envois.at(-1)).toEqual({
+      type: 'pratique.resultat',
+      donnees: { exercice: 'PR1', item: 'PR1-1', reussi: true, aide: 0, essais: 3 },
+    })
+    expect(screen.getByText('Réussi sans aide : il compte.')).toBeInTheDocument()
+  })
+
+  it('le cas de l’item vient de la règle : l’outil le lit dans fiche:rendu, la page l’envoie', async () => {
+    const { pont, envois } = avecServeur(
+      serveur(resultat('PR1-1', true, 2, { cas: 'variante' }), resultat('PR1-2', true, 0)),
+    )
+    const rendus: { cas?: string; refaire?: boolean }[] = []
+    const lire = (evenement: Event) => {
+      const detail = (
+        evenement as CustomEvent<{ pratique?: Record<string, { cas?: string; refaire?: boolean }> }>
+      ).detail
+      rendus.push(detail.pratique?.['PR1-1'] ?? {})
+    }
+    document.addEventListener('fiche:rendu', lire)
+    monter(avecOutil, pont)
+    const boite = (await screen.findByText('Outil de la fiche')).closest('.item')
+    if (!(boite instanceof HTMLElement)) throw new Error('Pas de boîte')
+
+    // Aidé sur la variante, l'aide éloignée : il se refait sur l'origine.
+    expect(rendus.at(-1)).toMatchObject({ cas: 'origine', refaire: true })
+    // L'outil pose le cas sur la boîte : il part avec le résultat.
+    boite.dataset.cas = 'origine'
+    verifier({ juste: true })
+    expect(envois.at(-1)?.donnees).toMatchObject({ item: 'PR1-1', aide: 0, cas: 'origine' })
+    document.removeEventListener('fiche:rendu', lire)
+  })
 
   it('après la solution montrée, la boîte de l’item le dit à l’outil, qui propose une variante', async () => {
     const { pont } = pontSimule(auPratique())
@@ -1665,19 +1726,42 @@ describe('la pratique', () => {
     ).toBeInTheDocument()
   })
 
+  it('hors de l’appli, la page garde elle-même ses résultats ; l’ancienne copie y devient des résultats', async () => {
+    const etat = auPratique({
+      itemCourant: 0,
+      pratique: { 'PR1-2': { reussi: true, aide: 0, essais: 1 }, 'PR1-3': { reussi: false } },
+    })
+    const simule = pontSimule(etat)
+    const pont = {
+      ...simule.pont,
+      demarrer: () => Promise.resolve({ mode: 'autonome', etat, init: null }),
+    }
+    monter(avecOutil, pont)
+    await screen.findByText('Outil de la fiche')
+
+    expect(screen.getByRole('button', { name: 'Item 2 sur 3, réussi' })).toBeInTheDocument()
+    verifier({ juste: true, aide: 1 })
+    const sauve = simule.sauvees.at(-1) as {
+      pratique?: unknown
+      pratiqueLocale: { resultats: { item: string; aide: number; brute: boolean }[] }
+    }
+    expect(sauve.pratique).toBeUndefined()
+    expect(sauve.pratiqueLocale.resultats).toEqual([
+      expect.objectContaining({ item: 'PR1-2', aide: 0, brute: false }),
+      expect.objectContaining({ item: 'PR1-1', aide: 1, brute: true, jour: AUJOURDHUI }),
+    ])
+    expect(screen.getByText('Réussi avec de l’aide')).toBeInTheDocument()
+  })
+
   it('rend « Étape suivante » actif une fois chaque item réussi, même avec de l’aide', async () => {
     const suite = () => screen.getByRole('button', { name: 'Étape suivante' })
-    const reussi = { reussi: true, aide: 0, essais: 1 }
-    const { pont: finie } = pontSimule(
-      auPratique({
-        pratique: { 'PR1-1': reussi, 'PR1-2': { ...reussi, aide: 3 }, 'PR1-3': reussi },
-      }),
+    const { pont: finie } = avecServeur(
+      serveur(resultat('PR1-1', true, 0), resultat('PR1-2', true, 3), resultat('PR1-3', true, 0)),
     )
     monter(avecOutil, finie)
     await screen.findByText('Outil de la fiche')
     expect(suite()).toBeEnabled()
   })
-
   it('rappelle l’objectif, replié, à l’entrée de la pratique', async () => {
     const { pont } = pontSimule(auPratique())
     monter(avecOutil, pont)
@@ -1860,10 +1944,10 @@ describe('une explication jugée par l’IA', () => {
     expect(screen.getByText('Réussi')).toBeInTheDocument()
     expect(screen.getByText('1 sur 3.')).toBeInTheDocument()
     const etat = sauvees.at(-1) as {
-      pratique: Record<string, { explique?: boolean }>
       traces: Record<string, { fin: string; essais: unknown[] }>
     }
-    expect(etat.pratique['PR1-1']?.explique).toBe(true)
+    // L'explication Solide, le serveur la garde (une correction) : la page n'en garde pas de copie.
+    expect(etat).not.toHaveProperty('pratique')
     expect(etat.traces['explique:PR1-1']).toMatchObject({ fin: 'solide' })
     expect(etat.traces['explique:PR1-1']?.essais).toHaveLength(2)
   })

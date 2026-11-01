@@ -4,6 +4,7 @@ import type { Autonome, CorrectionRecue } from './pont.ts'
 
 const ID = '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2b'
 const MANIFESTE = { bloc: 'D01', version: 1 }
+const PRATIQUE = { aujourdhui: '2026-06-01', resultats: [], expliques: [] }
 const INIT = {
   type: 'etat.init',
   bloc: 'B05',
@@ -12,6 +13,7 @@ const INIT = {
   statut: 'en_cours',
   serie_ouverte: { restitution: true },
   aisance: [],
+  pratique: PRATIQUE,
 } as const
 const ATTENDUE: CorrectionRecue = {
   id: ID,
@@ -241,11 +243,19 @@ describe('messages reçus', () => {
     pont.surStatut(surStatut)
     void pont.demarrer({ manifeste: MANIFESTE })
 
-    depuisParent({ type: 'statut.maj', statut: 'acquis', manque: [] }, { autre: 'fenêtre' })
+    depuisParent(
+      { type: 'statut.maj', statut: 'acquis', manque: [], pratique: PRATIQUE },
+      { autre: 'fenêtre' },
+    )
     expect(surStatut).not.toHaveBeenCalled()
 
-    depuisParent({ type: 'statut.maj', statut: 'acquis', manque: [] })
-    expect(surStatut).toHaveBeenCalledWith({ type: 'statut.maj', statut: 'acquis', manque: [] })
+    depuisParent({ type: 'statut.maj', statut: 'acquis', manque: [], pratique: PRATIQUE })
+    expect(surStatut).toHaveBeenCalledWith({
+      type: 'statut.maj',
+      statut: 'acquis',
+      manque: [],
+      pratique: PRATIQUE,
+    })
   })
 
   it('ignore un message mal formé et le dit en console', () => {
@@ -255,7 +265,7 @@ describe('messages reçus', () => {
     pont.surStatut(surStatut)
     void pont.demarrer({ manifeste: MANIFESTE })
 
-    depuisParent({ type: 'statut.maj', statut: 'inconnu', manque: [] })
+    depuisParent({ type: 'statut.maj', statut: 'inconnu', manque: [], pratique: PRATIQUE })
 
     expect(surStatut).not.toHaveBeenCalled()
     expect(erreur).toHaveBeenCalledWith(expect.stringContaining('mal formé'), expect.anything())
@@ -306,6 +316,7 @@ describe('etat.init après le démarrage', () => {
       statut: 'vu',
       serie_ouverte: { restitution: false },
       aisance: [],
+      pratique: PRATIQUE,
     }
     depuisParent(init)
     await demarrage
