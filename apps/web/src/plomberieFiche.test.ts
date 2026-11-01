@@ -3,7 +3,7 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { suivreLaPratique, texteDeLaTable } from '@janus/contrats'
+import { suivreLAtelier, suivreLaPratique, texteDeLaTable } from '@janus/contrats'
 import type { PratiqueDuBloc } from '@janus/contrats'
 
 // Le gabarit est une fiche complète (bloc X00). Ces tests font tourner sa plomberie, telle que l'appli
@@ -25,6 +25,7 @@ const pratiqueVide = (): PratiqueDuBloc => ({
   aujourdhui: AUJOURDHUI,
   resultats: [],
   expliques: [],
+  atelier: [],
 })
 
 type Rappel = (valeur: unknown) => void
@@ -142,7 +143,7 @@ const CLES_DE_LA_PAGE = new Set([
   'retourCours',
   // Hors de l'appli seulement : la page y garde ses résultats de pratique.
   'pratiqueLocale',
-  'atelier',
+  'atelierLocal',
   'bilan',
   'aCocher',
   'erreurs',
@@ -158,7 +159,10 @@ function monter(fiche: string, pont: object) {
     ...Array.from(page.body.childNodes, (noeud) => document.importNode(noeud, true)),
   )
   // Le pont embarque la règle de la pratique, celle du moteur.
-  Object.assign(window, { JanusPont: pont, JanusPratique: { suivre: suivreLaPratique } })
+  Object.assign(window, {
+    JanusPont: pont,
+    JanusPratique: { suivre: suivreLaPratique, atelier: suivreLAtelier },
+  })
   window.eval(plomberie)
 }
 
@@ -2572,7 +2576,7 @@ describe('l’atelier : faire hors de la page', () => {
     fireEvent.click(screen.getByRole('checkbox', { name: 'J’ai relevé le disque.' }))
     fireEvent.click(envoyer)
     expect(envoisAtelier(envois).at(-1)).toEqual({ reussi: true, predictions_justes: 3, aide: 0 })
-    expect(screen.getByText('Envoyé : réussi sans aide.')).toBeInTheDocument()
+    expect(screen.getByText('Réussi sans aide : ton atelier compte.')).toBeInTheDocument()
   })
 
   it('un coup de pouce ouvert fixe l’aide au moins à son cran, même au retour', async () => {
@@ -2601,6 +2605,106 @@ describe('l’atelier : faire hors de la page', () => {
     expect(
       screen.getByText(/réussi, aide 2\. Refais-le un autre jour sans aide/),
     ).toBeInTheDocument()
+  })
+
+  const HIER = jourLocal(new Date(Date.now() - 86_400_000))
+  /** Les constats que le serveur garde. */
+  const constats = (
+    ...liste: { reussi: boolean; aide: 0 | 1 | 2 | 3 | 4; jour: string }[]
+  ): PratiqueDuBloc => ({
+    ...pratiqueVide(),
+    atelier: liste.map((constat, k) => ({ id: 'constat-' + String(k + 1), ...constat })),
+  })
+  const toutCocher = () => {
+    for (const nom of ['J’ai relevé la RAM.', 'J’ai relevé le disque.'])
+      fireEvent.click(screen.getByRole('checkbox', { name: nom }))
+  }
+
+  it('fait avec de l’aide, il se rattrape un autre jour : refait sans aide, il compte', async () => {
+    const hier = {
+      ...aLEtape('ET7'),
+      traces: { 'atelier:constat': { coches: [0, 1], cran: 2, jour: HIER } },
+    }
+    const { pont, envois } = pontSimule(
+      hier,
+      undefined,
+      undefined,
+      [],
+      constats({ reussi: true, aide: 2, jour: HIER }),
+    )
+    monter(avecAtelier, pont)
+    await screen.findByText('Ouvre le gestionnaire des tâches.')
+
+    // Le coup de pouce d'hier ne pèse plus : « Aucune aide » se choisit.
+    expect(
+      screen.getByText(/réussi, aide 2\. Refais-le un autre jour sans aide/),
+    ).toBeInTheDocument()
+    const aucune = screen.getByRole('radio', { name: 'Aucune aide' })
+    expect(aucune).toBeEnabled()
+    expect(aucune).not.toBeChecked()
+    expect(screen.queryByText(/Tu as pris de l’aide aujourd’hui/)).toBeNull()
+    fireEvent.click(aucune)
+    fireEvent.click(screen.getByRole('button', { name: 'Envoyer mon constat' }))
+    expect(envoisAtelier(envois)).toEqual([{ reussi: true, predictions_justes: 3, aide: 0 }])
+    expect(screen.getByText('Réussi sans aide : ton atelier compte.')).toBeInTheDocument()
+  })
+
+  it('un brouillon d’avant, sans jour, ne bloque plus l’aide', async () => {
+    const avant = { ...aLEtape('ET7'), traces: { 'atelier:constat': { coches: [], cran: 4 } } }
+    const { pont } = pontSimule(avant)
+    monter(avecAtelier, pont)
+    await screen.findByText('Ouvre le gestionnaire des tâches.')
+    expect(screen.getByRole('radio', { name: 'Aucune aide' })).toBeEnabled()
+  })
+
+  it('le même jour, l’aide d’un constat envoyé reste, même l’état de la page vidé', async () => {
+    const { pont, envois } = pontSimule(
+      aLEtape('ET7'),
+      undefined,
+      undefined,
+      [],
+      constats({ reussi: true, aide: 3, jour: AUJOURDHUI }),
+    )
+    monter(avecAtelier, pont)
+    await screen.findByText('Ouvre le gestionnaire des tâches.')
+
+    expect(screen.getByRole('radio', { name: 'Aucune aide' })).toBeDisabled()
+    expect(screen.getByRole('radio', { name: 'Une partie de la solution' })).toBeChecked()
+    expect(screen.getByText(/Tu as pris de l’aide aujourd’hui/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Étape suivante' })).toBeEnabled()
+    toutCocher()
+    fireEvent.click(screen.getByRole('button', { name: 'Envoyer mon constat' }))
+    expect(envoisAtelier(envois)).toEqual([{ reussi: true, predictions_justes: 3, aide: 3 }])
+  })
+
+  it('réussi sans aide, il le reste : le serveur le dit, la page n’en garde rien', async () => {
+    const { pont, sauvees } = pontSimule(
+      { ...aLEtape('ET7'), atelier: { reussi: false, aide: 4, coches: [] } },
+      undefined,
+      undefined,
+      [],
+      constats({ reussi: true, aide: 0, jour: HIER }, { reussi: false, aide: 4, jour: AUJOURDHUI }),
+    )
+    monter(avecAtelier, pont)
+    await screen.findByText('Ouvre le gestionnaire des tâches.')
+    expect(screen.getByText('Réussi sans aide : ton atelier compte.')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('checkbox', { name: 'J’ai relevé la RAM.' }))
+    expect(sauvees.at(-1)).not.toHaveProperty('atelier')
+    expect(sauvees.at(-1)).not.toHaveProperty('atelierLocal')
+  })
+
+  it('un constat refusé par l’appli ne compte pas comme envoyé', async () => {
+    const { pont, refuserDernier } = pontSimule(aLEtape('ET7'))
+    monter(avecAtelier, pont)
+    await screen.findByText('Ouvre le gestionnaire des tâches.')
+    toutCocher()
+    fireEvent.click(screen.getByRole('radio', { name: 'Aucune aide' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Envoyer mon constat' }))
+    expect(screen.getByRole('button', { name: 'Étape suivante' })).toBeEnabled()
+
+    refuserDernier('Le serveur ne garde pas ce constat.')
+    expect(screen.queryByText('Réussi sans aide : ton atelier compte.')).toBeNull()
+    expect(screen.getByRole('button', { name: 'Étape suivante' })).toBeDisabled()
   })
 })
 

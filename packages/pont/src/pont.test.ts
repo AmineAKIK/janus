@@ -4,7 +4,7 @@ import type { Autonome, CorrectionRecue } from './pont.ts'
 
 const ID = '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2b'
 const MANIFESTE = { bloc: 'D01', version: 1 }
-const PRATIQUE = { aujourdhui: '2026-06-01', resultats: [], expliques: [] }
+const PRATIQUE = { aujourdhui: '2026-06-01', resultats: [], expliques: [], atelier: [] }
 const INIT = {
   type: 'etat.init',
   bloc: 'B05',

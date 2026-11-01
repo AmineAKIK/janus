@@ -51,13 +51,24 @@ describe('les dates des preuves', () => {
 
   it('date le premier atelier réussi à l’aide 0', () => {
     const f = fabrique()
-    const reussi = apres(DEBUT, 0, 5)
+    const reussi = apres(DEBUT, 1, 5)
     const resultat = preuves([
       f.atelier(apres(DEBUT, 0, 2), 2),
       f.atelier(reussi),
-      f.atelier(apres(DEBUT, 0, 9)),
+      f.atelier(apres(DEBUT, 1, 9)),
     ])
     expect(resultat.atelier).toBe(reussi)
+  })
+
+  it('le même jour, un atelier renvoyé sans aide garde l’aide déjà déclarée', () => {
+    const f = fabrique()
+    expect(preuves([f.atelier(DEBUT, 2), f.atelier(apres(DEBUT, 0, 5))]).atelier).toBeNull()
+  })
+
+  it('un autre jour, l’atelier refait sans aide compte : il se rattrape', () => {
+    const f = fabrique()
+    const lendemain = apres(DEBUT, 1)
+    expect(preuves([f.atelier(DEBUT, 4), f.atelier(lendemain)]).atelier).toBe(lendemain)
   })
 
   it('ne date pas un atelier réussi seulement avec de l’aide', () => {

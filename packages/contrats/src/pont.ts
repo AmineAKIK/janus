@@ -49,7 +49,8 @@ const JourIso = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
  * La pratique du bloc telle que le serveur la garde : ses résultats depuis la fiche recommencée (ou
  * la mise à reprendre), dans l'ordre, et les items dont l'explication est Solide. La page en relit
  * chaque item avec `suivreLaPratique` (`pratique.ts`), la même règle que le moteur : elle n'en garde
- * aucune copie. `aujourdhui` est le jour de l'appli (fuseau et heure de bascule).
+ * aucune copie. `atelier` : les constats d'atelier, dans l'ordre, que la page relit avec
+ * `suivreLAtelier`. `aujourdhui` est le jour de l'appli (fuseau et heure de bascule).
  */
 export const PratiqueDuBloc = z.strictObject({
   aujourdhui: JourIso,
@@ -65,6 +66,9 @@ export const PratiqueDuBloc = z.strictObject({
     }),
   ),
   expliques: z.array(Identifiant),
+  atelier: z.array(
+    z.strictObject({ id: Identifiant, reussi: z.boolean(), aide: Aide, jour: JourIso }),
+  ),
 })
 export type PratiqueDuBloc = z.infer<typeof PratiqueDuBloc>
 

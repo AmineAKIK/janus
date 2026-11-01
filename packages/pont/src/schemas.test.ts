@@ -40,7 +40,7 @@ const MESSAGES_APPLI = [
     statut: 'en_cours',
     serie_ouverte: { restitution: true },
     aisance: [],
-    pratique: { aujourdhui: '2026-06-01', resultats: [], expliques: [] },
+    pratique: { aujourdhui: '2026-06-01', resultats: [], expliques: [], atelier: [] },
   },
   {
     type: 'etat.init',

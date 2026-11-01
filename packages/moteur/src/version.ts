@@ -3,4 +3,4 @@
  * l'API compare cette valeur à celle des lignes calculées qu'elle a rangées et recalcule celles qui
  * sont périmées au démarrage.
  */
-export const VERSION_MOTEUR = 4
+export const VERSION_MOTEUR = 5

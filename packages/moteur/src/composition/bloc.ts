@@ -36,6 +36,7 @@ export function statutDuBloc(resultat: ResultatBloc): StatutBloc {
       aujourdhui: resultat.pratique.aujourdhui,
       resultats: resultat.pratique.essais.map((essai) => ({ ...essai })),
       expliques: [...resultat.pratique.expliques],
+      atelier: resultat.pratique.constats.map((constat) => ({ ...constat })),
     },
   })
 }

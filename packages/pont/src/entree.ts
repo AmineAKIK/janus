@@ -1,10 +1,11 @@
-import { suivreLaPratique } from '@janus/contrats/pratique'
+import { suivreLAtelier, suivreLaPratique } from '@janus/contrats/pratique'
 import { creerPont } from './pont.ts'
 import type { Pont } from './pont.ts'
 
-/** La règle de la pratique, la même que celle du moteur : la page en relit ses items. */
+/** Les règles de la pratique et de l'atelier, les mêmes que celles du moteur : la page en relit l'état. */
 export interface JanusPratique {
   readonly suivre: typeof suivreLaPratique
+  readonly atelier: typeof suivreLAtelier
 }
 
 declare global {
@@ -17,4 +18,4 @@ declare global {
 }
 
 window.JanusPont = creerPont()
-window.JanusPratique = { suivre: suivreLaPratique }
+window.JanusPratique = { suivre: suivreLaPratique, atelier: suivreLAtelier }

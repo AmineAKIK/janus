@@ -385,6 +385,7 @@ describe('la pratique et l’atelier', () => {
           expect.objectContaining({ item: 'PR1-2', cas: 'variante' }),
         ],
         expliques: [],
+        constats: [expect.objectContaining({ reussi: true, aide: 0 })],
       })
     })
   })

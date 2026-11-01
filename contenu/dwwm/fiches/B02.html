@@ -7337,12 +7337,12 @@ if (age &lt; 12) {
         "schema": 2,
         "bloc": "B02",
         "type": "systemes",
-        "version": 49,
+        "version": 50,
         "titre": "Décider : ET, OU, NON, SI/SINON",
         "titre_court": "Décider",
         "objectif": "Réciter les tables ET, OU et NON ; traduire en condition une règle écrite en français, en disant si son « ou » est inclusif ou exclusif ; évaluer 6 conditions avec comparaisons et parenthèses, en justifiant chaque étape ; écrire une chaîne SI / SINON SI / SINON à quatre branches bien ordonnée, la tracer pour 5 valeurs limites, puis la transcrire en JavaScript et l'exécuter dans la console du navigateur, avec le résultat prédit. Aisance : les tables ET et OU remplies sans erreur en moins de 20 s.",
         "prerequis": ["B01"],
-        "pont": 6,
+        "pont": 7,
         "contexte_ia": "Bloc B02 du module « Écosystème et outils du développeur » (DWWM), deuxième bloc de la partie La machine. Le modèle du bloc : des données, lues ou comparées, donnent des faits qui valent VRAI ou FAUX ; combinés par NON, ET et OU, dans l’ordre de calcul fixé (parenthèses, comparaisons, NON, ET, OU), ils donnent une condition, une seule valeur ; dans une chaîne SI / SINON SI / SINON, la première condition VRAIE, de haut en bas, choisit la seule branche exécutée, et SINON prend les cas où aucune ne l’est. Notations à accepter comme équivalentes : VRAI et FAUX, 1 et 0, true et false ; ET et &&, OU et ||, NON et ! ; en pseudo-code, = compare et ≥, ≤, ≠ s’écrivent ainsi ; en JavaScript, = range une valeur dans une variable (affectation), === compare (égalité stricte), et >=, <=, !== remplacent ≥, ≤, ≠. Le OU logique est inclusif (VRAI OU VRAI = VRAI) ; le ou exclusif s’écrit (A OU B) ET NON (A ET B). Les valeurs limites d’une comparaison sur des entiers : de part et d’autre du seuil, la dernière valeur avant le changement et la première après (17 et 18 pour âge ≥ 18, 18 et 19 pour âge > 18). Quand le « ou » d’une phrase ne permet pas de trancher, la bonne réponse est de demander à l’auteur de la règle. La fiche n’enseigne ni l’opérateur XOR, ni les lois de De Morgan, ni le SI imbriqué, ni ==, ni switch : ne pénalise pas leur absence, et accepte une réponse juste qui les emploie. Pièges à repérer : E1, traiter OU comme exclusif (VRAI OU VRAI jugé FAUX) ; E2, calculer le OU avant le ET (A ET B OU C lu A ET (B OU C)) ; E3, croire que plusieurs branches d’une chaîne s’exécutent, ou que les lignes qui suivent la première VRAIE sont encore testées ; E4, confondre = (affectation), === (égalité stricte) et && (le ET). Une erreur de calcul isolée sur une comparaison n’est pas E2. Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Pour examiner une explication, la grille de compréhension : l’idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d’application, le terme exact, la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Chaque attendu vient de la fiche : les étapes 3 à 9 et 12 (sources S1 à S8) ; ce qui est marqué « D’après » y est écrit ; ce qui est marqué « Déduit » s’obtient en appliquant une règle de la fiche à un autre cas. L’ordre de calcul et les signes de JavaScript sont redonnés avec chaque question qui s’en sert : ce qui compte, c’est de repérer l’opération qui passe en premier et de transcrire une condition, pas de réciter la liste.",
         "sources": [
           {
@@ -8007,7 +8007,7 @@ if (age &lt; 12) {
 
     <!-- La bibliothèque du pont est insérée ici au build (packages/pont/scripts/injecter.ts). -->
     <script id="pont">
-      /*! janus-pont v6 fb8753902b5e97204b334c151d153cc6af097223a3211e7f2f647eb0fa32efce */
+      /*! janus-pont v7 159a354cd3b7dab2b0451c362cbac7073faedf282689a730f0c72ac353f2839a */
       ;(function () {
         function e(e) {
           return e === `variante` ? `origine` : `variante`
@@ -8101,40 +8101,61 @@ if (age &lt; 12) {
           }
           return f
         }
-        function i() {
+        var i = class {
+          #e = null
+          #t = 0
+          noter(e) {
+            let t = Math.max(e.aide, this.aideGardee(e.jour))
+            return ((this.#e = e.jour), (this.#t = t), t)
+          }
+          aideGardee(e) {
+            return e === this.#e ? this.#t : 0
+          }
+        }
+        function a(e, t) {
+          let n = new i(),
+            r = !1,
+            a = null
+          for (let t of e) {
+            let e = n.noter(t)
+            ;((a = { reussi: t.reussi, aide: e }), t.reussi && e === 0 && (r = !0))
+          }
+          return { reussi: r, dernier: a, aideGardee: n.aideGardee(t) }
+        }
+        function o() {
           return Date.now()
         }
-        function a(e) {
+        function s(e) {
           return new Date(e).toISOString()
         }
-        var o = 2 ** 48 - 1,
-          s = -1,
-          c = 0
-        function l(e) {
+        var c = 2 ** 48 - 1,
+          l = -1,
+          u = 0
+        function d(e) {
           return crypto.getRandomValues(new Uint8Array(e))
         }
-        var u = (e) => Array.from(e, (e) => e.toString(16).padStart(2, `0`)).join(``)
-        function d(e) {
-          let t = Math.min(Math.max(Math.floor(e), s), o),
-            n = t === s ? c + 1 : 0
-          ;(n > 4095 && ((t += 1), (n = 0)), (s = t), (c = n))
-          let r = l(8)
+        var f = (e) => Array.from(e, (e) => e.toString(16).padStart(2, `0`)).join(``)
+        function p(e) {
+          let t = Math.min(Math.max(Math.floor(e), l), c),
+            n = t === l ? u + 1 : 0
+          ;(n > 4095 && ((t += 1), (n = 0)), (l = t), (u = n))
+          let r = d(8)
           r[0] = ((r[0] ?? 0) & 63) | 128
           let i = t.toString(16).padStart(12, `0`),
             a = n.toString(16).padStart(3, `0`),
-            d = u(r)
-          return `${i.slice(0, 8)}-${i.slice(8)}-7${a}-${d.slice(0, 4)}-${d.slice(4)}`
+            o = f(r)
+          return `${i.slice(0, 8)}-${i.slice(8)}-7${a}-${o.slice(0, 4)}-${o.slice(4)}`
         }
-        function f(e) {
+        function m(e) {
           let t = Object.values(e).filter((e) => typeof e == `number`)
           return Object.entries(e)
             .filter(([e, n]) => t.indexOf(+e) === -1)
             .map(([e, t]) => t)
         }
-        function p(e, t) {
+        function ee(e, t) {
           return typeof t == `bigint` ? t.toString() : t
         }
-        var ee = class {
+        var h = class {
           constructor(e) {
             ;((this._getter = e), (this._value = void 0))
           }
@@ -8143,23 +8164,23 @@ if (age &lt; 12) {
             return (e !== void 0 && ((this._value = e()), (this._getter = void 0)), this._value)
           }
         }
-        function m(e) {
-          return new ee(e)
+        function g(e) {
+          return new h(e)
         }
         function te(e) {
           return e == null
         }
-        function h(e) {
+        function _(e) {
           let t = +!!e.startsWith(`^`),
             n = e.endsWith(`$`) ? e.length - 1 : e.length
           return e.slice(t, n)
         }
-        var g = Symbol(`evaluating`)
-        function ne(e, t, n) {
+        var v = Symbol(`evaluating`)
+        function y(e, t, n) {
           let r
           Object.defineProperty(e, t, {
             get() {
-              if (r !== g) return (r === void 0 && ((r = g), (r = n())), r)
+              if (r !== v) return (r === void 0 && ((r = v), (r = n())), r)
             },
             set(n) {
               Object.defineProperty(e, t, { value: n })
@@ -8167,33 +8188,33 @@ if (age &lt; 12) {
             configurable: !0,
           })
         }
-        function _(e, t, n) {
+        function ne(e, t, n) {
           Object.defineProperty(e, t, { value: n, writable: !0, enumerable: !0, configurable: !0 })
         }
-        function v(e) {
+        function re(e) {
           let t = Object.getOwnPropertyDescriptor(e, `shape`)
           return t?.get ? t.get.raw : t?.value
         }
-        var re = `captureStackTrace` in Error ? Error.captureStackTrace : (...e) => {}
-        function y(e) {
+        var ie = `captureStackTrace` in Error ? Error.captureStackTrace : (...e) => {}
+        function b(e) {
           return typeof e == `object` && !!e && !Array.isArray(e)
         }
-        function ie(e) {
-          if (y(e) === !1) return !1
+        function ae(e) {
+          if (b(e) === !1) return !1
           let t = e.constructor
           if (t === void 0 || typeof t != `function`) return !0
           let n = t.prototype
-          return y(n) !== !1 && Object.prototype.hasOwnProperty.call(n, `isPrototypeOf`) !== !1
+          return b(n) !== !1 && Object.prototype.hasOwnProperty.call(n, `isPrototypeOf`) !== !1
         }
-        var ae = new Set([`string`, `number`, `symbol`])
-        function b(e) {
+        var x = new Set([`string`, `number`, `symbol`])
+        function S(e) {
           return e.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`)
         }
-        function x(e, t, n) {
+        function C(e, t, n) {
           let r = new e._zod.constr(t ?? e._zod.def)
           return ((!t || n?.parent) && (r._zod.parent = e), r)
         }
-        function S(e) {
+        function w(e) {
           let t = e
           if (!t) return {}
           if (typeof t == `string`) return { error: () => t }
@@ -8208,37 +8229,37 @@ if (age &lt; 12) {
             (t) => e[t]._zod.optin !== void 0 && e[t]._zod.optout === `optional`,
           )
         }
-        var C = {
+        var se = {
           safeint: [-(2 ** 53 - 1), 2 ** 53 - 1],
           int32: [-2147483648, 2147483647],
           uint32: [0, 4294967295],
           float32: [-34028234663852886e22, 34028234663852886e22],
           float64: [-Number.MAX_VALUE, Number.MAX_VALUE],
         }
-        function w(e, t = 0) {
+        function T(e, t = 0) {
           if (e.aborted === !0) return !0
           for (let n = t; n < e.issues.length; n++) if (e.issues[n]?.continue !== !0) return !0
           return !1
         }
-        function se(e, t = 0) {
+        function ce(e, t = 0) {
           if (e.aborted === !0) return !0
           for (let n = t; n < e.issues.length; n++) if (e.issues[n]?.continue === !1) return !0
           return !1
         }
-        function T(e, t) {
+        function E(e, t) {
           return t.map((t) => {
             var n
             return ((n = t).path ?? (n.path = []), t.path.unshift(e), t)
           })
         }
-        function E(e) {
+        function D(e) {
           return typeof e == `string` ? e : e?.message
         }
-        function ce(e, t, n) {
+        function le(e, t, n) {
           var r
           for (let i = t; i < e.length; i++) (r = e[i]).schema ?? (r.schema = n)
         }
-        function D(e, t, n) {
+        function O(e, t, n) {
           var r
           let i = e.inst?._zod?.traits
           i?.has(`$ZodType`) &&
@@ -8246,11 +8267,11 @@ if (age &lt; 12) {
           let a = e.schema === e.inst ? void 0 : e.schema?._zod.def?.error,
             o = e.message
               ? e.message
-              : (E(e.inst?._zod.def?.error?.(e)) ??
-                E(a?.(e)) ??
-                E(t?.error?.(e)) ??
-                E(n.customError?.(e)) ??
-                E(n.localeError?.(e)) ??
+              : (D(e.inst?._zod.def?.error?.(e)) ??
+                D(a?.(e)) ??
+                D(t?.error?.(e)) ??
+                D(n.customError?.(e)) ??
+                D(n.localeError?.(e)) ??
                 `Invalid input`),
             s = {}
           for (let t of Object.keys(e))
@@ -8262,10 +8283,10 @@ if (age &lt; 12) {
               (s[t] = e[t])
           return ((s.path ??= []), (s.message = o), t?.reportInput && (s.input = e.input), s)
         }
-        var le = /[\uD800-\uDBFF]/
-        function ue(e) {
+        var ue = /[\uD800-\uDBFF]/
+        function de(e) {
           let t = e.length
-          if (!le.test(e)) return t
+          if (!ue.test(e)) return t
           let n = t
           for (let r = 0; r < t - 1; r++)
             (e.charCodeAt(r) & 64512) == 55296 &&
@@ -8273,20 +8294,20 @@ if (age &lt; 12) {
               (n--, r++)
           return n
         }
-        function de(e) {
+        function fe(e) {
           return Array.isArray(e) ? `array` : typeof e == `string` ? `string` : `unknown`
         }
-        function fe(...e) {
+        function pe(...e) {
           let [t, n, r] = e
           return typeof t == `string` ? { message: t, code: `custom`, input: n, inst: r } : { ...t }
         }
-        function pe(e, t) {
+        function me(e, t) {
           for (let n in t) {
             let r = Object.getOwnPropertyDescriptor(t, n)
-            r.get ? Object.defineProperty(e, n, { ...r, enumerable: !1 }) : he(e, n, r.value)
+            r.get ? Object.defineProperty(e, n, { ...r, enumerable: !1 }) : ge(e, n, r.value)
           }
         }
-        function O(e, t, n, r = !0) {
+        function k(e, t, n, r = !0) {
           return (
             Object.defineProperty(e, t, {
               configurable: !0,
@@ -8297,60 +8318,60 @@ if (age &lt; 12) {
             n
           )
         }
-        function me(e, t, n) {
-          return O(e, t, n, !1)
-        }
         function he(e, t, n) {
+          return k(e, t, n, !1)
+        }
+        function ge(e, t, n) {
           Object.defineProperty(e, t, {
             configurable: !0,
             get() {
-              return this == null ? n : O(this, t, n.bind(this))
+              return this == null ? n : k(this, t, n.bind(this))
             },
             set(e) {
-              O(this, t, e)
+              k(this, t, e)
             },
           })
         }
-        function ge(e, t) {
+        function _e(e, t) {
           let n = Object.getPrototypeOf(e)
           return t in n ? void 0 : n
         }
-        var _e,
-          k = !1,
-          ve = {
+        var ve,
+          A = !1,
+          ye = {
             configurable: !0,
             get() {
-              k = !0
+              A = !0
             },
           }
-        function A(e, t, n) {
+        function j(e, t, n) {
           let r = Object.getPrototypeOf(e._zod)
-          if (t in r && _e !== e._zod) {
-            _e = void 0
+          if (t in r && ve !== e._zod) {
+            ve = void 0
             return
           }
-          ;((_e = e._zod),
+          ;((ve = e._zod),
             Object.defineProperty(r, t, {
               configurable: !0,
               get() {
-                Object.defineProperty(this, t, ve)
-                let e = k
-                k = !1
+                Object.defineProperty(this, t, ye)
+                let e = A
+                A = !1
                 try {
                   let r = n(this)
                   return (
-                    k
+                    A
                       ? delete this[t]
                       : Object.defineProperty(this, t, {
                           configurable: !0,
                           writable: !0,
                           value: r,
                         }),
-                    (k ||= e),
+                    (A ||= e),
                     r
                   )
                 } catch (n) {
-                  throw (delete this[t], (k ||= e), n)
+                  throw (delete this[t], (A ||= e), n)
                 }
               },
               set(e) {
@@ -8358,8 +8379,8 @@ if (age &lt; 12) {
               },
             }))
         }
-        function ye(e, t, n, r) {
-          let i = ge(e, t)
+        function be(e, t, n, r) {
+          let i = _e(e, t)
           i &&
             Object.defineProperty(i, t, {
               configurable: !0,
@@ -8382,18 +8403,18 @@ if (age &lt; 12) {
               },
             })
         }
-        var be,
-          xe = { value: void 0, enumerable: !1 },
-          Se = `captureStackTrace` in Error ? Error : null
-        function Ce(e) {
-          let t = Se
+        var xe,
+          Se = { value: void 0, enumerable: !1 },
+          Ce = `captureStackTrace` in Error ? Error : null
+        function we(e) {
+          let t = Ce
           if (t) {
             let n = t.stackTraceLimit
             if (typeof n == `number`) {
               try {
                 t.stackTraceLimit = 0
               } catch {
-                return ((Se = null), new e())
+                return ((Ce = null), new e())
               }
               try {
                 return new e()
@@ -8404,7 +8425,7 @@ if (age &lt; 12) {
           }
           return new e()
         }
-        function j(e, t, n, r) {
+        function M(e, t, n, r) {
           let i = {}
           function a(e) {
             ;((this.def = e), (this.constr = d), (this.traits = new Set()))
@@ -8414,11 +8435,11 @@ if (age &lt; 12) {
             s = o && new WeakSet()
           function c(n, r) {
             if (!n._zod) {
-              xe.value = new a(r)
+              Se.value = new a(r)
               try {
-                Object.defineProperty(n, '_zod', xe)
+                Object.defineProperty(n, '_zod', Se)
               } finally {
-                xe.value = void 0
+                Se.value = void 0
               }
             } else if (n._zod.traits.has(e)) return
             if ((n._zod.traits.add(e), t(n, r), s)) {
@@ -8427,7 +8448,7 @@ if (age &lt; 12) {
                 r = e
               for (; r && r !== t;) r = Object.getPrototypeOf(r)
               let i = r ?? e
-              s.has(i) || (s.add(i), pe(i, o))
+              s.has(i) || (s.add(i), me(i, o))
             }
             let i = d.prototype
             for (let e in i)
@@ -8437,7 +8458,7 @@ if (age &lt; 12) {
           class u extends l {}
           Object.defineProperty(u, 'name', { value: e })
           function d(e) {
-            let t = r?.Parent ? Ce(u) : this
+            let t = r?.Parent ? we(u) : this
             c(t, e)
             let n = t._zod.deferred
             if (n) {
@@ -8456,35 +8477,35 @@ if (age &lt; 12) {
             d
           )
         }
-        var M = class extends Error {
+        var N = class extends Error {
           constructor() {
             super(`Encountered Promise during synchronous parse. Use .parseAsync() instead.`)
           }
         }
-        ;(be = globalThis).__zod_globalConfig ?? (be.__zod_globalConfig = {})
-        var N = globalThis.__zod_globalConfig
-        function P(e) {
-          return (e && Object.assign(N, e), N)
+        ;(xe = globalThis).__zod_globalConfig ?? (xe.__zod_globalConfig = {})
+        var P = globalThis.__zod_globalConfig
+        function F(e) {
+          return (e && Object.assign(P, e), P)
         }
-        function we() {
+        function Te() {
           let e = this._zod
-          return ((e.message ??= JSON.stringify(e.def, p, 2)), e.message)
+          return ((e.message ??= JSON.stringify(e.def, ee, 2)), e.message)
         }
-        function Te(e) {
+        function Ee(e) {
           this._zod.message = e
         }
-        var Ee = { get: we, set: Te, enumerable: !0, configurable: !0 },
-          De = { value: void 0, enumerable: !1 },
-          Oe = new WeakSet([Object.prototype, Error.prototype]),
-          ke = (e, t) => {
+        var De = { get: Te, set: Ee, enumerable: !0, configurable: !0 },
+          Oe = { value: void 0, enumerable: !1 },
+          ke = new WeakSet([Object.prototype, Error.prototype]),
+          Ae = (e, t) => {
             ;((e.name = `$ZodError`),
-              (De.value = t),
-              Object.defineProperty(e, 'issues', De),
-              (De.value = void 0),
-              Object.defineProperty(e, 'message', Ee))
+              (Oe.value = t),
+              Object.defineProperty(e, 'issues', Oe),
+              (Oe.value = void 0),
+              Object.defineProperty(e, 'message', De))
             let n = Object.getPrototypeOf(e)
-            Oe.has(n) ||
-              (Oe.add(n),
+            ke.has(n) ||
+              (ke.add(n),
               Object.defineProperty(n, 'toString', {
                 configurable: !0,
                 enumerable: !1,
@@ -8508,68 +8529,68 @@ if (age &lt; 12) {
                 },
               }))
           }
-        j(`$ZodError`, ke)
-        var F = j(`$ZodError`, ke, void 0, { Parent: Error }),
-          Ae = ((e) => {
+        M(`$ZodError`, Ae)
+        var I = M(`$ZodError`, Ae, void 0, { Parent: Error }),
+          je = ((e) => {
             let t = (n, r, i, a) => {
               let o = i ? { ...i, async: !1 } : { async: !1 },
                 s = n._zod.run({ value: r, issues: [] }, o)
-              if (s instanceof Promise) throw new M()
+              if (s instanceof Promise) throw new N()
               if (s.issues.length) {
-                let n = new (a?.Err ?? e)(s.issues.map((e) => D(e, o, P())))
-                throw (re(n, a?.callee ?? t), n)
+                let n = new (a?.Err ?? e)(s.issues.map((e) => O(e, o, F())))
+                throw (ie(n, a?.callee ?? t), n)
               }
               return s.value
             }
             return t
-          })(F),
-          je = ((e) => {
+          })(I),
+          Me = ((e) => {
             let t = async (n, r, i, a) => {
               let o = i ? { ...i, async: !0 } : { async: !0 },
                 s = n._zod.run({ value: r, issues: [] }, o)
               if ((s instanceof Promise && (s = await s), s.issues.length)) {
-                let n = new (a?.Err ?? e)(s.issues.map((e) => D(e, o, P())))
-                throw (re(n, a?.callee ?? t), n)
+                let n = new (a?.Err ?? e)(s.issues.map((e) => O(e, o, F())))
+                throw (ie(n, a?.callee ?? t), n)
               }
               return s.value
             }
             return t
-          })(F),
-          Me = ((e) => (t, n, r) => {
+          })(I),
+          Ne = ((e) => (t, n, r) => {
             let i = r ? { ...r, async: !1 } : { async: !1 },
               a = t._zod.run({ value: n, issues: [] }, i)
-            if (a instanceof Promise) throw new M()
-            return a.issues.length ? Ne(e, a.issues, i) : { success: !0, data: a.value }
-          })(F)
-        function Ne(e, t, n) {
+            if (a instanceof Promise) throw new N()
+            return a.issues.length ? Pe(e, a.issues, i) : { success: !0, data: a.value }
+          })(I)
+        function Pe(e, t, n) {
           let r
           return {
             success: !1,
             get error() {
-              return (r || ((r = new e(t.map((e) => D(e, n, P())))), (t = void 0), (n = void 0)), r)
+              return (r || ((r = new e(t.map((e) => O(e, n, F())))), (t = void 0), (n = void 0)), r)
             },
             set error(e) {
               ;((r = e), (t = void 0), (n = void 0))
             },
           }
         }
-        var Pe = ((e) => async (t, n, r) => {
+        var Fe = ((e) => async (t, n, r) => {
             let i = r ? { ...r, async: !0 } : { async: !0 },
               a = t._zod.run({ value: n, issues: [] }, i)
             return (
               a instanceof Promise && (a = await a),
-              a.issues.length ? Ne(e, a.issues, i) : { success: !0, data: a.value }
+              a.issues.length ? Pe(e, a.issues, i) : { success: !0, data: a.value }
             )
-          })(F),
-          Fe = (e) =>
+          })(I),
+          Ie = (e) =>
             e
               ? RegExp(
                   `^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-${e}[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$`,
                 )
               : /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
-          Ie = /^https?$/,
-          Le = `(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))`
-        function Re(e) {
+          Le = /^https?$/,
+          Re = `(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))`
+        function ze(e) {
           let t = `(?:[01]\\d|2[0-3]):[0-5]\\d`
           return typeof e.precision == `number`
             ? e.precision === -1
@@ -8581,33 +8602,33 @@ if (age &lt; 12) {
               ? `${t}:[0-5]\\d(?:\\.\\d+)?`
               : `${t}(?::[0-5]\\d(?:\\.\\d+)?)?`
         }
-        function ze(e) {
+        function Be(e) {
           let t = [`Z`]
           e.offset && t.push(`([+-](?:[01]\\d|2[0-3]):[0-5]\\d)`)
-          let n = `${Re({ precision: e.precision, seconds: !0 })}(?:${t.join(`|`)})`,
-            r = e.local ? `${n}|${Re({ precision: e.precision })}` : n
-          return RegExp(`^${Le}T(?:${r})$`)
+          let n = `${ze({ precision: e.precision, seconds: !0 })}(?:${t.join(`|`)})`,
+            r = e.local ? `${n}|${ze({ precision: e.precision })}` : n
+          return RegExp(`^${Re}T(?:${r})$`)
         }
-        var Be = /^[\s\S]{0,}$/,
-          Ve = /^-?\d+(?:\.\d+)?$/,
-          He = /^(?:true|false)$/i,
-          Ue = /^null$/i,
-          I = j(`$ZodCheck`, (e, t) => {
+        var Ve = /^[\s\S]{0,}$/,
+          He = /^-?\d+(?:\.\d+)?$/,
+          Ue = /^(?:true|false)$/i,
+          We = /^null$/i,
+          L = M(`$ZodCheck`, (e, t) => {
             var n
             ;((e._zod ??= {}), (e._zod.def = t), (n = e._zod).onattach ?? (n.onattach = []))
           }),
-          We = (e) => {
+          Ge = (e) => {
             let t = e.value
             return !te(t) && t.length !== void 0
           },
-          L = { number: `number`, bigint: `bigint`, object: `date` },
-          Ge = j(`$ZodCheckLessThan`, (e, t) => {
-            I.init(e, t)
-            let n = L[typeof t.value]
+          R = { number: `number`, bigint: `bigint`, object: `date` },
+          Ke = M(`$ZodCheckLessThan`, (e, t) => {
+            L.init(e, t)
+            let n = R[typeof t.value]
             e._zod.check = (r) => {
               ;(t.inclusive ? r.value <= t.value : r.value < t.value) ||
                 r.issues.push({
-                  origin: L[typeof r.value] ?? n,
+                  origin: R[typeof r.value] ?? n,
                   code: `too_big`,
                   maximum: typeof t.value == `object` ? t.value.getTime() : t.value,
                   input: r.value,
@@ -8617,13 +8638,13 @@ if (age &lt; 12) {
                 })
             }
           }),
-          Ke = j(`$ZodCheckGreaterThan`, (e, t) => {
-            I.init(e, t)
-            let n = L[typeof t.value]
+          qe = M(`$ZodCheckGreaterThan`, (e, t) => {
+            L.init(e, t)
+            let n = R[typeof t.value]
             e._zod.check = (r) => {
               ;(t.inclusive ? r.value >= t.value : r.value > t.value) ||
                 r.issues.push({
-                  origin: L[typeof r.value] ?? n,
+                  origin: R[typeof r.value] ?? n,
                   code: `too_small`,
                   minimum: typeof t.value == `object` ? t.value.getTime() : t.value,
                   input: r.value,
@@ -8633,11 +8654,11 @@ if (age &lt; 12) {
                 })
             }
           }),
-          qe = j(`$ZodCheckNumberFormat`, (e, t) => {
-            ;(I.init(e, t), (t.format = t.format || `float64`))
+          Je = M(`$ZodCheckNumberFormat`, (e, t) => {
+            ;(L.init(e, t), (t.format = t.format || `float64`))
             let n = t.format?.includes(`int`),
               r = n ? `int` : `number`,
-              [i, a] = C[t.format]
+              [i, a] = se[t.format]
             e._zod.check = (o) => {
               let s = o.value
               if (n) {
@@ -8699,15 +8720,15 @@ if (age &lt; 12) {
                   }))
             }
           }),
-          Je = j(`$ZodCheckMaxLength`, (e, t) => {
+          Ye = M(`$ZodCheckMaxLength`, (e, t) => {
             var n
-            ;(I.init(e, t),
-              (n = e._zod.def).when ?? (n.when = We),
+            ;(L.init(e, t),
+              (n = e._zod.def).when ?? (n.when = Ge),
               (e._zod.check = (n) => {
                 let r = n.value,
                   i = r.length
-                if ((typeof r == `string` && i > t.maximum ? ue(r) : i) <= t.maximum) return
-                let a = de(r)
+                if ((typeof r == `string` && i > t.maximum ? de(r) : i) <= t.maximum) return
+                let a = fe(r)
                 n.issues.push({
                   origin: a,
                   code: `too_big`,
@@ -8719,19 +8740,19 @@ if (age &lt; 12) {
                 })
               }))
           }),
-          Ye = j(`$ZodCheckMinLength`, (e, t) => {
+          Xe = M(`$ZodCheckMinLength`, (e, t) => {
             var n
-            ;(I.init(e, t),
-              (n = e._zod.def).when ?? (n.when = We),
+            ;(L.init(e, t),
+              (n = e._zod.def).when ?? (n.when = Ge),
               (e._zod.check = (n) => {
                 let r = n.value,
                   i = r.length
                 if (
-                  (typeof r == `string` && i >= t.minimum && i < t.minimum * 2 ? ue(r) : i) >=
+                  (typeof r == `string` && i >= t.minimum && i < t.minimum * 2 ? de(r) : i) >=
                   t.minimum
                 )
                   return
-                let a = de(r)
+                let a = fe(r)
                 n.issues.push({
                   origin: a,
                   code: `too_small`,
@@ -8743,9 +8764,9 @@ if (age &lt; 12) {
                 })
               }))
           }),
-          Xe = j(`$ZodCheckStringFormat`, (e, t) => {
+          Ze = M(`$ZodCheckStringFormat`, (e, t) => {
             var n, r
-            ;(I.init(e, t),
+            ;(L.init(e, t),
               t.pattern
                 ? ((n = e._zod).check ??
                   (n.check = (n) => {
@@ -8763,8 +8784,8 @@ if (age &lt; 12) {
                   }))
                 : ((r = e._zod).check ?? (r.check = () => {})))
           }),
-          Ze = j(`$ZodCheckRegex`, (e, t) => {
-            ;(Xe.init(e, t),
+          Qe = M(`$ZodCheckRegex`, (e, t) => {
+            ;(Ze.init(e, t),
               (e._zod.check = (n) => {
                 ;((t.pattern.lastIndex = 0),
                   !t.pattern.test(n.value) &&
@@ -8779,21 +8800,21 @@ if (age &lt; 12) {
                     }))
               }))
           }),
-          Qe = j(`$ZodCheckOverwrite`, (e, t) => {
-            ;(I.init(e, t),
+          $e = M(`$ZodCheckOverwrite`, (e, t) => {
+            ;(L.init(e, t),
               (e._zod.check = (e) => {
                 e.value = t.tx(e.value)
               }))
           }),
-          $e = { major: 4, minor: 6, patch: 5 },
-          R = j(
+          et = { major: 4, minor: 6, patch: 5 },
+          z = M(
             `$ZodType`,
             (e, t) => {
               var n
               ;((e ??= {}),
                 (e._zod.def = t),
                 (e._zod.bag = e._zod.bag || {}),
-                (e._zod.version = $e))
+                (e._zod.version = et))
               let r = e._zod.def.checks,
                 i = e._zod.traits.has(`$ZodCheck`) ? [e, ...(r ?? [])] : r?.length ? [...r] : []
               for (let t of i) for (let n of t._zod.onattach) n(e)
@@ -8805,31 +8826,31 @@ if (age &lt; 12) {
               else {
                 let t = (t, n, r) => {
                     if (t.memo) return t
-                    let i = w(t),
+                    let i = T(t),
                       a
                     for (let o of n) {
                       if (o._zod.def.when) {
-                        if (se(t) || !o._zod.def.when(t)) continue
+                        if (ce(t) || !o._zod.def.when(t)) continue
                       } else if (i) continue
                       let n = t.issues.length,
                         s = o._zod.check(t)
-                      if (s instanceof Promise && r?.async === !1) throw new M()
+                      if (s instanceof Promise && r?.async === !1) throw new N()
                       if (a || s instanceof Promise)
                         a = (a ?? Promise.resolve()).then(async () => {
-                          ;(await s, t.issues.length !== n && (ce(t.issues, n, e), (i ||= w(t, n))))
+                          ;(await s, t.issues.length !== n && (le(t.issues, n, e), (i ||= T(t, n))))
                         })
                       else {
                         if (t.issues.length === n) continue
-                        ;(ce(t.issues, n, e), (i ||= w(t, n)))
+                        ;(le(t.issues, n, e), (i ||= T(t, n)))
                       }
                     }
                     return a ? a.then(() => t) : t
                   },
                   n = (n, r, a) => {
-                    if (w(n)) return ((n.aborted = !0), n)
+                    if (T(n)) return ((n.aborted = !0), n)
                     let o = t(r, i, a)
                     if (o instanceof Promise) {
-                      if (a.async === !1) throw new M()
+                      if (a.async === !1) throw new N()
                       return o.then((t) => e._zod.parse(t, a))
                     }
                     return e._zod.parse(o, a)
@@ -8842,7 +8863,7 @@ if (age &lt; 12) {
                   }
                   let o = e._zod.parse(r, a)
                   if (o instanceof Promise) {
-                    if (a.async === !1) throw new M()
+                    if (a.async === !1) throw new N()
                     return o.then((e) => t(e, i, a))
                   }
                   return t(o, i, a)
@@ -8851,36 +8872,36 @@ if (age &lt; 12) {
             },
             {
               get '~standard'() {
-                return me(this, `~standard`, nt(this))
+                return he(this, `~standard`, rt(this))
               },
               set '~standard'(e) {
-                O(this, `~standard`, e)
+                k(this, `~standard`, e)
               },
             },
           ),
-          et = (e, t) =>
-            e.issues.length ? { issues: e.issues.map((e) => D(e, t, P())) } : { value: e.value }
-        async function tt(e, t) {
+          tt = (e, t) =>
+            e.issues.length ? { issues: e.issues.map((e) => O(e, t, F())) } : { value: e.value }
+        async function nt(e, t) {
           let n = { async: !0 }
-          return et(await e._zod.run({ value: t, issues: [] }, n), n)
+          return tt(await e._zod.run({ value: t, issues: [] }, n), n)
         }
-        function nt(e) {
+        function rt(e) {
           return {
             validate: (t) => {
               let n = { async: !1 }
               try {
                 let r = e._zod.run({ value: t, issues: [] }, n)
-                if (!(r instanceof Promise)) return et(r, n)
+                if (!(r instanceof Promise)) return tt(r, n)
               } catch {}
-              return tt(e, t)
+              return nt(e, t)
             },
             vendor: `zod`,
             version: 1,
           }
         }
-        var rt = j(`$ZodString`, (e, t) => {
-            ;(R.init(e, t),
-              (e._zod.pattern = t.pattern ?? Be),
+        var it = M(`$ZodString`, (e, t) => {
+            ;(z.init(e, t),
+              (e._zod.pattern = t.pattern ?? Ve),
               (e._zod.parse = (n, r) => {
                 if (t.coerce)
                   try {
@@ -8898,18 +8919,18 @@ if (age &lt; 12) {
                 )
               }))
           }),
-          z = j(`$ZodStringFormat`, (e, t) => {
-            ;(Xe.init(e, t), rt.init(e, t))
+          B = M(`$ZodStringFormat`, (e, t) => {
+            ;(Ze.init(e, t), it.init(e, t))
           }),
-          it = j(`$ZodUUID`, (e, t) => {
+          at = M(`$ZodUUID`, (e, t) => {
             if (t.version) {
               let e = { v1: 1, v2: 2, v3: 3, v4: 4, v5: 5, v6: 6, v7: 7, v8: 8 }[t.version]
               if (e === void 0) throw Error(`Invalid UUID version: "${t.version}"`)
-              t.pattern ??= Fe(e)
-            } else t.pattern ??= Fe()
-            z.init(e, t)
+              t.pattern ??= Ie(e)
+            } else t.pattern ??= Ie()
+            B.init(e, t)
           })
-        function at(e) {
+        function ot(e) {
           try {
             return typeof URL < `u` && typeof URL.canParse == `function`
               ? URL.canParse(e)
@@ -8918,13 +8939,13 @@ if (age &lt; 12) {
             return !1
           }
         }
-        function ot(e, t) {
-          return !(`normalize` in t) && !(`hostname` in t) && !(`protocol` in t)
-            ? at(e) || 2
-            : st(e, t)
-        }
         function st(e, t) {
-          if (!t.normalize && t.protocol?.source === Ie.source && !/^https?:\/\//i.test(e)) return 1
+          return !(`normalize` in t) && !(`hostname` in t) && !(`protocol` in t)
+            ? ot(e) || 2
+            : ct(e, t)
+        }
+        function ct(e, t) {
+          if (!t.normalize && t.protocol?.source === Le.source && !/^https?:\/\//i.test(e)) return 1
           try {
             if (typeof URL < `u`) {
               let t = URL
@@ -8935,25 +8956,25 @@ if (age &lt; 12) {
             return 2
           }
         }
-        var ct = /[\t\n\r]/g
-        function lt(e) {
-          return e.replace(ct, ``)
-        }
-        function ut(e, t) {
-          return ((t.lastIndex = 0), t.test(e.hostname))
+        var lt = /[\t\n\r]/g
+        function ut(e) {
+          return e.replace(lt, ``)
         }
         function dt(e, t) {
+          return ((t.lastIndex = 0), t.test(e.hostname))
+        }
+        function ft(e, t) {
           return (
             (t.lastIndex = 0),
             t.test(e.protocol.endsWith(`:`) ? e.protocol.slice(0, -1) : e.protocol)
           )
         }
-        var ft = j(`$ZodURL`, (e, t) => {
-            ;(z.init(e, t),
+        var pt = M(`$ZodURL`, (e, t) => {
+            ;(B.init(e, t),
               (e._zod.check = (n) => {
                 try {
                   let r = n.value.trim(),
-                    i = ot(r, t)
+                    i = st(r, t)
                   if (i === 1) {
                     n.issues.push({
                       code: `invalid_format`,
@@ -8976,11 +8997,11 @@ if (age &lt; 12) {
                     return
                   }
                   if (i === !0) {
-                    n.value = lt(r)
+                    n.value = ut(r)
                     return
                   }
                   ;(t.hostname &&
-                    !ut(i, t.hostname) &&
+                    !dt(i, t.hostname) &&
                     n.issues.push({
                       code: `invalid_format`,
                       format: `url`,
@@ -8991,7 +9012,7 @@ if (age &lt; 12) {
                       continue: !t.abort,
                     }),
                     t.protocol &&
-                      !dt(i, t.protocol) &&
+                      !ft(i, t.protocol) &&
                       n.issues.push({
                         code: `invalid_format`,
                         format: `url`,
@@ -9001,7 +9022,7 @@ if (age &lt; 12) {
                         inst: e,
                         continue: !t.abort,
                       }),
-                    (n.value = t.normalize ? i.href : lt(r)))
+                    (n.value = t.normalize ? i.href : ut(r)))
                   return
                 } catch {
                   n.issues.push({
@@ -9014,12 +9035,12 @@ if (age &lt; 12) {
                 }
               }))
           }),
-          pt = j(`$ZodISODateTime`, (e, t) => {
-            ;((t.pattern ??= ze(t)), z.init(e, t))
+          mt = M(`$ZodISODateTime`, (e, t) => {
+            ;((t.pattern ??= Be(t)), B.init(e, t))
           }),
-          mt = j(`$ZodNumber`, (e, t) => {
-            ;(R.init(e, t),
-              (e._zod.pattern = Ve),
+          ht = M(`$ZodNumber`, (e, t) => {
+            ;(z.init(e, t),
+              (e._zod.pattern = He),
               (e._zod.parse = (n, r) => {
                 if (t.coerce)
                   try {
@@ -9047,12 +9068,12 @@ if (age &lt; 12) {
                 )
               }))
           }),
-          ht = j(`$ZodNumberFormat`, (e, t) => {
-            ;(qe.init(e, t), mt.init(e, t))
+          gt = M(`$ZodNumberFormat`, (e, t) => {
+            ;(Je.init(e, t), ht.init(e, t))
           }),
-          gt = j(`$ZodBoolean`, (e, t) => {
-            ;(R.init(e, t),
-              (e._zod.pattern = He),
+          _t = M(`$ZodBoolean`, (e, t) => {
+            ;(z.init(e, t),
+              (e._zod.pattern = Ue),
               (e._zod.parse = (n, r) => {
                 if (t.coerce)
                   try {
@@ -9066,9 +9087,9 @@ if (age &lt; 12) {
                 )
               }))
           }),
-          _t = j(`$ZodNull`, (e, t) => {
-            ;(R.init(e, t),
-              (e._zod.pattern = Ue),
+          vt = M(`$ZodNull`, (e, t) => {
+            ;(z.init(e, t),
+              (e._zod.pattern = We),
               (e._zod.values = new Set([null])),
               (e._zod.parse = (t, n) => {
                 let r = t.value
@@ -9079,19 +9100,19 @@ if (age &lt; 12) {
                 )
               }))
           }),
-          vt = j(`$ZodNever`, (e, t) => {
-            ;(R.init(e, t),
+          yt = M(`$ZodNever`, (e, t) => {
+            ;(z.init(e, t),
               (e._zod.parse = (t, n) => (
                 t.issues.push({ expected: `never`, code: `invalid_type`, input: t.value, inst: e }),
                 t
               )))
           })
-        function yt(e, t, n) {
-          ;(e.issues.length && t.issues.push(...T(n, e.issues)), (t.value[n] = e.value))
+        function bt(e, t, n) {
+          ;(e.issues.length && t.issues.push(...E(n, e.issues)), (t.value[n] = e.value))
         }
-        var bt = j(`$ZodArray`, (e, t) => {
-          R.init(e, t)
-          let n = N.memoizer
+        var xt = M(`$ZodArray`, (e, t) => {
+          z.init(e, t)
+          let n = P.memoizer
           ;(n?.attach(e),
             (e._zod.parse = (r, i) => {
               let a = r.value
@@ -9106,19 +9127,19 @@ if (age &lt; 12) {
               for (let e = 0; e < a.length; e++) {
                 let n = a[e],
                   c = t.element._zod.run({ value: n, issues: [] }, i)
-                if (c instanceof Promise) o.push(c.then((t) => yt(t, r, e)))
-                else if ((yt(c, r, e), s && c.issues.length !== 0 && w(c))) break
+                if (c instanceof Promise) o.push(c.then((t) => bt(t, r, e)))
+                else if ((bt(c, r, e), s && c.issues.length !== 0 && T(c))) break
               }
               return o.length ? Promise.all(o).then(() => r) : r
             }))
         })
-        function B(e, t, n, r, i, a) {
+        function V(e, t, n, r, i, a) {
           let o = n in r,
             s = a === `optional`
           if (o || !s || i !== `optional`) {
             if (e.issues.length) {
               if (i !== void 0 && s && !o) return
-              t.issues.push(...T(n, e.issues))
+              t.issues.push(...E(n, e.issues))
             }
             if (!o && i === void 0) {
               e.issues.length ||
@@ -9135,11 +9156,11 @@ if (age &lt; 12) {
               : (t.value[n] = e.value)
           }
         }
-        var xt = []
-        function St(e) {
+        var St = []
+        function Ct(e) {
           let t = Object.keys(e.shape),
             n = Object.getOwnPropertySymbols(e.shape),
-            r = n.length ? n : xt,
+            r = n.length ? n : St,
             i = r.length ? [...t, ...r] : t
           for (let t of i)
             if (!e.shape?.[t]?._zod?.traits?.has(`$ZodType`))
@@ -9154,7 +9175,7 @@ if (age &lt; 12) {
             optionalKeys: new Set(a),
           }
         }
-        function Ct(e, t, n, r, i, a, o) {
+        function wt(e, t, n, r, i, a, o) {
           let s = [],
             c = i.keySet,
             l = i.catchall._zod,
@@ -9164,7 +9185,7 @@ if (age &lt; 12) {
             p = 0
           for (let i in t) {
             if (o && n.issues.length !== p) {
-              if (w(n, p)) break
+              if (T(n, p)) break
               p = n.issues.length
             }
             if (c.has(i)) continue
@@ -9177,7 +9198,7 @@ if (age &lt; 12) {
               continue
             }
             let a = l.run({ value: t[i], issues: [] }, r)
-            a instanceof Promise ? e.push(a.then((e) => B(e, n, i, t, d, f))) : B(a, n, i, t, d, f)
+            a instanceof Promise ? e.push(a.then((e) => V(e, n, i, t, d, f))) : V(a, n, i, t, d, f)
           }
           return (
             s.length &&
@@ -9191,8 +9212,8 @@ if (age &lt; 12) {
             e.length ? Promise.all(e).then(() => n) : n
           )
         }
-        var wt = j(`$ZodObject`, (e, t) => {
-          R.init(e, t)
+        var Tt = M(`$ZodObject`, (e, t) => {
+          z.init(e, t)
           let n = Object.getOwnPropertyDescriptor(t, `shape`),
             r = n?.get ? n.get.raw : (t.shape ?? {})
           if (r) {
@@ -9202,24 +9223,24 @@ if (age &lt; 12) {
             }
             ;((e.raw = r), Object.defineProperty(t, 'shape', { get: e }))
           }
-          let i = m(() => St(t))
-          A(e, `propValues`, (e) => {
+          let i = g(() => Ct(t))
+          j(e, `propValues`, (e) => {
             let t = e.def.shape,
               n = {}
             for (let e in t) {
               let r = t[e]._zod
               if (r.values) {
-                Object.prototype.hasOwnProperty.call(n, e) || _(n, e, new Set())
+                Object.prototype.hasOwnProperty.call(n, e) || ne(n, e, new Set())
                 for (let t of r.values) n[e].add(t)
                 r.optin !== void 0 && n[e].add(void 0)
               }
             }
             return n
           })
-          let a = y,
+          let a = b,
             o = t.catchall,
             s,
-            c = N.memoizer
+            c = P.memoizer
           ;(c?.attach(e),
             (e._zod.parse = (t, n) => {
               s ??= i.value
@@ -9236,7 +9257,7 @@ if (age &lt; 12) {
                 f = t.issues.length
               for (let e of s.allKeys) {
                 if (d && t.issues.length !== f) {
-                  if (w(t, f)) break
+                  if (T(t, f)) break
                   f = t.issues.length
                 }
                 if (e === `__proto__`) continue
@@ -9245,49 +9266,49 @@ if (age &lt; 12) {
                   o = i._zod.optout,
                   s = i._zod.run({ value: r[e], issues: [] }, n)
                 s instanceof Promise
-                  ? l.push(s.then((n) => B(n, t, e, r, a, o)))
-                  : B(s, t, e, r, a, o)
+                  ? l.push(s.then((n) => V(n, t, e, r, a, o)))
+                  : V(s, t, e, r, a, o)
               }
               return o
-                ? Ct(l, r, t, n, i.value, e, d === !0)
+                ? wt(l, r, t, n, i.value, e, d === !0)
                 : l.length
                   ? Promise.all(l).then(() => t)
                   : t
             }))
         })
-        function Tt(e, t, n, r) {
+        function Et(e, t, n, r) {
           for (let n of e) if (n.issues.length === 0) return ((t.value = n.value), t)
-          let i = e.filter((e) => !w(e))
+          let i = e.filter((e) => !T(e))
           return i.length === 1
             ? ((t.value = i[0].value), i[0])
             : (t.issues.push({
                 code: `invalid_union`,
                 input: t.value,
                 inst: n,
-                errors: e.map((e) => e.issues.map((e) => D(e, r, P()))),
+                errors: e.map((e) => e.issues.map((e) => O(e, r, F()))),
               }),
               t)
         }
-        var Et = j(`$ZodUnion`, (e, t) => {
-          ;(R.init(e, t),
-            A(e, `optin`, (e) =>
+        var Dt = M(`$ZodUnion`, (e, t) => {
+          ;(z.init(e, t),
+            j(e, `optin`, (e) =>
               e.def.options.some((e) => e._zod.optin === `defaulted`)
                 ? `defaulted`
                 : e.def.options.some((e) => e._zod.optin !== void 0)
                   ? `optional`
                   : void 0,
             ),
-            A(e, `optout`, (e) =>
+            j(e, `optout`, (e) =>
               e.def.options.some((e) => e._zod.optout === `optional`) ? `optional` : void 0,
             ),
-            A(e, `values`, (e) => {
+            j(e, `values`, (e) => {
               if (e.def.options.every((e) => e._zod.values))
                 return new Set(e.def.options.flatMap((e) => Array.from(e._zod.values)))
             }),
-            A(e, `pattern`, (e) => {
+            j(e, `pattern`, (e) => {
               if (e.def.options.every((e) => e._zod.pattern)) {
                 let t = e.def.options.map((e) => e._zod.pattern)
-                return RegExp(`^(${t.map((e) => h(e.source)).join(`|`)})$`)
+                return RegExp(`^(${t.map((e) => _(e.source)).join(`|`)})$`)
               }
             }))
           let n = t.options.length === 1 ? t.options[0]._zod.run : null
@@ -9303,10 +9324,10 @@ if (age &lt; 12) {
                 o.push(t)
               }
             }
-            return a ? Promise.all(o).then((t) => Tt(t, r, e, i)) : Tt(o, r, e, i)
+            return a ? Promise.all(o).then((t) => Et(t, r, e, i)) : Et(o, r, e, i)
           }
         })
-        function Dt(e) {
+        function Ot(e) {
           let t = new Map()
           for (let n of e.options) {
             let r = n._zod.propValues?.[e.discriminator]
@@ -9320,10 +9341,10 @@ if (age &lt; 12) {
           }
           return t
         }
-        var Ot = j(`$ZodDiscriminatedUnion`, (e, t) => {
-            ;((t.inclusive = !1), Et.init(e, t))
+        var kt = M(`$ZodDiscriminatedUnion`, (e, t) => {
+            ;((t.inclusive = !1), Dt.init(e, t))
             let n = e._zod.parse
-            ;(A(e, `propValues`, (e) => {
+            ;(j(e, `propValues`, (e) => {
               let t = {},
                 n = 0
               for (let r of e.def.options) {
@@ -9334,21 +9355,21 @@ if (age &lt; 12) {
                   )
                 i[e.def.discriminator]?.has(void 0) && n++
                 for (let [e, n] of Object.entries(i)) {
-                  Object.prototype.hasOwnProperty.call(t, e) || _(t, e, new Set())
+                  Object.prototype.hasOwnProperty.call(t, e) || ne(t, e, new Set())
                   for (let r of n) t[e].add(r)
                 }
               }
               return (!e.def.unionFallback && n > 1 && t[e.def.discriminator]?.delete(void 0), t)
             }),
               t.options.forEach((e, n) => {
-                let r = v(e._zod.def)
+                let r = re(e._zod.def)
                 if (r && !Object.prototype.hasOwnProperty.call(r, t.discriminator))
                   throw Error(`Invalid discriminated union option at index "${n}"`)
               }))
-            let r = m(() => Dt(t))
+            let r = g(() => Ot(t))
             e._zod.parse = (i, a) => {
               let o = i.value
-              if (!y(o))
+              if (!b(o))
                 return (
                   i.issues.push({ code: `invalid_type`, expected: `object`, input: o, inst: e }),
                   i
@@ -9372,13 +9393,13 @@ if (age &lt; 12) {
                     i)
             }
           }),
-          kt = j(`$ZodRecord`, (e, t) => {
-            R.init(e, t)
-            let n = N.memoizer
+          At = M(`$ZodRecord`, (e, t) => {
+            z.init(e, t)
+            let n = P.memoizer
             ;(n?.attach(e),
               (e._zod.parse = (r, i) => {
                 let a = r.value
-                if (!ie(a))
+                if (!ae(a))
                   return (
                     r.issues.push({ expected: `record`, code: `invalid_type`, input: a, inst: e }),
                     r
@@ -9399,7 +9420,7 @@ if (age &lt; 12) {
                         r.issues.push({
                           code: `invalid_key`,
                           origin: `record`,
-                          issues: s.issues.map((e) => D(e, i, P())),
+                          issues: s.issues.map((e) => O(e, i, F())),
                           input: n,
                           path: [n],
                           inst: e,
@@ -9412,11 +9433,11 @@ if (age &lt; 12) {
                       u instanceof Promise
                         ? o.push(
                             u.then((e) => {
-                              ;(e.issues.length && r.issues.push(...T(n, e.issues)),
+                              ;(e.issues.length && r.issues.push(...E(n, e.issues)),
                                 (r.value[l] = e.value))
                             }),
                           )
-                        : (u.issues.length && r.issues.push(...T(n, u.issues)),
+                        : (u.issues.length && r.issues.push(...E(n, u.issues)),
                           (r.value[l] = u.value))
                     }
                   let l
@@ -9445,7 +9466,7 @@ if (age &lt; 12) {
                     let l = t.keyType._zod.run({ value: n, issues: [] }, i)
                     if (l instanceof Promise)
                       throw Error(`Async schemas not supported in object keys currently`)
-                    if (typeof n == `string` && Ve.test(n) && l.issues.length) {
+                    if (typeof n == `string` && He.test(n) && l.issues.length) {
                       let e = t.keyType._zod.run({ value: Number(n), issues: [] }, i)
                       if (e instanceof Promise)
                         throw Error(`Async schemas not supported in object keys currently`)
@@ -9459,7 +9480,7 @@ if (age &lt; 12) {
                           : r.issues.push({
                               code: `invalid_key`,
                               origin: `record`,
-                              issues: l.issues.map((e) => D(e, i, P())),
+                              issues: l.issues.map((e) => O(e, i, F())),
                               input: n,
                               path: [n],
                               inst: e,
@@ -9472,11 +9493,11 @@ if (age &lt; 12) {
                     d instanceof Promise
                       ? o.push(
                           d.then((e) => {
-                            ;(e.issues.length && r.issues.push(...T(n, e.issues)),
+                            ;(e.issues.length && r.issues.push(...E(n, e.issues)),
                               (r.value[u] = e.value))
                           }),
                         )
-                      : (d.issues.length && r.issues.push(...T(n, d.issues)),
+                      : (d.issues.length && r.issues.push(...E(n, d.issues)),
                         (r.value[u] = d.value))
                   }
                   c &&
@@ -9492,15 +9513,15 @@ if (age &lt; 12) {
                 return o.length ? Promise.all(o).then(() => r) : r
               }))
           }),
-          At = j(`$ZodEnum`, (e, t) => {
-            R.init(e, t)
-            let n = f(t.entries),
+          jt = M(`$ZodEnum`, (e, t) => {
+            z.init(e, t)
+            let n = m(t.entries),
               r = new Set(n)
             ;((e._zod.values = r),
-              A(e, `pattern`, (e) => {
-                let t = f(e.def.entries).filter((e) => ae.has(typeof e))
+              j(e, `pattern`, (e) => {
+                let t = m(e.def.entries).filter((e) => x.has(typeof e))
                 return RegExp(
-                  t.length ? `^(${t.map((e) => b(e.toString())).join(`|`)})$` : `^[^\\s\\S]$`,
+                  t.length ? `^(${t.map((e) => S(e.toString())).join(`|`)})$` : `^[^\\s\\S]$`,
                 )
               }),
               (e._zod.parse = (t, i) => {
@@ -9512,15 +9533,15 @@ if (age &lt; 12) {
                 )
               }))
           }),
-          jt = j(`$ZodLiteral`, (e, t) => {
-            R.init(e, t)
+          Mt = M(`$ZodLiteral`, (e, t) => {
+            z.init(e, t)
             let n = new Set(t.values)
             ;((e._zod.values = n),
-              A(e, `pattern`, (e) => {
+              j(e, `pattern`, (e) => {
                 let t = e.def.values
                 return RegExp(
                   t.length
-                    ? `^(${t.map((e) => (typeof e == `string` ? b(e) : e ? b(e.toString()) : String(e))).join(`|`)})$`
+                    ? `^(${t.map((e) => (typeof e == `string` ? S(e) : e ? S(e.toString()) : String(e))).join(`|`)})$`
                     : `^[^\\s\\S]$`,
                 )
               }),
@@ -9533,71 +9554,71 @@ if (age &lt; 12) {
                 )
               }))
           })
-        function Mt(e, t) {
+        function Nt(e, t) {
           return ((e.value = t.issues.length ? void 0 : t.value), e)
         }
-        var Nt = j(`$ZodOptional`, (e, t) => {
-            ;(R.init(e, t),
-              A(e, `optin`, (e) =>
+        var Pt = M(`$ZodOptional`, (e, t) => {
+            ;(z.init(e, t),
+              j(e, `optin`, (e) =>
                 e.def.innerType._zod.optin === `defaulted` ? `defaulted` : `optional`,
               ),
               (e._zod.optout = `optional`),
-              A(e, `values`, (e) => {
+              j(e, `values`, (e) => {
                 let t = e.def.innerType._zod.values
                 return t ? new Set([...t, void 0]) : void 0
               }),
-              A(e, `pattern`, (e) => {
+              j(e, `pattern`, (e) => {
                 let t = e.def.innerType._zod.pattern
-                return t ? RegExp(`^(${h(t.source)})?$`) : void 0
+                return t ? RegExp(`^(${_(t.source)})?$`) : void 0
               }),
               (e._zod.parse = (e, n) => {
                 if (e.value === void 0) {
                   if (t.innerType._zod.optin !== `defaulted`) return e
                   let r = t.innerType._zod.run({ value: e.value, issues: [] }, n)
-                  return r instanceof Promise ? r.then((t) => Mt(e, t)) : Mt(e, r)
+                  return r instanceof Promise ? r.then((t) => Nt(e, t)) : Nt(e, r)
                 }
                 return t.innerType._zod.run(e, n)
               }))
           }),
-          Pt = j(`$ZodNullable`, (e, t) => {
-            ;(R.init(e, t),
-              A(e, `optin`, (e) => e.def.innerType._zod.optin),
-              A(e, `optout`, (e) => e.def.innerType._zod.optout),
-              A(e, `pattern`, (e) => {
+          Ft = M(`$ZodNullable`, (e, t) => {
+            ;(z.init(e, t),
+              j(e, `optin`, (e) => e.def.innerType._zod.optin),
+              j(e, `optout`, (e) => e.def.innerType._zod.optout),
+              j(e, `pattern`, (e) => {
                 let t = e.def.innerType._zod.pattern
-                return t ? RegExp(`^(${h(t.source)}|null)$`) : void 0
+                return t ? RegExp(`^(${_(t.source)}|null)$`) : void 0
               }),
-              A(e, `values`, (e) =>
+              j(e, `values`, (e) =>
                 e.def.innerType._zod.values
                   ? new Set([...e.def.innerType._zod.values, null])
                   : void 0,
               ),
               (e._zod.parse = (e, n) => (e.value === null ? e : t.innerType._zod.run(e, n))))
           }),
-          Ft = j(`$ZodLazy`, (e, t) => {
-            ;(R.init(e, t),
-              ne(e._zod, `innerType`, () => {
+          It = M(`$ZodLazy`, (e, t) => {
+            ;(z.init(e, t),
+              y(e._zod, `innerType`, () => {
                 let e = t
                 return ((e._cachedInner ||= t.getter()), e._cachedInner)
               }),
-              A(e, `pattern`, (e) => e.innerType?._zod?.pattern),
-              A(e, `propValues`, (e) => e.innerType?._zod?.propValues),
-              A(e, `optin`, (e) => e.innerType?._zod?.optin ?? void 0),
-              A(e, `optout`, (e) => e.innerType?._zod?.optout ?? void 0),
+              j(e, `pattern`, (e) => e.innerType?._zod?.pattern),
+              j(e, `propValues`, (e) => e.innerType?._zod?.propValues),
+              j(e, `optin`, (e) => e.innerType?._zod?.optin ?? void 0),
+              j(e, `optout`, (e) => e.innerType?._zod?.optout ?? void 0),
               (e._zod.parse = (t, n) => e._zod.innerType._zod.run(t, n)))
           }),
-          It = j(`$ZodCustom`, (e, t) => {
-            ;(I.init(e, t),
-              R.init(e, t),
+          Lt = M(`$ZodCustom`, (e, t) => {
+            ;(L.init(e, t),
+              z.init(e, t),
               (e._zod.parse = (e, t) => e),
               (e._zod.check = (n) => {
                 let r = n.value,
                   i = t.fn(r)
-                if (i instanceof Promise) return i.then((t) => Lt(t, n, r, e))
-                Lt(i, n, r, e)
+                if (i instanceof Promise) return i.then((t) => Rt(t, n, r, e))
+                Rt(i, n, r, e)
               }))
           })
-        function Lt(e, t, n, r) {
+        function Rt(e, t, n, r) {
           if (!e) {
             let e = {
               code: `custom`,
@@ -9606,34 +9627,34 @@ if (age &lt; 12) {
               path: [...(r._zod.def.path ?? [])],
               continue: !r._zod.def.abort,
             }
-            ;(r._zod.def.params && (e.params = r._zod.def.params), t.issues.push(fe(e)))
+            ;(r._zod.def.params && (e.params = r._zod.def.params), t.issues.push(pe(e)))
           }
         }
-        function Rt(e) {
+        function zt(e) {
           return ((e.checks &&= [...e.checks]), e)
         }
-        function zt(e, t) {
-          return new e(Rt({ type: `string`, ...S(t) }))
-        }
         function Bt(e, t) {
+          return new e(zt({ type: `string`, ...w(t) }))
+        }
+        function Vt(e, t) {
           return new e({
             type: `string`,
             format: `uuid`,
             check: `string_format`,
             abort: !1,
-            ...S(t),
+            ...w(t),
           })
         }
-        function Vt(e, t) {
+        function Ht(e, t) {
           return new e({
             type: `string`,
             format: `url`,
             check: `string_format`,
             abort: !1,
-            ...S(t),
+            ...w(t),
           })
         }
-        function Ht(e, t) {
+        function Ut(e, t) {
           return new e({
             type: `string`,
             format: `datetime`,
@@ -9641,78 +9662,78 @@ if (age &lt; 12) {
             offset: !1,
             local: !1,
             precision: null,
-            ...S(t),
+            ...w(t),
           })
         }
-        function Ut(e, t) {
-          return new e(Rt({ type: `number`, checks: [], ...S(t) }))
-        }
         function Wt(e, t) {
+          return new e(zt({ type: `number`, checks: [], ...w(t) }))
+        }
+        function Gt(e, t) {
           return new e({
             type: `number`,
             check: `number_format`,
             abort: !1,
             format: `safeint`,
-            ...S(t),
+            ...w(t),
           })
         }
-        function Gt(e, t) {
-          return new e({ type: `boolean`, ...S(t) })
-        }
         function Kt(e, t) {
-          return new e({ type: `null`, ...S(t) })
+          return new e({ type: `boolean`, ...w(t) })
         }
         function qt(e, t) {
-          return new e({ type: `never`, ...S(t) })
+          return new e({ type: `null`, ...w(t) })
         }
         function Jt(e, t) {
-          return new Ge({ check: `less_than`, ...S(t), value: e, inclusive: !0 })
-        }
-        function V(e, t) {
-          return new Ke({ check: `greater_than`, ...S(t), value: e, inclusive: !0 })
+          return new e({ type: `never`, ...w(t) })
         }
         function Yt(e, t) {
-          return new Je({ check: `max_length`, ...S(t), maximum: e })
+          return new Ke({ check: `less_than`, ...w(t), value: e, inclusive: !0 })
+        }
+        function H(e, t) {
+          return new qe({ check: `greater_than`, ...w(t), value: e, inclusive: !0 })
         }
         function Xt(e, t) {
-          return new Ye({ check: `min_length`, ...S(t), minimum: e })
+          return new Ye({ check: `max_length`, ...w(t), maximum: e })
         }
         function Zt(e, t) {
-          return new Ze({ check: `string_format`, format: `regex`, ...S(t), pattern: e })
+          return new Xe({ check: `min_length`, ...w(t), minimum: e })
         }
-        function Qt(e) {
-          return new Qe({ check: `overwrite`, tx: e })
+        function Qt(e, t) {
+          return new Qe({ check: `string_format`, format: `regex`, ...w(t), pattern: e })
         }
-        function $t() {
-          return Qt((e) => e.trim())
+        function $t(e) {
+          return new $e({ check: `overwrite`, tx: e })
         }
-        function en(e, t, n) {
-          return new e({ type: `custom`, check: `custom`, fn: t, ...S(n) })
+        function en() {
+          return $t((e) => e.trim())
         }
-        var H = j(
+        function tn(e, t, n) {
+          return new e({ type: `custom`, check: `custom`, fn: t, ...w(n) })
+        }
+        var U = M(
             `ZodMiniType`,
             (e, t) => {
               if (!e._zod) throw Error(`Uninitialized schema in ZodMiniType.`)
-              ;(R.init(e, t), (e.def = t), (e.type = t.type))
+              ;(z.init(e, t), (e.def = t), (e.type = t.type))
             },
             {
               get with() {
                 return this.check
               },
               set with(e) {
-                O(this, `with`, e)
+                k(this, `with`, e)
               },
               parse(e, t) {
-                return Ae(this, e, t, { callee: this.parse })
+                return je(this, e, t, { callee: this.parse })
               },
               parseAsync(e, t) {
-                return je(this, e, t, { callee: this.parseAsync })
+                return Me(this, e, t, { callee: this.parseAsync })
               },
               safeParse(e, t) {
-                return Me(this, e, t)
+                return Ne(this, e, t)
               },
               safeParseAsync(e, t) {
-                return Pe(this, e, t)
+                return Fe(this, e, t)
               },
               check(...e) {
                 let t = this.def
@@ -9732,7 +9753,7 @@ if (age &lt; 12) {
                 )
               },
               clone(e, t) {
-                return x(this, e, t)
+                return C(this, e, t)
               },
               brand() {
                 return this
@@ -9745,149 +9766,149 @@ if (age &lt; 12) {
               },
             },
           ),
-          tn = j(`ZodMiniString`, (e, t) => {
-            ;(rt.init(e, t), H.init(e, t))
+          nn = M(`ZodMiniString`, (e, t) => {
+            ;(it.init(e, t), U.init(e, t))
           })
-        function U(e) {
-          return zt(tn, e)
-        }
-        var nn = j(`ZodMiniStringFormat`, (e, t) => {
-            ;(z.init(e, t), tn.init(e, t))
-          }),
-          rn = j(`ZodMiniUUID`, (e, t) => {
-            ;(it.init(e, t), nn.init(e, t))
-          })
-        function an(e) {
-          return Bt(rn, e)
-        }
-        var on = j(`ZodMiniURL`, (e, t) => {
-          ;(ft.init(e, t), nn.init(e, t))
-        })
-        function sn(e) {
-          return Vt(on, e)
-        }
-        var cn = j(`ZodMiniNumber`, (e, t) => {
-          ;(mt.init(e, t), H.init(e, t))
-        })
-        function ln(e) {
-          return Ut(cn, e)
-        }
-        var un = j(`ZodMiniNumberFormat`, (e, t) => {
-          ;(ht.init(e, t), cn.init(e, t))
-        })
-        function dn(e) {
-          return Wt(un, e)
-        }
-        var fn = j(`ZodMiniBoolean`, (e, t) => {
-          ;(gt.init(e, t), H.init(e, t))
-        })
         function W(e) {
-          return Gt(fn, e)
+          return Bt(nn, e)
         }
-        var pn = j(`ZodMiniNull`, (e, t) => {
-          ;(_t.init(e, t), H.init(e, t))
+        var rn = M(`ZodMiniStringFormat`, (e, t) => {
+            ;(B.init(e, t), nn.init(e, t))
+          }),
+          an = M(`ZodMiniUUID`, (e, t) => {
+            ;(at.init(e, t), rn.init(e, t))
+          })
+        function on(e) {
+          return Vt(an, e)
+        }
+        var sn = M(`ZodMiniURL`, (e, t) => {
+          ;(pt.init(e, t), rn.init(e, t))
         })
-        function mn(e) {
+        function cn(e) {
+          return Ht(sn, e)
+        }
+        var ln = M(`ZodMiniNumber`, (e, t) => {
+          ;(ht.init(e, t), U.init(e, t))
+        })
+        function un(e) {
+          return Wt(ln, e)
+        }
+        var dn = M(`ZodMiniNumberFormat`, (e, t) => {
+          ;(gt.init(e, t), ln.init(e, t))
+        })
+        function fn(e) {
+          return Gt(dn, e)
+        }
+        var pn = M(`ZodMiniBoolean`, (e, t) => {
+          ;(_t.init(e, t), U.init(e, t))
+        })
+        function G(e) {
           return Kt(pn, e)
         }
-        var hn = j(`ZodMiniNever`, (e, t) => {
-          ;(vt.init(e, t), H.init(e, t))
+        var mn = M(`ZodMiniNull`, (e, t) => {
+          ;(vt.init(e, t), U.init(e, t))
         })
-        function gn(e) {
-          return qt(hn, e)
+        function hn(e) {
+          return qt(mn, e)
         }
-        var _n = j(`ZodMiniArray`, (e, t) => {
-          ;(bt.init(e, t), H.init(e, t))
+        var gn = M(`ZodMiniNever`, (e, t) => {
+          ;(yt.init(e, t), U.init(e, t))
         })
-        function G(e, t) {
-          return new _n({ type: `array`, element: e, ...S(t) })
+        function _n(e) {
+          return Jt(gn, e)
         }
-        var vn = j(`ZodMiniObject`, (e, t) => {
-          ;(wt.init(e, t), H.init(e, t), ye(e, `shape`, (e) => e._zod.def.shape, !1))
+        var vn = M(`ZodMiniArray`, (e, t) => {
+          ;(xt.init(e, t), U.init(e, t))
         })
         function K(e, t) {
-          return new vn({ type: `object`, shape: e, catchall: gn(), ...S(t) })
+          return new vn({ type: `array`, element: e, ...w(t) })
         }
-        var yn = j(`ZodMiniUnion`, (e, t) => {
-          ;(Et.init(e, t), H.init(e, t))
-        })
-        function bn(e, t) {
-          return new yn({ type: `union`, options: e, ...S(t) })
-        }
-        var xn = j(`ZodMiniDiscriminatedUnion`, (e, t) => {
-          ;(Ot.init(e, t), H.init(e, t))
-        })
-        function Sn(e, t, n) {
-          return new xn({ type: `union`, options: t, discriminator: e, ...S(n) })
-        }
-        var Cn = j(`ZodMiniRecord`, (e, t) => {
-          ;(kt.init(e, t), H.init(e, t))
-        })
-        function wn(e, t, n) {
-          return !t || !t._zod
-            ? new Cn({ type: `record`, keyType: U(), valueType: e, ...S(t) })
-            : new Cn({ type: `record`, keyType: e, valueType: t, ...S(n) })
-        }
-        var Tn = j(`ZodMiniEnum`, (e, t) => {
-          ;(At.init(e, t), H.init(e, t), (e.options = [...e._zod.values]))
+        var yn = M(`ZodMiniObject`, (e, t) => {
+          ;(Tt.init(e, t), U.init(e, t), be(e, `shape`, (e) => e._zod.def.shape, !1))
         })
         function q(e, t) {
-          return new Tn({
-            type: `enum`,
-            entries: Array.isArray(e) ? Object.fromEntries(e.map((e) => [e, e])) : e,
-            ...S(t),
-          })
+          return new yn({ type: `object`, shape: e, catchall: _n(), ...w(t) })
         }
-        var En = j(`ZodMiniLiteral`, (e, t) => {
-          ;(jt.init(e, t), H.init(e, t))
+        var bn = M(`ZodMiniUnion`, (e, t) => {
+          ;(Dt.init(e, t), U.init(e, t))
+        })
+        function xn(e, t) {
+          return new bn({ type: `union`, options: e, ...w(t) })
+        }
+        var Sn = M(`ZodMiniDiscriminatedUnion`, (e, t) => {
+          ;(kt.init(e, t), U.init(e, t))
+        })
+        function Cn(e, t, n) {
+          return new Sn({ type: `union`, options: t, discriminator: e, ...w(n) })
+        }
+        var wn = M(`ZodMiniRecord`, (e, t) => {
+          ;(At.init(e, t), U.init(e, t))
+        })
+        function Tn(e, t, n) {
+          return !t || !t._zod
+            ? new wn({ type: `record`, keyType: W(), valueType: e, ...w(t) })
+            : new wn({ type: `record`, keyType: e, valueType: t, ...w(n) })
+        }
+        var En = M(`ZodMiniEnum`, (e, t) => {
+          ;(jt.init(e, t), U.init(e, t), (e.options = [...e._zod.values]))
         })
         function J(e, t) {
-          return new En({ type: `literal`, values: Array.isArray(e) ? e : [e], ...S(t) })
+          return new En({
+            type: `enum`,
+            entries: Array.isArray(e) ? Object.fromEntries(e.map((e) => [e, e])) : e,
+            ...w(t),
+          })
         }
-        var Dn = j(`ZodMiniOptional`, (e, t) => {
-          ;(Nt.init(e, t), H.init(e, t))
+        var Dn = M(`ZodMiniLiteral`, (e, t) => {
+          ;(Mt.init(e, t), U.init(e, t))
         })
-        function Y(e) {
-          return new Dn({ type: `optional`, innerType: e })
+        function Y(e, t) {
+          return new Dn({ type: `literal`, values: Array.isArray(e) ? e : [e], ...w(t) })
         }
-        var On = j(`ZodMiniNullable`, (e, t) => {
-          ;(Pt.init(e, t), H.init(e, t))
+        var On = M(`ZodMiniOptional`, (e, t) => {
+          ;(Pt.init(e, t), U.init(e, t))
         })
-        function kn(e) {
-          return new On({ type: `nullable`, innerType: e })
+        function X(e) {
+          return new On({ type: `optional`, innerType: e })
         }
-        var An = j(`ZodMiniLazy`, (e, t) => {
-          ;(Ft.init(e, t), H.init(e, t))
+        var kn = M(`ZodMiniNullable`, (e, t) => {
+          ;(Ft.init(e, t), U.init(e, t))
         })
-        function jn(e) {
-          return new An({ type: `lazy`, getter: e })
+        function An(e) {
+          return new kn({ type: `nullable`, innerType: e })
         }
-        var Mn = j(`ZodMiniCustom`, (e, t) => {
-          ;(It.init(e, t), H.init(e, t))
+        var jn = M(`ZodMiniLazy`, (e, t) => {
+          ;(It.init(e, t), U.init(e, t))
         })
-        function Nn(e, t = {}) {
-          return en(Mn, e, t)
+        function Mn(e) {
+          return new jn({ type: `lazy`, getter: e })
         }
-        function Pn() {
-          let e = jn(() => bn([U(), ln(), W(), mn(), G(e), wn(U(), e)]))
+        var Nn = M(`ZodMiniCustom`, (e, t) => {
+          ;(Lt.init(e, t), U.init(e, t))
+        })
+        function Pn(e, t = {}) {
+          return tn(Nn, e, t)
+        }
+        function Fn() {
+          let e = Mn(() => xn([W(), un(), G(), hn(), K(e), Tn(W(), e)]))
           return e
         }
-        var Fn = j(`ZodMiniISODateTime`, (e, t) => {
-          ;(pt.init(e, t), nn.init(e, t))
+        var In = M(`ZodMiniISODateTime`, (e, t) => {
+          ;(mt.init(e, t), rn.init(e, t))
         })
-        function In(e) {
-          return Ht(Fn, e)
+        function Ln(e) {
+          return Ut(In, e)
         }
-        var Ln = 2e3,
-          Rn = 2e5,
+        var Rn = 2e3,
           zn = 2e5,
-          X = () => U().check($t(), Xt(1)),
-          Bn = () => U().check(Zt(/^[A-Z]{1,3}\d{2,3}$/)),
-          Vn = () => U().check($t(), Xt(1)),
-          Hn = () => U().check(Yt(Ln)),
-          Z = () => an({ version: `v7` }),
-          Q = (e) => dn().check(V(e)),
-          Un = q([
+          Bn = 2e5,
+          Z = () => W().check(en(), Zt(1)),
+          Vn = () => W().check(Qt(/^[A-Z]{1,3}\d{2,3}$/)),
+          Hn = () => W().check(en(), Zt(1)),
+          Un = () => W().check(Xt(Rn)),
+          Wn = () => on({ version: `v7` }),
+          Q = (e) => fn().check(H(e)),
+          Gn = J([
             `non_commence`,
             `en_cours`,
             `vu`,
@@ -9896,23 +9917,24 @@ if (age &lt; 12) {
             `maitrise`,
             `a_reprendre`,
           ]),
-          Wn = q([`solide`, `partiel`, `fragile`, `pas_encore`]),
-          Gn = q([`sur`, `hesitant`, `hasard`]),
-          Kn = q([`support`, `deduit`, `ajoute`]),
-          qn = q([`sur`, `non_verifie`]),
-          Jn = q([`relance`, `avec_support`, `recopiee`, `non_verifiee`]),
-          Yn = J([0, 1, 2, 3, 4]),
-          Xn = q([`origine`, `variante`]),
-          Zn = () => U().check(Zt(/^\d{4}-\d{2}-\d{2}$/)),
-          Qn = K({
-            aujourdhui: Zn(),
-            resultats: G(
-              K({ id: X(), item: X(), reussi: W(), aide: Yn, brute: W(), jour: Zn(), cas: kn(Xn) }),
+          Kn = J([`solide`, `partiel`, `fragile`, `pas_encore`]),
+          qn = J([`sur`, `hesitant`, `hasard`]),
+          Jn = J([`support`, `deduit`, `ajoute`]),
+          Yn = J([`sur`, `non_verifie`]),
+          Xn = J([`relance`, `avec_support`, `recopiee`, `non_verifiee`]),
+          Zn = Y([0, 1, 2, 3, 4]),
+          Qn = J([`origine`, `variante`]),
+          $n = () => W().check(Qt(/^\d{4}-\d{2}-\d{2}$/)),
+          er = q({
+            aujourdhui: $n(),
+            resultats: K(
+              q({ id: Z(), item: Z(), reussi: G(), aide: Zn, brute: G(), jour: $n(), cas: An(Qn) }),
             ),
-            expliques: G(X()),
+            expliques: K(Z()),
+            atelier: K(q({ id: Z(), reussi: G(), aide: Zn, jour: $n() })),
           }),
-          $n = K({
-            code: q([
+          tr = q({
+            code: J([
               `restitution_incomplete`,
               `pratique_aide`,
               `atelier_manquant`,
@@ -9924,21 +9946,21 @@ if (age &lt; 12) {
               `reprise_a_faire`,
               `aisance_non_atteinte`,
             ]),
-            questions: Y(G(X())),
-            exercices: Y(G(X())),
-            erreurs: Y(G(X())),
-            apres: Y(U()),
+            questions: X(K(Z())),
+            exercices: X(K(Z())),
+            erreurs: X(K(Z())),
+            apres: X(W()),
           }),
-          er = wn(U(), Pn()).check(
-            Nn((e) => new TextEncoder().encode(JSON.stringify(e)).length <= Rn, {
+          nr = Tn(W(), Fn()).check(
+            Pn((e) => new TextEncoder().encode(JSON.stringify(e)).length <= zn, {
               error: `L’état de la page ne doit pas dépasser 200 ko.`,
             }),
           ),
-          $ = { id: Z(), bloc: Bn(), version: Q(1), t: In({ offset: !0 }) },
-          tr = q([`restitution`, `explication`]),
-          nr = sn({ protocol: /^https$/ }).check(
-            Yt(2e3),
-            Nn(
+          $ = { id: Wn(), bloc: Vn(), version: Q(1), t: Ln({ offset: !0 }) },
+          rr = J([`restitution`, `explication`]),
+          ir = cn({ protocol: /^https$/ }).check(
+            Xt(2e3),
+            Pn(
               (e) => {
                 if (!URL.canParse(e)) return !0
                 let { username: t, password: n } = new URL(e)
@@ -9947,87 +9969,87 @@ if (age &lt; 12) {
               { error: `Une adresse ne porte ni nom ni mot de passe.` },
             ),
           ),
-          rr = Sn(`type`, [
-            K({ ...$, type: J(`page.prete`), schema: J(2) }),
-            K({ ...$, type: J(`etape.vue`), etape: X() }),
-            K({ ...$, type: J(`pretest.reponse`), question: X(), reponse: Hn() }),
-            K({
+          ar = Cn(`type`, [
+            q({ ...$, type: Y(`page.prete`), schema: Y(2) }),
+            q({ ...$, type: Y(`etape.vue`), etape: Z() }),
+            q({ ...$, type: Y(`pretest.reponse`), question: Z(), reponse: Un() }),
+            q({
               ...$,
-              type: J(`pratique.resultat`),
-              exercice: X(),
-              item: X(),
-              reussi: W(),
-              aide: Yn,
+              type: Y(`pratique.resultat`),
+              exercice: Z(),
+              item: Z(),
+              reussi: G(),
+              aide: Zn,
               essais: Q(1),
-              cas: Y(Xn),
+              cas: X(Qn),
             }),
-            K({
+            q({
               ...$,
-              type: J(`atelier.resultat`),
-              reussi: W(),
+              type: Y(`atelier.resultat`),
+              reussi: G(),
               predictions_justes: Q(0),
-              aide: Yn,
+              aide: Zn,
             }),
-            K({ ...$, type: J(`aisance.resultat`), reussi: W(), duree_s: ln().check(V(0)) }),
-            K({
+            q({ ...$, type: Y(`aisance.resultat`), reussi: G(), duree_s: un().check(H(0)) }),
+            q({
               ...$,
-              type: J(`restitution.demande`),
-              serie: tr,
-              question: X(),
-              reponse: U().check(Xt(1), Yt(Ln)),
-              confiance: Gn,
-              relance: Hn(),
-              support: K({ colle: W(), retour_cours: W() }),
-              libre: Y(K({ question: Vn(), attendu: Vn(), apres_solution: Y(W()) })),
+              type: Y(`restitution.demande`),
+              serie: rr,
+              question: Z(),
+              reponse: W().check(Zt(1), Xt(Rn)),
+              confiance: qn,
+              relance: Un(),
+              support: q({ colle: G(), retour_cours: G() }),
+              libre: X(q({ question: Hn(), attendu: Hn(), apres_solution: X(G()) })),
             }),
-            K({ ...$, type: J(`bilan.erreurs`), ids: G(X()) }),
-            K({ ...$, type: J(`etat.sauver`), etat: er }),
-            K({ ...$, type: J(`lien.ouvrir`), url: nr }),
-            K({ ...$, type: J(`page.taille`), hauteur: dn().check(V(1), Jt(zn)) }),
-            K({ ...$, type: J(`page.haut`) }),
-            K({ ...$, type: J(`correction.accord`), correction: Z(), accord: W() }),
+            q({ ...$, type: Y(`bilan.erreurs`), ids: K(Z()) }),
+            q({ ...$, type: Y(`etat.sauver`), etat: nr }),
+            q({ ...$, type: Y(`lien.ouvrir`), url: ir }),
+            q({ ...$, type: Y(`page.taille`), hauteur: fn().check(H(1), Yt(Bn)) }),
+            q({ ...$, type: Y(`page.haut`) }),
+            q({ ...$, type: Y(`correction.accord`), correction: Wn(), accord: G() }),
           ]),
-          ir = {
-            id: Z(),
-            echantillon: W(),
-            question: X(),
+          or = {
+            id: Wn(),
+            echantillon: G(),
+            question: Z(),
             tour: Q(1),
-            message: U(),
-            niveau: Wn,
-            erreurs_critiques: G(X()),
-            source: Kn,
-            ref: U(),
-            certitude: qn,
-            compte: W(),
-            raison_non_compte: Y(Jn),
+            message: W(),
+            niveau: Kn,
+            erreurs_critiques: K(Z()),
+            source: Jn,
+            ref: W(),
+            certitude: Yn,
+            compte: G(),
+            raison_non_compte: X(Xn),
           },
-          ar = K(ir),
-          or = Sn(`type`, [
-            K({
-              type: J(`etat.init`),
-              bloc: Bn(),
+          sr = q(or),
+          cr = Cn(`type`, [
+            q({
+              type: Y(`etat.init`),
+              bloc: Vn(),
               version: Q(1),
-              etat: kn(er),
-              statut: Un,
-              serie_ouverte: K({ restitution: W() }),
-              aisance: G(K({ le: In(), duree_s: ln().check(V(0)) })),
-              pratique: Qn,
-              theme: Y(q([`clair`, `sombre`, `systeme`])),
+              etat: An(nr),
+              statut: Gn,
+              serie_ouverte: q({ restitution: G() }),
+              aisance: K(q({ le: Ln(), duree_s: un().check(H(0)) })),
+              pratique: er,
+              theme: X(J([`clair`, `sombre`, `systeme`])),
             }),
-            K({ type: J(`restitution.correction`), ...ir }),
-            K({ type: J(`statut.maj`), statut: Un, manque: G($n), pratique: Qn }),
-            K({
-              type: J(`erreur`),
-              code: q([`correction_indisponible`, `plafond_atteint`, `message_refuse`]),
-              detail: U(),
-              message_id: Y(Z()),
+            q({ type: Y(`restitution.correction`), ...or }),
+            q({ type: Y(`statut.maj`), statut: Gn, manque: K(tr), pratique: er }),
+            q({
+              type: Y(`erreur`),
+              code: J([`correction_indisponible`, `plafond_atteint`, `message_refuse`]),
+              detail: W(),
+              message_id: X(Wn()),
             }),
-            K({ type: J(`etape.aller`), etape: X(), retour_cours: Y(J(!0)) }),
-            K({ type: J(`erreur.rejetee`), question: X(), erreur: X() }),
+            q({ type: Y(`etape.aller`), etape: Z(), retour_cours: X(Y(!0)) }),
+            q({ type: Y(`erreur.rejetee`), question: Z(), erreur: Z() }),
           ]),
-          sr = 2e3,
-          cr = 2e3,
-          lr = class extends Error {
+          lr = 2e3,
+          ur = 2e3,
+          dr = class extends Error {
             code
             detail
             constructor(e) {
@@ -10037,7 +10059,7 @@ if (age &lt; 12) {
                 (this.detail = e.detail))
             }
           }
-        function ur(e) {
+        function fr(e) {
           return (t) => (
             e.add(t),
             () => {
@@ -10045,198 +10067,198 @@ if (age &lt; 12) {
             }
           )
         }
-        function dr(e = {}) {
+        function pr(e = {}) {
           let t = e.fenetre ?? window,
             n = e.parent ?? t.parent,
-            r = e.maintenant ?? i,
-            o = n === t,
-            s = null,
+            r = e.maintenant ?? o,
+            i = n === t,
+            a = null,
             c,
             l = null,
             u = null,
-            f = new Map(),
-            p = [],
-            ee = new Set(),
+            d = new Map(),
+            f = [],
             m = new Set(),
-            te = new Set(),
+            ee = new Set(),
             h = new Set(),
-            g = new Set()
-          function ne(e, t) {
-            return { id: d(r()), ...s, t: a(r()), type: e, ...t }
-          }
+            g = new Set(),
+            te = new Set()
           function _(e, t) {
-            return (console.error(`[pont] Message non envoyé : ${e}`, t), null)
+            return { id: p(r()), ...a, t: s(r()), type: e, ...t }
           }
           function v(e, t) {
-            if (s === null) return _(`demarrer() n’a pas été appelé.`, e)
-            let r = rr.safeParse(ne(e, t))
+            return (console.error(`[pont] Message non envoyé : ${e}`, t), null)
+          }
+          function y(e, t) {
+            if (a === null) return v(`demarrer() n’a pas été appelé.`, e)
+            let r = ar.safeParse(_(e, t))
             return r.success
-              ? (f.set(r.data.id, r.data), o || n.postMessage(r.data, `*`), r.data.id)
-              : _(`« ${e} » est mal formé.`, r.error.issues)
+              ? (d.set(r.data.id, r.data), i || n.postMessage(r.data, `*`), r.data.id)
+              : v(`« ${e} » est mal formé.`, r.error.issues)
+          }
+          function ne(e) {
+            let t = d.get(e)
+            return t !== void 0 && (i || n.postMessage(t, `*`), !0)
           }
           function re(e) {
-            let t = f.get(e)
-            return t !== void 0 && (o || n.postMessage(t, `*`), !0)
-          }
-          function y(e) {
-            let t = p.findIndex(e)
-            return t === -1 ? void 0 : p.splice(t, 1)[0]
+            let t = f.findIndex(e)
+            return t === -1 ? void 0 : f.splice(t, 1)[0]
           }
           function ie(e) {
             switch (e.type) {
               case `etat.init`:
                 u === null
-                  ? g.forEach((t) => {
+                  ? te.forEach((t) => {
                       t(e)
                     })
                   : u(e)
                 break
               case `restitution.correction`: {
-                let t = ar.parse(
+                let t = sr.parse(
                   Object.fromEntries(Object.entries(e).filter(([e]) => e !== `type`)),
                 )
-                y((e) => e.question === t.question)?.resoudre(t)
+                re((e) => e.question === t.question)?.resoudre(t)
                 break
               }
               case `statut.maj`:
-                ee.forEach((t) => {
+                m.forEach((t) => {
                   t(e)
                 })
                 break
               case `erreur`:
-                ;(m.forEach((t) => {
+                ;(ee.forEach((t) => {
                   t(e)
                 }),
-                  y((t) => t.id === e.message_id)?.rejeter(new lr(e)))
+                  re((t) => t.id === e.message_id)?.rejeter(new dr(e)))
                 break
               case `etape.aller`:
-                te.forEach((t) => {
+                h.forEach((t) => {
                   t(e.etape, { retourCours: e.retour_cours === !0 })
                 })
                 break
               case `erreur.rejetee`:
-                h.forEach((t) => {
+                g.forEach((t) => {
                   t({ question: e.question, erreur: e.erreur })
                 })
             }
           }
-          function ae(e) {
+          function b(e) {
             if (e.source !== n) return
-            let t = or.safeParse(e.data)
+            let t = cr.safeParse(e.data)
             if (!t.success) {
               console.error(`[pont] Message de l’appli ignoré : mal formé.`, t.error.issues)
               return
             }
             ie(t.data)
           }
-          let b = null,
+          let ae = null,
             x = null,
             S = -1 / 0,
-            oe
-          function C() {
-            ;(clearTimeout(oe), (oe = void 0))
+            C
+          function w() {
+            ;(clearTimeout(C), (C = void 0))
             let e = x
             if (((x = null), e === null)) return
             let t = JSON.stringify(e)
-            if (t !== b) {
+            if (t !== ae) {
               if (l === `autonome`)
                 Promise.resolve(c?.sauver(e)).catch((e) => {
                   console.error(`[pont] La sauvegarde autonome a échoué.`, e)
                 })
-              else if (v(`etat.sauver`, { etat: e }) === null) return
-              ;((b = t), (S = r()))
+              else if (y(`etat.sauver`, { etat: e }) === null) return
+              ;((ae = t), (S = r()))
             }
           }
-          function w(e, t = {}) {
+          function oe(e, t = {}) {
             if (l === null) {
-              _(`demarrer() n’a pas été appelé.`, `etat.sauver`)
+              v(`demarrer() n’a pas été appelé.`, `etat.sauver`)
               return
             }
             if (((x = e), t.immediat === !0)) {
-              C()
+              w()
               return
             }
-            let n = S + cr - r()
-            n <= 0 ? C() : (oe ??= setTimeout(C, n))
+            let n = S + ur - r()
+            n <= 0 ? w() : (C ??= setTimeout(w, n))
           }
           function se() {
             let e = t.document
             ;(e.addEventListener(`visibilitychange`, () => {
-              e.visibilityState === `hidden` && C()
+              e.visibilityState === `hidden` && w()
             }),
-              t.addEventListener(`pagehide`, C))
+              t.addEventListener(`pagehide`, w))
           }
           function T() {
             let e = t.document.documentElement,
               n = 0,
               r = () => {
                 let t = Math.ceil(e.getBoundingClientRect().height)
-                t !== 0 && t !== n && ((n = t), v(`page.taille`, { hauteur: t }))
+                t !== 0 && t !== n && ((n = t), y(`page.taille`, { hauteur: t }))
               }
             ;(typeof ResizeObserver == `function` && new ResizeObserver(r).observe(e), r())
           }
-          async function E(e) {
-            ;((s = { bloc: e.manifeste.bloc, version: e.manifeste.version }),
+          async function ce(e) {
+            ;((a = { bloc: e.manifeste.bloc, version: e.manifeste.version }),
               (c = e.autonome),
-              t.addEventListener(`message`, ae),
+              t.addEventListener(`message`, b),
               se())
             let n = new Promise((e) => {
               ;((u = e),
                 setTimeout(() => {
                   e(null)
-                }, sr))
+                }, lr))
             })
-            v(`page.prete`, { schema: 2 })
+            y(`page.prete`, { schema: 2 })
             let r = await n
             return (
               (u = null),
               r === null
                 ? ((l = `autonome`), { mode: l, etat: c?.charger?.() ?? null, init: null })
                 : ((l = `appli`),
-                  (s = { bloc: r.bloc, version: r.version }),
+                  (a = { bloc: r.bloc, version: r.version }),
                   T(),
                   { mode: l, etat: r.etat, init: r })
             )
           }
-          async function ce(e) {
+          async function E(e) {
             if (l === `autonome`) {
               if (c === void 0) throw Error(`Mode autonome sans fonction « ask ».`)
-              let t = rr.safeParse(ne(`restitution.demande`, e))
+              let t = ar.safeParse(_(`restitution.demande`, e))
               if (!t.success)
                 throw (
-                  _(`« restitution.demande » est mal formé.`, t.error.issues),
+                  v(`« restitution.demande » est mal formé.`, t.error.issues),
                   Error(`Demande de correction mal formée.`)
                 )
-              return ar.parse(await c.ask(e))
+              return sr.parse(await c.ask(e))
             }
             return new Promise((t, n) => {
-              let r = v(`restitution.demande`, e)
+              let r = y(`restitution.demande`, e)
               if (r === null) {
                 n(Error(`Demande de correction mal formée.`))
                 return
               }
-              p.push({ id: r, question: e.question, resoudre: t, rejeter: n })
+              f.push({ id: r, question: e.question, resoudre: t, rejeter: n })
             })
           }
           return {
-            demarrer: E,
-            envoyer: v,
-            renvoyer: re,
-            demanderCorrection: ce,
-            sauver: w,
-            surStatut: ur(ee),
-            surErreur: ur(m),
+            demarrer: ce,
+            envoyer: y,
+            renvoyer: ne,
+            demanderCorrection: E,
+            sauver: oe,
+            surStatut: fr(m),
+            surErreur: fr(ee),
             surEtape: (e) => (
-              te.add(e),
+              h.add(e),
               () => {
-                te.delete(e)
+                h.delete(e)
               }
             ),
-            surRejet: ur(h),
-            surInit: ur(g),
+            surRejet: fr(g),
+            surInit: fr(te),
           }
         }
-        ;((window.JanusPont = dr()), (window.JanusPratique = { suivre: r }))
+        ;((window.JanusPont = pr()), (window.JanusPratique = { suivre: r, atelier: a }))
       })()
     </script>
 
@@ -13363,11 +13385,15 @@ if (age &lt; 12) {
        * règle du moteur (`JanusPratique.suivre`, embarquée dans le pont) et n'en garde aucune copie.
        * Seuls les résultats et les explications notés depuis le dernier statut attendent ici, le temps
        * que l'appli réponde. Hors de l'appli, la page est seule : ils vont dans son état
-       * (`etat.pratiqueLocale`).
+       * (`etat.pratiqueLocale`). L'atelier suit la même loi : ses constats viennent du serveur
+       * (`pratique.atelier`), relus par `JanusPratique.atelier` ; hors de l'appli, `etat.atelierLocal`.
        */
       let pratiqueServeur = null
       const essaisEnAttente = []
       const expliquesEnAttente = new Set()
+      const ateliersEnAttente = []
+      /** Redessine le constat de l'atelier affiché (rien si l'étape n'est pas l'atelier). */
+      let majAtelier = () => {}
 
       /**
        * L'état part à l'appli tout de suite : une réponse, une trace ou un résultat ne se perd pas si
@@ -14011,6 +14037,25 @@ if (age &lt; 12) {
         if (pratiqueServeur !== null) expliquesEnAttente.add(item)
         else if (!pratiqueLocale().expliques.includes(item)) pratiqueLocale().expliques.push(item)
       }
+      /** Hors de l'appli, la page garde elle-même les constats de l'atelier. */
+      function atelierLocal() {
+        if (!Array.isArray(etat.atelierLocal)) etat.atelierLocal = []
+        return etat.atelierLocal
+      }
+      /** Les constats de l'atelier dans l'ordre : ceux du serveur, puis ceux qui l'attendent. */
+      function constatsAtelier() {
+        if (pratiqueServeur === null) return atelierLocal()
+        const connus = new Set(pratiqueServeur.atelier.map((constat) => constat.id))
+        return [
+          ...pratiqueServeur.atelier,
+          ...ateliersEnAttente.filter((constat) => !connus.has(constat.id)),
+        ]
+      }
+      /**
+       * L'atelier relu de ses constats par la règle du moteur (`suivreLAtelier`) : réussi sans aide (il
+       * compte), le dernier constat, l'aide qu'il garde aujourd'hui.
+       */
+      const suiviAtelier = () => window.JanusPratique.atelier(constatsAtelier(), jourPratique())
       /** La pratique que le serveur garde : ce qu'elle contient n'attend plus ici. */
       function recevoirPratique(pratique) {
         if (!pratique) return
@@ -14020,6 +14065,27 @@ if (age &lt; 12) {
           if (connus.has(essaisEnAttente[k].id)) essaisEnAttente.splice(k, 1)
         }
         for (const item of pratique.expliques) expliquesEnAttente.delete(item)
+        const constats = new Set(pratique.atelier.map((constat) => constat.id))
+        for (let k = ateliersEnAttente.length - 1; k >= 0; k -= 1) {
+          if (constats.has(ateliersEnAttente[k].id)) ateliersEnAttente.splice(k, 1)
+        }
+      }
+      /*
+       * L'état d'avant gardait le dernier constat de l'atelier (`etat.atelier`). Dans l'appli, le
+       * serveur a les constats : la copie s'efface. Hors de l'appli, elle devient le premier constat
+       * de la page, daté d'un jour passé : son aide ne pèse plus aujourd'hui.
+       */
+      function reprendreAncienAtelier() {
+        const ancien = etat.atelier
+        delete etat.atelier
+        if (pratiqueServeur !== null || !ancien || typeof ancien !== 'object') return
+        if (atelierLocal().length > 0) return
+        atelierLocal().push({
+          id: 'avant-atelier',
+          reussi: ancien.reussi === true,
+          aide: [0, 1, 2, 3, 4].includes(ancien.aide) ? ancien.aide : 4,
+          jour: '1970-01-01',
+        })
       }
       /*
        * L'état d'avant la refonte gardait sa copie des items (`etat.pratique`). Dans l'appli, le serveur
@@ -14027,6 +14093,7 @@ if (age &lt; 12) {
        * un item réussi le reste, avec l'aide notée.
        */
       function reprendreAnciennePratique() {
+        reprendreAncienAtelier()
         const ancienne = etat.pratique
         delete etat.pratique
         delete etat.rangPratique
@@ -14098,7 +14165,9 @@ if (age &lt; 12) {
           )
         }
         if (etape.type === 'atelier')
-          return etat.atelier ? '' : 'Envoie ton constat avant de passer à la suite.'
+          return constatsAtelier().length > 0
+            ? ''
+            : 'Envoie ton constat avant de passer à la suite.'
         if (etape.type !== 'restitution') return ''
         if (!serieOuverte[etape.type]) return ''
         const total = questions(etape.type).length
@@ -15306,7 +15375,9 @@ if (age &lt; 12) {
        * autre logiciel), que la page ne voit pas. Les critères sont fixés d'avance dans le manifeste
        * (`atelier.criteres`) ; il coche ceux qu'il a atteints et dit l'aide prise, de 0 (aucune) à 4
        * (la solution entière). Un coup de pouce ouvert dans l'atelier (`<details data-cran="2">`)
-       * fixe l'aide au moins à son cran : elle ne se déclare pas plus basse. Réussi quand chaque
+       * fixe l'aide au moins à son cran, pour le jour : ce jour-là, elle ne se déclare pas plus
+       * basse, pas plus que l'aide d'un constat déjà envoyé (`aideGardee`, la règle du moteur). Un
+       * autre jour, l'atelier se refait sans aide, et c'est là qu'il compte. Réussi quand chaque
        * critère est coché ; il ne compte qu'à l'aide 0 (moteur). Il se renvoie autant de fois qu'il
        * le faut, et l'étape suivante attend un premier envoi.
        */
@@ -15320,6 +15391,9 @@ if (age &lt; 12) {
       function constatAtelier(section) {
         const criteres = manifeste.atelier?.criteres ?? ['J’ai fait l’atelier en entier.']
         const brouillon = () => etat.traces?.['atelier:constat'] ?? { coches: [], cran: 0 }
+        // Le coup de pouce ouvert ne vaut que pour son jour (un brouillon sans jour est d'avant).
+        const cranDuJour = () => (brouillon().jour === jourPratique() ? brouillon().cran : 0)
+        const plancher = () => Math.max(cranDuJour(), suiviAtelier().aideGardee)
         const garder = (suite) => {
           etat.traces = { ...(etat.traces ?? {}), 'atelier:constat': { ...brouillon(), ...suite } }
           enregistrer()
@@ -15344,27 +15418,30 @@ if (age &lt; 12) {
         const resultat = creer('p', { className: 'retour', role: 'status' })
         const choisie = () => radios.findIndex((r) => r.checked)
         const maj = () => {
-          const cran = brouillon().cran
+          const cran = plancher()
           radios.forEach((r, aide) => {
             r.disabled = aide < cran
             if (r.disabled) r.checked = false
           })
           note.hidden = cran === 0
           note.textContent =
-            'Tu as ouvert un coup de pouce\u00a0: ton aide part au moins à «\u00a0' +
-            AIDES_ATELIER[cran] +
-            '\u00a0».'
+            cran === 0
+              ? ''
+              : 'Tu as pris de l’aide aujourd’hui\u00a0: ton constat part au moins à «\u00a0' +
+                AIDES_ATELIER[cran] +
+                '\u00a0». Un autre jour, tu pourras refaire l’atelier sans aide.'
           bouton.disabled = choisie() < 0
         }
-        const dire = (envoye) => {
-          resultat.textContent = !envoye
-            ? ''
-            : !envoye.reussi
-              ? 'Envoyé\u00a0: pas encore réussi. Refais ce qui manque, puis renvoie ton constat.'
-              : envoye.aide === 0
-                ? 'Envoyé\u00a0: réussi sans aide.'
+        const dire = () => {
+          const { reussi, dernier } = suiviAtelier()
+          resultat.textContent = reussi
+            ? 'Réussi sans aide\u00a0: ton atelier compte.'
+            : !dernier
+              ? ''
+              : !dernier.reussi
+                ? 'Envoyé\u00a0: pas encore réussi. Refais ce qui manque, puis renvoie ton constat.'
                 : 'Envoyé\u00a0: réussi, aide ' +
-                  envoye.aide +
+                  dernier.aide +
                   '. Refais-le un autre jour sans aide\u00a0: c’est là qu’il compte.'
         }
         for (const c of cases)
@@ -15379,8 +15456,8 @@ if (age &lt; 12) {
             const details = evenement.target
             if (!(details instanceof HTMLDetailsElement) || !details.open) return
             const cran = Math.min(Math.max(Number(details.dataset.cran) || 0, 0), 4)
-            if (cran > brouillon().cran) {
-              garder({ cran })
+            if (cran > cranDuJour()) {
+              garder({ cran, jour: jourPratique() })
               maj()
             }
           },
@@ -15390,17 +15467,29 @@ if (age &lt; 12) {
           const aide = choisie()
           if (aide < 0) return
           const reussi = cases.every((c) => c.checked)
-          const coches = cases.flatMap((x, k) => (x.checked ? [k] : []))
-          pont.envoyer('atelier.resultat', { reussi, predictions_justes: reussi ? 3 : 0, aide })
-          etat.atelier = { reussi, aide, coches }
+          const id = pont.envoyer('atelier.resultat', {
+            reussi,
+            predictions_justes: reussi ? 3 : 0,
+            aide,
+          })
+          if (id === null) return
+          const constat = { id, reussi, aide, jour: jourPratique() }
+          if (pratiqueServeur !== null) ateliersEnAttente.push(constat)
+          else atelierLocal().push(constat)
           enregistrer()
-          dire(etat.atelier)
+          maj()
+          dire()
           majPied()
         })
-        if (etat.atelier && etat.atelier.aide >= brouillon().cran)
-          radios[etat.atelier.aide].checked = true
+        // L'aide déjà déclarée aujourd'hui reste choisie ; un autre jour, rien ne l'est d'avance.
+        const aideDuJour = suiviAtelier().aideGardee
+        if (aideDuJour > 0) radios[Math.max(aideDuJour, plancher())].checked = true
         maj()
-        dire(etat.atelier)
+        dire()
+        majAtelier = () => {
+          maj()
+          dire()
+        }
         const panneau = creer(
           'div',
           {
@@ -16177,13 +16266,18 @@ if (age &lt; 12) {
             ),
           )
         }
+        const atelier = suiviAtelier()
         if (etapes.some((e) => e.type === 'atelier'))
           lignes.push(
             ligne(
-              Boolean(etat.atelier?.reussi),
-              etat.atelier
-                ? 'Atelier\u00a0: ' + (etat.atelier.reussi ? 'réussi.' : 'pas réussi.')
-                : 'Atelier\u00a0: pas encore fait.',
+              atelier.reussi,
+              atelier.reussi
+                ? 'Atelier\u00a0: réussi sans aide.'
+                : !atelier.dernier
+                  ? 'Atelier\u00a0: pas encore fait.'
+                  : atelier.dernier.reussi
+                    ? 'Atelier\u00a0: réussi avec de l’aide, à refaire un autre jour sans aide.'
+                    : 'Atelier\u00a0: pas réussi.',
             ),
           )
 
@@ -16351,6 +16445,7 @@ if (age &lt; 12) {
         majBilan = () => {}
         majEssais = () => {}
         majPratique = () => {}
+        majAtelier = () => {}
         afficherEtapes()
         const etape = etapes.find((e) => e.id === etat.etape) ?? etapes[0]
         let vue
@@ -16447,6 +16542,7 @@ if (age &lt; 12) {
           dernierStatut = { statut, manque }
           recevoirPratique(pratique)
           majPratique()
+          majAtelier()
           $('statut').textContent = 'Statut\u00a0: ' + (LIBELLES_STATUT[statut] ?? statut)
           if (bilanEnvoye !== null && bilanEnvoye.statut === null) bilanEnvoye.statut = statut
           majBilan()
@@ -16458,6 +16554,14 @@ if (age &lt; 12) {
           if (erreur.code === 'message_refuse' && refuse >= 0) {
             essaisEnAttente.splice(refuse, 1)
             majPratique()
+          }
+          const constatRefuse = ateliersEnAttente.findIndex(
+            (constat) => constat.id === erreur.message_id,
+          )
+          if (erreur.code === 'message_refuse' && constatRefuse >= 0) {
+            ateliersEnAttente.splice(constatRefuse, 1)
+            majAtelier()
+            majPied()
           }
           if (bilanEnvoye !== null && erreur.message_id === bilanEnvoye.id) {
             bilanEnvoye.refus = erreur.detail
