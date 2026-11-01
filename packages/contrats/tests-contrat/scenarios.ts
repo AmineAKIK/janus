@@ -229,7 +229,12 @@ export function scenariosContrat(creer: CreerBanc): void {
 
       expect(premier.doublon).toBe(false)
       expect(second.doublon).toBe(true)
-      expect(second.statut).toEqual(premier.statut)
+      // Seule l'heure du serveur (`pratique.maintenant`) change d'une réponse à l'autre.
+      const sansHeure = (statut: typeof premier.statut) => ({
+        ...statut,
+        pratique: { ...statut.pratique, maintenant: '' },
+      })
+      expect(sansHeure(second.statut)).toEqual(sansHeure(premier.statut))
     })
 
     it('état de page : rejouer l’écriture qui vient d’avoir lieu réussit, un autre contenu est un conflit', async () => {
