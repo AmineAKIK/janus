@@ -26,6 +26,22 @@ describe('textes des tâches', () => {
     })
   })
 
+  it('pratique : le bloc, le nombre d’exercices à finir sans aide et comment', () => {
+    const tache = (exercices: string[]): Tache => ({
+      type: 'pratique',
+      bloc: 'B02',
+      exercices,
+      lien: '/blocs/B02?etape=ET11',
+    })
+    expect(texte(tache(['PR1']))).toEqual({
+      titre: 'Pratique de B02 Langages',
+      texte:
+        '1 exercice à finir sans aide. Un item réussi avec de l’aide se refait sur un autre cas, après un autre item réussi : c’est là qu’il compte.',
+      complement: '1 exercice sans aide',
+    })
+    expect(texte(tache(['PR1', 'PR2'])).complement).toBe('2 exercices sans aide')
+  })
+
   it('questions : pluriel et complément', () => {
     expect(texte({ type: 'questions_debut', nombre: 6 })).toMatchObject({
       texte:

@@ -77,6 +77,12 @@ export function texteTache(tache: Tache, contexte: ContexteTexte): TexteTache {
           .join(', '),
       }
     }
+    case 'pratique':
+      return {
+        titre: `Pratique de ${bloc(tache.bloc)}`,
+        texte: `${nombre(tache.exercices.length, 'exercice', 'exercices')} à finir sans aide. Un item réussi avec de l’aide se refait sur un autre cas, après un autre item réussi : c’est là qu’il compte.`,
+        complement: `${nombre(tache.exercices.length, 'exercice', 'exercices')} sans aide`,
+      }
     case 'bloc': {
       const etape = contexte.etape(tache.bloc)
       const suffixe =

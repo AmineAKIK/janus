@@ -5682,7 +5682,7 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 59,
+        "version": 60,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
@@ -11234,10 +11234,17 @@
          */
         const prochain = {}
         const montre = {}
+        const enRefaire = {}
         function poserLaVariante() {
           for (const boite of $$('#contenu .item[data-item]')) {
             const id = boite.dataset.item
             const variante = $('template[data-variante="' + id + '"]')
+            // Réussi avec de l'aide, à refaire : sur l'autre cas que celui qui vient d'être montré.
+            // Au début de chaque reprise (`refaire` qui s'allume), une seule fois.
+            const refaire = Boolean(pratique[id]?.refaire)
+            if (refaire && !enRefaire[id])
+              prochain[id] = montre[id] === 'variante' ? 'origine' : 'variante'
+            enRefaire[id] = refaire
             const choix =
               variante && boite.hasAttribute('data-solution-vue')
                 ? (prochain[id] ?? 'variante')
@@ -11249,8 +11256,11 @@
         }
 
         const montes = new WeakSet()
+        /** L'état des items de pratique que le gabarit a noté (réussi, aide, à refaire), à chaque rendu. */
+        let pratique = {}
         document.addEventListener('fiche:rendu', (evenement) => {
           for (const [cle, val] of Object.entries(evenement.detail?.traces ?? {})) traces[cle] = val
+          pratique = evenement.detail?.pratique ?? {}
           if (Array.isArray(evenement.detail?.aisance)) aisanceServeur = evenement.detail.aisance
           poserLaVariante()
           // Les outils d'abord (le fichier décide si le pari paraît), puis les exercices.
@@ -12046,6 +12056,45 @@
         const deux = (nombre) => String(nombre).padStart(2, '0')
         return date.getFullYear() + '-' + deux(date.getMonth() + 1) + '-' + deux(date.getDate())
       }
+      /*
+       * Refaire après une aide (règle F03) : ce qui fausse la preuve, c'est la réponse encore sous les
+       * yeux, pas l'heure. Chaque résultat de pratique prend un rang (`rang`, le compteur
+       * `etat.rangPratique`) ; une aide reçue garde le sien (`aideRang`), une réussite aussi
+       * (`rangReussi`, gardé jusqu'à la réussite suivante de l'item). Un autre item réussi depuis
+       * l'éloigne (un « Pas réussi » ne suffit pas : il ne prouve aucun effort) : l'item se refait alors le jour même, sur un autre cas (la variante,
+       * quand l'outil en a une), et compte sans aide. Une aide d'avant ce rang (sans `aideRang`) ou
+       * d'un autre jour est éloignée aussi.
+       */
+      function aideEloignee(id) {
+        const fait = etat.pratique?.[id]
+        if (!fait || fait.aideLe !== aujourdhui()) return true
+        if (typeof fait.aideRang !== 'number') return true
+        return Object.entries(etat.pratique).some(
+          ([autre, note]) => autre !== id && (note?.rangReussi ?? -1) > fait.aideRang,
+        )
+      }
+      /** Réussi avec de l'aide, l'aide éloignée : l'item se refait sur un autre cas, sans aide, pour compter. */
+      const aRefaireAilleurs = (id) =>
+        Boolean(etat.pratique?.[id]?.reussi) &&
+        (etat.pratique[id].aide ?? 0) > 0 &&
+        aideEloignee(id)
+      /*
+       * Le relais (décision d'Amine du 1er novembre 2026) : une aide qui ne s'éloigne pas faute d'autre
+       * item à réussir (chacun est déjà réussi, et ne se refait pas) n'attend pas le lendemain. Les
+       * items réussis sans aide se rouvrent alors sur leur autre cas ; en réussir un éloigne l'aide.
+       * Un résultat de relais ne touche pas l'état de l'item : il reste réussi, quoi qu'il arrive.
+       */
+      const idsPratique = () =>
+        (manifeste.pratique ?? []).flatMap((exercice) => exercice.items.map((item) => item.id))
+      const sansAide = (id) =>
+        Boolean(etat.pratique?.[id]?.reussi) && (etat.pratique[id].aide ?? 0) === 0
+      const faisable = (id) => !etat.pratique?.[id]?.reussi || aRefaireAilleurs(id)
+      const bloque = (id) =>
+        Boolean(etat.pratique?.[id]) &&
+        !aideEloignee(id) &&
+        idsPratique().every((autre) => autre === id || !faisable(autre))
+      const enRelais = (id) =>
+        sansAide(id) && idsPratique().some((autre) => autre !== id && bloque(autre))
 
       const questions = (serie) => (serie === 'restitution' ? manifeste.restitution : [])
       const reponsesFinies = (serie) => questions(serie).filter((q) => etat.envoyees[q.id]).length
@@ -13009,20 +13058,24 @@
         const etatItem = creer('span', { className: 'item-etat' })
         const resultat = creer('p', { className: 'discret' })
         const solutionVue = () => Boolean(etat.pratique[item.id]?.solutionVue)
-        // La solution vue garde son jour : ce jour-là, l'item ne peut pas compter sans aide ; un autre
-        // jour, il repart sans aide (une marque d'avant, sans jour, ne retient plus rien).
+        // La solution vue garde son jour, pour le dire : « Tu as vu la solution ».
         const vueAujourdhui = () => etat.pratique[item.id]?.solutionVue === aujourdhui()
-        // Toute aide garde de même son jour : refait le même jour, l'item part avec l'aide la plus forte
-        // reçue ce jour-là. On ne le refait pas sans aide dans la foulée, la réponse encore sous les yeux.
-        const aideDuJour = () =>
-          etat.pratique[item.id]?.aideLe === aujourdhui()
-            ? (etat.pratique[item.id].aideMax ?? 0)
-            : 0
+        // Toute aide reste tant qu'elle n'est pas éloignée : refait dans la foulée, la réponse encore
+        // sous les yeux, l'item part avec l'aide la plus forte reçue depuis. Un autre item réussi entre-temps
+        // l'éloigne (aideEloignee) : il repart sans aide, sur un autre cas.
+        const aideDuJour = () => (aideEloignee(item.id) ? 0 : (etat.pratique[item.id].aideMax ?? 0))
         /** Note un résultat ; `vue` : l'outil vient de montrer la solution, et l'item s'en souvient. */
         const noter = (ok, aideUtilisee, vue = false) => {
           const avant = etat.pratique[item.id]
           const essais = (avant?.essais ?? 0) + 1
           const aideNotee = Math.max(aideUtilisee, aideDuJour(), vue ? 4 : 0)
+          // Une aide reçue à l'instant (pas seulement gardée) prend le rang de ce résultat.
+          const rang = (etat.rangPratique ?? 0) + 1
+          etat.rangPratique = rang
+          const aideNouvelle = aideUtilisee > 0 || vue
+          // Réussi sans aide, l'item le reste (comme pour l'appli, qui garde la première réussite sans
+          // aide) : refait en relais ou par erreur, son résultat ne change que ses rangs.
+          const relais = sansAide(item.id)
           pont.envoyer('pratique.resultat', {
             exercice: exercice.id,
             item: item.id,
@@ -13030,6 +13083,11 @@
             aide: aideNotee,
             essais,
           })
+          if (relais) {
+            etat.pratique[item.id] = { ...avant, essais, ...(ok ? { rangReussi: rang } : {}) }
+            enregistrer()
+            return
+          }
           etat.pratique[item.id] = {
             reussi: ok,
             aide: aideNotee,
@@ -13037,9 +13095,24 @@
             solutionVue: vue ? aujourdhui() : (avant?.solutionVue ?? false),
             // Une explication déjà jugée Solide le reste : l'item refait ne la redemande pas.
             ...(avant?.explique === true ? { explique: true } : {}),
+            rang,
+            ...(ok
+              ? { rangReussi: rang }
+              : typeof avant?.rangReussi === 'number'
+                ? { rangReussi: avant.rangReussi }
+                : {}),
             ...(aideNotee > 0
-              ? { aideLe: aujourdhui(), aideMax: aideNotee }
-              : { aideLe: avant?.aideLe ?? null, aideMax: avant?.aideMax ?? 0 }),
+              ? {
+                  aideLe: aujourdhui(),
+                  aideMax: aideNotee,
+                  aideRang:
+                    aideNouvelle || typeof avant?.aideRang !== 'number' ? rang : avant.aideRang,
+                }
+              : {
+                  aideLe: avant?.aideLe ?? null,
+                  aideMax: avant?.aideMax ?? 0,
+                  ...(typeof avant?.aideRang === 'number' ? { aideRang: avant.aideRang } : {}),
+                }),
           }
           enregistrer()
         }
@@ -13091,7 +13164,12 @@
           'div',
           {
             className: 'item',
-            dataset: { item: item.id, ...(solutionVue() ? { solutionVue: '' } : {}) },
+            dataset: {
+              item: item.id,
+              ...(solutionVue() || aRefaireAilleurs(item.id) || enRelais(item.id)
+                ? { solutionVue: '' }
+                : {}),
+            },
           },
           creer(
             'div',
@@ -13178,22 +13256,25 @@
           const pourCompter =
             !fait?.reussi || fait.aide === 0
               ? ''
-              : vueAujourdhui()
-                ? '. Tu as vu la solution aujourd’hui\u00a0: refais-le un autre jour, sans aide, pour qu’il compte.'
-                : aideDuJour() > 0
-                  ? '. Tu as eu de l’aide aujourd’hui\u00a0: refais-le un autre jour, sans aide, pour qu’il compte.'
-                  : '. Refais-le sans aide pour qu’il compte.'
-          resultat.textContent = aRefaire
-            ? 'Tu as vu la solution. Refais-la sans la regarder.'
-            : aExpliquer
-              ? 'Réussi. Explique-le maintenant\u00a0: l’item compte quand ton explication est Solide.'
-              : fait
-                ? 'Envoyé\u00a0: ' +
-                  (fait.reussi ? 'réussi' : 'non réussi') +
-                  ', aide ' +
-                  fait.aide +
-                  pourCompter
-                : ''
+              : !aideEloignee(item.id)
+                ? (vueAujourdhui() ? '. Tu as vu la solution' : '. Tu as eu de l’aide') +
+                  (bloque(item.id)
+                    ? '\u00a0: les autres items sont tous réussis. Refais l’un d’eux sur un autre cas (il reste réussi quoi qu’il arrive), puis reviens refaire celui-ci sans aide, sur un autre cas, pour qu’il compte.'
+                    : '\u00a0: réussis un autre item, puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte.')
+                : '. Refais-le maintenant sans aide, sur un autre cas, pour qu’il compte.'
+          resultat.textContent = enRelais(item.id)
+            ? 'Réussi. Refais-le sur un autre cas pour qu’un item aidé compte\u00a0: celui-ci reste réussi quoi qu’il arrive.'
+            : aRefaire
+              ? 'Tu as vu la solution. Refais-la sans la regarder.'
+              : aExpliquer
+                ? 'Réussi. Explique-le maintenant\u00a0: l’item compte quand ton explication est Solide.'
+                : fait
+                  ? 'Envoyé\u00a0: ' +
+                    (fait.reussi ? 'réussi' : 'non réussi') +
+                    ', aide ' +
+                    fait.aide +
+                    pourCompter
+                  : ''
         }
         majItem()
         // L'outil émet fiche:verification à chaque réponse vérifiée. L'item se met à jour sans être
@@ -13202,7 +13283,7 @@
         // neuf (l'outil se remonte sur fiche:rendu, son aide repart de zéro), pour être refait sans la
         // regarder. Avec `garder: true`, l'outil montre la solution à l'instant : l'item la note tout de
         // suite, sans se redessiner, et se redessine quand l'outil émet fiche:refaire (« je refais »).
-        // Le jour où une aide est reçue, chaque résultat de l'item part avec l'aide la plus forte du jour.
+        // Tant que l'aide reçue n'est pas éloignée (aideEloignee), chaque résultat de l'item part avec elle.
         const redessiner = () => {
           etat.itemCourant = index
           enregistrer()
@@ -14368,7 +14449,12 @@
               traces: { ...(etat.traces ?? {}) },
               aisance: [...aisanceServeur],
               // L'état noté des items de pratique : un outil y lit qu'un item est réussi, pour le remontrer.
-              pratique: JSON.parse(JSON.stringify(etat.pratique ?? {})),
+              // `refaire` : réussi avec une aide éloignée, l'item se refait sur un autre cas.
+              pratique: Object.fromEntries(
+                Object.entries(JSON.parse(JSON.stringify(etat.pratique ?? {}))).map(
+                  ([id, note]) => [id, { ...note, refaire: aRefaireAilleurs(id) || enRelais(id) }],
+                ),
+              ),
             },
           }),
         )

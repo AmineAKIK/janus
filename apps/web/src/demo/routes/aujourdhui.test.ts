@@ -17,11 +17,16 @@ describe('GET /aujourdhui de la démo', () => {
       'questions_debut',
       'verification',
       'cartes',
+      'pratique',
+      'pratique',
       'bloc',
     ])
     expect(taches[0]?.tache).toMatchObject({ type: 'reprendre_erreur', bloc: 'B04' })
     expect(taches[2]?.tache).toMatchObject({ type: 'verification', bloc: 'B02' })
-    expect(taches[4]?.tache).toMatchObject({ type: 'bloc', bloc: 'B03' })
+    // B04 et B05 n'ont pas fini leur pratique sans aide : elle est proposée avant le bloc en cours.
+    expect(taches[4]?.tache).toMatchObject({ type: 'pratique', bloc: 'B04' })
+    expect(taches[5]?.tache).toMatchObject({ type: 'pratique', bloc: 'B05' })
+    expect(taches[6]?.tache).toMatchObject({ type: 'bloc', bloc: 'B03' })
   })
 
   it('donne à chaque tâche son lien et la marque non faite', async () => {
@@ -34,6 +39,8 @@ describe('GET /aujourdhui de la démo', () => {
       '/questions',
       '/verifications/ouvrir/B02/verification',
       '/revision',
+      '/blocs/B04?etape=ET4',
+      '/blocs/B05?etape=ET4',
       '/blocs/B03',
     ])
     expect(taches.every(({ faite }) => !faite)).toBe(true)

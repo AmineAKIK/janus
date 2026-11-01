@@ -37,6 +37,14 @@ export const Tache = z.discriminatedUnion('type', [
     dues: z.number().int().min(0),
     nouvelles: z.number().int().min(0),
   }),
+  /** Un bloc dont la pratique a des exercices pas encore faits sans aide (`pratique_aide`). */
+  z.strictObject({
+    type: z.literal('pratique'),
+    bloc: CodeBloc,
+    exercices: z.array(Identifiant).min(1),
+    /** `/blocs/<id>`, suivi de `?etape=<etape>` quand le manifeste a une étape de pratique. */
+    lien: Texte,
+  }),
   z.strictObject({ type: z.literal('bloc'), bloc: CodeBloc }),
 ])
 export type Tache = z.infer<typeof Tache>
