@@ -2510,7 +2510,7 @@ c3      ret               reviens là d’où la fonction a été appelée</pre>
       </div>
     </template>
 
-    <!-- ET6, explication : la fonction C fournie, glosée mot à mot ; ce que le compilateur en produit pour x64, puis pour ARM64. -->
+    <!-- ET6, explication : la fonction C fournie, glosée mot à mot sauf sa ligne return, que l'apprenant prédit (r5) ; ce que le compilateur en produit pour x64, puis pour ARM64. -->
     <template data-etape="ET6">
       <div data-ecran="Trois lignes de C">
         <p class="discret">Tu es ici : la première boîte, le texte en C.</p>
@@ -2538,7 +2538,6 @@ int add(int a, int b) {
             <span class="mono">{</span> et <span class="mono">}</span> : entre les deux, ce qu’elle
             fait.
           </li>
-          <li><span class="mono">return a + b;</span> : elle renvoie la somme des deux.</li>
         </ul>
         <p>
           Ce texte ne parle ni de registre ni d’octet : il décrit un calcul, sans dire comment le
@@ -2575,8 +2574,9 @@ int add(int a, int b) {
           </ul>
         </div>
         <p>
-          5, le nombre que compte.exe affiche après « Total : ». Ces trois lignes, le compilateur va
-          les traduire en instructions machine : c’est ce que l’écran suivant montre.
+          5 : « return » renvoie la somme à celui qui a appelé la fonction. Elle n’affiche rien
+          elle-même : c’est compte.exe qui affiche ce 5 après « Total : ». Ces trois lignes, le
+          compilateur va les traduire en instructions machine : c’est ce que l’écran suivant montre.
         </p>
       </div>
       <div data-ecran="Ce que le compilateur en fait">
@@ -4776,7 +4776,7 @@ console.log(facture.total)</pre>
         "schema": 2,
         "bloc": "B04",
         "type": "systemes",
-        "version": 7,
+        "version": 8,
         "titre": "Du langage machine aux langages de haut niveau",
         "titre_court": "Les langages",
         "objectif": "Dessiner sans support les deux chaînes (source C, compilateur, langage d'assemblage, assembleur, exécutable, gcc enchaînant ces étapes ; source PHP ou JS, moteur interpréteur, qui peut contenir un JIT) et y situer le langage d'assemblage : ce que le compilateur produit et que Compiler Explorer affiche, des instructions machine propres à une architecture (les registres et une partie des instructions diffèrent entre x86-64 et ARM64), écrites avec des mnémoniques (mov, add, ret), à distinguer de l'assembleur, le programme qui les traduit en binaire ; il n'apparaît pas dans la chaîne interprétée, où aucun texte d'assemblage n'est produit : soit le moteur exécute lui-même le programme, soit, s'il a un JIT, il fabrique des instructions machine directement en mémoire ; classer C, PHP, JavaScript, Python et Java d'après ce que le développeur fait avant de lancer (il produit un fichier à part, exécutable natif pour C, bytecode pour Java ; ou il donne le source tel quel au moteur, pour PHP, JavaScript et Python), avec la nuance (compilé ou interprété qualifie l'outil, pas le langage ; bytecode et machine virtuelle, la troisième voie) ; expliquer pourquoi un exécutable Windows x64 (x86-64) ne tourne pas tel quel sur un Mac M2 (ARM64 et autre système d'exploitation : le système, Windows, macOS ou Linux, est le programme qui lance les autres et leur donne accès à la machine ; un exécutable est fabriqué pour un couple architecture + système) alors qu'un script PHP tourne une fois installé le programme PHP, l'interpréteur, dans la version faite pour cette machine ; dire ce qu'une erreur de syntaxe (trouvée à la lecture du source, avant la première instruction) et une erreur d'exécution (pendant que le programme tourne) ont de différent. La fiche fournit le code (trois lignes de C glosées mot à mot, deux ou trois lignes de JavaScript par cas) : on dit ce qu'il fait, on ne l'écrit pas.",
