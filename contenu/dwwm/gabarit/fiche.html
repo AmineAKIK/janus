@@ -1317,7 +1317,7 @@
         "titre_court": "À REMPLACER",
         "objectif": "À REMPLACER : ce que tu sauras faire à la fin, vérifiable en une phrase.",
         "prerequis": [],
-        "pont": 7,
+        "pont": 8,
         "contexte_ia": "À REMPLACER : ce que le correcteur doit savoir du bloc (1 500 mots au plus) : notions, vocabulaire, pièges.",
         "sources": [
           {
@@ -1762,6 +1762,10 @@
       const ateliersEnAttente = []
       /** Redessine le constat de l'atelier affiché (rien si l'étape n'est pas l'atelier). */
       let majAtelier = () => {}
+      /** Le minuteur qui redessine le constat quand l'aide de l'atelier tombe. */
+      let minuteurAtelier = null
+      /** L'écart entre l'horloge du serveur et celle de l'appareil (ms), relevé à chaque statut. */
+      let decalageServeur = 0
 
       /**
        * L'état part à l'appli tout de suite : une réponse, une trace ou un résultat ne se perd pas si
@@ -2419,15 +2423,24 @@
           ...ateliersEnAttente.filter((constat) => !connus.has(constat.id)),
         ]
       }
+      /** L'instant présent à l'horloge du serveur (ms) : le délai de l'aide de l'atelier s'y compte. */
+      const instantServeur = () => Date.now() + decalageServeur
       /**
        * L'atelier relu de ses constats par la règle du moteur (`suivreLAtelier`) : réussi sans aide (il
-       * compte), le dernier constat, l'aide qu'il garde aujourd'hui.
+       * compte), le dernier constat, l'aide qu'il garde encore et l'instant où elle tombe. `en_plus` :
+       * un constat qui n'est pas envoyé, le coup de pouce ouvert, compté comme une aide déclarée.
        */
-      const suiviAtelier = () => window.JanusPratique.atelier(constatsAtelier(), jourPratique())
+      function suiviAtelier(enPlus = []) {
+        const constats = [...constatsAtelier(), ...enPlus].sort(
+          (a, b) => Date.parse(a.le) - Date.parse(b.le),
+        )
+        return window.JanusPratique.atelier(constats, instantServeur())
+      }
       /** La pratique que le serveur garde : ce qu'elle contient n'attend plus ici. */
       function recevoirPratique(pratique) {
         if (!pratique) return
         pratiqueServeur = pratique
+        decalageServeur = Date.parse(pratique.maintenant) - Date.now()
         const connus = new Set(pratique.resultats.map((resultat) => resultat.id))
         for (let k = essaisEnAttente.length - 1; k >= 0; k -= 1) {
           if (connus.has(essaisEnAttente[k].id)) essaisEnAttente.splice(k, 1)
@@ -2441,7 +2454,7 @@
       /*
        * L'état d'avant gardait le dernier constat de l'atelier (`etat.atelier`). Dans l'appli, le
        * serveur a les constats : la copie s'efface. Hors de l'appli, elle devient le premier constat
-       * de la page, daté d'un jour passé : son aide ne pèse plus aujourd'hui.
+       * de la page, daté du passé : son aide ne pèse plus.
        */
       function reprendreAncienAtelier() {
         const ancien = etat.atelier
@@ -2452,7 +2465,7 @@
           id: 'avant-atelier',
           reussi: ancien.reussi === true,
           aide: [0, 1, 2, 3, 4].includes(ancien.aide) ? ancien.aide : 4,
-          jour: '1970-01-01',
+          le: '1970-01-01T00:00:00.000Z',
         })
       }
       /*
@@ -3743,9 +3756,10 @@
        * autre logiciel), que la page ne voit pas. Les critères sont fixés d'avance dans le manifeste
        * (`atelier.criteres`) ; il coche ceux qu'il a atteints et dit l'aide prise, de 0 (aucune) à 4
        * (la solution entière). Un coup de pouce ouvert dans l'atelier (`<details data-cran="2">`)
-       * fixe l'aide au moins à son cran, pour le jour : ce jour-là, elle ne se déclare pas plus
-       * basse, pas plus que l'aide d'un constat déjà envoyé (`aideGardee`, la règle du moteur). Un
-       * autre jour, l'atelier se refait sans aide, et c'est là qu'il compte. Réussi quand chaque
+       * fixe l'aide au moins à son cran pendant le délai de la règle (20 minutes,
+       * `DELAI_AIDE_ATELIER_MIN`), comme l'aide d'un constat déjà envoyé (`aideGardee`, la règle du
+       * moteur, comptée à l'horloge du serveur). Passé ce délai, l'atelier se refait sans aide, et
+       * c'est là qu'il compte. Réussi quand chaque
        * critère est coché ; il ne compte qu'à l'aide 0 (moteur). Il se renvoie autant de fois qu'il
        * le faut, et l'étape suivante attend un premier envoi.
        */
@@ -3759,9 +3773,20 @@
       function constatAtelier(section) {
         const criteres = manifeste.atelier?.criteres ?? ['J’ai fait l’atelier en entier.']
         const brouillon = () => etat.traces?.['atelier:constat'] ?? { coches: [], cran: 0 }
-        // Le coup de pouce ouvert ne vaut que pour son jour (un brouillon sans jour est d'avant).
-        const cranDuJour = () => (brouillon().jour === jourPratique() ? brouillon().cran : 0)
-        const plancher = () => Math.max(cranDuJour(), suiviAtelier().aideGardee)
+        // Le coup de pouce ouvert compte comme une aide déclarée à son instant (un brouillon sans
+        // instant est d'avant cette règle : il ne pèse plus).
+        const ouvert = () => {
+          const { cran, le } = brouillon()
+          return cran > 0 && typeof le === 'string'
+            ? [{ id: 'coup-de-pouce', reussi: false, aide: cran, le }]
+            : []
+        }
+        const suivi = () => suiviAtelier(ouvert())
+        const heure = (ms) =>
+          new Date(ms - decalageServeur).toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
+          })
         const garder = (suite) => {
           etat.traces = { ...(etat.traces ?? {}), 'atelier:constat': { ...brouillon(), ...suite } }
           enregistrer()
@@ -3786,7 +3811,7 @@
         const resultat = creer('p', { className: 'retour', role: 'status' })
         const choisie = () => radios.findIndex((r) => r.checked)
         const maj = () => {
-          const cran = plancher()
+          const { aideGardee: cran, libreA } = suivi()
           radios.forEach((r, aide) => {
             r.disabled = aide < cran
             if (r.disabled) r.checked = false
@@ -3795,13 +3820,21 @@
           note.textContent =
             cran === 0
               ? ''
-              : 'Tu as pris de l’aide aujourd’hui\u00a0: ton constat part au moins à «\u00a0' +
+              : 'Tu viens de prendre de l’aide\u00a0: jusqu’à ' +
+                heure(libreA) +
+                ', ton constat part au moins à «\u00a0' +
                 AIDES_ATELIER[cran] +
-                '\u00a0». Un autre jour, tu pourras refaire l’atelier sans aide.'
+                '\u00a0». Ensuite, tu pourras refaire l’atelier sans aide.'
           bouton.disabled = choisie() < 0
+          // Quand l'aide tombe, le constat se redessine de lui-même.
+          clearTimeout(minuteurAtelier)
+          minuteurAtelier =
+            libreA === null
+              ? null
+              : setTimeout(() => majAtelier(), Math.max(libreA - instantServeur(), 0) + 500)
         }
         const dire = () => {
-          const { reussi, dernier } = suiviAtelier()
+          const { reussi, dernier, libreA } = suiviAtelier()
           resultat.textContent = reussi
             ? 'Réussi sans aide\u00a0: ton atelier compte.'
             : !dernier
@@ -3810,24 +3843,28 @@
                 ? 'Envoyé\u00a0: pas encore réussi. Refais ce qui manque, puis renvoie ton constat.'
                 : 'Envoyé\u00a0: réussi, aide ' +
                   dernier.aide +
-                  '. Refais-le un autre jour sans aide\u00a0: c’est là qu’il compte.'
+                  (libreA === null
+                    ? '. Refais-le sans aide\u00a0: c’est là qu’il compte.'
+                    : '. Refais-le sans aide à partir de ' +
+                      heure(libreA) +
+                      '\u00a0: c’est là qu’il compte.')
         }
         for (const c of cases)
           c.addEventListener('change', () => {
             garder({ coches: cases.flatMap((x, k) => (x.checked ? [k] : [])) })
           })
         for (const r of radios) r.addEventListener('change', maj)
-        // Un coup de pouce ouvert relève l'aide au moins à son cran, même refermé ensuite.
+        // Un coup de pouce ouvert déclare son aide à cet instant, même refermé ensuite : le délai
+        // repart de là.
         section.addEventListener(
           'toggle',
           (evenement) => {
             const details = evenement.target
             if (!(details instanceof HTMLDetailsElement) || !details.open) return
             const cran = Math.min(Math.max(Number(details.dataset.cran) || 0, 0), 4)
-            if (cran > cranDuJour()) {
-              garder({ cran, jour: jourPratique() })
-              maj()
-            }
+            if (cran === 0) return
+            garder({ cran, le: new Date(instantServeur()).toISOString() })
+            maj()
           },
           true,
         )
@@ -3841,7 +3878,7 @@
             aide,
           })
           if (id === null) return
-          const constat = { id, reussi, aide, jour: jourPratique() }
+          const constat = { id, reussi, aide, le: new Date(instantServeur()).toISOString() }
           if (pratiqueServeur !== null) ateliersEnAttente.push(constat)
           else atelierLocal().push(constat)
           enregistrer()
@@ -3849,9 +3886,9 @@
           dire()
           majPied()
         })
-        // L'aide déjà déclarée aujourd'hui reste choisie ; un autre jour, rien ne l'est d'avance.
-        const aideDuJour = suiviAtelier().aideGardee
-        if (aideDuJour > 0) radios[Math.max(aideDuJour, plancher())].checked = true
+        // L'aide encore gardée reste choisie ; passé le délai, rien ne l'est d'avance.
+        const gardee = suivi().aideGardee
+        if (gardee > 0) radios[gardee].checked = true
         maj()
         dire()
         majAtelier = () => {
@@ -4644,7 +4681,7 @@
                 : !atelier.dernier
                   ? 'Atelier\u00a0: pas encore fait.'
                   : atelier.dernier.reussi
-                    ? 'Atelier\u00a0: réussi avec de l’aide, à refaire un autre jour sans aide.'
+                    ? 'Atelier\u00a0: réussi avec de l’aide, à refaire sans aide.'
                     : 'Atelier\u00a0: pas réussi.',
             ),
           )
@@ -4814,6 +4851,7 @@
         majEssais = () => {}
         majPratique = () => {}
         majAtelier = () => {}
+        clearTimeout(minuteurAtelier)
         afficherEtapes()
         const etape = etapes.find((e) => e.id === etat.etape) ?? etapes[0]
         let vue

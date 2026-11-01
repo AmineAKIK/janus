@@ -50,10 +50,12 @@ const JourIso = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
  * la mise à reprendre), dans l'ordre, et les items dont l'explication est Solide. La page en relit
  * chaque item avec `suivreLaPratique` (`pratique.ts`), la même règle que le moteur : elle n'en garde
  * aucune copie. `atelier` : les constats d'atelier, dans l'ordre, que la page relit avec
- * `suivreLAtelier`. `aujourdhui` est le jour de l'appli (fuseau et heure de bascule).
+ * `suivreLAtelier`. `aujourdhui` est le jour de l'appli (fuseau et heure de bascule), `maintenant`
+ * l'instant du serveur : la page compte le délai de l'aide de l'atelier à son horloge.
  */
 export const PratiqueDuBloc = z.strictObject({
   aujourdhui: JourIso,
+  maintenant: InstantUtc,
   resultats: z.array(
     z.strictObject({
       id: Identifiant,
@@ -67,7 +69,7 @@ export const PratiqueDuBloc = z.strictObject({
   ),
   expliques: z.array(Identifiant),
   atelier: z.array(
-    z.strictObject({ id: Identifiant, reussi: z.boolean(), aide: Aide, jour: JourIso }),
+    z.strictObject({ id: Identifiant, reussi: z.boolean(), aide: Aide, le: InstantUtc }),
   ),
 })
 export type PratiqueDuBloc = z.infer<typeof PratiqueDuBloc>

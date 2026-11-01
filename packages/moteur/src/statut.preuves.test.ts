@@ -60,15 +60,15 @@ describe('les dates des preuves', () => {
     expect(resultat.atelier).toBe(reussi)
   })
 
-  it('le même jour, un atelier renvoyé sans aide garde l’aide déjà déclarée', () => {
+  it('moins de 20 minutes après une aide, un atelier renvoyé sans aide la garde', () => {
     const f = fabrique()
-    expect(preuves([f.atelier(DEBUT, 2), f.atelier(apres(DEBUT, 0, 5))]).atelier).toBeNull()
+    expect(preuves([f.atelier(DEBUT, 2), f.atelier(apres(DEBUT, 0, 19))]).atelier).toBeNull()
   })
 
-  it('un autre jour, l’atelier refait sans aide compte : il se rattrape', () => {
+  it('20 minutes après une aide, l’atelier refait sans aide compte : il se rattrape', () => {
     const f = fabrique()
-    const lendemain = apres(DEBUT, 1)
-    expect(preuves([f.atelier(DEBUT, 4), f.atelier(lendemain)]).atelier).toBe(lendemain)
+    const plusTard = apres(DEBUT, 0, 20)
+    expect(preuves([f.atelier(DEBUT, 4), f.atelier(plusTard)]).atelier).toBe(plusTard)
   })
 
   it('ne date pas un atelier réussi seulement avec de l’aide', () => {

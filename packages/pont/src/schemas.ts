@@ -34,6 +34,7 @@ const cas = z.enum(['origine', 'variante'])
 const jour = () => z.string().check(z.regex(/^\d{4}-\d{2}-\d{2}$/))
 const pratique = z.strictObject({
   aujourdhui: jour(),
+  maintenant: z.iso.datetime(),
   resultats: z.array(
     z.strictObject({
       id: identifiant(),
@@ -46,7 +47,9 @@ const pratique = z.strictObject({
     }),
   ),
   expliques: z.array(identifiant()),
-  atelier: z.array(z.strictObject({ id: identifiant(), reussi: z.boolean(), aide, jour: jour() })),
+  atelier: z.array(
+    z.strictObject({ id: identifiant(), reussi: z.boolean(), aide, le: z.iso.datetime() }),
+  ),
 })
 const codeManque = z.enum([
   'restitution_incomplete',

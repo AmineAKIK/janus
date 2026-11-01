@@ -4717,9 +4717,9 @@ console.log(facture.total)</pre>
           manifeste (atelier.criteres) à cocher, et le niveau d’aide reçu. L’aide se monte cran par
           cran, chaque cran replié dans le précédent, titrés « Un indice » (data-cran 1), « Une
           piste détaillée » (2), « Une partie de la solution » (3), « La solution entière » (4) ; un
-          cran ouvert fixe l’aide au moins à son niveau. L’atelier n’est réussi qu’avec les quatre
-          critères cochés, sans aide (reussite_aide_max 0). Rien à installer : le site, le
-          navigateur et une feuille.
+          cran ouvert fixe l’aide au moins à son niveau pendant 20 minutes (décision d’Amine du 1er
+          novembre 2026). L’atelier n’est réussi qu’avec les quatre critères cochés, sans aide
+          (reussite_aide_max 0). Rien à installer : le site, le navigateur et une feuille.
         </li>
       </ul>
       <h3>Les retours</h3>
@@ -4776,12 +4776,12 @@ console.log(facture.total)</pre>
         "schema": 2,
         "bloc": "B04",
         "type": "systemes",
-        "version": 6,
+        "version": 7,
         "titre": "Du langage machine aux langages de haut niveau",
         "titre_court": "Les langages",
         "objectif": "Dessiner sans support les deux chaînes (source C, compilateur, langage d'assemblage, assembleur, exécutable, gcc enchaînant ces étapes ; source PHP ou JS, moteur interpréteur, qui peut contenir un JIT) et y situer le langage d'assemblage : ce que le compilateur produit et que Compiler Explorer affiche, des instructions machine propres à une architecture (les registres et une partie des instructions diffèrent entre x86-64 et ARM64), écrites avec des mnémoniques (mov, add, ret), à distinguer de l'assembleur, le programme qui les traduit en binaire ; il n'apparaît pas dans la chaîne interprétée, où aucun texte d'assemblage n'est produit : soit le moteur exécute lui-même le programme, soit, s'il a un JIT, il fabrique des instructions machine directement en mémoire ; classer C, PHP, JavaScript, Python et Java d'après ce que le développeur fait avant de lancer (il produit un fichier à part, exécutable natif pour C, bytecode pour Java ; ou il donne le source tel quel au moteur, pour PHP, JavaScript et Python), avec la nuance (compilé ou interprété qualifie l'outil, pas le langage ; bytecode et machine virtuelle, la troisième voie) ; expliquer pourquoi un exécutable Windows x64 (x86-64) ne tourne pas tel quel sur un Mac M2 (ARM64 et autre système d'exploitation : le système, Windows, macOS ou Linux, est le programme qui lance les autres et leur donne accès à la machine ; un exécutable est fabriqué pour un couple architecture + système) alors qu'un script PHP tourne une fois installé le programme PHP, l'interpréteur, dans la version faite pour cette machine ; dire ce qu'une erreur de syntaxe (trouvée à la lecture du source, avant la première instruction) et une erreur d'exécution (pendant que le programme tourne) ont de différent. La fiche fournit le code (trois lignes de C glosées mot à mot, deux ou trois lignes de JavaScript par cas) : on dit ce qu'il fait, on ne l'écrit pas.",
         "prerequis": ["B01", "B02", "B03"],
-        "pont": 7,
+        "pont": 8,
         "contexte_ia": "Bloc B04 du module « Écosystème et outils du développeur » (DWWM), quatrième et dernier bloc de la partie La machine. Le modèle du bloc : le processeur n’exécute que du code machine, des octets qui sont des instructions propres à son architecture, x64 (dite aussi x86-64 ou AMD64 : Intel, AMD) ou ARM64 (puces Apple M1, M2, M3, certains PC) ; les registres et une partie des instructions diffèrent d’une architecture à l’autre. Le langage d’assemblage est un texte où chaque ligne nomme une instruction machine par un mnémonique (mov, add, ret) et ses registres, les petites cases nommées du processeur (eax, edi, rbp pour x64 ; w0, w1, sp pour ARM64) ; l’assembleur est le programme qui traduit ce texte en octets : deux choses distinctes. Un langage de haut niveau (C, PHP, JavaScript, Python, Java) décrit le calcul pour l’humain sans désigner le processeur ; une ligne donne plusieurs instructions machine ; tout source est traduit, avant ou pendant. Chaîne compilée : source C, compilateur, langage d’assemblage, assembleur, exécutable ; gcc enchaîne ces étapes et Compiler Explorer (godbolt.org) affiche le langage d’assemblage que gcc produit ; pour la fonction add fournie (int add(int a, int b) { return a + b; }), sans option, x64 donne neuf lignes dont add eax, edx et ret, ARM64 huit lignes dont str w0, str w1, ldr w1, ldr w0, add w0, w1, w0 et ret ; les octets 01 d0 valent add eax, edx et c3 vaut ret. L’exécutable se lance ensuite sans le compilateur et il est fabriqué pour un couple architecture + système d’exploitation ; le système d’exploitation (Windows, macOS, Linux) est le programme qui démarre la machine, lance les autres et leur donne accès au disque, à l’écran, au réseau. Un exécutable Windows x64 ne tourne pas tel quel sur un Mac M2 pour deux raisons, dont une seule suffirait : ARM64 au lieu de x64, macOS au lieu de Windows ; il faut recompiler le source pour la machine d’arrivée. Chaîne interprétée : le source est donné tel quel au moteur, l’interpréteur, installé dans la version faite pour la machine, qui le lit et l’exécute à chaque lancement ; ce qui voyage est le texte ; aucun texte d’assemblage n’est produit : soit le moteur exécute lui-même le programme, soit, s’il a un JIT, il fabrique des instructions machine directement en mémoire, sans fichier ; le processeur exécute le moteur, jamais le texte. PHP est aussi le nom du programme interpréteur ; le moteur JavaScript est dans chaque navigateur. Nuance : compilé ou interprété qualifie l’outil, pas le langage ; un même langage peut avoir un compilateur et un interpréteur. Troisième voie : le bytecode, un fichier intermédiaire ni source ni code machine, produit avant (javac pour Java) et exécuté par une machine virtuelle installée sur la machine. Critère de classement du bloc : le développeur produit-il un fichier à part avant de lancer ? Oui pour C (exécutable natif) et Java (bytecode) ; non pour PHP, JavaScript et Python (source donné au moteur ; le programme Python fabrique un bytecode interne, mais le développeur ne produit rien). Erreurs : une erreur de syntaxe est trouvée à la lecture du source, avant la première instruction, et rien ne s’exécute (dans la console du navigateur : un seul message rouge SyntaxError, rien d’affiché avant) ; une erreur d’exécution survient pendant que le programme tourne, parfois pour certaines données seulement, et ce qui précède a eu son effet (« Bonjour » affiché, puis ReferenceError ou TypeError). Les blocs de la fiche sont collés en une seule fois dans la console, deux lignes ensemble. Pièges à repérer : E1, croire qu’un langage est compilé ou interprété par nature, ou classer sans le critère du bloc ; E2, croire qu’un exécutable passe d’une machine à l’autre comme un texte, ou n’en voir qu’une raison quand les deux manquent ; E3, confondre l’assembleur (programme) et le langage d’assemblage (texte), dire « écrit en assembleur » ; E4, croire qu’une erreur de syntaxe se découvre pendant l’exécution, ou qu’une erreur d’exécution empêche ce qui précède de tourner. Notations à accepter comme équivalentes : x64, x86-64 et AMD64 ; ARM64, Arm64 et AArch64 ; Apple silicon et puce M ; interpréteur et moteur ; code machine et instructions machine ; code source, source et texte ; « compiler » et « traduire avant ». Accepte un dessin des chaînes avec plus ou moins de boîtes si l’ordre et le moment de la traduction sont justes, et si le langage d’assemblage et l’assembleur sont dans la seule chaîne compilée ; accepte que l’apprenant nomme l’éditeur de liens ou Rosetta sans l’exiger. La fiche n’enseigne ni l’éditeur de liens, ni les bibliothèques, ni l’intérieur d’un JIT ou d’un bytecode, ni Rosetta et les émulateurs, ni les systèmes d’exploitation en détail, ni l’écriture de code : ne pénalise pas leur absence, et accepte une réponse juste qui les emploie. Pour examiner une explication, la grille de compréhension : l’idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d’application, le terme exact, la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Chaque attendu vient de la fiche : les étapes de la fiche (sources S1 à S11) ; ce qui est marqué « D’après » y est écrit ; ce qui est marqué « Déduit » s’obtient en appliquant une règle de la fiche à un autre cas. Les données dont une question se sert (quelle machine, quel fichier, ce que la console a affiché) sont redonnées avec elle : ce qui compte, c’est le raisonnement.",
         "sources": [
           {
@@ -5391,7 +5391,7 @@ console.log(facture.total)</pre>
 
     <!-- La bibliothèque du pont est insérée ici au build (packages/pont/scripts/injecter.ts). -->
     <script id="pont">
-      /*! janus-pont v7 159a354cd3b7dab2b0451c362cbac7073faedf282689a730f0c72ac353f2839a */
+      /*! janus-pont v8 0063cab019b5c46ee63caaf4f4da5d3165e62adfe8bf08bbba6965f7791cb600 */
       ;(function () {
         function e(e) {
           return e === `variante` ? `origine` : `variante`
@@ -5485,49 +5485,58 @@ console.log(facture.total)</pre>
           }
           return f
         }
-        var i = class {
-          #e = null
-          #t = 0
-          noter(e) {
-            let t = Math.max(e.aide, this.aideGardee(e.jour))
-            return ((this.#e = e.jour), (this.#t = t), t)
+        var i = 12e5,
+          a = class {
+            #e = 0
+            #t = 0
+            noter(e) {
+              let t = Date.parse(e.le),
+                n = this.aideGardee(t)
+              return (
+                e.aide > 0 && ((this.#e = Math.max(e.aide, n)), (this.#t = t)),
+                Math.max(e.aide, n)
+              )
+            }
+            aideGardee(e) {
+              return this.#e > 0 && e < this.libreA() ? this.#e : 0
+            }
+            libreA() {
+              return this.#t + i
+            }
           }
-          aideGardee(e) {
-            return e === this.#e ? this.#t : 0
-          }
-        }
-        function a(e, t) {
-          let n = new i(),
+        function o(e, t) {
+          let n = new a(),
             r = !1,
-            a = null
+            i = null
           for (let t of e) {
             let e = n.noter(t)
-            ;((a = { reussi: t.reussi, aide: e }), t.reussi && e === 0 && (r = !0))
+            ;((i = { reussi: t.reussi, aide: e }), t.reussi && e === 0 && (r = !0))
           }
-          return { reussi: r, dernier: a, aideGardee: n.aideGardee(t) }
+          let o = n.aideGardee(t)
+          return { reussi: r, dernier: i, aideGardee: o, libreA: o > 0 ? n.libreA() : null }
         }
-        function o() {
+        function s() {
           return Date.now()
         }
-        function s(e) {
+        function c(e) {
           return new Date(e).toISOString()
         }
-        var c = 2 ** 48 - 1,
-          l = -1,
-          u = 0
-        function d(e) {
+        var l = 2 ** 48 - 1,
+          u = -1,
+          d = 0
+        function f(e) {
           return crypto.getRandomValues(new Uint8Array(e))
         }
-        var f = (e) => Array.from(e, (e) => e.toString(16).padStart(2, `0`)).join(``)
-        function p(e) {
-          let t = Math.min(Math.max(Math.floor(e), l), c),
-            n = t === l ? u + 1 : 0
-          ;(n > 4095 && ((t += 1), (n = 0)), (l = t), (u = n))
-          let r = d(8)
+        var p = (e) => Array.from(e, (e) => e.toString(16).padStart(2, `0`)).join(``)
+        function ee(e) {
+          let t = Math.min(Math.max(Math.floor(e), u), l),
+            n = t === u ? d + 1 : 0
+          ;(n > 4095 && ((t += 1), (n = 0)), (u = t), (d = n))
+          let r = f(8)
           r[0] = ((r[0] ?? 0) & 63) | 128
           let i = t.toString(16).padStart(12, `0`),
             a = n.toString(16).padStart(3, `0`),
-            o = f(r)
+            o = p(r)
           return `${i.slice(0, 8)}-${i.slice(8)}-7${a}-${o.slice(0, 4)}-${o.slice(4)}`
         }
         function m(e) {
@@ -5536,10 +5545,10 @@ console.log(facture.total)</pre>
             .filter(([e, n]) => t.indexOf(+e) === -1)
             .map(([e, t]) => t)
         }
-        function ee(e, t) {
+        function h(e, t) {
           return typeof t == `bigint` ? t.toString() : t
         }
-        var h = class {
+        var te = class {
           constructor(e) {
             ;((this._getter = e), (this._value = void 0))
           }
@@ -5549,9 +5558,9 @@ console.log(facture.total)</pre>
           }
         }
         function g(e) {
-          return new h(e)
+          return new te(e)
         }
-        function te(e) {
+        function ne(e) {
           return e == null
         }
         function _(e) {
@@ -5560,7 +5569,7 @@ console.log(facture.total)</pre>
           return e.slice(t, n)
         }
         var v = Symbol(`evaluating`)
-        function y(e, t, n) {
+        function re(e, t, n) {
           let r
           Object.defineProperty(e, t, {
             get() {
@@ -5572,33 +5581,33 @@ console.log(facture.total)</pre>
             configurable: !0,
           })
         }
-        function ne(e, t, n) {
+        function y(e, t, n) {
           Object.defineProperty(e, t, { value: n, writable: !0, enumerable: !0, configurable: !0 })
         }
-        function re(e) {
+        function ie(e) {
           let t = Object.getOwnPropertyDescriptor(e, `shape`)
           return t?.get ? t.get.raw : t?.value
         }
-        var ie = `captureStackTrace` in Error ? Error.captureStackTrace : (...e) => {}
+        var ae = `captureStackTrace` in Error ? Error.captureStackTrace : (...e) => {}
         function b(e) {
           return typeof e == `object` && !!e && !Array.isArray(e)
         }
-        function ae(e) {
+        function oe(e) {
           if (b(e) === !1) return !1
           let t = e.constructor
           if (t === void 0 || typeof t != `function`) return !0
           let n = t.prototype
           return b(n) !== !1 && Object.prototype.hasOwnProperty.call(n, `isPrototypeOf`) !== !1
         }
-        var x = new Set([`string`, `number`, `symbol`])
-        function S(e) {
+        var se = new Set([`string`, `number`, `symbol`])
+        function x(e) {
           return e.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`)
         }
-        function C(e, t, n) {
+        function S(e, t, n) {
           let r = new e._zod.constr(t ?? e._zod.def)
           return ((!t || n?.parent) && (r._zod.parent = e), r)
         }
-        function w(e) {
+        function C(e) {
           let t = e
           if (!t) return {}
           if (typeof t == `string`) return { error: () => t }
@@ -5608,42 +5617,42 @@ console.log(facture.total)</pre>
           }
           return (delete t.message, typeof t.error == `string` ? { ...t, error: () => t.error } : t)
         }
-        function oe(e) {
+        function ce(e) {
           return Object.keys(e).filter(
             (t) => e[t]._zod.optin !== void 0 && e[t]._zod.optout === `optional`,
           )
         }
-        var se = {
+        var le = {
           safeint: [-(2 ** 53 - 1), 2 ** 53 - 1],
           int32: [-2147483648, 2147483647],
           uint32: [0, 4294967295],
           float32: [-34028234663852886e22, 34028234663852886e22],
           float64: [-Number.MAX_VALUE, Number.MAX_VALUE],
         }
-        function T(e, t = 0) {
+        function w(e, t = 0) {
           if (e.aborted === !0) return !0
           for (let n = t; n < e.issues.length; n++) if (e.issues[n]?.continue !== !0) return !0
           return !1
         }
-        function ce(e, t = 0) {
+        function ue(e, t = 0) {
           if (e.aborted === !0) return !0
           for (let n = t; n < e.issues.length; n++) if (e.issues[n]?.continue === !1) return !0
           return !1
         }
-        function E(e, t) {
+        function T(e, t) {
           return t.map((t) => {
             var n
             return ((n = t).path ?? (n.path = []), t.path.unshift(e), t)
           })
         }
-        function D(e) {
+        function E(e) {
           return typeof e == `string` ? e : e?.message
         }
-        function le(e, t, n) {
+        function de(e, t, n) {
           var r
           for (let i = t; i < e.length; i++) (r = e[i]).schema ?? (r.schema = n)
         }
-        function O(e, t, n) {
+        function D(e, t, n) {
           var r
           let i = e.inst?._zod?.traits
           i?.has(`$ZodType`) &&
@@ -5651,11 +5660,11 @@ console.log(facture.total)</pre>
           let a = e.schema === e.inst ? void 0 : e.schema?._zod.def?.error,
             o = e.message
               ? e.message
-              : (D(e.inst?._zod.def?.error?.(e)) ??
-                D(a?.(e)) ??
-                D(t?.error?.(e)) ??
-                D(n.customError?.(e)) ??
-                D(n.localeError?.(e)) ??
+              : (E(e.inst?._zod.def?.error?.(e)) ??
+                E(a?.(e)) ??
+                E(t?.error?.(e)) ??
+                E(n.customError?.(e)) ??
+                E(n.localeError?.(e)) ??
                 `Invalid input`),
             s = {}
           for (let t of Object.keys(e))
@@ -5667,10 +5676,10 @@ console.log(facture.total)</pre>
               (s[t] = e[t])
           return ((s.path ??= []), (s.message = o), t?.reportInput && (s.input = e.input), s)
         }
-        var ue = /[\uD800-\uDBFF]/
-        function de(e) {
+        var fe = /[\uD800-\uDBFF]/
+        function pe(e) {
           let t = e.length
-          if (!ue.test(e)) return t
+          if (!fe.test(e)) return t
           let n = t
           for (let r = 0; r < t - 1; r++)
             (e.charCodeAt(r) & 64512) == 55296 &&
@@ -5678,20 +5687,20 @@ console.log(facture.total)</pre>
               (n--, r++)
           return n
         }
-        function fe(e) {
+        function me(e) {
           return Array.isArray(e) ? `array` : typeof e == `string` ? `string` : `unknown`
         }
-        function pe(...e) {
+        function he(...e) {
           let [t, n, r] = e
           return typeof t == `string` ? { message: t, code: `custom`, input: n, inst: r } : { ...t }
         }
-        function me(e, t) {
+        function ge(e, t) {
           for (let n in t) {
             let r = Object.getOwnPropertyDescriptor(t, n)
-            r.get ? Object.defineProperty(e, n, { ...r, enumerable: !1 }) : ge(e, n, r.value)
+            r.get ? Object.defineProperty(e, n, { ...r, enumerable: !1 }) : ve(e, n, r.value)
           }
         }
-        function k(e, t, n, r = !0) {
+        function O(e, t, n, r = !0) {
           return (
             Object.defineProperty(e, t, {
               configurable: !0,
@@ -5702,60 +5711,60 @@ console.log(facture.total)</pre>
             n
           )
         }
-        function he(e, t, n) {
-          return k(e, t, n, !1)
+        function _e(e, t, n) {
+          return O(e, t, n, !1)
         }
-        function ge(e, t, n) {
+        function ve(e, t, n) {
           Object.defineProperty(e, t, {
             configurable: !0,
             get() {
-              return this == null ? n : k(this, t, n.bind(this))
+              return this == null ? n : O(this, t, n.bind(this))
             },
             set(e) {
-              k(this, t, e)
+              O(this, t, e)
             },
           })
         }
-        function _e(e, t) {
+        function ye(e, t) {
           let n = Object.getPrototypeOf(e)
           return t in n ? void 0 : n
         }
-        var ve,
-          A = !1,
-          ye = {
+        var be,
+          k = !1,
+          xe = {
             configurable: !0,
             get() {
-              A = !0
+              k = !0
             },
           }
-        function j(e, t, n) {
+        function A(e, t, n) {
           let r = Object.getPrototypeOf(e._zod)
-          if (t in r && ve !== e._zod) {
-            ve = void 0
+          if (t in r && be !== e._zod) {
+            be = void 0
             return
           }
-          ;((ve = e._zod),
+          ;((be = e._zod),
             Object.defineProperty(r, t, {
               configurable: !0,
               get() {
-                Object.defineProperty(this, t, ye)
-                let e = A
-                A = !1
+                Object.defineProperty(this, t, xe)
+                let e = k
+                k = !1
                 try {
                   let r = n(this)
                   return (
-                    A
+                    k
                       ? delete this[t]
                       : Object.defineProperty(this, t, {
                           configurable: !0,
                           writable: !0,
                           value: r,
                         }),
-                    (A ||= e),
+                    (k ||= e),
                     r
                   )
                 } catch (n) {
-                  throw (delete this[t], (A ||= e), n)
+                  throw (delete this[t], (k ||= e), n)
                 }
               },
               set(e) {
@@ -5763,8 +5772,8 @@ console.log(facture.total)</pre>
               },
             }))
         }
-        function be(e, t, n, r) {
-          let i = _e(e, t)
+        function Se(e, t, n, r) {
+          let i = ye(e, t)
           i &&
             Object.defineProperty(i, t, {
               configurable: !0,
@@ -5787,18 +5796,18 @@ console.log(facture.total)</pre>
               },
             })
         }
-        var xe,
-          Se = { value: void 0, enumerable: !1 },
-          Ce = `captureStackTrace` in Error ? Error : null
-        function we(e) {
-          let t = Ce
+        var Ce,
+          we = { value: void 0, enumerable: !1 },
+          Te = `captureStackTrace` in Error ? Error : null
+        function Ee(e) {
+          let t = Te
           if (t) {
             let n = t.stackTraceLimit
             if (typeof n == `number`) {
               try {
                 t.stackTraceLimit = 0
               } catch {
-                return ((Ce = null), new e())
+                return ((Te = null), new e())
               }
               try {
                 return new e()
@@ -5809,7 +5818,7 @@ console.log(facture.total)</pre>
           }
           return new e()
         }
-        function M(e, t, n, r) {
+        function j(e, t, n, r) {
           let i = {}
           function a(e) {
             ;((this.def = e), (this.constr = d), (this.traits = new Set()))
@@ -5819,11 +5828,11 @@ console.log(facture.total)</pre>
             s = o && new WeakSet()
           function c(n, r) {
             if (!n._zod) {
-              Se.value = new a(r)
+              we.value = new a(r)
               try {
-                Object.defineProperty(n, '_zod', Se)
+                Object.defineProperty(n, '_zod', we)
               } finally {
-                Se.value = void 0
+                we.value = void 0
               }
             } else if (n._zod.traits.has(e)) return
             if ((n._zod.traits.add(e), t(n, r), s)) {
@@ -5832,7 +5841,7 @@ console.log(facture.total)</pre>
                 r = e
               for (; r && r !== t;) r = Object.getPrototypeOf(r)
               let i = r ?? e
-              s.has(i) || (s.add(i), me(i, o))
+              s.has(i) || (s.add(i), ge(i, o))
             }
             let i = d.prototype
             for (let e in i)
@@ -5842,7 +5851,7 @@ console.log(facture.total)</pre>
           class u extends l {}
           Object.defineProperty(u, 'name', { value: e })
           function d(e) {
-            let t = r?.Parent ? we(u) : this
+            let t = r?.Parent ? Ee(u) : this
             c(t, e)
             let n = t._zod.deferred
             if (n) {
@@ -5861,35 +5870,35 @@ console.log(facture.total)</pre>
             d
           )
         }
-        var N = class extends Error {
+        var M = class extends Error {
           constructor() {
             super(`Encountered Promise during synchronous parse. Use .parseAsync() instead.`)
           }
         }
-        ;(xe = globalThis).__zod_globalConfig ?? (xe.__zod_globalConfig = {})
-        var P = globalThis.__zod_globalConfig
-        function F(e) {
-          return (e && Object.assign(P, e), P)
+        ;(Ce = globalThis).__zod_globalConfig ?? (Ce.__zod_globalConfig = {})
+        var N = globalThis.__zod_globalConfig
+        function P(e) {
+          return (e && Object.assign(N, e), N)
         }
-        function Te() {
+        function De() {
           let e = this._zod
-          return ((e.message ??= JSON.stringify(e.def, ee, 2)), e.message)
+          return ((e.message ??= JSON.stringify(e.def, h, 2)), e.message)
         }
-        function Ee(e) {
+        function Oe(e) {
           this._zod.message = e
         }
-        var De = { get: Te, set: Ee, enumerable: !0, configurable: !0 },
-          Oe = { value: void 0, enumerable: !1 },
-          ke = new WeakSet([Object.prototype, Error.prototype]),
-          Ae = (e, t) => {
+        var ke = { get: De, set: Oe, enumerable: !0, configurable: !0 },
+          Ae = { value: void 0, enumerable: !1 },
+          je = new WeakSet([Object.prototype, Error.prototype]),
+          Me = (e, t) => {
             ;((e.name = `$ZodError`),
-              (Oe.value = t),
-              Object.defineProperty(e, 'issues', Oe),
-              (Oe.value = void 0),
-              Object.defineProperty(e, 'message', De))
+              (Ae.value = t),
+              Object.defineProperty(e, 'issues', Ae),
+              (Ae.value = void 0),
+              Object.defineProperty(e, 'message', ke))
             let n = Object.getPrototypeOf(e)
-            ke.has(n) ||
-              (ke.add(n),
+            je.has(n) ||
+              (je.add(n),
               Object.defineProperty(n, 'toString', {
                 configurable: !0,
                 enumerable: !1,
@@ -5913,68 +5922,68 @@ console.log(facture.total)</pre>
                 },
               }))
           }
-        M(`$ZodError`, Ae)
-        var I = M(`$ZodError`, Ae, void 0, { Parent: Error }),
-          je = ((e) => {
+        j(`$ZodError`, Me)
+        var F = j(`$ZodError`, Me, void 0, { Parent: Error }),
+          Ne = ((e) => {
             let t = (n, r, i, a) => {
               let o = i ? { ...i, async: !1 } : { async: !1 },
                 s = n._zod.run({ value: r, issues: [] }, o)
-              if (s instanceof Promise) throw new N()
+              if (s instanceof Promise) throw new M()
               if (s.issues.length) {
-                let n = new (a?.Err ?? e)(s.issues.map((e) => O(e, o, F())))
-                throw (ie(n, a?.callee ?? t), n)
+                let n = new (a?.Err ?? e)(s.issues.map((e) => D(e, o, P())))
+                throw (ae(n, a?.callee ?? t), n)
               }
               return s.value
             }
             return t
-          })(I),
-          Me = ((e) => {
+          })(F),
+          Pe = ((e) => {
             let t = async (n, r, i, a) => {
               let o = i ? { ...i, async: !0 } : { async: !0 },
                 s = n._zod.run({ value: r, issues: [] }, o)
               if ((s instanceof Promise && (s = await s), s.issues.length)) {
-                let n = new (a?.Err ?? e)(s.issues.map((e) => O(e, o, F())))
-                throw (ie(n, a?.callee ?? t), n)
+                let n = new (a?.Err ?? e)(s.issues.map((e) => D(e, o, P())))
+                throw (ae(n, a?.callee ?? t), n)
               }
               return s.value
             }
             return t
-          })(I),
-          Ne = ((e) => (t, n, r) => {
+          })(F),
+          Fe = ((e) => (t, n, r) => {
             let i = r ? { ...r, async: !1 } : { async: !1 },
               a = t._zod.run({ value: n, issues: [] }, i)
-            if (a instanceof Promise) throw new N()
-            return a.issues.length ? Pe(e, a.issues, i) : { success: !0, data: a.value }
-          })(I)
-        function Pe(e, t, n) {
+            if (a instanceof Promise) throw new M()
+            return a.issues.length ? Ie(e, a.issues, i) : { success: !0, data: a.value }
+          })(F)
+        function Ie(e, t, n) {
           let r
           return {
             success: !1,
             get error() {
-              return (r || ((r = new e(t.map((e) => O(e, n, F())))), (t = void 0), (n = void 0)), r)
+              return (r || ((r = new e(t.map((e) => D(e, n, P())))), (t = void 0), (n = void 0)), r)
             },
             set error(e) {
               ;((r = e), (t = void 0), (n = void 0))
             },
           }
         }
-        var Fe = ((e) => async (t, n, r) => {
+        var Le = ((e) => async (t, n, r) => {
             let i = r ? { ...r, async: !0 } : { async: !0 },
               a = t._zod.run({ value: n, issues: [] }, i)
             return (
               a instanceof Promise && (a = await a),
-              a.issues.length ? Pe(e, a.issues, i) : { success: !0, data: a.value }
+              a.issues.length ? Ie(e, a.issues, i) : { success: !0, data: a.value }
             )
-          })(I),
-          Ie = (e) =>
+          })(F),
+          Re = (e) =>
             e
               ? RegExp(
                   `^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-${e}[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$`,
                 )
               : /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
-          Le = /^https?$/,
-          Re = `(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))`
-        function ze(e) {
+          ze = /^https?$/,
+          Be = `(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))`
+        function Ve(e) {
           let t = `(?:[01]\\d|2[0-3]):[0-5]\\d`
           return typeof e.precision == `number`
             ? e.precision === -1
@@ -5986,33 +5995,33 @@ console.log(facture.total)</pre>
               ? `${t}:[0-5]\\d(?:\\.\\d+)?`
               : `${t}(?::[0-5]\\d(?:\\.\\d+)?)?`
         }
-        function Be(e) {
+        function He(e) {
           let t = [`Z`]
           e.offset && t.push(`([+-](?:[01]\\d|2[0-3]):[0-5]\\d)`)
-          let n = `${ze({ precision: e.precision, seconds: !0 })}(?:${t.join(`|`)})`,
-            r = e.local ? `${n}|${ze({ precision: e.precision })}` : n
-          return RegExp(`^${Re}T(?:${r})$`)
+          let n = `${Ve({ precision: e.precision, seconds: !0 })}(?:${t.join(`|`)})`,
+            r = e.local ? `${n}|${Ve({ precision: e.precision })}` : n
+          return RegExp(`^${Be}T(?:${r})$`)
         }
-        var Ve = /^[\s\S]{0,}$/,
-          He = /^-?\d+(?:\.\d+)?$/,
-          Ue = /^(?:true|false)$/i,
-          We = /^null$/i,
-          L = M(`$ZodCheck`, (e, t) => {
+        var Ue = /^[\s\S]{0,}$/,
+          We = /^-?\d+(?:\.\d+)?$/,
+          Ge = /^(?:true|false)$/i,
+          Ke = /^null$/i,
+          I = j(`$ZodCheck`, (e, t) => {
             var n
             ;((e._zod ??= {}), (e._zod.def = t), (n = e._zod).onattach ?? (n.onattach = []))
           }),
-          Ge = (e) => {
+          qe = (e) => {
             let t = e.value
-            return !te(t) && t.length !== void 0
+            return !ne(t) && t.length !== void 0
           },
-          R = { number: `number`, bigint: `bigint`, object: `date` },
-          Ke = M(`$ZodCheckLessThan`, (e, t) => {
-            L.init(e, t)
-            let n = R[typeof t.value]
+          L = { number: `number`, bigint: `bigint`, object: `date` },
+          Je = j(`$ZodCheckLessThan`, (e, t) => {
+            I.init(e, t)
+            let n = L[typeof t.value]
             e._zod.check = (r) => {
               ;(t.inclusive ? r.value <= t.value : r.value < t.value) ||
                 r.issues.push({
-                  origin: R[typeof r.value] ?? n,
+                  origin: L[typeof r.value] ?? n,
                   code: `too_big`,
                   maximum: typeof t.value == `object` ? t.value.getTime() : t.value,
                   input: r.value,
@@ -6022,13 +6031,13 @@ console.log(facture.total)</pre>
                 })
             }
           }),
-          qe = M(`$ZodCheckGreaterThan`, (e, t) => {
-            L.init(e, t)
-            let n = R[typeof t.value]
+          Ye = j(`$ZodCheckGreaterThan`, (e, t) => {
+            I.init(e, t)
+            let n = L[typeof t.value]
             e._zod.check = (r) => {
               ;(t.inclusive ? r.value >= t.value : r.value > t.value) ||
                 r.issues.push({
-                  origin: R[typeof r.value] ?? n,
+                  origin: L[typeof r.value] ?? n,
                   code: `too_small`,
                   minimum: typeof t.value == `object` ? t.value.getTime() : t.value,
                   input: r.value,
@@ -6038,11 +6047,11 @@ console.log(facture.total)</pre>
                 })
             }
           }),
-          Je = M(`$ZodCheckNumberFormat`, (e, t) => {
-            ;(L.init(e, t), (t.format = t.format || `float64`))
+          Xe = j(`$ZodCheckNumberFormat`, (e, t) => {
+            ;(I.init(e, t), (t.format = t.format || `float64`))
             let n = t.format?.includes(`int`),
               r = n ? `int` : `number`,
-              [i, a] = se[t.format]
+              [i, a] = le[t.format]
             e._zod.check = (o) => {
               let s = o.value
               if (n) {
@@ -6104,15 +6113,15 @@ console.log(facture.total)</pre>
                   }))
             }
           }),
-          Ye = M(`$ZodCheckMaxLength`, (e, t) => {
+          Ze = j(`$ZodCheckMaxLength`, (e, t) => {
             var n
-            ;(L.init(e, t),
-              (n = e._zod.def).when ?? (n.when = Ge),
+            ;(I.init(e, t),
+              (n = e._zod.def).when ?? (n.when = qe),
               (e._zod.check = (n) => {
                 let r = n.value,
                   i = r.length
-                if ((typeof r == `string` && i > t.maximum ? de(r) : i) <= t.maximum) return
-                let a = fe(r)
+                if ((typeof r == `string` && i > t.maximum ? pe(r) : i) <= t.maximum) return
+                let a = me(r)
                 n.issues.push({
                   origin: a,
                   code: `too_big`,
@@ -6124,19 +6133,19 @@ console.log(facture.total)</pre>
                 })
               }))
           }),
-          Xe = M(`$ZodCheckMinLength`, (e, t) => {
+          Qe = j(`$ZodCheckMinLength`, (e, t) => {
             var n
-            ;(L.init(e, t),
-              (n = e._zod.def).when ?? (n.when = Ge),
+            ;(I.init(e, t),
+              (n = e._zod.def).when ?? (n.when = qe),
               (e._zod.check = (n) => {
                 let r = n.value,
                   i = r.length
                 if (
-                  (typeof r == `string` && i >= t.minimum && i < t.minimum * 2 ? de(r) : i) >=
+                  (typeof r == `string` && i >= t.minimum && i < t.minimum * 2 ? pe(r) : i) >=
                   t.minimum
                 )
                   return
-                let a = fe(r)
+                let a = me(r)
                 n.issues.push({
                   origin: a,
                   code: `too_small`,
@@ -6148,9 +6157,9 @@ console.log(facture.total)</pre>
                 })
               }))
           }),
-          Ze = M(`$ZodCheckStringFormat`, (e, t) => {
+          $e = j(`$ZodCheckStringFormat`, (e, t) => {
             var n, r
-            ;(L.init(e, t),
+            ;(I.init(e, t),
               t.pattern
                 ? ((n = e._zod).check ??
                   (n.check = (n) => {
@@ -6168,8 +6177,8 @@ console.log(facture.total)</pre>
                   }))
                 : ((r = e._zod).check ?? (r.check = () => {})))
           }),
-          Qe = M(`$ZodCheckRegex`, (e, t) => {
-            ;(Ze.init(e, t),
+          et = j(`$ZodCheckRegex`, (e, t) => {
+            ;($e.init(e, t),
               (e._zod.check = (n) => {
                 ;((t.pattern.lastIndex = 0),
                   !t.pattern.test(n.value) &&
@@ -6184,21 +6193,21 @@ console.log(facture.total)</pre>
                     }))
               }))
           }),
-          $e = M(`$ZodCheckOverwrite`, (e, t) => {
-            ;(L.init(e, t),
+          tt = j(`$ZodCheckOverwrite`, (e, t) => {
+            ;(I.init(e, t),
               (e._zod.check = (e) => {
                 e.value = t.tx(e.value)
               }))
           }),
-          et = { major: 4, minor: 6, patch: 5 },
-          z = M(
+          nt = { major: 4, minor: 6, patch: 5 },
+          R = j(
             `$ZodType`,
             (e, t) => {
               var n
               ;((e ??= {}),
                 (e._zod.def = t),
                 (e._zod.bag = e._zod.bag || {}),
-                (e._zod.version = et))
+                (e._zod.version = nt))
               let r = e._zod.def.checks,
                 i = e._zod.traits.has(`$ZodCheck`) ? [e, ...(r ?? [])] : r?.length ? [...r] : []
               for (let t of i) for (let n of t._zod.onattach) n(e)
@@ -6210,31 +6219,31 @@ console.log(facture.total)</pre>
               else {
                 let t = (t, n, r) => {
                     if (t.memo) return t
-                    let i = T(t),
+                    let i = w(t),
                       a
                     for (let o of n) {
                       if (o._zod.def.when) {
-                        if (ce(t) || !o._zod.def.when(t)) continue
+                        if (ue(t) || !o._zod.def.when(t)) continue
                       } else if (i) continue
                       let n = t.issues.length,
                         s = o._zod.check(t)
-                      if (s instanceof Promise && r?.async === !1) throw new N()
+                      if (s instanceof Promise && r?.async === !1) throw new M()
                       if (a || s instanceof Promise)
                         a = (a ?? Promise.resolve()).then(async () => {
-                          ;(await s, t.issues.length !== n && (le(t.issues, n, e), (i ||= T(t, n))))
+                          ;(await s, t.issues.length !== n && (de(t.issues, n, e), (i ||= w(t, n))))
                         })
                       else {
                         if (t.issues.length === n) continue
-                        ;(le(t.issues, n, e), (i ||= T(t, n)))
+                        ;(de(t.issues, n, e), (i ||= w(t, n)))
                       }
                     }
                     return a ? a.then(() => t) : t
                   },
                   n = (n, r, a) => {
-                    if (T(n)) return ((n.aborted = !0), n)
+                    if (w(n)) return ((n.aborted = !0), n)
                     let o = t(r, i, a)
                     if (o instanceof Promise) {
-                      if (a.async === !1) throw new N()
+                      if (a.async === !1) throw new M()
                       return o.then((t) => e._zod.parse(t, a))
                     }
                     return e._zod.parse(o, a)
@@ -6247,7 +6256,7 @@ console.log(facture.total)</pre>
                   }
                   let o = e._zod.parse(r, a)
                   if (o instanceof Promise) {
-                    if (a.async === !1) throw new N()
+                    if (a.async === !1) throw new M()
                     return o.then((e) => t(e, i, a))
                   }
                   return t(o, i, a)
@@ -6256,36 +6265,36 @@ console.log(facture.total)</pre>
             },
             {
               get '~standard'() {
-                return he(this, `~standard`, rt(this))
+                return _e(this, `~standard`, at(this))
               },
               set '~standard'(e) {
-                k(this, `~standard`, e)
+                O(this, `~standard`, e)
               },
             },
           ),
-          tt = (e, t) =>
-            e.issues.length ? { issues: e.issues.map((e) => O(e, t, F())) } : { value: e.value }
-        async function nt(e, t) {
+          rt = (e, t) =>
+            e.issues.length ? { issues: e.issues.map((e) => D(e, t, P())) } : { value: e.value }
+        async function it(e, t) {
           let n = { async: !0 }
-          return tt(await e._zod.run({ value: t, issues: [] }, n), n)
+          return rt(await e._zod.run({ value: t, issues: [] }, n), n)
         }
-        function rt(e) {
+        function at(e) {
           return {
             validate: (t) => {
               let n = { async: !1 }
               try {
                 let r = e._zod.run({ value: t, issues: [] }, n)
-                if (!(r instanceof Promise)) return tt(r, n)
+                if (!(r instanceof Promise)) return rt(r, n)
               } catch {}
-              return nt(e, t)
+              return it(e, t)
             },
             vendor: `zod`,
             version: 1,
           }
         }
-        var it = M(`$ZodString`, (e, t) => {
-            ;(z.init(e, t),
-              (e._zod.pattern = t.pattern ?? Ve),
+        var ot = j(`$ZodString`, (e, t) => {
+            ;(R.init(e, t),
+              (e._zod.pattern = t.pattern ?? Ue),
               (e._zod.parse = (n, r) => {
                 if (t.coerce)
                   try {
@@ -6303,18 +6312,18 @@ console.log(facture.total)</pre>
                 )
               }))
           }),
-          B = M(`$ZodStringFormat`, (e, t) => {
-            ;(Ze.init(e, t), it.init(e, t))
+          z = j(`$ZodStringFormat`, (e, t) => {
+            ;($e.init(e, t), ot.init(e, t))
           }),
-          at = M(`$ZodUUID`, (e, t) => {
+          st = j(`$ZodUUID`, (e, t) => {
             if (t.version) {
               let e = { v1: 1, v2: 2, v3: 3, v4: 4, v5: 5, v6: 6, v7: 7, v8: 8 }[t.version]
               if (e === void 0) throw Error(`Invalid UUID version: "${t.version}"`)
-              t.pattern ??= Ie(e)
-            } else t.pattern ??= Ie()
-            B.init(e, t)
+              t.pattern ??= Re(e)
+            } else t.pattern ??= Re()
+            z.init(e, t)
           })
-        function ot(e) {
+        function ct(e) {
           try {
             return typeof URL < `u` && typeof URL.canParse == `function`
               ? URL.canParse(e)
@@ -6323,13 +6332,13 @@ console.log(facture.total)</pre>
             return !1
           }
         }
-        function st(e, t) {
+        function lt(e, t) {
           return !(`normalize` in t) && !(`hostname` in t) && !(`protocol` in t)
-            ? ot(e) || 2
-            : ct(e, t)
+            ? ct(e) || 2
+            : ut(e, t)
         }
-        function ct(e, t) {
-          if (!t.normalize && t.protocol?.source === Le.source && !/^https?:\/\//i.test(e)) return 1
+        function ut(e, t) {
+          if (!t.normalize && t.protocol?.source === ze.source && !/^https?:\/\//i.test(e)) return 1
           try {
             if (typeof URL < `u`) {
               let t = URL
@@ -6340,25 +6349,25 @@ console.log(facture.total)</pre>
             return 2
           }
         }
-        var lt = /[\t\n\r]/g
-        function ut(e) {
-          return e.replace(lt, ``)
+        var dt = /[\t\n\r]/g
+        function ft(e) {
+          return e.replace(dt, ``)
         }
-        function dt(e, t) {
+        function pt(e, t) {
           return ((t.lastIndex = 0), t.test(e.hostname))
         }
-        function ft(e, t) {
+        function mt(e, t) {
           return (
             (t.lastIndex = 0),
             t.test(e.protocol.endsWith(`:`) ? e.protocol.slice(0, -1) : e.protocol)
           )
         }
-        var pt = M(`$ZodURL`, (e, t) => {
-            ;(B.init(e, t),
+        var ht = j(`$ZodURL`, (e, t) => {
+            ;(z.init(e, t),
               (e._zod.check = (n) => {
                 try {
                   let r = n.value.trim(),
-                    i = st(r, t)
+                    i = lt(r, t)
                   if (i === 1) {
                     n.issues.push({
                       code: `invalid_format`,
@@ -6381,11 +6390,11 @@ console.log(facture.total)</pre>
                     return
                   }
                   if (i === !0) {
-                    n.value = ut(r)
+                    n.value = ft(r)
                     return
                   }
                   ;(t.hostname &&
-                    !dt(i, t.hostname) &&
+                    !pt(i, t.hostname) &&
                     n.issues.push({
                       code: `invalid_format`,
                       format: `url`,
@@ -6396,7 +6405,7 @@ console.log(facture.total)</pre>
                       continue: !t.abort,
                     }),
                     t.protocol &&
-                      !ft(i, t.protocol) &&
+                      !mt(i, t.protocol) &&
                       n.issues.push({
                         code: `invalid_format`,
                         format: `url`,
@@ -6406,7 +6415,7 @@ console.log(facture.total)</pre>
                         inst: e,
                         continue: !t.abort,
                       }),
-                    (n.value = t.normalize ? i.href : ut(r)))
+                    (n.value = t.normalize ? i.href : ft(r)))
                   return
                 } catch {
                   n.issues.push({
@@ -6419,12 +6428,12 @@ console.log(facture.total)</pre>
                 }
               }))
           }),
-          mt = M(`$ZodISODateTime`, (e, t) => {
-            ;((t.pattern ??= Be(t)), B.init(e, t))
+          gt = j(`$ZodISODateTime`, (e, t) => {
+            ;((t.pattern ??= He(t)), z.init(e, t))
           }),
-          ht = M(`$ZodNumber`, (e, t) => {
-            ;(z.init(e, t),
-              (e._zod.pattern = He),
+          _t = j(`$ZodNumber`, (e, t) => {
+            ;(R.init(e, t),
+              (e._zod.pattern = We),
               (e._zod.parse = (n, r) => {
                 if (t.coerce)
                   try {
@@ -6452,12 +6461,12 @@ console.log(facture.total)</pre>
                 )
               }))
           }),
-          gt = M(`$ZodNumberFormat`, (e, t) => {
-            ;(Je.init(e, t), ht.init(e, t))
+          vt = j(`$ZodNumberFormat`, (e, t) => {
+            ;(Xe.init(e, t), _t.init(e, t))
           }),
-          _t = M(`$ZodBoolean`, (e, t) => {
-            ;(z.init(e, t),
-              (e._zod.pattern = Ue),
+          yt = j(`$ZodBoolean`, (e, t) => {
+            ;(R.init(e, t),
+              (e._zod.pattern = Ge),
               (e._zod.parse = (n, r) => {
                 if (t.coerce)
                   try {
@@ -6471,9 +6480,9 @@ console.log(facture.total)</pre>
                 )
               }))
           }),
-          vt = M(`$ZodNull`, (e, t) => {
-            ;(z.init(e, t),
-              (e._zod.pattern = We),
+          bt = j(`$ZodNull`, (e, t) => {
+            ;(R.init(e, t),
+              (e._zod.pattern = Ke),
               (e._zod.values = new Set([null])),
               (e._zod.parse = (t, n) => {
                 let r = t.value
@@ -6484,19 +6493,19 @@ console.log(facture.total)</pre>
                 )
               }))
           }),
-          yt = M(`$ZodNever`, (e, t) => {
-            ;(z.init(e, t),
+          xt = j(`$ZodNever`, (e, t) => {
+            ;(R.init(e, t),
               (e._zod.parse = (t, n) => (
                 t.issues.push({ expected: `never`, code: `invalid_type`, input: t.value, inst: e }),
                 t
               )))
           })
-        function bt(e, t, n) {
-          ;(e.issues.length && t.issues.push(...E(n, e.issues)), (t.value[n] = e.value))
+        function St(e, t, n) {
+          ;(e.issues.length && t.issues.push(...T(n, e.issues)), (t.value[n] = e.value))
         }
-        var xt = M(`$ZodArray`, (e, t) => {
-          z.init(e, t)
-          let n = P.memoizer
+        var Ct = j(`$ZodArray`, (e, t) => {
+          R.init(e, t)
+          let n = N.memoizer
           ;(n?.attach(e),
             (e._zod.parse = (r, i) => {
               let a = r.value
@@ -6511,19 +6520,19 @@ console.log(facture.total)</pre>
               for (let e = 0; e < a.length; e++) {
                 let n = a[e],
                   c = t.element._zod.run({ value: n, issues: [] }, i)
-                if (c instanceof Promise) o.push(c.then((t) => bt(t, r, e)))
-                else if ((bt(c, r, e), s && c.issues.length !== 0 && T(c))) break
+                if (c instanceof Promise) o.push(c.then((t) => St(t, r, e)))
+                else if ((St(c, r, e), s && c.issues.length !== 0 && w(c))) break
               }
               return o.length ? Promise.all(o).then(() => r) : r
             }))
         })
-        function V(e, t, n, r, i, a) {
+        function B(e, t, n, r, i, a) {
           let o = n in r,
             s = a === `optional`
           if (o || !s || i !== `optional`) {
             if (e.issues.length) {
               if (i !== void 0 && s && !o) return
-              t.issues.push(...E(n, e.issues))
+              t.issues.push(...T(n, e.issues))
             }
             if (!o && i === void 0) {
               e.issues.length ||
@@ -6540,16 +6549,16 @@ console.log(facture.total)</pre>
               : (t.value[n] = e.value)
           }
         }
-        var St = []
-        function Ct(e) {
+        var wt = []
+        function Tt(e) {
           let t = Object.keys(e.shape),
             n = Object.getOwnPropertySymbols(e.shape),
-            r = n.length ? n : St,
+            r = n.length ? n : wt,
             i = r.length ? [...t, ...r] : t
           for (let t of i)
             if (!e.shape?.[t]?._zod?.traits?.has(`$ZodType`))
               throw Error(`Invalid element at key "${String(t)}": expected a Zod schema`)
-          let a = oe(e.shape)
+          let a = ce(e.shape)
           return {
             ...e,
             allKeys: i,
@@ -6559,7 +6568,7 @@ console.log(facture.total)</pre>
             optionalKeys: new Set(a),
           }
         }
-        function wt(e, t, n, r, i, a, o) {
+        function Et(e, t, n, r, i, a, o) {
           let s = [],
             c = i.keySet,
             l = i.catchall._zod,
@@ -6569,7 +6578,7 @@ console.log(facture.total)</pre>
             p = 0
           for (let i in t) {
             if (o && n.issues.length !== p) {
-              if (T(n, p)) break
+              if (w(n, p)) break
               p = n.issues.length
             }
             if (c.has(i)) continue
@@ -6582,7 +6591,7 @@ console.log(facture.total)</pre>
               continue
             }
             let a = l.run({ value: t[i], issues: [] }, r)
-            a instanceof Promise ? e.push(a.then((e) => V(e, n, i, t, d, f))) : V(a, n, i, t, d, f)
+            a instanceof Promise ? e.push(a.then((e) => B(e, n, i, t, d, f))) : B(a, n, i, t, d, f)
           }
           return (
             s.length &&
@@ -6596,8 +6605,8 @@ console.log(facture.total)</pre>
             e.length ? Promise.all(e).then(() => n) : n
           )
         }
-        var Tt = M(`$ZodObject`, (e, t) => {
-          z.init(e, t)
+        var Dt = j(`$ZodObject`, (e, t) => {
+          R.init(e, t)
           let n = Object.getOwnPropertyDescriptor(t, `shape`),
             r = n?.get ? n.get.raw : (t.shape ?? {})
           if (r) {
@@ -6607,14 +6616,14 @@ console.log(facture.total)</pre>
             }
             ;((e.raw = r), Object.defineProperty(t, 'shape', { get: e }))
           }
-          let i = g(() => Ct(t))
-          j(e, `propValues`, (e) => {
+          let i = g(() => Tt(t))
+          A(e, `propValues`, (e) => {
             let t = e.def.shape,
               n = {}
             for (let e in t) {
               let r = t[e]._zod
               if (r.values) {
-                Object.prototype.hasOwnProperty.call(n, e) || ne(n, e, new Set())
+                Object.prototype.hasOwnProperty.call(n, e) || y(n, e, new Set())
                 for (let t of r.values) n[e].add(t)
                 r.optin !== void 0 && n[e].add(void 0)
               }
@@ -6624,7 +6633,7 @@ console.log(facture.total)</pre>
           let a = b,
             o = t.catchall,
             s,
-            c = P.memoizer
+            c = N.memoizer
           ;(c?.attach(e),
             (e._zod.parse = (t, n) => {
               s ??= i.value
@@ -6641,7 +6650,7 @@ console.log(facture.total)</pre>
                 f = t.issues.length
               for (let e of s.allKeys) {
                 if (d && t.issues.length !== f) {
-                  if (T(t, f)) break
+                  if (w(t, f)) break
                   f = t.issues.length
                 }
                 if (e === `__proto__`) continue
@@ -6650,46 +6659,46 @@ console.log(facture.total)</pre>
                   o = i._zod.optout,
                   s = i._zod.run({ value: r[e], issues: [] }, n)
                 s instanceof Promise
-                  ? l.push(s.then((n) => V(n, t, e, r, a, o)))
-                  : V(s, t, e, r, a, o)
+                  ? l.push(s.then((n) => B(n, t, e, r, a, o)))
+                  : B(s, t, e, r, a, o)
               }
               return o
-                ? wt(l, r, t, n, i.value, e, d === !0)
+                ? Et(l, r, t, n, i.value, e, d === !0)
                 : l.length
                   ? Promise.all(l).then(() => t)
                   : t
             }))
         })
-        function Et(e, t, n, r) {
+        function Ot(e, t, n, r) {
           for (let n of e) if (n.issues.length === 0) return ((t.value = n.value), t)
-          let i = e.filter((e) => !T(e))
+          let i = e.filter((e) => !w(e))
           return i.length === 1
             ? ((t.value = i[0].value), i[0])
             : (t.issues.push({
                 code: `invalid_union`,
                 input: t.value,
                 inst: n,
-                errors: e.map((e) => e.issues.map((e) => O(e, r, F()))),
+                errors: e.map((e) => e.issues.map((e) => D(e, r, P()))),
               }),
               t)
         }
-        var Dt = M(`$ZodUnion`, (e, t) => {
-          ;(z.init(e, t),
-            j(e, `optin`, (e) =>
+        var kt = j(`$ZodUnion`, (e, t) => {
+          ;(R.init(e, t),
+            A(e, `optin`, (e) =>
               e.def.options.some((e) => e._zod.optin === `defaulted`)
                 ? `defaulted`
                 : e.def.options.some((e) => e._zod.optin !== void 0)
                   ? `optional`
                   : void 0,
             ),
-            j(e, `optout`, (e) =>
+            A(e, `optout`, (e) =>
               e.def.options.some((e) => e._zod.optout === `optional`) ? `optional` : void 0,
             ),
-            j(e, `values`, (e) => {
+            A(e, `values`, (e) => {
               if (e.def.options.every((e) => e._zod.values))
                 return new Set(e.def.options.flatMap((e) => Array.from(e._zod.values)))
             }),
-            j(e, `pattern`, (e) => {
+            A(e, `pattern`, (e) => {
               if (e.def.options.every((e) => e._zod.pattern)) {
                 let t = e.def.options.map((e) => e._zod.pattern)
                 return RegExp(`^(${t.map((e) => _(e.source)).join(`|`)})$`)
@@ -6708,10 +6717,10 @@ console.log(facture.total)</pre>
                 o.push(t)
               }
             }
-            return a ? Promise.all(o).then((t) => Et(t, r, e, i)) : Et(o, r, e, i)
+            return a ? Promise.all(o).then((t) => Ot(t, r, e, i)) : Ot(o, r, e, i)
           }
         })
-        function Ot(e) {
+        function At(e) {
           let t = new Map()
           for (let n of e.options) {
             let r = n._zod.propValues?.[e.discriminator]
@@ -6725,10 +6734,10 @@ console.log(facture.total)</pre>
           }
           return t
         }
-        var kt = M(`$ZodDiscriminatedUnion`, (e, t) => {
-            ;((t.inclusive = !1), Dt.init(e, t))
+        var jt = j(`$ZodDiscriminatedUnion`, (e, t) => {
+            ;((t.inclusive = !1), kt.init(e, t))
             let n = e._zod.parse
-            ;(j(e, `propValues`, (e) => {
+            ;(A(e, `propValues`, (e) => {
               let t = {},
                 n = 0
               for (let r of e.def.options) {
@@ -6739,18 +6748,18 @@ console.log(facture.total)</pre>
                   )
                 i[e.def.discriminator]?.has(void 0) && n++
                 for (let [e, n] of Object.entries(i)) {
-                  Object.prototype.hasOwnProperty.call(t, e) || ne(t, e, new Set())
+                  Object.prototype.hasOwnProperty.call(t, e) || y(t, e, new Set())
                   for (let r of n) t[e].add(r)
                 }
               }
               return (!e.def.unionFallback && n > 1 && t[e.def.discriminator]?.delete(void 0), t)
             }),
               t.options.forEach((e, n) => {
-                let r = re(e._zod.def)
+                let r = ie(e._zod.def)
                 if (r && !Object.prototype.hasOwnProperty.call(r, t.discriminator))
                   throw Error(`Invalid discriminated union option at index "${n}"`)
               }))
-            let r = g(() => Ot(t))
+            let r = g(() => At(t))
             e._zod.parse = (i, a) => {
               let o = i.value
               if (!b(o))
@@ -6777,13 +6786,13 @@ console.log(facture.total)</pre>
                     i)
             }
           }),
-          At = M(`$ZodRecord`, (e, t) => {
-            z.init(e, t)
-            let n = P.memoizer
+          Mt = j(`$ZodRecord`, (e, t) => {
+            R.init(e, t)
+            let n = N.memoizer
             ;(n?.attach(e),
               (e._zod.parse = (r, i) => {
                 let a = r.value
-                if (!ae(a))
+                if (!oe(a))
                   return (
                     r.issues.push({ expected: `record`, code: `invalid_type`, input: a, inst: e }),
                     r
@@ -6804,7 +6813,7 @@ console.log(facture.total)</pre>
                         r.issues.push({
                           code: `invalid_key`,
                           origin: `record`,
-                          issues: s.issues.map((e) => O(e, i, F())),
+                          issues: s.issues.map((e) => D(e, i, P())),
                           input: n,
                           path: [n],
                           inst: e,
@@ -6817,11 +6826,11 @@ console.log(facture.total)</pre>
                       u instanceof Promise
                         ? o.push(
                             u.then((e) => {
-                              ;(e.issues.length && r.issues.push(...E(n, e.issues)),
+                              ;(e.issues.length && r.issues.push(...T(n, e.issues)),
                                 (r.value[l] = e.value))
                             }),
                           )
-                        : (u.issues.length && r.issues.push(...E(n, u.issues)),
+                        : (u.issues.length && r.issues.push(...T(n, u.issues)),
                           (r.value[l] = u.value))
                     }
                   let l
@@ -6850,7 +6859,7 @@ console.log(facture.total)</pre>
                     let l = t.keyType._zod.run({ value: n, issues: [] }, i)
                     if (l instanceof Promise)
                       throw Error(`Async schemas not supported in object keys currently`)
-                    if (typeof n == `string` && He.test(n) && l.issues.length) {
+                    if (typeof n == `string` && We.test(n) && l.issues.length) {
                       let e = t.keyType._zod.run({ value: Number(n), issues: [] }, i)
                       if (e instanceof Promise)
                         throw Error(`Async schemas not supported in object keys currently`)
@@ -6864,7 +6873,7 @@ console.log(facture.total)</pre>
                           : r.issues.push({
                               code: `invalid_key`,
                               origin: `record`,
-                              issues: l.issues.map((e) => O(e, i, F())),
+                              issues: l.issues.map((e) => D(e, i, P())),
                               input: n,
                               path: [n],
                               inst: e,
@@ -6877,11 +6886,11 @@ console.log(facture.total)</pre>
                     d instanceof Promise
                       ? o.push(
                           d.then((e) => {
-                            ;(e.issues.length && r.issues.push(...E(n, e.issues)),
+                            ;(e.issues.length && r.issues.push(...T(n, e.issues)),
                               (r.value[u] = e.value))
                           }),
                         )
-                      : (d.issues.length && r.issues.push(...E(n, d.issues)),
+                      : (d.issues.length && r.issues.push(...T(n, d.issues)),
                         (r.value[u] = d.value))
                   }
                   c &&
@@ -6897,15 +6906,15 @@ console.log(facture.total)</pre>
                 return o.length ? Promise.all(o).then(() => r) : r
               }))
           }),
-          jt = M(`$ZodEnum`, (e, t) => {
-            z.init(e, t)
+          Nt = j(`$ZodEnum`, (e, t) => {
+            R.init(e, t)
             let n = m(t.entries),
               r = new Set(n)
             ;((e._zod.values = r),
-              j(e, `pattern`, (e) => {
-                let t = m(e.def.entries).filter((e) => x.has(typeof e))
+              A(e, `pattern`, (e) => {
+                let t = m(e.def.entries).filter((e) => se.has(typeof e))
                 return RegExp(
-                  t.length ? `^(${t.map((e) => S(e.toString())).join(`|`)})$` : `^[^\\s\\S]$`,
+                  t.length ? `^(${t.map((e) => x(e.toString())).join(`|`)})$` : `^[^\\s\\S]$`,
                 )
               }),
               (e._zod.parse = (t, i) => {
@@ -6917,15 +6926,15 @@ console.log(facture.total)</pre>
                 )
               }))
           }),
-          Mt = M(`$ZodLiteral`, (e, t) => {
-            z.init(e, t)
+          Pt = j(`$ZodLiteral`, (e, t) => {
+            R.init(e, t)
             let n = new Set(t.values)
             ;((e._zod.values = n),
-              j(e, `pattern`, (e) => {
+              A(e, `pattern`, (e) => {
                 let t = e.def.values
                 return RegExp(
                   t.length
-                    ? `^(${t.map((e) => (typeof e == `string` ? S(e) : e ? S(e.toString()) : String(e))).join(`|`)})$`
+                    ? `^(${t.map((e) => (typeof e == `string` ? x(e) : e ? x(e.toString()) : String(e))).join(`|`)})$`
                     : `^[^\\s\\S]$`,
                 )
               }),
@@ -6938,20 +6947,20 @@ console.log(facture.total)</pre>
                 )
               }))
           })
-        function Nt(e, t) {
+        function Ft(e, t) {
           return ((e.value = t.issues.length ? void 0 : t.value), e)
         }
-        var Pt = M(`$ZodOptional`, (e, t) => {
-            ;(z.init(e, t),
-              j(e, `optin`, (e) =>
+        var It = j(`$ZodOptional`, (e, t) => {
+            ;(R.init(e, t),
+              A(e, `optin`, (e) =>
                 e.def.innerType._zod.optin === `defaulted` ? `defaulted` : `optional`,
               ),
               (e._zod.optout = `optional`),
-              j(e, `values`, (e) => {
+              A(e, `values`, (e) => {
                 let t = e.def.innerType._zod.values
                 return t ? new Set([...t, void 0]) : void 0
               }),
-              j(e, `pattern`, (e) => {
+              A(e, `pattern`, (e) => {
                 let t = e.def.innerType._zod.pattern
                 return t ? RegExp(`^(${_(t.source)})?$`) : void 0
               }),
@@ -6959,50 +6968,50 @@ console.log(facture.total)</pre>
                 if (e.value === void 0) {
                   if (t.innerType._zod.optin !== `defaulted`) return e
                   let r = t.innerType._zod.run({ value: e.value, issues: [] }, n)
-                  return r instanceof Promise ? r.then((t) => Nt(e, t)) : Nt(e, r)
+                  return r instanceof Promise ? r.then((t) => Ft(e, t)) : Ft(e, r)
                 }
                 return t.innerType._zod.run(e, n)
               }))
           }),
-          Ft = M(`$ZodNullable`, (e, t) => {
-            ;(z.init(e, t),
-              j(e, `optin`, (e) => e.def.innerType._zod.optin),
-              j(e, `optout`, (e) => e.def.innerType._zod.optout),
-              j(e, `pattern`, (e) => {
+          Lt = j(`$ZodNullable`, (e, t) => {
+            ;(R.init(e, t),
+              A(e, `optin`, (e) => e.def.innerType._zod.optin),
+              A(e, `optout`, (e) => e.def.innerType._zod.optout),
+              A(e, `pattern`, (e) => {
                 let t = e.def.innerType._zod.pattern
                 return t ? RegExp(`^(${_(t.source)}|null)$`) : void 0
               }),
-              j(e, `values`, (e) =>
+              A(e, `values`, (e) =>
                 e.def.innerType._zod.values
                   ? new Set([...e.def.innerType._zod.values, null])
                   : void 0,
               ),
               (e._zod.parse = (e, n) => (e.value === null ? e : t.innerType._zod.run(e, n))))
           }),
-          It = M(`$ZodLazy`, (e, t) => {
-            ;(z.init(e, t),
-              y(e._zod, `innerType`, () => {
+          Rt = j(`$ZodLazy`, (e, t) => {
+            ;(R.init(e, t),
+              re(e._zod, `innerType`, () => {
                 let e = t
                 return ((e._cachedInner ||= t.getter()), e._cachedInner)
               }),
-              j(e, `pattern`, (e) => e.innerType?._zod?.pattern),
-              j(e, `propValues`, (e) => e.innerType?._zod?.propValues),
-              j(e, `optin`, (e) => e.innerType?._zod?.optin ?? void 0),
-              j(e, `optout`, (e) => e.innerType?._zod?.optout ?? void 0),
+              A(e, `pattern`, (e) => e.innerType?._zod?.pattern),
+              A(e, `propValues`, (e) => e.innerType?._zod?.propValues),
+              A(e, `optin`, (e) => e.innerType?._zod?.optin ?? void 0),
+              A(e, `optout`, (e) => e.innerType?._zod?.optout ?? void 0),
               (e._zod.parse = (t, n) => e._zod.innerType._zod.run(t, n)))
           }),
-          Lt = M(`$ZodCustom`, (e, t) => {
-            ;(L.init(e, t),
-              z.init(e, t),
+          zt = j(`$ZodCustom`, (e, t) => {
+            ;(I.init(e, t),
+              R.init(e, t),
               (e._zod.parse = (e, t) => e),
               (e._zod.check = (n) => {
                 let r = n.value,
                   i = t.fn(r)
-                if (i instanceof Promise) return i.then((t) => Rt(t, n, r, e))
-                Rt(i, n, r, e)
+                if (i instanceof Promise) return i.then((t) => Bt(t, n, r, e))
+                Bt(i, n, r, e)
               }))
           })
-        function Rt(e, t, n, r) {
+        function Bt(e, t, n, r) {
           if (!e) {
             let e = {
               code: `custom`,
@@ -7011,34 +7020,34 @@ console.log(facture.total)</pre>
               path: [...(r._zod.def.path ?? [])],
               continue: !r._zod.def.abort,
             }
-            ;(r._zod.def.params && (e.params = r._zod.def.params), t.issues.push(pe(e)))
+            ;(r._zod.def.params && (e.params = r._zod.def.params), t.issues.push(he(e)))
           }
         }
-        function zt(e) {
+        function Vt(e) {
           return ((e.checks &&= [...e.checks]), e)
         }
-        function Bt(e, t) {
-          return new e(zt({ type: `string`, ...w(t) }))
+        function Ht(e, t) {
+          return new e(Vt({ type: `string`, ...C(t) }))
         }
-        function Vt(e, t) {
+        function Ut(e, t) {
           return new e({
             type: `string`,
             format: `uuid`,
             check: `string_format`,
             abort: !1,
-            ...w(t),
+            ...C(t),
           })
         }
-        function Ht(e, t) {
+        function Wt(e, t) {
           return new e({
             type: `string`,
             format: `url`,
             check: `string_format`,
             abort: !1,
-            ...w(t),
+            ...C(t),
           })
         }
-        function Ut(e, t) {
+        function Gt(e, t) {
           return new e({
             type: `string`,
             format: `datetime`,
@@ -7046,78 +7055,78 @@ console.log(facture.total)</pre>
             offset: !1,
             local: !1,
             precision: null,
-            ...w(t),
+            ...C(t),
           })
         }
-        function Wt(e, t) {
-          return new e(zt({ type: `number`, checks: [], ...w(t) }))
+        function Kt(e, t) {
+          return new e(Vt({ type: `number`, checks: [], ...C(t) }))
         }
-        function Gt(e, t) {
+        function qt(e, t) {
           return new e({
             type: `number`,
             check: `number_format`,
             abort: !1,
             format: `safeint`,
-            ...w(t),
+            ...C(t),
           })
         }
-        function Kt(e, t) {
-          return new e({ type: `boolean`, ...w(t) })
-        }
-        function qt(e, t) {
-          return new e({ type: `null`, ...w(t) })
-        }
         function Jt(e, t) {
-          return new e({ type: `never`, ...w(t) })
+          return new e({ type: `boolean`, ...C(t) })
         }
         function Yt(e, t) {
-          return new Ke({ check: `less_than`, ...w(t), value: e, inclusive: !0 })
-        }
-        function H(e, t) {
-          return new qe({ check: `greater_than`, ...w(t), value: e, inclusive: !0 })
+          return new e({ type: `null`, ...C(t) })
         }
         function Xt(e, t) {
-          return new Ye({ check: `max_length`, ...w(t), maximum: e })
+          return new e({ type: `never`, ...C(t) })
         }
         function Zt(e, t) {
-          return new Xe({ check: `min_length`, ...w(t), minimum: e })
+          return new Je({ check: `less_than`, ...C(t), value: e, inclusive: !0 })
+        }
+        function V(e, t) {
+          return new Ye({ check: `greater_than`, ...C(t), value: e, inclusive: !0 })
         }
         function Qt(e, t) {
-          return new Qe({ check: `string_format`, format: `regex`, ...w(t), pattern: e })
+          return new Ze({ check: `max_length`, ...C(t), maximum: e })
         }
-        function $t(e) {
-          return new $e({ check: `overwrite`, tx: e })
+        function $t(e, t) {
+          return new Qe({ check: `min_length`, ...C(t), minimum: e })
         }
-        function en() {
-          return $t((e) => e.trim())
+        function en(e, t) {
+          return new et({ check: `string_format`, format: `regex`, ...C(t), pattern: e })
         }
-        function tn(e, t, n) {
-          return new e({ type: `custom`, check: `custom`, fn: t, ...w(n) })
+        function tn(e) {
+          return new tt({ check: `overwrite`, tx: e })
         }
-        var U = M(
+        function nn() {
+          return tn((e) => e.trim())
+        }
+        function rn(e, t, n) {
+          return new e({ type: `custom`, check: `custom`, fn: t, ...C(n) })
+        }
+        var H = j(
             `ZodMiniType`,
             (e, t) => {
               if (!e._zod) throw Error(`Uninitialized schema in ZodMiniType.`)
-              ;(z.init(e, t), (e.def = t), (e.type = t.type))
+              ;(R.init(e, t), (e.def = t), (e.type = t.type))
             },
             {
               get with() {
                 return this.check
               },
               set with(e) {
-                k(this, `with`, e)
+                O(this, `with`, e)
               },
               parse(e, t) {
-                return je(this, e, t, { callee: this.parse })
+                return Ne(this, e, t, { callee: this.parse })
               },
               parseAsync(e, t) {
-                return Me(this, e, t, { callee: this.parseAsync })
+                return Pe(this, e, t, { callee: this.parseAsync })
               },
               safeParse(e, t) {
-                return Ne(this, e, t)
+                return Fe(this, e, t)
               },
               safeParseAsync(e, t) {
-                return Fe(this, e, t)
+                return Le(this, e, t)
               },
               check(...e) {
                 let t = this.def
@@ -7137,7 +7146,7 @@ console.log(facture.total)</pre>
                 )
               },
               clone(e, t) {
-                return C(this, e, t)
+                return S(this, e, t)
               },
               brand() {
                 return this
@@ -7150,149 +7159,149 @@ console.log(facture.total)</pre>
               },
             },
           ),
-          nn = M(`ZodMiniString`, (e, t) => {
-            ;(it.init(e, t), U.init(e, t))
+          an = j(`ZodMiniString`, (e, t) => {
+            ;(ot.init(e, t), H.init(e, t))
           })
-        function W(e) {
-          return Bt(nn, e)
+        function U(e) {
+          return Ht(an, e)
         }
-        var rn = M(`ZodMiniStringFormat`, (e, t) => {
-            ;(B.init(e, t), nn.init(e, t))
+        var on = j(`ZodMiniStringFormat`, (e, t) => {
+            ;(z.init(e, t), an.init(e, t))
           }),
-          an = M(`ZodMiniUUID`, (e, t) => {
-            ;(at.init(e, t), rn.init(e, t))
+          sn = j(`ZodMiniUUID`, (e, t) => {
+            ;(st.init(e, t), on.init(e, t))
           })
-        function on(e) {
-          return Vt(an, e)
-        }
-        var sn = M(`ZodMiniURL`, (e, t) => {
-          ;(pt.init(e, t), rn.init(e, t))
-        })
         function cn(e) {
-          return Ht(sn, e)
+          return Ut(sn, e)
         }
-        var ln = M(`ZodMiniNumber`, (e, t) => {
-          ;(ht.init(e, t), U.init(e, t))
+        var ln = j(`ZodMiniURL`, (e, t) => {
+          ;(ht.init(e, t), on.init(e, t))
         })
         function un(e) {
           return Wt(ln, e)
         }
-        var dn = M(`ZodMiniNumberFormat`, (e, t) => {
-          ;(gt.init(e, t), ln.init(e, t))
+        var dn = j(`ZodMiniNumber`, (e, t) => {
+          ;(_t.init(e, t), H.init(e, t))
         })
         function fn(e) {
-          return Gt(dn, e)
+          return Kt(dn, e)
         }
-        var pn = M(`ZodMiniBoolean`, (e, t) => {
-          ;(_t.init(e, t), U.init(e, t))
+        var pn = j(`ZodMiniNumberFormat`, (e, t) => {
+          ;(vt.init(e, t), dn.init(e, t))
         })
-        function G(e) {
-          return Kt(pn, e)
+        function mn(e) {
+          return qt(pn, e)
         }
-        var mn = M(`ZodMiniNull`, (e, t) => {
-          ;(vt.init(e, t), U.init(e, t))
+        var hn = j(`ZodMiniBoolean`, (e, t) => {
+          ;(yt.init(e, t), H.init(e, t))
         })
-        function hn(e) {
-          return qt(mn, e)
+        function W(e) {
+          return Jt(hn, e)
         }
-        var gn = M(`ZodMiniNever`, (e, t) => {
-          ;(yt.init(e, t), U.init(e, t))
+        var gn = j(`ZodMiniNull`, (e, t) => {
+          ;(bt.init(e, t), H.init(e, t))
         })
         function _n(e) {
-          return Jt(gn, e)
+          return Yt(gn, e)
         }
-        var vn = M(`ZodMiniArray`, (e, t) => {
-          ;(xt.init(e, t), U.init(e, t))
+        var vn = j(`ZodMiniNever`, (e, t) => {
+          ;(xt.init(e, t), H.init(e, t))
+        })
+        function yn(e) {
+          return Xt(vn, e)
+        }
+        var bn = j(`ZodMiniArray`, (e, t) => {
+          ;(Ct.init(e, t), H.init(e, t))
+        })
+        function G(e, t) {
+          return new bn({ type: `array`, element: e, ...C(t) })
+        }
+        var xn = j(`ZodMiniObject`, (e, t) => {
+          ;(Dt.init(e, t), H.init(e, t), Se(e, `shape`, (e) => e._zod.def.shape, !1))
         })
         function K(e, t) {
-          return new vn({ type: `array`, element: e, ...w(t) })
+          return new xn({ type: `object`, shape: e, catchall: yn(), ...C(t) })
         }
-        var yn = M(`ZodMiniObject`, (e, t) => {
-          ;(Tt.init(e, t), U.init(e, t), be(e, `shape`, (e) => e._zod.def.shape, !1))
+        var Sn = j(`ZodMiniUnion`, (e, t) => {
+          ;(kt.init(e, t), H.init(e, t))
         })
-        function q(e, t) {
-          return new yn({ type: `object`, shape: e, catchall: _n(), ...w(t) })
+        function Cn(e, t) {
+          return new Sn({ type: `union`, options: e, ...C(t) })
         }
-        var bn = M(`ZodMiniUnion`, (e, t) => {
-          ;(Dt.init(e, t), U.init(e, t))
-        })
-        function xn(e, t) {
-          return new bn({ type: `union`, options: e, ...w(t) })
-        }
-        var Sn = M(`ZodMiniDiscriminatedUnion`, (e, t) => {
-          ;(kt.init(e, t), U.init(e, t))
-        })
-        function Cn(e, t, n) {
-          return new Sn({ type: `union`, options: t, discriminator: e, ...w(n) })
-        }
-        var wn = M(`ZodMiniRecord`, (e, t) => {
-          ;(At.init(e, t), U.init(e, t))
+        var wn = j(`ZodMiniDiscriminatedUnion`, (e, t) => {
+          ;(jt.init(e, t), H.init(e, t))
         })
         function Tn(e, t, n) {
-          return !t || !t._zod
-            ? new wn({ type: `record`, keyType: W(), valueType: e, ...w(t) })
-            : new wn({ type: `record`, keyType: e, valueType: t, ...w(n) })
+          return new wn({ type: `union`, options: t, discriminator: e, ...C(n) })
         }
-        var En = M(`ZodMiniEnum`, (e, t) => {
-          ;(jt.init(e, t), U.init(e, t), (e.options = [...e._zod.values]))
+        var En = j(`ZodMiniRecord`, (e, t) => {
+          ;(Mt.init(e, t), H.init(e, t))
         })
-        function J(e, t) {
-          return new En({
+        function Dn(e, t, n) {
+          return !t || !t._zod
+            ? new En({ type: `record`, keyType: U(), valueType: e, ...C(t) })
+            : new En({ type: `record`, keyType: e, valueType: t, ...C(n) })
+        }
+        var On = j(`ZodMiniEnum`, (e, t) => {
+          ;(Nt.init(e, t), H.init(e, t), (e.options = [...e._zod.values]))
+        })
+        function q(e, t) {
+          return new On({
             type: `enum`,
             entries: Array.isArray(e) ? Object.fromEntries(e.map((e) => [e, e])) : e,
-            ...w(t),
+            ...C(t),
           })
         }
-        var Dn = M(`ZodMiniLiteral`, (e, t) => {
-          ;(Mt.init(e, t), U.init(e, t))
+        var kn = j(`ZodMiniLiteral`, (e, t) => {
+          ;(Pt.init(e, t), H.init(e, t))
         })
-        function Y(e, t) {
-          return new Dn({ type: `literal`, values: Array.isArray(e) ? e : [e], ...w(t) })
+        function J(e, t) {
+          return new kn({ type: `literal`, values: Array.isArray(e) ? e : [e], ...C(t) })
         }
-        var On = M(`ZodMiniOptional`, (e, t) => {
-          ;(Pt.init(e, t), U.init(e, t))
+        var An = j(`ZodMiniOptional`, (e, t) => {
+          ;(It.init(e, t), H.init(e, t))
         })
-        function X(e) {
-          return new On({ type: `optional`, innerType: e })
+        function Y(e) {
+          return new An({ type: `optional`, innerType: e })
         }
-        var kn = M(`ZodMiniNullable`, (e, t) => {
-          ;(Ft.init(e, t), U.init(e, t))
-        })
-        function An(e) {
-          return new kn({ type: `nullable`, innerType: e })
-        }
-        var jn = M(`ZodMiniLazy`, (e, t) => {
-          ;(It.init(e, t), U.init(e, t))
+        var jn = j(`ZodMiniNullable`, (e, t) => {
+          ;(Lt.init(e, t), H.init(e, t))
         })
         function Mn(e) {
-          return new jn({ type: `lazy`, getter: e })
+          return new jn({ type: `nullable`, innerType: e })
         }
-        var Nn = M(`ZodMiniCustom`, (e, t) => {
-          ;(Lt.init(e, t), U.init(e, t))
+        var Nn = j(`ZodMiniLazy`, (e, t) => {
+          ;(Rt.init(e, t), H.init(e, t))
         })
-        function Pn(e, t = {}) {
-          return tn(Nn, e, t)
+        function Pn(e) {
+          return new Nn({ type: `lazy`, getter: e })
         }
-        function Fn() {
-          let e = Mn(() => xn([W(), un(), G(), hn(), K(e), Tn(W(), e)]))
+        var Fn = j(`ZodMiniCustom`, (e, t) => {
+          ;(zt.init(e, t), H.init(e, t))
+        })
+        function In(e, t = {}) {
+          return rn(Fn, e, t)
+        }
+        function Ln() {
+          let e = Pn(() => Cn([U(), fn(), W(), _n(), G(e), Dn(U(), e)]))
           return e
         }
-        var In = M(`ZodMiniISODateTime`, (e, t) => {
-          ;(mt.init(e, t), rn.init(e, t))
+        var Rn = j(`ZodMiniISODateTime`, (e, t) => {
+          ;(gt.init(e, t), on.init(e, t))
         })
-        function Ln(e) {
-          return Ut(In, e)
+        function X(e) {
+          return Gt(Rn, e)
         }
-        var Rn = 2e3,
-          zn = 2e5,
+        var zn = 2e3,
           Bn = 2e5,
-          Z = () => W().check(en(), Zt(1)),
-          Vn = () => W().check(Qt(/^[A-Z]{1,3}\d{2,3}$/)),
-          Hn = () => W().check(en(), Zt(1)),
-          Un = () => W().check(Xt(Rn)),
-          Wn = () => on({ version: `v7` }),
-          Q = (e) => fn().check(H(e)),
-          Gn = J([
+          Vn = 2e5,
+          Z = () => U().check(nn(), $t(1)),
+          Hn = () => U().check(en(/^[A-Z]{1,3}\d{2,3}$/)),
+          Un = () => U().check(nn(), $t(1)),
+          Wn = () => U().check(Qt(zn)),
+          Gn = () => cn({ version: `v7` }),
+          Q = (e) => mn().check(V(e)),
+          Kn = q([
             `non_commence`,
             `en_cours`,
             `vu`,
@@ -7301,24 +7310,25 @@ console.log(facture.total)</pre>
             `maitrise`,
             `a_reprendre`,
           ]),
-          Kn = J([`solide`, `partiel`, `fragile`, `pas_encore`]),
-          qn = J([`sur`, `hesitant`, `hasard`]),
-          Jn = J([`support`, `deduit`, `ajoute`]),
-          Yn = J([`sur`, `non_verifie`]),
-          Xn = J([`relance`, `avec_support`, `recopiee`, `non_verifiee`]),
-          Zn = Y([0, 1, 2, 3, 4]),
-          Qn = J([`origine`, `variante`]),
-          $n = () => W().check(Qt(/^\d{4}-\d{2}-\d{2}$/)),
-          er = q({
-            aujourdhui: $n(),
-            resultats: K(
-              q({ id: Z(), item: Z(), reussi: G(), aide: Zn, brute: G(), jour: $n(), cas: An(Qn) }),
+          qn = q([`solide`, `partiel`, `fragile`, `pas_encore`]),
+          Jn = q([`sur`, `hesitant`, `hasard`]),
+          Yn = q([`support`, `deduit`, `ajoute`]),
+          Xn = q([`sur`, `non_verifie`]),
+          Zn = q([`relance`, `avec_support`, `recopiee`, `non_verifiee`]),
+          Qn = J([0, 1, 2, 3, 4]),
+          $n = q([`origine`, `variante`]),
+          er = () => U().check(en(/^\d{4}-\d{2}-\d{2}$/)),
+          tr = K({
+            aujourdhui: er(),
+            maintenant: X(),
+            resultats: G(
+              K({ id: Z(), item: Z(), reussi: W(), aide: Qn, brute: W(), jour: er(), cas: Mn($n) }),
             ),
-            expliques: K(Z()),
-            atelier: K(q({ id: Z(), reussi: G(), aide: Zn, jour: $n() })),
+            expliques: G(Z()),
+            atelier: G(K({ id: Z(), reussi: W(), aide: Qn, le: X() })),
           }),
-          tr = q({
-            code: J([
+          nr = K({
+            code: q([
               `restitution_incomplete`,
               `pratique_aide`,
               `atelier_manquant`,
@@ -7330,21 +7340,21 @@ console.log(facture.total)</pre>
               `reprise_a_faire`,
               `aisance_non_atteinte`,
             ]),
-            questions: X(K(Z())),
-            exercices: X(K(Z())),
-            erreurs: X(K(Z())),
-            apres: X(W()),
+            questions: Y(G(Z())),
+            exercices: Y(G(Z())),
+            erreurs: Y(G(Z())),
+            apres: Y(U()),
           }),
-          nr = Tn(W(), Fn()).check(
-            Pn((e) => new TextEncoder().encode(JSON.stringify(e)).length <= zn, {
+          rr = Dn(U(), Ln()).check(
+            In((e) => new TextEncoder().encode(JSON.stringify(e)).length <= Bn, {
               error: `L’état de la page ne doit pas dépasser 200 ko.`,
             }),
           ),
-          $ = { id: Wn(), bloc: Vn(), version: Q(1), t: Ln({ offset: !0 }) },
-          rr = J([`restitution`, `explication`]),
-          ir = cn({ protocol: /^https$/ }).check(
-            Xt(2e3),
-            Pn(
+          $ = { id: Gn(), bloc: Hn(), version: Q(1), t: X({ offset: !0 }) },
+          ir = q([`restitution`, `explication`]),
+          ar = un({ protocol: /^https$/ }).check(
+            Qt(2e3),
+            In(
               (e) => {
                 if (!URL.canParse(e)) return !0
                 let { username: t, password: n } = new URL(e)
@@ -7353,87 +7363,87 @@ console.log(facture.total)</pre>
               { error: `Une adresse ne porte ni nom ni mot de passe.` },
             ),
           ),
-          ar = Cn(`type`, [
-            q({ ...$, type: Y(`page.prete`), schema: Y(2) }),
-            q({ ...$, type: Y(`etape.vue`), etape: Z() }),
-            q({ ...$, type: Y(`pretest.reponse`), question: Z(), reponse: Un() }),
-            q({
+          or = Tn(`type`, [
+            K({ ...$, type: J(`page.prete`), schema: J(2) }),
+            K({ ...$, type: J(`etape.vue`), etape: Z() }),
+            K({ ...$, type: J(`pretest.reponse`), question: Z(), reponse: Wn() }),
+            K({
               ...$,
-              type: Y(`pratique.resultat`),
+              type: J(`pratique.resultat`),
               exercice: Z(),
               item: Z(),
-              reussi: G(),
-              aide: Zn,
+              reussi: W(),
+              aide: Qn,
               essais: Q(1),
-              cas: X(Qn),
+              cas: Y($n),
             }),
-            q({
+            K({
               ...$,
-              type: Y(`atelier.resultat`),
-              reussi: G(),
+              type: J(`atelier.resultat`),
+              reussi: W(),
               predictions_justes: Q(0),
-              aide: Zn,
+              aide: Qn,
             }),
-            q({ ...$, type: Y(`aisance.resultat`), reussi: G(), duree_s: un().check(H(0)) }),
-            q({
+            K({ ...$, type: J(`aisance.resultat`), reussi: W(), duree_s: fn().check(V(0)) }),
+            K({
               ...$,
-              type: Y(`restitution.demande`),
-              serie: rr,
+              type: J(`restitution.demande`),
+              serie: ir,
               question: Z(),
-              reponse: W().check(Zt(1), Xt(Rn)),
-              confiance: qn,
-              relance: Un(),
-              support: q({ colle: G(), retour_cours: G() }),
-              libre: X(q({ question: Hn(), attendu: Hn(), apres_solution: X(G()) })),
+              reponse: U().check($t(1), Qt(zn)),
+              confiance: Jn,
+              relance: Wn(),
+              support: K({ colle: W(), retour_cours: W() }),
+              libre: Y(K({ question: Un(), attendu: Un(), apres_solution: Y(W()) })),
             }),
-            q({ ...$, type: Y(`bilan.erreurs`), ids: K(Z()) }),
-            q({ ...$, type: Y(`etat.sauver`), etat: nr }),
-            q({ ...$, type: Y(`lien.ouvrir`), url: ir }),
-            q({ ...$, type: Y(`page.taille`), hauteur: fn().check(H(1), Yt(Bn)) }),
-            q({ ...$, type: Y(`page.haut`) }),
-            q({ ...$, type: Y(`correction.accord`), correction: Wn(), accord: G() }),
+            K({ ...$, type: J(`bilan.erreurs`), ids: G(Z()) }),
+            K({ ...$, type: J(`etat.sauver`), etat: rr }),
+            K({ ...$, type: J(`lien.ouvrir`), url: ar }),
+            K({ ...$, type: J(`page.taille`), hauteur: mn().check(V(1), Zt(Vn)) }),
+            K({ ...$, type: J(`page.haut`) }),
+            K({ ...$, type: J(`correction.accord`), correction: Gn(), accord: W() }),
           ]),
-          or = {
-            id: Wn(),
-            echantillon: G(),
+          sr = {
+            id: Gn(),
+            echantillon: W(),
             question: Z(),
             tour: Q(1),
-            message: W(),
-            niveau: Kn,
-            erreurs_critiques: K(Z()),
-            source: Jn,
-            ref: W(),
-            certitude: Yn,
-            compte: G(),
-            raison_non_compte: X(Xn),
+            message: U(),
+            niveau: qn,
+            erreurs_critiques: G(Z()),
+            source: Yn,
+            ref: U(),
+            certitude: Xn,
+            compte: W(),
+            raison_non_compte: Y(Zn),
           },
-          sr = q(or),
-          cr = Cn(`type`, [
-            q({
-              type: Y(`etat.init`),
-              bloc: Vn(),
+          cr = K(sr),
+          lr = Tn(`type`, [
+            K({
+              type: J(`etat.init`),
+              bloc: Hn(),
               version: Q(1),
-              etat: An(nr),
-              statut: Gn,
-              serie_ouverte: q({ restitution: G() }),
-              aisance: K(q({ le: Ln(), duree_s: un().check(H(0)) })),
-              pratique: er,
-              theme: X(J([`clair`, `sombre`, `systeme`])),
+              etat: Mn(rr),
+              statut: Kn,
+              serie_ouverte: K({ restitution: W() }),
+              aisance: G(K({ le: X(), duree_s: fn().check(V(0)) })),
+              pratique: tr,
+              theme: Y(q([`clair`, `sombre`, `systeme`])),
             }),
-            q({ type: Y(`restitution.correction`), ...or }),
-            q({ type: Y(`statut.maj`), statut: Gn, manque: K(tr), pratique: er }),
-            q({
-              type: Y(`erreur`),
-              code: J([`correction_indisponible`, `plafond_atteint`, `message_refuse`]),
-              detail: W(),
-              message_id: X(Wn()),
+            K({ type: J(`restitution.correction`), ...sr }),
+            K({ type: J(`statut.maj`), statut: Kn, manque: G(nr), pratique: tr }),
+            K({
+              type: J(`erreur`),
+              code: q([`correction_indisponible`, `plafond_atteint`, `message_refuse`]),
+              detail: U(),
+              message_id: Y(Gn()),
             }),
-            q({ type: Y(`etape.aller`), etape: Z(), retour_cours: X(Y(!0)) }),
-            q({ type: Y(`erreur.rejetee`), question: Z(), erreur: Z() }),
+            K({ type: J(`etape.aller`), etape: Z(), retour_cours: Y(J(!0)) }),
+            K({ type: J(`erreur.rejetee`), question: Z(), erreur: Z() }),
           ]),
-          lr = 2e3,
           ur = 2e3,
-          dr = class extends Error {
+          dr = 2e3,
+          fr = class extends Error {
             code
             detail
             constructor(e) {
@@ -7443,7 +7453,7 @@ console.log(facture.total)</pre>
                 (this.detail = e.detail))
             }
           }
-        function fr(e) {
+        function pr(e) {
           return (t) => (
             e.add(t),
             () => {
@@ -7451,40 +7461,40 @@ console.log(facture.total)</pre>
             }
           )
         }
-        function pr(e = {}) {
+        function mr(e = {}) {
           let t = e.fenetre ?? window,
             n = e.parent ?? t.parent,
-            r = e.maintenant ?? o,
+            r = e.maintenant ?? s,
             i = n === t,
             a = null,
-            c,
+            o,
             l = null,
             u = null,
             d = new Map(),
             f = [],
+            p = new Set(),
             m = new Set(),
-            ee = new Set(),
             h = new Set(),
-            g = new Set(),
-            te = new Set()
-          function _(e, t) {
-            return { id: p(r()), ...a, t: s(r()), type: e, ...t }
+            te = new Set(),
+            g = new Set()
+          function ne(e, t) {
+            return { id: ee(r()), ...a, t: c(r()), type: e, ...t }
           }
-          function v(e, t) {
+          function _(e, t) {
             return (console.error(`[pont] Message non envoyé : ${e}`, t), null)
           }
-          function y(e, t) {
-            if (a === null) return v(`demarrer() n’a pas été appelé.`, e)
-            let r = ar.safeParse(_(e, t))
+          function v(e, t) {
+            if (a === null) return _(`demarrer() n’a pas été appelé.`, e)
+            let r = or.safeParse(ne(e, t))
             return r.success
               ? (d.set(r.data.id, r.data), i || n.postMessage(r.data, `*`), r.data.id)
-              : v(`« ${e} » est mal formé.`, r.error.issues)
+              : _(`« ${e} » est mal formé.`, r.error.issues)
           }
-          function ne(e) {
+          function re(e) {
             let t = d.get(e)
             return t !== void 0 && (i || n.postMessage(t, `*`), !0)
           }
-          function re(e) {
+          function y(e) {
             let t = f.findIndex(e)
             return t === -1 ? void 0 : f.splice(t, 1)[0]
           }
@@ -7492,28 +7502,28 @@ console.log(facture.total)</pre>
             switch (e.type) {
               case `etat.init`:
                 u === null
-                  ? te.forEach((t) => {
+                  ? g.forEach((t) => {
                       t(e)
                     })
                   : u(e)
                 break
               case `restitution.correction`: {
-                let t = sr.parse(
+                let t = cr.parse(
                   Object.fromEntries(Object.entries(e).filter(([e]) => e !== `type`)),
                 )
-                re((e) => e.question === t.question)?.resoudre(t)
+                y((e) => e.question === t.question)?.resoudre(t)
                 break
               }
               case `statut.maj`:
-                m.forEach((t) => {
+                p.forEach((t) => {
                   t(e)
                 })
                 break
               case `erreur`:
-                ;(ee.forEach((t) => {
+                ;(m.forEach((t) => {
                   t(e)
                 }),
-                  re((t) => t.id === e.message_id)?.rejeter(new dr(e)))
+                  y((t) => t.id === e.message_id)?.rejeter(new fr(e)))
                 break
               case `etape.aller`:
                 h.forEach((t) => {
@@ -7521,102 +7531,102 @@ console.log(facture.total)</pre>
                 })
                 break
               case `erreur.rejetee`:
-                g.forEach((t) => {
+                te.forEach((t) => {
                   t({ question: e.question, erreur: e.erreur })
                 })
             }
           }
-          function b(e) {
+          function ae(e) {
             if (e.source !== n) return
-            let t = cr.safeParse(e.data)
+            let t = lr.safeParse(e.data)
             if (!t.success) {
               console.error(`[pont] Message de l’appli ignoré : mal formé.`, t.error.issues)
               return
             }
             ie(t.data)
           }
-          let ae = null,
-            x = null,
-            S = -1 / 0,
-            C
-          function w() {
-            ;(clearTimeout(C), (C = void 0))
-            let e = x
-            if (((x = null), e === null)) return
+          let b = null,
+            oe = null,
+            se = -1 / 0,
+            x
+          function S() {
+            ;(clearTimeout(x), (x = void 0))
+            let e = oe
+            if (((oe = null), e === null)) return
             let t = JSON.stringify(e)
-            if (t !== ae) {
+            if (t !== b) {
               if (l === `autonome`)
-                Promise.resolve(c?.sauver(e)).catch((e) => {
+                Promise.resolve(o?.sauver(e)).catch((e) => {
                   console.error(`[pont] La sauvegarde autonome a échoué.`, e)
                 })
-              else if (y(`etat.sauver`, { etat: e }) === null) return
-              ;((ae = t), (S = r()))
+              else if (v(`etat.sauver`, { etat: e }) === null) return
+              ;((b = t), (se = r()))
             }
           }
-          function oe(e, t = {}) {
+          function C(e, t = {}) {
             if (l === null) {
-              v(`demarrer() n’a pas été appelé.`, `etat.sauver`)
+              _(`demarrer() n’a pas été appelé.`, `etat.sauver`)
               return
             }
-            if (((x = e), t.immediat === !0)) {
-              w()
+            if (((oe = e), t.immediat === !0)) {
+              S()
               return
             }
-            let n = S + ur - r()
-            n <= 0 ? w() : (C ??= setTimeout(w, n))
+            let n = se + dr - r()
+            n <= 0 ? S() : (x ??= setTimeout(S, n))
           }
-          function se() {
+          function ce() {
             let e = t.document
             ;(e.addEventListener(`visibilitychange`, () => {
-              e.visibilityState === `hidden` && w()
+              e.visibilityState === `hidden` && S()
             }),
-              t.addEventListener(`pagehide`, w))
+              t.addEventListener(`pagehide`, S))
           }
-          function T() {
+          function le() {
             let e = t.document.documentElement,
               n = 0,
               r = () => {
                 let t = Math.ceil(e.getBoundingClientRect().height)
-                t !== 0 && t !== n && ((n = t), y(`page.taille`, { hauteur: t }))
+                t !== 0 && t !== n && ((n = t), v(`page.taille`, { hauteur: t }))
               }
             ;(typeof ResizeObserver == `function` && new ResizeObserver(r).observe(e), r())
           }
-          async function ce(e) {
+          async function w(e) {
             ;((a = { bloc: e.manifeste.bloc, version: e.manifeste.version }),
-              (c = e.autonome),
-              t.addEventListener(`message`, b),
-              se())
+              (o = e.autonome),
+              t.addEventListener(`message`, ae),
+              ce())
             let n = new Promise((e) => {
               ;((u = e),
                 setTimeout(() => {
                   e(null)
-                }, lr))
+                }, ur))
             })
-            y(`page.prete`, { schema: 2 })
+            v(`page.prete`, { schema: 2 })
             let r = await n
             return (
               (u = null),
               r === null
-                ? ((l = `autonome`), { mode: l, etat: c?.charger?.() ?? null, init: null })
+                ? ((l = `autonome`), { mode: l, etat: o?.charger?.() ?? null, init: null })
                 : ((l = `appli`),
                   (a = { bloc: r.bloc, version: r.version }),
-                  T(),
+                  le(),
                   { mode: l, etat: r.etat, init: r })
             )
           }
-          async function E(e) {
+          async function ue(e) {
             if (l === `autonome`) {
-              if (c === void 0) throw Error(`Mode autonome sans fonction « ask ».`)
-              let t = ar.safeParse(_(`restitution.demande`, e))
+              if (o === void 0) throw Error(`Mode autonome sans fonction « ask ».`)
+              let t = or.safeParse(ne(`restitution.demande`, e))
               if (!t.success)
                 throw (
-                  v(`« restitution.demande » est mal formé.`, t.error.issues),
+                  _(`« restitution.demande » est mal formé.`, t.error.issues),
                   Error(`Demande de correction mal formée.`)
                 )
-              return sr.parse(await c.ask(e))
+              return cr.parse(await o.ask(e))
             }
             return new Promise((t, n) => {
-              let r = y(`restitution.demande`, e)
+              let r = v(`restitution.demande`, e)
               if (r === null) {
                 n(Error(`Demande de correction mal formée.`))
                 return
@@ -7625,24 +7635,24 @@ console.log(facture.total)</pre>
             })
           }
           return {
-            demarrer: ce,
-            envoyer: y,
-            renvoyer: ne,
-            demanderCorrection: E,
-            sauver: oe,
-            surStatut: fr(m),
-            surErreur: fr(ee),
+            demarrer: w,
+            envoyer: v,
+            renvoyer: re,
+            demanderCorrection: ue,
+            sauver: C,
+            surStatut: pr(p),
+            surErreur: pr(m),
             surEtape: (e) => (
               h.add(e),
               () => {
                 h.delete(e)
               }
             ),
-            surRejet: fr(g),
-            surInit: fr(te),
+            surRejet: pr(te),
+            surInit: pr(g),
           }
         }
-        ;((window.JanusPont = pr()), (window.JanusPratique = { suivre: r, atelier: a }))
+        ;((window.JanusPont = mr()), (window.JanusPratique = { suivre: r, atelier: o }))
       })()
     </script>
 
@@ -8854,6 +8864,10 @@ console.log(facture.total)</pre>
       const ateliersEnAttente = []
       /** Redessine le constat de l'atelier affiché (rien si l'étape n'est pas l'atelier). */
       let majAtelier = () => {}
+      /** Le minuteur qui redessine le constat quand l'aide de l'atelier tombe. */
+      let minuteurAtelier = null
+      /** L'écart entre l'horloge du serveur et celle de l'appareil (ms), relevé à chaque statut. */
+      let decalageServeur = 0
 
       /**
        * L'état part à l'appli tout de suite : une réponse, une trace ou un résultat ne se perd pas si
@@ -9511,15 +9525,24 @@ console.log(facture.total)</pre>
           ...ateliersEnAttente.filter((constat) => !connus.has(constat.id)),
         ]
       }
+      /** L'instant présent à l'horloge du serveur (ms) : le délai de l'aide de l'atelier s'y compte. */
+      const instantServeur = () => Date.now() + decalageServeur
       /**
        * L'atelier relu de ses constats par la règle du moteur (`suivreLAtelier`) : réussi sans aide (il
-       * compte), le dernier constat, l'aide qu'il garde aujourd'hui.
+       * compte), le dernier constat, l'aide qu'il garde encore et l'instant où elle tombe. `en_plus` :
+       * un constat qui n'est pas envoyé, le coup de pouce ouvert, compté comme une aide déclarée.
        */
-      const suiviAtelier = () => window.JanusPratique.atelier(constatsAtelier(), jourPratique())
+      function suiviAtelier(enPlus = []) {
+        const constats = [...constatsAtelier(), ...enPlus].sort(
+          (a, b) => Date.parse(a.le) - Date.parse(b.le),
+        )
+        return window.JanusPratique.atelier(constats, instantServeur())
+      }
       /** La pratique que le serveur garde : ce qu'elle contient n'attend plus ici. */
       function recevoirPratique(pratique) {
         if (!pratique) return
         pratiqueServeur = pratique
+        decalageServeur = Date.parse(pratique.maintenant) - Date.now()
         const connus = new Set(pratique.resultats.map((resultat) => resultat.id))
         for (let k = essaisEnAttente.length - 1; k >= 0; k -= 1) {
           if (connus.has(essaisEnAttente[k].id)) essaisEnAttente.splice(k, 1)
@@ -9533,7 +9556,7 @@ console.log(facture.total)</pre>
       /*
        * L'état d'avant gardait le dernier constat de l'atelier (`etat.atelier`). Dans l'appli, le
        * serveur a les constats : la copie s'efface. Hors de l'appli, elle devient le premier constat
-       * de la page, daté d'un jour passé : son aide ne pèse plus aujourd'hui.
+       * de la page, daté du passé : son aide ne pèse plus.
        */
       function reprendreAncienAtelier() {
         const ancien = etat.atelier
@@ -9544,7 +9567,7 @@ console.log(facture.total)</pre>
           id: 'avant-atelier',
           reussi: ancien.reussi === true,
           aide: [0, 1, 2, 3, 4].includes(ancien.aide) ? ancien.aide : 4,
-          jour: '1970-01-01',
+          le: '1970-01-01T00:00:00.000Z',
         })
       }
       /*
@@ -10835,9 +10858,10 @@ console.log(facture.total)</pre>
        * autre logiciel), que la page ne voit pas. Les critères sont fixés d'avance dans le manifeste
        * (`atelier.criteres`) ; il coche ceux qu'il a atteints et dit l'aide prise, de 0 (aucune) à 4
        * (la solution entière). Un coup de pouce ouvert dans l'atelier (`<details data-cran="2">`)
-       * fixe l'aide au moins à son cran, pour le jour : ce jour-là, elle ne se déclare pas plus
-       * basse, pas plus que l'aide d'un constat déjà envoyé (`aideGardee`, la règle du moteur). Un
-       * autre jour, l'atelier se refait sans aide, et c'est là qu'il compte. Réussi quand chaque
+       * fixe l'aide au moins à son cran pendant le délai de la règle (20 minutes,
+       * `DELAI_AIDE_ATELIER_MIN`), comme l'aide d'un constat déjà envoyé (`aideGardee`, la règle du
+       * moteur, comptée à l'horloge du serveur). Passé ce délai, l'atelier se refait sans aide, et
+       * c'est là qu'il compte. Réussi quand chaque
        * critère est coché ; il ne compte qu'à l'aide 0 (moteur). Il se renvoie autant de fois qu'il
        * le faut, et l'étape suivante attend un premier envoi.
        */
@@ -10851,9 +10875,20 @@ console.log(facture.total)</pre>
       function constatAtelier(section) {
         const criteres = manifeste.atelier?.criteres ?? ['J’ai fait l’atelier en entier.']
         const brouillon = () => etat.traces?.['atelier:constat'] ?? { coches: [], cran: 0 }
-        // Le coup de pouce ouvert ne vaut que pour son jour (un brouillon sans jour est d'avant).
-        const cranDuJour = () => (brouillon().jour === jourPratique() ? brouillon().cran : 0)
-        const plancher = () => Math.max(cranDuJour(), suiviAtelier().aideGardee)
+        // Le coup de pouce ouvert compte comme une aide déclarée à son instant (un brouillon sans
+        // instant est d'avant cette règle : il ne pèse plus).
+        const ouvert = () => {
+          const { cran, le } = brouillon()
+          return cran > 0 && typeof le === 'string'
+            ? [{ id: 'coup-de-pouce', reussi: false, aide: cran, le }]
+            : []
+        }
+        const suivi = () => suiviAtelier(ouvert())
+        const heure = (ms) =>
+          new Date(ms - decalageServeur).toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
+          })
         const garder = (suite) => {
           etat.traces = { ...(etat.traces ?? {}), 'atelier:constat': { ...brouillon(), ...suite } }
           enregistrer()
@@ -10878,7 +10913,7 @@ console.log(facture.total)</pre>
         const resultat = creer('p', { className: 'retour', role: 'status' })
         const choisie = () => radios.findIndex((r) => r.checked)
         const maj = () => {
-          const cran = plancher()
+          const { aideGardee: cran, libreA } = suivi()
           radios.forEach((r, aide) => {
             r.disabled = aide < cran
             if (r.disabled) r.checked = false
@@ -10887,13 +10922,21 @@ console.log(facture.total)</pre>
           note.textContent =
             cran === 0
               ? ''
-              : 'Tu as pris de l’aide aujourd’hui\u00a0: ton constat part au moins à «\u00a0' +
+              : 'Tu viens de prendre de l’aide\u00a0: jusqu’à ' +
+                heure(libreA) +
+                ', ton constat part au moins à «\u00a0' +
                 AIDES_ATELIER[cran] +
-                '\u00a0». Un autre jour, tu pourras refaire l’atelier sans aide.'
+                '\u00a0». Ensuite, tu pourras refaire l’atelier sans aide.'
           bouton.disabled = choisie() < 0
+          // Quand l'aide tombe, le constat se redessine de lui-même.
+          clearTimeout(minuteurAtelier)
+          minuteurAtelier =
+            libreA === null
+              ? null
+              : setTimeout(() => majAtelier(), Math.max(libreA - instantServeur(), 0) + 500)
         }
         const dire = () => {
-          const { reussi, dernier } = suiviAtelier()
+          const { reussi, dernier, libreA } = suiviAtelier()
           resultat.textContent = reussi
             ? 'Réussi sans aide\u00a0: ton atelier compte.'
             : !dernier
@@ -10902,24 +10945,28 @@ console.log(facture.total)</pre>
                 ? 'Envoyé\u00a0: pas encore réussi. Refais ce qui manque, puis renvoie ton constat.'
                 : 'Envoyé\u00a0: réussi, aide ' +
                   dernier.aide +
-                  '. Refais-le un autre jour sans aide\u00a0: c’est là qu’il compte.'
+                  (libreA === null
+                    ? '. Refais-le sans aide\u00a0: c’est là qu’il compte.'
+                    : '. Refais-le sans aide à partir de ' +
+                      heure(libreA) +
+                      '\u00a0: c’est là qu’il compte.')
         }
         for (const c of cases)
           c.addEventListener('change', () => {
             garder({ coches: cases.flatMap((x, k) => (x.checked ? [k] : [])) })
           })
         for (const r of radios) r.addEventListener('change', maj)
-        // Un coup de pouce ouvert relève l'aide au moins à son cran, même refermé ensuite.
+        // Un coup de pouce ouvert déclare son aide à cet instant, même refermé ensuite : le délai
+        // repart de là.
         section.addEventListener(
           'toggle',
           (evenement) => {
             const details = evenement.target
             if (!(details instanceof HTMLDetailsElement) || !details.open) return
             const cran = Math.min(Math.max(Number(details.dataset.cran) || 0, 0), 4)
-            if (cran > cranDuJour()) {
-              garder({ cran, jour: jourPratique() })
-              maj()
-            }
+            if (cran === 0) return
+            garder({ cran, le: new Date(instantServeur()).toISOString() })
+            maj()
           },
           true,
         )
@@ -10933,7 +10980,7 @@ console.log(facture.total)</pre>
             aide,
           })
           if (id === null) return
-          const constat = { id, reussi, aide, jour: jourPratique() }
+          const constat = { id, reussi, aide, le: new Date(instantServeur()).toISOString() }
           if (pratiqueServeur !== null) ateliersEnAttente.push(constat)
           else atelierLocal().push(constat)
           enregistrer()
@@ -10941,9 +10988,9 @@ console.log(facture.total)</pre>
           dire()
           majPied()
         })
-        // L'aide déjà déclarée aujourd'hui reste choisie ; un autre jour, rien ne l'est d'avance.
-        const aideDuJour = suiviAtelier().aideGardee
-        if (aideDuJour > 0) radios[Math.max(aideDuJour, plancher())].checked = true
+        // L'aide encore gardée reste choisie ; passé le délai, rien ne l'est d'avance.
+        const gardee = suivi().aideGardee
+        if (gardee > 0) radios[gardee].checked = true
         maj()
         dire()
         majAtelier = () => {
@@ -11736,7 +11783,7 @@ console.log(facture.total)</pre>
                 : !atelier.dernier
                   ? 'Atelier\u00a0: pas encore fait.'
                   : atelier.dernier.reussi
-                    ? 'Atelier\u00a0: réussi avec de l’aide, à refaire un autre jour sans aide.'
+                    ? 'Atelier\u00a0: réussi avec de l’aide, à refaire sans aide.'
                     : 'Atelier\u00a0: pas réussi.',
             ),
           )
@@ -11906,6 +11953,7 @@ console.log(facture.total)</pre>
         majEssais = () => {}
         majPratique = () => {}
         majAtelier = () => {}
+        clearTimeout(minuteurAtelier)
         afficherEtapes()
         const etape = etapes.find((e) => e.id === etat.etape) ?? etapes[0]
         let vue
