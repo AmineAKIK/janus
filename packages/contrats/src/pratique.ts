@@ -207,6 +207,14 @@ export function suivreLaPratique(
 }
 
 /**
+ * Le délai, en minutes, pendant lequel l'aide prise dans l'atelier reste à l'atelier (décision
+ * d'Amine du 1er novembre 2026) : assez pour ne pas recopier un indice à chaud. La vraie preuve
+ * reste la vérification, trois jours plus tard.
+ */
+export const DELAI_AIDE_ATELIER_MIN = 20
+const DELAI_AIDE_ATELIER_MS = DELAI_AIDE_ATELIER_MIN * 60_000
+
+/**
  * Un constat d'atelier, dans l'ordre où il a été envoyé : ce que l'apprenant a fait sur sa machine,
  * hors de la page, et l'aide qu'il dit avoir prise.
  */
@@ -214,29 +222,38 @@ export interface ConstatAtelier {
   readonly id: string
   readonly reussi: boolean
   readonly aide: number
-  /** Le jour du constat, AAAA-MM-JJ, au sens de l'appli. */
-  readonly jour: string
+  /** L'instant du constat (ISO 8601, horloge du serveur). */
+  readonly le: string
 }
 
 /**
- * L'aide de l'atelier se garde le jour où elle a été prise : un constat envoyé le même jour part avec
- * la plus forte aide déjà déclarée ce jour-là. Un autre jour, l'atelier refait sans aide compte.
+ * L'aide de l'atelier reste à l'atelier `DELAI_AIDE_ATELIER_MIN` minutes après le constat qui l'a
+ * déclarée : un constat envoyé avant part avec elle. Passé ce délai, l'atelier refait sans aide
+ * compte. Renvoyer un constat ne relance pas le délai ; déclarer une aide, si.
  */
 export class RejeuAtelier {
-  #jour: string | null = null
   #aide = 0
+  #depuis = 0
 
   /** Note un constat et rend l'aide qui compte pour lui. */
   noter(constat: ConstatAtelier): number {
-    const aide = Math.max(constat.aide, this.aideGardee(constat.jour))
-    this.#jour = constat.jour
-    this.#aide = aide
-    return aide
+    const instant = Date.parse(constat.le)
+    const gardee = this.aideGardee(instant)
+    if (constat.aide > 0) {
+      this.#aide = Math.max(constat.aide, gardee)
+      this.#depuis = instant
+    }
+    return Math.max(constat.aide, gardee)
   }
 
-  /** L'aide que l'atelier garde ce jour-là, 0 s'il n'en garde pas. */
-  aideGardee(jour: string): number {
-    return jour === this.#jour ? this.#aide : 0
+  /** L'aide que l'atelier garde à cet instant (en millisecondes), 0 s'il n'en garde pas. */
+  aideGardee(instant: number): number {
+    return this.#aide > 0 && instant < this.libreA() ? this.#aide : 0
+  }
+
+  /** L'instant (en millisecondes) où l'aide gardée tombe. */
+  libreA(): number {
+    return this.#depuis + DELAI_AIDE_ATELIER_MS
   }
 }
 
@@ -246,14 +263,19 @@ export interface EtatAtelier {
   readonly reussi: boolean
   /** Le dernier constat, avec l'aide qui a compté ; `null` avant le premier. */
   readonly dernier: { readonly reussi: boolean; readonly aide: number } | null
-  /** L'aide que l'atelier garde aujourd'hui (0 : aucune) : le prochain constat part avec elle. */
+  /** L'aide que l'atelier garde maintenant (0 : aucune) : le prochain constat part avec elle. */
   readonly aideGardee: number
+  /** L'instant (en millisecondes) où l'aide gardée tombe ; `null` sans aide gardée. */
+  readonly libreA: number | null
 }
 
-/** L'atelier d'un bloc, d'après ses constats (dans l'ordre où ils ont été envoyés) et le jour d'aujourd'hui. */
+/**
+ * L'atelier d'un bloc, d'après ses constats (dans l'ordre où ils ont été envoyés) et l'instant
+ * présent, en millisecondes, à l'horloge du serveur.
+ */
 export function suivreLAtelier(
   constats: readonly ConstatAtelier[],
-  aujourdhui: string,
+  maintenant: number,
 ): EtatAtelier {
   const rejeu = new RejeuAtelier()
   let reussi = false
@@ -263,5 +285,6 @@ export function suivreLAtelier(
     dernier = { reussi: constat.reussi, aide }
     if (constat.reussi && aide === 0) reussi = true
   }
-  return { reussi, dernier, aideGardee: rejeu.aideGardee(aujourdhui) }
+  const aideGardee = rejeu.aideGardee(maintenant)
+  return { reussi, dernier, aideGardee, libreA: aideGardee > 0 ? rejeu.libreA() : null }
 }

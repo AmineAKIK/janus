@@ -2,7 +2,7 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { suivreLAtelier, suivreLaPratique, texteDeLaTable } from '@janus/contrats'
 import type { PratiqueDuBloc } from '@janus/contrats'
 
@@ -23,6 +23,7 @@ const AUJOURDHUI = jourLocal()
 /** La pratique que le serveur garde, vide par défaut. */
 const pratiqueVide = (): PratiqueDuBloc => ({
   aujourdhui: AUJOURDHUI,
+  maintenant: new Date().toISOString(),
   resultats: [],
   expliques: [],
   atelier: [],
@@ -2602,88 +2603,118 @@ describe('l’atelier : faire hors de la page', () => {
     fireEvent.click(screen.getByRole('radio', { name: 'Une piste détaillée' }))
     fireEvent.click(screen.getByRole('button', { name: 'Envoyer mon constat' }))
     expect(envoisAtelier(envois)).toEqual([{ reussi: true, predictions_justes: 3, aide: 2 }])
-    expect(
-      screen.getByText(/réussi, aide 2\. Refais-le un autre jour sans aide/),
-    ).toBeInTheDocument()
+    expect(screen.getByText(/réussi, aide 2\. Refais-le sans aide à partir de/)).toBeInTheDocument()
   })
 
-  const HIER = jourLocal(new Date(Date.now() - 86_400_000))
-  /** Les constats que le serveur garde. */
+  const MINUTE = 60_000
+  /** Un instant ISO, `minutes` avant maintenant (à l'horloge de l'appareil). */
+  const ilYA = (minutes: number) => new Date(Date.now() - minutes * MINUTE).toISOString()
+  /** Les constats que le serveur garde ; `decalage` : l'avance de son horloge sur l'appareil (ms). */
   const constats = (
-    ...liste: { reussi: boolean; aide: 0 | 1 | 2 | 3 | 4; jour: string }[]
+    liste: readonly { reussi: boolean; aide: 0 | 1 | 2 | 3 | 4; le: string }[],
+    decalage = 0,
   ): PratiqueDuBloc => ({
     ...pratiqueVide(),
+    maintenant: new Date(Date.now() + decalage).toISOString(),
     atelier: liste.map((constat, k) => ({ id: 'constat-' + String(k + 1), ...constat })),
   })
   const toutCocher = () => {
     for (const nom of ['J’ai relevé la RAM.', 'J’ai relevé le disque.'])
       fireEvent.click(screen.getByRole('checkbox', { name: nom }))
   }
+  const avecConstats = (pratique: PratiqueDuBloc, etat: Record<string, unknown> = aLEtape('ET7')) =>
+    pontSimule(etat, undefined, undefined, [], pratique)
 
-  it('fait avec de l’aide, il se rattrape un autre jour : refait sans aide, il compte', async () => {
-    const hier = {
+  it('fait avec de l’aide, il se rattrape le jour même, 20 minutes plus tard : refait sans aide, il compte', async () => {
+    const tot = {
       ...aLEtape('ET7'),
-      traces: { 'atelier:constat': { coches: [0, 1], cran: 2, jour: HIER } },
+      traces: { 'atelier:constat': { coches: [0, 1], cran: 2, le: ilYA(25) } },
     }
-    const { pont, envois } = pontSimule(
-      hier,
-      undefined,
-      undefined,
-      [],
-      constats({ reussi: true, aide: 2, jour: HIER }),
-    )
+    const { pont, envois } = avecConstats(constats([{ reussi: true, aide: 2, le: ilYA(21) }]), tot)
     monter(avecAtelier, pont)
     await screen.findByText('Ouvre le gestionnaire des tâches.')
 
-    // Le coup de pouce d'hier ne pèse plus : « Aucune aide » se choisit.
-    expect(
-      screen.getByText(/réussi, aide 2\. Refais-le un autre jour sans aide/),
-    ).toBeInTheDocument()
+    // L'aide d'il y a plus de 20 minutes ne pèse plus : « Aucune aide » se choisit.
+    expect(screen.getByText(/réussi, aide 2\. Refais-le sans aide :/)).toBeInTheDocument()
     const aucune = screen.getByRole('radio', { name: 'Aucune aide' })
     expect(aucune).toBeEnabled()
     expect(aucune).not.toBeChecked()
-    expect(screen.queryByText(/Tu as pris de l’aide aujourd’hui/)).toBeNull()
+    expect(screen.queryByText(/Tu viens de prendre de l’aide/)).toBeNull()
     fireEvent.click(aucune)
     fireEvent.click(screen.getByRole('button', { name: 'Envoyer mon constat' }))
     expect(envoisAtelier(envois)).toEqual([{ reussi: true, predictions_justes: 3, aide: 0 }])
     expect(screen.getByText('Réussi sans aide : ton atelier compte.')).toBeInTheDocument()
   })
 
-  it('un brouillon d’avant, sans jour, ne bloque plus l’aide', async () => {
-    const avant = { ...aLEtape('ET7'), traces: { 'atelier:constat': { coches: [], cran: 4 } } }
-    const { pont } = pontSimule(avant)
-    monter(avecAtelier, pont)
-    await screen.findByText('Ouvre le gestionnaire des tâches.')
-    expect(screen.getByRole('radio', { name: 'Aucune aide' })).toBeEnabled()
+  it('un brouillon d’avant, sans instant, ne bloque plus l’aide', async () => {
+    for (const brouillon of [
+      { coches: [], cran: 4 },
+      { coches: [], cran: 4, jour: AUJOURDHUI },
+    ]) {
+      document.body.replaceChildren()
+      const { pont } = pontSimule({ ...aLEtape('ET7'), traces: { 'atelier:constat': brouillon } })
+      monter(avecAtelier, pont)
+      await screen.findByText('Ouvre le gestionnaire des tâches.')
+      expect(screen.getByRole('radio', { name: 'Aucune aide' })).toBeEnabled()
+    }
   })
 
-  it('le même jour, l’aide d’un constat envoyé reste, même l’état de la page vidé', async () => {
-    const { pont, envois } = pontSimule(
-      aLEtape('ET7'),
-      undefined,
-      undefined,
-      [],
-      constats({ reussi: true, aide: 3, jour: AUJOURDHUI }),
-    )
+  it('moins de 20 minutes après, l’aide d’un constat envoyé reste, même l’état de la page vidé', async () => {
+    const { pont, envois } = avecConstats(constats([{ reussi: true, aide: 3, le: ilYA(5) }]))
     monter(avecAtelier, pont)
     await screen.findByText('Ouvre le gestionnaire des tâches.')
 
     expect(screen.getByRole('radio', { name: 'Aucune aide' })).toBeDisabled()
     expect(screen.getByRole('radio', { name: 'Une partie de la solution' })).toBeChecked()
-    expect(screen.getByText(/Tu as pris de l’aide aujourd’hui/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Tu viens de prendre de l’aide : jusqu’à \d\d:\d\d/),
+    ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Étape suivante' })).toBeEnabled()
     toutCocher()
     fireEvent.click(screen.getByRole('button', { name: 'Envoyer mon constat' }))
     expect(envoisAtelier(envois)).toEqual([{ reussi: true, predictions_justes: 3, aide: 3 }])
   })
 
+  it('le délai se compte à l’horloge du serveur, pas à celle de l’appareil', async () => {
+    // L'appareil retarde de 30 minutes : à son horloge, l'aide date d'il y a 5 minutes ; au serveur,
+    // de 35. Elle est tombée.
+    const enRetard = constats([{ reussi: true, aide: 2, le: ilYA(5) }], 30 * MINUTE)
+    const { pont } = avecConstats(enRetard)
+    monter(avecAtelier, pont)
+    await screen.findByText('Ouvre le gestionnaire des tâches.')
+    expect(screen.getByRole('radio', { name: 'Aucune aide' })).toBeEnabled()
+
+    // L'appareil avance de 30 minutes : à son horloge, l'aide date d'il y a 35 minutes ; au serveur,
+    // de 5. Elle reste.
+    document.body.replaceChildren()
+    const enAvance = constats([{ reussi: true, aide: 2, le: ilYA(35) }], -30 * MINUTE)
+    const { pont: autre } = avecConstats(enAvance)
+    monter(avecAtelier, autre)
+    await screen.findByText('Ouvre le gestionnaire des tâches.')
+    expect(screen.getByRole('radio', { name: 'Aucune aide' })).toBeDisabled()
+  })
+
+  it('l’aide tombée, le constat se débloque de lui-même, sans recharger', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] })
+    try {
+      const { pont } = avecConstats(constats([{ reussi: true, aide: 1, le: ilYA(19) }]))
+      monter(avecAtelier, pont)
+      await vi.waitFor(() => screen.getByText('Ouvre le gestionnaire des tâches.'))
+      expect(screen.getByRole('radio', { name: 'Aucune aide' })).toBeDisabled()
+      await vi.advanceTimersByTimeAsync(MINUTE + 1000)
+      expect(screen.getByRole('radio', { name: 'Aucune aide' })).toBeEnabled()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('réussi sans aide, il le reste : le serveur le dit, la page n’en garde rien', async () => {
-    const { pont, sauvees } = pontSimule(
+    const { pont, sauvees } = avecConstats(
+      constats([
+        { reussi: true, aide: 0, le: ilYA(60) },
+        { reussi: false, aide: 4, le: ilYA(1) },
+      ]),
       { ...aLEtape('ET7'), atelier: { reussi: false, aide: 4, coches: [] } },
-      undefined,
-      undefined,
-      [],
-      constats({ reussi: true, aide: 0, jour: HIER }, { reussi: false, aide: 4, jour: AUJOURDHUI }),
     )
     monter(avecAtelier, pont)
     await screen.findByText('Ouvre le gestionnaire des tâches.')

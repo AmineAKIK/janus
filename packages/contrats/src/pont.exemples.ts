@@ -5,6 +5,7 @@ import type { MessageAppli, MessagePage } from './pont.ts'
 /** La pratique d'un bloc, telle que le serveur la rend : un item réussi avec de l'aide, puis refait. */
 export const EXEMPLE_PRATIQUE = {
   aujourdhui: '2026-06-01',
+  maintenant: '2026-06-01T09:30:00.000Z',
   resultats: [
     {
       id: '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2a',
@@ -27,7 +28,12 @@ export const EXEMPLE_PRATIQUE = {
   ],
   expliques: [],
   atelier: [
-    { id: '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2c', reussi: true, aide: 2, jour: '2026-05-31' },
+    {
+      id: '0190a1b2-c3d4-7e5f-8a6b-7c8d9e0f1a2c',
+      reussi: true,
+      aide: 2,
+      le: '2026-05-31T18:12:00.000Z',
+    },
   ],
 } as const
 

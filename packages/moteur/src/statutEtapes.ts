@@ -55,6 +55,8 @@ export interface ResultatBloc {
    */
   readonly pratique: {
     readonly aujourdhui: Jour
+    /** L'instant du calcul : la page y compte le délai de l'aide de l'atelier. */
+    readonly maintenant: string
     readonly essais: readonly EssaiPratique[]
     readonly expliques: readonly string[]
     readonly constats: readonly ConstatAtelier[]
@@ -300,19 +302,17 @@ export interface ResultatAtelier {
 }
 
 /**
- * Le premier constat d'atelier réussi à l'aide 0, l'aide gardée du jour comprise (`RejeuAtelier`, la
- * règle que la page applique aussi), quand le manifeste a un atelier.
+ * Le premier constat d'atelier réussi à l'aide 0, l'aide gardée comprise (`RejeuAtelier`, la règle
+ * que la page applique aussi), quand le manifeste a un atelier.
  */
 export class SuiviAtelier {
   readonly #requis: boolean
-  readonly #reglages: Pick<Reglages, 'fuseau' | 'heureBascule'>
   readonly #rejeu = new RejeuAtelier()
   readonly #constats: ConstatAtelier[] = []
   #date: string | null = null
 
-  constructor(manifeste: Manifeste, reglages: Pick<Reglages, 'fuseau' | 'heureBascule'>) {
+  constructor(manifeste: Manifeste) {
     this.#requis = manifeste.atelier !== undefined
-    this.#reglages = reglages
   }
 
   avancer(fait: Fait): void {
@@ -321,7 +321,7 @@ export class SuiviAtelier {
       id: fait.id,
       reussi: fait.reussi,
       aide: fait.aide,
-      jour: jourDe(fait.date, this.#reglages.fuseau, this.#reglages.heureBascule),
+      le: fait.date,
     }
     const aide = this.#rejeu.noter(constat)
     this.#constats.push(constat)
@@ -849,6 +849,7 @@ export function assembler(
     etapesVues: [...etapes.etapesVues],
     pratique: {
       aujourdhui: jour(maintenant),
+      maintenant,
       essais: pratique.essais,
       expliques: pratique.expliques,
       constats: atelier.constats,
@@ -970,7 +971,7 @@ export function construireEtat(
     corrections: new Map(),
     restitution: new SuiviRestitution(manifeste),
     pratique: new SuiviPratique(manifeste, reglages),
-    atelier: new SuiviAtelier(manifeste, reglages),
+    atelier: new SuiviAtelier(manifeste),
     aisance: new SuiviAisance(manifeste.aisance, reglages),
     explication: new SuiviPartie('explication'),
     transfert: new SuiviPartie('transfert'),

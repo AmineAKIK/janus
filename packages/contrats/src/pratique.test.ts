@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { RejeuAtelier, RejeuPratique, suivreLAtelier, suivreLaPratique } from './pratique.ts'
+import {
+  DELAI_AIDE_ATELIER_MIN,
+  RejeuAtelier,
+  RejeuPratique,
+  suivreLAtelier,
+  suivreLaPratique,
+} from './pratique.ts'
 import type { CasItem, EssaiPratique } from './pratique.ts'
 
 const JOUR = '2026-11-01'
@@ -236,46 +242,64 @@ describe('suivreLaPratique', () => {
 })
 
 describe('suivreLAtelier', () => {
+  const T0 = Date.parse('2026-11-01T17:00:00.000Z')
+  const minutes = (n: number) => T0 + n * 60_000
   let numero = 0
-  const constat = (reussi: boolean, aide: number, jour = JOUR) => {
+  const constat = (reussi: boolean, aide: number, apres = 0) => {
     numero += 1
-    return { id: 'a' + String(numero), reussi, aide, jour }
+    return { id: 'a' + String(numero), reussi, aide, le: new Date(minutes(apres)).toISOString() }
   }
 
   it('rien avant le premier constat', () => {
-    expect(suivreLAtelier([], JOUR)).toEqual({ reussi: false, dernier: null, aideGardee: 0 })
+    expect(suivreLAtelier([], T0)).toEqual({
+      reussi: false,
+      dernier: null,
+      aideGardee: 0,
+      libreA: null,
+    })
   })
 
   it('réussi sans aide : il compte', () => {
-    expect(suivreLAtelier([constat(true, 0)], JOUR).reussi).toBe(true)
+    expect(suivreLAtelier([constat(true, 0)], T0).reussi).toBe(true)
   })
 
-  it("le même jour, un constat part avec l'aide déjà déclarée", () => {
-    const etat = suivreLAtelier([constat(true, 2), constat(true, 0)], JOUR)
+  it(`avant ${String(DELAI_AIDE_ATELIER_MIN)} minutes, un constat part avec l'aide déclarée`, () => {
+    const etat = suivreLAtelier([constat(true, 1), constat(true, 0, 19)], minutes(19))
     expect(etat.reussi).toBe(false)
-    expect(etat.dernier).toEqual({ reussi: true, aide: 2 })
-    expect(etat.aideGardee).toBe(2)
+    expect(etat.dernier).toEqual({ reussi: true, aide: 1 })
+    expect(etat.aideGardee).toBe(1)
+    expect(etat.libreA).toBe(minutes(20))
   })
 
-  it("un autre jour, l'atelier refait sans aide compte : il se rattrape", () => {
-    const aide = [constat(true, 4)]
-    expect(suivreLAtelier(aide, LENDEMAIN).aideGardee).toBe(0)
-    const etat = suivreLAtelier([...aide, constat(true, 0, LENDEMAIN)], LENDEMAIN)
+  it("passé le délai, l'atelier refait sans aide compte : il se rattrape le jour même", () => {
+    const aide = [constat(true, 1)]
+    expect(suivreLAtelier(aide, minutes(20))).toMatchObject({ aideGardee: 0, libreA: null })
+    const etat = suivreLAtelier([...aide, constat(true, 0, 20)], minutes(20))
     expect(etat.reussi).toBe(true)
     expect(etat.dernier).toEqual({ reussi: true, aide: 0 })
   })
 
+  it('renvoyer un constat ne relance pas le délai ; déclarer une aide, si', () => {
+    const renvoi = [constat(false, 2), constat(false, 0, 15)]
+    expect(suivreLAtelier(renvoi, minutes(20)).aideGardee).toBe(0)
+    const nouvelle = [constat(false, 2), constat(false, 1, 15)]
+    expect(suivreLAtelier(nouvelle, minutes(20))).toMatchObject({
+      aideGardee: 2,
+      libreA: minutes(35),
+    })
+  })
+
   it('réussi sans aide, il le reste, même raté ou aidé ensuite', () => {
-    const etat = suivreLAtelier([constat(true, 0), constat(false, 3)], JOUR)
+    const etat = suivreLAtelier([constat(true, 0), constat(false, 3, 1)], minutes(1))
     expect(etat.reussi).toBe(true)
     expect(etat.dernier).toEqual({ reussi: false, aide: 3 })
   })
 
-  it('garde la plus forte aide du jour', () => {
+  it('garde la plus forte aide du délai', () => {
     const rejeu = new RejeuAtelier()
     rejeu.noter(constat(false, 3))
-    expect(rejeu.noter(constat(false, 1))).toBe(3)
-    expect(rejeu.aideGardee(JOUR)).toBe(3)
-    expect(rejeu.aideGardee(LENDEMAIN)).toBe(0)
+    expect(rejeu.noter(constat(false, 1, 5))).toBe(3)
+    expect(rejeu.aideGardee(minutes(24))).toBe(3)
+    expect(rejeu.aideGardee(minutes(25))).toBe(0)
   })
 })

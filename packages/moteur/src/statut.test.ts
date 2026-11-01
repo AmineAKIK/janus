@@ -372,6 +372,7 @@ describe('la pratique et l’atelier', () => {
       expect(calcule.manque.map(({ code }) => code)).not.toContain('pratique_aide')
       expect(calcule.pratique).toEqual({
         aujourdhui: jourDe(apres(DEBUT, 60), REGLAGES.fuseau, REGLAGES.heureBascule),
+        maintenant: apres(DEBUT, 60),
         essais: [
           {
             id: apresCoupure.id,
