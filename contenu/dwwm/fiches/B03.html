@@ -7265,7 +7265,7 @@ Serveur de test   1 000 Mo</code></pre>
         "schema": 2,
         "bloc": "B03",
         "type": "systemes",
-        "version": 9,
+        "version": 10,
         "titre": "L’ordinateur et ses composants",
         "titre_court": "Les composants",
         "objectif": "Fiche « ma machine » (CPU, cœurs, fréquence, RAM, stockage, architecture) relevée avec les outils système, dont la virtualisation que demandent WSL 2 et Docker ; expliquer sans support le trajet stockage, RAM, CPU au lancement d’un programme, et le rôle du CPU (cœurs, horloge, cache), de la RAM (volatile), du stockage (HDD, SSD), de la carte mère, du GPU et du refroidissement ; reconnaître l’architecture d’un processeur (x64 ou ARM64) et choisir la version d’un logiciel qui lui correspond ; diagnostiquer 3 symptômes simples (lenteur, mémoire pleine, surchauffe) ; entretenir sa machine (poussière, mises à jour de sécurité) ; juger si la machine convient au développement web. Aisance : ouvrir l’outil qui décrit sa machine et y lire une caractéristique en moins de 10 s.",
@@ -13775,6 +13775,12 @@ Serveur de test   1 000 Mo</code></pre>
         const compteur = creer('p', { className: 'discret' })
         const etatItem = creer('span', { className: 'item-etat' })
         const resultat = creer('p', { className: 'discret' })
+        // Vers l'item qui débloque celui-ci : un autre item à réussir, ou un relais.
+        const debloquer = creer('button', {
+          type: 'button',
+          className: 'bouton secondaire',
+          hidden: true,
+        })
         const solutionVue = () => Boolean(etat.pratique[item.id]?.solutionVue)
         // La solution vue garde son jour, pour le dire : « Tu as vu la solution ».
         const vueAujourdhui = () => etat.pratique[item.id]?.solutionVue === aujourdhui()
@@ -13913,6 +13919,7 @@ Serveur de test   1 000 Mo</code></pre>
             ? []
             : [creer('div', { className: 'actions' }, jaiReussi, pasReussi), attente]),
           resultat,
+          debloquer,
         )
         // Un item déclaré peut contenir une question que l'outil vérifie (une prédiction avant la
         // console) : « J'ai réussi » attend qu'elle ait sa réponse, sinon l'item réussirait sans elle.
@@ -13970,6 +13977,27 @@ Serveur de test   1 000 Mo</code></pre>
                   : 'À refaire'
             : ''
           resultat.className = aRefaire ? 'item-refaire' : 'discret'
+          // Les items qui débloquent celui-ci, par leur numéro : d'autres à réussir, ou des relais.
+          const enAttente = Boolean(fait?.reussi) && fait.aide > 0 && !aideEloignee(item.id)
+          const cibles = enAttente
+            ? liste.flatMap((entree, k) =>
+                entree.item.id !== item.id &&
+                (bloque(item.id) ? enRelais(entree.item.id) : faisable(entree.item.id))
+                  ? [k]
+                  : [],
+              )
+            : []
+          const numeros = cibles.map((k) => String(k + 1))
+          const lesItems =
+            numeros.length < 2
+              ? 'l’item ' + (numeros[0] ?? '')
+              : 'l’item ' + numeros.slice(0, -1).join(', ') + ' ou ' + numeros.at(-1)
+          const suivante = cibles.find((k) => k > index) ?? cibles[0]
+          debloquer.hidden = suivante === undefined
+          if (suivante !== undefined) {
+            debloquer.textContent = 'Aller à l’item ' + String(suivante + 1)
+            debloquer.onclick = () => aller_a(suivante)
+          }
           // Réussi avec de l'aide : l'appli ne le compte pas encore, la page dit comment il comptera.
           const pourCompter =
             !fait?.reussi || fait.aide === 0
@@ -13977,8 +14005,12 @@ Serveur de test   1 000 Mo</code></pre>
               : !aideEloignee(item.id)
                 ? (vueAujourdhui() ? '. Tu as vu la solution' : '. Tu as eu de l’aide') +
                   (bloque(item.id)
-                    ? '\u00a0: les autres items sont tous réussis. Refais l’un d’eux sur un autre cas (il reste réussi quoi qu’il arrive), puis reviens refaire celui-ci sans aide, sur un autre cas, pour qu’il compte.'
-                    : '\u00a0: réussis un autre item, puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte.')
+                    ? '\u00a0: les autres items sont tous réussis. Refais ' +
+                      lesItems +
+                      ' sur un autre cas (il reste réussi quoi qu’il arrive), puis reviens refaire celui-ci sans aide, sur un autre cas, pour qu’il compte.'
+                    : '\u00a0: réussis d’abord ' +
+                      lesItems +
+                      ' (même avec de l’aide), puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte. D’ici là, le refaire ici garde ton aide.')
                 : '. Refais-le maintenant sans aide, sur un autre cas, pour qu’il compte.'
           resultat.textContent = enRelais(item.id)
             ? 'Réussi. Refais-le sur un autre cas pour qu’un item aidé compte\u00a0: celui-ci reste réussi quoi qu’il arrive.'
