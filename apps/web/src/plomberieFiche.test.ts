@@ -1360,7 +1360,7 @@ describe('la pratique', () => {
     expect(envois.at(-1)?.donnees).toMatchObject({ reussi: true, aide: 2 })
     expect(
       screen.getByText(
-        'Envoyé : réussi, aide 2. Tu as eu de l’aide : fais un autre item, puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte.',
+        'Envoyé : réussi, aide 2. Tu as eu de l’aide : réussis un autre item, puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte.',
       ),
     ).toBeInTheDocument()
     expect(screen.getByText('Outil de la fiche').closest('.item')).not.toHaveAttribute(
@@ -1368,7 +1368,7 @@ describe('la pratique', () => {
     )
   })
 
-  it('après un autre item, le même jour, l’item aidé se refait sur un autre cas et compte sans aide', async () => {
+  it('après un autre item réussi, le même jour, l’item aidé se refait sur un autre cas et compte sans aide', async () => {
     const { pont, envois } = pontSimule(auPratique())
     monter(avecOutil, pont)
     await screen.findByText('Outil de la fiche')
@@ -1383,8 +1383,10 @@ describe('la pratique', () => {
 
     verifier({ juste: true, aide: 2 })
     fireEvent.click(screen.getByRole('button', { name: /^Item 2 sur 3/ }))
-    fireEvent.click(await screen.findByRole('button', { name: 'Pas réussi' }))
-    expect(envois.at(-1)?.donnees).toMatchObject({ item: 'PR1-2', reussi: false })
+    fireEvent.click(await screen.findByRole('button', { name: 'J’ai réussi' }))
+    expect(envois.filter(({ type }) => type === 'pratique.resultat').at(-1)?.donnees).toMatchObject(
+      { item: 'PR1-2', reussi: true },
+    )
     fireEvent.click(screen.getByRole('button', { name: /^Item 1 sur 3/ }))
     const boite = (await screen.findByText('Outil de la fiche')).closest('.item')
 
@@ -1402,6 +1404,23 @@ describe('la pratique', () => {
     document.removeEventListener('fiche:rendu', lire)
   })
 
+  it('un « Pas réussi » sur un autre item ne suffit pas : l’aide reste', async () => {
+    const { pont, envois } = pontSimule(auPratique())
+    monter(avecOutil, pont)
+    await screen.findByText('Outil de la fiche')
+
+    verifier({ juste: true, aide: 2 })
+    fireEvent.click(screen.getByRole('button', { name: /^Item 2 sur 3/ }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Pas réussi' }))
+    fireEvent.click(screen.getByRole('button', { name: /^Item 1 sur 3/ }))
+    const boite = (await screen.findByText('Outil de la fiche')).closest('.item')
+
+    expect(boite).not.toHaveAttribute('data-solution-vue')
+    expect(screen.getByText(/réussis un autre item, puis reviens/)).toBeInTheDocument()
+    verifier({ juste: true })
+    expect(envois.at(-1)?.donnees).toMatchObject({ item: 'PR1-1', reussi: true, aide: 2 })
+  })
+
   it('un item aidé raté sur l’autre cas reste à refaire, sans aide après un autre item', async () => {
     const { pont, envois } = pontSimule(auPratique())
     monter(avecOutil, pont)
@@ -1417,7 +1436,7 @@ describe('la pratique', () => {
     expect(envois.at(-1)?.donnees).toMatchObject({ item: 'PR1-1', reussi: true, aide: 1 })
     verifier({ juste: true })
     expect(envois.at(-1)?.donnees).toMatchObject({ item: 'PR1-1', reussi: true, aide: 1 })
-    expect(screen.getByText(/fais un autre item, puis reviens/)).toBeInTheDocument()
+    expect(screen.getByText(/réussis un autre item, puis reviens/)).toBeInTheDocument()
   })
 
   it('une aide notée sans rang (d’avant cette règle) est tenue pour éloignée', async () => {
@@ -1509,7 +1528,7 @@ describe('la pratique', () => {
     expect(screen.getByText('1 sur 3, dont 1 avec de l’aide.')).toBeInTheDocument()
     expect(
       screen.getByText(
-        'Envoyé : réussi, aide 4. Tu as vu la solution : fais un autre item, puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte.',
+        'Envoyé : réussi, aide 4. Tu as vu la solution : réussis un autre item, puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte.',
       ),
     ).toBeInTheDocument()
     expect(rendus).toBe(1)

@@ -12055,8 +12055,9 @@
       /*
        * Refaire après une aide (règle F03) : ce qui fausse la preuve, c'est la réponse encore sous les
        * yeux, pas l'heure. Chaque résultat de pratique prend un rang (`rang`, le compteur
-       * `etat.rangPratique`) ; une aide reçue garde le sien (`aideRang`). Un résultat noté depuis sur
-       * un autre item l'éloigne : l'item se refait alors le jour même, sur un autre cas (la variante,
+       * `etat.rangPratique`) ; une aide reçue garde le sien (`aideRang`), une réussite aussi
+       * (`rangReussi`, gardé jusqu'à la réussite suivante de l'item). Un autre item réussi depuis
+       * l'éloigne (un « Pas réussi » ne suffit pas : il ne prouve aucun effort) : l'item se refait alors le jour même, sur un autre cas (la variante,
        * quand l'outil en a une), et compte sans aide. Une aide d'avant ce rang (sans `aideRang`) ou
        * d'un autre jour est éloignée aussi.
        */
@@ -12065,7 +12066,7 @@
         if (!fait || fait.aideLe !== aujourdhui()) return true
         if (typeof fait.aideRang !== 'number') return true
         return Object.entries(etat.pratique).some(
-          ([autre, note]) => autre !== id && (note?.rang ?? -1) > fait.aideRang,
+          ([autre, note]) => autre !== id && (note?.rangReussi ?? -1) > fait.aideRang,
         )
       }
       /** Réussi avec de l'aide, l'aide éloignée : l'item se refait sur un autre cas, sans aide, pour compter. */
@@ -13039,7 +13040,7 @@
         // La solution vue garde son jour, pour le dire : « Tu as vu la solution ».
         const vueAujourdhui = () => etat.pratique[item.id]?.solutionVue === aujourdhui()
         // Toute aide reste tant qu'elle n'est pas éloignée : refait dans la foulée, la réponse encore
-        // sous les yeux, l'item part avec l'aide la plus forte reçue depuis. Un autre item fait entre-temps
+        // sous les yeux, l'item part avec l'aide la plus forte reçue depuis. Un autre item réussi entre-temps
         // l'éloigne (aideEloignee) : il repart sans aide, sur un autre cas.
         const aideDuJour = () => (aideEloignee(item.id) ? 0 : (etat.pratique[item.id].aideMax ?? 0))
         /** Note un résultat ; `vue` : l'outil vient de montrer la solution, et l'item s'en souvient. */
@@ -13066,6 +13067,11 @@
             // Une explication déjà jugée Solide le reste : l'item refait ne la redemande pas.
             ...(avant?.explique === true ? { explique: true } : {}),
             rang,
+            ...(ok
+              ? { rangReussi: rang }
+              : typeof avant?.rangReussi === 'number'
+                ? { rangReussi: avant.rangReussi }
+                : {}),
             ...(aideNotee > 0
               ? {
                   aideLe: aujourdhui(),
@@ -13221,7 +13227,7 @@
               ? ''
               : !aideEloignee(item.id)
                 ? (vueAujourdhui() ? '. Tu as vu la solution' : '. Tu as eu de l’aide') +
-                  '\u00a0: fais un autre item, puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte.'
+                  '\u00a0: réussis un autre item, puis reviens le refaire sans aide, sur un autre cas, pour qu’il compte.'
                 : '. Refais-le maintenant sans aide, sur un autre cas, pour qu’il compte.'
           resultat.textContent = aRefaire
             ? 'Tu as vu la solution. Refais-la sans la regarder.'

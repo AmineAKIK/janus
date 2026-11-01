@@ -140,6 +140,23 @@ describe('fileDuJour', () => {
     expect(taches.map(({ type }) => type).slice(-2)).toEqual(['pratique', 'bloc'])
   })
 
+  it('mène la pratique au bloc quand le manifeste n’a pas d’étape de pratique', () => {
+    const sansEtape = bloc('B01', [], (f) => jusquaProvisoire(f, [2, 0]))
+    const blocs = [
+      {
+        ...sansEtape,
+        manifeste: {
+          ...sansEtape.manifeste,
+          etapes: sansEtape.manifeste.etapes.filter(({ type }) => type !== 'pratique'),
+        },
+      },
+      bloc('B02', [], (f) => f.restitution(apres(DEBUT, 1))),
+    ]
+    expect(fileDuJour(entree(blocs)).taches.find(({ type }) => type === 'pratique')).toMatchObject({
+      lien: '/blocs/B01',
+    })
+  })
+
   it('ne double pas le bloc en cours d’une tâche de pratique, ni un bloc dont la pratique est faite', () => {
     const blocs = [
       bloc('B01', [], (f) => jusquaProvisoire(f)),

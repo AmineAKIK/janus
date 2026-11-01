@@ -36,7 +36,7 @@ describe('textes des tâches', () => {
     expect(texte(tache(['PR1']))).toEqual({
       titre: 'Pratique de B02 Langages',
       texte:
-        '1 exercice à finir sans aide. Un item réussi avec de l’aide se refait sur un autre cas, après un autre item : c’est là qu’il compte.',
+        '1 exercice à finir sans aide. Un item réussi avec de l’aide se refait sur un autre cas, après un autre item réussi : c’est là qu’il compte.',
       complement: '1 exercice sans aide',
     })
     expect(texte(tache(['PR1', 'PR2'])).complement).toBe('2 exercices sans aide')
