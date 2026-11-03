@@ -1,0 +1,1 @@
+function e(){return new Date(Date.now()).toISOString()}export{e as t};
