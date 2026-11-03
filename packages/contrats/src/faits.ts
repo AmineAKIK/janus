@@ -88,7 +88,7 @@ export const Fait = z.discriminatedUnion('type', [
     compte: z.boolean(),
     raisonNonCompte: RaisonNonCompte.optional(),
     confiance: Confiance,
-    /** Erreurs repérées par l'IA : elles n'ouvrent rien tant qu'Amine ne les coche pas. */
+    /** Erreurs repérées par le correcteur : chacune s'ouvre, sauf si Amine la rejette pour cette correction. */
     erreursIa: z.array(Identifiant),
   }),
   z.strictObject({
@@ -124,6 +124,14 @@ export const Fait = z.discriminatedUnion('type', [
     type: z.literal('erreur_cochee'),
     erreur: Identifiant,
     source: SourceErreur,
+  }),
+  z.strictObject({
+    ...commun,
+    /** Une erreur critique qu'un outil de la fiche a reconnue dans une réponse : elle s'ouvre aussitôt. */
+    type: z.literal('erreur_reperee'),
+    erreur: Identifiant,
+    /** L'endroit que l'outil nomme (un item, l'aisance…). */
+    ou: Texte,
   }),
   z.strictObject({
     ...commun,

@@ -206,6 +206,16 @@ export const MessagePage = z.discriminatedUnion('type', [
     ...champsReponse,
   }),
   z.strictObject({ ...communPage, type: z.literal('bilan.erreurs'), ids: z.array(Identifiant) }),
+  /**
+   * Une erreur critique qu'un outil de la fiche a reconnue dans une réponse (`fiche:erreur`) : le
+   * serveur l'ouvre aussitôt, sans attendre le bilan. `ou` : l'endroit que l'outil nomme.
+   */
+  z.strictObject({
+    ...communPage,
+    type: z.literal('erreur.reperee'),
+    erreur: Identifiant,
+    ou: z.string().trim().min(1).max(200),
+  }),
   z.strictObject({ ...communPage, type: z.literal('etat.sauver'), etat: EtatPage }),
   /** Ouvre un site dans un nouvel onglet : la fiche (sandbox) ne peut pas le faire seule. Reste dans l'appli. */
   z.strictObject({ ...communPage, type: z.literal('lien.ouvrir'), url: LienExterne }),

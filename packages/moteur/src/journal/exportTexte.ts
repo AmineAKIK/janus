@@ -100,7 +100,7 @@ export function exportTexte(contexte: ContexteExport): string {
       const dernier = duJour.reduce((_, fait) => fait.date, '')
       const resultat = statuts.resultat(dernier)
       const erreurs = duJour.flatMap((fait) =>
-        fait.type === 'erreur_cochee'
+        fait.type === 'erreur_cochee' || fait.type === 'erreur_reperee'
           ? [
               manifeste.erreurs_critiques.find(({ id }) => id === fait.erreur)?.libelle ??
                 fait.erreur,

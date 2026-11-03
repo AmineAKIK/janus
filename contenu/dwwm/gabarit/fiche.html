@@ -1317,7 +1317,7 @@
         "titre_court": "À REMPLACER",
         "objectif": "À REMPLACER : ce que tu sauras faire à la fin, vérifiable en une phrase.",
         "prerequis": [],
-        "pont": 8,
+        "pont": 9,
         "contexte_ia": "À REMPLACER : ce que le correcteur doit savoir du bloc (1 500 mots au plus) : notions, vocabulaire, pièges.",
         "sources": [
           {
@@ -2328,14 +2328,18 @@
       /**
        * Un outil qui reconnaît une erreur critique dans une réponse (des bits lus à l'envers, un départ
        * de 256) émet sur son élément `fiche:erreur` (`bubbles: true`, `cancelable: true`, `detail:
-       * { erreur, ou }`). Une fois la restitution faite, l'erreur attend le bilan : le gabarit annule
-       * l'événement, et l'outil dit d'envoyer le bilan avant de continuer.
+       * { erreur, ou }`). Dans l'appli, l'erreur part aussitôt au serveur (`erreur.reperee`), qui
+       * l'ouvre : quitter la page sans envoyer le bilan ne la fait pas oublier (règle V01). Une fois
+       * la restitution faite, l'erreur attend aussi le bilan : le gabarit annule l'événement, et
+       * l'outil dit d'envoyer le bilan avant de continuer.
        */
       $('contenu').addEventListener('fiche:erreur', (evenement) => {
         const { erreur, ou } = evenement.detail ?? {}
-        if (typeof ou !== 'string' || ou === '') return
+        if (typeof ou !== 'string' || ou.trim() === '') return
         if (!manifeste.erreurs_critiques.some((e) => e.id === erreur)) return
         noterReperees('outil:' + ou, [erreur])
+        if (mode === 'appli')
+          pont.envoyer('erreur.reperee', { erreur, ou: ou.trim().slice(0, 200) })
         if (bilanAttendu()) evenement.preventDefault()
       })
       /**

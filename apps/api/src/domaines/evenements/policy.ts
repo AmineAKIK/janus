@@ -74,6 +74,13 @@ export function enregistrementDe(message: Message): Enregistrement {
         aide: null,
         changeLeStatut: true,
       }
+    case 'erreur.reperee':
+      return {
+        type: 'erreur_reperee',
+        donnees: { erreur: message.erreur, ou: message.ou },
+        aide: null,
+        changeLeStatut: true,
+      }
     case 'pretest.reponse':
       return {
         type: 'pretest.reponse',
@@ -128,6 +135,10 @@ export function incoherence(message: Message, manifeste: Manifeste): string | un
       const inconnues = message.ids.filter((id) => !connues.has(id))
       return inconnues.length === 0 ? undefined : `l'erreur « ${inconnues.join('», «')} »`
     }
+    case 'erreur.reperee':
+      return manifeste.erreurs_critiques.some(({ id }) => id === message.erreur)
+        ? undefined
+        : `l'erreur « ${message.erreur} »`
     default:
       return undefined
   }

@@ -203,6 +203,40 @@ describe.skipIf(URL_SERVEUR_TEST === undefined)(
         ).toEqual(['E1', 'E3'])
       })
 
+      it('ouvre une erreur repérée par un outil sans attendre le bilan ; le bilan ne la recoche pas', async () => {
+        const ouvertes = (reponse: Awaited<ReturnType<typeof envoyer>>) =>
+          reponse.json<{ statut: { erreurs_ouvertes: string[] } }>().statut.erreurs_ouvertes
+        const reperee = await envoyer({
+          ...commun(),
+          type: 'erreur.reperee',
+          erreur: 'E2',
+          ou: 'PR1-1',
+        })
+        const bilan = await envoyer({ ...commun(), type: 'bilan.erreurs', ids: ['E2'] })
+
+        expect(reperee.statusCode).toBe(200)
+        expect(ouvertes(reperee)).toContain('E2')
+        expect(ouvertes(bilan)).toContain('E2')
+        expect(await compter('erreur_reperee')).toBe(1)
+        const { rows } = await bases.pool.query<{ n: string }>(
+          "SELECT count(*) AS n FROM decisions_erreurs WHERE erreur_id = 'E2'",
+        )
+        expect(Number(rows[0]?.n)).toBe(0)
+      })
+
+      it('refuse une erreur repérée que le bloc ne connaît pas (400)', async () => {
+        const avant = await compter('erreur_reperee')
+        const reponse = await envoyer({
+          ...commun(),
+          type: 'erreur.reperee',
+          erreur: 'E999',
+          ou: 'PR1-1',
+        })
+
+        expect(reponse.statusCode).toBe(400)
+        expect(await compter('erreur_reperee')).toBe(avant)
+      })
+
       it('refuse une erreur que le bloc ne connaît pas (400)', async () => {
         const reponse = await envoyer({ ...commun(), type: 'bilan.erreurs', ids: ['E999'] })
 

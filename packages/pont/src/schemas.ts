@@ -156,6 +156,12 @@ export const MessagePage = z.discriminatedUnion('type', [
     ),
   }),
   z.strictObject({ ...communPage, type: z.literal('bilan.erreurs'), ids: z.array(identifiant()) }),
+  z.strictObject({
+    ...communPage,
+    type: z.literal('erreur.reperee'),
+    erreur: identifiant(),
+    ou: z.string().check(z.trim(), z.minLength(1), z.maxLength(200)),
+  }),
   z.strictObject({ ...communPage, type: z.literal('etat.sauver'), etat: etatPage }),
   z.strictObject({ ...communPage, type: z.literal('lien.ouvrir'), url: lienExterne }),
   z.strictObject({
