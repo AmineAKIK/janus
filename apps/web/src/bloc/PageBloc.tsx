@@ -115,9 +115,9 @@ function FicheOuverte({
   useEffect(() => {
     changerEtape(typeCourant)
   }, [changerEtape, typeCourant])
-  // Une erreur déjà ouverte n'a plus besoin d'être tranchée.
   const ouvertes = hote.statut.manque.find(({ code }) => code === 'erreur_ouverte')?.erreurs ?? []
-  const enAttente = hote.propositions.filter(({ erreur }) => !ouvertes.includes(erreur))
+  // L'erreur repérée est déjà ouverte côté serveur : Amine dit si l'IA s'est trompée, réponse par réponse.
+  const enAttente = hote.propositions
   const aRevoir = etapesARevoir(
     etapes,
     erreursCritiques,

@@ -194,13 +194,14 @@ function construireCas(): CasAcceptation[] {
   const cas15 = ((): CasAcceptation => {
     const f = fabrique()
     return cas(
-      'Erreur critique repérée par l’IA, non confirmée',
+      // Décision d'Amine du 3 novembre 2026 : l'erreur repérée s'ouvre sans attendre le bilan (règle V01).
+      'Erreur critique repérée par l’IA, sans bilan envoyé',
       [
         ...jusquaProvisoire(f),
         f.correction(apres(DEBUT, 1), 'rappel', 'RA1', { niveau: 'fragile', erreursIa: ['E1'] }),
       ],
       apres(DEBUT, 2),
-      { statut: 'acquis_provisoirement', erreursOuvertes: [] },
+      { statut: 'a_reprendre', erreursOuvertes: ['E1'] },
     )
   })()
 

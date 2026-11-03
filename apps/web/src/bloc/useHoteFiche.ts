@@ -304,11 +304,16 @@ export function useHoteFiche(
                           ],
                     )
                   }
+                  // Une proposition par réponse : chaque correction qui repère l'erreur l'ouvre, et se tranche à part.
                   setPropositions((avant) => [
                     ...avant,
                     ...recue.erreurs_critiques
                       .filter(
-                        (erreur) => !avant.some((proposition) => proposition.erreur === erreur),
+                        (erreur) =>
+                          !avant.some(
+                            (proposition) =>
+                              proposition.erreur === erreur && proposition.correction === recue.id,
+                          ),
                       )
                       .map((erreur) => ({
                         erreur,
@@ -437,8 +442,9 @@ export function useHoteFiche(
   }
 
   /**
-   * Confirmer une erreur de l'IA l'ouvre ; la rejeter garde la décision dans l'historique, et la fiche
-   * la retire de son bilan, qui sinon la cocherait d'office.
+   * L'erreur que l'IA a repérée est déjà ouverte par le serveur. La confirmer la garde ; la rejeter
+   * fait qu'elle ne compte plus pour cette réponse, et la fiche la retire de son bilan, qui sinon la
+   * cocherait d'office.
    */
   const trancherErreur = (proposition: PropositionErreur, decision: 'confirmee' | 'rejetee') => {
     setPropositions((avant) => avant.filter((autre) => autre !== proposition))

@@ -414,6 +414,9 @@ function fermeLesErreurs(tranchages: Tranchages, reponse: Correction): boolean {
   return compteEffectif(tranchages, reponse) && niveauEffectif(tranchages, reponse) === 'solide'
 }
 
+/** La clé d'une erreur repérée dans une correction : ce sur quoi porte une décision d'Amine. */
+const cle = (correction: string, erreur: string) => `${correction}|${erreur}`
+
 /** Ce qui est arrivé à une erreur. */
 interface EvenementErreur {
   /** Le rang du fait dans l'ordre des faits. */
@@ -421,6 +424,11 @@ interface EvenementErreur {
   readonly ouvre: boolean
   /** Pour une fermeture par une réponse de restitution : elle ne ferme que si cette réponse le fait. */
   readonly reponse: Correction | undefined
+  /**
+   * Pour une ouverture par une correction (l'erreur y a été repérée) : la correction. L'ouverture ne
+   * compte pas si Amine a rejeté cette erreur pour cette correction.
+   */
+  readonly correction?: string
 }
 
 interface EtatErreur {
@@ -430,8 +438,11 @@ interface EtatErreur {
 }
 
 /**
- * Une erreur s'ouvre quand Amine la coche (l'IA seule n'ouvre rien) et se ferme quand il la décoche
- * ou qu'une réponse réussie, au premier tour et qui compte, touche la même erreur dans une série
+ * Une erreur s'ouvre dès qu'elle est repérée : par le correcteur dans une réponse (sauf si Amine rejette
+ * cette erreur pour cette correction : la dernière décision sur la paire l'emporte), par un outil de la
+ * fiche (`erreur_reperee`), ou quand Amine la coche au bilan. Le bilan n'est donc pas le seul chemin :
+ * quitter la page sans l'envoyer ne garde pas le bloc à l'abri (règle V01). Elle se ferme quand Amine
+ * la décoche ou qu'une réponse réussie, au premier tour et qui compte, touche la même erreur dans une série
  * de restitution, ou dans une vérification retenue par `SuiviVerifications`
  * (valable, du bon genre et à l'heure : les autres sont ignorées). Le suivi des vérifications
  * avance d'un fait avant celui-ci : `verificationsRetenues` est à jour quand le fait arrive.
@@ -447,6 +458,8 @@ export class SuiviErreurs {
   readonly #etats = new Map<string, EtatErreur>()
   #rang = 0
   #nombreOuvertes = 0
+  /** La dernière décision d'Amine sur une erreur repérée par une correction, par `correction|erreur`. */
+  readonly #decisions = new Map<string, 'confirmee' | 'rejetee'>()
   #parQuestion: ReadonlyMap<string, readonly string[]> | undefined
 
   constructor(
@@ -470,6 +483,11 @@ export class SuiviErreurs {
       .filter(([, etat]) => etat.ouverte)
       .sort(([, a], [, b]) => a.depuis - b.depuis)
       .map(([erreur]) => erreur)
+  }
+
+  /** Une erreur que le manifeste liste : le correcteur ne fait pas ouvrir une erreur que la fiche ignore. */
+  #connue(erreur: string): boolean {
+    return this.#manifeste.erreurs_critiques.some(({ id }) => id === erreur)
   }
 
   #erreursDeLaQuestion(question: string): readonly string[] {
@@ -499,8 +517,19 @@ export class SuiviErreurs {
     return reponse === undefined || fermeLesErreurs(this.#tranchages, reponse)
   }
 
-  #ouvrir(erreur: string, rang: number): void {
-    this.#histoireDe(erreur).push({ rang, ouvre: true, reponse: undefined })
+  /** Vrai si cette ouverture compte : elle ne vient pas d'une correction où Amine a rejeté l'erreur. */
+  #ouvertureCompte(erreur: string, correction: string | undefined): boolean {
+    return correction === undefined || this.#decisions.get(cle(correction, erreur)) !== 'rejetee'
+  }
+
+  #ouvrir(erreur: string, rang: number, correction?: string): void {
+    this.#histoireDe(erreur).push({
+      rang,
+      ouvre: true,
+      reponse: undefined,
+      ...(correction === undefined ? {} : { correction }),
+    })
+    if (!this.#ouvertureCompte(erreur, correction)) return
     const etat = this.#etatDe(erreur)
     if (!etat.ouverte) {
       etat.ouverte = true
@@ -521,14 +550,25 @@ export class SuiviErreurs {
   avancer(fait: Fait): void {
     const rang = this.#rang
     this.#rang += 1
-    if (fait.type === 'erreur_cochee') this.#ouvrir(fait.erreur, rang)
-    if (fait.type === 'erreur_decochee') this.#fermer(fait.erreur, rang, undefined)
-    if (fait.type === 'erreur_ia_tranchee' && fait.decision === 'confirmee') {
+    if (fait.type === 'erreur_cochee' || fait.type === 'erreur_reperee') {
       this.#ouvrir(fait.erreur, rang)
+    }
+    if (fait.type === 'erreur_decochee') this.#fermer(fait.erreur, rang, undefined)
+    if (fait.type === 'erreur_ia_tranchee') {
+      // La décision vaut pour toutes les lectures de la paire, celles d'avant comprises : on relit l'histoire.
+      this.#decisions.set(cle(fait.correction, fait.erreur), fait.decision)
+      if (fait.decision === 'confirmee') this.#ouvrir(fait.erreur, rang, fait.correction)
+      this.#relire(fait.erreur)
     }
     if (peutFermerDesErreurs(fait)) {
       for (const erreur of this.#erreursDeLaQuestion(fait.question)) {
         this.#fermer(erreur, rang, fait)
+      }
+    }
+    // Repérée dans cette réponse : elle s'ouvre, même si la réponse vient de fermer les erreurs de sa question.
+    if (fait.type === 'correction') {
+      for (const erreur of new Set(fait.erreursIa)) {
+        if (this.#connue(erreur)) this.#ouvrir(erreur, rang, fait.id)
       }
     }
     if (fait.type === 'verification_terminee' && this.#verificationsRetenues.has(fait.id)) {
@@ -542,23 +582,27 @@ export class SuiviErreurs {
 
   /** Une réponse déjà lue a été tranchée : relit l'histoire des erreurs qu'elle touche. */
   revoir(reponse: Correction): void {
-    for (const erreur of this.#erreursDeLaQuestion(reponse.question)) {
-      const etat = this.#etatDe(erreur)
-      const etaitOuverte = etat.ouverte
-      etat.ouverte = false
-      etat.depuis = -1
-      for (const evenement of this.#histoireDe(erreur)) {
-        if (evenement.ouvre) {
-          if (!etat.ouverte) {
-            etat.ouverte = true
-            etat.depuis = evenement.rang
-          }
-        } else if (this.#ferme(evenement.reponse)) {
-          etat.ouverte = false
+    for (const erreur of this.#erreursDeLaQuestion(reponse.question)) this.#relire(erreur)
+  }
+
+  /** Refait l'état d'une erreur à partir de son histoire, avec les tranchages et les décisions d'aujourd'hui. */
+  #relire(erreur: string): void {
+    const etat = this.#etatDe(erreur)
+    const etaitOuverte = etat.ouverte
+    etat.ouverte = false
+    etat.depuis = -1
+    for (const evenement of this.#histoireDe(erreur)) {
+      if (evenement.ouvre) {
+        if (!this.#ouvertureCompte(erreur, evenement.correction)) continue
+        if (!etat.ouverte) {
+          etat.ouverte = true
+          etat.depuis = evenement.rang
         }
+      } else if (this.#ferme(evenement.reponse)) {
+        etat.ouverte = false
       }
-      this.#nombreOuvertes += Number(etat.ouverte) - Number(etaitOuverte)
     }
+    this.#nombreOuvertes += Number(etat.ouverte) - Number(etaitOuverte)
   }
 }
 

@@ -42,6 +42,7 @@ describe('enregistrementDe', () => {
     ['atelier.resultat', 'atelier_resultat', { reussi: true, aide: 1 }, 1, true],
     ['aisance.resultat', 'aisance_resultat', { reussi: true, dureeS: 42.5 }, null, true],
     ['bilan.erreurs', 'bilan.erreurs', { ids: ['E1', 'E3'] }, null, true],
+    ['erreur.reperee', 'erreur_reperee', { erreur: 'E4', ou: 'PR7-1' }, null, true],
     ['page.prete', 'page.prete', {}, null, false],
     [
       'pretest.reponse',
@@ -114,7 +115,7 @@ describe('incoherence et estSansEffet', () => {
   const fiche = {
     etapes: [{ id: 'ET3' }],
     pratique: [{ id: 'PR1', items: [{ id: 'PR1-2' }] }],
-    erreurs_critiques: [{ id: 'E1' }, { id: 'E3' }],
+    erreurs_critiques: [{ id: 'E1' }, { id: 'E3' }, { id: 'E4' }],
     atelier: { id: 'AT1' },
     aisance: { libelle: 'Aisance' },
   } as unknown as Manifeste
@@ -127,6 +128,7 @@ describe('incoherence et estSansEffet', () => {
       'atelier.resultat',
       'aisance.resultat',
       'bilan.erreurs',
+      'erreur.reperee',
     ] as const) {
       expect(incoherence(exemple(type), fiche), type).toBeUndefined()
     }
@@ -144,6 +146,9 @@ describe('incoherence et estSansEffet', () => {
     expect(
       incoherence({ ...exemple('bilan.erreurs'), ids: ['E1', 'E8', 'E9'] } as never, fiche),
     ).toContain('E8')
+    expect(incoherence({ ...exemple('erreur.reperee'), erreur: 'E9' } as never, fiche)).toContain(
+      'E9',
+    )
     expect(incoherence(exemple('atelier.resultat'), sansAtelierNiAisance)).toContain('atelier')
     expect(incoherence(exemple('aisance.resultat'), sansAtelierNiAisance)).toContain('aisance')
   })

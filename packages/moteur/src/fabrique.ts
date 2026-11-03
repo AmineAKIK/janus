@@ -118,6 +118,16 @@ export function fabrique(bloc: string = MANIFESTE.bloc) {
       fait(date, { type: 'erreur_cochee', erreur, source: 'amine' }),
     decochee: (date: string, erreur: string): Fait =>
       fait(date, { type: 'erreur_decochee', erreur, source: 'amine' }),
+    /** Un outil de la fiche a reconnu l'erreur dans une réponse. */
+    reperee: (date: string, erreur: string, ou = 'PR1-1'): Fait =>
+      fait(date, { type: 'erreur_reperee', erreur, ou }),
+    /** Amine confirme ou rejette une erreur que le correcteur a repérée dans `correction`. */
+    tranchee: (
+      date: string,
+      correction: string,
+      erreur: string,
+      decision: 'confirmee' | 'rejetee',
+    ): Fait => fait(date, { type: 'erreur_ia_tranchee', correction, erreur, decision }),
     force: (date: string, statut: Statut, raison: string): Fait =>
       fait(date, { type: 'statut_force', statut, raison }),
     levee: (date: string): Fait => fait(date, { type: 'force_levee' }),

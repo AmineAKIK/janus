@@ -18,6 +18,7 @@ const TYPES_PAGE = [
   'aisance.resultat',
   'restitution.demande',
   'bilan.erreurs',
+  'erreur.reperee',
   'etat.sauver',
   'lien.ouvrir',
   'page.taille',
@@ -81,6 +82,14 @@ describe('les messages de la page vers l’appli', () => {
   it('page.prete : le schéma est la version 2', () => {
     expect(MessagePage.safeParse({ ...EXEMPLES_PAGE['page.prete'], schema: 1 }).success).toBe(false)
     expect(MessagePage.safeParse(sans(EXEMPLES_PAGE['page.prete'], 'schema')).success).toBe(false)
+  })
+
+  it('erreur.reperee : l’endroit est requis, 200 caractères au plus', () => {
+    const exemple = EXEMPLES_PAGE['erreur.reperee']
+    expect(MessagePage.safeParse({ ...exemple, ou: '  ' }).success).toBe(false)
+    expect(MessagePage.safeParse({ ...exemple, ou: 'a'.repeat(201) }).success).toBe(false)
+    expect(MessagePage.safeParse({ ...exemple, ou: 'a'.repeat(200) }).success).toBe(true)
+    expect(MessagePage.safeParse({ ...exemple, erreur: '' }).success).toBe(false)
   })
 
   it('etape.vue et pretest.reponse : champs vides ou trop longs refusés', () => {

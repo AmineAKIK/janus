@@ -18,6 +18,7 @@ export const TYPES_DES_EVENEMENTS: readonly TypeDeFait[] = [
   'correction_contestee',
   'correction_tranchee',
   'verification_terminee',
+  'erreur_reperee',
 ]
 const TYPES_DES_FORCAGES: readonly TypeDeFait[] = ['statut_force', 'force_levee']
 const TYPES_DES_DECISIONS: readonly TypeDeFait[] = [

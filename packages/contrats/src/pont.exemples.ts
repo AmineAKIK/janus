@@ -82,6 +82,7 @@ export const EXEMPLES_PAGE = {
     support: { colle: false, retour_cours: false },
   },
   'bilan.erreurs': { ...commun, type: 'bilan.erreurs', ids: ['E1', 'E3'] },
+  'erreur.reperee': { ...commun, type: 'erreur.reperee', erreur: 'E4', ou: 'PR7-1' },
   'etat.sauver': {
     ...commun,
     type: 'etat.sauver',

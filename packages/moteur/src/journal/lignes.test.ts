@@ -217,6 +217,15 @@ describe('lignesDuJournal', () => {
     ])
   })
 
+  it('erreur critique : repérée par un outil de la fiche, avec l’endroit', () => {
+    const f = fabrique()
+    const erreur = MANIFESTE.erreurs_critiques[0]
+    const lignes = lignesDuJournal([f.reperee(DEBUT, erreur?.id ?? '', 'PR1-2')], CONTEXTE)
+    expect(du('erreur_critique', lignes).map(({ resume }) => resume)).toEqual([
+      `${erreur?.libelle ?? ''} · repérée dans tes réponses (PR1-2)`,
+    ])
+  })
+
   it('contestation : une nouvelle correction et un forçage ne la ferment pas', () => {
     const f = fabrique()
     const correction = f.correction(DEBUT, 'restitution', 'R1')

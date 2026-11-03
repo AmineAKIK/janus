@@ -232,8 +232,33 @@ describe('vérifications de la démo', () => {
 
     expect(derniere.resultat?.issue).toBe('a_examiner')
     expect(derniere.resultat?.erreur_a_confirmer?.erreur).toBeTruthy()
-    // L'erreur n'ouvre rien tant qu'Amine ne la confirme pas.
-    expect(derniere.resultat?.statut).toBe('acquis')
+    // Repérée, l'erreur est ouverte sans attendre la décision d'Amine (règle V01) : la rejeter la retire.
+    expect(derniere.resultat?.statut).toBe('a_reprendre')
+  })
+
+  it('rejeter l’erreur proposée par le tuteur la retire du statut', async () => {
+    const banc = monterDemo()
+    banc.magasin.ecrire((etat) => ({
+      ...etat,
+      interrupteurs: { ...etat.interrupteurs, erreurIa: true },
+    }))
+    const { id, vue } = await ouvrirVerification(banc)
+    const derniere = await toutRepondre(banc, id, vue, reponseJuste)
+    const proposee = derniere.resultat?.erreur_a_confirmer
+    if (proposee === null || proposee === undefined) throw new Error('Aucune erreur proposée')
+
+    const apres = await banc.transport.appeler(ROUTES['POST /blocs/:id/erreurs'], {
+      params: { id: 'B02' },
+      corps: {
+        id: nouvelId(Date.parse(PREMIER_LANCEMENT) + 1),
+        erreur: proposee.erreur,
+        correction: proposee.correction,
+        decision: 'rejetee',
+      },
+    })
+
+    expect(apres.statut).not.toBe('a_reprendre')
+    expect(apres.erreurs_ouvertes).not.toContain(proposee.erreur)
   })
 
   it('refuse une tâche de code envoyée sans résultat de test', async () => {

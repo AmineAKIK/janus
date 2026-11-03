@@ -317,6 +317,14 @@ export function lignesDuJournal(faits: readonly Fait[], contexte: ContexteJourna
           })
           break
         }
+        case 'erreur_reperee':
+          lignes.push({
+            ...commun,
+            type: 'erreur_critique',
+            resume: `${libelleErreur(fait.erreur)} · repérée dans tes réponses (${fait.ou})`,
+            detail: [],
+          })
+          break
         case 'correction_contestee': {
           index ??= indexerLeBloc(faitsDuBloc)
           const correction = index.corrections.get(fait.correction)

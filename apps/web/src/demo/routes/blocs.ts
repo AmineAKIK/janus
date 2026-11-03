@@ -42,6 +42,8 @@ function faitDuMessage(message: MessagePage, date: string): Fait | null {
         reussi: message.reussi,
         dureeS: message.duree_s,
       }
+    case 'erreur.reperee':
+      return { ...commun, type: 'erreur_reperee', erreur: message.erreur, ou: message.ou }
     default:
       // Les corrections, les erreurs, l'état de la page... passent par leurs propres routes.
       return null

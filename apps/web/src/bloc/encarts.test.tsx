@@ -69,9 +69,10 @@ describe('encart du bilan', () => {
 
     await envoyer(message('etape.vue', { etape: etape('bilan') }))
 
-    expect(await screen.findByText('Pour passer à Acquis provisoirement')).toBeVisible()
+    // Les réponses de la démo sont fragiles : les erreurs que le correcteur y repère sont déjà ouvertes.
+    expect(await screen.findByText('Pour passer à En cours')).toBeVisible()
     expect(screen.getByText(/Statut calculé/)).toBeVisible()
-    expect(screen.getByText('Fais l’atelier.')).toBeVisible()
+    expect(screen.getByText(/^Réussis une question sur chaque erreur ouverte/)).toBeVisible()
   })
 
   it('ne s’affiche qu’à l’étape du bilan', async () => {
@@ -242,7 +243,7 @@ describe('erreur critique repérée par l’IA', () => {
       banc.message('restitution.demande', { question: QUESTIONS[0], reponse: REPONSE }),
     )
     const encart = await screen.findByRole('region', {
-      name: 'Erreur critique repérée par l’IA · À confirmer',
+      name: 'Erreur critique repérée par l’IA · À vérifier',
     })
     return { ...banc, encart }
   }
@@ -258,7 +259,7 @@ describe('erreur critique repérée par l’IA', () => {
 
     expect(encart).toHaveTextContent(`« ${REPONSE} »`)
     expect(encart).toHaveTextContent(
-      'Si tu confirmes, B03 passe à À reprendre jusqu’à ce que tu réussisses une question sur ce point.',
+      'B03 est À reprendre jusqu’à ce que tu réussisses une question sur ce point. Si l’IA s’est trompée sur cette réponse, dis-le : elle ne compte plus.',
     )
     expect(within(encart).getByRole('button', { name: 'C’est bien une erreur' })).toBeVisible()
     expect(within(encart).getByRole('button', { name: 'Ce n’en est pas une' })).toBeVisible()

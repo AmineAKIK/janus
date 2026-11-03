@@ -352,7 +352,12 @@ const donneesDeBruit: fc.Arbitrary<Donnees> = fc.oneof(
       niveau: fc.constantFrom(...NIVEAUX),
       compte: fc.boolean(),
       confiance: fc.constantFrom('sur' as const, 'hesitant' as const),
-      erreursIa: fc.constant<string[]>([]),
+      // Des erreurs repérées par le correcteur, une fois sur trois, et une que le manifeste ignore.
+      erreursIa: fc.oneof(
+        fc.constant<string[]>([]),
+        fc.constant<string[]>([]),
+        fc.subarray(['E1', 'E2', 'E3', 'E9']),
+      ),
     }),
   },
   {
@@ -375,7 +380,7 @@ const donneesDeBruit: fc.Arbitrary<Donnees> = fc.oneof(
     weight: 2,
     arbitrary: fc.record({
       type: fc.constant('erreur_ia_tranchee' as const),
-      correction: fc.constantFrom(...IDENTIFIANTS_PARCOURS),
+      correction: fc.constantFrom(...IDENTIFIANTS_PARCOURS, 'b1', 'b2'),
       erreur: fc.constantFrom('E1', 'E2'),
       decision: fc.constantFrom('confirmee' as const, 'rejetee' as const),
     }),
@@ -393,6 +398,14 @@ const donneesDeBruit: fc.Arbitrary<Donnees> = fc.oneof(
       reponses: fc
         .boolean()
         .chain((reussi) => fc.boolean().map((compte) => reponses(reussi, compte))),
+    }),
+  },
+  {
+    weight: 2,
+    arbitrary: fc.record({
+      type: fc.constant('erreur_reperee' as const),
+      erreur: fc.constantFrom('E1', 'E2', 'E3'),
+      ou: fc.constantFrom('PR1-1', 'aisance'),
     }),
   },
   {
@@ -611,3 +624,88 @@ describe('SuiviBloc : propriété, sur des jeux tordus (égalités de date, iden
     }
   }, 60_000)
 })
+
+describe('les erreurs repérées s’ouvrent sans attendre le bilan (règle V01)', () => {
+  const ouvertes = (faits: readonly Fait[]) =>
+    calculerBloc(faits, MANIFESTE, REGLAGES, MAINTENANT).erreursOuvertes
+
+  it('une erreur repérée par le correcteur s’ouvre ; la rejeter la ferme, la confirmer ensuite la rouvre', () => {
+    const f = fabrique()
+    const reperee = f.correction(apres(DEBUT, 0, 10), 'rappel', 'RA1', {
+      niveau: 'fragile',
+      erreursIa: ['E1'],
+    })
+    const rejet = f.tranchee(apres(DEBUT, 0, 11), reperee.id, 'E1', 'rejetee')
+    const confirmation = f.tranchee(apres(DEBUT, 0, 12), reperee.id, 'E1', 'confirmee')
+    const faits = [
+      reperee,
+      rejet,
+      confirmation,
+      f.tranchee(apres(DEBUT, 0, 13), reperee.id, 'E1', 'rejetee'),
+    ]
+    verifierChaquePrefixe(faits)
+    expect(ouvertes([reperee])).toEqual(['E1'])
+    expect(ouvertes([reperee, rejet])).toEqual([])
+    expect(ouvertes([reperee, rejet, confirmation])).toEqual(['E1'])
+    // La dernière décision l'emporte : rejetée après sa confirmation, elle se referme.
+    expect(ouvertes(faits)).toEqual([])
+  })
+
+  it('un rejet ne vaut que pour sa correction : la même erreur repérée ailleurs reste ouverte', () => {
+    const f = fabrique()
+    const premiere = f.correction(apres(DEBUT, 0, 10), 'rappel', 'RA1', { erreursIa: ['E1'] })
+    const seconde = f.correction(apres(DEBUT, 0, 20), 'rappel', 'RA1', { erreursIa: ['E1'] })
+    const faits = [premiere, seconde, f.tranchee(apres(DEBUT, 0, 30), premiere.id, 'E1', 'rejetee')]
+    verifierChaquePrefixe(faits)
+    expect(ouvertes(faits)).toEqual(['E1'])
+  })
+
+  it('une réponse solide qui touche l’erreur la referme ; repérée dans cette réponse même, elle reste ouverte', () => {
+    const f = fabrique()
+    const reperee = f.correction(apres(DEBUT, 0, 10), 'rappel', 'RA1', { erreursIa: ['E1'] })
+    const fermante = f.correction(apres(DEBUT, 0, 20), 'restitution', 'R1', {})
+    const solideMaisFautive = f.correction(apres(DEBUT, 0, 30), 'restitution', 'R1', {
+      erreursIa: ['E1'],
+    })
+    verifierChaquePrefixe([reperee, fermante, solideMaisFautive])
+    expect(ouvertes([reperee, fermante])).toEqual([])
+    expect(ouvertes([reperee, fermante, solideMaisFautive])).toEqual(['E1'])
+  })
+
+  it('un rejet rangé avant sa correction (horloges décalées) vaut quand même', () => {
+    const f = fabrique()
+    const reperee = f.correction(apres(DEBUT, 0, 10), 'rappel', 'RA1', { erreursIa: ['E1'] })
+    const rejet = f.tranchee(apres(DEBUT, 0, 5), reperee.id, 'E1', 'rejetee')
+    verifierChaquePrefixe([rejet, reperee])
+    expect(ouvertes([rejet, reperee])).toEqual([])
+  })
+
+  it('une erreur repérée qui n’est pas au manifeste n’ouvre rien', () => {
+    const f = fabrique()
+    expect(
+      ouvertes([f.correction(apres(DEBUT, 0, 10), 'rappel', 'RA1', { erreursIa: ['E9'] })]),
+    ).toEqual([])
+  })
+
+  it('une erreur repérée par un outil s’ouvre, et une réponse solide qui la touche la referme', () => {
+    const f = fabrique()
+    const faits = [
+      ...jusquaProvisoireLocal(f),
+      f.reperee(apres(DEBUT, 1), 'E1', 'PR1-1'),
+      f.correction(apres(DEBUT, 1, 10), 'restitution', 'R1', {}),
+    ]
+    verifierChaquePrefixe(faits)
+    const avant = calculerBloc(faits.slice(0, -1), MANIFESTE, REGLAGES, MAINTENANT)
+    expect(avant.erreursOuvertes).toEqual(['E1'])
+    expect(avant.statutCalcule).toBe('a_reprendre')
+    expect(ouvertes(faits)).toEqual([])
+  })
+})
+
+function jusquaProvisoireLocal(f: ReturnType<typeof fabrique>): Fait[] {
+  return [
+    ...f.pratique(DEBUT),
+    f.atelier(apres(DEBUT, 0, 5)),
+    ...f.restitution(apres(DEBUT, 0, 30)),
+  ]
+}
