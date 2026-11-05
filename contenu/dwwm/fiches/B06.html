@@ -2433,6 +2433,14 @@
           L’appareil affiche « connecté » même si le maillon cassé est loin, du côté de la ligne du
           FAI ou du site. Seul un test le trouve.
         </p>
+        <p>
+          Le terme du métier : le <strong>chemin</strong> d’un paquet. Il est fait de
+          <strong>liens</strong> (le Wi-Fi, le câble, la ligne du FAI) et d’<strong
+            >équipements</strong
+          >
+          qui font suivre les paquets (la box, puis les routeurs du FAI et d’Internet). Dans cette
+          fiche, un maillon désigne l’un ou l’autre.
+        </p>
         <div
           class="ex"
           data-widget="choix"
@@ -3790,7 +3798,7 @@ en6: flags=8863&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
         </div>
         <div
           class="schema-bloc"
-          data-lecture="Les trois tests de Yasmine placés sur la chaîne. Le ping vers la passerelle va du PC jusqu’à la box. Le ping vers l’adresse du site va plus loin : la box, la ligne du FAI et Internet. Le ping vers le nom ajoute le DNS, qui doit traduire le nom en adresse. Le premier test qui échoue montre le premier maillon qui casse."
+          data-lecture="Les trois tests de Yasmine placés sur la chaîne. Le ping vers la passerelle va du PC jusqu’à la box. Le ping vers l’adresse du site va plus loin : la box, la ligne du FAI et Internet. Le ping vers le nom ajoute un maillon à part : le DNS du FAI, à qui la box passe la question de nom, et qui doit traduire le nom en adresse. Le premier test qui échoue montre le premier maillon qui casse."
         >
           <span class="boite-fixe">Le PC de Yasmine<small>il lance les trois tests</small></span
           ><span class="fleche">le ping vers la passerelle va jusqu’à</span
@@ -3798,15 +3806,52 @@ en6: flags=8863&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
           ><span class="fleche">le ping vers l’adresse du site va plus loin, par</span
           ><span class="boite-fixe"
             >La ligne du FAI et Internet<small>jusqu’au serveur, en 203.0.113.20</small></span
-          ><span class="fleche">le ping vers le nom demande en plus au</span
+          ><span class="fleche">le ping vers le nom demande en plus, par la box, au</span
           ><span class="boite-fixe"
-            >DNS<small>qui traduit formation.example.org en adresse</small></span
+            >DNS du FAI<small>qui traduit formation.example.org en adresse</small></span
           >
         </div>
         <p>
-          Chaque test va un maillon plus loin que le précédent. Le premier qui échoue montre le
-          premier maillon qui casse.
+          Chaque test ajoute un maillon à ceux du précédent : le deuxième, la ligne du FAI et
+          Internet ; le troisième, le DNS du FAI, que la box interroge à la place du PC. Le DNS que
+          Yasmine a relevé, 192.168.1.1, est sa box, mais la box ne traduit pas elle-même : elle
+          passe la question. Le premier test qui échoue montre le premier maillon qui casse.
         </p>
+      </div>
+      <div data-ecran="Si seul le nom échoue">
+        <p class="accroche">
+          Avant de lancer ses trois tests, Yasmine se demande comment lire un résultat possible.
+        </p>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="predtrois"
+          data-reponse="dns"
+          data-prediction
+          data-aide1="Quels maillons le ping vers l’adresse du site a-t-il déjà traversés ?"
+          data-aide2="Que demande le ping vers le nom, que le ping vers l’adresse ne demande pas ?"
+          data-aide3="Le test du nom n’ajoute qu’un maillon aux autres : la traduction du nom en adresse."
+        >
+          <p class="q">
+            À ton avis, si la passerelle et l’adresse du site répondent, mais pas le nom, quel
+            maillon casse ?
+          </p>
+          <ul class="options">
+            <li data-option="dns">Le DNS, qui traduit les noms en adresses.</li>
+            <li
+              data-option="ligne"
+              data-retour="Le ping vers l’adresse du site a traversé la ligne. Aurait-il répondu si elle était coupée ?"
+            >
+              La ligne du FAI.
+            </li>
+            <li
+              data-option="box"
+              data-retour="La passerelle a répondu. Que prouve ce test sur la box ?"
+            >
+              La box.
+            </li>
+          </ul>
+        </div>
       </div>
       <div data-ecran="Les trois tests">
         <p class="accroche">
@@ -4313,7 +4358,7 @@ Itinéraire déterminé.</pre>
         </p>
         <div data-os="macos">
           <p>
-            <strong>Sous macOS :</strong> Sous macOS, ping ne s’arrête pas seul : écris
+            <strong>Sous macOS :</strong> Ping ne s’arrête pas seul : écris
             <span class="mono">ping -c 4</span> suivi de la cible, sinon tape Ctrl+C pour l’arrêter.
           </p>
         </div>
@@ -4464,9 +4509,9 @@ Itinéraire déterminé.</pre>
           </ul>
         </div>
         <p>
-          Si ta box demande un mot de passe, regarde sous le boîtier. Si elle ne se gère que depuis
-          l’application de ton FAI, ouvre l’application et cherche les mêmes rubriques. Si la box
-          n’est pas à toi, demande à la personne qui la gère de l’ouvrir avec toi.
+          Si la page ne s’ouvre pas, vérifie que tu as tapé l’adresse de ta passerelle sans faute,
+          sans « www ». Si ta box demande un mot de passe, regarde sous le boîtier. Si la box n’est
+          pas à toi, demande à la personne qui la gère de l’ouvrir avec toi.
         </p>
         <details data-cran="1">
           <summary>Un indice</summary>
@@ -4643,7 +4688,7 @@ Itinéraire déterminé.</pre>
               Par où les paquets de l’ordinateur passent-ils d’abord, et vers quoi ?
             </li>
             <li class="boite">
-              Quelle partie de l’appartement reçoit les paquets, d’après le premier ping ?
+              Quel appareil de Karim reçoit les paquets, d’après le premier ping ?
             </li>
             <li class="fleche">
               Où les paquets essaient-ils d’aller ensuite, d’après les deux autres pings ?
@@ -5020,8 +5065,8 @@ Itinéraire déterminé.</pre>
             <li>Serveurs DNS : le DNS.</li>
             <li>Serveur DHCP : la machine qui a donné ces réglages à la carte.</li>
             <li>
-              Les autres lignes (« Adresse IPv6 », « liaison locale », « Statut du média ») n’ont
-              pas besoin d’être lues.
+              Statut du média : Média déconnecté : la carte n’est pas branchée. Les autres lignes («
+              Adresse IPv6 », « liaison locale ») n’ont pas besoin d’être lues.
             </li>
           </ul>
         </div>
@@ -5081,8 +5126,8 @@ Itinéraire déterminé.</pre>
             <li>Serveurs DNS : le DNS.</li>
             <li>Serveur DHCP : la machine qui a donné ces réglages à la carte.</li>
             <li>
-              Les autres lignes (« Adresse IPv6 », « liaison locale », « Statut du média ») n’ont
-              pas besoin d’être lues.
+              Statut du média : Média déconnecté : la carte n’est pas branchée. Les autres lignes («
+              Adresse IPv6 », « liaison locale ») n’ont pas besoin d’être lues.
             </li>
           </ul>
         </div>
@@ -5153,6 +5198,7 @@ Itinéraire déterminé.</pre>
               Dans les réglages réseau de macOS, la passerelle s’appelle « Routeur », et « Serveurs
               DNS » donne le DNS.
             </li>
+            <li>lo0 : une interface interne à l’ordinateur, qui ne mène pas au réseau.</li>
             <li>Les autres mots (flags, broadcast, IPv6) n’ont pas besoin d’être lus.</li>
           </ul>
         </div>
@@ -5226,6 +5272,7 @@ Itinéraire déterminé.</pre>
               Dans les réglages réseau de macOS, la passerelle s’appelle « Routeur », et « Serveurs
               DNS » donne le DNS.
             </li>
+            <li>lo0 : une interface interne à l’ordinateur, qui ne mène pas au réseau.</li>
             <li>Les autres mots (flags, broadcast, IPv6) n’ont pas besoin d’être lus.</li>
           </ul>
         </div>
@@ -5275,7 +5322,7 @@ Itinéraire déterminé.</pre>
         data-aide1="Les documents de ce serveur arrivent jusqu’à Yasmine. Qu’est-ce que cela dit du chemin ?"
         data-aide2="Si le chemin marche, qu’est-ce qui peut encore faire échouer un ping ?"
         data-aide3="Le ping est un message particulier : une machine peut ne pas y répondre. Compare ce que dit le ping et ce que disent les documents."
-        data-justifier="Le ping de Yasmine vers 203.0.113.30, le serveur des documents de la formation, est perdu, mais les documents s’ouvrent. Un collègue en conclut que sa ligne est coupée. Quels tests, et dans quel ordre, lui montreraient que la ligne marche ? Et qu’est-ce qui, sur ce serveur, peut faire taire un ping sans qu’il soit en panne ?"
+        data-justifier="Le ping de Yasmine vers 203.0.113.30, le serveur des documents de la formation, est perdu, mais les documents s’ouvrent. Un collègue en conclut que sa ligne est coupée. Quels tests lui montreraient, et dans quel ordre, que la ligne marche ? Pourquoi cet ordre ?"
       >
         <p>
           Yasmine envoie un ping à 203.0.113.30, le serveur des documents de la formation. Les
@@ -5316,7 +5363,7 @@ Itinéraire déterminé.</pre>
         data-aide1="Les courriers de Yasmine arrivent jusqu’à elle. Qu’est-ce que cela dit du chemin ?"
         data-aide2="Si le chemin marche, qu’est-ce qui peut encore faire échouer un ping ?"
         data-aide3="Le ping est un message particulier : une machine peut ne pas y répondre. Compare ce que dit le ping et ce que disent les courriers."
-        data-justifier="Le ping de Yasmine vers 203.0.113.25, le serveur de messagerie de la formation, est perdu, mais ses courriers arrivent. Un collègue en conclut que le serveur est en panne. Quels tests, et dans quel ordre, lui montreraient que le chemin marche ? Et qu’est-ce qui, sur ce serveur, peut faire taire un ping sans qu’il soit en panne ?"
+        data-justifier="Le ping de Yasmine vers 203.0.113.25, le serveur de messagerie de la formation, est perdu, mais ses courriers arrivent. Un collègue en conclut que le serveur est en panne. Quels tests lui montreraient, et dans quel ordre, que le chemin marche ? Pourquoi cet ordre ?"
       >
         <p>
           Yasmine envoie un ping à 203.0.113.25, le serveur de messagerie de la formation. Les
@@ -5521,80 +5568,14 @@ Itinéraire déterminé.</pre>
     <template data-item="PR1-9">
       <div
         class="ex"
-        data-widget="choix"
-        data-reponse="dns"
-        data-verifie
-        data-aide1="Qu’est-ce qui change, pour le Mac, entre viser une adresse et viser un nom ?"
-        data-aide2="Quel travail faut-il faire pour un nom et pas pour une adresse ?"
-        data-aide3="Seuls les noms échouent : l’information qui sert uniquement aux noms est en cause."
-      >
-        <p>
-          Le Mac de Farid, chez lui, a reçu du DHCP l’adresse 192.168.1.42. Depuis son terminal, un
-          ping vers 198.51.100.50, une adresse publique, répond. Un ping vers un nom de site ne
-          trouve pas l’hôte.
-        </p>
-        <p class="q">Parmi les informations reçues du DHCP, laquelle est probablement fausse ?</p>
-        <ul class="options">
-          <li data-option="dns">L’adresse du DNS.</li>
-          <li
-            data-option="ip"
-            data-retour="Le Mac parle à la box avec cette adresse. Un ping vers une adresse publique répondrait-il avec une adresse fausse ?"
-          >
-            L’adresse IP du Mac.
-          </li>
-          <li
-            data-option="passerelle"
-            data-retour="Le ping vers une adresse publique répond. Un paquet sort-il de la maison sans passerelle ?"
-          >
-            La passerelle.
-          </li>
-        </ul>
-      </div>
-    </template>
-    <template data-variante="PR1-9">
-      <div
-        class="ex"
-        data-widget="choix"
-        data-reponse="dns"
-        data-verifie
-        data-aide1="Qu’est-ce qui change, pour le PC, entre viser une adresse et viser un nom ?"
-        data-aide2="Quel travail faut-il faire pour un nom et pas pour une adresse ?"
-        data-aide3="Seuls les noms échouent : le réglage qui sert uniquement aux noms est en cause."
-      >
-        <p>
-          Le PC de Yasmine vient de rejoindre le réseau d’une salle de formation. Un ping vers
-          198.51.100.50, une adresse publique, répond. Un ping vers un nom de site ne trouve pas
-          l’hôte.
-        </p>
-        <p class="q">Parmi les réglages reçus du DHCP, lequel est probablement faux ?</p>
-        <ul class="options">
-          <li data-option="dns">L’adresse du DNS.</li>
-          <li
-            data-option="masque"
-            data-retour="Le masque aide à lire les adresses du réseau. Le ping vers une adresse publique répondrait-il avec un masque faux ?"
-          >
-            Le masque.
-          </li>
-          <li
-            data-option="ip"
-            data-retour="Le PC joint une adresse publique par ping. Pourrait-il le faire sans adresse correcte ?"
-          >
-            L’adresse IP du PC.
-          </li>
-        </ul>
-      </div>
-    </template>
-    <template data-item="PR1-10">
-      <div
-        class="ex"
         data-widget="apparier"
         data-verifie
         data-options="dns=DNS|dhcp=DHCP|routeur=Routeur|switch=Switch|lan=LAN|wan=WAN"
-        data-reponse="Farid tape un nom de site : voilà ce qui en trouve l’adresse IP=dns,La demande de page de Farid quitte son appartement : voilà ce qui la fait sortir=routeur,Le serveur du site de la formation est hors de l’appartement de Farid : il est de l’autre côté de sa box=wan"
+        data-reponse="Farid tape un nom de site : voilà ce qui en trouve l’adresse IP=dns,La demande de page de Farid quitte son appartement : voilà ce qui la fait sortir=routeur,Le serveur du site de la formation : loin de l’appartement de Farid et du réseau de ses appareils=wan"
         data-aide1="Pour chaque situation, cherche le mot qui lui répond ; chaque mot désigne une seule situation au plus."
         data-aide2="Les six mots forment trois paires. Chaque situation parle d’une paire différente : de laquelle ?"
         data-aide3="Une fois la paire trouvée, choisis entre ses deux mots : lequel répond à la situation ?"
-        data-justifier="Le serveur du site de la formation est hors de l’appartement de Farid. Qu’est-ce qui sépare son LAN du WAN, et de quel côté est ce serveur ? Pourquoi ?"
+        data-justifier="Chez Farid, où passe la limite entre le LAN et le WAN ? Pourquoi là ?"
       >
         <p>
           Les six mots à associer : DNS, DHCP, routeur, switch, LAN, WAN. Chaque situation en
@@ -5617,26 +5598,26 @@ Itinéraire déterminé.</pre>
             La demande de page de Farid quitte son appartement : voilà ce qui la fait sortir
           </li>
           <li
-            data-element="Le serveur du site de la formation est hors de l’appartement de Farid : il est de l’autre côté de sa box"
+            data-element="Le serveur du site de la formation : loin de l’appartement de Farid et du réseau de ses appareils"
             data-retour="Ce réseau est-il celui de la maison, ou celui qui commence après la box ?"
           >
-            Le serveur du site de la formation est hors de l’appartement de Farid : il est de
-            l’autre côté de sa box
+            Le serveur du site de la formation : loin de l’appartement de Farid et du réseau de ses
+            appareils
           </li>
         </ul>
       </div>
     </template>
-    <template data-variante="PR1-10">
+    <template data-variante="PR1-9">
       <div
         class="ex"
         data-widget="apparier"
         data-verifie
         data-options="dns=DNS|dhcp=DHCP|routeur=Routeur|switch=Switch|lan=LAN|wan=WAN"
-        data-reponse="Le Mac de Farid vient d’être branché à sa box et a reçu seul ses réglages : voilà qui les lui a donnés=dhcp,Farid branche son Mac et son imprimante par câble à sa box : voilà ce qui les relie=switch,L’imprimante de Farid est de ce côté de sa box : dans l’appartement=lan"
+        data-reponse="Le Mac de Farid vient d’être branché à sa box et a reçu seul ses réglages : voilà qui les lui a donnés=dhcp,Farid branche son Mac et son imprimante par câble à sa box : voilà ce qui les relie=switch,L’imprimante de Farid : posée dans son salon et reliée à ses autres appareils=lan"
         data-aide1="Pour chaque situation, cherche le mot qui lui répond ; chaque mot désigne une seule situation au plus."
         data-aide2="Les six mots forment trois paires. Chaque situation parle d’une paire différente : de laquelle ?"
         data-aide3="Une fois la paire trouvée, choisis entre ses deux mots : lequel répond à la situation ?"
-        data-justifier="L’imprimante de Farid est dans son appartement. Qu’est-ce qui sépare son LAN du WAN, et de quel côté est cette imprimante ? Pourquoi ?"
+        data-justifier="Chez Farid, où passe la limite entre le LAN et le WAN ? Pourquoi là ?"
       >
         <p>
           Les six mots à associer : DNS, DHCP, routeur, switch, LAN, WAN. Chaque situation en
@@ -5660,15 +5641,15 @@ Itinéraire déterminé.</pre>
             Farid branche son Mac et son imprimante par câble à sa box : voilà ce qui les relie
           </li>
           <li
-            data-element="L’imprimante de Farid est de ce côté de sa box : dans l’appartement"
+            data-element="L’imprimante de Farid : posée dans son salon et reliée à ses autres appareils"
             data-retour="Ce réseau est-il celui de la maison, ou celui qui commence après la box ?"
           >
-            L’imprimante de Farid est de ce côté de sa box : dans l’appartement
+            L’imprimante de Farid : posée dans son salon et reliée à ses autres appareils
           </li>
         </ul>
       </div>
     </template>
-    <template data-item="PR1-11">
+    <template data-item="PR1-10">
       <div
         class="ex"
         data-widget="apparier"
@@ -5678,7 +5659,7 @@ Itinéraire déterminé.</pre>
         data-aide1="Pour chaque situation, cherche le mot qui lui répond ; chaque mot désigne une seule situation au plus."
         data-aide2="Les six mots forment trois paires. Chaque situation parle d’une paire différente : de laquelle ?"
         data-aide3="Une fois la paire trouvée, choisis entre ses deux mots : lequel répond à la situation ?"
-        data-justifier="Farid hésite entre une offre de 1 000 Mbit/s à 40 ms et une offre de 300 Mbit/s à 10 ms, chez deux FAI. Laquelle télécharge le plus vite un gros fichier, laquelle fait réagir le plus vite une page ? Et s’il change de FAI, qui fait tourner le site de sa librairie ? Pourquoi ?"
+        data-justifier="Farid hésite entre une offre à 1 000 Mbit/s et 40 ms, et une offre à 300 Mbit/s et 10 ms. Laquelle fait réagir le plus vite une page, et pourquoi ? S’il change de FAI, qui fait tourner le site de sa librairie ?"
       >
         <p>
           Les six mots à associer : débit, latence, IP privée, IP publique, FAI, hébergeur. Chaque
@@ -5708,7 +5689,7 @@ Itinéraire déterminé.</pre>
         </ul>
       </div>
     </template>
-    <template data-variante="PR1-11">
+    <template data-variante="PR1-10">
       <div
         class="ex"
         data-widget="apparier"
@@ -5718,7 +5699,7 @@ Itinéraire déterminé.</pre>
         data-aide1="Pour chaque situation, cherche le mot qui lui répond ; chaque mot désigne une seule situation au plus."
         data-aide2="Les six mots forment trois paires. Chaque situation parle d’une paire différente : de laquelle ?"
         data-aide3="Une fois la paire trouvée, choisis entre ses deux mots : lequel répond à la situation ?"
-        data-justifier="Yasmine hésite entre une offre de 500 Mbit/s à 30 ms et une offre de 200 Mbit/s à 8 ms, chez deux FAI. Laquelle télécharge le plus vite un gros fichier, laquelle fait réagir le plus vite une page ? Et si elle change de FAI, qui fait tourner le site de la formation ? Pourquoi ?"
+        data-justifier="Yasmine hésite entre une offre à 500 Mbit/s et 30 ms, et une offre à 200 Mbit/s et 8 ms. Laquelle fait réagir le plus vite une page, et pourquoi ? Si elle change de FAI, qui fait tourner le site de la formation ?"
       >
         <p>
           Les six mots à associer : débit, latence, IP privée, IP publique, FAI, hébergeur. Chaque
@@ -5789,14 +5770,15 @@ Itinéraire déterminé.</pre>
       <h3>Anticiper avant de voir</h3>
       <ul>
         <li>
-          Neuf moments demandent à l'apprenant de prévoir avant l'explication, sans note
+          Dix moments demandent à l'apprenant de prévoir avant l'explication, sans note
           (data-prediction) : par où la page revient à la tablette (retour, avant la phrase qui le
           dit), d'où vient l'adresse de la tablette (dhcp0, avant la définition du DHCP), quelle
           adresse voit un site (predpub, avant le tableau du NAT), l'ordre du DHCP, du DNS et du NAT
           (ordre, avant le schéma qui le montre), le temps d'un fichier de 300 Mo à 100 Mbit/s
           (duree, avant la conversion), ce que liste la commande (predsortie, avant ses sorties), ce
-          que dit un ping vers la passerelle (predping, avant les trois tests), la machine du
-          premier saut (predsaut, avant tracert) et où taper l'adresse de la passerelle
+          que dit un ping vers la passerelle (predping, avant le schéma des trois tests), le maillon
+          qui casse quand seul le nom échoue (predtrois, avant de jouer les trois tests), la machine
+          du premier saut (predsaut, avant tracert) et où taper l'adresse de la passerelle
           (adressebox). Les options de ces prévisions n'ont aucune marque d'erreur critique, parce
           que la règle n'a pas encore été donnée ; mais deux options sont une erreur en substance :
           « Environ 3 secondes » (duree) est la confusion de Mbit/s et de Mo/s, « Que la ligne du
@@ -5823,6 +5805,14 @@ Itinéraire déterminé.</pre>
       <h3>La box ouverte, les trois tests</h3>
       <ul>
         <li>
+          Charge, comptée sur la page : 54 écrans titrés ; dans le cours, 31 exercices, dont dix
+          prévisions sans note, plus le pari et sa reprise, un schéma à remplir et deux outils à
+          manipuler (la box ouverte, les trois tests) ; en pratique, dix items, une variante
+          seulement après une solution vue, et trois explications ; cinq questions de restitution.
+          L’atelier se fait hors de la page (six écrans, neuf critères). Hors séance : huit rappels,
+          cinq vérifications différées, trois transferts et dix-sept cartes.
+        </li>
+        <li>
           Le sens du masque (avec 255.255.255.0, les trois premiers nombres désignent le réseau) est
           une notion de l’objectif, montrée en ET6 et en ET9 : Q7 et K11 l’interrogent sans le
           redonner, comme toute notion qu’on restitue. Seule l’écriture hexadécimale, qui est une
@@ -5831,8 +5821,8 @@ Itinéraire déterminé.</pre>
         <li>
           La box ouverte (outil fonctions, étape « Dans la box ») : six boutons, un par fonction.
           Chacun montre ce que fait la fonction et ce qu’elle fait chez Yasmine, et se marque d’un «
-          ✓ » une fois vu. Rien n’est noté ; l’outil est fini quand les six ont été vus. L’exercice
-          qui suit, à l’écran suivant, interroge les fonctions.
+          ✓ » une fois vu. Rien n’est noté ; l’outil est fini quand les six ont été vus. Les
+          fonctions sont interrogées ensuite en pratique (PR1-7) et dans le rappel B06-Q4.
         </li>
         <li>
           Les trois tests de ping (outil sim-ping, étape « Tester la chaîne ») : trois boutons, un
@@ -5900,11 +5890,11 @@ Itinéraire déterminé.</pre>
           variante). E3 (routeur et switch, DNS et DHCP) par une option en p3 et p4, dans switch et
           dnsdhcp, et en pratique par les deux lignes de PR1-7 qui opposent le switch et le routeur
           (l'outil marque la ligne, quelle que soit la mauvaise réponse) et par les lignes du DNS,
-          du DHCP, du routeur et du switch en PR1-10. Les relevés ne portent aucune erreur critique
-          : une ligne mal choisie y est un retour, pas une confusion de rôles. E4 (Mbit/s et Mo/s)
-          par une option en p5, par les valeurs piégées de conv et en pratique (PR1-3 et sa
-          variante). Le prétest touche les quatre avant toute explication, chaque essai est repris
-          au moment où le cours y répond (data-si-essai).
+          du DHCP, du routeur et du switch en PR1-9. Les relevés ne portent aucune erreur critique :
+          une ligne mal choisie y est un retour, pas une confusion de rôles. E4 (Mbit/s et Mo/s) par
+          une option en p5, par les valeurs piégées de conv et en pratique (PR1-3 et sa variante).
+          Le prétest touche les quatre avant toute explication, chaque essai est repris au moment où
+          le cours y répond (data-si-essai).
         </li>
       </ul>
       <h3>Les coups de pouce</h3>
@@ -5921,17 +5911,16 @@ Itinéraire déterminé.</pre>
         <li>
           Dans la pratique, après une solution vue, l’item se refait sur sa variante, puis
           l’apprenant explique. L’ordre des items va du plus guidé au plus seul : PR1-1 à PR1-6 ont
-          un encadré « pour lire » qui redonne les mots ou la convention, PR1-7, PR1-8 et PR1-9 n’en
-          ont plus, PR1-10 et PR1-11 n’ont aucune définition et ne redonnent que la liste de leurs
-          six mots. Le geste (convertir, relever) ne prend que trois items sur onze, PR1-3, PR1-4 et
+          un encadré « pour lire » qui redonne les mots ou la convention, PR1-7 et PR1-8 n’en ont
+          plus, PR1-9 et PR1-10 n’ont aucune définition et ne redonnent que la liste de leurs six
+          mots. Le geste (convertir, relever) ne prend que trois items sur dix, PR1-3, PR1-4 et
           PR1-5 ; PR1-2 range des adresses selon trois plages données, ce qui est une lecture ;
-          compté comme geste, il ferait quatre sur onze. Trois items sur onze portent une demande
-          d’explication (data-justifier : PR1-6, PR1-10, PR1-11), sur ce que l’écran ne montre pas ;
-          en PR1-10 et PR1-11, elle fait justifier les trois paires que l’appariement ne fait que
+          compté comme geste, il ferait quatre sur dix. Trois items sur dix portent une demande
+          d’explication (data-justifier : PR1-6, PR1-9, PR1-10), sur ce que l’écran ne montre pas ;
+          en PR1-9 et PR1-10, elle fait justifier les trois paires que l’appariement ne fait que
           nommer : LAN et WAN, débit et latence, FAI et hébergeur ; les paires de PR1-8 (IP privée
-          et publique) et de PR1-9 (DNS et DHCP) sont justifiées en restitution (B06-R3, B06-R2) ;
-          le manifeste la déclare, l’IA la juge, et l’item n’est réussi qu’avec une explication
-          Solide.
+          et publique), ainsi que DNS et DHCP, sont justifiées en restitution (B06-R3, B06-R2) ; le
+          manifeste la déclare, l’IA la juge, et l’item n’est réussi qu’avec une explication Solide.
         </li>
         <li>
           L’atelier se fait sur la machine de l’apprenant, hors de la page : six écrans de guidage
@@ -6113,45 +6102,45 @@ Itinéraire déterminé.</pre>
         "explication": [
           {
             "id": "PR1-10",
-            "question": "Le serveur du site de la formation est hors de l’appartement de Farid. Qu’est-ce qui sépare son LAN du WAN, et de quel côté est ce serveur ? Pourquoi ?",
-            "attendu": "La box fait la limite : le LAN est le réseau local de l’appartement, de ce côté de la box ; le WAN est le réseau étendu qui commence après elle. Le serveur est dans le WAN, puisqu’il est au-delà de la box de Farid. Déduit de l’étape « Dans la box ».",
+            "question": "Farid hésite entre une offre à 1 000 Mbit/s et 40 ms, et une offre à 300 Mbit/s et 10 ms. Laquelle fait réagir le plus vite une page, et pourquoi ? S’il change de FAI, qui fait tourner le site de sa librairie ?",
+            "attendu": "L’offre à 10 ms : la latence, le temps d’un aller-retour, fait réagir une page, alors que le débit dit combien de données arrivent par seconde, ce qui compte pour un gros fichier. Le site de la librairie tourne toujours chez son hébergeur, sur ses machines : le FAI ne donne que l’accès à Internet, et en changer ne touche pas le site. Déduit des étapes « Débit et latence » et « La chaîne de la maison ».",
             "erreurs": [],
             "item": "PR1-10"
           },
           {
             "id": "PR1-10:variante",
-            "question": "L’imprimante de Farid est dans son appartement. Qu’est-ce qui sépare son LAN du WAN, et de quel côté est cette imprimante ? Pourquoi ?",
-            "attendu": "La box fait la limite : le LAN est le réseau local de l’appartement, de ce côté de la box ; le WAN est le réseau étendu qui commence après elle. L’imprimante est dans le LAN, puisqu’elle est du côté de l’appartement. Déduit de l’étape « Dans la box ».",
+            "question": "Yasmine hésite entre une offre à 500 Mbit/s et 30 ms, et une offre à 200 Mbit/s et 8 ms. Laquelle fait réagir le plus vite une page, et pourquoi ? Si elle change de FAI, qui fait tourner le site de la formation ?",
+            "attendu": "L’offre à 8 ms : la latence, le temps d’un aller-retour, fait réagir une page, alors que le débit dit combien de données arrivent par seconde, ce qui compte pour un gros fichier. Le site de la formation tourne toujours chez son hébergeur, sur ses machines : le FAI ne donne que l’accès à Internet, et en changer ne touche pas le site. Déduit des étapes « Débit et latence » et « La chaîne de la maison ».",
             "erreurs": [],
             "item": "PR1-10"
           },
           {
-            "id": "PR1-11",
-            "question": "Farid hésite entre une offre de 1 000 Mbit/s à 40 ms et une offre de 300 Mbit/s à 10 ms, chez deux FAI. Laquelle télécharge le plus vite un gros fichier, laquelle fait réagir le plus vite une page ? Et s’il change de FAI, qui fait tourner le site de sa librairie ? Pourquoi ?",
-            "attendu": "Le débit compte les données par seconde : 1 000 Mbit/s télécharge plus vite un gros fichier. La latence est le temps d’un aller-retour : 10 ms fait réagir plus vite une page. Le FAI donne l’accès à Internet à Farid, l’hébergeur fait tourner le site sur ses machines : changer de FAI ne change pas l’hébergeur du site. Déduit des étapes « Débit et latence » et « La chaîne de la maison ».",
-            "erreurs": [],
-            "item": "PR1-11"
-          },
-          {
-            "id": "PR1-11:variante",
-            "question": "Yasmine hésite entre une offre de 500 Mbit/s à 30 ms et une offre de 200 Mbit/s à 8 ms, chez deux FAI. Laquelle télécharge le plus vite un gros fichier, laquelle fait réagir le plus vite une page ? Et si elle change de FAI, qui fait tourner le site de la formation ? Pourquoi ?",
-            "attendu": "Le débit compte les données par seconde : 500 Mbit/s télécharge plus vite un gros fichier. La latence est le temps d’un aller-retour : 8 ms fait réagir plus vite une page. Le FAI donne l’accès à Internet à Yasmine, l’hébergeur fait tourner le site sur ses machines : changer de FAI ne change pas l’hébergeur du site. Déduit des étapes « Débit et latence » et « La chaîne de la maison ».",
-            "erreurs": [],
-            "item": "PR1-11"
-          },
-          {
             "id": "PR1-6",
-            "question": "Le ping de Yasmine vers 203.0.113.30, le serveur des documents de la formation, est perdu, mais les documents s’ouvrent. Un collègue en conclut que sa ligne est coupée. Quels tests, et dans quel ordre, lui montreraient que la ligne marche ? Et qu’est-ce qui, sur ce serveur, peut faire taire un ping sans qu’il soit en panne ?",
-            "attendu": "Pinguer d’abord la passerelle, puis une autre adresse publique : s’ils répondent, la box et la ligne marchent. Un ping muet ne suffit pas, car une machine peut refuser de répondre au ping, par son pare-feu, sans être en panne. Déduit de l’étape « Tester la chaîne ».",
+            "question": "Le ping de Yasmine vers 203.0.113.30, le serveur des documents de la formation, est perdu, mais les documents s’ouvrent. Un collègue en conclut que sa ligne est coupée. Quels tests lui montreraient, et dans quel ordre, que la ligne marche ? Pourquoi cet ordre ?",
+            "attendu": "Pinguer d’abord la passerelle, puis une autre adresse publique : on va de proche en proche, et le premier test qui échoue situe la panne. Si les deux répondent, la box et la ligne marchent ; le serveur des documents, lui, peut refuser de répondre au ping sans être en panne. Déduit de l’étape « Tester la chaîne ».",
             "erreurs": [],
             "item": "PR1-6"
           },
           {
             "id": "PR1-6:variante",
-            "question": "Le ping de Yasmine vers 203.0.113.25, le serveur de messagerie de la formation, est perdu, mais ses courriers arrivent. Un collègue en conclut que le serveur est en panne. Quels tests, et dans quel ordre, lui montreraient que le chemin marche ? Et qu’est-ce qui, sur ce serveur, peut faire taire un ping sans qu’il soit en panne ?",
-            "attendu": "Pinguer d’abord la passerelle, puis une autre adresse publique : s’ils répondent, la box et la ligne marchent. Un ping muet ne suffit pas, car une machine peut refuser de répondre au ping, par son pare-feu, sans être en panne. Déduit de l’étape « Tester la chaîne ».",
+            "question": "Le ping de Yasmine vers 203.0.113.25, le serveur de messagerie de la formation, est perdu, mais ses courriers arrivent. Un collègue en conclut que le serveur est en panne. Quels tests lui montreraient, et dans quel ordre, que le chemin marche ? Pourquoi cet ordre ?",
+            "attendu": "Pinguer d’abord la passerelle, puis une autre adresse publique : on va de proche en proche, et le premier test qui échoue situe la panne. Si les deux répondent, la box et la ligne marchent ; le serveur de messagerie, lui, peut refuser de répondre au ping sans être en panne. Déduit de l’étape « Tester la chaîne ».",
             "erreurs": [],
             "item": "PR1-6"
+          },
+          {
+            "id": "PR1-9",
+            "question": "Chez Farid, où passe la limite entre le LAN et le WAN ? Pourquoi là ?",
+            "attendu": "À la box : le LAN est le réseau local de l’appartement, les appareils de Farid reliés à sa box ; le WAN commence après la box, avec la ligne du FAI et Internet, où est le serveur du site. La box est le point par où tout sort de la maison. Déduit de l’étape « Dans la box ».",
+            "erreurs": [],
+            "item": "PR1-9"
+          },
+          {
+            "id": "PR1-9:variante",
+            "question": "Chez Farid, où passe la limite entre le LAN et le WAN ? Pourquoi là ?",
+            "attendu": "À la box : le LAN est le réseau local de l’appartement, où sont ses appareils et son imprimante ; le WAN commence après la box, avec la ligne du FAI et Internet. La box est le point par où tout sort de la maison. Déduit de l’étape « Dans la box ».",
+            "erreurs": [],
+            "item": "PR1-9"
           }
         ],
         "restitution": [
@@ -6284,7 +6273,7 @@ Itinéraire déterminé.</pre>
             "id": "B06-T2",
             "type": "transfert",
             "forme": "adapter_condition",
-            "consigne": "Deux unités, pour lire : 1 octet = 8 bits, Mbit/s = mégabits par seconde, Mo/s = mégaoctets par seconde. Avec 200 Mbit/s, Farid divisait 200 par 8, puis la taille par 25. Il passe à 400 Mbit/s et télécharge 900 Mo : combien de secondes au mieux, et qu’est-ce qui reste identique dans le calcul ?",
+            "consigne": "Deux unités, pour lire : 1 octet = 8 bits, Mbit/s = mégabits par seconde, Mo/s = mégaoctets par seconde. Farid passe de 200 à 400 Mbit/s et télécharge un fichier de 900 Mo. Combien de secondes au mieux ? Qu’est-ce qui change dans ton calcul, et qu’est-ce qui reste identique ?",
             "attendu": "400 Mbit/s divisés par 8 font 50 Mo/s, et 900 Mo divisés par 50 Mo/s font 18 secondes. La méthode ne change pas : convertir le débit en Mo/s en divisant par 8, puis diviser la taille du fichier par ce débit. Erreur à repérer : confondre Mbit/s et Mo/s. Déduit de l’étape « Débit et latence ».",
             "erreurs": ["E4"]
           },
@@ -6331,12 +6320,9 @@ Itinéraire déterminé.</pre>
               },
               {
                 "id": "PR1-10"
-              },
-              {
-                "id": "PR1-11"
               }
             ],
-            "reussite": 10
+            "reussite": 9
           }
         ],
         "atelier": {
@@ -6348,8 +6334,8 @@ Itinéraire déterminé.</pre>
             "J’ai noté l’adresse de ma passerelle et celle de mon DNS (sous macOS, dans Réglages Système, Réseau, Détails).",
             "J’ai lancé ping vers ma passerelle, puis vers 1.1.1.1, puis vers wikipedia.org, et noté pour chacun le temps en ms et la perte.",
             "J’ai écrit, pour chacun de ces trois ping, une phrase sur ce que le résultat prouve.",
-            "J’ai lancé tracert (Windows) ou traceroute (macOS) vers 1.1.1.1, et j’ai constaté que l’adresse de son premier saut est celle de ma passerelle.",
-            "J’ai ouvert l’interface de ma box (à l’adresse de ma passerelle, dans mon navigateur, ou à défaut dans l’application de mon fournisseur d’accès) et lu la liste des appareils connectés, la protection du Wi-Fi et l’adresse vue d’Internet, comparé cette adresse à mon IPv4, sans rien modifier.",
+            "J’ai lancé tracert (Windows) ou traceroute (macOS) vers 1.1.1.1, et j’ai comparé l’adresse de son premier saut à celle de ma passerelle.",
+            "J’ai ouvert l’interface de ma box en tapant l’adresse de ma passerelle dans mon navigateur, et lu la liste des appareils connectés, la protection du Wi-Fi et l’adresse vue d’Internet, comparé cette adresse à mon IPv4, sans rien modifier.",
             "J’ai dessiné sur papier, sans regarder le cours, au moins deux de mes appareils, ma box, mon fournisseur d’accès et Internet, reliés entre eux, et noté sur chaque lien entre un appareil et la box s’il est en Wi-Fi ou en Ethernet.",
             "J’ai écrit à côté de ma box ses six fonctions, et marqué sur mon dessin où s’arrête mon réseau local (LAN) et où commence le WAN."
           ]
