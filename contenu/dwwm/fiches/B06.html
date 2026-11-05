@@ -3710,28 +3710,29 @@ en6: flags=8863&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
           class="ex"
           data-widget="choix"
           data-id="predpass"
-          data-reponse="box"
+          data-reponse="non"
           data-prediction
-          data-aide1="Par quelle machine tout paquet pour un autre réseau sort-il de la maison ?"
-          data-aide2="La passerelle est une adresse du réseau local. Laquelle de ces trois adresses en fait partie, sans être celle du PC ?"
-          data-aide3="La passerelle est l’adresse de la box vue de la maison."
+          data-aide1="Que donnait la sortie d’ifconfig de Farid : combien de lignes par interface ?"
+          data-aide2="Deux systèmes, deux commandes : rien n’oblige la seconde à donner les mêmes informations que la première."
+          data-aide3="ifconfig ne décrit que les interfaces ; les réglages du réseau sont ailleurs sous macOS."
         >
           <p class="q">
-            À ton avis, quelle adresse Yasmine va-t-elle lire comme passerelle de son PC ?
+            À ton avis, la commande que Farid a tapée sur son Mac, ifconfig, lui donne-t-elle aussi
+            sa passerelle et son DNS ?
           </p>
           <ul class="options">
-            <li data-option="box">192.168.1.1, l’adresse de sa box.</li>
+            <li data-option="non">Non : il devra les lire ailleurs.</li>
             <li
-              data-option="pc"
-              data-retour="La passerelle est-elle l’adresse de l’appareil lui-même, ou celle par où il sort de la maison ?"
+              data-option="oui"
+              data-retour="Relis la sortie de Farid, à l’écran « Lire la sortie » : y as-tu vu une ligne pour la passerelle ?"
             >
-              192.168.1.23, l’adresse de son PC.
+              Oui, comme ipconfig /all sous Windows.
             </li>
             <li
-              data-option="site"
-              data-retour="Le PC joint-il le site directement, ou passe-t-il d’abord par une machine de la maison ?"
+              data-option="dns"
+              data-retour="La sortie de Farid donnait inet et netmask. Y avait-il une ligne de plus ?"
             >
-              203.0.113.20, l’adresse du site.
+              Seulement le DNS, pas la passerelle.
             </li>
           </ul>
         </div>
@@ -5541,10 +5542,18 @@ Itinéraire déterminé.</pre>
         data-widget="choix"
         data-reponse="deux"
         data-verifie
-        data-aide1="Les deux PC sont dans deux maisons différentes. Qu’est-ce qui sort réellement de chaque maison ?"
+        data-aide1="La tablette et la console sont dans deux maisons différentes. Qu’est-ce qui sort réellement de chaque maison ?"
         data-aide2="Quelle fonction de la box change l’adresse écrite sur un paquet qui part ?"
         data-aide3="Une adresse privée ne sort pas de sa maison : c’est la box qui donne l’adresse de ce qui sort."
       >
+        <div class="cadre pour-lire">
+          <p class="discret">Les trois plages privées, pour lire :</p>
+          <ul>
+            <li>10.0.0.0 à 10.255.255.255</li>
+            <li>172.16.0.0 à 172.31.255.255</li>
+            <li>192.168.0.0 à 192.168.255.255</li>
+          </ul>
+        </div>
         <p class="q">
           Yasmine et Farid ouvrent le site de la formation en même temps, chacun chez soi. La
           tablette de Yasmine et la console de jeu de Farid ont la même adresse, 192.168.1.24. Que
@@ -5575,9 +5584,17 @@ Itinéraire déterminé.</pre>
         data-aide2="Quelle fonction de la box change l’adresse écrite sur un paquet qui part ?"
         data-aide3="Une adresse privée ne sort pas de sa salle : c’est la box qui donne l’adresse de ce qui sort."
       >
+        <div class="cadre pour-lire">
+          <p class="discret">Les trois plages privées, pour lire :</p>
+          <ul>
+            <li>10.0.0.0 à 10.255.255.255</li>
+            <li>172.16.0.0 à 172.31.255.255</li>
+            <li>192.168.0.0 à 192.168.255.255</li>
+          </ul>
+        </div>
         <p class="q">
-          Dans deux salles de formation de deux villes, un ordinateur porte l’adresse 10.0.0.5. Les
-          deux ouvrent un même site. Que voit le site ?
+          Dans deux salles de formation de deux villes, chacune avec sa box, un ordinateur porte
+          l’adresse 10.0.0.5. Les deux ouvrent un même site. Que voit le site ?
         </p>
         <ul class="options">
           <li data-option="deux">Deux adresses publiques différentes, une par salle.</li>
@@ -5693,7 +5710,7 @@ Itinéraire déterminé.</pre>
         data-aide1="Pour chaque situation, cherche le mot qui lui répond ; chaque mot désigne une seule situation au plus."
         data-aide2="Les six mots forment trois paires. Chaque situation parle d’une paire différente : de laquelle ?"
         data-aide3="Une fois la paire trouvée, choisis entre ses deux mots : lequel répond à la situation ?"
-        data-justifier="Farid hésite entre une offre à 1 000 Mbit/s et 40 ms, et une offre à 300 Mbit/s et 10 ms. Laquelle fait réagir le plus vite une page, et pourquoi ? S’il change de FAI, que devient l’hébergeur de la librairie en ligne où il commande ses livres ?"
+        data-justifier="Farid hésite entre une offre à 1 000 Mbit/s et 40 ms, et une offre à 300 Mbit/s et 10 ms. Laquelle fait réagir le plus vite une page ? Pourquoi ?"
       >
         <p>
           Les six mots à associer : débit, latence, IP privée, IP publique, FAI, hébergeur. Chaque
@@ -5733,7 +5750,7 @@ Itinéraire déterminé.</pre>
         data-aide1="Pour chaque situation, cherche le mot qui lui répond ; chaque mot désigne une seule situation au plus."
         data-aide2="Les six mots forment trois paires. Chaque situation parle d’une paire différente : de laquelle ?"
         data-aide3="Une fois la paire trouvée, choisis entre ses deux mots : lequel répond à la situation ?"
-        data-justifier="Yasmine hésite entre une offre à 500 Mbit/s et 30 ms, et une offre à 200 Mbit/s et 8 ms. Laquelle fait réagir le plus vite une page, et pourquoi ? Si elle change de FAI, que devient l’hébergeur du site de la formation ?"
+        data-justifier="Yasmine hésite entre une offre à 500 Mbit/s et 30 ms, et une offre à 200 Mbit/s et 8 ms. Laquelle fait réagir le plus vite une page ? Pourquoi ?"
       >
         <p>
           Les six mots à associer : débit, latence, IP privée, IP publique, FAI, hébergeur. Chaque
@@ -5809,11 +5826,11 @@ Itinéraire déterminé.</pre>
           dit), d'où vient l'adresse de la tablette (dhcp0, avant la définition du DHCP), quelle
           adresse voit un site (predpub, avant le tableau du NAT), l'ordre du DHCP, du DNS et du NAT
           (ordre, avant le schéma qui le montre), le temps d'un fichier de 300 Mo à 100 Mbit/s
-          (duree, avant la conversion), ce que liste la commande (predsortie, avant ses sorties),
-          l’adresse de la passerelle à lire (predpass, avant de la relever), ce que dit un ping vers
-          la passerelle (predping, avant le schéma des trois tests), ce que donne le test du nom
-          quand l’adresse du site se tait (predtrois, avant de jouer les trois tests), la machine du
-          premier saut (predsaut, avant tracert) et où taper l'adresse de la passerelle
+          (duree, avant la conversion), ce que liste la commande (predsortie, avant ses sorties), où
+          se lit la passerelle selon le système (predpass, avant de la relever), ce que dit un ping
+          vers la passerelle (predping, avant le schéma des trois tests), ce que donne le test du
+          nom quand l’adresse du site se tait (predtrois, avant de jouer les trois tests), la
+          machine du premier saut (predsaut, avant tracert) et où taper l'adresse de la passerelle
           (adressebox). Les options de ces prévisions n'ont aucune marque d'erreur critique, parce
           que la règle n'a pas encore été donnée ; mais deux options sont une erreur en substance :
           « Environ 3 secondes » (duree) est la confusion de Mbit/s et de Mo/s, « Que la ligne du
@@ -5840,12 +5857,13 @@ Itinéraire déterminé.</pre>
       <h3>La box ouverte, les trois tests</h3>
       <ul>
         <li>
-          Charge, comptée sur la page : 54 écrans titrés ; dans le cours, 31 exercices, dont dix
-          prévisions sans note, plus le pari et sa reprise, un schéma à remplir et deux outils à
-          manipuler (la box ouverte, les trois tests) ; en pratique, dix items, une variante
-          seulement après une solution vue, et trois explications ; cinq questions de restitution.
-          L’atelier se fait hors de la page (six écrans, neuf critères). Hors séance : huit rappels,
-          cinq vérifications différées, trois transferts et dix-sept cartes.
+          Charge, comptée sur la page : 54 écrans titrés dans le cours ; dans le cours, 37 saisies
+          ou manipulations (data-widget), dont onze prévisions sans note, plus le pari et sa
+          reprise, un schéma à remplir et deux outils à manipuler (la box ouverte, les trois tests)
+          ; en pratique, dix items, une variante seulement après une solution vue, et trois
+          explications ; six questions de restitution. L’atelier se fait hors de la page (six
+          écrans, neuf critères). Hors séance : huit rappels, cinq vérifications différées, trois
+          transferts et dix-sept cartes.
         </li>
         <li>
           L’écriture du masque (255 marque un nombre du réseau, 0 un nombre de l’appareil) est une
@@ -5952,12 +5970,11 @@ Itinéraire déterminé.</pre>
           PR1-5 ; PR1-2 range des adresses selon trois plages données, ce qui est une lecture ;
           compté comme geste, il ferait quatre sur dix. Trois items sur dix portent une demande
           d’explication (data-justifier : PR1-6, PR1-9, PR1-10), sur ce que l’écran ne montre pas ;
-          en PR1-9 et PR1-10, elle fait justifier les trois paires que l’appariement ne fait que
-          nommer : LAN et WAN, débit et latence, FAI et hébergeur ; PR1-10 en porte donc deux, en
-          deux questions qui se suivent, parce que les demandes d’explication sont limitées à un
-          tiers des items ; les paires de PR1-8 (IP privée et publique), ainsi que DNS et DHCP, sont
-          justifiées en restitution (B06-R3, B06-R2) ; le manifeste la déclare, l’IA la juge, et
-          l’item n’est réussi qu’avec une explication Solide.
+          en PR1-9 et PR1-10, elle fait justifier deux paires que l’appariement ne fait que nommer :
+          LAN et WAN, débit et latence ; FAI et hébergeur est justifiée en restitution (B06-R1, le
+          rôle de chacun sur le chemin) ; IP privée et publique, DNS et DHCP, routeur et switch sont
+          justifiées en restitution (B06-R3, B06-R2, B06-R6) ; le manifeste la déclare, l’IA la
+          juge, et l’item n’est réussi qu’avec une explication Solide.
         </li>
         <li>
           L’atelier se fait sur la machine de l’apprenant, hors de la page : six écrans de guidage
@@ -6127,7 +6144,7 @@ Itinéraire déterminé.</pre>
           },
           {
             "id": "E3",
-            "libelle": "Confondre deux rôles voisins : le routeur (relie des réseaux différents) et le switch (relie des appareils d’un même réseau), ou le DNS (traduit un nom en adresse) et le DHCP (distribue les réglages réseau)",
+            "libelle": "Confondre deux rôles voisins : le routeur (relie des réseaux différents) et le switch (relie des appareils d’un même réseau), expliqués à l’étape « Dans la box », ou le DNS (traduit un nom en adresse) et le DHCP (distribue les réglages réseau), expliqués à l’étape « DNS ou DHCP »",
             "etape": "ET5"
           },
           {
@@ -6139,15 +6156,15 @@ Itinéraire déterminé.</pre>
         "explication": [
           {
             "id": "PR1-10",
-            "question": "Farid hésite entre une offre à 1 000 Mbit/s et 40 ms, et une offre à 300 Mbit/s et 10 ms. Laquelle fait réagir le plus vite une page, et pourquoi ? S’il change de FAI, que devient l’hébergeur de la librairie en ligne où il commande ses livres ?",
-            "attendu": "L’offre à 10 ms : la latence, le temps d’un aller-retour, fait réagir une page, alors que le débit dit combien de données arrivent par seconde, ce qui compte pour un gros fichier. Le site de la librairie en ligne tourne toujours chez son hébergeur, sur ses machines : le FAI ne donne que l’accès à Internet, et en changer ne touche pas le site. Déduit des étapes « Débit et latence » et « La chaîne de la maison ».",
+            "question": "Farid hésite entre une offre à 1 000 Mbit/s et 40 ms, et une offre à 300 Mbit/s et 10 ms. Laquelle fait réagir le plus vite une page ? Pourquoi ?",
+            "attendu": "L’offre à 10 ms : la latence, le temps d’un aller-retour, fait réagir une page à un clic, alors que le débit dit combien de données arrivent par seconde, ce qui compte pour un gros fichier. Un fort débit n’implique pas une faible latence. Déduit de l’étape « Débit et latence ».",
             "erreurs": [],
             "item": "PR1-10"
           },
           {
             "id": "PR1-10:variante",
-            "question": "Yasmine hésite entre une offre à 500 Mbit/s et 30 ms, et une offre à 200 Mbit/s et 8 ms. Laquelle fait réagir le plus vite une page, et pourquoi ? Si elle change de FAI, que devient l’hébergeur du site de la formation ?",
-            "attendu": "L’offre à 8 ms : la latence, le temps d’un aller-retour, fait réagir une page, alors que le débit dit combien de données arrivent par seconde, ce qui compte pour un gros fichier. Le site de la formation tourne toujours chez son hébergeur, sur ses machines : le FAI ne donne que l’accès à Internet, et en changer ne touche pas le site. Déduit des étapes « Débit et latence » et « La chaîne de la maison ».",
+            "question": "Yasmine hésite entre une offre à 500 Mbit/s et 30 ms, et une offre à 200 Mbit/s et 8 ms. Laquelle fait réagir le plus vite une page ? Pourquoi ?",
+            "attendu": "L’offre à 8 ms : la latence, le temps d’un aller-retour, fait réagir une page à un clic, alors que le débit dit combien de données arrivent par seconde, ce qui compte pour un gros fichier. Un fort débit n’implique pas une faible latence. Déduit de l’étape « Débit et latence ».",
             "erreurs": [],
             "item": "PR1-10"
           },
@@ -6183,14 +6200,14 @@ Itinéraire déterminé.</pre>
         "restitution": [
           {
             "id": "B06-R1",
-            "question": "Farid envoie une photo depuis son Mac, branché à sa box par un câble, vers le serveur d’un site de partage. Décris le chemin de la photo, maillon par maillon, jusqu’à ce serveur. Puis dis ce que prouve le voyant allumé du câble.",
-            "attendu": "Le Mac passe par le câble Ethernet à la box de Farid, puis par la ligne au FAI, puis par Internet jusqu’au serveur du site, chez son hébergeur. Le voyant ne prouve que le premier maillon, le câble entre le Mac et la box : le reste peut casser sans qu’il le montre. Erreur à repérer : prendre le lien pour l’accès à Internet. Déduit de l’étape « La chaîne de la maison ».",
+            "question": "Farid envoie une photo depuis son Mac, câblé à sa box, vers le serveur d’un site de partage, mais elle ne part pas. Décris le chemin de la photo jusqu’à ce serveur, en disant le rôle du FAI et celui de l’hébergeur sur ce chemin. Puis : le Mac imprime sans problème sur l’imprimante câblée à la même box ; jusqu’où ce test prouve-t-il que la chaîne marche ?",
+            "attendu": "Le Mac passe par le câble à la box, puis par la ligne au FAI, l’entreprise qui donne l’accès à Internet, puis par Internet jusqu’au serveur, chez l’hébergeur, l’entreprise qui fait tourner le site. L’impression prouve seulement les maillons de la maison : le câble, le switch de la box. La ligne, le FAI, Internet et le serveur restent à tester. Erreur à repérer : prendre un lien qui marche pour l’accès à Internet. Déduit des étapes « La chaîne de la maison » et « Dans la box ».",
             "erreurs": ["E1"]
           },
           {
             "id": "B06-R2",
-            "question": "Chez Farid, la console et la télévision, câblées à la box, s’échangent une vidéo ; puis la console télécharge une mise à jour sur le site de son fabricant. Quelle fonction de la box sert dans chaque cas, et pourquoi ? Puis : quel service donne son adresse à la console quand elle rejoint le réseau, et lequel trouve l’adresse du site du fabricant ?",
-            "attendu": "Le switch relie la console et la télévision, qui sont dans le même réseau ; le routeur fait sortir la demande vers un autre réseau, Internet. Le DHCP donne à la console son adresse et ses réglages quand elle arrive ; le DNS traduit le nom du site du fabricant en adresse IP. Erreur à repérer : confondre routeur et switch, ou DNS et DHCP. Déduit des étapes « Dans la box » et « DNS ou DHCP ».",
+            "question": "Chez Farid, la console rejoint le réseau et reçoit son adresse ; puis elle cherche l’adresse du site de son fabricant pour télécharger une mise à jour. Quel service fait chacun de ces deux travaux ? Qu’est-ce qui distingue ces deux travaux ?",
+            "attendu": "Le DHCP donne à la console son adresse et ses réglages quand elle arrive ; le DNS traduit le nom du site du fabricant en adresse IP. L’un parle à un appareil qui arrive, pour le régler ; l’autre répond à une question sur un nom, à chaque site ouvert. Erreur à repérer : confondre DNS et DHCP. Déduit de l’étape « DNS ou DHCP ».",
             "erreurs": ["E3"]
           },
           {
@@ -6201,8 +6218,8 @@ Itinéraire déterminé.</pre>
           },
           {
             "id": "B06-R4",
-            "question": "Dans une salle de formation, un ordinateur câblé n’ouvre pas formation.example.org. La formatrice teste de proche en proche : la passerelle répond ; 198.51.100.50 ne répond pas ; 203.0.113.20, l’adresse du site, répond ; le nom formation.example.org ne trouve pas la machine qui le porte. Où est la panne ? Que penser du ping vers 198.51.100.50 ?",
-            "attendu": "La panne est dans le DNS : la passerelle et l’adresse du site répondent, donc la box, la ligne et Internet marchent jusqu’au site, et seul le nom échoue. Le ping muet vers 198.51.100.50 ne prouve pas une panne : une adresse plus lointaine répond, donc cette machine refuse sans doute de répondre au ping. Erreur à repérer : s’arrêter au premier ping muet sans lire la suite. Déduit de l’étape « Tester la chaîne ».",
+            "question": "Dans une salle de formation, un ordinateur câblé n’ouvre pas mairie.example.org. La formatrice teste de proche en proche : la passerelle répond ; 198.51.100.50, une adresse publique, ne répond pas ; 203.0.113.60, l’adresse du site de la mairie, répond ; le nom mairie.example.org ne trouve pas la machine qui le porte. Où est la panne ? Que penser du ping muet vers 198.51.100.50 ?",
+            "attendu": "La panne est dans le DNS : la passerelle et l’adresse du site répondent, donc la box, la ligne et Internet marchent jusqu’au site, et seul le nom échoue. Le ping muet vers 198.51.100.50 ne prouve pas une panne : une autre adresse publique répond, donc la ligne et Internet marchent, et cette machine refuse sans doute de répondre au ping, par son pare-feu. Erreur à repérer : s’arrêter au premier ping muet sans lire la suite. Déduit de l’étape « Tester la chaîne ».",
             "erreurs": []
           },
           {
@@ -6210,6 +6227,12 @@ Itinéraire déterminé.</pre>
             "question": "Deux unités, pour lire : 1 octet = 8 bits, Mbit/s = mégabits par seconde, Mo/s = mégaoctets par seconde. Farid télécharge un fichier de 600 Mo avec son offre de 200 Mbit/s. Au mieux, combien de secondes cela prend-il ? Explique ton calcul.",
             "attendu": "200 Mbit/s divisés par 8 font 25 Mo/s, et 600 Mo divisés par 25 Mo/s font 24 secondes. On divise par 8 parce qu’un octet fait 8 bits : une même quantité compte huit fois plus de bits que d’octets, donc le débit en Mo/s est huit fois plus petit que le nombre de Mbit/s. Erreur à repérer : confondre Mbit/s et Mo/s. Déduit de l’étape « Débit et latence ».",
             "erreurs": ["E4"]
+          },
+          {
+            "id": "B06-R6",
+            "question": "Chez Farid, la console et la télévision, câblées à la box, s’échangent une vidéo ; puis la console télécharge une mise à jour sur le site de son fabricant. Quelle fonction de la box sert dans chaque cas ? Pourquoi n’est-ce pas la même ?",
+            "attendu": "Le switch relie la console et la télévision : elles sont dans le même réseau, celui de la maison. Le routeur fait sortir la demande de mise à jour : le site est dans un autre réseau, Internet, et seul le routeur fait passer d’un réseau à un autre. Erreur à repérer : confondre routeur et switch. Déduit de l’étape « Dans la box ».",
+            "erreurs": ["E3"]
           }
         ],
         "rappel": [
@@ -6280,8 +6303,8 @@ Itinéraire déterminé.</pre>
           {
             "id": "B06-C3",
             "type": "explication",
-            "consigne": "Un stagiaire écrit : « Mon ordinateur portable a reçu son adresse dès que je l’ai branché, grâce au DNS ; et mon imprimante, câblée à la box, reçoit mes documents grâce au routeur. » Qu’y a-t-il à corriger ?",
-            "attendu": "C’est le DHCP qui donne son adresse à un appareil qui arrive ; le DNS traduit un nom en adresse. Entre l’ordinateur et l’imprimante, dans le même réseau, c’est le switch qui relie ; le routeur relie des réseaux différents. Erreur à repérer : confondre DNS et DHCP, routeur et switch. Déduit des étapes « Dans la box » et « DNS ou DHCP ».",
+            "consigne": "Un stagiaire écrit : « Mon ordinateur portable a reçu son adresse dès que je l’ai branché, grâce au DNS ; et mon téléphone et mon enceinte, tous deux en Wi-Fi chez moi, se parlent grâce au routeur. » Qu’y a-t-il à corriger ?",
+            "attendu": "C’est le DHCP qui donne son adresse à un appareil qui arrive ; le DNS traduit un nom en adresse. Entre le téléphone et l’enceinte, dans le même réseau, c’est le switch de la box qui relie, par le point d’accès Wi-Fi ; le routeur relie des réseaux différents. Erreur à repérer : confondre DNS et DHCP, routeur et switch. Déduit des étapes « Dans la box » et « DNS ou DHCP ».",
             "erreurs": ["E3"]
           },
           {
@@ -6415,7 +6438,7 @@ Itinéraire déterminé.</pre>
           },
           {
             "id": "B06-K8",
-            "recto": "Le Mac de Farid ne joint aucun site. Farid lance d’abord un ping vers 198.51.100.50 : sans réponse. Que ne sait-il pas encore, et quel test aurait-il dû faire avant ?",
+            "recto": "Le Mac de Farid ne joint aucun site. Farid lance d’abord un ping vers 198.51.100.50, une adresse publique : sans réponse. Que ne sait-il pas encore, et quel test aurait-il dû faire avant ?",
             "verso": "Il ne sait pas si la panne est entre son Mac et la box ou plus loin. Il aurait dû pinguer d’abord la passerelle : c’est le premier maillon, et si elle ne répond pas, rien de ce qui est plus loin n’est atteint. Déduit de l’étape « Tester la chaîne »."
           },
           {
@@ -6497,14 +6520,14 @@ Itinéraire déterminé.</pre>
             "notion": "Un FAI est l’entreprise qui fournit l’accès à Internet",
             "montree": ["ET4"],
             "pratiquee": ["PR1"],
-            "questions": ["B06-Q1", "B06-K2"]
+            "questions": ["B06-R1", "B06-Q1", "B06-K2"]
           },
           {
             "id": "N4",
             "notion": "Un hébergeur est l’entreprise qui fait tourner les serveurs d’un site ; il est distinct du FAI, une même entreprise pouvant tenir les deux rôles",
             "montree": ["ET4"],
             "pratiquee": ["PR1"],
-            "questions": ["B06-Q1", "B06-K2"]
+            "questions": ["B06-R1", "B06-Q1", "B06-K2"]
           },
           {
             "id": "N5",
@@ -6518,14 +6541,14 @@ Itinéraire déterminé.</pre>
             "notion": "Le routeur relie le réseau local à Internet et fait avancer les paquets",
             "montree": ["ET5"],
             "pratiquee": ["PR1"],
-            "questions": ["B06-R2", "B06-C3", "B06-K3"]
+            "questions": ["B06-R6", "B06-C3", "B06-K3"]
           },
           {
             "id": "N7",
             "notion": "Le switch relie par câble les appareils d’un même réseau local",
             "montree": ["ET5"],
             "pratiquee": ["PR1"],
-            "questions": ["B06-R2", "B06-C3", "B06-K3"]
+            "questions": ["B06-R6", "B06-R1", "B06-C3", "B06-K3"]
           },
           {
             "id": "N8",
@@ -6560,7 +6583,7 @@ Itinéraire déterminé.</pre>
             "notion": "Un routeur relie des réseaux différents ; un switch relie des appareils d’un même réseau",
             "montree": ["ET5"],
             "pratiquee": ["PR1"],
-            "questions": ["B06-R2", "B06-C3", "B06-K3"]
+            "questions": ["B06-R6", "B06-C3", "B06-K3"]
           },
           {
             "id": "N13",
@@ -6721,7 +6744,7 @@ Itinéraire déterminé.</pre>
             "vers": "N6",
             "type": "opposition",
             "montree": "ET5",
-            "questions": ["B06-R2", "B06-C3", "B06-K3"]
+            "questions": ["B06-R6", "B06-C3", "B06-K3"]
           },
           {
             "id": "L6",
@@ -6737,7 +6760,7 @@ Itinéraire déterminé.</pre>
             "vers": "N4",
             "type": "opposition",
             "montree": "ET4",
-            "questions": ["B06-Q1", "B06-K2"]
+            "questions": ["B06-R1", "B06-Q1", "B06-K2"]
           },
           {
             "id": "L8",
@@ -6802,6 +6825,22 @@ Itinéraire déterminé.</pre>
             "type": "cause",
             "montree": "ET6",
             "questions": ["B06-K7"]
+          },
+          {
+            "id": "L16",
+            "de": "N9",
+            "vers": "N22",
+            "type": "sequence",
+            "montree": "ET6",
+            "questions": ["B06-K4"]
+          },
+          {
+            "id": "L17",
+            "de": "N22",
+            "vers": "N28",
+            "type": "condition",
+            "montree": "ET9",
+            "questions": ["B06-K14"]
           }
         ],
         "ensemble": {
