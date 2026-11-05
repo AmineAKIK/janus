@@ -3128,8 +3128,10 @@
         </p>
         <p>
           Le <strong>masque</strong> dit quelles adresses sont dans le même réseau que l’appareil.
-          Avec le masque 255.255.255.0, les trois premiers nombres désignent le réseau de la maison,
-          le dernier désigne l’appareil.
+          Son écriture suit une convention : chaque 255 marque un nombre qui désigne le réseau,
+          chaque 0 un nombre qui désigne l’appareil. Avec le masque 255.255.255.0, les trois
+          premiers nombres désignent donc le réseau de la maison, le dernier désigne l’appareil.
+          C’est la box qui choisit ce masque et le donne par le DHCP.
         </p>
         <p>
           Toutes les adresses qui commencent par les trois mêmes nombres que 192.168.1.24, donc les
@@ -3239,11 +3241,10 @@
           <div class="cadre pour-lire">
             <p class="discret">Trois mots, pour lire :</p>
             <ul>
-              <li>Le DHCP donne ses réglages à un appareil qui rejoint le réseau.</li>
+              <li>Le DHCP donne ses réglages à un appareil.</li>
               <li>Le DNS traduit un nom de site en adresse IP.</li>
               <li>
-                Le NAT remplace l’adresse privée d’un paquet par l’adresse publique de la box, à la
-                sortie de la maison.
+                Le NAT remplace l’adresse privée d’un paquet par l’adresse publique de la box.
               </li>
             </ul>
           </div>
@@ -3705,6 +3706,35 @@ en6: flags=8863&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
           Il reste deux informations à relever : la passerelle et le DNS. Elles ne sont pas au même
           endroit sous Windows et sous macOS.
         </p>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="predpass"
+          data-reponse="box"
+          data-prediction
+          data-aide1="Par quelle machine tout paquet pour un autre réseau sort-il de la maison ?"
+          data-aide2="La passerelle est une adresse du réseau local. Laquelle de ces trois adresses en fait partie, sans être celle du PC ?"
+          data-aide3="La passerelle est l’adresse de la box vue de la maison."
+        >
+          <p class="q">
+            À ton avis, quelle adresse Yasmine va-t-elle lire comme passerelle de son PC ?
+          </p>
+          <ul class="options">
+            <li data-option="box">192.168.1.1, l’adresse de sa box.</li>
+            <li
+              data-option="pc"
+              data-retour="La passerelle est-elle l’adresse de l’appareil lui-même, ou celle par où il sort de la maison ?"
+            >
+              192.168.1.23, l’adresse de son PC.
+            </li>
+            <li
+              data-option="site"
+              data-retour="Le PC joint-il le site directement, ou passe-t-il d’abord par une machine de la maison ?"
+            >
+              203.0.113.20, l’adresse du site.
+            </li>
+          </ul>
+        </div>
         <div data-os="windows">
           <p>
             <strong>Sous Windows :</strong> Dans <span class="mono">ipconfig /all</span>, la
@@ -3818,37 +3848,38 @@ en6: flags=8863&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
           passe la question. Le premier test qui échoue montre le premier maillon qui casse.
         </p>
       </div>
-      <div data-ecran="Si seul le nom échoue">
+      <div data-ecran="Si l’adresse du site se tait">
         <p class="accroche">
-          Avant de lancer ses trois tests, Yasmine se demande comment lire un résultat possible.
+          Avant de lancer ses trois tests, Yasmine se demande ce que donnerait le troisième dans un
+          cas précis.
         </p>
         <div
           class="ex"
           data-widget="choix"
           data-id="predtrois"
-          data-reponse="dns"
+          data-reponse="echoue"
           data-prediction
-          data-aide1="Quels maillons le ping vers l’adresse du site a-t-il déjà traversés ?"
-          data-aide2="Que demande le ping vers le nom, que le ping vers l’adresse ne demande pas ?"
-          data-aide3="Le test du nom n’ajoute qu’un maillon aux autres : la traduction du nom en adresse."
+          data-aide1="Après la traduction du nom, par où passe le ping vers le nom ?"
+          data-aide2="Le deuxième test a échoué sur un chemin. Le troisième emprunte-t-il ce même chemin ?"
+          data-aide3="Le test du nom refait tout le chemin du deuxième test, avec un maillon de plus : si ce chemin est coupé, il ne peut pas aboutir."
         >
           <p class="q">
-            À ton avis, si la passerelle et l’adresse du site répondent, mais pas le nom, quel
-            maillon casse ?
+            À ton avis, si la passerelle répond, mais pas l’adresse du site, que donnera le test
+            vers le nom du site ?
           </p>
           <ul class="options">
-            <li data-option="dns">Le DNS, qui traduit les noms en adresses.</li>
+            <li data-option="echoue">Il échouera aussi, quel que soit l’état du DNS.</li>
             <li
-              data-option="ligne"
-              data-retour="Le ping vers l’adresse du site a traversé la ligne. Aurait-il répondu si elle était coupée ?"
+              data-option="repond"
+              data-retour="Une fois le nom traduit, le paquet doit encore aller jusqu’au site. Ce chemin-là marche-t-il ?"
             >
-              La ligne du FAI.
+              Il répondra, puisque le DNS est un autre maillon.
             </li>
             <li
-              data-option="box"
-              data-retour="La passerelle a répondu. Que prouve ce test sur la box ?"
+              data-option="rien"
+              data-retour="Le test du nom emprunte-t-il un chemin que le deuxième test a déjà essayé ?"
             >
-              La box.
+              On ne peut rien en prévoir.
             </li>
           </ul>
         </div>
@@ -4790,9 +4821,9 @@ Itinéraire déterminé.</pre>
         data-widget="choix"
         data-reponse="lien"
         data-verifie
-        data-aide1="Que relie exactement le Wi-Fi ? Entre quoi et quoi ?"
-        data-aide2="Après la box, combien de maillons reste-t-il avant la messagerie ?"
-        data-aide3="Le Wi-Fi et son signal décrivent un seul maillon de la chaîne : le premier, entre l’appareil et la box."
+        data-aide1="Quel morceau du chemin le téléphone et le Mac ont-ils en commun ?"
+        data-aide2="Chacun a son propre lien jusqu’à la box. Qu’y a-t-il après la box, pour les deux ?"
+        data-aide3="Quand deux appareils aux liens différents échouent ensemble, la panne est dans un maillon qu’ils partagent."
       >
         <div class="cadre pour-lire">
           <p class="discret">Un mot, pour lire :</p>
@@ -4801,26 +4832,28 @@ Itinéraire déterminé.</pre>
           </ul>
         </div>
         <p class="q">
-          Le téléphone de Farid affiche le Wi-Fi « connecté », avec un signal fort. Sa messagerie
-          n’a rien reçu depuis une heure. Quelle phrase est exacte ?
+          Chez Farid, le téléphone affiche le Wi-Fi « connecté », avec un signal fort, et son Mac,
+          branché à la box par un câble, affiche « Ethernet connecté ». Aucun des deux n’ouvre de
+          page. Quelle phrase est exacte ?
         </p>
         <ul class="options">
           <li data-option="lien">
-            Le téléphone parle bien à la box. Pour savoir si le reste du chemin marche, il faut
-            tester.
+            Chacun parle à la box : la panne est dans ce qu’ils partagent, la box, la ligne ou plus
+            loin.
           </li>
           <li
             data-option="internet"
-            data-retour="« Connecté » parle de quel morceau du chemin ? Et la messagerie, où est-elle ?"
+            data-retour="« Connecté » parle de quel morceau du chemin ? Que reste-t-il après lui ?"
             data-erreur="E1"
           >
-            Internet marche, puisque le Wi-Fi est connecté : c’est la messagerie qui est en panne.
+            Internet marche, puisque le téléphone est connecté au Wi-Fi : ce sont les deux appareils
+            qui sont en panne.
           </li>
           <li
             data-option="signal"
-            data-retour="Que mesure un signal fort : la liaison avec la box, ou le chemin jusqu’au serveur de la messagerie ?"
+            data-retour="Le téléphone n’utilise pas ce câble. Une panne du câble l’empêcherait-elle d’ouvrir une page ?"
           >
-            Le signal est fort, donc le problème n’est pas dans le réseau.
+            Le signal est fort, donc la panne vient du câble du Mac.
           </li>
         </ul>
       </div>
@@ -4831,9 +4864,9 @@ Itinéraire déterminé.</pre>
         data-widget="choix"
         data-reponse="lien"
         data-verifie
-        data-aide1="Que relie exactement le Wi-Fi ? Entre quoi et quoi ?"
-        data-aide2="Après la box, combien de maillons reste-t-il avant le service de vidéo ?"
-        data-aide3="Le Wi-Fi et son signal décrivent un seul maillon de la chaîne : le premier, entre l’appareil et la box."
+        data-aide1="Quel morceau du chemin le téléviseur et la console ont-ils en commun ?"
+        data-aide2="Chacun a son propre lien jusqu’à la box. Qu’y a-t-il après la box, pour les deux ?"
+        data-aide3="Quand deux appareils aux liens différents échouent ensemble, la panne est dans un maillon qu’ils partagent."
       >
         <div class="cadre pour-lire">
           <p class="discret">Un mot, pour lire :</p>
@@ -4842,28 +4875,27 @@ Itinéraire déterminé.</pre>
           </ul>
         </div>
         <p class="q">
-          Le téléviseur du salon de Yasmine est en Wi-Fi, avec une application de vidéo. Le Wi-Fi
-          affiche « connecté », avec un signal fort. La vidéo ne démarre pas. Quelle phrase est
-          exacte ?
+          Chez Yasmine, le téléviseur en Wi-Fi et la console câblée affichent « connecté ». Ni la
+          vidéo ni le jeu en ligne ne démarrent. Quelle phrase est exacte ?
         </p>
         <ul class="options">
           <li data-option="lien">
-            Le téléviseur parle bien à la box. Pour savoir si le reste du chemin marche, il faut
-            tester.
+            Chacun parle à la box : la panne est dans ce qu’ils partagent, la box, la ligne ou plus
+            loin.
           </li>
           <li
             data-option="internet"
-            data-retour="« Connecté » parle de quel morceau du chemin ? Et le service de vidéo, où est-il ?"
+            data-retour="« Connecté » parle de quel morceau du chemin ? Que reste-t-il après lui ?"
             data-erreur="E1"
           >
-            Internet marche, puisque le Wi-Fi est connecté : c’est l’application de vidéo qui est en
-            panne.
+            Internet marche, puisque le téléviseur est connecté au Wi-Fi : la vidéo et le jeu sont
+            en panne en même temps.
           </li>
           <li
             data-option="signal"
-            data-retour="Un signal fort parle de quelle distance : celle jusqu’à la box, ou celle jusqu’au service de vidéo ?"
+            data-retour="Le téléviseur n’utilise pas ce câble. Une panne du câble l’empêcherait-elle de lire une vidéo ?"
           >
-            Le téléviseur est trop loin de la box : le Wi-Fi affiche « connecté » par erreur.
+            Le signal est fort, donc la panne vient du câble de la console.
           </li>
         </ul>
       </div>
@@ -5401,7 +5433,7 @@ Itinéraire déterminé.</pre>
         data-widget="apparier"
         data-verifie
         data-options="switch=Switch|routeur=Routeur|dhcp=DHCP|parefeu=Pare-feu|modem=Modem (ONT avec la fibre)|ap=Point d’accès Wi-Fi"
-        data-reponse="Relie par câble le Mac et l’imprimante de Farid=switch,Fait sortir de l’appartement de Farid la demande d’une page web=routeur,Donne son adresse IP au téléphone de Farid quand il rejoint le Wi-Fi=dhcp,Filtre ce qui entre dans l’appartement de Farid=parefeu,Reçoit le signal de la ligne du FAI pour le reste de la box=modem,Envoie le Wi-Fi dans les pièces=ap"
+        data-reponse="Relie par câble la console et la télévision de Farid=switch,Fait partir vers Internet la vidéo que Farid envoie à sa sœur=routeur,Donne son adresse IP à la console de Farid dès qu’il la branche=dhcp,Refuse un programme inconnu qui cherche à entrer chez Farid=parefeu,Adapte pour la box le signal qui arrive par la fibre=modem,Permet à la montre de Farid de se relier sans fil=ap"
         data-aide1="Pour chaque rôle, demande-toi s’il parle d’appareils d’un même réseau, de deux réseaux, d’une ligne ou de réglages."
         data-aide2="Prends les rôles un par un : lequel concerne la ligne du FAI, lequel concerne la radio, lequel concerne le filtrage ?"
         data-aide3="Il y a six fonctions et six rôles. Commence par les deux rôles qui concernent la ligne et la radio, puis sépare ce qui relie des appareils de ce qui relie des réseaux."
@@ -5409,42 +5441,42 @@ Itinéraire déterminé.</pre>
         <p class="q">Associe chaque rôle à la fonction de la box qui le tient.</p>
         <ul class="a-apparier">
           <li
-            data-element="Relie par câble le Mac et l’imprimante de Farid"
+            data-element="Relie par câble la console et la télévision de Farid"
             data-retour="Ces deux appareils sont-ils dans le même réseau, ou dans deux réseaux ? Quelle fonction relie des appareils entre eux ?"
             data-erreur="E3"
           >
-            Relie par câble le Mac et l’imprimante de Farid
+            Relie par câble la console et la télévision de Farid
           </li>
           <li
-            data-element="Fait sortir de l’appartement de Farid la demande d’une page web"
+            data-element="Fait partir vers Internet la vidéo que Farid envoie à sa sœur"
             data-retour="Cette demande va-t-elle vers un autre réseau, ou reste-t-elle dans la maison ?"
             data-erreur="E3"
           >
-            Fait sortir de l’appartement de Farid la demande d’une page web
+            Fait partir vers Internet la vidéo que Farid envoie à sa sœur
           </li>
           <li
-            data-element="Donne son adresse IP au téléphone de Farid quand il rejoint le Wi-Fi"
+            data-element="Donne son adresse IP à la console de Farid dès qu’il la branche"
             data-retour="Quelle fonction travaille au moment où un appareil arrive, pour lui donner ses réglages ?"
           >
-            Donne son adresse IP au téléphone de Farid quand il rejoint le Wi-Fi
+            Donne son adresse IP à la console de Farid dès qu’il la branche
           </li>
           <li
-            data-element="Filtre ce qui entre dans l’appartement de Farid"
+            data-element="Refuse un programme inconnu qui cherche à entrer chez Farid"
             data-retour="Quelle fonction surveille le trafic plutôt que de le faire avancer ?"
           >
-            Filtre ce qui entre dans l’appartement de Farid
+            Refuse un programme inconnu qui cherche à entrer chez Farid
           </li>
           <li
-            data-element="Reçoit le signal de la ligne du FAI pour le reste de la box"
+            data-element="Adapte pour la box le signal qui arrive par la fibre"
             data-retour="Quelle fonction s’occupe de la ligne qui entre dans la maison ?"
           >
-            Reçoit le signal de la ligne du FAI pour le reste de la box
+            Adapte pour la box le signal qui arrive par la fibre
           </li>
           <li
-            data-element="Envoie le Wi-Fi dans les pièces"
+            data-element="Permet à la montre de Farid de se relier sans fil"
             data-retour="Quelle partie de la box est la partie radio ?"
           >
-            Envoie le Wi-Fi dans les pièces
+            Permet à la montre de Farid de se relier sans fil
           </li>
         </ul>
       </div>
@@ -5571,7 +5603,7 @@ Itinéraire déterminé.</pre>
         data-widget="apparier"
         data-verifie
         data-options="dns=DNS|dhcp=DHCP|routeur=Routeur|switch=Switch|lan=LAN|wan=WAN"
-        data-reponse="Farid tape un nom de site : voilà ce qui en trouve l’adresse IP=dns,La demande de page de Farid quitte son appartement : voilà ce qui la fait sortir=routeur,Le serveur du site de la formation : loin de l’appartement de Farid et du réseau de ses appareils=wan"
+        data-reponse="Le téléphone de Farid cherche l’adresse de librairie.example.org : voilà ce qui la trouve=dns,Le courriel que Farid envoie à sa banque quitte son appartement : voilà ce qui le fait sortir=routeur,Le serveur de la banque de Farid : loin de son appartement et du réseau de ses appareils=wan"
         data-aide1="Pour chaque situation, cherche le mot qui lui répond ; chaque mot désigne une seule situation au plus."
         data-aide2="Les six mots forment trois paires. Chaque situation parle d’une paire différente : de laquelle ?"
         data-aide3="Une fois la paire trouvée, choisis entre ses deux mots : lequel répond à la situation ?"
@@ -5584,25 +5616,26 @@ Itinéraire déterminé.</pre>
         <p class="q">Associe chaque situation au mot qui la désigne.</p>
         <ul class="a-apparier">
           <li
-            data-element="Farid tape un nom de site : voilà ce qui en trouve l’adresse IP"
+            data-element="Le téléphone de Farid cherche l’adresse de librairie.example.org : voilà ce qui la trouve"
             data-retour="Ce service répond-il à une question sur un nom, ou donne-t-il ses réglages à un appareil qui arrive ?"
             data-erreur="E3"
           >
-            Farid tape un nom de site : voilà ce qui en trouve l’adresse IP
+            Le téléphone de Farid cherche l’adresse de librairie.example.org : voilà ce qui la
+            trouve
           </li>
           <li
-            data-element="La demande de page de Farid quitte son appartement : voilà ce qui la fait sortir"
+            data-element="Le courriel que Farid envoie à sa banque quitte son appartement : voilà ce qui le fait sortir"
             data-retour="Cette demande passe-t-elle d’un réseau à un autre, ou reste-t-elle entre appareils d’un même réseau ?"
             data-erreur="E3"
           >
-            La demande de page de Farid quitte son appartement : voilà ce qui la fait sortir
+            Le courriel que Farid envoie à sa banque quitte son appartement : voilà ce qui le fait
+            sortir
           </li>
           <li
-            data-element="Le serveur du site de la formation : loin de l’appartement de Farid et du réseau de ses appareils"
+            data-element="Le serveur de la banque de Farid : loin de son appartement et du réseau de ses appareils"
             data-retour="Ce réseau est-il celui de la maison, ou celui qui commence après la box ?"
           >
-            Le serveur du site de la formation : loin de l’appartement de Farid et du réseau de ses
-            appareils
+            Le serveur de la banque de Farid : loin de son appartement et du réseau de ses appareils
           </li>
         </ul>
       </div>
@@ -5613,11 +5646,11 @@ Itinéraire déterminé.</pre>
         data-widget="apparier"
         data-verifie
         data-options="dns=DNS|dhcp=DHCP|routeur=Routeur|switch=Switch|lan=LAN|wan=WAN"
-        data-reponse="Le Mac de Farid vient d’être branché à sa box et a reçu seul ses réglages : voilà qui les lui a donnés=dhcp,Farid branche son Mac et son imprimante par câble à sa box : voilà ce qui les relie=switch,L’imprimante de Farid : posée dans son salon et reliée à ses autres appareils=lan"
+        data-reponse="La console de Farid rejoint son Wi-Fi pour la première fois : voilà ce qui lui donne seul son adresse=dhcp,La télévision et la console de Farid câblées à sa box s’échangent une vidéo : voilà ce qui les relie=switch,La télévision de Farid : dans son salon et reliée à ses autres appareils=lan"
         data-aide1="Pour chaque situation, cherche le mot qui lui répond ; chaque mot désigne une seule situation au plus."
         data-aide2="Les six mots forment trois paires. Chaque situation parle d’une paire différente : de laquelle ?"
         data-aide3="Une fois la paire trouvée, choisis entre ses deux mots : lequel répond à la situation ?"
-        data-justifier="Chez Farid, où passe la limite entre le LAN et le WAN ? Pourquoi là ?"
+        data-justifier="Farid ajoute un second switch dans son salon pour y câbler sa télévision. Où passe alors la limite entre son LAN et son WAN ? Pourquoi ?"
       >
         <p>
           Les six mots à associer : DNS, DHCP, routeur, switch, LAN, WAN. Chaque situation en
@@ -5626,25 +5659,26 @@ Itinéraire déterminé.</pre>
         <p class="q">Associe chaque situation au mot qui la désigne.</p>
         <ul class="a-apparier">
           <li
-            data-element="Le Mac de Farid vient d’être branché à sa box et a reçu seul ses réglages : voilà qui les lui a donnés"
+            data-element="La console de Farid rejoint son Wi-Fi pour la première fois : voilà ce qui lui donne seul son adresse"
             data-retour="Ce service répond-il à une question sur un nom, ou donne-t-il ses réglages à un appareil qui arrive ?"
             data-erreur="E3"
           >
-            Le Mac de Farid vient d’être branché à sa box et a reçu seul ses réglages : voilà qui
-            les lui a donnés
+            La console de Farid rejoint son Wi-Fi pour la première fois : voilà ce qui lui donne
+            seul son adresse
           </li>
           <li
-            data-element="Farid branche son Mac et son imprimante par câble à sa box : voilà ce qui les relie"
+            data-element="La télévision et la console de Farid câblées à sa box s’échangent une vidéo : voilà ce qui les relie"
             data-retour="Ces appareils sont-ils dans le même réseau, ou dans deux réseaux ?"
             data-erreur="E3"
           >
-            Farid branche son Mac et son imprimante par câble à sa box : voilà ce qui les relie
+            La télévision et la console de Farid câblées à sa box s’échangent une vidéo : voilà ce
+            qui les relie
           </li>
           <li
-            data-element="L’imprimante de Farid : posée dans son salon et reliée à ses autres appareils"
+            data-element="La télévision de Farid : dans son salon et reliée à ses autres appareils"
             data-retour="Ce réseau est-il celui de la maison, ou celui qui commence après la box ?"
           >
-            L’imprimante de Farid : posée dans son salon et reliée à ses autres appareils
+            La télévision de Farid : dans son salon et reliée à ses autres appareils
           </li>
         </ul>
       </div>
@@ -5659,7 +5693,7 @@ Itinéraire déterminé.</pre>
         data-aide1="Pour chaque situation, cherche le mot qui lui répond ; chaque mot désigne une seule situation au plus."
         data-aide2="Les six mots forment trois paires. Chaque situation parle d’une paire différente : de laquelle ?"
         data-aide3="Une fois la paire trouvée, choisis entre ses deux mots : lequel répond à la situation ?"
-        data-justifier="Farid hésite entre une offre à 1 000 Mbit/s et 40 ms, et une offre à 300 Mbit/s et 10 ms. Laquelle fait réagir le plus vite une page, et pourquoi ? S’il change de FAI, qui fait tourner le site de sa librairie ?"
+        data-justifier="Farid hésite entre une offre à 1 000 Mbit/s et 40 ms, et une offre à 300 Mbit/s et 10 ms. Laquelle fait réagir le plus vite une page, et pourquoi ? S’il change de FAI, que devient l’hébergeur de la librairie en ligne où il commande ses livres ?"
       >
         <p>
           Les six mots à associer : débit, latence, IP privée, IP publique, FAI, hébergeur. Chaque
@@ -5699,7 +5733,7 @@ Itinéraire déterminé.</pre>
         data-aide1="Pour chaque situation, cherche le mot qui lui répond ; chaque mot désigne une seule situation au plus."
         data-aide2="Les six mots forment trois paires. Chaque situation parle d’une paire différente : de laquelle ?"
         data-aide3="Une fois la paire trouvée, choisis entre ses deux mots : lequel répond à la situation ?"
-        data-justifier="Yasmine hésite entre une offre à 500 Mbit/s et 30 ms, et une offre à 200 Mbit/s et 8 ms. Laquelle fait réagir le plus vite une page, et pourquoi ? Si elle change de FAI, qui fait tourner le site de la formation ?"
+        data-justifier="Yasmine hésite entre une offre à 500 Mbit/s et 30 ms, et une offre à 200 Mbit/s et 8 ms. Laquelle fait réagir le plus vite une page, et pourquoi ? Si elle change de FAI, que devient l’hébergeur du site de la formation ?"
       >
         <p>
           Les six mots à associer : débit, latence, IP privée, IP publique, FAI, hébergeur. Chaque
@@ -5770,15 +5804,16 @@ Itinéraire déterminé.</pre>
       <h3>Anticiper avant de voir</h3>
       <ul>
         <li>
-          Dix moments demandent à l'apprenant de prévoir avant l'explication, sans note
+          Onze moments demandent à l'apprenant de prévoir avant l'explication, sans note
           (data-prediction) : par où la page revient à la tablette (retour, avant la phrase qui le
           dit), d'où vient l'adresse de la tablette (dhcp0, avant la définition du DHCP), quelle
           adresse voit un site (predpub, avant le tableau du NAT), l'ordre du DHCP, du DNS et du NAT
           (ordre, avant le schéma qui le montre), le temps d'un fichier de 300 Mo à 100 Mbit/s
-          (duree, avant la conversion), ce que liste la commande (predsortie, avant ses sorties), ce
-          que dit un ping vers la passerelle (predping, avant le schéma des trois tests), le maillon
-          qui casse quand seul le nom échoue (predtrois, avant de jouer les trois tests), la machine
-          du premier saut (predsaut, avant tracert) et où taper l'adresse de la passerelle
+          (duree, avant la conversion), ce que liste la commande (predsortie, avant ses sorties),
+          l’adresse de la passerelle à lire (predpass, avant de la relever), ce que dit un ping vers
+          la passerelle (predping, avant le schéma des trois tests), ce que donne le test du nom
+          quand l’adresse du site se tait (predtrois, avant de jouer les trois tests), la machine du
+          premier saut (predsaut, avant tracert) et où taper l'adresse de la passerelle
           (adressebox). Les options de ces prévisions n'ont aucune marque d'erreur critique, parce
           que la règle n'a pas encore été donnée ; mais deux options sont une erreur en substance :
           « Environ 3 secondes » (duree) est la confusion de Mbit/s et de Mo/s, « Que la ligne du
@@ -5813,10 +5848,10 @@ Itinéraire déterminé.</pre>
           cinq vérifications différées, trois transferts et dix-sept cartes.
         </li>
         <li>
-          Le sens du masque (avec 255.255.255.0, les trois premiers nombres désignent le réseau) est
-          une notion de l’objectif, montrée en ET6 et en ET9 : Q7 et K11 l’interrogent sans le
-          redonner, comme toute notion qu’on restitue. Seule l’écriture hexadécimale, qui est une
-          convention de macOS, est redonnée avec la question (« Hexadécimal, pour lire : »).
+          L’écriture du masque (255 marque un nombre du réseau, 0 un nombre de l’appareil) est une
+          convention, dite comme telle en ET6 et redonnée avec chaque question qui l’emploie : Q7
+          (avec l’hexadécimal) et K11 (« Le masque, pour lire : »). L’apprenant l’applique à un cas,
+          il ne la récite pas.
         </li>
         <li>
           La box ouverte (outil fonctions, étape « Dans la box ») : six boutons, un par fonction.
@@ -5918,9 +5953,11 @@ Itinéraire déterminé.</pre>
           compté comme geste, il ferait quatre sur dix. Trois items sur dix portent une demande
           d’explication (data-justifier : PR1-6, PR1-9, PR1-10), sur ce que l’écran ne montre pas ;
           en PR1-9 et PR1-10, elle fait justifier les trois paires que l’appariement ne fait que
-          nommer : LAN et WAN, débit et latence, FAI et hébergeur ; les paires de PR1-8 (IP privée
-          et publique), ainsi que DNS et DHCP, sont justifiées en restitution (B06-R3, B06-R2) ; le
-          manifeste la déclare, l’IA la juge, et l’item n’est réussi qu’avec une explication Solide.
+          nommer : LAN et WAN, débit et latence, FAI et hébergeur ; PR1-10 en porte donc deux, en
+          deux questions qui se suivent, parce que les demandes d’explication sont limitées à un
+          tiers des items ; les paires de PR1-8 (IP privée et publique), ainsi que DNS et DHCP, sont
+          justifiées en restitution (B06-R3, B06-R2) ; le manifeste la déclare, l’IA la juge, et
+          l’item n’est réussi qu’avec une explication Solide.
         </li>
         <li>
           L’atelier se fait sur la machine de l’apprenant, hors de la page : six écrans de guidage
@@ -6102,14 +6139,14 @@ Itinéraire déterminé.</pre>
         "explication": [
           {
             "id": "PR1-10",
-            "question": "Farid hésite entre une offre à 1 000 Mbit/s et 40 ms, et une offre à 300 Mbit/s et 10 ms. Laquelle fait réagir le plus vite une page, et pourquoi ? S’il change de FAI, qui fait tourner le site de sa librairie ?",
-            "attendu": "L’offre à 10 ms : la latence, le temps d’un aller-retour, fait réagir une page, alors que le débit dit combien de données arrivent par seconde, ce qui compte pour un gros fichier. Le site de la librairie tourne toujours chez son hébergeur, sur ses machines : le FAI ne donne que l’accès à Internet, et en changer ne touche pas le site. Déduit des étapes « Débit et latence » et « La chaîne de la maison ».",
+            "question": "Farid hésite entre une offre à 1 000 Mbit/s et 40 ms, et une offre à 300 Mbit/s et 10 ms. Laquelle fait réagir le plus vite une page, et pourquoi ? S’il change de FAI, que devient l’hébergeur de la librairie en ligne où il commande ses livres ?",
+            "attendu": "L’offre à 10 ms : la latence, le temps d’un aller-retour, fait réagir une page, alors que le débit dit combien de données arrivent par seconde, ce qui compte pour un gros fichier. Le site de la librairie en ligne tourne toujours chez son hébergeur, sur ses machines : le FAI ne donne que l’accès à Internet, et en changer ne touche pas le site. Déduit des étapes « Débit et latence » et « La chaîne de la maison ».",
             "erreurs": [],
             "item": "PR1-10"
           },
           {
             "id": "PR1-10:variante",
-            "question": "Yasmine hésite entre une offre à 500 Mbit/s et 30 ms, et une offre à 200 Mbit/s et 8 ms. Laquelle fait réagir le plus vite une page, et pourquoi ? Si elle change de FAI, qui fait tourner le site de la formation ?",
+            "question": "Yasmine hésite entre une offre à 500 Mbit/s et 30 ms, et une offre à 200 Mbit/s et 8 ms. Laquelle fait réagir le plus vite une page, et pourquoi ? Si elle change de FAI, que devient l’hébergeur du site de la formation ?",
             "attendu": "L’offre à 8 ms : la latence, le temps d’un aller-retour, fait réagir une page, alors que le débit dit combien de données arrivent par seconde, ce qui compte pour un gros fichier. Le site de la formation tourne toujours chez son hébergeur, sur ses machines : le FAI ne donne que l’accès à Internet, et en changer ne touche pas le site. Déduit des étapes « Débit et latence » et « La chaîne de la maison ».",
             "erreurs": [],
             "item": "PR1-10"
@@ -6131,14 +6168,14 @@ Itinéraire déterminé.</pre>
           {
             "id": "PR1-9",
             "question": "Chez Farid, où passe la limite entre le LAN et le WAN ? Pourquoi là ?",
-            "attendu": "À la box : le LAN est le réseau local de l’appartement, les appareils de Farid reliés à sa box ; le WAN commence après la box, avec la ligne du FAI et Internet, où est le serveur du site. La box est le point par où tout sort de la maison. Déduit de l’étape « Dans la box ».",
+            "attendu": "À la box : le LAN est le réseau local de l’appartement, les appareils de Farid reliés à sa box ; le WAN commence après la box, avec la ligne du FAI et Internet, où est le serveur de la banque. La box est le point par où tout sort de la maison. Déduit de l’étape « Dans la box ».",
             "erreurs": [],
             "item": "PR1-9"
           },
           {
             "id": "PR1-9:variante",
-            "question": "Chez Farid, où passe la limite entre le LAN et le WAN ? Pourquoi là ?",
-            "attendu": "À la box : le LAN est le réseau local de l’appartement, où sont ses appareils et son imprimante ; le WAN commence après la box, avec la ligne du FAI et Internet. La box est le point par où tout sort de la maison. Déduit de l’étape « Dans la box ».",
+            "question": "Farid ajoute un second switch dans son salon pour y câbler sa télévision. Où passe alors la limite entre son LAN et son WAN ? Pourquoi ?",
+            "attendu": "Toujours à la box : le switch relie des appareils d’un même réseau, donc la télévision reste dans le LAN, le réseau local de l’appartement. Le WAN commence après la box, avec la ligne du FAI et Internet ; seul le routeur de la box fait passer de l’un à l’autre. Déduit de l’étape « Dans la box ».",
             "erreurs": [],
             "item": "PR1-9"
           }
@@ -6146,27 +6183,27 @@ Itinéraire déterminé.</pre>
         "restitution": [
           {
             "id": "B06-R1",
-            "question": "Chez lui, Farid ouvre le site de sa banque sur son téléphone, relié au Wi-Fi. Décris-lui le chemin de la page, du téléphone au serveur de la banque, avec tous les maillons dans l’ordre. Puis dis ce que prouve l’affichage « connecté au Wi-Fi » sur son téléphone.",
-            "attendu": "Le téléphone passe par le Wi-Fi à la box de Farid, puis par la ligne au FAI, puis par Internet jusqu’au serveur de la banque, et la page revient par le même chemin. « Connecté au Wi-Fi » ne prouve que le premier maillon, entre le téléphone et la box : le reste peut casser sans que le Wi-Fi le montre. Erreur à repérer : croire que le Wi-Fi est l’accès à Internet. Déduit de l’étape « La chaîne de la maison ».",
+            "question": "Farid envoie une photo depuis son Mac, branché à sa box par un câble, vers le serveur d’un site de partage. Décris le chemin de la photo, maillon par maillon, jusqu’à ce serveur. Puis dis ce que prouve le voyant allumé du câble.",
+            "attendu": "Le Mac passe par le câble Ethernet à la box de Farid, puis par la ligne au FAI, puis par Internet jusqu’au serveur du site, chez son hébergeur. Le voyant ne prouve que le premier maillon, le câble entre le Mac et la box : le reste peut casser sans qu’il le montre. Erreur à repérer : prendre le lien pour l’accès à Internet. Déduit de l’étape « La chaîne de la maison ».",
             "erreurs": ["E1"]
           },
           {
             "id": "B06-R2",
-            "question": "Farid a un Mac, un téléphone et une imprimante. Pour chacune de ces deux paires, dis ce qui distingue les deux éléments, sur un exemple pris chez lui : le routeur et le switch ; le DNS et le DHCP.",
-            "attendu": "Le switch relie des appareils d’un même réseau, comme le Mac et l’imprimante de Farid ; le routeur relie des réseaux différents, comme son appartement et Internet. Le DHCP donne ses réglages à un appareil qui arrive, comme le téléphone de Farid (adresse IP, masque, passerelle, adresse du DNS) ; le DNS traduit un nom de site en adresse IP. Erreur à repérer : confondre routeur et switch, ou DNS et DHCP. Déduit des étapes « Dans la box » et « DNS ou DHCP ».",
+            "question": "Chez Farid, la console et la télévision, câblées à la box, s’échangent une vidéo ; puis la console télécharge une mise à jour sur le site de son fabricant. Quelle fonction de la box sert dans chaque cas, et pourquoi ? Puis : quel service donne son adresse à la console quand elle rejoint le réseau, et lequel trouve l’adresse du site du fabricant ?",
+            "attendu": "Le switch relie la console et la télévision, qui sont dans le même réseau ; le routeur fait sortir la demande vers un autre réseau, Internet. Le DHCP donne à la console son adresse et ses réglages quand elle arrive ; le DNS traduit le nom du site du fabricant en adresse IP. Erreur à repérer : confondre routeur et switch, ou DNS et DHCP. Déduit des étapes « Dans la box » et « DNS ou DHCP ».",
             "erreurs": ["E3"]
           },
           {
             "id": "B06-R3",
-            "question": "Dans une salle de formation, vingt ordinateurs reliés à la même box ouvrent en même temps le même site. Que voit le site comme adresse d’origine de ces vingt demandes, et que devient l’adresse privée de chaque ordinateur à la sortie de la salle ?",
-            "attendu": "Le site voit une seule adresse, l’adresse publique de la box de la salle. À l’intérieur, le DHCP donne à chaque ordinateur une adresse privée, qui ne vaut que dans le réseau local ; en sortant, la box la remplace par son adresse publique (NAT) et la rétablit au retour. Une adresse IP n’est donc pas unique au monde. Erreur à repérer : croire que le site voit l’adresse de chaque ordinateur. Déduit de l’étape « Les adresses de la maison ».",
+            "question": "Un serveur de jeu en ligne voit, au même instant, trois joueurs arriver de la même adresse, 203.0.113.80. Est-ce possible sans tricherie ? Que s’est-il passé à la sortie de leur réseau ?",
+            "attendu": "Oui : les trois joueurs sont derrière la même box, dans le même réseau local. Chacun a une adresse privée ; à la sortie, la box la remplace par son unique adresse publique, 203.0.113.80 (NAT), et rend chaque réponse au bon appareil. Une adresse IP n’est donc pas propre à un appareil. Erreur à repérer : croire que le site voit l’adresse de chaque appareil. Déduit de l’étape « Les adresses de la maison ».",
             "erreurs": ["E2"]
           },
           {
             "id": "B06-R4",
-            "question": "Dans une salle de formation, un ordinateur relié à la box par un câble affiche « connecté », voyant allumé, et aucune page ne s’ouvre. La formatrice ouvre un terminal sur cet ordinateur. Vers quelles cibles teste-t-elle la chaîne, et dans quel ordre ? Comment en déduit-elle où se trouve la panne ?",
-            "attendu": "Elle teste de proche en proche, de la box vers le site : un ping vers la passerelle, puis vers une adresse IP publique, puis vers un nom. Le premier test qui échoue situe le maillon en panne (entre l’ordinateur et la box, après la box, ou le DNS), et les suivants échouent par conséquence. Erreur à repérer : conclure que « connecté » prouve qu’Internet marche. Déduit des étapes « Tester la chaîne » et « La chaîne de la maison ».",
-            "erreurs": ["E1"]
+            "question": "Dans une salle de formation, un ordinateur câblé n’ouvre pas formation.example.org. La formatrice teste de proche en proche : la passerelle répond ; 198.51.100.50 ne répond pas ; 203.0.113.20, l’adresse du site, répond ; le nom formation.example.org ne trouve pas la machine qui le porte. Où est la panne ? Que penser du ping vers 198.51.100.50 ?",
+            "attendu": "La panne est dans le DNS : la passerelle et l’adresse du site répondent, donc la box, la ligne et Internet marchent jusqu’au site, et seul le nom échoue. Le ping muet vers 198.51.100.50 ne prouve pas une panne : une adresse plus lointaine répond, donc cette machine refuse sans doute de répondre au ping. Erreur à repérer : s’arrêter au premier ping muet sans lire la suite. Déduit de l’étape « Tester la chaîne ».",
+            "erreurs": []
           },
           {
             "id": "B06-R5",
@@ -6190,14 +6227,14 @@ Itinéraire déterminé.</pre>
           },
           {
             "id": "B06-Q3",
-            "question": "Dans une salle de formation, deux ordinateurs ouvrent en même temps le même site. Leurs deux demandes arrivent au site avec la même adresse, celle de la box de la salle. Comment la réponse destinée à chacun retrouve-t-elle le bon ordinateur ?",
-            "attendu": "Le site répond à l’adresse publique de la box. La box, qui a remplacé l’adresse privée de chaque ordinateur par la sienne à la sortie, a retenu quel ordinateur a fait quelle demande : au retour, elle remet l’adresse privée du bon ordinateur. C’est le NAT. Déduit de l’étape « Les adresses de la maison ».",
+            "question": "La box d’une salle de formation, d’adresse publique 198.51.100.40, a fait sortir deux demandes : l’une de l’ordinateur 10.0.0.5, l’autre de l’ordinateur 10.0.0.7. Une réponse revient pour la demande de 10.0.0.7. Vers quelle adresse va-t-elle en arrivant à la box, puis en arrivant à l’ordinateur ? Pourquoi ce changement ?",
+            "attendu": "En arrivant à la box, vers 198.51.100.40, la seule adresse que le site a vue ; en arrivant à l’ordinateur, vers 10.0.0.7. La box a retenu quel ordinateur a fait quelle demande et remet l’adresse privée du bon : c’est le NAT. Déduit de l’étape « Les adresses de la maison ».",
             "erreurs": ["E2"]
           },
           {
             "id": "B06-Q4",
-            "question": "Deux travaux de la box de Farid : envoyer le Wi-Fi dans l’appartement, et refuser ce qui cherche à entrer sans y avoir été invité. Quelle fonction de la box tient chacun, et laquelle des deux est un programme plutôt qu’une pièce ?",
-            "attendu": "Le point d’accès Wi-Fi envoie le Wi-Fi ; le pare-feu refuse ce qui entre sans invitation. Le pare-feu est un programme qui tourne dans la box, le point d’accès en est une pièce. Déduit de l’étape « Dans la box ».",
+            "question": "Le téléphone de Farid ne trouve plus le Wi-Fi de sa box. Son Mac, câblé à la même box, ouvre encore les sites. Quelle fonction de la box est en cause, et pourquoi le Mac n’est-il pas touché ?",
+            "attendu": "Le point d’accès Wi-Fi, la partie radio de la box. Le Mac passe par le câble et le switch, puis par le routeur et le modem, qui marchent encore : chaque fonction a son rôle, et une seule est tombée. Déduit de l’étape « Dans la box ».",
             "erreurs": []
           },
           {
@@ -6214,7 +6251,7 @@ Itinéraire déterminé.</pre>
           },
           {
             "id": "B06-Q7",
-            "question": "Hexadécimal, pour lire : 0x annonce un nombre hexadécimal, chaque paire de chiffres est un octet, ff vaut 255 et 00 vaut 0. Un Mac de la salle de formation affiche « inet 10.0.0.12 netmask 0xffffff00 ». Écris ce masque avec quatre nombres, puis dis quelle partie de l’adresse 10.0.0.12 désigne le réseau.",
+            "question": "Hexadécimal, pour lire : 0x annonce l’hexadécimal, chaque paire de chiffres est un octet, ff vaut 255, 00 vaut 0 ; dans un masque, 255 marque le réseau et 0 l’appareil. Un Mac de la salle affiche « inet 10.0.0.12 netmask 0xffffff00 ». Écris ce masque en quatre nombres, puis dis quelle partie de 10.0.0.12 désigne le réseau.",
             "attendu": "255.255.255.0, car ff vaut 255 et 00 vaut 0. Avec ce masque, les trois premiers nombres désignent le réseau, 10.0.0, et le dernier, 12, désigne le Mac. Déduit des étapes « Le terminal » et « Les adresses de la maison ».",
             "erreurs": []
           },
@@ -6229,8 +6266,8 @@ Itinéraire déterminé.</pre>
           {
             "id": "B06-C1",
             "type": "explication",
-            "consigne": "Une stagiaire de la formation dit : « Ma console de salon est branchée à la box par un câble, le voyant clignote, donc mes parties en ligne vont marcher. » Qu’est-ce qui manque dans cette phrase ?",
-            "attendu": "Le voyant ne dit que le premier maillon, entre la console et la box. La ligne du FAI, le DNS et le serveur du jeu sont d’autres maillons, qui peuvent casser sans que le voyant le montre. Erreur à repérer : prendre le lien pour l’accès à Internet. Déduit de l’étape « La chaîne de la maison ».",
+            "consigne": "Une stagiaire dit : « Ma console est branchée à la box par un câble, voyant allumé : Internet marche donc chez moi, et si mon jeu ne se lance pas, c’est le jeu. » Son téléphone, en Wi-Fi sur la même box, n’ouvre pourtant aucun site. Qu’est-ce qui ne va pas dans son raisonnement ?",
+            "attendu": "Le voyant ne prouve que le câble, entre la console et la box. Le téléphone, qui passe par la même box et la même ligne, n’ouvre rien non plus : la panne est dans ce qu’ils partagent, la box, la ligne ou plus loin, pas dans le jeu. Erreur à repérer : prendre le lien pour l’accès à Internet. Déduit de l’étape « La chaîne de la maison ».",
             "erreurs": ["E1"]
           },
           {
@@ -6243,15 +6280,15 @@ Itinéraire déterminé.</pre>
           {
             "id": "B06-C3",
             "type": "explication",
-            "consigne": "Un stagiaire de la formation écrit : « Mon DNS donne à chaque appareil son adresse IP, et mon switch relie ma maison à Internet. » Qu’y a-t-il à corriger ?",
-            "attendu": "C’est le DHCP qui donne à un appareil ses réglages (adresse IP, masque, passerelle, adresse du DNS) ; le DNS traduit un nom en adresse. C’est le routeur qui relie la maison à Internet ; le switch relie des appareils d’un même réseau. Erreur à repérer : confondre DNS et DHCP, routeur et switch. Déduit des étapes « Dans la box » et « DNS ou DHCP ».",
+            "consigne": "Un stagiaire écrit : « Mon ordinateur portable a reçu son adresse dès que je l’ai branché, grâce au DNS ; et mon imprimante, câblée à la box, reçoit mes documents grâce au routeur. » Qu’y a-t-il à corriger ?",
+            "attendu": "C’est le DHCP qui donne son adresse à un appareil qui arrive ; le DNS traduit un nom en adresse. Entre l’ordinateur et l’imprimante, dans le même réseau, c’est le switch qui relie ; le routeur relie des réseaux différents. Erreur à repérer : confondre DNS et DHCP, routeur et switch. Déduit des étapes « Dans la box » et « DNS ou DHCP ».",
             "erreurs": ["E3"]
           },
           {
             "id": "B06-C4",
             "type": "explication",
-            "consigne": "Une offre annonce un très gros débit, 1 000 Mbit/s. Garantit-elle que les pages réagissent vite ? Pourquoi ?",
-            "attendu": "Non : le débit compte la quantité de données qui arrivent par seconde, la latence compte le temps d’un aller-retour. Ce sont deux mesures différentes : un fort débit n’implique pas une faible latence, et une annonce en Mbit/s ne dit rien du temps d’aller-retour. Déduit de l’étape « Débit et latence ».",
+            "consigne": "Un ami joue en ligne : ses actions arrivent en retard sur l’écran des autres joueurs. Il veut passer de 300 à 1 000 Mbit/s. Cela réglera-t-il son problème ? Pourquoi ?",
+            "attendu": "Pas forcément : son problème est un temps d’aller-retour trop long, la latence, en ms. Le débit compte les données par seconde, et un fort débit n’implique pas une faible latence : c’est la latence de l’offre qu’il faut regarder. Déduit de l’étape « Débit et latence ».",
             "erreurs": []
           },
           {
@@ -6273,8 +6310,8 @@ Itinéraire déterminé.</pre>
             "id": "B06-T2",
             "type": "transfert",
             "forme": "adapter_condition",
-            "consigne": "Deux unités, pour lire : 1 octet = 8 bits, Mbit/s = mégabits par seconde, Mo/s = mégaoctets par seconde. Farid passe de 200 à 400 Mbit/s et télécharge un fichier de 900 Mo. Combien de secondes au mieux ? Qu’est-ce qui change dans ton calcul, et qu’est-ce qui reste identique ?",
-            "attendu": "400 Mbit/s divisés par 8 font 50 Mo/s, et 900 Mo divisés par 50 Mo/s font 18 secondes. La méthode ne change pas : convertir le débit en Mo/s en divisant par 8, puis diviser la taille du fichier par ce débit. Erreur à repérer : confondre Mbit/s et Mo/s. Déduit de l’étape « Débit et latence ».",
+            "consigne": "Deux unités, pour lire : 1 octet = 8 bits, Mbit/s = mégabits par seconde, Mo/s = mégaoctets par seconde. Farid passe de 200 à 400 Mbit/s et télécharge un fichier de 900 Mo. Combien de secondes au mieux ? Explique ce que ce passage à 400 Mbit/s change dans le calcul.",
+            "attendu": "400 Mbit/s divisés par 8 font 50 Mo/s, et 900 Mo divisés par 50 Mo/s font 18 secondes. Seul le débit change : en Mo/s, il double (50 au lieu de 25), donc le temps est divisé par deux. La méthode reste la même : convertir le débit en Mo/s en divisant par 8, puis diviser la taille du fichier par ce débit. Erreur à repérer : confondre Mbit/s et Mo/s. Déduit de l’étape « Débit et latence ».",
             "erreurs": ["E4"]
           },
           {
@@ -6343,13 +6380,13 @@ Itinéraire déterminé.</pre>
         "cartes": [
           {
             "id": "B06-K1",
-            "recto": "La montre de Farid affiche « Wi-Fi connecté », mais ses notifications n’arrivent plus. Qu’est-ce que ce « connecté » a vérifié, et qu’est-ce qu’il n’a pas vérifié ?",
-            "verso": "Il a vérifié le lien entre la montre et la box, le premier maillon. Il n’a pas vérifié la ligne du FAI, le DNS ni le serveur qui envoie les notifications, qui peuvent casser sans que le Wi-Fi le montre. Déduit de l’étape « La chaîne de la maison »."
+            "recto": "La montre de Farid affiche « Wi-Fi connecté », mais ses notifications n’arrivent plus, alors que son Mac, sur la même box, reçoit ses courriels. Quels maillons sont hors de cause, et lequel reste à tester ?",
+            "verso": "Le Mac prouve que la box, la ligne du FAI et Internet marchent, et « connecté » prouve le lien de la montre. Reste le serveur qui envoie les notifications. Déduit de l’étape « La chaîne de la maison »."
           },
           {
             "id": "B06-K2",
-            "recto": "Le site d’une librairie est chez l’entreprise X ; Farid y accède grâce à son abonnement chez l’entreprise Y. Quel rôle tient chaque entreprise ?",
-            "verso": "Y est son FAI : elle lui donne l’accès à Internet. X est l’hébergeur : elle fait tourner le serveur du site. Ce sont deux rôles : si X et Y sont la même entreprise, elle tient les deux. Déduit de l’étape « La chaîne de la maison »."
+            "recto": "Farid crée le site de son club de course et le place chez l’entreprise Z. Les membres y vont depuis chez eux, chacun avec son propre abonnement à Internet. Combien d’hébergeurs et combien de FAI entrent en jeu ?",
+            "verso": "Un seul hébergeur, Z, qui fait tourner le serveur du site. Autant de FAI que d’abonnements différents : chaque FAI donne l’accès à Internet à ses abonnés. Déduit de l’étape « La chaîne de la maison »."
           },
           {
             "id": "B06-K3",
@@ -6393,13 +6430,13 @@ Itinéraire déterminé.</pre>
           },
           {
             "id": "B06-K11",
-            "recto": "Avec le masque 255.255.255.0, les adresses 192.168.1.23 et 192.168.2.23 sont-elles dans le même réseau ? Pourquoi ?",
+            "recto": "Le masque, pour lire : dans un masque, 255 marque un nombre qui désigne le réseau, et 0 un nombre qui désigne l’appareil. Avec le masque 255.255.255.0, les adresses 192.168.1.23 et 192.168.2.23 sont-elles dans le même réseau ? Pourquoi ?",
             "verso": "Non : avec ce masque, les trois premiers nombres désignent le réseau, et 192.168.1 diffère de 192.168.2. Déduit de l’étape « Les adresses de la maison »."
           },
           {
             "id": "B06-K12",
-            "recto": "Farid règle le pare-feu de son ordinateur pour qu’il ne réponde plus aux ping. Quelle erreur un collègue qui le pingue risque-t-il de faire ?",
-            "verso": "Croire que l’ordinateur est en panne : un pare-feu peut refuser de répondre aux ping alors que la machine marche. Déduit de l’étape « Tester la chaîne »."
+            "recto": "Farid pingue l’ordinateur d’un collègue, dans la même salle : sans réponse. Il ouvre pourtant sans peine le dossier partagé de cet ordinateur. Comment est-ce possible ?",
+            "verso": "L’ordinateur marche, et le chemin aussi, puisque le dossier s’ouvre. Son pare-feu refuse simplement de répondre au ping : un ping sans réponse ne prouve pas une panne. Déduit de l’étape « Tester la chaîne »."
           },
           {
             "id": "B06-K13",
