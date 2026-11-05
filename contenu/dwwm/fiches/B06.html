@@ -4530,9 +4530,8 @@ Itinéraire déterminé.</pre>
         </p>
         <p>
           La suite suit une page web de bout en bout : l’adresse tapée, la demande, la réponse, ce
-          que le navigateur affiche. Tout cela s’appuie sur la chaîne que tu viens de voir, et un
-          serveur de test, un petit serveur web que tu feras tourner sur ta propre machine, ne sera
-          joignable que depuis chez toi, à cause de son adresse privée.
+          que le navigateur affiche. Chaque demande et chaque réponse y passent par la chaîne que tu
+          viens de voir : ton appareil, ta box, ton FAI, Internet, puis le serveur du site.
         </p>
         <h3>À explorer plus tard</h3>
         <ul>
@@ -4759,246 +4758,6 @@ Itinéraire déterminé.</pre>
     <template data-item="PR1-3">
       <div
         class="ex"
-        data-widget="choix"
-        data-reponse="deux"
-        data-verifie
-        data-aide1="Les deux PC sont dans deux maisons différentes. Qu’est-ce qui sort réellement de chaque maison ?"
-        data-aide2="Quelle fonction de la box change l’adresse écrite sur un paquet qui part ?"
-        data-aide3="Chaque box met sa propre adresse publique à la place de l’adresse privée. Les deux maisons ont deux box."
-        data-justifier="La tablette de Yasmine et le téléphone de Farid ont la même adresse, 192.168.1.24. Qu’en penses-tu, et pourquoi ?"
-      >
-        <p class="q">
-          Yasmine et Farid ouvrent le site de la formation en même temps, chacun chez soi. La
-          tablette de Yasmine et le téléphone de Farid ont la même adresse, 192.168.1.24. Que voit
-          le site ?
-        </p>
-        <ul class="options">
-          <li data-option="deux">Deux adresses publiques différentes, celles de leurs deux box.</li>
-          <li
-            data-option="memeip"
-            data-retour="Cette adresse sort-elle de la maison de Yasmine, de celle de Farid ? Que met chaque box à la place ?"
-            data-erreur="E2"
-          >
-            Deux demandes venues de 192.168.1.24 : il ne sait pas les distinguer.
-          </li>
-          <li data-option="une" data-retour="Yasmine et Farid ont-ils la même box ?">
-            Une seule adresse publique, partagée par Yasmine et Farid.
-          </li>
-        </ul>
-      </div>
-    </template>
-    <template data-variante="PR1-3">
-      <div
-        class="ex"
-        data-widget="choix"
-        data-reponse="deux"
-        data-verifie
-        data-aide1="Les deux appareils sont dans deux maisons différentes. Qu’est-ce qui quitte vraiment chaque maison ?"
-        data-aide2="Quelle fonction de la box change l’adresse écrite sur un paquet qui part ?"
-        data-aide3="Chaque box met sa propre adresse publique à la place de l’adresse privée. Les deux maisons ont deux box."
-        data-justifier="Un appareil de Yasmine et un appareil de Farid ont la même adresse, 10.0.0.5. Qu’en penses-tu, et pourquoi ?"
-      >
-        <p class="q">
-          Chez Yasmine et chez Farid, un appareil porte l’adresse 10.0.0.5. Les deux ouvrent un même
-          site. Que voit le site ?
-        </p>
-        <ul class="options">
-          <li data-option="deux">Deux adresses publiques différentes, une par maison.</li>
-          <li
-            data-option="memeip"
-            data-retour="L’adresse 10.0.0.5 sort-elle des maisons ? Que met chaque box sur les paquets qui partent ?"
-            data-erreur="E2"
-          >
-            Deux demandes venues de 10.0.0.5 : il ne peut pas savoir laquelle est laquelle.
-          </li>
-          <li
-            data-option="une"
-            data-retour="Chaque maison a-t-elle sa propre box, donc sa propre sortie ?"
-          >
-            Une seule adresse publique pour les deux maisons.
-          </li>
-        </ul>
-      </div>
-    </template>
-    <template data-item="PR1-4">
-      <div
-        class="ex"
-        data-widget="apparier"
-        data-verifie
-        data-options="switch=Switch|routeur=Routeur|dhcp=DHCP|parefeu=Pare-feu|modem=Modem (ONT avec la fibre)|ap=Point d’accès Wi-Fi"
-        data-reponse="Relie par câble le PC et l’imprimante de la maison=switch,Fait sortir de la maison la demande d’une page web=routeur,Donne son adresse IP à une tablette qui rejoint le Wi-Fi=dhcp,Filtre ce qui entre dans la maison=parefeu,Reçoit le signal de la ligne du FAI pour le reste de la box=modem,Envoie le Wi-Fi dans les pièces=ap"
-        data-aide1="Pour chaque rôle, demande-toi s’il parle d’appareils d’un même réseau, de deux réseaux, d’une ligne ou de réglages."
-        data-aide2="Prends les rôles un par un : lequel concerne la ligne du FAI, lequel concerne la radio, lequel concerne le filtrage ?"
-        data-aide3="Il y a six fonctions et six rôles. Commence par les deux rôles qui concernent la ligne et la radio, puis sépare ce qui relie des appareils de ce qui relie des réseaux."
-      >
-        <p class="q">Associe chaque rôle à la fonction de la box qui le tient.</p>
-        <ul class="a-apparier">
-          <li
-            data-element="Relie par câble le PC et l’imprimante de la maison"
-            data-retour="Ces deux appareils sont-ils dans le même réseau, ou dans deux réseaux ? Quelle fonction relie des appareils entre eux ?"
-            data-erreur="E3"
-          >
-            Relie par câble le PC et l’imprimante de la maison
-          </li>
-          <li
-            data-element="Fait sortir de la maison la demande d’une page web"
-            data-retour="Cette demande va-t-elle vers un autre réseau, ou reste-t-elle dans la maison ?"
-            data-erreur="E3"
-          >
-            Fait sortir de la maison la demande d’une page web
-          </li>
-          <li
-            data-element="Donne son adresse IP à une tablette qui rejoint le Wi-Fi"
-            data-retour="Quelle fonction travaille au moment où un appareil arrive, pour lui donner ses réglages ?"
-          >
-            Donne son adresse IP à une tablette qui rejoint le Wi-Fi
-          </li>
-          <li
-            data-element="Filtre ce qui entre dans la maison"
-            data-retour="Quelle fonction surveille le trafic plutôt que de le faire avancer ?"
-          >
-            Filtre ce qui entre dans la maison
-          </li>
-          <li
-            data-element="Reçoit le signal de la ligne du FAI pour le reste de la box"
-            data-retour="Quelle fonction s’occupe de la ligne qui entre dans la maison ?"
-          >
-            Reçoit le signal de la ligne du FAI pour le reste de la box
-          </li>
-          <li
-            data-element="Envoie le Wi-Fi dans les pièces"
-            data-retour="Quelle partie de la box est la partie radio ?"
-          >
-            Envoie le Wi-Fi dans les pièces
-          </li>
-        </ul>
-      </div>
-    </template>
-    <template data-variante="PR1-4">
-      <div
-        class="ex"
-        data-widget="apparier"
-        data-verifie
-        data-options="switch=Switch|routeur=Routeur|dhcp=DHCP|parefeu=Pare-feu|modem=Modem (ONT avec la fibre)|ap=Point d’accès Wi-Fi"
-        data-reponse="Relie par câble le PC du salon et la console de la chambre=switch,Fait avancer les paquets du réseau de la maison vers Internet=routeur,Attribue seul ses réglages réseau à un téléphone qui arrive=dhcp,Décide ce qui peut sortir de la maison=parefeu,Adapte le signal de la ligne qui entre dans la maison pour le reste de la box=modem,Permet à un téléphone de trouver le Wi-Fi de la maison=ap"
-        data-aide1="Pour chaque rôle, demande-toi s’il parle d’appareils d’un même réseau, de deux réseaux, d’une ligne ou de réglages."
-        data-aide2="Prends les rôles un par un : lequel concerne la ligne du FAI, lequel concerne la radio, lequel concerne le filtrage ?"
-        data-aide3="Il y a six fonctions et six rôles. Commence par les deux rôles qui concernent la ligne et la radio, puis sépare ce qui relie des appareils de ce qui relie des réseaux."
-      >
-        <p class="q">Associe chaque rôle à la fonction de la box qui le tient.</p>
-        <ul class="a-apparier">
-          <li
-            data-element="Relie par câble le PC du salon et la console de la chambre"
-            data-retour="Ces deux appareils sont-ils dans le même réseau, ou dans deux réseaux ? Quelle fonction relie des appareils entre eux ?"
-            data-erreur="E3"
-          >
-            Relie par câble le PC du salon et la console de la chambre
-          </li>
-          <li
-            data-element="Fait avancer les paquets du réseau de la maison vers Internet"
-            data-retour="Ces paquets restent-ils dans la maison, ou passent-ils d’un réseau à un autre ?"
-            data-erreur="E3"
-          >
-            Fait avancer les paquets du réseau de la maison vers Internet
-          </li>
-          <li
-            data-element="Attribue seul ses réglages réseau à un téléphone qui arrive"
-            data-retour="Quelle fonction travaille au moment où un appareil arrive, pour lui donner ses réglages ?"
-          >
-            Attribue seul ses réglages réseau à un téléphone qui arrive
-          </li>
-          <li
-            data-element="Décide ce qui peut sortir de la maison"
-            data-retour="Quelle fonction surveille le trafic plutôt que de le faire avancer ?"
-          >
-            Décide ce qui peut sortir de la maison
-          </li>
-          <li
-            data-element="Adapte le signal de la ligne qui entre dans la maison pour le reste de la box"
-            data-retour="Quelle fonction s’occupe de la ligne qui entre dans la maison ?"
-          >
-            Adapte le signal de la ligne qui entre dans la maison pour le reste de la box
-          </li>
-          <li
-            data-element="Permet à un téléphone de trouver le Wi-Fi de la maison"
-            data-retour="Quelle partie de la box est la partie radio ?"
-          >
-            Permet à un téléphone de trouver le Wi-Fi de la maison
-          </li>
-        </ul>
-      </div>
-    </template>
-    <template data-item="PR1-5">
-      <div
-        class="ex"
-        data-widget="choix"
-        data-reponse="dns"
-        data-verifie
-        data-aide1="Qu’est-ce qui change, pour le Mac, entre viser une adresse et viser un nom ?"
-        data-aide2="Quel travail faut-il faire pour un nom et pas pour une adresse ?"
-        data-aide3="Seuls les noms échouent : l’information qui sert uniquement aux noms est en cause."
-        data-justifier="Pourquoi le ping vers l’adresse répond-il, alors que le ping vers le nom ne trouve pas l’hôte ?"
-      >
-        <p>
-          Le Mac de Farid, chez lui, a reçu du DHCP l’adresse 192.168.1.42. Depuis son terminal, un
-          ping vers 198.51.100.50, une adresse publique, répond. Un ping vers un nom de site ne
-          trouve pas l’hôte.
-        </p>
-        <p class="q">Parmi les informations reçues du DHCP, laquelle est probablement fausse ?</p>
-        <ul class="options">
-          <li data-option="dns">L’adresse du DNS.</li>
-          <li
-            data-option="ip"
-            data-retour="Le Mac parle à la box avec cette adresse. Un ping vers une adresse publique répondrait-il avec une adresse fausse ?"
-          >
-            L’adresse IP du Mac.
-          </li>
-          <li
-            data-option="passerelle"
-            data-retour="Le ping vers une adresse publique répond. Un paquet sort-il de la maison sans passerelle ?"
-          >
-            La passerelle.
-          </li>
-        </ul>
-      </div>
-    </template>
-    <template data-variante="PR1-5">
-      <div
-        class="ex"
-        data-widget="choix"
-        data-reponse="dns"
-        data-verifie
-        data-aide1="Qu’est-ce qui change, pour le PC, entre viser une adresse et viser un nom ?"
-        data-aide2="Quel travail faut-il faire pour un nom et pas pour une adresse ?"
-        data-aide3="Seuls les noms échouent : le réglage qui sert uniquement aux noms est en cause."
-        data-justifier="Pourquoi le ping vers l’adresse répond-il, alors que le ping vers le nom ne trouve pas l’hôte ?"
-      >
-        <p>
-          Le PC de Yasmine vient de rejoindre le réseau d’une salle de formation. Un ping vers
-          198.51.100.50, une adresse publique, répond. Un ping vers un nom de site ne trouve pas
-          l’hôte.
-        </p>
-        <p class="q">Parmi les réglages reçus du DHCP, lequel est probablement faux ?</p>
-        <ul class="options">
-          <li data-option="dns">L’adresse du DNS.</li>
-          <li
-            data-option="masque"
-            data-retour="Le masque aide à lire les adresses du réseau. Le ping vers une adresse publique répondrait-il avec un masque faux ?"
-          >
-            Le masque.
-          </li>
-          <li
-            data-option="ip"
-            data-retour="Le PC joint une adresse publique par ping. Pourrait-il le faire sans adresse correcte ?"
-          >
-            L’adresse IP du PC.
-          </li>
-        </ul>
-      </div>
-    </template>
-    <template data-item="PR1-6">
-      <div
-        class="ex"
         data-widget="nombre"
         data-verifie
         data-reponse="20"
@@ -5024,7 +4783,7 @@ Itinéraire déterminé.</pre>
         </p>
       </div>
     </template>
-    <template data-variante="PR1-6">
+    <template data-variante="PR1-3">
       <div
         class="ex"
         data-widget="nombre"
@@ -5052,7 +4811,7 @@ Itinéraire déterminé.</pre>
         </p>
       </div>
     </template>
-    <template data-item="PR1-7">
+    <template data-item="PR1-4">
       <div
         class="ex"
         data-widget="releve"
@@ -5113,7 +4872,7 @@ Itinéraire déterminé.</pre>
         </div>
       </div>
     </template>
-    <template data-variante="PR1-7">
+    <template data-variante="PR1-4">
       <div
         class="ex"
         data-widget="releve"
@@ -5179,7 +4938,7 @@ Itinéraire déterminé.</pre>
         </div>
       </div>
     </template>
-    <template data-item="PR1-8">
+    <template data-item="PR1-5">
       <div
         class="ex"
         data-widget="releve"
@@ -5252,7 +5011,7 @@ Itinéraire déterminé.</pre>
         </div>
       </div>
     </template>
-    <template data-variante="PR1-8">
+    <template data-variante="PR1-5">
       <div
         class="ex"
         data-widget="releve"
@@ -5319,7 +5078,7 @@ Itinéraire déterminé.</pre>
         </div>
       </div>
     </template>
-    <template data-item="PR1-9">
+    <template data-item="PR1-6">
       <div
         class="ex"
         data-widget="choix"
@@ -5361,7 +5120,7 @@ Itinéraire déterminé.</pre>
         </ul>
       </div>
     </template>
-    <template data-variante="PR1-9">
+    <template data-variante="PR1-6">
       <div
         class="ex"
         data-widget="choix"
@@ -5399,6 +5158,246 @@ Itinéraire déterminé.</pre>
             data-retour="Le ping vise une adresse IP, pas un nom. Le DNS a-t-il du travail à faire ici ?"
           >
             Le DNS de Yasmine ne marche pas.
+          </li>
+        </ul>
+      </div>
+    </template>
+    <template data-item="PR1-7">
+      <div
+        class="ex"
+        data-widget="apparier"
+        data-verifie
+        data-options="switch=Switch|routeur=Routeur|dhcp=DHCP|parefeu=Pare-feu|modem=Modem (ONT avec la fibre)|ap=Point d’accès Wi-Fi"
+        data-reponse="Relie par câble le PC et l’imprimante de la maison=switch,Fait sortir de la maison la demande d’une page web=routeur,Donne son adresse IP à une tablette qui rejoint le Wi-Fi=dhcp,Filtre ce qui entre dans la maison=parefeu,Reçoit le signal de la ligne du FAI pour le reste de la box=modem,Envoie le Wi-Fi dans les pièces=ap"
+        data-aide1="Pour chaque rôle, demande-toi s’il parle d’appareils d’un même réseau, de deux réseaux, d’une ligne ou de réglages."
+        data-aide2="Prends les rôles un par un : lequel concerne la ligne du FAI, lequel concerne la radio, lequel concerne le filtrage ?"
+        data-aide3="Il y a six fonctions et six rôles. Commence par les deux rôles qui concernent la ligne et la radio, puis sépare ce qui relie des appareils de ce qui relie des réseaux."
+      >
+        <p class="q">Associe chaque rôle à la fonction de la box qui le tient.</p>
+        <ul class="a-apparier">
+          <li
+            data-element="Relie par câble le PC et l’imprimante de la maison"
+            data-retour="Ces deux appareils sont-ils dans le même réseau, ou dans deux réseaux ? Quelle fonction relie des appareils entre eux ?"
+            data-erreur="E3"
+          >
+            Relie par câble le PC et l’imprimante de la maison
+          </li>
+          <li
+            data-element="Fait sortir de la maison la demande d’une page web"
+            data-retour="Cette demande va-t-elle vers un autre réseau, ou reste-t-elle dans la maison ?"
+            data-erreur="E3"
+          >
+            Fait sortir de la maison la demande d’une page web
+          </li>
+          <li
+            data-element="Donne son adresse IP à une tablette qui rejoint le Wi-Fi"
+            data-retour="Quelle fonction travaille au moment où un appareil arrive, pour lui donner ses réglages ?"
+          >
+            Donne son adresse IP à une tablette qui rejoint le Wi-Fi
+          </li>
+          <li
+            data-element="Filtre ce qui entre dans la maison"
+            data-retour="Quelle fonction surveille le trafic plutôt que de le faire avancer ?"
+          >
+            Filtre ce qui entre dans la maison
+          </li>
+          <li
+            data-element="Reçoit le signal de la ligne du FAI pour le reste de la box"
+            data-retour="Quelle fonction s’occupe de la ligne qui entre dans la maison ?"
+          >
+            Reçoit le signal de la ligne du FAI pour le reste de la box
+          </li>
+          <li
+            data-element="Envoie le Wi-Fi dans les pièces"
+            data-retour="Quelle partie de la box est la partie radio ?"
+          >
+            Envoie le Wi-Fi dans les pièces
+          </li>
+        </ul>
+      </div>
+    </template>
+    <template data-variante="PR1-7">
+      <div
+        class="ex"
+        data-widget="apparier"
+        data-verifie
+        data-options="switch=Switch|routeur=Routeur|dhcp=DHCP|parefeu=Pare-feu|modem=Modem (ONT avec la fibre)|ap=Point d’accès Wi-Fi"
+        data-reponse="Relie par câble le PC du salon et la console de la chambre=switch,Fait avancer les paquets du réseau de la maison vers Internet=routeur,Attribue seul ses réglages réseau à un téléphone qui arrive=dhcp,Décide ce qui peut sortir de la maison=parefeu,Adapte le signal de la ligne qui entre dans la maison pour le reste de la box=modem,Permet à un téléphone de trouver le Wi-Fi de la maison=ap"
+        data-aide1="Pour chaque rôle, demande-toi s’il parle d’appareils d’un même réseau, de deux réseaux, d’une ligne ou de réglages."
+        data-aide2="Prends les rôles un par un : lequel concerne la ligne du FAI, lequel concerne la radio, lequel concerne le filtrage ?"
+        data-aide3="Il y a six fonctions et six rôles. Commence par les deux rôles qui concernent la ligne et la radio, puis sépare ce qui relie des appareils de ce qui relie des réseaux."
+      >
+        <p class="q">Associe chaque rôle à la fonction de la box qui le tient.</p>
+        <ul class="a-apparier">
+          <li
+            data-element="Relie par câble le PC du salon et la console de la chambre"
+            data-retour="Ces deux appareils sont-ils dans le même réseau, ou dans deux réseaux ? Quelle fonction relie des appareils entre eux ?"
+            data-erreur="E3"
+          >
+            Relie par câble le PC du salon et la console de la chambre
+          </li>
+          <li
+            data-element="Fait avancer les paquets du réseau de la maison vers Internet"
+            data-retour="Ces paquets restent-ils dans la maison, ou passent-ils d’un réseau à un autre ?"
+            data-erreur="E3"
+          >
+            Fait avancer les paquets du réseau de la maison vers Internet
+          </li>
+          <li
+            data-element="Attribue seul ses réglages réseau à un téléphone qui arrive"
+            data-retour="Quelle fonction travaille au moment où un appareil arrive, pour lui donner ses réglages ?"
+          >
+            Attribue seul ses réglages réseau à un téléphone qui arrive
+          </li>
+          <li
+            data-element="Décide ce qui peut sortir de la maison"
+            data-retour="Quelle fonction surveille le trafic plutôt que de le faire avancer ?"
+          >
+            Décide ce qui peut sortir de la maison
+          </li>
+          <li
+            data-element="Adapte le signal de la ligne qui entre dans la maison pour le reste de la box"
+            data-retour="Quelle fonction s’occupe de la ligne qui entre dans la maison ?"
+          >
+            Adapte le signal de la ligne qui entre dans la maison pour le reste de la box
+          </li>
+          <li
+            data-element="Permet à un téléphone de trouver le Wi-Fi de la maison"
+            data-retour="Quelle partie de la box est la partie radio ?"
+          >
+            Permet à un téléphone de trouver le Wi-Fi de la maison
+          </li>
+        </ul>
+      </div>
+    </template>
+    <template data-item="PR1-8">
+      <div
+        class="ex"
+        data-widget="choix"
+        data-reponse="deux"
+        data-verifie
+        data-aide1="Les deux PC sont dans deux maisons différentes. Qu’est-ce qui sort réellement de chaque maison ?"
+        data-aide2="Quelle fonction de la box change l’adresse écrite sur un paquet qui part ?"
+        data-aide3="Chaque box met sa propre adresse publique à la place de l’adresse privée. Les deux maisons ont deux box."
+        data-justifier="La tablette de Yasmine et le téléphone de Farid ont la même adresse, 192.168.1.24. Qu’en penses-tu, et pourquoi ?"
+      >
+        <p class="q">
+          Yasmine et Farid ouvrent le site de la formation en même temps, chacun chez soi. La
+          tablette de Yasmine et le téléphone de Farid ont la même adresse, 192.168.1.24. Que voit
+          le site ?
+        </p>
+        <ul class="options">
+          <li data-option="deux">Deux adresses publiques différentes, celles de leurs deux box.</li>
+          <li
+            data-option="memeip"
+            data-retour="Cette adresse sort-elle de la maison de Yasmine, de celle de Farid ? Que met chaque box à la place ?"
+            data-erreur="E2"
+          >
+            Deux demandes venues de 192.168.1.24 : il ne sait pas les distinguer.
+          </li>
+          <li data-option="une" data-retour="Yasmine et Farid ont-ils la même box ?">
+            Une seule adresse publique, partagée par Yasmine et Farid.
+          </li>
+        </ul>
+      </div>
+    </template>
+    <template data-variante="PR1-8">
+      <div
+        class="ex"
+        data-widget="choix"
+        data-reponse="deux"
+        data-verifie
+        data-aide1="Les deux appareils sont dans deux maisons différentes. Qu’est-ce qui quitte vraiment chaque maison ?"
+        data-aide2="Quelle fonction de la box change l’adresse écrite sur un paquet qui part ?"
+        data-aide3="Chaque box met sa propre adresse publique à la place de l’adresse privée. Les deux maisons ont deux box."
+        data-justifier="Un appareil de Yasmine et un appareil de Farid ont la même adresse, 10.0.0.5. Qu’en penses-tu, et pourquoi ?"
+      >
+        <p class="q">
+          Chez Yasmine et chez Farid, un appareil porte l’adresse 10.0.0.5. Les deux ouvrent un même
+          site. Que voit le site ?
+        </p>
+        <ul class="options">
+          <li data-option="deux">Deux adresses publiques différentes, une par maison.</li>
+          <li
+            data-option="memeip"
+            data-retour="L’adresse 10.0.0.5 sort-elle des maisons ? Que met chaque box sur les paquets qui partent ?"
+            data-erreur="E2"
+          >
+            Deux demandes venues de 10.0.0.5 : il ne peut pas savoir laquelle est laquelle.
+          </li>
+          <li
+            data-option="une"
+            data-retour="Chaque maison a-t-elle sa propre box, donc sa propre sortie ?"
+          >
+            Une seule adresse publique pour les deux maisons.
+          </li>
+        </ul>
+      </div>
+    </template>
+    <template data-item="PR1-9">
+      <div
+        class="ex"
+        data-widget="choix"
+        data-reponse="dns"
+        data-verifie
+        data-aide1="Qu’est-ce qui change, pour le Mac, entre viser une adresse et viser un nom ?"
+        data-aide2="Quel travail faut-il faire pour un nom et pas pour une adresse ?"
+        data-aide3="Seuls les noms échouent : l’information qui sert uniquement aux noms est en cause."
+        data-justifier="Pourquoi le ping vers l’adresse répond-il, alors que le ping vers le nom ne trouve pas l’hôte ?"
+      >
+        <p>
+          Le Mac de Farid, chez lui, a reçu du DHCP l’adresse 192.168.1.42. Depuis son terminal, un
+          ping vers 198.51.100.50, une adresse publique, répond. Un ping vers un nom de site ne
+          trouve pas l’hôte.
+        </p>
+        <p class="q">Parmi les informations reçues du DHCP, laquelle est probablement fausse ?</p>
+        <ul class="options">
+          <li data-option="dns">L’adresse du DNS.</li>
+          <li
+            data-option="ip"
+            data-retour="Le Mac parle à la box avec cette adresse. Un ping vers une adresse publique répondrait-il avec une adresse fausse ?"
+          >
+            L’adresse IP du Mac.
+          </li>
+          <li
+            data-option="passerelle"
+            data-retour="Le ping vers une adresse publique répond. Un paquet sort-il de la maison sans passerelle ?"
+          >
+            La passerelle.
+          </li>
+        </ul>
+      </div>
+    </template>
+    <template data-variante="PR1-9">
+      <div
+        class="ex"
+        data-widget="choix"
+        data-reponse="dns"
+        data-verifie
+        data-aide1="Qu’est-ce qui change, pour le PC, entre viser une adresse et viser un nom ?"
+        data-aide2="Quel travail faut-il faire pour un nom et pas pour une adresse ?"
+        data-aide3="Seuls les noms échouent : le réglage qui sert uniquement aux noms est en cause."
+        data-justifier="Pourquoi le ping vers l’adresse répond-il, alors que le ping vers le nom ne trouve pas l’hôte ?"
+      >
+        <p>
+          Le PC de Yasmine vient de rejoindre le réseau d’une salle de formation. Un ping vers
+          198.51.100.50, une adresse publique, répond. Un ping vers un nom de site ne trouve pas
+          l’hôte.
+        </p>
+        <p class="q">Parmi les réglages reçus du DHCP, lequel est probablement faux ?</p>
+        <ul class="options">
+          <li data-option="dns">L’adresse du DNS.</li>
+          <li
+            data-option="masque"
+            data-retour="Le masque aide à lire les adresses du réseau. Le ping vers une adresse publique répondrait-il avec un masque faux ?"
+          >
+            Le masque.
+          </li>
+          <li
+            data-option="ip"
+            data-retour="Le PC joint une adresse publique par ping. Pourrait-il le faire sans adresse correcte ?"
+          >
+            L’adresse IP du PC.
           </li>
         </ul>
       </div>
@@ -5612,7 +5611,7 @@ Itinéraire déterminé.</pre>
           donne « Les bits et les octets sont-ils en même nombre ? Combien de bits y a-t-il dans un
           octet ? », 640 donne « Passer de bits à octets doit-il rendre le nombre plus grand ou plus
           petit ? », tout autre nombre donne « Combien de bits y a-t-il dans un octet ? Le nombre de
-          Mo/s sera-t-il plus petit ou plus grand que celui de Mbit/s ? ». PR1-6 : 2,5 et 160
+          Mo/s sera-t-il plus petit ou plus grand que celui de Mbit/s ? ». PR1-3 : 2,5 et 160
           portent chacun un retour qui nomme les deux unités, tout autre nombre le même message
           général.
         </li>
@@ -5655,13 +5654,13 @@ Itinéraire déterminé.</pre>
         <li>
           E1 (le Wi-Fi pris pour l’accès à Internet) est marquée par une option en p1, dans « Le
           Wi-Fi n’est qu’un lien » (lien) et en pratique (PR1-1 et sa variante). E2 (une IP unique
-          au monde) par une option en p2, dans nat et boxpage, et en pratique (PR1-3 et sa
+          au monde) par une option en p2, dans nat et boxpage, et en pratique (PR1-8 et sa
           variante). E3 (routeur et switch, DNS et DHCP) par une option en p3 et p4, dans switch et
-          dnsdhcp, et en pratique par les deux lignes de PR1-4 qui opposent le switch et le routeur
+          dnsdhcp, et en pratique par les deux lignes de PR1-7 qui opposent le switch et le routeur
           (l'outil marque la ligne, quelle que soit la mauvaise réponse) et par l'explication de
-          PR1-5 (DNS et DHCP). Les relevés ne portent aucune erreur critique : une ligne mal choisie
+          PR1-9 (DNS et DHCP). Les relevés ne portent aucune erreur critique : une ligne mal choisie
           y est un retour, pas une confusion de rôles. E4 (Mbit/s et Mo/s) par une option en p5, par
-          les valeurs piégées de conv et en pratique (PR1-6 et sa variante). Le prétest touche les
+          les valeurs piégées de conv et en pratique (PR1-3 et sa variante). Le prétest touche les
           quatre avant toute explication, chaque essai est repris au moment où le cours y répond
           (data-si-essai).
         </li>
@@ -5679,13 +5678,13 @@ Itinéraire déterminé.</pre>
         </li>
         <li>
           Dans la pratique, après une solution vue, l’item se refait sur sa variante, puis
-          l’apprenant explique. L’ordre des items va du plus guidé au plus seul : PR1-1, 2, 6, 7, 8
-          et 9 ont un encadré « pour lire » qui redonne les mots ou la convention, PR1-4, 3 et 5
-          n’en ont plus, PR1-10 n’a aucune définition et ne redonne que la liste des douze mots. Le
-          geste (convertir, relever) ne prend que trois items sur dix, PR1-6, PR1-7 et PR1-8 ; PR1-2
-          range des adresses selon trois plages données, ce qui est une lecture ; compté comme
-          geste, il ferait quatre sur dix. Trois items sur dix portent une demande d’explication
-          (data-justifier : PR1-3, PR1-5, PR1-9), sur ce que l’écran ne montre pas ; le manifeste la
+          l’apprenant explique. L’ordre des items va du plus guidé au plus seul : PR1-1 à PR1-6 ont
+          un encadré « pour lire » qui redonne les mots ou la convention, PR1-7, PR1-8 et PR1-9 n’en
+          ont plus, PR1-10 n’a aucune définition et ne redonne que la liste des douze mots. Le geste
+          (convertir, relever) ne prend que trois items sur dix, PR1-3, PR1-4 et PR1-5 ; PR1-2 range
+          des adresses selon trois plages données, ce qui est une lecture ; compté comme geste, il
+          ferait quatre sur dix. Trois items sur dix portent une demande d’explication
+          (data-justifier : PR1-6, PR1-8, PR1-9), sur ce que l’écran ne montre pas ; le manifeste la
           déclare, l’IA la juge, et l’item n’est réussi qu’avec une explication Solide.
         </li>
         <li>
@@ -5867,53 +5866,53 @@ Itinéraire déterminé.</pre>
         ],
         "explication": [
           {
-            "id": "PR1-3",
-            "question": "La tablette de Yasmine et le téléphone de Farid ont la même adresse, 192.168.1.24. Qu’en penses-tu, et pourquoi ?",
-            "attendu": "Ces adresses sont privées : elles ne valent que dans le réseau local de chaque maison, donc deux maisons peuvent les répéter. Erreur à repérer : croire qu’une adresse IP est unique au monde. Déduit de l’étape « Les adresses de la maison ».",
-            "erreurs": ["E2"],
-            "item": "PR1-3"
-          },
-          {
-            "id": "PR1-3:variante",
-            "question": "Un appareil de Yasmine et un appareil de Farid ont la même adresse, 10.0.0.5. Qu’en penses-tu, et pourquoi ?",
-            "attendu": "Ces adresses sont privées : elles ne valent que dans le réseau local de chaque maison, donc deux maisons peuvent les répéter. Erreur à repérer : croire qu’une adresse IP est unique au monde. Déduit de l’étape « Les adresses de la maison ».",
-            "erreurs": ["E2"],
-            "item": "PR1-3"
-          },
-          {
-            "id": "PR1-5",
-            "question": "Pourquoi le ping vers l’adresse répond-il, alors que le ping vers le nom ne trouve pas l’hôte ?",
-            "attendu": "Une adresse tapée n’a pas besoin d’être traduite ; un nom, si, par le DNS. L’adresse du DNS, donnée par le DHCP avec les autres réglages, est donc probablement fausse : seuls les noms échouent. Erreur à repérer : confondre le DNS, qui traduit un nom, et le DHCP, qui distribue les réglages. Déduit de l’étape « DNS ou DHCP ».",
-            "erreurs": ["E3"],
-            "item": "PR1-5"
-          },
-          {
-            "id": "PR1-5:variante",
-            "question": "Pourquoi le ping vers l’adresse répond-il, alors que le ping vers le nom ne trouve pas l’hôte ?",
-            "attendu": "Une adresse tapée n’a pas besoin d’être traduite ; un nom, si, par le DNS. L’adresse du DNS, donnée par le DHCP avec les autres réglages, est donc probablement fausse : seuls les noms échouent. Erreur à repérer : confondre le DNS, qui traduit un nom, et le DHCP, qui distribue les réglages. Déduit de l’étape « DNS ou DHCP ».",
-            "erreurs": ["E3"],
-            "item": "PR1-5"
-          },
-          {
-            "id": "PR1-9",
+            "id": "PR1-6",
             "question": "Qu’est-ce que ce ping teste que l’ouverture des documents ne teste pas ?",
             "attendu": "Le ping teste si la machine répond à ce petit message précis. L’ouverture des documents prouve déjà que le chemin marche ; or un serveur, ou un pare-feu devant lui, peut refuser de répondre aux ping sans être en panne. Déduit de l’étape « Tester la chaîne ».",
             "erreurs": [],
+            "item": "PR1-6"
+          },
+          {
+            "id": "PR1-6:variante",
+            "question": "Qu’est-ce que ce ping teste que la lecture des courriers ne teste pas ?",
+            "attendu": "Le ping teste si la machine répond à ce petit message précis. La lecture des courriers prouve déjà que le chemin marche ; or un serveur, ou un pare-feu devant lui, peut refuser de répondre aux ping sans être en panne. Déduit de l’étape « Tester la chaîne ».",
+            "erreurs": [],
+            "item": "PR1-6"
+          },
+          {
+            "id": "PR1-8",
+            "question": "La tablette de Yasmine et le téléphone de Farid ont la même adresse, 192.168.1.24. Qu’en penses-tu, et pourquoi ?",
+            "attendu": "Ces adresses sont privées : elles ne valent que dans le réseau local de chaque maison, donc deux maisons peuvent les répéter. Erreur à repérer : croire qu’une adresse IP est unique au monde. Déduit de l’étape « Les adresses de la maison ».",
+            "erreurs": ["E2"],
+            "item": "PR1-8"
+          },
+          {
+            "id": "PR1-8:variante",
+            "question": "Un appareil de Yasmine et un appareil de Farid ont la même adresse, 10.0.0.5. Qu’en penses-tu, et pourquoi ?",
+            "attendu": "Ces adresses sont privées : elles ne valent que dans le réseau local de chaque maison, donc deux maisons peuvent les répéter. Erreur à repérer : croire qu’une adresse IP est unique au monde. Déduit de l’étape « Les adresses de la maison ».",
+            "erreurs": ["E2"],
+            "item": "PR1-8"
+          },
+          {
+            "id": "PR1-9",
+            "question": "Pourquoi le ping vers l’adresse répond-il, alors que le ping vers le nom ne trouve pas l’hôte ?",
+            "attendu": "Une adresse tapée n’a pas besoin d’être traduite ; un nom, si, par le DNS. L’adresse du DNS, donnée par le DHCP avec les autres réglages, est donc probablement fausse : seuls les noms échouent. Erreur à repérer : confondre le DNS, qui traduit un nom, et le DHCP, qui distribue les réglages. Déduit de l’étape « DNS ou DHCP ».",
+            "erreurs": ["E3"],
             "item": "PR1-9"
           },
           {
             "id": "PR1-9:variante",
-            "question": "Qu’est-ce que ce ping teste que la lecture des courriers ne teste pas ?",
-            "attendu": "Le ping teste si la machine répond à ce petit message précis. La lecture des courriers prouve déjà que le chemin marche ; or un serveur, ou un pare-feu devant lui, peut refuser de répondre aux ping sans être en panne. Déduit de l’étape « Tester la chaîne ».",
-            "erreurs": [],
+            "question": "Pourquoi le ping vers l’adresse répond-il, alors que le ping vers le nom ne trouve pas l’hôte ?",
+            "attendu": "Une adresse tapée n’a pas besoin d’être traduite ; un nom, si, par le DNS. L’adresse du DNS, donnée par le DHCP avec les autres réglages, est donc probablement fausse : seuls les noms échouent. Erreur à repérer : confondre le DNS, qui traduit un nom, et le DHCP, qui distribue les réglages. Déduit de l’étape « DNS ou DHCP ».",
+            "erreurs": ["E3"],
             "item": "PR1-9"
           }
         ],
         "restitution": [
           {
             "id": "B06-R1",
-            "question": "Farid veut comprendre la maison de Yasmine. Décris-lui le chemin d’une page, de la tablette de Yasmine au site de la formation, avec tous les maillons dans l’ordre. Puis dis ce que prouve l’affichage « connectée au Wi-Fi » sur la tablette.",
-            "attendu": "La tablette se relie par le Wi-Fi à la box ; la box est reliée au FAI ; le FAI la relie à Internet, où le serveur du site garde la page, qui revient par le même chemin. « Connectée au Wi-Fi » ne prouve que le premier maillon, entre la tablette et la box : le reste de la chaîne peut casser sans que le Wi-Fi le montre. Erreur à repérer : croire que le Wi-Fi est l’accès à Internet. Déduit de l’étape « La chaîne de la maison ».",
+            "question": "Chez lui, Farid ouvre le site de sa banque sur son téléphone, relié au Wi-Fi. Décris-lui le chemin de la page, du téléphone au serveur de la banque, avec tous les maillons dans l’ordre. Puis dis ce que prouve l’affichage « connecté au Wi-Fi » sur son téléphone.",
+            "attendu": "Le téléphone se relie par le Wi-Fi à la box de Farid ; la box est reliée par sa ligne au FAI ; le FAI la relie à Internet, où le serveur de la banque, chez son hébergeur, garde la page, qui revient par le même chemin. « Connecté au Wi-Fi » ne prouve que le premier maillon, entre le téléphone et la box : le reste de la chaîne peut casser sans que le Wi-Fi le montre. Erreur à repérer : croire que le Wi-Fi est l’accès à Internet. Déduit de l’étape « La chaîne de la maison ».",
             "erreurs": ["E1"]
           },
           {
@@ -5924,8 +5923,8 @@ Itinéraire déterminé.</pre>
           },
           {
             "id": "B06-R3",
-            "question": "Dans l’appartement de Farid, un Mac, un téléphone et une tablette ouvrent chacun le même site. Que voit le site comme adresse d’origine de ces trois demandes, et que devient l’adresse privée de chaque appareil à la sortie de l’appartement ?",
-            "attendu": "Le site voit une seule adresse, l’adresse publique de la box de Farid. À l’intérieur, le DHCP donne à chaque appareil une adresse privée, qui ne vaut que dans le réseau local ; en sortant, la box la remplace par son adresse publique (NAT) et la rétablit au retour. Une adresse IP n’est donc pas unique au monde. Erreur à repérer : croire que le site voit l’adresse de chaque appareil. Déduit de l’étape « Les adresses de la maison ».",
+            "question": "Dans une salle de formation, vingt ordinateurs reliés à la même box ouvrent en même temps le même site. Que voit le site comme adresse d’origine de ces vingt demandes, et que devient l’adresse privée de chaque ordinateur à la sortie de la salle ?",
+            "attendu": "Le site voit une seule adresse, l’adresse publique de la box de la salle. À l’intérieur, le DHCP donne à chaque ordinateur une adresse privée, qui ne vaut que dans le réseau local ; en sortant, la box la remplace par son adresse publique (NAT) et la rétablit au retour. Une adresse IP n’est donc pas unique au monde. Erreur à repérer : croire que le site voit l’adresse de chaque ordinateur. Déduit de l’étape « Les adresses de la maison ».",
             "erreurs": ["E2"]
           },
           {
@@ -5956,7 +5955,7 @@ Itinéraire déterminé.</pre>
           },
           {
             "id": "B06-Q3",
-            "question": "Chez Farid, dont la box a l’adresse publique 203.0.113.60, le Mac et le téléphone ouvrent en même temps le même site. Comment la réponse du site retrouve-t-elle le bon appareil ?",
+            "question": "Chez Farid, dont la box a l’adresse publique 198.51.100.7, le Mac et le téléphone ouvrent en même temps le même site. Comment la réponse du site retrouve-t-elle le bon appareil ?",
             "attendu": "La box a remplacé l’adresse privée de l’appareil par son adresse publique à la sortie, et retient quel appareil a fait quelle demande : au retour, elle rétablit l’adresse privée du bon appareil. C’est le NAT. Déduit de l’étape « Les adresses de la maison ».",
             "erreurs": ["E2"]
           },
@@ -5974,14 +5973,14 @@ Itinéraire déterminé.</pre>
           },
           {
             "id": "B06-Q6",
-            "question": "Farid lance traceroute vers 198.51.100.50 depuis son Mac. La première ligne affiche 192.168.1.1, la deuxième 198.51.100.1, la troisième « * * * ». De quelle machine parle la première ligne, et que dit la troisième ?",
-            "attendu": "La première ligne est le premier saut, la passerelle, la box de Farid. Une ligne « * * * » dit que cette machine n’a pas répondu : c’est fréquent et normal, le paquet est passé si les sauts suivants répondent. Déduit de l’étape « Tester la chaîne ».",
+            "question": "Farid lance traceroute vers 198.51.100.50 depuis son Mac, dont la passerelle est 192.168.1.1. La première ligne affiche 192.168.1.1. De quelle machine parle cette ligne, et pourquoi est-ce elle qui vient en premier ?",
+            "attendu": "C’est la box de Farid : 192.168.1.1 est sa passerelle. Elle vient en premier parce que tout paquet destiné à un autre réseau part d’abord vers la passerelle, qui le fait sortir de la maison : c’est le premier saut. Déduit de l’étape « Tester la chaîne ».",
             "erreurs": []
           },
           {
             "id": "B06-Q7",
-            "question": "Hexadécimal, pour lire : 0x annonce un nombre hexadécimal ; chaque paire de chiffres est un octet ; ff vaut 255 et 00 vaut 0. Sur le Mac de Farid, chez lui, ifconfig affiche « netmask 0xffffff00 » pour l’adresse 192.168.1.42. Quel est ce masque avec quatre nombres, et son téléphone, en 192.168.1.43, est-il dans le même réseau que le Mac ?",
-            "attendu": "255.255.255.0, car ff vaut 255 et 00 vaut 0. Avec ce masque, les trois premiers nombres désignent le réseau : 192.168.1.42 et 192.168.1.43 commencent par les mêmes trois nombres, ils sont dans le même réseau. Déduit des étapes « Le terminal » et « Les adresses de la maison ».",
+            "question": "Hexadécimal, pour lire : 0x annonce un nombre hexadécimal ; chaque paire de chiffres est un octet ; ff vaut 255 et 00 vaut 0. Dans une salle de formation, ifconfig affiche sur un Mac « inet 10.0.0.12 netmask 0xffffff00 ». Quel est ce masque avec quatre nombres, et l’imprimante de la salle, en 10.0.0.40, est-elle dans le même réseau que le Mac ?",
+            "attendu": "255.255.255.0, car ff vaut 255 et 00 vaut 0. Avec ce masque, les trois premiers nombres désignent le réseau : 10.0.0.12 et 10.0.0.40 commencent par les mêmes trois nombres, ils sont dans le même réseau. Déduit des étapes « Le terminal » et « Les adresses de la maison ».",
             "erreurs": []
           },
           {
@@ -6047,8 +6046,8 @@ Itinéraire déterminé.</pre>
             "id": "B06-T3",
             "type": "transfert",
             "forme": "hors_champ",
-            "consigne": "Yasmine ajoute dans le couloir un répéteur Wi-Fi, un boîtier qui prolonge la portée du Wi-Fi. Dans la cuisine, le Wi-Fi est reçu mieux, mais les pages s’ouvrent aussi lentement. Qu’est-ce que le répéteur change dans la chaîne, et qu’est-ce qu’il ne change pas ?",
-            "attendu": "Aucune connaissance du répéteur n’est exigée : la question le définit, et le sujet est hors de ce que la fiche enseigne. Il agit sur le premier maillon, le Wi-Fi entre l’appareil et la box : le signal est meilleur. Il ne change rien à la ligne du FAI ni au débit de l’offre, qui sont des maillons plus loin dans la chaîne. Erreur à repérer : croire que le Wi-Fi est l’accès à Internet. Déduit de l’étape « La chaîne de la maison ».",
+            "consigne": "Yasmine ajoute dans le couloir un répéteur Wi-Fi, un boîtier qui prolonge la portée du Wi-Fi. Dans la cuisine, le Wi-Fi est mieux reçu, mais les pages s’ouvrent aussi lentement. Qu’est-ce que le répéteur change dans la chaîne, et qu’est-ce qu’il ne change pas ?",
+            "attendu": "Aucune connaissance du répéteur n’est exigée : la question le définit. Il agit sur le premier maillon, le Wi-Fi entre l’appareil et la box : le signal est meilleur. Il ne change rien à la ligne du FAI ni au débit de l’offre, qui sont des maillons plus loin dans la chaîne. Erreur à repérer : croire que le Wi-Fi est l’accès à Internet. Déduit de l’étape « La chaîne de la maison ».",
             "erreurs": ["E1"]
           }
         ],
@@ -6064,6 +6063,15 @@ Itinéraire déterminé.</pre>
                 "id": "PR1-2"
               },
               {
+                "id": "PR1-3"
+              },
+              {
+                "id": "PR1-4"
+              },
+              {
+                "id": "PR1-5"
+              },
+              {
                 "id": "PR1-6"
               },
               {
@@ -6074,15 +6082,6 @@ Itinéraire déterminé.</pre>
               },
               {
                 "id": "PR1-9"
-              },
-              {
-                "id": "PR1-4"
-              },
-              {
-                "id": "PR1-3"
-              },
-              {
-                "id": "PR1-5"
               },
               {
                 "id": "PR1-10"
@@ -6125,7 +6124,7 @@ Itinéraire déterminé.</pre>
           {
             "id": "B06-K4",
             "recto": "Dans une salle de formation, un ordinateur a ces réglages saisis à la main : adresse 10.0.0.31, masque 255.255.255.0, DNS 10.0.0.1. Il joint l’imprimante de la salle, mais aucun site. Quel réglage lui manque, et d’où vient-il d’ordinaire ?",
-            "verso": "La passerelle, l’adresse de la box de la salle, ici 10.0.0.1. D’ordinaire, le DHCP la donne avec l’adresse, le masque et le DNS ; sans elle, rien ne sort de la salle. Déduit des étapes « DNS ou DHCP » et « Les adresses de la maison »."
+            "verso": "La passerelle, l’adresse de la box de la salle vue de l’intérieur. D’ordinaire, le DHCP la donne avec l’adresse, le masque et le DNS ; sans elle, rien ne sort de la salle. Déduit des étapes « DNS ou DHCP » et « Les adresses de la maison »."
           },
           {
             "id": "B06-K5",
@@ -6174,7 +6173,7 @@ Itinéraire déterminé.</pre>
           },
           {
             "id": "B06-K14",
-            "recto": "La voisine de Yasmine lui propose de réinitialiser la box « pour voir si ça règle le problème ». Que risque Yasmine, et que peut-elle faire à la place ?",
+            "recto": "Farid propose à Yasmine de réinitialiser sa box « pour voir si ça règle le problème ». Que risque Yasmine, et que peut-elle faire à la place ?",
             "verso": "Une réinitialisation efface les réglages et peut couper la maison d’Internet. À la place, Yasmine lit les pages de sa box sans rien modifier : les appareils connectés, la protection du Wi-Fi et l’adresse vue d’Internet. Déduit de l’étape « La box vue de l’intérieur »."
           },
           {
@@ -6472,8 +6471,7 @@ Itinéraire déterminé.</pre>
           "Les tests de débit, curl et nslookup (le DNS en détail relève du bloc suivant)",
           "Les ports, TLS, et le fonctionnement interne d’un pare-feu : la fiche dit seulement qu’il filtre",
           "Les plages d’adresses privées apprises par cœur : elles sont redonnées à chaque exercice qui les emploie",
-          "Les adresses non publiques que certaines lignes donnent à la box (CGNAT) : l’atelier note le cas sans l’expliquer ni l’interroger",
-          "Le répéteur Wi-Fi : défini en une phrase dans la seule question de transfert hors champ B06-T3, sans être enseigné ; aucune connaissance n’en est exigée"
+          "Les adresses non publiques que certaines lignes donnent à la box (CGNAT) : l’atelier note le cas sans l’expliquer ni l’interroger"
         ]
       }
     </script>
