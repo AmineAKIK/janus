@@ -3704,15 +3704,23 @@ en6: flags=8863&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
       <div data-ecran="La passerelle et le DNS">
         <p class="accroche">
           Il reste deux informations à relever : la passerelle et le DNS. Elles ne sont pas au même
-          endroit sous Windows et sous macOS.
+          endroit sous Windows et sous macOS. Voici, pour mémoire, ce qu’ifconfig a écrit sur le Mac
+          de Farid pour l’interface qui sert.
         </p>
+        <pre
+          class="listing"
+          data-lecture="La sortie d’ifconfig de Farid pour en6 : une ligne inet avec l’adresse 192.168.1.42 et le masque 0xffffff00, et une ligne status active. Rien d’autre."
+        >
+en6: flags=8863&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
+	inet 192.168.1.42 netmask 0xffffff00 broadcast 192.168.1.255
+	status: active</pre>
         <div
           class="ex"
           data-widget="choix"
           data-id="predpass"
           data-reponse="non"
           data-prediction
-          data-aide1="Que donnait la sortie d’ifconfig de Farid : combien de lignes par interface ?"
+          data-aide1="Dans cette sortie, quelles informations lis-tu, et lesquelles manquent ?"
           data-aide2="Deux systèmes, deux commandes : rien n’oblige la seconde à donner les mêmes informations que la première."
           data-aide3="ifconfig ne décrit que les interfaces ; les réglages du réseau sont ailleurs sous macOS."
         >
@@ -3724,13 +3732,13 @@ en6: flags=8863&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
             <li data-option="non">Non : il devra les lire ailleurs.</li>
             <li
               data-option="oui"
-              data-retour="Relis la sortie de Farid, à l’écran « Lire la sortie » : y as-tu vu une ligne pour la passerelle ?"
+              data-retour="Dans cette sortie, y a-t-il une ligne pour la passerelle ?"
             >
               Oui, comme ipconfig /all sous Windows.
             </li>
             <li
               data-option="dns"
-              data-retour="La sortie de Farid donnait inet et netmask. Y avait-il une ligne de plus ?"
+              data-retour="Cette sortie donne inet et netmask. Y a-t-il une ligne pour le DNS ?"
             >
               Seulement le DNS, pas la passerelle.
             </li>
@@ -3854,6 +3862,14 @@ en6: flags=8863&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
           Avant de lancer ses trois tests, Yasmine se demande ce que donnerait le troisième dans un
           cas précis.
         </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Les trois tests de Yasmine, pour lire :</p>
+          <ol>
+            <li>1. un ping vers la passerelle, 192.168.1.1 ;</li>
+            <li>2. un ping vers l’adresse du site de la formation, 203.0.113.20 ;</li>
+            <li>3. un ping vers le nom du site, formation.example.org.</li>
+          </ol>
+        </div>
         <div
           class="ex"
           data-widget="choix"
@@ -6212,7 +6228,7 @@ Itinéraire déterminé.</pre>
           },
           {
             "id": "B06-R3",
-            "question": "Un serveur de jeu en ligne voit, au même instant, trois joueurs arriver de la même adresse, 203.0.113.80. Est-ce possible sans tricherie ? Que s’est-il passé à la sortie de leur réseau ?",
+            "question": "Un serveur de jeu en ligne voit, au même instant, trois joueurs arriver de la même adresse, 203.0.113.80. Est-ce possible sans tricherie ? Qu’est-il arrivé à l’adresse de chaque joueur en chemin ?",
             "attendu": "Oui : les trois joueurs sont derrière la même box, dans le même réseau local. Chacun a une adresse privée ; à la sortie, la box la remplace par son unique adresse publique, 203.0.113.80 (NAT), et rend chaque réponse au bon appareil. Une adresse IP n’est donc pas propre à un appareil. Erreur à repérer : croire que le site voit l’adresse de chaque appareil. Déduit de l’étape « Les adresses de la maison ».",
             "erreurs": ["E2"]
           },
@@ -6250,7 +6266,7 @@ Itinéraire déterminé.</pre>
           },
           {
             "id": "B06-Q3",
-            "question": "La box d’une salle de formation, d’adresse publique 198.51.100.40, a fait sortir deux demandes : l’une de l’ordinateur 10.0.0.5, l’autre de l’ordinateur 10.0.0.7. Une réponse revient pour la demande de 10.0.0.7. Vers quelle adresse va-t-elle en arrivant à la box, puis en arrivant à l’ordinateur ? Pourquoi ce changement ?",
+            "question": "La box d’une salle de formation, d’adresse publique 198.51.100.40, a fait sortir deux demandes : l’une de l’ordinateur 10.0.0.5, l’autre de l’ordinateur 10.0.0.7. Une réponse revient pour la demande de 10.0.0.7. Vers quelle adresse va-t-elle en arrivant à la box, puis en arrivant à l’ordinateur ? Pourquoi ?",
             "attendu": "En arrivant à la box, vers 198.51.100.40, la seule adresse que le site a vue ; en arrivant à l’ordinateur, vers 10.0.0.7. La box a retenu quel ordinateur a fait quelle demande et remet l’adresse privée du bon : c’est le NAT. Déduit de l’étape « Les adresses de la maison ».",
             "erreurs": ["E2"]
           },
