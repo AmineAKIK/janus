@@ -77,9 +77,11 @@ B06-K17 : RECOPIÉE (ET10, Ping ; ET8, Débit et latence) : c'est la latence, le
 Non déductibles : aucun.
 
 Recopiés :
+
 - B06-K17 : « temps= … c'est la latence » est écrit tel quel à ET10, Ping ; la question ne change que la valeur (42 ms) et la cible (banque), qui n'entrent dans aucun calcul ni aucune règle.
 
 Points à surveiller (déductibles, mais au bord) :
+
 - B06-Q7 : le masque 0xffffff00 est le même que dans le texte (ET9, ET13 : « 0xffffff00 vaut 255.255.255.0 ») ; seule la partie sur 10.0.0.12 vérifie la règle. Un autre masque (par exemple 0xffff0000) vérifierait la conversion.
 - B06-C3 : la correction « pas le routeur » se déduit, mais la fonction qui relie deux appareils en Wi-Fi d'un même réseau n'est jamais écrite (le switch est défini « par câble »). Si l'attendu nomme le switch ou le point d'accès pour ce cas, je ne peux pas le produire.
 - B06-K1 : le maillon restant (le serveur des notifications) se déduit de la chaîne, mais le texte n'a jamais travaillé un cas où le premier lien et le milieu de la chaîne sont prouvés et où seul le bout reste ; la question « lequel reste à tester » suppose qu'il n'en reste qu'un.
