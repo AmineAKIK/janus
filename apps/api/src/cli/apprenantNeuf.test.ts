@@ -60,6 +60,16 @@ describe('les réponses de l’apprenant neuf', () => {
     expect(lecture.ignores).toEqual(['P1', 'ZZ'])
   })
 
+  it('lit un verdict en minuscules qui finit par une lettre accentuée', () => {
+    const texte = [
+      `${R1} : recopiée (étape 1, écran 1) : la restitution se fait sans le cours.`,
+      `${R2} : hors champ assumé : je ne sais pas.`,
+    ].join('\n')
+    const lecture = lireLApprenantNeuf(texte, MANIFESTE)
+    expect(lecture.jeux[0]?.cas.map(({ id }) => id)).toEqual([R1])
+    expect(lecture.sansReponse).toContain(R2)
+  })
+
   it('garde la première réponse quand l’agent répond deux fois à la même question', () => {
     const texte = [
       `${R1} : déductible (étape 2, écran 1) : première.`,

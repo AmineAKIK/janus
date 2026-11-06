@@ -21,6 +21,8 @@ Sois strict :
 - Une `[image : sans description]` ne t'apprend rien non plus.
 - Ne devine pas la réponse attendue : tu ne l'as pas.
 
+Chaque réponse tient sur une seule ligne qui commence par l'identifiant tel quel : la machine compte tes lignes (`pnpm fiches:epreuves … --bilan`).
+
 Termine par quatre listes :
 
 1. Les éléments NON DÉDUCTIBLES, avec ce qui manque, puis les éléments RECOPIÉS.
