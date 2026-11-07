@@ -23,6 +23,8 @@ Sois strict :
 
 Termine par la liste des lignes contestées, puis par les règles que la fiche viole sans qu'aucune ligne de la grille ne le dise (une règle tenue à l'écran cité et violée à un autre).
 
+Tout à la fin, un bloc `## Compte` de trois lignes, lu par la machine (`pnpm fiches:epreuves … --bilan`) : `- contestées : N` (lignes CONTESTÉE), `- écarts contestés : N` (lignes ÉCART CONTESTÉ), `- violées hors grille : N` (règles violées sans ligne qui le dise).
+
 ---
 
 ## Ce que l'auteur de la fiche fait du résultat

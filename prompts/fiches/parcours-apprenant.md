@@ -27,6 +27,8 @@ Sois strict :
 - Un `[outil interactif : …]` ne t'apprend rien : tu ne vois pas ce qu'il montre.
 - Une `[image : sans description]` ne t'apprend rien non plus.
 
+Tout à la fin, un bloc `## Compte` de trois lignes, lu par la machine (`pnpm fiches:epreuves … --bilan`) : `- décrochages : N`, `- îles : N`, `- abstraits d’affilée : N` (la plus longue suite d'écrans ABSTRAIT).
+
 ---
 
 ## Ce que l'auteur de la fiche fait du résultat

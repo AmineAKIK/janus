@@ -9,10 +9,11 @@ import type { JeuDeTest } from './evaluerIa.ts'
 /**
  * Une ligne de l'épreuve : `ID : déductible (étape, écran) : réponse`, `ID : RECOPIÉE (…) : réponse`,
  * `ID : NON DÉDUCTIBLE : ce qui manque`, `ID : HORS CHAMP ASSUMÉ : réponse`. L'agent la met parfois
- * en liste (`- `) ou l'id en code (`` ` ``) : on tolère les deux.
+ * en liste (`- `) ou l'id en code (`` ` ``) : on tolère les deux. Le verdict peut finir par une lettre accentuée
+ * (« recopiée », « hors champ assumé ») : la frontière de mot se teste sur toute lettre, pas sur l'ASCII seul.
  */
 const LIGNE =
-  /^\s*(?:[-*]\s+)?`?([A-Za-z][\w-]*)`?\s*:\s*(déductible|non déductible|recopiée|hors champ assumé)\b\s*(?:\([^)]*\))?\s*:\s*(.+?)\s*$/iu
+  /^\s*(?:[-*]\s+)?`?([A-Za-z][\w-]*)`?\s*:\s*(déductible|non déductible|recopiée|hors champ assumé)(?![\p{L}\p{N}_])\s*(?:\([^)]*\))?\s*:\s*(.+?)\s*$/iu
 
 export interface LectureApprenantNeuf {
   /** Un jeu par série où l'agent a répondu ; vide si aucune ligne n'est une question du manifeste. */

@@ -12,6 +12,8 @@ Puis, leçon par leçon, chaque manquement : convention interrogée non redonné
 
 Rends une liste triée par gravité (bloquant, gênant, mineur). Pour chaque point : l'écran exact (étape et titre d'écran, ou identifiant), une citation courte, la leçon ou la règle violée, et la correction concrète (le texte à ajouter ou à changer). Termine par les leçons que la fiche viole de façon répétée, et pour chacune un contrôle que `pnpm fiches:verifier` pourrait faire.
 
+Tout à la fin, un bloc `## Compte` de trois lignes, lu par la machine (`pnpm fiches:epreuves … --bilan`) : `- bloquants : N`, `- gênants : N`, `- mineurs : N`.
+
 ---
 
 ## Ce que l'auteur de la fiche fait du résultat
