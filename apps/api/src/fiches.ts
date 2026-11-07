@@ -581,6 +581,27 @@ function verifierExplicationsDesVariantes(
 }
 
 /**
+ * Chaque attendu d'explication dit d'où il vient (règle P05 : « D'après l'étape 7. », « Déduit des
+ * étapes 5 et 7. »), comme ceux de la restitution, du rappel et des différées : le correcteur affiche
+ * cette origine avec sa correction, et un attendu sans origine ne se relit pas. B01 était seule à
+ * ne pas le faire (manche 1 des épreuves, 7 novembre 2026).
+ */
+const ORIGINE = /\bD[’']après\b|\bDéduit\b/u
+
+function verifierOriginesDesExplications(
+  manifeste: Manifeste,
+  signaler: (message: string) => void,
+): void {
+  for (const explication of manifeste.explication) {
+    if (!ORIGINE.test(explication.attendu)) {
+      signaler(
+        `explication « ${explication.id} » : l’attendu ne dit pas d’où il vient (« D’après l’étape… » ou « Déduit de… », règle P05) : le correcteur n’aurait rien à afficher.`,
+      )
+    }
+  }
+}
+
+/**
  * L'écran n'écrit pas la réponse avant de la demander (leçons du B06, R3 et R6 : « Qu'est-il arrivé à
  * l'adresse… » après un paragraphe qui le disait). La prose d'un écran qui précède un outil ne partage
  * aucune suite de MOTS_REDONNES mots avec la bonne option, la réponse attendue ou la solution de cet
@@ -1563,13 +1584,14 @@ export async function verifierLesFiches({
       verifierCeQuiRedonneLaReponse(resultat.manifeste, fiche.html, signaler)
       verifierErreursCritiques(resultat.manifeste, signaler)
       verifierAtelier(resultat.manifeste, signaler)
-      // Les contrôles écrits après les leçons du B06 (7 novembre 2026) : B01 et B03 ne les passent pas
-      // encore. Ils valent pour toute fiche nouvelle ou reprise ; une fiche inchangée depuis la révision
-      // de référence attend sa prochaine PR, qui la corrigera. Sans référence, tout est contrôlé.
+      // Les contrôles écrits après les leçons du B06 (7 novembre 2026) valent pour toute fiche nouvelle
+      // ou reprise ; une fiche inchangée depuis la révision de référence attend sa prochaine PR, qui la
+      // corrigera. Sans référence, tout est contrôlé (B01 et B03 ont été reprises pour les passer).
       const avant = contenuDeReference?.(fiche.nom)
       if (contenuDeReference === undefined || avant !== fiche.html) {
         verifierDemandes(resultat.manifeste, signaler)
         verifierExplicationsDesVariantes(resultat.manifeste, signaler)
+        verifierOriginesDesExplications(resultat.manifeste, signaler)
         verifierReponseAvantLaQuestion(fiche.html, signaler)
       }
       verifierTablesEnGrille(resultat.manifeste, signaler)

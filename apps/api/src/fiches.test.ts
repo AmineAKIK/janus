@@ -286,7 +286,7 @@ describe('vérification des fiches du dépôt', () => {
           id: cle,
           item: cle.replace(/:variante$/, ''),
           question: 'Pourquoi le premier bit compte-t-il double ?',
-          attendu: 'Chaque place vers la gauche double.',
+          attendu: 'Chaque place vers la gauche double. D’après l’étape 1.',
           erreurs: [],
         }))
       })
@@ -652,7 +652,7 @@ describe('vérification des fiches du dépôt', () => {
                 id: 'PR1-1',
                 item: 'PR1-1',
                 question: 'Pourquoi ?',
-                attendu: 'Huit bits qui font un nombre entre 0 et 255.',
+                attendu: 'Huit bits qui font un nombre entre 0 et 255. D’après l’étape 1.',
                 erreurs: [],
               },
             ]
@@ -1349,7 +1349,7 @@ describe('vérification des fiches du dépôt', () => {
                 id: 'PR1-1',
                 item: 'PR1-1',
                 question: 'Pourquoi ? Que se passe-t-il sinon ? Et comment le vérifier ?',
-                attendu: 'Le poids des bits.',
+                attendu: 'Le poids des bits. D’après l’étape 1.',
                 erreurs: [],
               },
             ]
@@ -1374,7 +1374,7 @@ describe('vérification des fiches du dépôt', () => {
               id: 'PR1-1',
               item: 'PR1-1',
               question: 'Pourquoi ?',
-              attendu: 'Le poids des bits.',
+              attendu: 'Le poids des bits. D’après l’étape 1.',
               erreurs: [],
             },
             { id: 'PR1-1:variante', item: 'PR1-1', question, attendu, erreurs: [] },
@@ -1383,15 +1383,27 @@ describe('vérification des fiches du dépôt', () => {
       )
 
     it('refuse l’explication d’une variante identique à celle de son item', async () => {
-      await poser('X00.html', avecVariante('Pourquoi ?', 'Le poids des bits.'))
+      await poser('X00.html', avecVariante('Pourquoi ?', 'Le poids des bits. D’après l’étape 1.'))
       expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
         expect.stringContaining(
           'explication « PR1-1:variante » : la variante repose la question de l’item PR1-1 avec le même attendu',
         ),
       ])
 
-      await poser('X00.html', avecVariante('Pourquoi ?', 'Le poids des bits, ici 64 et 1.'))
+      await poser(
+        'X00.html',
+        avecVariante('Pourquoi ?', 'Le poids des bits, ici 64 et 1. D’après l’étape 1.'),
+      )
       expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+
+    it('refuse un attendu d’explication qui ne dit pas d’où il vient', async () => {
+      await poser('X00.html', avecVariante('Et ici ?', 'Le poids des bits, ici 64 et 1.'))
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'explication « PR1-1:variante » : l’attendu ne dit pas d’où il vient',
+        ),
+      ])
     })
 
     /** L'item PR1-1 en choix, précédé d'un texte. */
