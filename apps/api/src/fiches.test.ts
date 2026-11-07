@@ -1291,6 +1291,166 @@ describe('vérification des fiches du dépôt', () => {
     })
   })
 
+  describe('les leçons du B06 : demandes, variantes, réponse écrite avant la question (7 novembre 2026)', () => {
+    const avecRappel = (question: string) =>
+      avecManifeste(fiche, (m) => {
+        const [q1] = m.rappel
+        if (q1 !== undefined) q1.question = question
+      })
+
+    it('compte les demandes d’une question, pas ses « ? » : « …, et pourquoi ? » en demande deux', async () => {
+      await poser('X00.html', avecRappel('Qu’est-il arrivé à l’adresse, et pourquoi ?'))
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+
+      await poser(
+        'X00.html',
+        avecRappel('Qu’est-il arrivé à l’adresse, pourquoi, et comment la box le sait-elle ?'),
+      )
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'rappel Q1 : la question demande 3 choses ; une tâche, deux sous-questions au plus',
+        ),
+      ])
+    })
+
+    it('ne compte pas un mot interrogatif au milieu d’une proposition', async () => {
+      await poser(
+        'X00.html',
+        avecRappel(
+          'Quelle adresse porte cette réponse, et comment la box sait-elle à quel ordinateur la remettre ?',
+        ),
+      )
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+
+    it('tient la même limite pour une différée et pour une explication', async () => {
+      await poser(
+        'X00.html',
+        avecManifeste(fiche, (m) => {
+          const [d1] = m.differees
+          if (d1 !== undefined)
+            d1.consigne = 'Combien de valeurs, quelle est la plus forte, et combien de bits ?'
+        }),
+      )
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('différée DE1 : la question demande 3 choses'),
+      ])
+
+      await poser(
+        'X00.html',
+        avecManifeste(
+          fiche.replace(
+            '<p data-erreur="E1">À REMPLACER : item PR1-1 (E1).</p>',
+            '<div class="ex" data-widget="choix" data-id="c1" data-reponse="a" data-aide1="Que demande-t-on ?" data-aide2="Compte." data-justifier="Pourquoi ?"><p class="q">Laquelle ?</p><ul class="options"><li data-option="a">A</li><li data-option="b" data-erreur="E1">B</li></ul></div>',
+          ),
+          (m) => {
+            m.explication = [
+              {
+                id: 'PR1-1',
+                item: 'PR1-1',
+                question: 'Pourquoi ? Que se passe-t-il sinon ? Et comment le vérifier ?',
+                attendu: 'Le poids des bits.',
+                erreurs: [],
+              },
+            ]
+          },
+        ),
+      )
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining('explication PR1-1 : la question demande 3 choses'),
+      ])
+    })
+
+    /** L'item PR1-1 en choix avec explication, et sa variante avec la sienne. */
+    const avecVariante = (question: string, attendu: string) =>
+      avecManifeste(
+        fiche.replace(
+          '<p data-erreur="E1">À REMPLACER : item PR1-1 (E1).</p>',
+          '<div class="ex" data-widget="choix" data-id="c1" data-reponse="a" data-aide1="Que demande-t-on ?" data-aide2="Compte." data-justifier="Pourquoi ?"><p class="q">Laquelle ?</p><ul class="options"><li data-option="a">A</li><li data-option="b" data-erreur="E1">B</li></ul></div></template><template data-variante="PR1-1"><div class="ex" data-widget="choix" data-id="c1v" data-reponse="a" data-aide1="Que demande-t-on ?" data-aide2="Compte." data-justifier="Pourquoi ?"><p class="q">Et ici ?</p><ul class="options"><li data-option="a">A</li><li data-option="b">B</li></ul></div>',
+        ),
+        (m) => {
+          m.explication = [
+            {
+              id: 'PR1-1',
+              item: 'PR1-1',
+              question: 'Pourquoi ?',
+              attendu: 'Le poids des bits.',
+              erreurs: [],
+            },
+            { id: 'PR1-1:variante', item: 'PR1-1', question, attendu, erreurs: [] },
+          ]
+        },
+      )
+
+    it('refuse l’explication d’une variante identique à celle de son item', async () => {
+      await poser('X00.html', avecVariante('Pourquoi ?', 'Le poids des bits.'))
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'explication « PR1-1:variante » : la variante repose la question de l’item PR1-1 avec le même attendu',
+        ),
+      ])
+
+      await poser('X00.html', avecVariante('Pourquoi ?', 'Le poids des bits, ici 64 et 1.'))
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+
+    /** L'item PR1-1 en choix, précédé d'un texte. */
+    const avecTexteAvant = (
+      texte: string,
+      bonneOption = 'Le poids de chaque bit à 1 fait la somme des valeurs.',
+    ) =>
+      fiche.replace(
+        '<p data-erreur="E1">À REMPLACER : item PR1-1 (E1).</p>',
+        `${texte}<div class="ex" data-widget="choix" data-id="c1" data-reponse="a" data-aide1="Que demande-t-on ?" data-aide2="Compte."><p class="q">Laquelle ?</p><ul class="options"><li data-option="a">${bonneOption}</li><li data-option="b" data-erreur="E1">B</li></ul></div>`,
+      )
+
+    it('refuse un écran qui écrit la bonne option avant de la demander', async () => {
+      await poser(
+        'X00.html',
+        avecTexteAvant(
+          '<p>Pour lire un octet, le poids de chaque bit à 1 fait la somme des valeurs.</p>',
+        ),
+      )
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([
+        expect.stringContaining(
+          'l’item PR1-1, le choix c1 : l’écran écrit la bonne option avant de la demander (« le poids de chaque bit »)',
+        ),
+      ])
+    })
+
+    it('laisse l’écran montrer du code, une table, ou une étiquette courte que l’option cite', async () => {
+      await poser(
+        'X00.html',
+        avecTexteAvant(
+          '<table><tr><td>le poids de chaque bit à 1 fait la somme des valeurs</td></tr></table>',
+        ),
+      )
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+
+      await poser(
+        'X00.html',
+        avecTexteAvant(
+          '<p>Le menu propose : Mise à jour de logiciels et Stockage.</p>',
+          'Mise à jour de logiciels et Stockage',
+        ),
+      )
+      expect(await verifierLesFiches({ dossierContenu: contenu })).toEqual([])
+    })
+
+    it('ne contrôle, contre une révision de référence, que les fiches nouvelles ou reprises', async () => {
+      const reprise = avecTexteAvant(
+        '<p>Pour lire un octet, le poids de chaque bit à 1 fait la somme des valeurs.</p>',
+      )
+      await poser('X00.html', reprise)
+      expect(
+        await verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => reprise }),
+      ).toEqual([])
+      expect(
+        await verifierLesFiches({ dossierContenu: contenu, contenuDeReference: () => undefined }),
+      ).toEqual([expect.stringContaining('l’écran écrit la bonne option avant de la demander')])
+    })
+  })
+
   describe('contre la révision de référence', () => {
     it('refuse un contenu changé sans que la version change', async () => {
       await poser('X00.html', fiche.replace('À REMPLACER : titre du bloc', 'Titre du bloc'))
