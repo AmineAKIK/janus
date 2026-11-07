@@ -3587,6 +3587,30 @@
       </div>
       <div data-ecran="À compléter">
         <div
+          class="outil"
+          data-lecture="La même table des seize chiffres de l’hexadécimal, sous les yeux pour écrire : de 0, pour 0000, à 9, pour 1001, puis a pour 10, b pour 11, c pour 12, d pour 13, e pour 14 et f pour 15."
+        >
+          <p class="outil-titre">Les 16 chiffres de l’hexadécimal</p>
+          <ul class="hexa-table">
+            <li><b>0</b><span>0000</span><span>vaut 0</span></li>
+            <li><b>1</b><span>0001</span><span>vaut 1</span></li>
+            <li><b>2</b><span>0010</span><span>vaut 2</span></li>
+            <li><b>3</b><span>0011</span><span>vaut 3</span></li>
+            <li><b>4</b><span>0100</span><span>vaut 4</span></li>
+            <li><b>5</b><span>0101</span><span>vaut 5</span></li>
+            <li><b>6</b><span>0110</span><span>vaut 6</span></li>
+            <li><b>7</b><span>0111</span><span>vaut 7</span></li>
+            <li><b>8</b><span>1000</span><span>vaut 8</span></li>
+            <li><b>9</b><span>1001</span><span>vaut 9</span></li>
+            <li><b>a</b><span>1010</span><span>vaut 10</span></li>
+            <li><b>b</b><span>1011</span><span>vaut 11</span></li>
+            <li><b>c</b><span>1100</span><span>vaut 12</span></li>
+            <li><b>d</b><span>1101</span><span>vaut 13</span></li>
+            <li><b>e</b><span>1110</span><span>vaut 14</span></li>
+            <li><b>f</b><span>1111</span><span>vaut 15</span></li>
+          </ul>
+        </div>
+        <div
           class="ex"
           data-widget="texte"
           data-id="hx4"
@@ -3686,6 +3710,22 @@
             Ajoute le 8 de droite, qui compte une fois. Que vaut <span class="mono">88</span> ?
           </p>
         </div>
+      </div>
+      <div data-ecran="À compléter">
+        <div
+          class="ex"
+          data-widget="nombre"
+          data-id="rl3"
+          data-reponse="200"
+          data-hex="c8"
+          data-diag="hexa16"
+        >
+          <p class="q">
+            De même, que vaut <span class="mono">c8</span> ? Dans la table, c vaut 12.
+          </p>
+        </div>
+      </div>
+      <div data-ecran="Relire seul">
         <div class="groupe">
           <p class="q">Que vaut <code>#4000a0</code> en <code>rgb</code> ? Relis chaque octet.</p>
           <div class="mini">
@@ -5912,9 +5952,9 @@
             "erreurs": ["E2"]
           },
           {
-            "id": "Q25",
-            "question": "Vrai ou faux : « Programmer, c’est écrire en binaire. » Explique.",
-            "attendu": "Faux. Programmer, c’est écrire un programme dans un langage, comme PHP ou JavaScript, avec ses mots et sa grammaire. Le binaire est une façon d’écrire les nombres. Le texte du programme est rangé en octets, comme tout texte, puis traduit en code machine ou exécuté par un interpréteur. D’après l’étape 11.",
+            "id": "Q25b",
+            "question": "Un développeur enregistre le mot « echo » dans un fichier PHP. Qu’est-ce qui est rangé dans le fichier, et le processeur peut-il l’exécuter tel quel ? Explique.",
+            "attendu": "Le texte « echo » est rangé en octets avec un codage de caractères : 101, 99, 104, 111 en ASCII. Le processeur ne l’exécute pas tel quel : le texte doit d’abord être traduit en code machine, que le processeur lit avec son jeu d’instructions. D’après l’étape 11.",
             "erreurs": ["E3"]
           },
           {
@@ -6061,11 +6101,11 @@
             "erreurs": ["E4"]
           },
           {
-            "id": "DT24",
+            "id": "DT24b",
             "type": "transfert",
             "forme": "hors_champ",
-            "consigne": "Un programme affiche l’octet 11111111 comme le nombre −1. Le système binaire de ce bloc peut-il donner −1 ? Explique ce qui se passe.",
-            "attendu": "Non : avec le système binaire du bloc, fait pour les entiers positifs, 11111111 vaut 255. Si un programme affiche −1, c’est qu’il lit ces bits avec un autre codage, fait pour les nombres négatifs, que le bloc n’enseigne pas. La réponse attend cette limite, pas la méthode de ce codage. Déduit des étapes 5 et 14.",
+            "consigne": "Un programme affiche 0,5 à partir d’un octet. Le système binaire de ce bloc, avec ses poids de 128 à 1, peut-il écrire 0,5 ? Explique ce qui se passe.",
+            "attendu": "Non : avec les poids du bloc, de 128 à 1, un octet n’écrit que des nombres entiers, de 0 à 255. Si un programme affiche 0,5, c’est qu’il lit ces bits avec un autre codage, fait pour les nombres à virgule, que le bloc n’enseigne pas. La réponse attend cette limite, pas la méthode de ce codage. Déduit des étapes 5 et 6.",
             "erreurs": ["E2"]
           },
           {
@@ -6159,8 +6199,8 @@
           },
           {
             "id": "K25",
-            "recto": "Un ami dit : « Le binaire, c’est le langage des ordinateurs. » Que lui réponds-tu en une phrase ?",
-            "verso": "Le binaire est une façon d’écrire les nombres avec deux chiffres, 0 et 1, comme le décimal en utilise dix. Ce n’est pas un langage de programmation. D’après « Bits, octets et poids »."
+            "recto": "Un fichier contient l’octet 01000001. Un ami dit : « C’est du binaire, donc ce fichier est écrit dans un langage de programmation. » Est-ce juste, et que vaut l’octet ?",
+            "verso": "Non : le binaire écrit des nombres avec deux chiffres, ce n’est pas un langage de programmation. L’octet vaut 64 + 1 = 65, un nombre, que le programme qui le lit peut ensuite lire autrement. D’après « Bits, octets et poids »."
           },
           {
             "id": "K26",
@@ -6169,8 +6209,8 @@
           },
           {
             "id": "K33",
-            "recto": "Un programme veut afficher l’octet 01001010 comme une lettre. Quelles lectures fait-il, dans l’ordre ?",
-            "verso": "D’abord l’octet en nombre, avec les poids : 64 + 8 + 2 = 74. Puis il cherche ce numéro dans la table du codage, par exemple la table ASCII : 74 est la lettre J. D’après « Lire une lettre »."
+            "recto": "Le Bloc-notes reçoit l’octet 01001101. Quelle lettre affiche-t-il, avec quelles lectures ? (A vaut 65, et chaque lettre suivante un de plus.)",
+            "verso": "D’abord l’octet en nombre, avec les poids : 64 + 8 + 4 + 1 = 77. Puis ce numéro dans la table ASCII : A est 65, donc 77 est la 13e lettre, M. D’après « Lire une lettre »."
           },
           {
             "id": "K28",
@@ -6291,7 +6331,7 @@
             "notion": "Dire pourquoi le binaire n’est pas un langage de programmation : c’est une façon d’écrire les nombres ; ce qui fait du code machine un langage, c’est le jeu d’instructions ; un langage comme PHP s’écrit en texte, puis est traduit ou exécuté par un interpréteur",
             "montree": ["ET11"],
             "pratiquee": ["PR8"],
-            "questions": ["R26", "C25", "Q25", "DE25"]
+            "questions": ["R26", "C25", "Q25b", "DE25"]
           }
         ],
         "relations": [
@@ -6363,10 +6403,10 @@
         "ensemble": {
           "montree": "ET2",
           "rappelee": "ET14",
-          "questions": ["R31", "DT30b", "DT30c", "DE30", "DE24", "DT24", "Q24"]
+          "questions": ["R31", "DT30b", "DT30c", "DE30", "DE24", "DT24b", "Q24"]
         },
         "hors_objectif": [
-          "Les nombres négatifs : nommés comme limite du système binaire du bloc dans « À explorer plus tard » (étape 14) ; DT24 demande seulement de dire cette limite, jamais une méthode",
+          "Les nombres négatifs et les nombres à virgule : les négatifs sont nommés dans « À explorer plus tard » (étape 14) et ne sont jamais interrogés ; DT24b demande seulement de dire que les poids du bloc n’écrivent que des entiers, jamais une méthode",
           "La compression des images (JPEG) : nommée à l’étape 10 et dans « À explorer plus tard », jamais interrogée",
           "Le détail d’UTF-8 : la fiche montre seulement que « é » y prend deux octets (étape 7) ; UTF-8 en détail est dans « À explorer plus tard », jamais interrogé",
           "Les vrais jeux d’instructions, comme x86 et ARM : nommés à l’étape 11 et dans « À explorer plus tard », jamais interrogés"
