@@ -2034,8 +2034,9 @@
         <li>dire si un ordinateur convient pour développer, et ce qu’il faudrait y changer.</li>
       </ul>
       <p class="discret">
-        Il te faudra ton ordinateur, rien d’autre : tu t’y enregistreras aussi, pour t’écouter
-        expliquer.
+        Il te faudra ton ordinateur et un navigateur, un chiffon sec, et sous Windows un petit
+        logiciel gratuit à télécharger, HWMonitor, pour lire une température. Tu t’y enregistreras
+        aussi, pour t’écouter expliquer.
       </p>
     </template>
 
@@ -4390,8 +4391,9 @@ Total          8 500 Mo</code></pre>
         <p class="accroche">Lucie ouvre le Moniteur d’activité pour savoir si sa RAM suffit.</p>
         <p>
           Le Moniteur d’activité a un onglet Mémoire. La ligne Mémoire physique y donne la RAM. Sa
-          courbe de pression de la mémoire, verte, jaune ou rouge, dit si la RAM suffit ; la ligne
-          Mémoire d’échange utilisée dit ce que le Mac a dû ranger sur son SSD.
+          courbe de pression de la mémoire dit si la RAM suffit : verte, elle suffit ; jaune, elle
+          est presque pleine ; rouge, elle ne suffit plus. La ligne Mémoire d’échange utilisée dit
+          ce que le Mac a dû ranger sur son SSD.
         </p>
         <div
           class="ex"
@@ -4995,6 +4997,31 @@ Total          8 500 Mo</code></pre>
           surchauffe se lit à la vitesse qui tombe, pas à une jauge. Sur un Mac, le Moniteur
           d’activité n’affiche pas la vitesse : restent les signes, le ralentissement au bout d’un
           moment, la chaleur et le ventilateur.
+        </p>
+        <p>
+          Sous Windows, <strong>HWMonitor</strong> montre aussi la température. Yasmine la note
+          avant de jouer, au repos, puis après une heure de jeu :
+        </p>
+        <div
+          class="ecran-simule"
+          data-lecture="HWMonitor, ligne Temperatures du processeur de Yasmine : 41 degrés au repos, avant de jouer ; 93 degrés après une heure de jeu."
+        >
+          <p class="titre-simule">HWMonitor · Temperatures · Package</p>
+          <dl>
+            <div>
+              <dt>Au repos, avant de jouer</dt>
+              <dd>41 °C</dd>
+            </div>
+            <div>
+              <dt>Après une heure de jeu</dt>
+              <dd>93 °C</dd>
+            </div>
+          </dl>
+        </div>
+        <p>
+          La température a plus que doublé pendant que la vitesse tombait : le processeur chauffe,
+          et il baisse sa fréquence pour se protéger. La température au repos sert de repère : un
+          nombre seul ne dit pas si le processeur est chaud pour lui.
         </p>
       </div>
       <div data-ecran="Le portable de Jade">
@@ -5732,6 +5759,14 @@ Serveur de test   1 000 Mo</code></pre>
           tien chauffe trop pendant cinq minutes de travail lourd, une vidéo en très haute
           définition ou un jeu.
         </p>
+        <p>
+          Sous Windows, relève aussi la température : télécharge <strong>HWMonitor</strong>, un
+          logiciel gratuit, sur
+          <a data-lien="https://www.cpuid.com/softwares/hwmonitor.html">cpuid.com</a>, puis
+          lance-le. Il liste les capteurs de ta machine. Note la température du processeur au repos,
+          avant le travail lourd, puis pendant. Sur un Mac, aucun outil à installer : observe les
+          signes.
+        </p>
         <details data-cran="1">
           <summary>Un indice</summary>
           <p>
@@ -5753,12 +5788,14 @@ Serveur de test   1 000 Mo</code></pre>
               <details data-cran="4">
                 <summary>La solution entière</summary>
                 <p>
-                  Windows : lance le travail lourd, attends cinq minutes, puis Ctrl+Maj+Échap,
-                  l’onglet Performance et le panneau Processeur. Si la Vitesse est sous la Vitesse
-                  de base alors que le travail continue, ton processeur chauffe trop : dégage ses
-                  grilles, dans « Les grilles ». Mac : pendant les cinq minutes, note s’il ralentit,
-                  si le dessous devient très chaud et si le ventilateur souffle fort ; un MacBook
-                  Air, sans ventilateur, ne fait que chauffer et ralentir.
+                  Windows : ouvre HWMonitor et lis, sous le nom de ton processeur, la ligne
+                  Temperatures, colonne Value : note-la au repos. Lance le travail lourd, attends
+                  cinq minutes, relis-la, puis Ctrl+Maj+Échap, l’onglet Performance et le panneau
+                  Processeur. Si la Vitesse est sous la Vitesse de base alors que le travail
+                  continue, ton processeur chauffe trop : dégage ses grilles, dans « Les grilles ».
+                  Mac : pendant les cinq minutes, note s’il ralentit, si le dessous devient très
+                  chaud et si le ventilateur souffle fort ; un MacBook Air, sans ventilateur, ne
+                  fait que chauffer et ralentir.
                 </p>
               </details>
             </details>
@@ -6160,9 +6197,7 @@ Serveur de test   1 000 Mo</code></pre>
           Yasmine sait maintenant pourquoi son portable rame à 30 onglets, et ce qu’elle changera
           pour développer. Le bloc suivant suit un programme jusqu’au processeur : comment le code
           qu’on écrit dans un langage, en JavaScript par exemple, devient le code machine que ses
-          cœurs exécutent, pour une architecture, x64 ou ARM64. Plus loin, le bloc sur l’empreinte
-          du numérique montrera que fabriquer ces composants pèse plus, pour la planète, que s’en
-          servir.
+          cœurs exécutent, pour une architecture, x64 ou ARM64.
         </p>
         <h3>À explorer plus tard</h3>
         <ul>
@@ -7156,17 +7191,18 @@ Serveur de test   1 000 Mo</code></pre>
         <li>
           L’atelier se fait sur la machine de l’apprenant, hors de la page : lire la ligne
           Virtualisation, voir si la machine chauffe trop après cinq minutes de travail lourd (sous
-          Windows, la ligne Vitesse face à la vitesse de base ; sur un Mac, les signes), repérer les
-          grilles d’aération et en retirer la poussière de l’extérieur, installer les mises à jour.
-          Chaque écran ne donne que la consigne : le geste est replié dans les crans. À la fin de
-          l’étape, le gabarit affiche le constat : les quatre critères du manifeste
-          (atelier.criteres) à cocher, et le niveau d’aide reçu. L’aide se monte cran par cran,
-          chaque cran replié dans le précédent : titrés comme les niveaux du constat : « Un
-          indice », une question qui oriente (data-cran 1), « Une piste détaillée » (2), « La
-          solution entière », le chemin pas à pas (4) ; un cran ouvert fixe l’aide au moins à son
-          niveau pendant 20 minutes (décision d’Amine du 1er novembre 2026). L’atelier n’est réussi
-          qu’avec les quatre critères cochés, sans aide (reussite_aide_max 0). Aucun logiciel à
-          télécharger : tout se fait avec les outils du système, comme le plan le demande.
+          Windows, la température relevée avec HWMonitor et la ligne Vitesse face à la vitesse de
+          base ; sur un Mac, les signes), repérer les grilles d’aération et en retirer la poussière
+          de l’extérieur, installer les mises à jour. Chaque écran ne donne que la consigne : le
+          geste est replié dans les crans. À la fin de l’étape, le gabarit affiche le constat : les
+          quatre critères du manifeste (atelier.criteres) à cocher, et le niveau d’aide reçu. L’aide
+          se monte cran par cran, chaque cran replié dans le précédent : titrés comme les niveaux du
+          constat : « Un indice », une question qui oriente (data-cran 1), « Une piste détaillée »
+          (2), « La solution entière », le chemin pas à pas (4) ; un cran ouvert fixe l’aide au
+          moins à son niveau pendant 20 minutes (décision d’Amine du 1er novembre 2026). L’atelier
+          n’est réussi qu’avec les quatre critères cochés, sans aide (reussite_aide_max 0). Un seul
+          logiciel est à télécharger, HWMonitor, pour la température sous Windows, comme le plan le
+          demande ; le reste se fait avec les outils du système.
         </li>
       </ul>
       <h3>Vite, l’outil (aisance, ET18)</h3>
@@ -7250,13 +7286,13 @@ Serveur de test   1 000 Mo</code></pre>
         "schema": 2,
         "bloc": "B03",
         "type": "systemes",
-        "version": 16,
+        "version": 17,
         "titre": "L’ordinateur et ses composants",
         "titre_court": "Les composants",
         "objectif": "Fiche « ma machine » (CPU, cœurs, fréquence, RAM, stockage, architecture) relevée avec les outils système, dont la virtualisation que demandent WSL 2 et Docker ; expliquer sans support le trajet stockage, RAM, CPU au lancement d’un programme, et le rôle du CPU (cœurs, horloge, cache), de la RAM (volatile), du stockage (HDD, SSD), de la carte mère, du GPU et du refroidissement ; reconnaître l’architecture d’un processeur (x64 ou ARM64) et choisir la version d’un logiciel qui lui correspond ; diagnostiquer 3 symptômes simples (lenteur, mémoire pleine, surchauffe) ; entretenir sa machine (poussière, mises à jour de sécurité) ; juger si la machine convient au développement web. Aisance : ouvrir l’outil qui décrit sa machine et y lire une caractéristique en moins de 10 s.",
         "prerequis": ["B01"],
         "pont": 9,
-        "contexte_ia": "Bloc B03 du module « Écosystème et outils du développeur » (DWWM), troisième bloc de la partie La machine. Le modèle du bloc : le stockage (SSD ou disque dur) garde les fichiers et les logiciels, même éteint ; au lancement, ce qu’il garde est copié dans la RAM, volatile, qui tient prêt ce qui tourne ; le processeur l’y lit, par son cache, et l’exécute sur ses cœurs ; la carte graphique dessine l’image, que l’écran affiche ; la carte mère relie le tout, et le refroidissement évacue la chaleur. Ordres de grandeur du bloc : RAM 0,0001 ms, SSD 0,1 ms, disque dur 10 ms par accès ; 1 Go compté comme 1 000 Mo ; Windows 3 000 Mo, VS Code 1 000 Mo, un onglet 150 Mo, une journée de développement environ 8 000 Mo. La RAM pleine, une partie part dans le fichier d’échange, sur le disque, et tout ralentit. Les GHz comptent les cycles par seconde ; les instructions par seconde sont les GHz multipliés par les instructions par cycle, qui changent d’une génération à l’autre. Deux familles de processeurs : x64 (Intel, AMD) et ARM64 (puces M d’Apple, certains PC) ; un logiciel se prend dans la version de sa famille ; un Mac ARM fait tourner une version Intel traduite par Rosetta 2, moins vite, et un PC Windows ARM une version x64 traduite par Windows ; sur un PC x64 ou un Mac Intel, une version ARM64 ne se lance pas ; « 64 bits » ne dit pas la famille ; la famille s’appelle aussi l’architecture ; les processeurs Snapdragon sont ARM64. Diagnostic : la jauge au maximum du gestionnaire des tâches (processeur, mémoire, disque) désigne la cause ; un disque à 100 % est occupé, pas plein ; un processeur à 100 % est occupé par un travail lourd (le laisser finir, sans rien lancer à côté) ou par un programme bloqué (Fin de tâche) ; un portable qui chauffe baisse sa fréquence, et sa vitesse affichée tombe ; la vitesse du moment peut dépasser la vitesse de base quand le processeur reste frais, et descend sous elle quand il a peu à faire. À génération et conception égales, plus de GHz veut bien dire plus rapide. Une carte graphique dédiée sert aux jeux, à la 3D et au montage vidéo. Repères pour développer : RAM 8 Go au minimum, 16 Go à l’aise ; un SSD, 256 Go au minimum, 512 Go à l’aise ; 4 cœurs au minimum, 6 à l’aise ; x64 ou ARM64 ; carte graphique intégrée. Notations à accepter comme équivalentes : CPU et processeur, GPU et carte graphique, HDD et disque dur, mémoire vive et RAM ; x64, x86-64 et AMD64 ; ARM64, Arm64 et AArch64 ; Apple silicon et puce M. Accepte des ordres de grandeur voisins (un SSD de 0,05 à 0,1 ms, par exemple) et une conversion de 1 Go en 1 024 Mo. Virtualisation : la capacité du processeur à faire tourner un second système à côté du sien, une machine virtuelle ; WSL 2 et Docker en ont besoin ; « Désactivé » dans le gestionnaire des tâches veut dire éteinte dans le BIOS ou l’UEFI de la carte mère, où elle s’active ; sur un Mac, elle est toujours en service. Entretien : retirer la poussière des grilles ; installer au plus tôt les mises à jour de sécurité, qui corrigent des failles connues de tous une fois corrigées. Surchauffe : elle se lit à la vitesse du processeur qui tombe sous sa vitesse de base pendant un travail lourd, avec la machine chaude et le ventilateur fort ; aucune jauge n’est forcément au maximum. Sur un Mac, qui n’affiche pas la vitesse, ce sont ces signes. La fiche ne fait pas relever de température. La fiche n’enseigne ni comment créer une machine virtuelle, ni les tests de performance, ni les générations de RAM (DDR4, DDR5) ni les types de SSD (NVMe, SATA), ni Linux, ni les portes logiques : ne pénalise pas leur absence, et accepte une réponse juste qui les emploie. Pièges à repérer : E1, confondre RAM et stockage (prendre 512 Go de SSD pour de la mémoire vive, croire que la RAM garde ce qui n’est pas enregistré ou qu’elle range les fichiers) ; E2, croire que plus de GHz veut toujours dire plus rapide ; E3, ignorer la famille du processeur au téléchargement (x64 pour une puce ARM64, ARM64 pour un processeur Intel ou AMD), ou croire que « 64 bits » dit la famille ; E4, faire lire ou écrire au processeur un programme ou un fichier directement sur le stockage, sans la copie en RAM. Accepté sans être exigé : proposer l’action qui agit sur la cause d’une lenteur (fermer des programmes, laisser finir un travail lourd, dégager les grilles) ; nommer le cache ou les cœurs dans un trajet ; comparer deux processeurs de la même génération par leurs GHz ; évoquer, sans la détailler, une machine virtuelle pour faire tourner Windows sur un Mac. Pour PR2-2 : les deux observations, une attente ou non, sont justes si l’explication va avec ; un navigateur qui met des onglets en veille et les recharge, ce qui libère de la RAM, est une explication juste.  Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Pour examiner une explication, la grille de compréhension : l’idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d’application, le terme exact, la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Chaque attendu vient de la fiche : les étapes 3 à 12 et 14 (sources S1 à S11) ; ce qui est marqué « D’après » y est écrit ; ce qui est marqué « Déduit » s’obtient en appliquant une règle de la fiche à un autre cas. Les conventions dont une question se sert (1 GHz, les Mo d’une journée) sont redonnées avec elle : ce qui compte, c’est le raisonnement, pas de réciter les nombres.",
+        "contexte_ia": "Bloc B03 du module « Écosystème et outils du développeur » (DWWM), troisième bloc de la partie La machine. Le modèle du bloc : le stockage (SSD ou disque dur) garde les fichiers et les logiciels, même éteint ; au lancement, ce qu’il garde est copié dans la RAM, volatile, qui tient prêt ce qui tourne ; le processeur l’y lit, par son cache, et l’exécute sur ses cœurs ; la carte graphique dessine l’image, que l’écran affiche ; la carte mère relie le tout, et le refroidissement évacue la chaleur. Ordres de grandeur du bloc : RAM 0,0001 ms, SSD 0,1 ms, disque dur 10 ms par accès ; 1 Go compté comme 1 000 Mo ; Windows 3 000 Mo, VS Code 1 000 Mo, un onglet 150 Mo, une journée de développement environ 8 000 Mo. La RAM pleine, une partie part dans le fichier d’échange, sur le disque, et tout ralentit. Les GHz comptent les cycles par seconde ; les instructions par seconde sont les GHz multipliés par les instructions par cycle, qui changent d’une génération à l’autre. Deux familles de processeurs : x64 (Intel, AMD) et ARM64 (puces M d’Apple, certains PC) ; un logiciel se prend dans la version de sa famille ; un Mac ARM fait tourner une version Intel traduite par Rosetta 2, moins vite, et un PC Windows ARM une version x64 traduite par Windows ; sur un PC x64 ou un Mac Intel, une version ARM64 ne se lance pas ; « 64 bits » ne dit pas la famille ; la famille s’appelle aussi l’architecture ; les processeurs Snapdragon sont ARM64. Diagnostic : la jauge au maximum du gestionnaire des tâches (processeur, mémoire, disque) désigne la cause ; un disque à 100 % est occupé, pas plein ; un processeur à 100 % est occupé par un travail lourd (le laisser finir, sans rien lancer à côté) ou par un programme bloqué (Fin de tâche) ; un portable qui chauffe baisse sa fréquence, et sa vitesse affichée tombe ; la vitesse du moment peut dépasser la vitesse de base quand le processeur reste frais, et descend sous elle quand il a peu à faire. À génération et conception égales, plus de GHz veut bien dire plus rapide. Une carte graphique dédiée sert aux jeux, à la 3D et au montage vidéo. Repères pour développer : RAM 8 Go au minimum, 16 Go à l’aise ; un SSD, 256 Go au minimum, 512 Go à l’aise ; 4 cœurs au minimum, 6 à l’aise ; x64 ou ARM64 ; carte graphique intégrée. Notations à accepter comme équivalentes : CPU et processeur, GPU et carte graphique, HDD et disque dur, mémoire vive et RAM ; x64, x86-64 et AMD64 ; ARM64, Arm64 et AArch64 ; Apple silicon et puce M. Accepte des ordres de grandeur voisins (un SSD de 0,05 à 0,1 ms, par exemple) et une conversion de 1 Go en 1 024 Mo. Virtualisation : la capacité du processeur à faire tourner un second système à côté du sien, une machine virtuelle ; WSL 2 et Docker en ont besoin ; « Désactivé » dans le gestionnaire des tâches veut dire éteinte dans le BIOS ou l’UEFI de la carte mère, où elle s’active ; sur un Mac, elle est toujours en service. Entretien : retirer la poussière des grilles ; installer au plus tôt les mises à jour de sécurité, qui corrigent des failles connues de tous une fois corrigées. Surchauffe : elle se lit à la vitesse du processeur qui tombe sous sa vitesse de base pendant un travail lourd, avec la machine chaude et le ventilateur fort ; aucune jauge n’est forcément au maximum. Sur un Mac, qui n’affiche pas la vitesse, ce sont ces signes. Sous Windows, la température se relève avec HWMonitor, au repos puis pendant le travail lourd (TP du plan) ; sur un Mac, aucun outil. La fiche n’enseigne ni comment créer une machine virtuelle, ni les tests de performance, ni les générations de RAM (DDR4, DDR5) ni les types de SSD (NVMe, SATA), ni Linux, ni les portes logiques : ne pénalise pas leur absence, et accepte une réponse juste qui les emploie. Pièges à repérer : E1, confondre RAM et stockage (prendre 512 Go de SSD pour de la mémoire vive, croire que la RAM garde ce qui n’est pas enregistré ou qu’elle range les fichiers) ; E2, croire que plus de GHz veut toujours dire plus rapide ; E3, ignorer la famille du processeur au téléchargement (x64 pour une puce ARM64, ARM64 pour un processeur Intel ou AMD), ou croire que « 64 bits » dit la famille ; E4, faire lire ou écrire au processeur un programme ou un fichier directement sur le stockage, sans la copie en RAM. Accepté sans être exigé : proposer l’action qui agit sur la cause d’une lenteur (fermer des programmes, laisser finir un travail lourd, dégager les grilles) ; nommer le cache ou les cœurs dans un trajet ; comparer deux processeurs de la même génération par leurs GHz ; évoquer, sans la détailler, une machine virtuelle pour faire tourner Windows sur un Mac. Pour PR2-2 : les deux observations, une attente ou non, sont justes si l’explication va avec ; un navigateur qui met des onglets en veille et les recharge, ce qui libère de la RAM, est une explication juste.  Une réponse à moitié juste est notée à moitié juste, avec ce qui manque. Pour examiner une explication, la grille de compréhension : l’idée en mots simples, le mécanisme ou la raison au niveau de la fiche, la condition d’application, le terme exact, la relation avec une autre notion du modèle, un exemple ou une limite ; dire ce qui manque et ce que ça implique. Chaque attendu vient de la fiche : les étapes 3 à 12 et 14 (sources S1 à S11) ; ce qui est marqué « D’après » y est écrit ; ce qui est marqué « Déduit » s’obtient en appliquant une règle de la fiche à un autre cas. Les conventions dont une question se sert (1 GHz, les Mo d’une journée) sont redonnées avec elle : ce qui compte, c’est le raisonnement, pas de réciter les nombres.",
         "sources": [
           {
             "id": "S1",
@@ -7586,6 +7622,12 @@ Serveur de test   1 000 Mo</code></pre>
             "erreurs": []
           },
           {
+            "id": "B03-Q19",
+            "question": "Salomé lance un seul programme, qui n’a qu’une suite d’instructions, sur un processeur à 8 cœurs, puis sur un à 4 cœurs ; chaque cœur va à la même vitesse. Sur lequel finit-il le plus vite ? Pourquoi ?",
+            "attendu": "Aucune différence : une suite d’instructions n’occupe qu’un cœur à la fois, et les autres cœurs restent libres pour d’autres programmes. Avoir plus de cœurs aide à faire avancer plusieurs suites en même temps, pas à accélérer une seule. Erreur à repérer : croire qu’un programme se répartit tout seul sur tous les cœurs. Déduit de l’étape 7.",
+            "erreurs": []
+          },
+          {
             "id": "B03-Q14",
             "question": "Le réparateur de Paul lui dit : « La carte mère de votre portable est en panne ; le SSD, la RAM et le processeur, eux, marchent. » Pourquoi le portable ne peut-il plus rien lancer ?",
             "attendu": "La carte mère relie les composants : le lancement copie le programme du SSD vers la RAM, puis le processeur le lit, et ces trajets passent par ses pistes. Sans elle, rien ne circule entre eux, même s’ils marchent. Déduit de l’étape 9.",
@@ -7754,7 +7796,7 @@ Serveur de test   1 000 Mo</code></pre>
           "reussite_aide_max": 0,
           "criteres": [
             "J’ai lu sur ma machine si la virtualisation est en service : sous Windows, dans le panneau Processeur du gestionnaire des tâches ; sur un Mac, elle l’est toujours.",
-            "Après cinq minutes de travail lourd, j’ai regardé si ma machine chauffe trop : sous Windows, j’ai comparé la ligne Vitesse du panneau Processeur à sa vitesse de base ; sur un Mac, j’ai noté s’il ralentissait, chauffait au toucher et soufflait fort.",
+            "Après cinq minutes de travail lourd, j’ai regardé si ma machine chauffe trop : sous Windows, j’ai relevé avec HWMonitor la température du processeur au repos puis pendant le travail, et comparé la ligne Vitesse du panneau Processeur à sa vitesse de base ; sur un Mac, j’ai noté s’il ralentissait, chauffait au toucher et soufflait fort.",
             "Machine éteinte et débranchée, j’ai repéré ses grilles d’aération et retiré de l’extérieur, au chiffon sec, la poussière visible, ou vérifié qu’elle n’en a pas, comme un MacBook Air ; je la pose sur une surface dure pour travailler.",
             "J’ai ouvert la page des mises à jour de mon système, recherché les mises à jour, et installé celles qui restaient."
           ]
@@ -7892,7 +7934,16 @@ Serveur de test   1 000 Mo</code></pre>
             "notion": "Dire le rôle du processeur, de ses cœurs, de sa fréquence et de son cache, et pourquoi les GHz seuls ne disent pas la vitesse",
             "montree": ["ET7"],
             "pratiquee": ["PR1"],
-            "questions": ["B03-R3", "B03-Q2", "B03-Q5", "B03-C2", "B03-K6", "B03-K20", "B03-K21"]
+            "questions": [
+              "B03-R3",
+              "B03-Q2",
+              "B03-Q19",
+              "B03-Q5",
+              "B03-C2",
+              "B03-K6",
+              "B03-K20",
+              "B03-K21"
+            ]
           },
           {
             "id": "N6",
