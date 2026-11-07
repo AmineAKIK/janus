@@ -1,108 +1,111 @@
-# B01 : réponses de l'apprenant neuf (version 35)
+# Rapport de l'apprenant neuf, fiche B01 (version 66)
 
-## Pratique
+## Réponses
 
-PR7-1 : déductible (ET5, « Pas à pas » et « Sans les poids ») : 10010110 → poids 128 + 16 + 4 + 2 = 150.
-PR7-2 : déductible (ET6, « La méthode ») : 77 → 128 non (0), 64 oui reste 13 (1), 32 non (0), 16 non (0), 8 oui reste 5 (1), 4 oui reste 1 (1), 2 non (0), 1 oui reste 0 (1) : 01001101.
-PR7-3 : déductible (ET4, « Combien de valeurs ») : 64 valeurs, c'est juste, mais on compte à partir de 0, donc le plus grand nombre est 2^6 − 1 = 63.
-PR7-4 : déductible (ET4, « Combien de valeurs ») : 127 : le nombre de valeurs double, de 64 à 128, et le plus grand nombre est 128 − 1.
-PR7-5 : déductible (ET5, « Sans les poids » ; ET7, « La table ASCII ») : 01011010 = 64 + 16 + 8 + 2 = 90, et 90 dans la table, c'est Z.
-PR7-6 : déductible (ET11, « Un programme de 6 octets ») : 1 10 range 10 dans le registre, 2 10 ajoute 10 (registre 20), 3 0 affiche : l'écran affiche 20.
-PR8-1 : déductible (ET6, « La méthode ») : 6 = 4 + 2 → 00000110.
-PR8-2 : déductible (ET14, « À retenir » ; ET2) : Ça dépend du programme qui les lit, et de son codage : une suite de bits n'a pas de sens toute seule.
-PR8-3 : déductible (ET8, « Une couleur en octets » ; ET6, « La méthode ») : 32 → 00100000, 192 = 128 + 64 → 11000000, 96 = 64 + 32 → 01100000.
-PR8-4 : déductible (ET9, « Écrire un octet ») : 0010 0000 → 20, 1100 0000 → c0, 0110 0000 → 60 : #20c060.
-PR8-5 : déductible (ET10, « La taille d'une photo ») : 800 × 600 = 480 000 pixels, × 3 octets = 1 440 000 octets.
-PR8-6 : déductible (ET4, « Les poids » ; ET6, « La méthode ») : Il a rangé les bits à l'envers : le poids 128 est à gauche. 163 = 128 + 32 + 2 + 1 s'écrit 10100011 (son 11000101 est cette suite retournée).
-PR8-8 : déductible (ET11, « Un autre processeur » et « Le binaire n'est pas un langage ») : Chaque processeur les lit avec son jeu d'instructions, et les deux tables diffèrent : les mêmes octets font autre chose avec une autre table.
+PR7-1 : déductible (ET5, Pas à pas et Avec les poids) : 128 + 16 + 4 + 2 = 150.
+PR7-2 : déductible (ET6, La méthode) : 77 = 64 + 8 + 4 + 1, soit 01001101.
+PR7-3 : déductible (ET4, Combien de valeurs) : 64 valeurs est juste, mais le plus grand nombre est 2^n − 1 = 63. Première réponse.
+PR7-4 : déductible (ET4, Combien de valeurs) : 2^7 = 128 valeurs, le plus grand nombre est 128 − 1 = 127. Première réponse.
+PR7-5 : déductible (ET5 + ET7, La table ASCII) : 01011010 = 64 + 16 + 8 + 2 = 90, et 90 est Z dans la table. Il affiche Z.
+PR7-6 : déductible (ET11, Un programme de 6 octets) : 1 10 range 10, 2 10 ajoute 10 donc 20, 3 0 affiche. L'écran affiche 20.
+PR8-1 : déductible (ET6, La méthode) : 6 = 4 + 2, soit 00000110.
+PR8-2 : déductible (ET14, À retenir) : une suite de bits n'a pas de sens toute seule, donc la première réponse : ça dépend du programme qui les lit et de son codage.
+PR8-3 : déductible (ET6 + ET8, Une couleur en octets) : 32 = 00100000, 192 = 11000000, 96 = 01100000.
+PR8-4 : déductible (ET9, Écrire un octet) : 32 = 0010 0000 donc 20, 192 = 1100 0000 donc c0, 96 = 0110 0000 donc 60. Réponse : #20c060.
+PR8-5 : déductible (ET10, La taille d'une photo) : 800 × 600 × 3 = 1 440 000 octets.
+PR8-6 : déductible (ET4, Les poids) : 11000101 vaut 197, pas 163. Les bits sont à l'envers, le poids 128 est à gauche. 163 = 128 + 32 + 2 + 1 = 10100011. Première réponse.
+PR8-8 : déductible (ET11, Un autre processeur et Le binaire n'est pas un langage) : chaque processeur lit les octets avec sa propre table, et les deux tables diffèrent. Première réponse.
+R21 : déductible (ET4, Combien de valeurs) : chaque bit double le nombre de valeurs, donc n bits donnent 2^n valeurs, un octet 2^8 = 256. On compte à partir de 0 et 0 est une valeur, donc le plus grand nombre est 2^n − 1 = 255. Avec 7 bits : 2^7 = 128 valeurs et le plus grand nombre est 127.
+R35 : déductible (ET5 + ET4, Les poids) : 01010101 = 64 + 16 + 4 + 1 = 85. Un bit à 1 compte son poids, qui double à chaque place en allant de droite à gauche (1, 2, 4... 128) : plus il est à gauche, plus il compte.
+R31 : déductible (ET5, ET7, ET8, ET14) : 01000011 = 64 + 2 + 1 = 67. Avec la table ASCII, 67 est C. Comme intensité de rouge, c'est 67 sur 255, un rouge assez faible (un peu plus du quart). Ce qui décide de la bonne lecture : le codage avec lequel le programme lit les bits. Aucune lecture n'est juste en soi.
+R32 : déductible (ET6, ET8) : 144 = 128 + 16 = 10010000 ; 48 = 32 + 16 = 00110000 ; 224 = 128 + 64 + 32 = 11100000. Rouge 144 sur 255 : un peu plus que mi-chemin. Vert 48 : faible. Bleu 224 : presque à fond.
+R34 : déductible (ET10, Pixels et en-tête, La taille d'une photo, Ko Mo Go) : une photo est une grille de pixels ; chaque pixel prend trois octets, un par lumière rouge, vert, bleu ; le fichier range ces octets à la suite, pixel après pixel, ligne après ligne ; un en-tête donne largeur et hauteur pour que le programme sache où couper les lignes. Calcul : 2 000 × 1 000 = 2 000 000 pixels, × 3 = 6 000 000 octets, soit 6 Mo.
+R26 : déductible (ET11, Un programme de 6 octets et Le binaire n'est pas un langage) : 1 6 range 6, 2 4 ajoute 4 donc 10, 3 0 affiche : l'écran affiche 10. Le binaire dit seulement comment c'est écrit (une façon d'écrire des nombres avec deux chiffres) ; ce qui fait le langage machine, c'est le jeu d'instructions du processeur. Un langage de programmation, ce sont des mots et des règles de grammaire.
+Q21 : déductible (ET5) : 10110100 = 128 + 32 + 16 + 4 = 180.
+Q22 : déductible (ET6) : 37 = 32 + 4 + 1, soit 00100101.
+Q23 : déductible (ET4, Combien de valeurs) : on compte à partir de 0 et 0 est une valeur ; 32 est le nombre de valeurs, le plus grand nombre est 2^5 − 1 = 31.
+Q24 : déductible (ET14, À retenir ; ET7 ; ET8) : les deux ont raison, chacun avec son codage. 72 105 33 donne « Hi! » en ASCII et une couleur rgb(72, 105, 33) en RGB. Les bits n'ont pas de sens seuls : le sens vient du codage du programme qui lit.
+Q25 : déductible (ET11, Le binaire n'est pas un langage) : faux. Le binaire est une façon d'écrire des nombres avec deux chiffres, pas un langage. Programmer, c'est écrire du texte dans un langage (PHP, JavaScript), traduit en code machine ou exécuté par un interpréteur.
+Q31 : déductible (ET9, Relire) : #00ff80 : 00 = 0, ff = 15 × 16 + 15 = 255, 80 = 8 × 16 = 128, soit rgb(0, 255, 128). Le chiffre de gauche écrit la moitié gauche de l'octet, dont les poids 128, 64, 32, 16 valent 16 fois ceux de la moitié droite (8, 4, 2, 1).
+Q27 : déductible (ET10, La taille d'une photo) : 64 × 64 = 4 096 pixels, × 3 octets par pixel = 12 288.
+Q30 : déductible (ET4, Les poids) : les poids doublent en allant vers la gauche : 1, 2, 4, 8, 16, 32, 64, 128, 256, 512. Le 10e bit, tout à gauche, pèse 512 = 2^9, un poids de plus que dans l'octet à chaque doublement.
+C21 : déductible (ET6 + ET5) : 172 = 128 + 32 + 8 + 4, soit 10101100. 00110011 = 32 + 16 + 2 + 1 = 51.
+C22b : déductible (ET4, Combien de valeurs) : 10 bits donnent 2^10 = 1 024 valeurs, le plus grand nombre est 1 023. Il n'est pas égal au nombre de valeurs parce que 0 est l'une des valeurs.
+C23 : déductible (ET7, Quand « é » devient « Ã© » et Éviter « Ã© ») : les octets sont justes (UTF-8, deux octets pour le caractère accentué), mais le navigateur les a lus avec le mauvais codage, Latin-1, un caractère par octet. On l'évite en enregistrant la page en UTF-8 et en annonçant <meta charset="utf-8"> en tête de la page.
+C27 : déductible (ET9, Relire et Écrire un octet) : #33cc99 : 33 = 3 × 16 + 3 = 51, cc = 12 × 16 + 12 = 204, 99 = 9 × 16 + 9 = 153, soit rgb(51, 204, 153). rgb(255, 64, 0) : 255 = 1111 1111 donc ff, 64 = 0100 0000 donc 40, 0 donc 00 : #ff4000.
+C25 : déductible (ET11) : 1 7 range 7, 2 1 ajoute 1 donc 8, 3 0 affiche : il affiche 8. Réponse au collègue : le binaire est seulement une façon d'écrire des nombres avec deux chiffres, pas un langage. Ce qui fait du code machine un langage, c'est le jeu d'instructions du processeur, la table qui donne un sens aux octets.
+DE31b : déductible (ET4, Combien de valeurs) : 2^12 = 4 096 valeurs (2^10 = 1 024, puis deux doublements : 2 048, 4 096). Chaque bit ajouté double le nombre de valeurs.
+DE22 : déductible (ET4, Combien de valeurs) : 256 est le nombre de valeurs, pas le plus grand nombre. Avec 3 bits : 8 valeurs, de 0 à 7, donc le plus grand nombre est 8 − 1 = 7, pas 8. Pour un octet, c'est 255.
+DE30 : déductible (ET14, À retenir ; ET7) : 01000101 = 64 + 4 + 1 = 69, et 69 est E dans la table. Aucun ne se trompe : le premier lit en binaire (un nombre), l'autre avec la table ASCII (une lettre).
+DE24 : déductible (ET10, Une photo compressée ; ET14, À retenir) : non, il n'est pas forcément abîmé. Le fichier est une suite d'octets ; le Bloc-notes les lit avec sa table de caractères, donc la plupart tombent sur des signes sans suite ou des codes invisibles. Mauvais codage pour ce fichier, pas fichier abîmé.
+DE25 : déductible (ET11, Le binaire n'est pas un langage) : le binaire n'est pas un langage de programmation, c'est une façon d'écrire des nombres avec deux chiffres. PHP est un vrai langage de programmation : du texte exécuté par un interpréteur (lui-même en code machine). Pas besoin d'apprendre « le binaire » comme langage.
+DE32b : déductible (ET11 + ET14) : les mêmes octets donnent un programme avec le jeu d'instructions du processeur (affiche 65) et une lettre avec la table ASCII (A). Ce n'est donc pas le binaire qui en fait un programme : c'est le jeu d'instructions qui lit les octets.
+DE27 : déductible (ET6, La méthode) : 128 rentre dans 180 : 1, reste 52 ; 64 ne rentre pas : 0 ; 32 rentre : 1, reste 20 ; 16 rentre : 1, reste 4 ; 8 ne rentre pas : 0 ; 4 rentre : 1, reste 0 ; 2 : 0 ; 1 : 0. Résultat 10110100. On commence par 128 car tous les poids plus petits ensemble valent 127 : si 128 rentre, aucun autre poids ne peut le remplacer, chaque décision est sûre.
+DE28 : déductible (ET4, Les poids) : chaque 1 compte le poids de sa place, qui double d'un rang à l'autre : ici 128, 64 et 1. L'octet vaut 128 + 64 + 1 = 193.
+DT30 : déductible (ET7, ET9, ET11) : a) ASCII, « Hi ». b) #c03060 est une couleur hexadécimale rgb : c0 = 12 × 16 = 192, 30 = 3 × 16 = 48, 60 = 6 × 16 = 96, soit rgb(192, 48, 96). c) jeu d'instructions du processeur imaginaire : 1 9 range 9, 3 0 affiche : 9.
+DT22b : déductible (ET4, ET8) : avec 10 bits, le plus grand nombre est 2^10 − 1 = 1 023, intensité la plus forte d'une lumière. Un pixel a trois lumières : 3 × 10 = 30 bits.
+DT23 : déductible (ET4, Les poids) : 00001011 = 8 + 2 + 1 = 11. 208 = 11010000 est ce même octet lu à l'envers : il a inversé le sens des poids (le plus lourd, 128, est à gauche). Bonne valeur : 11.
+DT24 : déductible (ET4, ET14) avec une limite : non. Dans le système binaire de ce bloc, 11111111 est 255 (tous les poids à 1). Le programme lit les mêmes bits avec un autre codage, et le texte dit seulement que les nombres négatifs en demandent un autre ; je ne sais pas lequel ni comment il fonctionne.
+DT28 : déductible (ET10, La taille d'une photo ; Ko Mo Go) : 800 × 600 = 480 000 pixels, un octet par pixel : 480 000 octets, soit 480 ko.
+K21 : RECOPIÉE (ET3, Le compteur ; ET14, Les mots du bloc) : un bit est un chiffre qui vaut 0 ou 1.
+K22 : RECOPIÉE (ET4, Bit et octet ; ET14, Les mots du bloc) : un octet, c'est 8 bits, 256 valeurs, de 0 à 255.
+K23 : RECOPIÉE (ET4, Combien de valeurs ; ET14, Les mots du bloc) : avec n bits, 2^n valeurs, et le plus grand nombre est 2^n − 1.
+K24 : RECOPIÉE (ET4, Les poids ; ET14, Les mots du bloc) : 128 64 32 16 8 4 2 1, de gauche à droite.
+K25 : RECOPIÉE (ET4, Les poids ; ET14, Les mots du bloc) : une façon d'écrire les nombres avec deux chiffres (base 2), pas un langage.
+K26 : RECOPIÉE (ET7, La table ASCII ; ET14, Les mots du bloc) : la règle qui dit comment lire des bits : nombre, lettre, couleur, instruction.
+K33 : RECOPIÉE (ET7, La table ASCII) : calculer son nombre, puis chercher ce numéro dans la table.
+K28 : RECOPIÉE (ET8, Trois lumières ; ET14, Les mots du bloc) : dans l'ordre, rouge, vert, bleu, chacun de 0 (éteint) à 255 (à fond).
+K29 : RECOPIÉE (ET9, Écrire un octet ; ET14, Les mots du bloc) : écrire les 8 bits, couper au milieu, écrire chaque moitié avec son chiffre hexadécimal : deux chiffres, de 00 à ff.
+K30 : RECOPIÉE (ET11, Le processeur ; ET14, Les mots du bloc) : la table du processeur qui dit ce que fait chaque instruction, et qui fait de certains octets des instructions (le code machine).
+K31 : RECOPIÉE (ET10, Pixels et en-tête ; ET14, Les mots du bloc) : 3 octets par pixel, dans le cas le plus simple.
+K34 : RECOPIÉE (ET10, La taille d'une photo) : largeur × hauteur × 3 octets (plus un en-tête de quelques octets).
 
-## Restitution
+## Liste 1 : éléments NON DÉDUCTIBLES, puis RECOPIÉS
 
-R21 : déductible (ET4, « Combien de valeurs ») : Avec 8 bits il y a 2^8 = 256 valeurs, mais on compte à partir de 0 et 0 est une valeur : les 256 valeurs vont de 0 à 255, donc le plus grand est 2^8 − 1 = 255. Avec 7 bits : 2^7 = 128 valeurs, et le plus grand nombre est 127.
-R35 : déductible (ET4, « Les poids » ; ET5, « Pas à pas ») : 01010101 = 64 + 16 + 4 + 1 = 85. Un bit à 1 compte selon le poids de sa place : en partant de la droite les poids sont 1, 2, 4, 8, 16, 32, 64, 128, chacun le double du précédent (des puissances de 2) ; plus le bit est à gauche, plus il compte.
-R31 : déductible (ET5 ; ET7, « La table ASCII » ; ET8, « Trois lumières » ; ET14, « À retenir ») : 01000011 = 64 + 2 + 1 = 67. Avec la table ASCII : la lettre C. Comme rouge en RGB : une intensité de 67 sur 255, un rouge plutôt faible. Aucune lecture n'est bonne toute seule : c'est le codage avec lequel le programme lit l'octet qui décide.
-R32 : déductible (ET8, « Une couleur en octets » ; ET6, « La méthode ») : 144 = 128 + 16 → 10010000 ; 48 = 32 + 16 → 00110000 ; 224 = 128 + 64 + 32 → 11100000. Rouge 144 sur 255 : à mi-chemin (un peu plus de la moitié, comme 136 dans l'exemple) ; vert 48 : faible ; bleu 224 : presque à fond.
-R34 : déductible (ET10, « Pixels et en-tête », « La taille d'une photo », « Ko, Mo, Go ») : Une photo est une grille de pixels. Chaque pixel prend trois octets, un par lumière : rouge, vert, bleu. Le fichier range ces octets à la suite, pixel après pixel, ligne après ligne. Au début, un en-tête donne la largeur et la hauteur, pour que le programme sache où couper les lignes. Calcul : 2 000 × 1 000 = 2 000 000 pixels, × 3 = 6 000 000 octets, soit 6 Mo (6 000 ko).
-R26 : déductible (ET11, « Un programme de 6 octets » et « Le binaire n'est pas un langage ») : 1 6 range 6, 2 4 ajoute 4 (registre 10), 3 0 affiche : 10. Le binaire est seulement une façon d'écrire des nombres avec deux chiffres, comme le décimal avec dix ; il dit comment c'est écrit, pas ce que c'est. Ce qui fait du code machine un langage, c'est le jeu d'instructions du processeur ; un langage de programmation, ce sont des mots et des règles de grammaire pour écrire un programme en texte (PHP, JavaScript).
+NON DÉDUCTIBLES : aucun.
 
-## Rappel
+Réserves sur des éléments que j'ai tout de même classés déductibles :
 
-Q21 : déductible (ET5, « Sans les poids ») : 10110100 = 128 + 32 + 16 + 4 = 180.
-Q22 : déductible (ET6, « La méthode ») : 37 = 32 + 4 + 1 → 00100101.
-Q23 : déductible (ET4, « Combien de valeurs ») : Parce qu'on compte à partir de 0 et que 0 est une valeur : les 32 valeurs vont de 0 à 31, le plus grand est 2^5 − 1 = 31.
-Q24 : déductible (ET7, « La table ASCII » ; ET8, « Trois lumières » ; ET14, « À retenir ») : Aucun n'a raison tout seul, ou les deux : 72, 105, 33 donnent « Hi! » avec la table ASCII et rgb(72, 105, 33) lus comme une couleur. Le sens vient du codage avec lequel le programme lit les octets.
-Q25 : déductible (ET11, « Le binaire n'est pas un langage ») : Faux. Programmer, c'est écrire un programme en texte, avec les mots et la grammaire d'un langage comme PHP ou JavaScript. Ce texte est rangé en octets (en binaire, comme tout), puis traduit en code machine ou exécuté par un interpréteur. Le binaire n'est qu'une façon d'écrire des nombres.
-Q29 : déductible (ET9, « Relire ») : 00 → 0 ; ff → 15 × 16 + 15 = 255 ; 80 → 8 × 16 + 0 = 128 : rgb(0, 255, 128).
-Q27 : déductible (ET10, « La taille d'une photo ») : 64 × 64 = 4 096 pixels, × 3 octets par pixel (rouge, vert, bleu) = 12 288 octets.
-Q30 : déductible (ET4, « Les poids » et « Combien de valeurs ») : 512. Les poids doublent à chaque place depuis la droite : 1, 2, 4, …, soit 2^0 à 2^9 pour 10 bits ; le bit de gauche, le 10e, vaut 2^9 = 512.
+- DT24 : la partie « explique ce qui se passe » n'est enseignée qu'au niveau « un autre codage lit les mêmes bits ». Le codage des négatifs est seulement nommé (« À explorer plus tard »). Si la réponse attendue détaille ce codage, elle n'est pas déductible.
+- Q31, R35 et C23 : la justification (pourquoi le chiffre de gauche compte 16 fois ; pourquoi un bit compte selon sa place ; pourquoi « è » devient « Ã¨ ») est reconstruite à partir de règles écrites, mais la bonne réponse n'est donnée par aucune phrase du texte. Le texte ne donne que le cas « é » pour C23.
+- R31 : « un rouge faible » repose sur le seul repère de l'échelle de 0 à 255. Aucun seuil n'est écrit. R32 et « mi-chemin » : même remarque.
 
-## Tâches différées
+RECOPIÉS : K21, K22, K23, K24, K25, K26, K33, K28, K29, K30, K31, K34 (les douze cartes). Chaque réponse est écrite telle quelle dans le texte, surtout dans « Les mots du bloc ».
 
-C21 : déductible (ET6, « La méthode » ; ET5) : 172 = 128 + 32 + 8 + 4 → 10101100. 00110011 = 32 + 16 + 2 + 1 = 51.
-C22 : déductible (ET4, « Combien de valeurs ») : 2^10 = 1 024 valeurs, plus grand nombre 1 023. La différence de 1 vient du 0 : on compte à partir de 0, et 0 est une des valeurs.
-C23 : déductible (ET7, « Quand « é » devient « Ã© » » et « Éviter « Ã© » ») : « è » n'est pas dans ASCII ; la page l'a écrit en UTF-8, avec deux octets. Le navigateur, faute d'annonce du codage (ou avec une fausse annonce), a lu la page avec Latin-1, un caractère par octet : les deux octets donnent deux caractères, Ã et ¨. Les octets sont justes, c'est le codage de lecture qui est faux. On l'évite en enregistrant la page en UTF-8 et en mettant <meta charset="utf-8"> en tête de la page HTML. (Je ne peux pas vérifier les valeurs des deux octets de « è » : elles ne sont pas données.)
-C26 : déductible (ET9, « Relire » et « Écrire un octet ») : #33cc99 → 3 × 16 + 3 = 51, 12 × 16 + 12 = 204, 9 × 16 + 9 = 153 : rgb(51, 204, 153). rgb(255, 64, 0) : 255 = 1111 1111 → ff, 64 = 0100 0000 → 40, 0 → 00 : #ff4000.
-C25 : déductible (ET11, « Un programme de 6 octets » et « Le binaire n'est pas un langage ») : Range 7, ajoute 1, affiche : 8. Je lui réponds : le code machine est écrit en binaire, mais « en binaire » dit seulement comment c'est écrit. Ce qui en fait un langage, c'est le jeu d'instructions du processeur : les mêmes octets font autre chose avec une autre table. Le binaire est une façon d'écrire des nombres, pas un langage.
-DE21 : déductible (ET4, « Combien de valeurs ») : 2^12 = 1 024 × 2 × 2 = 4 096 valeurs, plus grand nombre 4 095. Ils diffèrent de 1 parce que 0 est une des valeurs : on compte de 0 à 4 095.
-DE22 : déductible (ET3, « Le compteur » ; ET4, « Combien de valeurs ») : 256 est le nombre de valeurs, pas le plus grand nombre. Avec 3 bits : 2^3 = 8 valeurs, 0, 1, 2, 3, 4, 5, 6, 7 ; le plus grand est 7 = 8 − 1. De même un octet a 256 valeurs, de 0 à 255.
-DE30 : déductible (ET7, « La table ASCII » ; ET14, « À retenir ») : Aucun ne se trompe. 01000101 = 64 + 4 + 1 = 69 ; lu comme un nombre c'est 69, lu avec la table ASCII c'est E. Ce sont deux codages différents pour les mêmes bits.
-DE24 : déductible (ET1 ; ET10, « Une photo compressée » ; ET14, « À retenir ») : Non, pas forcément abîmé. Le fichier est une suite d'octets ; le Bloc-notes la lit avec sa table de caractères, qui n'est pas son codage : la plupart des octets tombent sur des signes sans suite ou des codes invisibles, d'où le charabia, comme pour une photo.
-DE25 : déductible (ET11, « Le binaire n'est pas un langage ») : Le binaire n'est pas un langage, c'est une façon d'écrire des nombres avec deux chiffres. Son programme PHP est du texte, rangé en octets avec un codage comme UTF-8, et exécuté par un interpréteur, lui-même en code machine. Ce que le processeur exécute, c'est du code machine, lu avec son jeu d'instructions ; il n'y a pas de « binaire » à apprendre comme langage.
-DE29 : déductible (ET11 ; ET7, « La table ASCII » ; ET14, « À retenir ») : Le processeur range 65 puis l'affiche : 65. Lu avec la table ASCII, l'octet 65 est la lettre A. Les deux lectures montrent que les mêmes octets donnent un programme ou du texte selon la règle qui les lit : c'est le jeu d'instructions qui en fait un programme, pas le binaire.
-DE27 : déductible (ET6, « La méthode ») : Reste 180. 128 rentre : 1, reste 52. 64 ne rentre pas : 0. 32 rentre : 1, reste 20. 16 rentre : 1, reste 4. 8 ne rentre pas : 0. 4 rentre : 1, reste 0. 2 : 0. 1 : 0. Donc 10110100. On commence par 128 parce que tous les poids plus petits ensemble valent 127, moins que lui : si 128 rentre, rien ne peut le remplacer, chaque décision est sûre et les bits s'écrivent de gauche à droite.
-DE28 : déductible (ET4, « Les poids » ; ET5) : Chaque 1 vaut le poids de sa place : celui de gauche 128, le suivant 64, celui de droite 1. L'octet vaut 128 + 64 + 1 = 193.
-DT26 : déductible (ET7 ; ET9, « Relire » ; ET11 ; ET14, « Quatre lectures ») : a) table ASCII : 72 → H, 105 → i : « Hi ». b) hexadécimal relu en RGB : c0 = 12 × 16 = 192, 30 = 3 × 16 = 48, 60 = 6 × 16 = 96 : rgb(192, 48, 96). c) jeu d'instructions du processeur : 1 9 range 9, 3 0 affiche : 9.
-DT22 : déductible (ET4, « Combien de valeurs » ; ET8, « Trois lumières ») : 2^10 = 1 024 valeurs d'intensité, la plus forte 1 023 ; un pixel a trois lumières, donc 3 × 10 = 30 bits.
-DT23 : déductible (ET4, « Les poids » ; ET17, erreur « Inverser le sens des poids ») : Il a inversé le sens des poids, en mettant 128 à droite : il a lu 11010000 = 128 + 64 + 16 = 208. Le poids 128 est à gauche : 00001011 = 8 + 2 + 1 = 11.
-DT24 : déductible (ET4 ; ET14, « À retenir » et « À explorer plus tard ») : Non : dans le système binaire de ce bloc, 11111111 vaut 255, et un octet va de 0 à 255, sans nombre négatif. Le programme lit l'octet avec un autre codage, fait pour les nombres négatifs, que ce bloc n'enseigne pas. Comment ce codage donne −1, je ne le sais pas : ce n'est pas expliqué.
-DT28 : déductible (ET10, « La taille d'une photo » et « Ko, Mo, Go ») : 800 × 600 = 480 000 pixels, × 1 octet = 480 000 octets, soit 480 ko.
+## Liste 2 : mots ou notions employés par les questions et jamais définis
 
-## Cartes
+- Nombres négatifs et codage des négatifs (DT24) : seulement nommés, renvoyés à plus tard.
+- « Bloc-notes » : employé comme un programme qui lit en caractères (DE24, PR7-5). Jamais défini, on l'infère du contexte.
+- « Fichier de musique » (DE24) : aucun mot sur les formats audio, la compression d'une photo est le seul cas traité. Le raisonnement se transpose, il n'est pas écrit pour la musique.
+- « Faible », « mi-chemin », « presque à fond » (R32) : jamais chiffrés, seulement l'échelle de 0 à 255 et un exemple (136 « un peu plus de la moitié »).
+- « Niveaux de gris » (DT28) : défini dans la question elle-même.
+- « Opacité » : mentionnée en ET9 sans être travaillée, non demandée.
+- « UTF-8 » : seulement « deux octets pour é, le détail est pour plus tard ». Pas de règle pour prédire le nombre d'octets d'un autre caractère comme « è » (C23).
 
-K21 : RECOPIÉE (ET3, « Le compteur » ; ET14, « Les mots du bloc ») : Un chiffre binaire, qui vaut 0 ou 1.
-K22 : RECOPIÉE (ET4, « Bit et octet » ; ET14, « Les mots du bloc ») : Huit bits à la suite ; 256 valeurs, de 0 à 255.
-K23 : RECOPIÉE (ET4, « Combien de valeurs » ; ET14, « Les mots du bloc ») : 2^n valeurs ; le plus grand nombre est 2^n − 1.
-K24 : RECOPIÉE (ET14, « Les mots du bloc ») : 128, 64, 32, 16, 8, 4, 2, 1.
-K25 : RECOPIÉE (ET4, « Les poids » ; ET14, « Les mots du bloc ») : Une façon d'écrire les nombres avec deux chiffres, 0 et 1, où chaque bit a un poids, puissance de 2. Pas un langage.
-K26 : RECOPIÉE (ET7, « La table ASCII » ; ET14, « Les mots du bloc ») : La règle qui dit comment lire des bits : nombre, lettre, couleur, instruction.
-K33 : RECOPIÉE (ET7, « La table ASCII ») : Je calcule son nombre, puis je cherche ce numéro dans la table.
-K28 : RECOPIÉE (ET8, « Trois lumières » ; ET14, « Les mots du bloc ») : L'intensité du rouge, du vert et du bleu, dans cet ordre, chacune de 0 (éteinte) à 255 (à fond).
-K29 : RECOPIÉE (ET9, « Écrire un octet » ; ET14, « Les mots du bloc ») : En deux chiffres hexadécimaux, un par moitié de 4 bits, de 00 à ff.
-K30 : RECOPIÉE (ET11, « Le processeur » ; ET14, « Les mots du bloc ») : La table qui dit ce que fait chaque instruction ; elle fait de certains octets des instructions, le code machine.
-K31 : RECOPIÉE (ET10, « Pixels et en-tête » ; ET14, « Les mots du bloc ») : 3 octets, un par lumière.
-K34 : RECOPIÉE (ET10, « La taille d'une photo ») : Largeur × hauteur × 3 octets.
+## Liste 3 : passages qui renvoient à autre chose que la fiche
 
-## Décompte
+- ET1 : « Les trois blocs suivants reposent sur celui-ci », et les trois autres idées de la partie La machine.
+- ET7 : « Le détail est pour plus tard » (UTF-8).
+- ET7 : « Dans ton navigateur » (console F12, charCodeAt, fromCharCode, TextEncoder) : action hors fiche.
+- ET11 : « Sur la carte du bloc, tu as lu que tout, dans la machine, est écrit en binaire. »
+- ET12 et ET15 : renvoi à « Ce qu'on te demande », parties Pratique et Restitution, « plus bas ». Restitution « sans le cours ».
+- ET13 : « la page des blocs », « Prouvé », preuve « Aisance », niveaux de 30, 20, 10 secondes sur plusieurs jours.
+- ET14 : « le schéma du cours s'affiche, pour comparer » ; « Tes mots et ton nombre de boîtes peuvent différer du cours ».
+- ET14 « La suite » : le bloc suivant (logique), les composants, les langages. « À explorer plus tard » : UTF-8 en détail, nombres négatifs, compression JPEG, vrais jeux d'instructions x86 et ARM.
+- ET9 : « La table des seize chiffres te sera redonnée chaque fois qu'une question convertit. »
+- ET1 : « Replié sous " Ce qui sera vérifié " » (reproduit aussi en ET12).
+- ET17 : les erreurs critiques « que la page a repérées dans tes réponses ».
 
-57 éléments : 45 déductibles, 12 recopiées, 0 non déductible, 0 hors champ assumé.
+## Liste 4 : passages qui parlent de la fiche au lieu de me parler
 
-## Listes
-
-### 1. Éléments NON DÉDUCTIBLES, puis éléments RECOPIÉS
-
-Non déductibles : aucun.
-(Limites signalées dans des éléments déductibles : C23, les valeurs des deux octets de « è » et le caractère ¨ ne sont donnés nulle part ; DT24, le codage des nombres négatifs est seulement nommé, la façon dont il donne −1 n'est pas enseignée.)
-
-Recopiés : K21, K22, K23, K24, K25, K26, K33, K28, K29, K30, K31, K34. Les douze cartes reprennent mot pour mot « Les mots du bloc » (ET14) ou une phrase de méthode (ET7, ET10) : elles ne vérifient que la lecture.
-
-### 2. Mots ou notions employés par les questions et jamais définis par le texte
-
-- « faible », « à mi-chemin », « presque à fond » (R32) : aucun seuil donné ; seul l'exemple « 136 sur 255, un peu plus de la moitié » existe.
-- « programmer » (Q25) : seul « langage de programmation » est défini.
-- « fichier texte » (DT26 a) : jamais défini ; le texte parle seulement du Bloc-notes et de sa table de caractères.
-- « feuille CSS » (DT26 b) : employée en ET8 sans définition ; seul CSS est défini.
-- « fichier de musique » (DE24) : jamais évoqué.
-- nombres négatifs, −1 (DT24) : seulement nommés dans « À explorer plus tard ».
-- le caractère « ¨ » (C23) : absent de l'extrait Latin-1.
-- « intensité » : utilisée (ET8, R31, R32, DT22) sans autre définition que « de 0 (éteinte) à 255 (à fond) ».
-
-### 3. Passages qui renvoient à autre chose que la fiche
-
-- ET1 : la partie « La machine » et ses trois blocs suivants (« Décider », « L'ordinateur et ses composants », « Du langage machine aux langages de haut niveau ») ; « Ce qui sera vérifié », replié.
-- ET7 : « Le détail est pour plus tard » (UTF-8) ; la console du navigateur (F12), outil extérieur à la fiche.
-- ET10 : la convention de Windows (par 1 024), non travaillée.
-- ET11 : les vrais processeurs x86 et ARM, seulement nommés.
-- ET13 : la preuve « Aisance » « dans ses Cinq preuves », jamais décrites ; « reviens ici les jours suivants ».
-- ET14 : « La suite » (le bloc suivant sur la logique ET, OU, NON, puis les composants et les langages) ; « À explorer plus tard » (UTF-8 en détail, nombres négatifs, compression JPEG, vrais jeux d'instructions).
-- ET15 : « sans le cours », qui renvoie à un cours distinct de la fiche.
-- ET17 : le statut « À reprendre » du bloc, géré hors de la fiche.
+- Les étapes portent des numéros ET2, ET1, ET3 ... ET15, ET17 dans le désordre, sans ET16 : numéros jamais expliqués. Le titre porte « (version 66) ».
+- ET4 : « Ce que tu as cherché avec le compteur a des noms. Les encadrés reprennent tes essais, là où ta réponse s'écartait. » Suivent des modèles bruts : « [seulement si l'essai c2 est faux] », « [la réponse à l'essai c2] », et ainsi de suite pour c1, c3b, c3c, c4, c5, c6, c7c, c7d, c7e, c8a, c8b. Je n'ai pas vu les essais, le texte reste cassé pour moi.
+- ET3 : « Ici, pas de compteur, et ne reviens pas le chercher... Une réponse fausse ici n'a rien de grave, l'étape suivante part de tes réponses. »
+- ET1 : « Replié sous " Ce qui sera vérifié " » : paragraphe de plan d'évaluation recopié (aussi dans ET12).
+- ET12 : « Les exercices, un item à la fois : plus bas, dans " Ce qu'on te demande ", partie Pratique. »
+- ET13 : explication de la preuve « Aisance » et de la page des blocs.
+- ET14 : « Ça ne compte pas dans ta note : c'est un essai... pas pour réciter un dessin. Tu as deux essais, puis le schéma du cours s'affiche. » ; « Fais passer note.dat dans le schéma » avec la liste « Boîte donnée / Flèche à écrire / Boîte à écrire » : consignes de l'outil, pas du contenu.
+- ET15 : « Elle se fait sans le cours... masqué jusqu'à ta dernière réponse... corrigées à la fin de la série, pour qu'une correction ne souffle pas la question suivante. »
+- ET17 : « Une erreur cochée met le bloc " À reprendre " jusqu'à ce qu'une réponse solide... la referme » ; la case « Inverser le sens des poids » révèle un piège que le texte ne mentionne nulle part.
+- Répétitions mécaniques : la table du jeu d'instructions est recopiée quatre fois en ET11, la table hexadécimale trois fois en ET9.
+- Étiquettes de méthode adressées à l'apprenant : « Pas à pas : réponds à chaque question avant de passer à la suivante », « Sans aide », « À compléter », « À toi ».

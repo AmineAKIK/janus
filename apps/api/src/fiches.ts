@@ -485,11 +485,28 @@ function verifierErreursCritiques(manifeste: Manifeste, signaler: (message: stri
 const DEMANDE =
   /^(?:puis\s+)?(?:écris|dis|explique|donne|calcule|traduis|trace|transcris|corrige|trouve|compare|décris|nomme|cite|justifie|montre|convertis|lis|relis|complète|adapte|remets|remplis|propose|indique|précise|réponds|choisis|range|fais|décode|encode|dessine|retrouve|vérifie)\b/i
 
-/** Combien de choses une question demande : ses phrases interrogatives et ses ordres. */
+/**
+ * Un mot interrogatif qui ouvre une demande de plus dans la même phrase : « …, et pourquoi ? ». Il
+ * compte en tête de phrase ou après une virgule, « et », « ou », « puis » ; pas au milieu d'une
+ * proposition (« à quel ordinateur la remettre »).
+ */
+const INTERROGATIF =
+  /(?:^|[,;:]\s*(?:et\s+|ou\s+|puis\s+)?|\s(?:et|ou|puis)\s+)(?:pourquoi|comment|combien|quel(?:le)?s?|lequel|laquelle|lesquel(?:le)?s|qu[’']est-(?:ce|il|elle)|que\s+(?:devient|fait|font|se\s+passe|affiche|montre|vaut))(?!\p{L})/giu
+
+/**
+ * Combien de choses une question demande : ses phrases interrogatives et ses ordres, et dans une
+ * phrase, chaque mot interrogatif (« Qu'est-il arrivé, et pourquoi ? » demande deux choses, pas une :
+ * leçons du B06, on compte les demandes, pas les « ? »).
+ */
 function sousQuestions(question: string): number {
   return question
     .split(/(?<=[.?!])\s+/)
-    .filter((phrase) => phrase.endsWith('?') || DEMANDE.test(phrase)).length
+    .map((phrase) => {
+      const demande = phrase.endsWith('?') || DEMANDE.test(phrase) ? 1 : 0
+      const interrogatifs = (phrase.match(INTERROGATIF) ?? []).length
+      return Math.max(demande, phrase.endsWith('?') ? interrogatifs : 0)
+    })
+    .reduce((somme, n) => somme + n, 0)
 }
 
 /**
@@ -514,13 +531,136 @@ function verifierOrdreDuCycle(manifeste: Manifeste, signaler: (message: string) 
   }
 }
 
-function verifierRestitution(manifeste: Manifeste, signaler: (message: string) => void): void {
+function verifierDemandes(manifeste: Manifeste, signaler: (message: string) => void): void {
   for (const question of manifeste.restitution) {
     const n = sousQuestions(question.question)
     if (n > 2) {
       signaler(
         `restitution ${question.id} : la question demande ${String(n)} choses ; une question de restitution, une tâche, deux sous-questions au plus.`,
       )
+    }
+  }
+  // Le rappel, les différées et les explications ont la même limite (leçons du B06 : PR1-6 et Q3
+  // demandaient trois choses, et l'apprenant répond à la première).
+  const autres: readonly { serie: string; id: string; texte: string }[] = [
+    ...manifeste.rappel.map((q) => ({ serie: 'rappel', id: q.id, texte: q.question })),
+    ...manifeste.differees.map((d) => ({ serie: 'différée', id: d.id, texte: d.consigne })),
+    ...manifeste.explication.map((e) => ({ serie: 'explication', id: e.id, texte: e.question })),
+  ]
+  for (const { serie, id, texte } of autres) {
+    const n = sousQuestions(texte)
+    if (n > 2) {
+      signaler(
+        `${serie} ${id} : la question demande ${String(n)} choses ; une tâche, deux sous-questions au plus.`,
+      )
+    }
+  }
+}
+
+/**
+ * L'explication d'une variante pose une autre question que celle de son item (leçons du B06, PR1-6) :
+ * la même question et le même attendu feraient rejuger la même réponse après la solution vue.
+ */
+function verifierExplicationsDesVariantes(
+  manifeste: Manifeste,
+  signaler: (message: string) => void,
+): void {
+  for (const explication of manifeste.explication) {
+    if (!explication.id.endsWith(':variante')) continue
+    const base = manifeste.explication.find((e) => e.id === explication.item)
+    if (base === undefined) continue
+    if (
+      normaliserTexte(base.question) === normaliserTexte(explication.question) &&
+      normaliserTexte(base.attendu) === normaliserTexte(explication.attendu)
+    ) {
+      signaler(
+        `explication « ${explication.id} » : la variante repose la question de l’item ${explication.item} avec le même attendu ; après une solution vue, la variante change le cas, et son explication aussi.`,
+      )
+    }
+  }
+}
+
+/**
+ * Chaque attendu d'explication dit d'où il vient (règle P05 : « D'après l'étape 7. », « Déduit des
+ * étapes 5 et 7. »), comme ceux de la restitution, du rappel et des différées : le correcteur affiche
+ * cette origine avec sa correction, et un attendu sans origine ne se relit pas. B01 était seule à
+ * ne pas le faire (manche 1 des épreuves, 7 novembre 2026).
+ */
+const ORIGINE = /\bD[’']après\b|\bDéduit\b/u
+
+function verifierOriginesDesExplications(
+  manifeste: Manifeste,
+  signaler: (message: string) => void,
+): void {
+  for (const explication of manifeste.explication) {
+    if (!ORIGINE.test(explication.attendu)) {
+      signaler(
+        `explication « ${explication.id} » : l’attendu ne dit pas d’où il vient (« D’après l’étape… » ou « Déduit de… », règle P05) : le correcteur n’aurait rien à afficher.`,
+      )
+    }
+  }
+}
+
+/**
+ * L'écran n'écrit pas la réponse avant de la demander (leçons du B06, R3 et R6 : « Qu'est-il arrivé à
+ * l'adresse… » après un paragraphe qui le disait). La prose d'un écran qui précède un outil ne partage
+ * aucune suite de MOTS_REDONNES mots avec la bonne option, la réponse attendue ou la solution de cet
+ * outil. Les retours, coups de pouce et « Pour lire » ont leur propre contrôle (verifierCeQuiRedonneLaReponse).
+ */
+const MOTS_REPONSE_ECRITE = 8
+
+function verifierReponseAvantLaQuestion(html: string, signaler: (message: string) => void): void {
+  for (const [, attributs, corps] of sansScriptsNiCommentaires(html).matchAll(
+    /<template\b([^>]*)>([\s\S]*?)<\/template\s*>/gi,
+  )) {
+    const etape = /\bdata-etape\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
+    const item = /\bdata-item\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
+    const variante = /\bdata-variante\s*=\s*["']([^"']*)["']/i.exec(attributs ?? '')?.[1]
+    const ou =
+      etape !== undefined
+        ? `l’étape ${etape}`
+        : item !== undefined
+          ? `l’item ${item}`
+          : variante !== undefined
+            ? `la variante de ${variante}`
+            : undefined
+    if (ou === undefined) continue
+    for (const ecran of (corps ?? '').split(/(?=<div\b[^>]*\bdata-ecran\s*=)/i)) {
+      const outils = outilsDe(ecran)
+      for (const [rang, outil] of outils.entries()) {
+        const reponses = reponsesDe(outil)
+        if (reponses.length === 0) continue
+        const debut =
+          rang === 0
+            ? 0
+            : ecran.indexOf(outils[rang - 1]?.balise ?? '') +
+              (outils[rang - 1]?.balise.length ?? 0) +
+              (outils[rang - 1]?.corps.length ?? 0)
+        const avant = ecran.slice(debut, ecran.indexOf(outil.balise, debut))
+        // La prose seulement : sans les encadrés « Pour lire », déjà contrôlés, ni ce que l'écran
+        // montre et que l'option peut citer (code, tables, touches). Une réponse courte est une
+        // étiquette que l'écran a le droit d'afficher (« Mise à jour de logiciels ») : seule une
+        // réponse d'au moins MOTS_REPONSE_ECRITE mots peut avoir été écrite avant la question.
+        const prose = avant
+          .replace(
+            /<div\b[^>]*\bclass\s*=\s*["'][^"']*\bpour-lire\b[^"']*["'][^>]*>[\s\S]*?<\/div>/gi,
+            ' ',
+          )
+          .replace(/<(pre|code|table|kbd|samp)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, ' ')
+        for (const { quoi, texte } of reponses) {
+          if (
+            (pourComparer(texte.replace(/<[^>]+>/g, ' ')).match(/[\p{L}\p{N}]+/gu) ?? []).length <
+            MOTS_REPONSE_ECRITE
+          )
+            continue
+          const commun = suiteCommune(prose, texte)
+          if (commun === undefined) continue
+          signaler(
+            `${ou}, ${outil.nom} : l’écran écrit ${quoi} avant de la demander (« ${commun} ») : on montre un autre cas, ou on demande autre chose que ce que l’écran vient de dire.`,
+          )
+          break
+        }
+      }
     }
   }
 }
@@ -1444,7 +1584,16 @@ export async function verifierLesFiches({
       verifierCeQuiRedonneLaReponse(resultat.manifeste, fiche.html, signaler)
       verifierErreursCritiques(resultat.manifeste, signaler)
       verifierAtelier(resultat.manifeste, signaler)
-      verifierRestitution(resultat.manifeste, signaler)
+      // Les contrôles écrits après les leçons du B06 (7 novembre 2026) valent pour toute fiche nouvelle
+      // ou reprise ; une fiche inchangée depuis la révision de référence attend sa prochaine PR, qui la
+      // corrigera. Sans référence, tout est contrôlé (B01 et B03 ont été reprises pour les passer).
+      const avant = contenuDeReference?.(fiche.nom)
+      if (contenuDeReference === undefined || avant !== fiche.html) {
+        verifierDemandes(resultat.manifeste, signaler)
+        verifierExplicationsDesVariantes(resultat.manifeste, signaler)
+        verifierOriginesDesExplications(resultat.manifeste, signaler)
+        verifierReponseAvantLaQuestion(fiche.html, signaler)
+      }
       verifierTablesEnGrille(resultat.manifeste, signaler)
       verifierOrdreDuCycle(resultat.manifeste, signaler)
       verifierAdressesExternes(fiche.html, signaler)
@@ -1460,7 +1609,6 @@ export async function verifierLesFiches({
       verifierDonneesALEcran(fiche.html, signaler)
       verifierAlignement(resultat.manifeste, fiche.html, signaler)
 
-      const avant = contenuDeReference?.(fiche.nom)
       if (regles !== undefined) {
         const grille = await lireSiPresent(
           join(dossierContenu, formation, DOSSIER_FICHES, nomDeLaGrille(bloc)),
