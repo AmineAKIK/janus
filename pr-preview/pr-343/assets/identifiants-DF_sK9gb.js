@@ -1,0 +1,1 @@
+var e=`amine`,t=`demo-janus`;export{t as n,e as t};
