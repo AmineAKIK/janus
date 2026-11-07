@@ -2019,8 +2019,8 @@
             </li>
             <li>
               Il ouvre une liaison avec la machine qui porte ce numéro, puis il la protège, pour que
-              personne en chemin ne puisse lire l’échange. Sur cette liaison, il demande la page du
-              planning.
+              personne entre les deux ne puisse lire l’échange. Sur cette liaison, il demande la
+              page du planning.
             </li>
             <li>
               La machine du site prépare la page : elle va chercher le planning de la semaine. Puis
@@ -2082,7 +2082,7 @@
       <h3>À quoi ça sert</h3>
       <p>
         Quand quelqu’un te dit « mon site ne marche pas », tu sauras demander ce qu’il voit, et en
-        déduire où chercher : le nom du site, le chemin jusqu’à lui, le site lui-même, ou le
+        déduire où chercher : le nom du site, la liaison jusqu’à lui, le site lui-même, ou le
         navigateur. Tu sauras aussi vérifier avec des outils, au lieu de deviner. Pour un
         développeur web, c’est le quotidien : chaque page que tu fabriqueras passera par là.
       </p>
@@ -2380,7 +2380,7 @@
             </li>
             <li
               data-option="plustard"
-              data-retour="Le DNS n’a rien répondu. Avec quelle machine le navigateur ouvrirait-il la connexion ?"
+              data-retour="Le DNS donne d’habitude une adresse IP. À quel moment de la chaîne le navigateur s’en sert-il ?"
               data-erreur="E1"
             >
               Oui : il envoie la requête, et le DNS lui donnera l’adresse IP ensuite.
@@ -2544,12 +2544,11 @@
         <p>
           L’adresse web complète d’une ressource (une page, une image, un fichier), celle qu’on tape
           dans la barre du navigateur, s’appelle une <strong>URL</strong>. Ses morceaux sont séparés
-          par des signes fixés d’avance : c’est une convention. Le premier s’appelle le schéma :
-          rien à voir avec le schéma de la chaîne, le dessin des moments d’une page.
+          par des signes fixés d’avance : c’est une convention. Voici les quatre premiers.
         </p>
         <div
           class="defile"
-          data-lecture="Les parties de l’URL du formateur. https, avant ://, est le schéma : la règle d’échange, ici HTTP protégé. formation.example.org est l’hôte : le nom de la machine à joindre. 443, après deux-points, est le port : le numéro du service sur cette machine. /planning est le chemin : la ressource demandée. ?semaine=12 sont les paramètres : des précisions envoyées avec la demande, séparées par & quand il y en a plusieurs. #jeudi est le fragment : l’endroit de la page où se placer."
+          data-lecture="Les quatre premiers morceaux de l’URL du formateur. https, avant ://, est le schéma : la règle d’échange, ici HTTP protégé. formation.example.org est l’hôte : le nom de la machine à joindre. 443, après deux-points, est le port : le numéro du service sur cette machine. /planning est le chemin : la page demandée sur le serveur."
         >
           <table class="table-lue">
             <thead>
@@ -2578,27 +2577,14 @@
               <tr>
                 <td class="mono">/planning</td>
                 <th scope="row">le chemin</th>
-                <td>la ressource demandée sur le serveur</td>
-              </tr>
-              <tr>
-                <td class="mono">?semaine=12</td>
-                <th scope="row">les paramètres</th>
-                <td>des précisions envoyées avec la demande ; &amp; sépare deux paramètres</td>
-              </tr>
-              <tr>
-                <td class="mono">#jeudi</td>
-                <th scope="row">le fragment</th>
-                <td>l’endroit de la page où se placer</td>
+                <td>la page demandée sur le serveur</td>
               </tr>
             </tbody>
           </table>
         </div>
         <p>
-          Plus rare : des <strong>identifiants</strong>, un nom d’utilisateur, parfois suivi de : et
-          d’un mot de passe, placés avant l’hôte et suivis de @, par exemple
-          <span class="mono">https://yasmine:secret@formation.example.org/</span>. Ils servent à
-          s’identifier auprès du serveur ; écrits dans l’URL, ils restent lisibles par qui la voit :
-          on les évite.
+          Le mot « schéma » a ici un autre sens que dans « le schéma de la chaîne » : c’est le
+          premier morceau de l’URL, pas un dessin.
         </p>
       </div>
       <div data-ecran="Le port">
@@ -2622,6 +2608,23 @@
           C’est une convention : le Web utilise par défaut le port 80 pour http et le port 443 pour
           https. Quand l’URL n’écrit pas de port, le navigateur prend celui de son schéma ; on ne
           l’écrit que pour un autre numéro, et un port écrit dans l’URL l’emporte toujours.
+        </p>
+      </div>
+      <div data-ecran="Après le chemin">
+        <p class="accroche">
+          Dans le lien du formateur, après /planning, il reste ?semaine=12 et #jeudi.
+        </p>
+        <p>
+          Après un ?, les <strong>paramètres</strong> : des précisions envoyées avec la demande, ici
+          la semaine 12 ; quand il y en a plusieurs, &amp; les sépare, comme dans
+          <span class="mono">?semaine=12&amp;groupe=2</span>. Après un #, le
+          <strong>fragment</strong> : l’endroit de la page où se placer, ici la journée de jeudi.
+        </p>
+        <p>
+          Plus rare, avant l’hôte : des <strong>identifiants</strong>, un nom d’utilisateur, parfois
+          suivi de : et d’un mot de passe, puis @, comme dans
+          <span class="mono">https://yasmine:secret@formation.example.org/</span>. Écrits dans
+          l’URL, ils restent lisibles par qui la voit : on les évite.
         </p>
       </div>
       <div data-ecran="Ce qui part au serveur">
@@ -2765,14 +2768,14 @@
             </li>
             <li
               data-option="erreur"
-              data-retour="L’adresse IP est le numéro d’une machine. Une machine ne peut-elle porter qu’un seul site ?"
+              data-retour="Une adresse IP numérote quoi ? Relis ce que porte une machine chez un hébergeur."
               data-erreur="E2"
             >
               C’est une erreur : une adresse IP ne peut appartenir qu’à un seul site.
             </li>
             <li
               data-option="meme"
-              data-retour="Les deux noms ont-ils le même domaine, lu de droite à gauche ?"
+              data-retour="Compare la fin des deux noms, lue depuis la droite. Est-ce la même ?"
             >
               Ce sont deux noms du même site.
             </li>
@@ -2803,6 +2806,10 @@
           celui qui gère son domaine, qui relie ce nom à une valeur, ici une adresse IP. Celui du
           planning dit : formation.example.org mène à 203.0.113.20. Le résolveur ne devine rien :
           pour un nom sans enregistrement publié, il n’a aucune adresse IP à donner.
+        </p>
+        <p>
+          Un serveur DNS n’est pas le serveur du site : celui-là, c’est la machine qui reçoit la
+          requête et renvoie la page.
         </p>
       </div>
       <div data-ecran="nslookup, au terminal">
@@ -2990,18 +2997,31 @@ cours.example.net   has AAAA address 2001:db8::9</pre>
          └─ notes    un sous-domaine</pre>
         <p>
           Voilà pourquoi l’hôte se lit de droite à gauche : de la racine vers le morceau le plus
-          précis. Et c’est cet arbre que suit le résolveur quand aucun cache ne connaît encore un
-          nom : il demande à la racine qui répond pour .org, puis aux serveurs de .org qui répond
-          pour example.org, puis aux serveurs de example.org l’adresse IP de
-          notes.formation.example.org.
+          précis.
         </p>
         <p>
-          Chaque niveau a quelqu’un qui en répond. Tout en haut, l’<strong>ICANN</strong> coordonne
-          le système des noms : elle décide quelles extensions existent et veille sur la racine, la
-          première que le résolveur interroge. Sous elle, chaque extension a son
-          <strong>registre</strong> : l’organisme qui tient la liste des noms de cette extension et
-          fait tourner ses serveurs, ceux qui disent où trouver chaque domaine. Ce que l’image de
-          l’arbre ne dit pas : un arbre pousse seul ; ici, chaque branche a quelqu’un qui en répond.
+          C’est cet arbre que suit le résolveur quand aucun cache ne connaît encore un nom : il
+          demande d’abord à la racine, puis descend d’une branche à chaque question, jusqu’à
+          l’adresse IP de notes.formation.example.org.
+        </p>
+      </div>
+      <div data-ecran="Qui tient chaque branche">
+        <p class="accroche">
+          Le résolveur de Yasmine a commencé par la racine, puis il est passé par .org. Quelqu’un
+          fait tourner ces serveurs-là.
+        </p>
+        <p>
+          Tout en haut, l’<strong>ICANN</strong> coordonne le système des noms : elle décide quelles
+          extensions existent et veille sur la racine.
+        </p>
+        <p>
+          Sous elle, chaque extension a son <strong>registre</strong> : l’organisme qui tient la
+          liste des noms de cette extension, et fait tourner les serveurs qui disent où trouver
+          chacun de ces noms. Le registre du .org tient la liste où figure example.org.
+        </p>
+        <p>
+          Ce que l’image de l’arbre ne dit pas : un arbre pousse seul ; ici, chaque branche a
+          quelqu’un qui en répond.
         </p>
       </div>
       <div data-ecran="Qui réserve un nom">
@@ -3078,16 +3098,18 @@ GET /planning?semaine=12 HTTP/1.1
 Host: formation.example.org</pre>
         <p>
           La première ligne donne la <strong>méthode</strong>, puis le chemin et ses paramètres,
-          puis la version de HTTP. Deux méthodes suffisent ici : <strong>GET</strong> pour lire une
-          ressource, <strong>POST</strong> pour envoyer des données au serveur, comme un formulaire
-          rempli.
+          puis la version de HTTP. Pour ouvrir le planning, la méthode est <strong>GET</strong> :
+          lire une ressource. Quand Yasmine tape son mot de passe et valide, la requête part avec
+          <strong>POST</strong> : envoyer des données au serveur.
         </p>
         <p>
           Les lignes suivantes sont des <strong>en-têtes</strong> : chacune s’écrit « Nom: valeur »
           et précise la demande. Host dit quel site le navigateur veut sur cette machine, ce qui
           permet à une seule machine d’en porter plusieurs ; sans nom de site, elle sert celui
-          qu’elle donne par défaut. Une requête POST porte en plus un <strong>corps</strong>, après
-          les en-têtes : les données envoyées.
+          qu’elle donne par défaut. La requête POST de Yasmine porte en plus un
+          <strong>corps</strong>, après les en-têtes : son nom d’utilisateur et son mot de passe.
+          C’est à cette requête que le serveur répondra en lui donnant un cookie : l’étape des
+          cookies le montre.
         </p>
       </div>
       <div data-ecran="Ce que répond le serveur">
@@ -3114,8 +3136,9 @@ Content-Length: 18240
           La première ligne, la ligne de statut, porte le <strong>code</strong> de la réponse : 200
           veut dire que tout s’est bien passé. Puis viennent les en-têtes. Content-Type dit le
           <strong>type de contenu</strong> du corps : text/html pour une page, text/css pour une
-          feuille de style, image/png pour une image. Après une ligne vide vient le corps : ici, la
-          page en HTML.
+          feuille de style, image/png pour une image. Content-Length dit la taille du corps, en
+          octets : le navigateur sait ainsi quand la page est arrivée en entier. Après une ligne
+          vide vient le corps : ici, la page en HTML.
         </p>
       </div>
       <div data-ecran="L’onglet Réseau">
@@ -3255,7 +3278,7 @@ Content-Length: 18240
             </li>
             <li
               data-option="panne"
-              data-retour="Ce 404 est arrivé jusqu’au navigateur de Yasmine. Qui l’a écrit ?"
+              data-retour="Ce 404 est une réponse, écrite par le serveur du site. Un serveur en panne pourrait-il en écrire une ?"
               data-erreur="E3"
             >
               Il est en panne pour ce fichier-là.
@@ -3395,7 +3418,9 @@ Content-Length: 162</pre>
         </div>
         <p>
           Le navigateur suit la redirection de lui-même, sans que Yasmine ait rien à faire : la page
-          vient de cette nouvelle requête, et c’est la nouvelle URL que montre la barre.
+          vient de cette nouvelle requête, et c’est la nouvelle URL que montre la barre. Comme cette
+          URL passe de http à https, la nouvelle requête ne part pas sur la connexion d’avant : le
+          navigateur en ouvre une autre, sur le port de https, et la protège avant d’envoyer.
         </p>
       </div>
     </template>
@@ -3410,8 +3435,8 @@ Content-Length: 162</pre>
           Quand l’URL commence par https, le navigateur fait un pas de plus juste après avoir ouvert
           la connexion, et avant d’envoyer la requête : il s’entend avec le serveur sur une façon de
           chiffrer l’échange. Cette règle s’appelle <strong>TLS</strong>. Ensuite, ce qui passe sur
-          la connexion est chiffré : illisible pour qui l’intercepte en chemin, sur le Wi-Fi, chez
-          le fournisseur d’accès ou plus loin. <strong>HTTPS</strong>, c’est HTTP dans une connexion
+          la connexion est chiffré : illisible pour qui l’intercepte en route, sur le Wi-Fi, chez le
+          fournisseur d’accès ou plus loin. <strong>HTTPS</strong>, c’est HTTP dans une connexion
           protégée par TLS. En http, sans s, ce pas n’a pas lieu : la requête et la réponse passent
           en clair, lisibles par qui les capte.
         </p>
@@ -3461,10 +3486,11 @@ Content-Length: 162</pre>
           navigateur affiche un cadenas.
         </p>
         <p>
-          Pendant TLS, le serveur présente un <strong>certificat</strong> : un document numérique,
-          délivré par un organisme que les navigateurs reconnaissent, qui lie le serveur à un nom de
-          domaine. Le navigateur vérifie que le certificat est valide et qu’il correspond au nom de
-          l’URL. Si oui, il affiche le cadenas.
+          Pendant TLS, le serveur présente un <strong>certificat</strong> : un document numérique
+          qui lie le serveur à un nom de domaine. Il est délivré par un organisme que les
+          navigateurs reconnaissent, après une seule vérification : que le demandeur contrôle bien
+          ce nom, celui que le DNS relie à son serveur. Le navigateur vérifie que le certificat est
+          valide et qu’il correspond au nom de l’URL. Si oui, il affiche le cadenas.
         </p>
         <p>
           Le cadenas prouve donc deux choses : l’échange est chiffré, et il se fait avec la machine
@@ -3575,8 +3601,8 @@ Content-Length: 162</pre>
         <p>
           Avec l’en-tête <strong>Set-Cookie</strong>, le serveur demande au navigateur de garder une
           petite donnée : un <strong>cookie</strong>. Le navigateur la renvoie ensuite dans chaque
-          requête vers ce site, dans l’en-tête <strong>Cookie</strong>. Celui de Yasmine contient un
-          identifiant tiré au hasard, 7f3a9c41e2. Un tel identifiant s’appelle un
+          requête vers ce site, dans l’en-tête <strong>Cookie</strong>. Celui de Yasmine contient
+          une suite tirée au hasard, 7f3a9c41e2. Une telle suite s’appelle un
           <strong>jeton</strong> : il ne veut rien dire en lui-même, seul le serveur sait à qui il
           correspond.
         </p>
@@ -3635,7 +3661,7 @@ Content-Length: 162</pre>
           data-reponse="jeton"
           data-aide1="Que contient ce cookie, d’après la ligne Set-Cookie ?"
           data-aide2="Le serveur a-t-il besoin du mot de passe à chaque requête, ou d’autre chose ?"
-          data-aide3="Le cookie porte un identifiant tiré au hasard que le serveur relie à Yasmine ; le mot de passe n’a été envoyé qu’une fois."
+          data-aide3="Le cookie porte un jeton tiré au hasard, que le serveur relie à Yasmine ; le mot de passe n’a été envoyé qu’une fois."
           data-explication="Le voleur aurait le jeton : il pourrait se faire passer pour Yasmine tant que le serveur l’accepte, mais le jeton ne contient pas son mot de passe."
         >
           <p class="q">
@@ -3644,8 +3670,8 @@ Content-Length: 162</pre>
           </p>
           <ul class="options">
             <li data-option="jeton">
-              Non : il aura un identifiant qui ouvre l’accès de Yasmine tant que le serveur
-              l’accepte, pas son mot de passe.
+              Non : il aura un jeton qui ouvre l’accès de Yasmine tant que le serveur l’accepte, pas
+              son mot de passe.
             </li>
             <li
               data-option="mdp"
@@ -3720,8 +3746,8 @@ Content-Length: 162</pre>
     <template data-etape="ET11">
       <div data-ecran="L’hébergeur, le FAI, le cloud">
         <p class="accroche">
-          Le serveur du site de la formation tourne sur une machine louée dans un data center.
-          Yasmine y accède depuis chez elle, par son fournisseur d’accès.
+          Le serveur du site de la formation tourne sur une machine louée dans le cloud. Yasmine y
+          accède depuis chez elle, par son fournisseur d’accès.
         </p>
         <p>
           L’<strong>hébergeur</strong> fait tourner les serveurs des sites dans un
@@ -3757,11 +3783,20 @@ Content-Length: 162</pre>
             </ul>
           </details>
           <p class="q">
-            Le site de la formation répond en 503 à tous les stagiaires, chacun chez son propre
-            fournisseur d’accès. Qui le formateur appelle-t-il ?
+            Le site de la formation tourne sur une machine louée dans le cloud. Il répond en 503 à
+            tous les stagiaires, chacun chez son propre fournisseur d’accès. Qui le formateur
+            appelle-t-il ?
           </p>
           <ul class="options">
-            <li data-option="hebergeur">Le fournisseur du cloud où tourne la machine du site.</li>
+            <li data-option="hebergeur">
+              Le fournisseur du cloud : il fait tourner la machine, il est l’hébergeur du site.
+            </li>
+            <li
+              data-option="autre"
+              data-retour="D’après le paragraphe, que loue le cloud ? Qui fait alors tourner la machine du site ?"
+            >
+              Un hébergeur à trouver en plus : le cloud ne fait que garder des fichiers.
+            </li>
             <li
               data-option="fai"
               data-retour="Les stagiaires ont des FAI différents. Un FAI peut-il causer la même erreur chez les personnes abonnées ailleurs ?"
@@ -3790,50 +3825,16 @@ Content-Length: 162</pre>
           connexion, la requête, la réponse ; le rangement vient ensuite, chez le moteur. Une page
           neuve, vers laquelle aucun lien ne mène encore, n’est pas encore indexée.
         </p>
-        <div
-          class="ex"
-          data-widget="choix"
-          data-id="indexation"
-          data-reponse="index"
-          data-aide1="nslookup a donné l’adresse IP : que dit cela de l’étage du DNS ?"
-          data-aide2="curl -I a reçu 200 : que dit cela du serveur ?"
-          data-aide3="Le nom se traduit et le serveur répond : la page marche. Ce qui manque ne se passe pas dans la chaîne de la page, mais chez le moteur."
-        >
-          <div class="cadre pour-lire">
-            <p class="discret">Deux commandes, pour lire :</p>
-            <ul>
-              <li>nslookup : demande au DNS l’adresse IP d’un nom.</li>
-              <li>
-                curl -I : envoie une requête et affiche le code de la réponse ; 200, réussite.
-              </li>
-            </ul>
-          </div>
-          <p class="q">
-            Pour club.example.net, nslookup donne l’adresse IP du serveur, et curl -I reçoit le code
-            200. Où est le problème de Farid ?
-          </p>
-          <ul class="options">
-            <li data-option="index">
-              Nulle part dans la chaîne : la page marche, le moteur ne l’a pas encore indexée.
-            </li>
-            <li
-              data-option="propagation"
-              data-retour="Pendant une propagation, certains reçoivent encore l’ancienne adresse IP. La page de Farid s’ouvre-t-elle chez tous ?"
-            >
-              Dans le DNS : la propagation n’est pas finie.
-            </li>
-            <li
-              data-option="serveur"
-              data-retour="Le serveur a répondu 200. Que veut dire ce code ?"
-            >
-              Dans le serveur : il ne répond pas au moteur de recherche.
-            </li>
-          </ul>
-        </div>
         <p>
-          La page existe et marche : elle n’apparaît simplement pas encore dans les résultats. La
-          propagation, elle, concerne l’adresse IP que donne le DNS, et ne dépend d’aucun moteur de
-          recherche.
+          Farid vérifie : nslookup club.example.net donne l’adresse IP de son serveur, et curl -I
+          reçoit le code 200, réussite. Le DNS, la connexion et le serveur marchent : rien ne manque
+          dans la chaîne. Ce qui manque se passe ensuite, chez le moteur, qui n’a pas encore trouvé
+          de lien vers cette page neuve.
+        </p>
+        <p>
+          La propagation, elle, concerne l’adresse IP que donne le DNS et ne dépend d’aucun moteur
+          de recherche : pendant une propagation, certains reçoivent encore l’ancienne adresse IP,
+          alors que la page de Farid s’ouvre chez tous ses amis.
         </p>
       </div>
       <div data-ecran="Deep web, darknet, dark web">
@@ -3885,13 +3886,10 @@ Content-Length: 162</pre>
           </ul>
         </div>
         <p>
-          Sur la chaîne, la différence est à l’étage du DNS, le premier. L’espace des notes, sur le
-          deep web, suit la chaîne habituelle de bout en bout : le DNS, la connexion, la requête, la
-          réponse. Le programme d’un moteur qui la demande reçoit la page qui réclame un mot de
-          passe : il n’a rien d’autre à ranger. Les noms du dark web, eux, ne sont pas dans l’arbre
-          des noms du DNS, de la racine aux sous-domaines : aucun résolveur ne les connaît, et un
-          navigateur ordinaire s’arrête à l’étage du DNS. Seul le logiciel dédié les trouve et les
-          joint, par son propre réseau.
+          L’espace des notes s’ouvre comme toute page, du DNS à la réponse ; un moteur n’y reçoit
+          que la page qui demande un mot de passe. Les noms du dark web, eux, ne sont pas dans
+          l’arbre des noms : un navigateur ordinaire s’arrête au DNS, et seul le logiciel dédié les
+          joint.
         </p>
         <p data-si-essai="p6:faux">
           Au début, à propos du deep web, tu avais répondu
@@ -3968,7 +3966,7 @@ Content-Length: 162</pre>
         <p>Voici les symptômes les plus courants, leur étage, et ce qu’on vérifie.</p>
         <div
           class="defile"
-          data-lecture="Six symptômes. Impossible de trouver l’adresse IP du serveur : étage du DNS ; on vérifie avec nslookup si le nom donne une adresse IP, et, si tout un site a disparu d’un coup, avec WHOIS, la fiche publique du nom chez son registre, si son nom est encore actif. Délai de connexion dépassé, ou connexion refusée : étage du réseau : la connexion ne s’ouvre pas, chemin coupé ou serveur qui ne l’accepte pas ; on vérifie si d’autres sites s’ouvrent, puis on lance curl -I. Un code 4xx : le serveur, joint, refuse la requête ou ne trouve pas la ressource ; on vérifie l’URL demandée, et curl -I. Un code 5xx : le serveur, joint, est en défaut ; on vérifie avec curl -I, puis on attend ou on prévient l’hébergeur. Une page ancienne alors que le site a changé : le navigateur, son cache, ses copies des fichiers déjà reçus ; on recharge sans le cache. Un menu qui ne réagit plus alors que chaque requête de la page a reçu son code 200 : le navigateur, une extension, un petit programme qu’on lui ajoute, comme un bloqueur de publicités ; on ouvre une fenêtre de navigation privée, une fenêtre qui part sans cache et, en général, sans extensions."
+          data-lecture="Six symptômes. Impossible de trouver l’adresse IP du serveur : étage du DNS ; on vérifie avec nslookup si le nom donne une adresse IP, et, si tout un site a disparu d’un coup, avec WHOIS, la fiche publique du nom chez son registre, si son nom est encore actif. Délai de connexion dépassé, ou connexion refusée : étage du réseau : la connexion ne s’ouvre pas, liaison coupée ou serveur qui ne l’accepte pas ; on vérifie si d’autres sites s’ouvrent, puis on lance curl -I. Un code 4xx : le serveur, joint, refuse la requête ou ne trouve pas la ressource ; on vérifie l’URL demandée, et curl -I. Un code 5xx : le serveur, joint, est en défaut ; on vérifie avec curl -I, puis on attend ou on prévient l’hébergeur. Une page ancienne alors que le site a changé : le navigateur, son cache, ses copies des fichiers déjà reçus ; on recharge sans le cache. Un menu qui ne réagit plus alors que chaque requête de la page a reçu son code 200 : le navigateur, une extension, un petit programme qu’on lui ajoute, comme un bloqueur de publicités ; on ouvre une fenêtre de navigation privée, une fenêtre qui part sans cache et, en général, sans extensions."
         >
           <table class="table-lue">
             <thead>
@@ -3990,8 +3988,8 @@ Content-Length: 162</pre>
               <tr>
                 <td>« Délai de connexion dépassé » ou « Connexion refusée »</td>
                 <td>
-                  le réseau : la connexion ne s’ouvre pas, chemin coupé ou serveur qui ne l’accepte
-                  pas
+                  le réseau : la connexion ne s’ouvre pas, liaison coupée ou serveur qui ne
+                  l’accepte pas
                 </td>
                 <td>d’autres sites s’ouvrent-ils ? puis curl -I</td>
               </tr>
@@ -4322,10 +4320,7 @@ Content-Length: 162</pre>
             <li>
               IPv6 : des groupes de chiffres et de lettres de a à f, séparés par des deux-points.
             </li>
-            <li>
-              Sous macOS, #53 est le numéro d’un port ; « has AAAA address » : « a pour adresse
-              IPv6, de type AAAA ».
-            </li>
+            <li>Sous macOS, #53 est le numéro d’un port.</li>
           </ul>
         </div>
         <p class="q">
@@ -4377,10 +4372,7 @@ Content-Length: 162</pre>
             <li>
               IPv6 : des groupes de chiffres et de lettres de a à f, séparés par des deux-points.
             </li>
-            <li>
-              Sous macOS, #53 est le numéro d’un port ; « has AAAA address » : « a pour adresse
-              IPv6, de type AAAA ».
-            </li>
+            <li>Sous macOS, #53 est le numéro d’un port.</li>
           </ul>
         </div>
         <p class="q">
@@ -4552,7 +4544,7 @@ Content-Length: 162</pre>
           </li>
           <li
             data-option="panne"
-            data-retour="Un code 403 est arrivé. Qui l’a envoyé, et qu’a-t-il fallu qu’il reçoive d’abord ?"
+            data-retour="Ce 403 est une réponse du serveur de la formation. Que ferait un serveur en panne d’une requête qui lui arrive ?"
             data-erreur="E3"
           >
             Il est en panne, puisqu’il renvoie une erreur.
@@ -4594,7 +4586,7 @@ Content-Length: 162</pre>
           </li>
           <li
             data-option="panne"
-            data-retour="Un code 404 est arrivé. Qui l’a envoyé, et qu’a-t-il fallu qu’il reçoive d’abord ?"
+            data-retour="Ce 404 est une réponse du serveur de la formation. Que ferait un serveur en panne d’une requête qui lui arrive ?"
             data-erreur="E3"
           >
             Il est en panne, puisqu’il renvoie une erreur.
@@ -4764,7 +4756,7 @@ Content-Length: 162</pre>
         data-aide1="Pour chaque symptôme, jusqu’où la chaîne est-elle allée ?"
         data-aide2="Un code reçu prouve-t-il que le serveur a été joint ? Et un nom sans adresse IP ?"
         data-aide3="Pas d’adresse IP : la chaîne s’arrête au premier étage. Une adresse IP mais pas de connexion : au suivant. Un code : le serveur a répondu. Tout arrive mais s’affiche mal sur un seul navigateur : le dernier étage."
-        data-justifier="Farid reçoit le code 503 sur la page des notes, et il veut redémarrer sa box. Quel étage est en cause, et pourquoi sa box n’y est pour rien ?"
+        data-justifier="Farid reçoit le code 503 sur la page des notes, et il veut redémarrer sa box. Redémarrer sa box réglerait-il ce 503 ? Pourquoi ?"
       >
         <details class="cadre">
           <summary>Les quatre étages et les familles de codes, pour lire</summary>
@@ -4813,7 +4805,7 @@ Content-Length: 162</pre>
         data-aide1="Pour chaque symptôme, jusqu’où la chaîne est-elle allée ?"
         data-aide2="Un code reçu prouve-t-il que le serveur a été joint ? Et un nom sans adresse IP ?"
         data-aide3="Pas d’adresse IP : la chaîne s’arrête au premier étage. Une adresse IP mais pas de connexion : au suivant. Un code : le serveur a répondu. Tout arrive mais s’affiche mal sur un seul navigateur : le dernier étage."
-        data-justifier="Yasmine reçoit le code 500 sur la page des moyennes, et elle veut vider le cache de son navigateur. Quel étage est en cause, et pourquoi son navigateur n’y est pour rien ?"
+        data-justifier="Farid reçoit le code 500 quand il envoie le formulaire d’inscription, et il veut vider le cache de son navigateur. Vider ce cache réglerait-il ce 500 ? Pourquoi ?"
       >
         <details class="cadre">
           <summary>Les quatre étages et les familles de codes, pour lire</summary>
@@ -4929,7 +4921,7 @@ Content-Length: 162</pre>
         data-aide1="Le certificat lie le serveur à quoi : à un nom de domaine, ou à une enquête sur ses propriétaires ?"
         data-aide2="Qui peut obtenir un certificat pour un nom ? Faut-il prouver qu’on est honnête ?"
         data-aide3="Le cadenas garantit deux choses sur l’échange avec le détenteur du nom affiché. Ni sa réputation, ni ses intentions n’en font partie."
-        data-justifier="Un faux site copie la page d’une banque sous le nom banque-secours.example.net, et le navigateur y affiche un cadenas. Qui a pu obtenir le certificat de ce nom, et que prouve ce certificat au navigateur ?"
+        data-justifier="Un faux site copie la page d’une banque sous le nom banque-secours.example.net, et le navigateur y affiche un cadenas. Qui a pu obtenir le certificat de ce nom ?"
       >
         <p class="q">
           Farid trouve une boutique qu’il ne connaît pas, https://baskets-pas-cheres.example.com.
@@ -4965,7 +4957,7 @@ Content-Length: 162</pre>
         data-aide1="Le certificat lie le serveur à quoi : à un nom de domaine, ou à une enquête sur ses propriétaires ?"
         data-aide2="Qui peut obtenir un certificat pour un nom ? Faut-il prouver qu’on est honnête ?"
         data-aide3="Le cadenas garantit deux choses sur l’échange avec le détenteur du nom affiché. Ni sa réputation, ni ses intentions n’en font partie."
-        data-justifier="Un inconnu envoie à Yasmine une cagnotte sur https://dons-ecole.example.org, et la page affiche un cadenas. Qui a pu obtenir le certificat de ce nom, et que prouve ce certificat au navigateur ?"
+        data-justifier="Un inconnu envoie à Yasmine une cagnotte sur https://dons-ecole.example.org, et la page affiche un cadenas. Qui a pu obtenir le certificat de ce nom ?"
       >
         <p class="q">
           Yasmine reçoit un SMS qui l’envoie sur https://colis-relais.example.net pour payer des
@@ -5841,11 +5833,17 @@ Content-Length: 162</pre>
         ></p>
         <p>
           Elle lit le message, parce qu’il dit à quel moment l’échange s’est arrêté, donc où
-          chercher. « Impossible de trouver l’adresse IP du serveur » arrête la chaîne au DNS ; «
-          Délai de connexion dépassé », à la connexion ; un code 4xx ou 5xx prouve que le serveur a
-          été joint et a répondu ; une page ancienne alors que le serveur répond désigne le
-          navigateur. Redémarrer le PC ne règle presque jamais un problème de DNS ou de serveur, et
-          un 404 n’est pas une panne du site.
+          chercher :
+        </p>
+        <ul>
+          <li>« Impossible de trouver l’adresse IP du serveur » : la chaîne s’arrête au DNS.</li>
+          <li>« Délai de connexion dépassé » : elle s’arrête à la connexion.</li>
+          <li>Un code 4xx ou 5xx : le serveur a été joint et a répondu.</li>
+          <li>Une page ancienne alors que le serveur répond : le navigateur est en cause.</li>
+        </ul>
+        <p>
+          Redémarrer le PC ne règle presque jamais un problème de DNS ou de serveur, et un 404 n’est
+          pas une panne du site.
         </p>
         <p>
           C’est l’idée du bloc : une page se charge étage par étage, toujours dans le même ordre, et
@@ -5855,60 +5853,41 @@ Content-Length: 162</pre>
       </div>
       <div data-ecran="Le schéma, pour Bruno">
         <p class="accroche">
-          Tu as vu toutes les pièces. Voici un cas nouveau : Bruno, 52 ans, boulanger, vient de
-          réserver un nom pour sa boulangerie et de faire créer son site.
+          Un cas nouveau : Bruno, 52 ans, boulanger. Ce matin, la page de l’espace pro de son site
+          neuf affiche une erreur.
         </p>
-        <div class="cadre pour-lire">
-          <p class="discret">Le cas de Bruno, pour lire :</p>
-          <ul>
-            <li>
-              Bruno a réservé boulangerie.example.net avant-hier, et son site tourne chez un
-              hébergeur. Aucun autre site ne donne encore de lien vers lui. Ce matin, il se plaint
-              de deux choses : « Quand j’ouvre la page de mon espace pro, elle affiche une erreur.
-              Et quand je cherche ma boulangerie dans un moteur de recherche, mon site n’apparaît
-              pas. »
-            </li>
-            <li>
-              Yasmine vérifie depuis chez elle. nslookup boulangerie.example.net donne
-              198.51.100.80, l’adresse IP du serveur de l’hébergeur. curl -I
-              https://boulangerie.example.net, l’accueil, reçoit HTTP/1.1 200 OK. curl -I
-              https://boulangerie.example.net/espace-pro, la page que Bruno essayait d’ouvrir,
-              reçoit HTTP/1.1 403 Forbidden.
-            </li>
-          </ul>
-        </div>
-        <div class="cadre pour-lire">
-          <p class="discret">Deux commandes, pour lire :</p>
+        <p>
+          <strong>Ce que tu fais</strong> : sur le schéma de la chaîne, tu suis cette page depuis
+          son URL tapée.
+        </p>
+        <p>
+          La première case est remplie. Pour chaque élément suivant, réponds à sa question en une
+          phrase ; sous la dernière case, dis où la chaîne s’arrête.
+        </p>
+        <p>
+          Bruno a réservé boulangerie.example.net avant-hier, et son site tourne chez un hébergeur.
+          Yasmine vérifie depuis chez elle. nslookup boulangerie.example.net donne 198.51.100.80,
+          l’adresse IP du serveur de l’hébergeur. curl -I https://boulangerie.example.net,
+          l’accueil, reçoit HTTP/1.1 200 OK. curl -I https://boulangerie.example.net/espace-pro, la
+          page de Bruno, reçoit HTTP/1.1 403 Forbidden.
+        </p>
+        <details class="cadre">
+          <summary>Les commandes, les étages et les codes, pour lire</summary>
           <ul>
             <li>nslookup : demande au DNS l’adresse IP d’un nom.</li>
             <li>
               curl -I : envoie une requête et affiche la ligne de statut et les en-têtes de la
               réponse.
             </li>
-          </ul>
-        </div>
-        <div class="cadre pour-lire">
-          <p class="discret">Les quatre étages, pour lire :</p>
-          <ul>
-            <li>Le DNS : le nom devient une adresse IP.</li>
-            <li>Le réseau : la connexion s’ouvre jusqu’au serveur.</li>
-            <li>Le serveur : il reçoit la requête, la traite et répond.</li>
-            <li>Le navigateur : il affiche la page et demande les fichiers qui manquent.</li>
-          </ul>
-        </div>
-        <details class="cadre">
-          <summary>Les codes 200 et 403, pour lire</summary>
-          <ul>
+            <li>
+              Les quatre étages, dans l’ordre : le DNS (le nom devient une adresse IP), le réseau
+              (la connexion s’ouvre jusqu’au serveur), le serveur (il reçoit la requête, la traite
+              et répond), le navigateur (il affiche la page).
+            </li>
             <li>200 : la requête a réussi, de la famille 2xx.</li>
             <li>403 : accès refusé, de la famille 4xx, erreur côté client.</li>
           </ul>
         </details>
-        <p>
-          Ce que tu fais : tu suis, sur le schéma de la chaîne, la page de l’espace pro de Bruno
-          depuis son URL tapée. La première case est remplie. Au-dessus de chacun des trois éléments
-          suivants, une question t’aide : réponds-y avec tes mots, une phrase par élément. Sous la
-          dernière case, dis où la chaîne s’arrête, puis d’où vient la seconde plainte de Bruno.
-        </p>
         <p class="discret">
           Cet exercice n’est pas noté. Tes mots peuvent différer de ceux de la fiche ; le schéma de
           la fiche s’affiche ensuite, pour comparer.
@@ -5917,7 +5896,7 @@ Content-Length: 162</pre>
           class="ex"
           data-widget="schema"
           data-id="f1"
-          data-cas="Pour la page https://boulangerie.example.net/espace-pro, tapée dans un navigateur : chaque étage jusqu’au serveur a répondu, puisque nslookup donne 198.51.100.80 et que curl -I reçoit un code. Le 403 est un refus écrit par un serveur qui marche, pour cette page seulement, puisque l’accueil reçoit 200 : la chaîne de l’espace pro s’arrête au serveur, sans panne, et c’est l’accès à cette page que Bruno doit faire régler. Son absence des moteurs de recherche est une autre affaire : l’accueil répond 200 à tous, donc un moteur peut l’ouvrir, mais le site a deux jours et aucun lien ne mène à lui, il n’est pas encore indexé ; ce n’est pas la propagation, puisque le DNS donne déjà l’adresse IP. Déduit des étapes « Un symptôme, un étage » et « Qui fait quoi »."
+          data-cas="La chaîne de l’espace pro va jusqu’au serveur : le DNS a donné l’adresse IP (198.51.100.80), la connexion s’est ouverte, et le serveur, qui marche puisque l’accueil reçoit 200, a répondu 403. C’est un refus d’accès à cette page, pas une panne. Déduit de l’étape « Un symptôme, un étage »."
         >
           <p class="q">
             Remplis la première flèche, la boîte du milieu et la flèche suivante, puis réponds sous
@@ -5932,18 +5911,14 @@ Content-Length: 162</pre>
             <li class="fleche">
               Jusqu’où la requête de l’espace pro va-t-elle ensuite, d’après curl -I ?
             </li>
-            <li
-              class="boite"
-              data-pose
-              data-champ="Où la chaîne s’arrête-t-elle, et pourquoi le site n’est-il pas dans les moteurs ?"
-            >
+            <li class="boite" data-pose data-champ="Où la chaîne s’arrête-t-elle ?">
               ce que voit Bruno à la place de la page de son espace pro
             </li>
           </ol>
           <div class="modele" hidden>
             <div
               class="chaine"
-              data-lecture="Le schéma de la fiche, pour l’espace pro de Bruno. L’URL https://boulangerie.example.net/espace-pro est tapée dans un navigateur. Puis le navigateur demande l’adresse IP du nom au DNS, qui donne 198.51.100.80 : cet étage marche. Puis la connexion s’ouvre et la requête arrive au serveur de l’hébergeur, qui répond 403 pour cette page, alors que l’accueil reçoit 200 : il marche, et refuse l’accès à l’espace pro ; rien n’est en panne, c’est l’accès à cette page qu’il faut régler. L’absence dans les moteurs de recherche est une autre affaire : l’accueil répond à tous, mais le site, neuf et sans lien vers lui, n’est pas encore indexé."
+              data-lecture="Le schéma de la fiche, pour l’espace pro de Bruno. L’URL https://boulangerie.example.net/espace-pro est tapée dans un navigateur. Puis le navigateur demande l’adresse IP du nom au DNS, qui donne 198.51.100.80 : cet étage marche. Puis la connexion s’ouvre et la requête arrive au serveur de l’hébergeur, qui répond 403 pour cette page, alors que l’accueil reçoit 200 : il marche, et refuse l’accès à l’espace pro ; rien n’est en panne, c’est l’accès à cette page qu’il faut régler."
             >
               <span class="boite"
                 >la page /espace-pro de boulangerie.example.net, tapée dans un navigateur</span
@@ -5956,11 +5931,51 @@ Content-Length: 162</pre>
               <span class="fleche">puis la connexion s’ouvre et la requête arrive au</span>
               <span class="boite"
                 >serveur de l’hébergeur, qui répond 403 pour l’espace pro, alors que l’accueil
-                reçoit 200 : il marche, et refuse l’accès à cette page. Les moteurs, eux, n’ont pas
-                encore indexé ce site neuf, sans lien vers lui</span
+                reçoit 200 : il marche, et refuse l’accès à cette page</span
               >
             </div>
           </div>
+        </div>
+      </div>
+      <div data-ecran="Bruno, absent des moteurs">
+        <p class="accroche">
+          Bruno se plaint d’autre chose : quand il cherche sa boulangerie dans un moteur de
+          recherche, son site n’apparaît pas. Il pense que son nom, réservé avant-hier, n’a pas fini
+          sa propagation.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Les vérifications de Yasmine, pour lire :</p>
+          <ul>
+            <li>nslookup boulangerie.example.net donne 198.51.100.80.</li>
+            <li>curl -I sur l’accueil reçoit 200 ; sur l’espace pro, 403.</li>
+            <li>Aucun autre site ne donne encore de lien vers celui de Bruno.</li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="bruno-moteurs"
+          data-reponse="index"
+          data-aide1="Le DNS donne-t-il déjà une adresse IP pour ce nom, chez Yasmine ?"
+          data-aide2="Quelle page reçoit 200 ? Un programme de moteur pourrait-il l’ouvrir ?"
+          data-aide3="Un moteur range les pages qu’il trouve en suivant des liens ; une page qui marche, mais vers laquelle rien ne mène, n’est pas encore rangée."
+        >
+          <p class="q">D’où vient l’absence du site de Bruno dans les moteurs de recherche ?</p>
+          <ul class="options">
+            <li data-option="index">Son site marche, mais aucun moteur ne l’a encore indexé.</li>
+            <li
+              data-option="propagation"
+              data-retour="Chez Yasmine, le DNS donne déjà l’adresse IP du site. Que montrerait une propagation inachevée ?"
+            >
+              Son nom n’a pas fini sa propagation.
+            </li>
+            <li
+              data-option="refus"
+              data-retour="Quelle page a reçu le 403, et quel code a reçu l’accueil ?"
+            >
+              Son serveur refuse les moteurs : le 403 le montre.
+            </li>
+          </ul>
         </div>
       </div>
       <div data-ecran="À retenir">
@@ -6113,30 +6128,32 @@ Content-Length: 162</pre>
           le monde, une sortie par écran : celle de Windows dans « nslookup, au terminal », lue en
           deux temps (le résolveur, puis la réponse) ; celle de macOS dans « A, puis AAAA », où
           Farid tape lui-même nslookup -type=AAAA, chacune lue en mots. PR1-3 lit une sortie de
-          macOS et redonne, dans son encadré, #53 et « has AAAA address ». La durée de vie se lit
-          sous Windows dans ipconfig /displaydns, le cache de la machine, et sous macOS dans
-          nslookup -debug, celui du résolveur.
+          macOS et redonne, dans son encadré, les écritures IPv4 et IPv6 et le #53 ; « has AAAA
+          address » se lit dans « A, puis AAAA ». La durée de vie se lit sous Windows dans ipconfig
+          /displaydns, le cache de la machine, et sous macOS dans nslookup -debug, celui du
+          résolveur.
         </li>
       </ul>
       <h3>La charge, comptée sur la page</h3>
       <ul>
         <li>
-          62 écrans : perception 2, carte 1, prétest 6, explications 35 (ET4 5, ET5 5, ET6 8, ET7 3,
-          ET8 3, ET9 2, ET10 3, ET11 3, ET12 3), atelier 12, aisance 1, ensemble 5 ; plus les douze
+          65 écrans : perception 2, carte 1, prétest 6, explications 37 (ET4 5, ET5 6, ET6 9, ET7 3,
+          ET8 3, ET9 2, ET10 3, ET11 3, ET12 3), atelier 12, aisance 1, ensemble 6 ; plus les douze
           items de la pratique et les pages de la restitution et du bilan, que le gabarit dessine.
         </li>
         <li>
           Les saisies, comptées une par geste (un bouton qui dévoile un moment, une option, une
           ligne d’un appariement ou d’un classement, deux touches par information relevée, une pièce
           de chaîne déplaçable, une case du schéma, une explication écrite, un critère à cocher) :
-          39 dans le cours (déroulé de la perception 4, schémas pas à pas 7, paris 2, prétest 6, 16
-          exercices d’explication, dont trois pronostics, pour 16, schéma de Bruno 4), 37 dans la
-          pratique (douze items, dont deux explications écrites ; une variante seulement après une
-          solution vue), 6 en restitution, 8 critères à cocher au constat de l’atelier, et 30
-          réponses d’aisance (trois séries de dix, trois jours différents). Soit 120 saisies dans la
-          page, dont 90 hors aisance : 79 réponses et 11 boutons qui dévoilent un moment. L’atelier
-          y ajoute une trentaine de notes sur papier. Hors séance : huit rappels, cinq vérifications
-          différées, trois transferts et douze cartes.
+          39 dans le cours (déroulé de la perception 4, schémas pas à pas 7, paris 2, prétest 6, 15
+          exercices d’explication, dont trois pronostics, pour 15, la question des moteurs pour
+          Bruno 1, schéma de Bruno 4), 37 dans la pratique (douze items, dont deux explications
+          écrites ; une variante seulement après une solution vue), 6 en restitution, 8 critères à
+          cocher au constat de l’atelier, et 30 réponses d’aisance (trois séries de dix, trois jours
+          différents). Soit 120 saisies dans la page, dont 90 hors aisance : 79 réponses et 11
+          boutons qui dévoilent un moment. L’atelier y ajoute une trentaine de notes sur papier.
+          Hors séance : huit rappels, cinq vérifications différées, trois transferts et douze
+          cartes.
         </li>
         <li>
           Les exercices du cours qui ne faisaient que relire un geste que la pratique refait sont
@@ -6200,15 +6217,16 @@ Content-Length: 162</pre>
           (ET4), après le pronostic sansdns, puis pour la page des notes de Farid qui répond 503
           (ET12). Celui de fin de bloc est construit pour l’espace pro de Bruno : l’accueil de son
           site neuf répond 200 à tous, la page de son espace pro répond 403, un autre code, d’une
-          autre famille, qui ne désigne pas une panne ; sa seconde plainte, l’absence des moteurs,
-          vient de l’indexation d’un site de deux jours sans lien vers lui. Le cas n’a qu’une chaîne
-          juste : l’accueil en 200 écarte le 403 comme cause de l’absence des moteurs. L’écran
-          redonne le cas, les deux commandes, les quatre étages et, replié, le sens des codes 200 et
-          403, puis dit en une phrase ce qu’on fait ; seule la première boîte est donnée ;
-          l’apprenant remplit la première flèche, la boîte du milieu et la flèche suivante, chacune
-          avec une question qui aide sans donner le terme, et répond sous la dernière boîte. L’IA le
-          juge sur la chaîne du cas (data-cas), puis le schéma de la fiche s’affiche pour comparer.
-          Il ne compte pas pour le statut.
+          autre famille, qui ne désigne pas une panne. Le schéma ne porte que cette chaîne ; la
+          seconde plainte de Bruno, l’absence des moteurs, a son propre écran, « Bruno, absent des
+          moteurs », avec sa propre question (bruno-moteurs) : un site neuf, sans lien vers lui, pas
+          encore indexé, ni la propagation ni le 403 de l’espace pro. L’écran du schéma dit d’abord
+          ce qu’on fait, en deux lignes, puis donne le cas en texte, et replie dans un seul encadré
+          les deux commandes, les quatre étages et le sens des codes 200 et 403 ; seule la première
+          boîte est donnée ; l’apprenant remplit la première flèche, la boîte du milieu et la flèche
+          suivante, chacune avec une question qui aide sans donner le terme, et répond sous la
+          dernière boîte. L’IA le juge sur la chaîne du cas (data-cas), puis le schéma de la fiche
+          s’affiche pour comparer. Il ne compte pas pour le statut.
         </li>
       </ul>
       <h3>Les erreurs critiques et le prétest</h3>
@@ -6240,12 +6258,13 @@ Content-Length: 162</pre>
           et PR1-4 redonnent les écritures d’adresse IP et deux mots. Encadré replié : PR1-5 (les
           familles de codes), PR1-6 (Expires et Max-Age), PR1-7 (les six codes), PR1-8 (les quatre
           étages et les familles). Seul, sans encadré : PR1-9, PR1-10, PR1-11 et PR1-12, qui
-          interrogent une relation du modèle, pas une convention. Les six codes, à savoir par cœur,
-          sont repliés dès le premier item qui s’en sert, PR1-5, jusqu’à PR1-8, et ne sont plus
-          redonnés dans l’aisance, « Les codes, sans réfléchir ». Le geste (lire une URL, relever,
-          classer) prend quatre items sur douze, PR1-2, PR1-3, PR1-4 et PR1-6. Deux items sur douze
-          portent une demande d’explication (data-justifier : PR1-8, PR1-10), sur ce que l’écran ne
-          montre pas ; l’item n’est réussi qu’avec une explication Solide.
+          interrogent une relation du modèle, pas une convention. Les familles de codes sont
+          repliées dès PR1-5 (avec le seul 403), les six codes dans PR1-7, et les familles encore
+          dans PR1-8 ; ni les uns ni les autres ne sont redonnés dans l’aisance, « Les codes, sans
+          réfléchir ». Le geste (lire une URL, relever, classer) prend quatre items sur douze,
+          PR1-2, PR1-3, PR1-4 et PR1-6. Deux items sur douze portent une demande d’explication
+          (data-justifier : PR1-8, PR1-10), sur ce que l’écran ne montre pas ; l’item n’est réussi
+          qu’avec une explication Solide.
         </li>
         <li>
           L’atelier se fait sur la machine de l’apprenant, dans Chrome, Edge ou Firefox : douze
@@ -6253,12 +6272,12 @@ Content-Length: 162</pre>
           requête en détail, une ligne Set-Cookie, un 404, les cookies, nslookup, la durée de vie
           lue deux fois, ipconfig /displaydns sous Windows et nslookup -debug sous macOS, curl -I,
           un nom qui n’existe pas, un port fermé, le WHOIS de l’AFNIC), chacun avec quatre crans
-          d’aide emboîtés. Chaque écran prévoit un second cas quand le site du jour ne répond pas
-          comme prévu (autre code, durée de vie remontée, pas de redirection, rubrique WHOIS
-          manquante) ; pour la ligne Set-Cookie et les cookies, le second site, GitHub, est exigé
-          quand Wikipédia n’en donne pas : le geste doit être fait, pas seulement constaté absent.
-          Le constat porte sur huit critères observables, et l’atelier ne compte réussi que sans
-          aide.
+          d’aide emboîtés. Les écrans qui reposent sur la réponse d’un site du jour prévoient un
+          second cas quand il ne répond pas comme prévu (autre code, durée de vie remontée, pas de
+          redirection, rubrique WHOIS manquante) ; pour la ligne Set-Cookie et les cookies, le
+          second site, GitHub, est exigé quand Wikipédia n’en donne pas : le geste doit être fait,
+          pas seulement constaté absent. Le constat porte sur huit critères observables, et
+          l’atelier ne compte réussi que sans aide.
         </li>
       </ul>
     </template>
@@ -6274,7 +6293,7 @@ Content-Length: 162</pre>
         "objectif": "Réciter dans l'ordre : URL, DNS, connexion TCP au port du service puis TLS, requête HTTP, traitement par le serveur, réponse avec code, rendu, requêtes secondaires ; décomposer une URL complexe (schéma, identifiants, hôte, port, chemin, paramètres, fragment) ; dire le sens des codes 200, 301, 403, 404, 500, 503 et de leur famille ; dans l'onglet Réseau, désigner méthode, code, Content-Type et Set-Cookie d'une requête réelle ; dire ce que TLS apporte (échange chiffré, certificat lié au nom de domaine) et ce que le cadenas ne prouve pas ; classer des cookies en session et persistants ; lire un enregistrement DNS (A, AAAA, durée de vie, propagation) ; associer un symptôme à l'étage en cause (DNS, réseau, serveur, navigateur) ; distinguer registre et registrar, et lire un WHOIS ; distinguer hébergeur, FAI et cloud, et un site non indexé du deep web et du darknet ; vérifier avec `nslookup` et `curl -I`",
         "prerequis": ["B05", "B06"],
         "pont": 9,
-        "contexte_ia": "Bloc B07 du module « Écosystème et outils du développeur » (DWWM), troisième bloc de la partie Internet et le Web, après « Internet, réseau de réseaux » et « Le réseau local et l’accès à Internet », avant « Serveur local ». Le fil : Yasmine, 34 ans, en formation de développeuse web sur un PC Windows, ouvre le planning du site de la formation (formation.example.org, adresse IP 203.0.113.20, IPv6 2001:db8::20) ; Farid, un ami qui suit la même formation, est sur Mac ; le formateur ; Bruno, 52 ans, boulanger, n’apparaît qu’au cas de l’étape d’ensemble.\nLe modèle du bloc : ouvrir une page est une conversation en étapes dans un ordre imposé. Le navigateur, le client, demande l’adresse IP du nom à un résolveur DNS ; il ouvre une connexion TCP vers cette adresse IP, sur le port du service (80 pour http, 443 pour https, omis de l’URL quand c’est celui par défaut) ; en https, il convient avec le serveur de chiffrer l’échange (TLS) ; il envoie la requête HTTP ; le serveur la traite (lit un fichier ou fait tourner un programme) et renvoie une réponse avec un code ; le navigateur affiche la page (le rendu) puis envoie les requêtes secondaires pour les fichiers qu’elle nomme (CSS pour la présentation, JavaScript pour le comportement, images). Sans adresse IP, pas de connexion ; sans connexion, pas de requête. Ces moments forment quatre étages : le DNS, le réseau (la connexion jusqu’au serveur), le serveur, le navigateur. Relation centrale : la page se charge étage par étage dans un ordre fixe et chaque étage a ses symptômes ; le symptôme dit l’étage, donc où chercher, et on le vérifie (nslookup, curl -I, l’onglet Réseau) au lieu de deviner.\nLes notions. Une URL : schéma, identifiants éventuels suivis de @, hôte, port, chemin, paramètres après ?, fragment après # ; le fragment ne part jamais au serveur. L’hôte se lit de droite à gauche : extension, nom de domaine (les deux derniers morceaux pour les noms en .org, .net ou .com de la fiche), sous-domaines ; www n’est qu’un sous-domaine habituel. Un nom de domaine est un nom lisible, une URL l’adresse web complète d’une ressource, une adresse IP le numéro d’une machine ; une machine peut servir plusieurs sites (l’en-tête Host dit lequel), donc une IP n’identifie pas un site. Le DNS : un enregistrement A relie un nom à une IPv4, AAAA à une IPv6 ; les réponses restent en cache pendant leur durée de vie (TTL), comptée à partir de la réception par chaque cache, d’où la propagation : un changement atteint chacun à son rythme. Le registre tient la liste d’une extension (l’AFNIC pour .fr), le bureau d’enregistrement (registrar) réserve un nom pour la personne et l’inscrit au registre, l’ICANN veille sur la racine de l’arbre des noms et coordonne les registres ; WHOIS lit la fiche publique d’un nom. HTTP : requête avec méthode (GET pour lire, POST pour envoyer), chemin, en-têtes, corps éventuel ; réponse avec ligne de statut (code), en-têtes (Content-Type, le type de contenu ; Location ; Set-Cookie) et corps. Familles : 2xx réussite, 3xx redirection, 4xx erreur côté client, 5xx erreur côté serveur. Six codes : 200 réussite, 301 déplacée définitivement (Location donne la nouvelle URL, le navigateur la redemande), 403 accès refusé, 404 ressource introuvable, 500 erreur interne du serveur, 503 service momentanément indisponible. HTTPS est HTTP dans une connexion protégée par TLS : l’échange est chiffré (on voit encore avec quelle machine on parle, pas ce qu’on dit) et le certificat lie le serveur à un nom de domaine. HTTP est sans état : sans cookie, rien ne relie deux requêtes. Le serveur demande un cookie (Set-Cookie), le navigateur le renvoie (Cookie) à chaque requête vers ce site ; un cookie porte un identifiant tiré au hasard, appelé jeton dans la fiche, ou une préférence, jamais le mot de passe ; sans Expires ni Max-Age, c’est un cookie de session, effacé à la fermeture du navigateur ; avec l’un des deux, un cookie persistant. L’hébergeur fait tourner le serveur d’un site dans un data center ; le FAI relie une maison à Internet ; le cloud loue à la demande des machines de ses data centers : pour un site qui tourne sur une machine louée dans le cloud, le fournisseur de ce cloud joue le rôle d’hébergeur et répond de l’étage du serveur. L’indexation est le recensement des pages par un moteur de recherche : un site neuf qui marche peut ne pas être indexé, ce qui n’a rien à voir avec la propagation DNS. Le deep web est tout ce qui n’est pas indexé (messageries, espaces derrière un mot de passe), ni illégal ni dangereux en soi ; un darknet est un réseau bâti par-dessus Internet qu’on ne rejoint qu’avec un logiciel dédié comme Tor ; le dark web, les sites de ces réseaux. Symptômes : « Impossible de trouver l’adresse IP du serveur », le DNS (vérifier avec nslookup) ; « Délai de connexion dépassé » ou « Connexion refusée » alors que le nom a une adresse IP, le réseau (d’autres sites, puis curl -I) ; un 4xx, le serveur joint qui refuse ou ne trouve pas ; un 5xx, le serveur joint mais en défaut ; une page ancienne alors que le site a changé, le navigateur et son cache, ses copies des fichiers déjà reçus (recharger sans le cache) ; un menu bloqué alors que chaque requête a reçu son 200, une extension du navigateur (fenêtre de navigation privée, sans cache et en général sans extensions).\nLe vocabulaire : « adresse IP » se dit en entier pour le numéro d’une machine ; « URL » ou « adresse web » pour l’adresse complète d’une ressource ; « adresse » seule ne s’emploie pas ; « connexion » désigne la connexion TCP, pas le fait de saisir son mot de passe (on dit « s’identifier ») ; « session » ne sert qu’au cookie de session ; « client » désigne le navigateur ou la machine, jamais une personne ; « étage » désigne l’un des quatre groupes.\nLes pièges : un 4xx est une réponse, le serveur marche ; le cadenas ne dit rien de l’honnêteté du site, n’importe quel propriétaire d’un nom obtient un certificat pour ce nom ; le cookie ne garde pas le mot de passe ; la propagation n’est pas l’indexation ; le port écrit dans l’URL l’emporte sur celui du schéma ; la durée de vie se compte depuis la réception, pas depuis le changement.\nUne réponse Solide retrouve la relation en jeu dans le cas posé (l’ordre et la condition de la chaîne, l’étage qu’un symptôme désigne, ce qu’un code dit du serveur, ce que prouve un cadenas, ce que contient un cookie), dit la condition qui la rend vraie (ce qui a dû marcher avant) et, quand le cas l’appelle, sa limite (ce que le code, le cadenas ou le cookie ne disent pas). Elle nomme chaque notion par son terme exact : résolveur, adresse IP, enregistrement A ou AAAA, durée de vie, propagation, connexion TCP, TLS, certificat, requête, réponse, code, en-tête, cookie de session ou persistant, jeton, registre, bureau d’enregistrement, hébergeur, FAI, indexation, deep web, darknet. Un mot vague à la place du terme (« le truc qui traduit les noms », « la sécurité », « le site » pour la machine) n’est pas Solide ; seule la tournure de la phrase peut varier. Une réponse qui énumère des notions sans les relier au cas n’est pas Solide. Les commandes, les noms d’en-têtes et les codes s’écrivent exactement.",
+        "contexte_ia": "Bloc B07 du module « Écosystème et outils du développeur » (DWWM), troisième bloc de la partie Internet et le Web, après « Internet, réseau de réseaux » et « Le réseau local et l’accès à Internet », avant « Serveur local ». Le fil : Yasmine, 34 ans, en formation de développeuse web sur un PC Windows, ouvre le planning du site de la formation (formation.example.org, adresse IP 203.0.113.20, IPv6 2001:db8::20) ; Farid, un ami qui suit la même formation, est sur Mac ; le formateur ; Bruno, 52 ans, boulanger, n’apparaît qu’au cas de l’étape d’ensemble.\nLe modèle du bloc : ouvrir une page est une conversation en étapes dans un ordre imposé. Le navigateur, le client, demande l’adresse IP du nom à un résolveur DNS ; il ouvre une connexion TCP vers cette adresse IP, sur le port du service (80 pour http, 443 pour https, omis de l’URL quand c’est celui par défaut) ; en https, il convient avec le serveur de chiffrer l’échange (TLS) ; il envoie la requête HTTP ; le serveur la traite (lit un fichier ou fait tourner un programme) et renvoie une réponse avec un code ; le navigateur affiche la page (le rendu) puis envoie les requêtes secondaires pour les fichiers qu’elle nomme (CSS pour la présentation, JavaScript pour le comportement, images). Sans adresse IP, pas de connexion ; sans connexion, pas de requête. Ces moments forment quatre étages : le DNS, le réseau (la connexion jusqu’au serveur), le serveur, le navigateur. Relation centrale : la page se charge étage par étage dans un ordre fixe et chaque étage a ses symptômes ; le symptôme dit l’étage, donc où chercher, et on le vérifie (nslookup, curl -I, l’onglet Réseau) au lieu de deviner.\nLes notions. Une URL : schéma, identifiants éventuels suivis de @, hôte, port, chemin, paramètres après ?, fragment après # ; le fragment ne part jamais au serveur. L’hôte se lit de droite à gauche : extension, nom de domaine (les deux derniers morceaux pour les noms en .org, .net ou .com de la fiche), sous-domaines ; www n’est qu’un sous-domaine habituel. Un nom de domaine est un nom lisible, une URL l’adresse web complète d’une ressource, une adresse IP le numéro d’une machine ; une machine peut servir plusieurs sites (l’en-tête Host dit lequel), donc une IP n’identifie pas un site. Le DNS : un enregistrement A relie un nom à une IPv4, AAAA à une IPv6 ; les réponses restent en cache pendant leur durée de vie (TTL), comptée à partir de la réception par chaque cache, d’où la propagation : un changement atteint chacun à son rythme. Le registre tient la liste d’une extension (l’AFNIC pour .fr), le bureau d’enregistrement (registrar) réserve un nom pour la personne et l’inscrit au registre, l’ICANN veille sur la racine de l’arbre des noms et coordonne les registres ; WHOIS lit la fiche publique d’un nom. HTTP : requête avec méthode (GET pour lire, POST pour envoyer), chemin, en-têtes, corps éventuel ; réponse avec ligne de statut (code), en-têtes (Content-Type, le type de contenu ; Location ; Set-Cookie) et corps. Familles : 2xx réussite, 3xx redirection, 4xx erreur côté client, 5xx erreur côté serveur. Six codes : 200 réussite, 301 déplacée définitivement (Location donne la nouvelle URL, le navigateur la redemande), 403 accès refusé, 404 ressource introuvable, 500 erreur interne du serveur, 503 service momentanément indisponible. HTTPS est HTTP dans une connexion protégée par TLS : l’échange est chiffré (on voit encore avec quelle machine on parle, pas ce qu’on dit) et le certificat lie le serveur à un nom de domaine. HTTP est sans état : sans cookie, rien ne relie deux requêtes. Le serveur demande un cookie (Set-Cookie), le navigateur le renvoie (Cookie) à chaque requête vers ce site ; un cookie porte une suite tirée au hasard, appelée jeton dans la fiche, ou une préférence, jamais le mot de passe ; sans Expires ni Max-Age, c’est un cookie de session, effacé à la fermeture du navigateur ; avec l’un des deux, un cookie persistant. L’hébergeur fait tourner le serveur d’un site dans un data center ; le FAI relie une maison à Internet ; le cloud loue à la demande des machines de ses data centers : pour un site qui tourne sur une machine louée dans le cloud, le fournisseur de ce cloud joue le rôle d’hébergeur et répond de l’étage du serveur. L’indexation est le recensement des pages par un moteur de recherche : un site neuf qui marche peut ne pas être indexé, ce qui n’a rien à voir avec la propagation DNS. Le deep web est tout ce qui n’est pas indexé (messageries, espaces derrière un mot de passe), ni illégal ni dangereux en soi ; un darknet est un réseau bâti par-dessus Internet qu’on ne rejoint qu’avec un logiciel dédié comme Tor ; le dark web, les sites de ces réseaux. Symptômes : « Impossible de trouver l’adresse IP du serveur », le DNS (vérifier avec nslookup) ; « Délai de connexion dépassé » ou « Connexion refusée » alors que le nom a une adresse IP, le réseau (d’autres sites, puis curl -I) ; un 4xx, le serveur joint qui refuse ou ne trouve pas ; un 5xx, le serveur joint mais en défaut ; une page ancienne alors que le site a changé, le navigateur et son cache, ses copies des fichiers déjà reçus (recharger sans le cache) ; un menu bloqué alors que chaque requête a reçu son 200, une extension du navigateur (fenêtre de navigation privée, sans cache et en général sans extensions).\nLe vocabulaire : « adresse IP » se dit en entier pour le numéro d’une machine ; « URL » ou « adresse web » pour l’adresse complète d’une ressource ; « adresse » seule ne s’emploie pas ; « connexion » désigne la connexion TCP, pas le fait de saisir son mot de passe (on dit « s’identifier ») ; « session » ne sert qu’au cookie de session ; « client » désigne le navigateur ou la machine, jamais une personne ; « identifiants » ne désigne que le morceau d’une URL avant @ ; « chemin » ne désigne que le morceau d’une URL après l’hôte ; « étage » désigne l’un des quatre groupes.\nLes pièges : un 4xx est une réponse, le serveur marche ; le cadenas ne dit rien de l’honnêteté du site, n’importe quel propriétaire d’un nom obtient un certificat pour ce nom ; le cookie ne garde pas le mot de passe ; la propagation n’est pas l’indexation ; le port écrit dans l’URL l’emporte sur celui du schéma ; la durée de vie se compte depuis la réception, pas depuis le changement.\nUne réponse Solide retrouve la relation en jeu dans le cas posé (l’ordre et la condition de la chaîne, l’étage qu’un symptôme désigne, ce qu’un code dit du serveur, ce que prouve un cadenas, ce que contient un cookie), dit la condition qui la rend vraie (ce qui a dû marcher avant) et, quand le cas l’appelle, sa limite (ce que le code, le cadenas ou le cookie ne disent pas). Elle nomme chaque notion par son terme exact : résolveur, adresse IP, enregistrement A ou AAAA, durée de vie, propagation, connexion TCP, TLS, certificat, requête, réponse, code, en-tête, cookie de session ou persistant, jeton, registre, bureau d’enregistrement, hébergeur, FAI, indexation, deep web, darknet. Un mot vague à la place du terme (« le truc qui traduit les noms », « la sécurité », « le site » pour la machine) n’est pas Solide ; seule la tournure de la phrase peut varier. Une réponse qui énumère des notions sans les relier au cas n’est pas Solide. Les commandes, les noms d’en-têtes et les codes s’écrivent exactement.",
         "sources": [
           {
             "id": "S1",
@@ -6456,29 +6475,29 @@ Content-Length: 162</pre>
         "explication": [
           {
             "id": "PR1-8",
-            "question": "Farid reçoit le code 503 sur la page des notes, et il veut redémarrer sa box. Quel étage est en cause, et pourquoi sa box n’y est pour rien ?",
-            "attendu": "Le 503 est une réponse : la requête est arrivée, donc le DNS et la connexion ont marché, et la box n’est pas en cause ; seul le serveur bloque. Déduit de l’étape « Un symptôme, un étage ».",
+            "question": "Farid reçoit le code 503 sur la page des notes, et il veut redémarrer sa box. Redémarrer sa box réglerait-il ce 503 ? Pourquoi ?",
+            "attendu": "Le 503 est une réponse : la requête est arrivée jusqu’au serveur, donc la box, le DNS et la connexion ont fait leur part ; c’est le serveur qui ne peut pas la traiter. Déduit de l’étape « Un symptôme, un étage ».",
             "erreurs": [],
             "item": "PR1-8"
           },
           {
             "id": "PR1-8:variante",
-            "question": "Yasmine reçoit le code 500 sur la page des moyennes, et elle veut vider le cache de son navigateur. Quel étage est en cause, et pourquoi son navigateur n’y est pour rien ?",
-            "attendu": "Le 500 est une réponse : la requête est arrivée et le navigateur a affiché ce qu’il a reçu, donc vider son cache n’y change rien ; c’est le programme du serveur qui a échoué. Déduit de l’étape « Un symptôme, un étage ».",
+            "question": "Farid reçoit le code 500 quand il envoie le formulaire d’inscription, et il veut vider le cache de son navigateur. Vider ce cache réglerait-il ce 500 ? Pourquoi ?",
+            "attendu": "Le 500 est une réponse : la requête est arrivée et c’est le programme du serveur qui a échoué en la traitant. Le cache du navigateur ne garde que des copies de fichiers déjà reçus : le vider ne change rien à ce que fait le serveur. Déduit de l’étape « Un symptôme, un étage ».",
             "erreurs": [],
             "item": "PR1-8"
           },
           {
             "id": "PR1-10",
-            "question": "Un faux site copie la page d’une banque sous le nom banque-secours.example.net, et le navigateur y affiche un cadenas. Qui a pu obtenir le certificat de ce nom, et que prouve ce certificat au navigateur ?",
-            "attendu": "L’escroc, qui détient le nom banque-secours.example.net : n’importe quel détenteur d’un nom obtient un certificat pour ce nom. Le certificat prouve seulement que l’échange chiffré se fait avec le détenteur de ce nom, rien de son honnêteté. Déduit de l’étape « HTTPS et TLS ».",
+            "question": "Un faux site copie la page d’une banque sous le nom banque-secours.example.net, et le navigateur y affiche un cadenas. Qui a pu obtenir le certificat de ce nom ?",
+            "attendu": "L’escroc lui-même, qui détient le nom banque-secours.example.net : un certificat se délivre à qui contrôle le nom, sans rien vérifier de son honnêteté. Déduit de l’étape « HTTPS et TLS ».",
             "erreurs": ["E4"],
             "item": "PR1-10"
           },
           {
             "id": "PR1-10:variante",
-            "question": "Un inconnu envoie à Yasmine une cagnotte sur https://dons-ecole.example.org, et la page affiche un cadenas. Qui a pu obtenir le certificat de ce nom, et que prouve ce certificat au navigateur ?",
-            "attendu": "Le détenteur du nom dons-ecole.example.org, quel qu’il soit : n’importe quel détenteur d’un nom obtient un certificat pour ce nom. Le certificat prouve seulement que l’échange chiffré se fait avec ce détenteur, rien de qui tient la cagnotte ni de ses intentions. Déduit de l’étape « HTTPS et TLS ».",
+            "question": "Un inconnu envoie à Yasmine une cagnotte sur https://dons-ecole.example.org, et la page affiche un cadenas. Qui a pu obtenir le certificat de ce nom ?",
+            "attendu": "Le détenteur du nom dons-ecole.example.org, quel qu’il soit, l’inconnu compris : un certificat se délivre à qui contrôle le nom, sans rien vérifier de qui tient la cagnotte ni de ses intentions. Déduit de l’étape « HTTPS et TLS ».",
             "erreurs": ["E4"],
             "item": "PR1-10"
           }
@@ -6486,7 +6505,7 @@ Content-Length: 162</pre>
         "restitution": [
           {
             "id": "B07-R7",
-            "question": "Yasmine tape http://agenda.example.org:8080/rdv, une URL sans s, et la page s’affiche avec ses photos. Récite dans l’ordre ce qui se passe entre la touche Entrée et la page complète. Qu’est-ce qui change par rapport à une URL en https ?",
+            "question": "Yasmine tape http://agenda.example.org:8080/rdv, une URL sans s, et la page s’affiche avec ses photos. Récite dans l’ordre ce qui se passe entre la touche Entrée et la page complète. Quelle étape de la chaîne n’a pas lieu, parce que l’URL est en http ?",
             "attendu": "Le DNS donne l’adresse IP de agenda.example.org ; le navigateur ouvre une connexion TCP vers cette adresse IP, sur le port 8080 écrit dans l’URL ; la requête /rdv part sur cette connexion ; le serveur la traite et répond par un code et la page ; le navigateur l’affiche, puis demande les photos en requêtes secondaires. En http, le pas de TLS n’a pas lieu : la requête et la réponse passent en clair. Erreur à repérer : inverser DNS, connexion et requête. Déduit des étapes « La chaîne d’une page », « Lire une URL » et « HTTPS et TLS ».",
             "erreurs": ["E1"]
           },
@@ -6548,8 +6567,8 @@ Content-Length: 162</pre>
           },
           {
             "id": "B07-Q11",
-            "question": "Pourquoi un site a-t-il besoin d’un cookie pour savoir, d’une page à l’autre, que Farid s’est identifié ?",
-            "attendu": "Parce que HTTP est sans état : chaque requête est traitée seule, le serveur ne la relie pas aux précédentes. Le cookie, que le navigateur renvoie avec chaque requête, porte un identifiant (un jeton) qui permet au serveur de la reconnaître. Une réponse qui dit « sans état », ou « le serveur ne se souvient pas des requêtes », et que le cookie renvoyé permet de reconnaître Farid, est Solide, même sans le mot jeton ni Set-Cookie. Déduit de l’étape « Les cookies ».",
+            "question": "Farid règle son navigateur pour refuser tous les cookies. Sur le site de la formation, il tape le bon mot de passe et l’accueil s’affiche ; mais dès qu’il clique sur « Mes notes », le site lui redemande de s’identifier. Pourquoi ?",
+            "attendu": "Sa requête « Mes notes » arrive sans cookie, donc sans jeton. Or le serveur ne relie pas une requête à celle du mot de passe, HTTP est sans état : rien ne lui dit que cette requête vient de Farid, déjà identifié. Une réponse qui dit que la requête n’apporte plus de quoi reconnaître Farid, parce que le serveur ne relie pas les requêtes entre elles, est Solide, même sans les mots « sans état » ni jeton. Déduit de l’étape « Les cookies ».",
             "erreurs": []
           },
           {
@@ -6566,8 +6585,8 @@ Content-Length: 162</pre>
           },
           {
             "id": "B07-Q13",
-            "question": "Farid veut mettre en ligne le site de son club sans acheter de serveur. Que lui propose le cloud, et qui répondra alors de l’étage du serveur ?",
-            "attendu": "Le cloud lui loue à la demande une machine dans un data center, au lieu d’en acheter une. Le fournisseur de ce cloud, qui fait tourner la machine, joue alors le rôle d’hébergeur : c’est lui qui répond de l’étage du serveur. Déduit de l’étape « Qui fait quoi ».",
+            "question": "Le site du club de Farid tourne sur une machine louée dans le cloud. Pour le jour des inscriptions, il attend dix fois plus de visiteurs que d’habitude. À qui demande-t-il plus de puissance pour ce seul jour, et pourquoi n’a-t-il aucune machine à acheter ?",
+            "attendu": "Au fournisseur du cloud, qui fait tourner la machine du site et en est donc l’hébergeur. Le cloud se loue à la demande, à l’heure : Farid loue plus de puissance pour la journée, puis revient à ce qu’il avait, sans acheter de machine. Une réponse qui nomme le fournisseur du cloud et dit qu’il loue selon le besoin du moment est Solide. Déduit de l’étape « Qui fait quoi ».",
             "erreurs": []
           }
         ],
@@ -6611,7 +6630,7 @@ Content-Length: 162</pre>
             "id": "B07-T4",
             "type": "transfert",
             "forme": "choisir_methode",
-            "consigne": "Pour lire : les quatre étages, dans l’ordre, sont le DNS, le réseau (la connexion jusqu’au serveur), le serveur et le navigateur. Le site d’une cliente affiche « 503 Service Unavailable » depuis ce matin ; elle croit que son nom a expiré et veut le renouveler. Quelle vérification lui proposes-tu d’abord, et pourquoi ?",
+            "consigne": "Pour lire : les quatre étages, dans l’ordre, sont le DNS, le réseau (la connexion jusqu’au serveur), le serveur et le navigateur. Le site d’une commerçante du quartier affiche « 503 Service Unavailable » depuis ce matin ; elle croit que son nom a expiré et veut le renouveler. Quelle vérification lui proposes-tu d’abord, et pourquoi ?",
             "attendu": "curl -I sur l’URL du site, ou nslookup sur son nom : s’il revient le 503, la réponse est arrivée, donc le nom a donné son adresse IP et la connexion s’est ouverte ; un nom expiré arrêterait la chaîne au DNS, avant toute réponse. Le 503 désigne le serveur : c’est l’hébergeur qu’elle prévient, pas son bureau d’enregistrement. Déduit des étapes « Un symptôme, un étage » et « Le nom et le DNS ».",
             "erreurs": []
           },
@@ -6718,7 +6737,7 @@ Content-Length: 162</pre>
           },
           {
             "id": "B07-K6",
-            "recto": "Pour lire : l’AFNIC est le registre du .fr. Le formateur ouvre la fiche WHOIS d’un nom en .fr. Qui publie cette fiche, et d’où vient le nom du bureau d’enregistrement qui y figure ?",
+            "recto": "Pour lire : le .fr est géré par l’AFNIC. Le formateur ouvre la fiche WHOIS d’un nom en .fr. Qui publie cette fiche, et d’où vient le nom du bureau d’enregistrement qui y figure ?",
             "verso": "Le registre, l’AFNIC, publie la fiche de chaque nom en .fr qu’il tient dans sa liste. Le bureau d’enregistrement est le revendeur chez qui ce nom a été réservé et qui l’a inscrit au registre : il change d’un nom à l’autre, alors que le registre est le même pour tous les .fr. Déduit de l’étape « Le nom et le DNS »."
           },
           {
@@ -7078,6 +7097,38 @@ Content-Length: 162</pre>
             "type": "cause",
             "montree": "ET12",
             "questions": ["B07-R8", "B07-T4", "B07-K12"]
+          },
+          {
+            "id": "L13",
+            "de": "N16",
+            "vers": "N29",
+            "type": "opposition",
+            "montree": "ET12",
+            "questions": ["B07-K7", "B07-T3"]
+          },
+          {
+            "id": "L14",
+            "de": "N11",
+            "vers": "N29",
+            "type": "opposition",
+            "montree": "ET6",
+            "questions": ["B07-K5"]
+          },
+          {
+            "id": "L15",
+            "de": "N6",
+            "vers": "N12",
+            "type": "composition",
+            "montree": "ET6",
+            "questions": ["B07-K4"]
+          },
+          {
+            "id": "L16",
+            "de": "N12",
+            "vers": "N9",
+            "type": "condition",
+            "montree": "ET6",
+            "questions": ["B07-Q3", "B07-T4"]
           }
         ],
         "ensemble": {
