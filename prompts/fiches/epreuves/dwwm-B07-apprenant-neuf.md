@@ -1,91 +1,80 @@
-PR1-1 : déductible (ET4 « Du nom à la page », ET9 « Un échange chiffré ») : 1 DNS donne l'adresse IP ; 2 connexion TCP ; 3 TLS (juste après la connexion, avant la requête) ; 4 requête « donne-moi /planning » ; 5 le serveur traite et renvoie 200 et la page ; 6 le navigateur affiche la page et demande la feuille de style.
-PR1-2 : déductible (ET5 « Les morceaux d'une adresse », tableau et ligne sur les identifiants) : https = schéma ; yasmine = identifiants ; notes.formation.example.org = hôte ; 8443 = port ; /notes/2026 = chemin ; trimestre=2&matiere=reseau = paramètres (& sépare les deux) ; moyenne = fragment.
-PR1-3 : déductible (ET6 « nslookup, au terminal », version macOS en anglais) : résolveur interrogé = 192.168.1.1 ; adresse IPv6 de mediatheque.example.com = 2001:db8::31.
-PR1-4 : déductible (ET7 « Ce que répond le serveur » et « L'onglet Réseau », ET10 « Set-Cookie, puis Cookie ») : méthode POST ; code 200 ; adresse distante 203.0.113.20 port 443 ; Content-Type text/html; charset=utf-8 ; Set-Cookie jeton=c4d81f07. Je compte cinq lignes pour « quatre informations » : j'ai donné les cinq.
-PR1-5 : déductible (ET8 « Quatre familles ») : le serveur marche, il a reçu la requête et refuse l'accès à ce dossier (4xx : c'est la requête qui pose problème, pas une panne). Première option.
-PR1-6 : déductible (ET10 « Jusqu'à la fermeture, ou jusqu'à une date », règle écrite) : langue=fr; Max-Age=2592000 persistant ; panier=3 session ; membre=e29d07 session ; bandeau=ferme; Expires=… persistant ; course=10km; Max-Age=600 persistant.
-PR1-7 : déductible (ET8 « Six codes à connaître », tableau) : /contact renommée = 301 ; programme des moyennes qui s'arrête = 500 ; profil qui s'affiche = 200 ; cours inexistant = 404 ; notes réservées d'un autre groupe = 403 ; site arrêté trente minutes = 503.
-PR1-8 : déductible (ET12 « Vérifier au lieu de deviner », tableau des symptômes ; ET16 « Ton pari, corrigé ») : « Impossible de trouver l'adresse IP » = DNS ; « Délai de connexion dépassé » avec nslookup qui répond = réseau ; code 500 = serveur ; menu qui ne s'ouvre pas sauf en navigation privée sans extension = navigateur.
-PR1-9 : déductible (ET5 « Nom, URL, adresse IP ») : une même machine sert les deux sites ; la requête dit lequel elle veut (première option).
-PR1-10 : déductible (ET9 « Ce que le cadenas prouve ») : l'échange est chiffré avec le détenteur du nom baskets-pas-cheres.example.com ; rien sur l'honnêteté de la boutique (première option).
-PR1-11 : déductible (ET10 « Set-Cookie, puis Cookie ») : une petite valeur (un jeton, lecteur=a81b) donnée par le serveur, renvoyée dans chaque requête vers ce site ; jamais le mot de passe (première option). L'exemple lecteur=a81b est déjà dans l'explication, mais c'est la règle qui fait répondre.
-PR1-12 : déductible (ET11 « Deep web, darknet, dark web ») : sur le deep web (pas indexée, ouverte avec le navigateur habituel).
-B07-R1 : RECOPIÉE (ET4 « Du nom à la page » et « Pourquoi cet ordre », ET16 « À retenir ») : l'ordre est écrit tel quel (adresse tapée, DNS, connexion TCP, TLS, requête, traitement, réponse 200 et page, rendu, requêtes secondaires pour le logo) et la raison aussi (chaque moment a besoin du précédent) ; seul le nom du site change.
-B07-R2 : déductible (ET5 « Les morceaux d'une adresse », « Ce qui part au serveur ») : https = schéma ; invite = identifiants ; agenda.example.org = hôte ; 8443 = port ; /rdv/2027 = chemin ; mois=3&vue=liste = paramètres ; samedi = fragment. Le fragment (samedi) ne quitte jamais le navigateur.
-B07-R3 : déductible (ET12 « Vérifier au lieu de deviner », tableau) : le réseau (la connexion ne s'ouvre pas, le DNS a répondu) ; ensuite, vérifier si d'autres sites s'ouvrent, puis curl -I sur le site.
-B07-R4 : déductible (ET8 « Quatre familles » et « Six codes ») : 403 = accès refusé, 4xx : serveur joint et en état de marche, il refuse la requête ; 503 = service momentanément indisponible, 5xx : serveur joint mais qui n'arrive pas à traiter, temporairement.
-B07-R5 : déductible (ET10 « Set-Cookie, puis Cookie » et « Jusqu'à la fermeture ») : un jeton (identifiant) donné par le serveur, jamais le mot de passe ; avec Max-Age c'est un cookie persistant : il reste après la fermeture du navigateur, jusqu'à la fin de la durée (2 592 000 secondes).
-B07-R6 : déductible (ET5 « Un nom se lit de droite à gauche », ET9 « Ce que le cadenas prouve ») : le nom de domaine de cette page est example.com (deux derniers morceaux), pas celui de la formation ; le cadenas prouve seulement un échange chiffré avec le détenteur de ce nom-là ; non, elle ne doit pas taper son mot de passe.
-B07-Q1 : déductible (ET5 « Le port ») : port 443, celui de https ; quand l'URL n'écrit pas de port, le navigateur prend celui de son schéma, on ne l'écrit que pour un autre numéro.
-B07-Q2 : déductible (ET6 « Combien de temps une réponse reste valable ») : jusqu'à 16 h (14 h + 7 200 s = 2 h), car la durée se compte depuis la réception par le cache (14 h) et le cache ignore le changement de 14 h 30.
-B07-Q3 : déductible (ET6 « Qui réserve un nom ») : deux bureaux d'enregistrement (registrars), des revendeurs agréés ; quel que soit son choix, le nom sera inscrit sur la liste du registre, l'AFNIC.
-B07-Q4 : déductible (ET7 « Ce que répond le serveur », ET4 « Les fichiers d'une page ») : le corps contient une feuille de style CSS ; elle a sans doute été demandée par une requête secondaire, après la page HTML.
-B07-Q5 : déductible (ET10 « Un serveur sans mémoire ») : HTTP est sans état, le serveur ne relie pas une requête aux précédentes ; le cookie est le signe que le navigateur renvoie à chaque requête pour qu'il reconnaisse Farid.
-B07-Q6 : déductible (ET5 « Ce qui part au serveur ») : non, le fragment ne quitte jamais le navigateur ; il sert à faire défiler la page jusqu'à l'endroit marqué « absences » une fois la page reçue.
-B07-Q7 : déductible (ET4 « Les fichiers d'une page ») : celle du programme JavaScript (le comportement), puisque texte et couleurs (HTML, CSS) sont arrivés.
-B07-Q8 : déductible (ET11 « L'hébergeur, le FAI, le cloud », ET12 tableau « d'autres sites s'ouvrent-ils ? ») : le FAI de Yasmine : aucun site ne s'ouvre chez elle alors que le site de la formation marche chez Farid, donc le serveur va bien (hébergeur hors de cause) ; le FAI porte l'étage réseau de la maison à Internet. L'inférence « aucun site ne s'ouvre donc pas l'hébergeur » n'est pas écrite telle quelle ; le DNS ou la box pourraient aussi être en cause.
-B07-C1 : déductible (ET4 « Du nom à la page ») : l'ordre est inversé : le DNS donne l'adresse IP avant toute requête ; sans adresse, pas de connexion, sans connexion, pas de requête.
-B07-C2 : déductible (ET5 « Nom, URL, adresse IP ») : trois choses différentes : example.org est un nom de domaine (nom lisible), https://example.org/contact une URL (adresse complète d'une ressource), 203.0.113.20 une adresse IP (numéro d'une machine).
-B07-C3 : déductible (ET9 « Ce que le cadenas prouve ») : le cadenas prouve seulement un échange chiffré avec le détenteur du nom ; tout propriétaire d'un nom peut obtenir un certificat, il ne dit rien de l'honnêteté.
-B07-C4 : déductible (ET10 « Set-Cookie, puis Cookie ») : le cookie ne contient jamais le mot de passe (jeton ou préférence) ; le serveur l'a vérifié une fois ; effacer le cookie retire le jeton, donc il sera déconnecté, mais le mot de passe n'était pas là.
-B07-C5 : déductible (ET11 « Deep web, darknet, dark web ») : le deep web est ce qu'aucun moteur n'indexe (messageries, pages derrière mot de passe), ni illégal ni dangereux ; il se visite avec un navigateur ordinaire ; Tor relève d'un darknet, autre chose.
-B07-T1 : RECOPIÉE (ET12 « Vérifier au lieu de deviner », dernier paragraphe) : la phrase « le site ne répond plus » et la réponse sont écrites : dans l'ordre de la chaîne, d'abord nslookup (le nom donne-t-il une adresse IP ?), puis curl -I (le serveur répond-il, avec quel code ?) avant d'appeler l'hébergeur.
-B07-T2 : déductible (ET8 « Quatre familles », « Six codes ») : non, 403 est une réponse 4xx : le serveur marche, il a reçu la requête et refuse l'accès ; ce qui est en cause maintenant, c'est la requête (accès non permis), pas une panne.
-B07-T3 : déductible (ET8 « Quatre familles ») : le premier chiffre donne la famille : 4xx = erreur côté client ; le serveur a répondu et marche, c'est la requête qui pose problème ; le sens exact du 418 reste inconnu.
-B07-K1 : déductible (ET6 « Qui répond au nom », « Combien de temps… ») : oui pour le planning tant que la réponse en cache est valable (le Mac la redonne) ; non pour un site jamais visité : pas de cache, pas de résolveur, donc pas d'adresse IP, donc pas de connexion.
-B07-K2 : déductible (ET5 « Nom, URL, adresse IP », ET7 « Ce que demande le navigateur ») : une adresse IP désigne une machine qui peut porter plusieurs sites ; la requête n'a plus de nom de site dans Host, donc la machine sert son site par défaut.
-B07-K3 : déductible (ET5 « Ce qui part au serveur ») : les deux fois, le serveur reçoit /planning seulement ; le fragment (#jeudi, #vendredi) ne part pas.
-B07-K4 : déductible (ET5 « Un nom se lit de droite à gauche », ET6 « L'arbre des noms ») : le propriétaire de example.net a réservé le nom de domaine ; « cours » et « paris » sont des sous-domaines créés comme il veut par ce propriétaire.
-B07-K5 : déductible (ET6 « Combien de temps une réponse reste valable ») : des caches (résolveurs, ordinateurs) ont gardé l'ancienne réponse et la redonnent jusqu'à la fin de sa durée de vie ; ils ne savent rien du changement ; c'est la propagation.
-B07-K6 : déductible (ET6 « Qui réserve un nom ») : le registre (l'AFNIC pour .fr) publie la fiche ; le nom du bureau d'enregistrement y figure parce que c'est lui qui a inscrit le nom au registre pour le titulaire.
-B07-K7 : RECOPIÉE (ET8 « Quatre familles », tableau des six codes, ET16 « À retenir ») : 404 = le serveur marche, il a reçu la requête et répond qu'il n'a pas la ressource ; 503 = serveur joint mais qui n'arrive pas à traiter, momentanément indisponible (5xx, côté serveur). Aucun cas nouveau.
-B07-K8 : déductible (ET8 « Une redirection, vue au terminal ») : deux requêtes : la première vers http, qui reçoit 301 ; le navigateur suit de lui-même Location et envoie une seconde requête vers https, d'où vient la page.
-B07-K9 : déductible (ET9 « Un échange chiffré ») : sur http://club.example.net, car sans s la requête passe en clair ; sur https le contenu est chiffré par TLS.
-B07-K10 : déductible (ET10 « Jusqu'à la fermeture, ou jusqu'à une date ») : non, panier=2 n'a ni Expires ni Max-Age : cookie de session, effacé à la fermeture du navigateur.
-B07-K11 : déductible (ET6 « Combien de temps… », ET11 « Exister, et être trouvé ») : l'ancien site encore affiché = propagation (caches DNS) ; page absente des moteurs = indexation (page neuve, aucun lien ne mène à elle).
-B07-K12 : déductible (ET4 « Du nom à la page » et « Quatre étages ») : non : la chaîne s'est arrêtée au DNS, sans adresse IP pas de connexion, sans connexion pas de requête ; le serveur n'a rien reçu.
-B07-K13 : déductible (ET7 « L'onglet Réseau », ET14 « L'onglet Réseau, chez toi ») : 11 requêtes secondaires ; la première ligne est la page elle-même, les autres sont les requêtes secondaires (comme 5 requêtes dont 4 secondaires pour le planning).
+PR1-1 : RECOPIÉE (ET4 Du nom à la page, écran du déroulé ; ET9 Un échange chiffré) : DNS donne l'adresse IP ; connexion TCP avec le serveur ; accord TLS pour chiffrer ; requête « donne-moi /planning » ; le serveur traite et renvoie 200 et la page ; le navigateur affiche la page et demande la feuille de style. La suite est écrite telle quelle dans le déroulé, seule l'URL change.
+PR1-2 : déductible (ET5 Les morceaux d'une adresse, tableau et ligne des identifiants) : https = schéma ; yasmine = identifiants ; notes.formation.example.org = hôte ; 8443 = port ; /notes/2026 = chemin ; trimestre=2&matiere=reseau = paramètres ; moyenne = fragment.
+PR1-3 : déductible (ET6 nslookup, au terminal, écran macOS) : résolveur 192.168.1.1 (port 53) ; adresse IPv6 du nom 2001:db8::31.
+PR1-4 : déductible (ET7 Ce que demande le navigateur, L'onglet Réseau ; ET10 Set-Cookie, puis Cookie) : méthode POST, code 200, type de contenu text/html; charset=utf-8, cookie demandé jeton=c4d81f07.
+PR1-5 : déductible (ET8 Quatre familles) : première réponse : le serveur marche, il a reçu la requête et refuse l'accès à ce dossier ; 4xx est une réponse, pas une panne.
+PR1-6 : déductible (ET10 Jusqu'à la fermeture, ou jusqu'à une date) : langue=fr; Max-Age=2592000 persistant ; panier=3 session ; membre=e29d07 session ; bandeau=ferme; Expires=... persistant ; course=10km; Max-Age=600 persistant (toute durée, même courte, rend persistant).
+PR1-7 : déductible (ET8 Six codes à connaître, tableau) : /contact renommée = 301 ; programme qui s'arrête sur une erreur = 500 ; profil qui s'affiche = 200 ; cours inexistant = 404 ; notes d'un autre groupe réservées = 403 ; site arrêté trente minutes pour mise à jour = 503.
+PR1-8 : déductible (ET12 Vérifier au lieu de deviner, tableau ; ET4 Quatre étages) : « Impossible de trouver l'adresse IP » = DNS ; « Délai de connexion dépassé » avec adresse IP obtenue = réseau ; code 500 = serveur ; menu qui ne réagit plus mais marche en navigation privée = navigateur (extension).
+PR1-9 : déductible (ET5 Nom, URL, adresse IP) : une même machine sert les deux sites, une adresse IP ne désigne pas un site, la requête dit lequel.
+PR1-10 : déductible (ET9 Ce que le cadenas prouve) : échange chiffré avec le détenteur du nom affiché, rien sur l'honnêteté de la boutique.
+PR1-11 : déductible (ET10 Set-Cookie, puis Cookie) : une petite valeur (un jeton lecteur=a81b) donnée par le serveur, renvoyée à chaque requête vers ce site ; pas le mot de passe.
+PR1-12 : déductible (ET11 Deep web, darknet, dark web) : sur le deep web, ouverte avec le navigateur habituel ; non indexée n'est pas darknet.
+B07-R1 : déductible (ET4 Du nom à la page ; ET5 Le port ; ET9 Un échange chiffré) : Entrée ; DNS donne l'adresse IP de agenda.example.org ; connexion TCP vers cette adresse et le port 8080 (port écrit dans l'URL, il l'emporte sur le 80) ; requête GET /rdv ; le serveur traite ; réponse 200 et page HTML ; rendu ; requêtes secondaires pour les photos. Par rapport à https : pas de pas TLS entre la connexion et la requête, donc requête et réponse en clair, lisibles par qui les capte (et ici port 8080 au lieu de 443).
+B07-R2 : déductible (ET5 Les morceaux d'une adresse, Ce qui part au serveur) : https = schéma ; invite = identifiants ; agenda.example.org = hôte ; 8443 = port ; /rdv/2027 = chemin ; mois=3&vue=liste = paramètres ; samedi = fragment. Le fragment ne quitte jamais le navigateur.
+B07-R3 : déductible (ET12 Vérifier au lieu de deviner, tableau) : étage du réseau (la connexion ne s'ouvre pas, le DNS a donné l'adresse IP) ; ensuite il vérifie si d'autres sites s'ouvrent, puis curl -I.
+B07-R4 : déductible (ET8 Quatre familles, Six codes à connaître) : 403 : le serveur est joint et marche, il refuse l'accès à cette page ; 503 : le serveur est joint mais momentanément indisponible, en défaut (5xx).
+B07-R5 : déductible (ET10 Jusqu'à la fermeture, ou jusqu'à une date) : le cookie contient un jeton (abonne=5be1d2), pas le mot de passe ; Max-Age rend le cookie persistant : il reste 2 592 000 secondes même navigateur fermé, il ne disparaît pas à la fermeture.
+B07-R6 : déductible (ET5 Un nom se lit de droite à gauche ; ET9 Ce que le cadenas prouve) : l'hôte a pour domaine example.com (deux derniers morceaux), pas example.org ; le cadenas prouve seulement un échange chiffré avec le détenteur de example.com ; non, elle ne doit pas taper son mot de passe.
+B07-Q1 : déductible (ET5 Le port) : port 443 ; quand l'URL n'écrit pas de port, le navigateur prend celui de son schéma (https : 443), on n'écrit un port que pour un autre numéro.
+B07-Q2 : déductible (ET6 Combien de temps une réponse reste valable) : jusqu'à 16 h (14 h + 7 200 s = 2 h), parce que la durée se compte depuis la réception de la réponse par le résolveur, qui ne sait rien du changement de 14 h 30.
+B07-Q3 : déductible (ET6 Qui réserve un nom) : deux bureaux d'enregistrement (registrars, revendeurs agréés) ; son nom sera inscrit sur la liste du registre du .fr, l'AFNIC.
+B07-Q4 : déductible (ET7 ; ET4 Les fichiers d'une page) : le corps contient une feuille de style CSS ; la demande vient sans doute d'une requête secondaire, faite après réception de la page HTML.
+B07-Q5 : déductible (ET10 Un serveur sans mémoire) : HTTP est sans état, le serveur ne relie pas une requête aux précédentes ; le cookie est le signe renvoyé avec chaque requête qui permet de reconnaître Farid.
+B07-Q6 : déductible (ET5 Ce qui part au serveur) : non, le fragment ne quitte jamais le navigateur ; il sert à faire défiler la page jusqu'à l'endroit marqué, une fois la page reçue.
+B07-Q7 : déductible (ET4 Les fichiers d'une page) : celle du programme JavaScript (menu.js), qui donne le comportement ; texte et couleurs sont arrivés.
+B07-Q8 : déductible (ET11 L'hébergeur, le FAI, le cloud) : le FAI de Yasmine : aucun site ne s'ouvre chez elle alors que Farid ouvre le site, donc l'hébergeur marche ; le FAI porte le début de l'étage réseau, de la maison à Internet.
+B07-C1 : déductible (ET4 Pourquoi cet ordre) : ordre inversé : le DNS donne l'adresse IP d'abord, ensuite la connexion, ensuite seulement la requête ; pas de requête avant la connexion.
+B07-C2 : déductible (ET5 Nom, URL, adresse IP) : trois choses différentes : nom de domaine, URL (adresse complète d'une ressource), adresse IP (numéro d'une machine).
+B07-C3 : déductible (ET9 Ce que le cadenas prouve) : le cadenas prouve un échange chiffré avec le détenteur du nom, rien de ses intentions ni de son sérieux ; tout détenteur de nom peut en obtenir un.
+B07-C4 : déductible (ET10 Set-Cookie, puis Cookie) : le cookie ne contient jamais le mot de passe, seulement un jeton ou une préférence ; effacer le cookie fait perdre le jeton, le site ne reconnaît plus la personne, mais cela n'efface pas un mot de passe.
+B07-C5 : déductible (ET11 Deep web, darknet, dark web) : le deep web est tout ce qui n'est pas indexé (messageries, pages à mot de passe), ni illégal ni dangereux ; Tor sert à un darknet, pas au deep web.
+B07-T1 : déductible (ET12 Un symptôme, un étage ; Vérifier au lieu de deviner) : un code 503 prouve que le serveur a été joint, donc le DNS a marché et le nom n'est pas expiré ; je propose curl -I (code 5xx : serveur en défaut, attendre ou prévenir l'hébergeur) plutôt que le renouvellement.
+B07-T2 : déductible (ET8 ; ET12 Côté client, étage serveur) : le serveur répond, il n'est plus indisponible ; 403 (4xx) : accès refusé, c'est la requête ou l'accès qui est en cause.
+B07-T3 : déductible (ET8 Quatre familles) : le premier chiffre donne la famille : 4xx, erreur côté client ; le serveur a répondu, il marche, c'est la requête qui pose problème.
+B07-K1 : déductible (ET6 Combien de temps une réponse reste valable) : planning : oui tant que la durée de vie de la réponse en cache n'est pas écoulée ; site jamais visité : non, aucune adresse IP en cache et le résolveur ne répond pas.
+B07-K2 : déductible (ET5 Nom, URL, adresse IP ; ET7 Ce que demande le navigateur) : une même machine porte souvent plusieurs sites ; sans nom de site dans Host, elle sert celui qu'elle donne par défaut.
+B07-K3 : déductible (ET5 Ce qui part au serveur) : les deux fois la requête porte /planning ; le fragment (#jeudi, #vendredi) n'est pas envoyé.
+B07-K4 : déductible (ET5 Un nom se lit de droite à gauche ; ET6 Qui réserve un nom) : le propriétaire de example.net a réservé le nom de domaine (via un bureau d'enregistrement) ; « paris » et « cours » sont des sous-domaines choisis par ce propriétaire.
+B07-K5 : déductible (ET6 La propagation) : des caches ont reçu l'ancienne réponse et la gardent jusqu'à la fin de sa durée de vie ; le site est déjà sur la nouvelle machine, ce sont les caches qui tardent.
+B07-K6 : déductible (ET6 Qui réserve un nom ; ET14 Le registre et le bureau d'enregistrement) : le registre (l'AFNIC) publie la fiche ; le bureau d'enregistrement y figure parce qu'il a inscrit le nom au registre pour son titulaire.
+B07-K7 : déductible (ET8 ; ET12 Côté client, étage serveur) : non : le serveur marche, il a répondu 404 pour ce chemin (lien périmé) et l'accueil répond 200 ; la panne n'est pas en cause.
+B07-K8 : déductible (ET8 Une redirection, vue au terminal) : deux requêtes : la première reçoit le 301 avec Location, le navigateur en envoie de lui-même une seconde vers l'adresse donnée, qui renvoie la page.
+B07-K9 : déductible (ET9 Un échange chiffré) : sur http://club.example.net : sans s, pas de TLS, la requête passe en clair ; sur https, chiffré, illisible.
+B07-K10 : déductible (ET10 Jusqu'à la fermeture, ou jusqu'à une date) : non : sans Expires ni Max-Age c'est un cookie de session, effacé à la fermeture du navigateur.
+B07-K11 : déductible (ET6 La propagation ; ET11 Exister, et être trouvé) : l'ancien site affiché chez certains vient de la propagation (caches DNS) ; la page absente des moteurs vient de l'indexation (page neuve, pas encore rangée).
+B07-K12 : déductible (ET12 Un symptôme, un étage ; ET4) : non : la chaîne s'est arrêtée au DNS, pas d'adresse IP, donc ni connexion ni requête vers le serveur.
+B07-K13 : déductible (ET7 L'onglet Réseau ; ET14) : 11 requêtes secondaires, car la première est la page elle-même ; les autres, envoyées après réception de la page, sont secondaires.
 
-LISTE 1. Éléments NON DÉDUCTIBLES et RECOPIÉS
-Non déductibles : aucun. Réserve sur B07-Q8 (l'inférence « aucun site ne s'ouvre chez elle donc pas l'hébergeur » n'est pas écrite) et sur PR1-4 (« quatre informations » pour cinq lignes demandées à relever).
-Recopiés : B07-R1 (ordre de la chaîne et raison écrits tels quels), B07-T1 (la phrase « le site ne répond plus » et l'ordre nslookup puis curl -I sont écrits à ET12), B07-K7 (404 et 503 sont écrits mot pour mot à ET8, sans cas nouveau). Proche de la recopie : PR1-11 (réutilise le Set-Cookie lecteur=a81b de ET10).
+Liste 1. Éléments NON DÉDUCTIBLES : aucun.
+Éléments RECOPIÉS : PR1-1 (l'ordre des six moments est écrit tel quel dans le déroulé d'ET4 et dans ET9 ; seul le nom de l'hôte change). Proches de la copie, sans l'être : PR1-5 et PR1-9 reprennent la structure d'une question posée dans le texte (404 de la salle 3, Nom/URL/IP), avec un code ou des noms changés ; B07-R2 reprend la lecture d'URL de l'exemple d'ET5 sur un autre cas.
 
-LISTE 2. Mots ou notions des questions que le texte ne définit pas
+Liste 2. Mots ou notions employés par les questions et jamais définis :
 
-- « Wi-Fi » (utilisé en ET9 et K9) : jamais défini.
-- « paquets » (K9, ET9) : seulement nommé en ET2 (« Internet transporte des paquets »), jamais défini.
-- « #53 » dans « Address: 192.168.1.1#53 » (PR1-3) : jamais expliqué, sans effet sur la réponse.
-- « Tor » (C5, ET11) : seulement « logiciel dédié », sans définition.
-- « jeton » : défini en ET10 (« la fiche l'appelle un jeton »), mais PR1-11 et R5 appellent le contenu « petite valeur » ; le lien avec abonne=5be1d2 (jeton ou préférence ?) est à deviner.
-- « mise à jour » (PR1-7) : suppose le lien avec la maintenance (503), non écrit mais évident.
-- « sous-domaine créé par le propriétaire » (K4) : « paris » et « cours » sont deux sous-domaines à deux niveaux, la règle ne traite que « formation » et « notes ».
-- Trait d'union dans « formation-example.org-connexion.example.com » (R6) : la règle des deux derniers morceaux ne dit pas que les tirets ne séparent pas.
+- « paquets » (B07-K9, Wi-Fi) : seulement nommé en ET2 (« Internet transporte des paquets »), jamais défini.
+- « Tor » (B07-C5) : donné seulement comme « logiciel dédié », sans plus.
+- « cache du Mac » / cache de l'ordinateur (B07-K1) : le texte dit que « les ordinateurs eux-mêmes » gardent des réponses, mais pas ce que l'ordinateur fait quand le résolveur ne répond plus ; j'ai appliqué la règle du TTL.
+- « Wi-Fi », « FAI », « box », « data center » : FAI et data center sont définis ; Wi-Fi et box ne le sont pas (box rappelée comme connue).
+- « registrar »/« bureau d'enregistrement » : défini. « WHOIS » : défini. « ICANN » : seulement nommée.
+- « Content-Length », « charset », « HTTP/1.1 », « OK » : lus dans les exemples (PR1-4), jamais expliqués ; sans incidence sur les réponses.
+- « extension » a deux sens (de nom de domaine, d'un navigateur) : le texte le signale en ET12.
 
-LISTE 3. Passages qui renvoient à autre chose que la fiche
+Liste 3. Passages qui renvoient à autre chose que la fiche :
 
-- ET2 : « Des deux blocs d'avant » ; « Internet, réseau de réseaux », « Le réseau local et l'accès à Internet » ; adresse IP, DNS, box, terminal « redits » sans autre détail.
-- ET2 et ET13 : « Replié sous « Ce qui sera vérifié » » (objectif replié, non affiché).
-- ET4 : « le s de https, expliqué plus loin » ; « Les autres mots… expliqués dans les étapes qui suivent ».
-- ET8 : « L'étape « Les codes, sans réfléchir » t'y entraîne ».
-- ET13, ET17 : « plus bas, dans « Ce qu'on te demande », partie Pratique / Restitution ».
-- ET14 : sites externes (Wikipédia, example.com, github.com, service WHOIS de l'AFNIC), « si la page de l'AFNIC a changé d'adresse, cherche WHOIS AFNIC » ; commandes ipconfig /displaydns et nslookup -debug.
-- ET15 : séries sur trois jours différents.
-- ET16 « La suite » : « Serveur local », « GitHub et hébergement », « Menaces », « Se protéger » ; « À explorer plus tard » (DNS autres types, HTTP récent, négociation TLS, cookies protégés, ordre des résultats).
-- ET18 : « Bilan », erreurs critiques, bloc « À reprendre ».
+- ET2 : « Des deux blocs d'avant », « la partie Internet et le Web », « Le réseau local et l'accès à Internet », « Internet, réseau de réseaux » ; « Ce que tu connais déjà » (adresse IP, DNS, box, terminal supposés connus).
+- ET2 et ET13 : « Replié sous “Ce qui sera vérifié” » (objectif replié que je ne vois pas, hormis son texte recopié).
+- ET8 : « L'étape “Les codes, sans réfléchir” t'y entraîne ».
+- ET13, ET17 : « plus bas, dans “Ce qu'on te demande”, partie Pratique / Restitution ».
+- ET14 : l'atelier (« avant l'atelier » en ET2), les outils de ton propre navigateur, le service WHOIS de l'AFNIC, Wikipédia.
+- ET16 « La suite » : « Serveur local », « GitHub et hébergement », « Menaces », « Se protéger » ; « À explorer plus tard ».
+- ET3 : « les étapes suivantes expliquent pourquoi » ; « la page te montre tes réponses ».
+- ET15 : la liste des séries faites et la preuve « Aisance ».
 
-LISTE 4. Passages qui parlent de la fiche au lieu de me parler
+Liste 4. Passages qui parlent de la fiche au lieu de me parler :
 
-- Titre « (version 2) ».
-- « [seulement si l'essai p1/p2/p3/p4/p5/p6 est faux] … [la réponse à l'essai p1] » : gabarits et identifiants d'essai que je ne vois nulle part (ET4, ET5, ET8, ET9, ET10, ET11).
-- « Essaie avec ton bon sens. Personne ne te note… À la fin de cette étape, la page te montre tes réponses » (ET3) ; « Cet exercice n'est pas noté… le schéma de la fiche s'affiche ensuite, pour comparer » (ET16).
-- « Ton pari », « Ton pari, repris », « Ton pari, corrigé », « fais ton pronostic » (ET1, ET12, ET16).
-- « Cet identifiant, la fiche l'appelle un jeton » (ET10).
-- « L'idée du bloc. », « Ce bloc est le dernier de la partie… Tu es ici. », « À la fin, tu sauras », « À quoi ça sert ».
-- « Pour te le représenter… Ce que l'image ne dit pas » : commentaire de méthode sur les analogies (ET4, ET5, ET8, ET9, ET10, ET5 arbre).
-- « Deux mots, pour lire », « Les quatre étages, pour lire », « Le code 503, pour lire » : étiquettes d'auteur.
-- ET14 : « Un indice / Une piste détaillée / Une partie de la solution / La solution entière », « Ton constat. La page ne voit pas ta machine… Coche ce qui est vrai », « L'aide que tu as prise ».
-- ET15 : « Une série est réussie quand… la preuve « Aisance » ».
-- ET17 : « Elle se fait sans le cours : dès que tu commences, il est masqué… corrigées à la fin de la série ».
-- ET18 : « Celles que la page a repérées dans tes réponses y sont déjà cochées ».
-- Marques « [outil interactif : …] » sans contenu visible (deroule, pari, choix, chaine, apparier, releve, nombre, classer, systeme, aisance, schema).
-- Consigne « Réponds avec ce qui précède, et seulement avec ça ».
+- Marqueurs non résolus : « [seulement si l'essai p1 est faux] … [la réponse à l'essai p1] » (ET4), p2 (ET5), p3 (ET8), p4 (ET9), p5 (ET10), p6 (ET11) : étiquettes et variables d'auteur visibles.
+- « Ton pari », « Ton pari, repris », « Ton pari, corrigé » ; « Avant de voir sa soirée sur le schéma de la chaîne, fais ton pronostic » ; « avant chacun, réponds dans ta tête à la question, puis vérifie » ; « Essaie avec ton bon sens. Personne ne te note » ; « Cet exercice n'est pas noté… le schéma de la fiche s'affiche ensuite » ; « Ce que tu fais : tu suis, sur le schéma… ».
+- Étiquettes de mise en page : « Pour lire », « Deux mots, pour lire », « Les données, pour lire », « Pour te le représenter », « Ce que l'image ne dit pas » (remarque de conception récurrente), « Le terme du métier ».
+- Numéros d'étape ET1 à ET18 en titres, « version 2 » dans le titre, « Réponds avec ce qui précède, et seulement avec ça ».
+- ET2 : « L'idée du bloc », « À la fin, tu sauras » (annonces sur la fiche) ; ET14 : « Ton constat. La page ne voit pas ta machine » et « L'aide que tu as prise : Aucune aide, Un indice… » ; ET17 : « il est masqué jusqu'à ta dernière réponse, … corrigées à la fin de la série » ; ET18 : « Une erreur cochée met le bloc “À reprendre” ».
+- Marqueurs [outil interactif : …] : je ne vois pas ce qu'ils montrent ; aucune réponse n'en dépend, sauf PR1-1 (ordre) que je tire du texte écrit.
