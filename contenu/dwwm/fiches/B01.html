@@ -2910,6 +2910,23 @@
             ><span class="lampe-col"><span class="lampe" data-on="1">1</span></span>
           </div>
         </div>
+        <p>
+          Tu viens de lire des bits comme un nombre, en suivant une règle : les poids. Une règle de
+          ce genre, qui dit comment lire des bits, s’appelle un <strong>codage</strong>. Les mêmes
+          bits donnent un sens quand un codage les lit : ici, un nombre. Voici ce que tu as fait,
+          sous la forme qui reviendra dans la suite.
+        </p>
+        <figure
+          class="chaine-fixe"
+          role="img"
+          aria-label="Des bits, 01001100, lus avec un codage, le binaire et ses poids, donnent un sens : le nombre 76."
+        >
+          <span class="boite-fixe">des bits<small>01001100</small></span>
+          <span class="fleche">lus avec</span>
+          <span class="boite-fixe">un codage<small>le binaire, ses poids</small></span>
+          <span class="fleche">donnent</span>
+          <span class="boite-fixe">un sens<small>le nombre 76</small></span>
+        </figure>
       </div>
     </template>
 
@@ -2988,10 +3005,9 @@
         <p class="accroche">
           Un octet peut aussi écrire une lettre. Il suffit d’une table qui donne un numéro à chaque
           caractère. La plus connue s’appelle <strong>ASCII</strong>. Elle date de 1963 et sert
-          toujours : les codages d’aujourd’hui reprennent ses 128 numéros tels quels. Une règle de
-          ce genre, qui dit comment lire des bits, s’appelle un <strong>codage</strong>. Les numéros
-          eux-mêmes sont une convention : rien n’oblige A à valoir 65, sinon que tout le monde suit
-          la même table.
+          toujours : les codages d’aujourd’hui reprennent ses 128 numéros tels quels. C’est un
+          deuxième <strong>codage</strong>, après le binaire. Les numéros eux-mêmes sont une
+          convention : rien n’oblige A à valoir 65, sinon que tout le monde suit la même table.
         </p>
         <p>
           Pas à pas, avec le premier octet du fichier : réponds à chaque question avant de passer à
@@ -4383,6 +4399,120 @@
       </div>
     </template>
 
+    <!-- ET16, atelier : sur sa machine, la Calculatrice en mode Programmeur, puis un fichier de trois couleurs ; puis le constat. -->
+    <template data-etape="ET16">
+      <div data-ecran="La calculatrice">
+        <p class="discret">Tu es ici : deux gestes sur ta machine, avec de vrais outils.</p>
+        <p class="accroche">
+          Jusqu’ici, tu as converti à la main. Vérifie maintenant cinq conversions avec la
+          Calculatrice de ton ordinateur, dans son mode Programmeur.
+        </p>
+        <p>
+          Prends ces cinq nombres : 0, 76, 128, 136 et 255. Pour chacun, écris d’abord son binaire
+          sur 8 bits, à la main, puis compare avec ce que montre la Calculatrice. Si une réponse
+          diffère, refais ta conversion en additionnant les poids : l’erreur est dans ta main, pas
+          dans la machine.
+        </p>
+        <details data-cran="1">
+          <summary>Un indice</summary>
+          <p>
+            La Calculatrice a plusieurs modes. Lequel est fait pour ceux qui écrivent des
+            programmes ?
+          </p>
+          <details data-cran="2">
+            <summary>Une piste détaillée</summary>
+            <p>
+              Le mode Programmeur montre le même nombre dans plusieurs bases à la fois, dont une
+              ligne BIN.
+            </p>
+            <details data-cran="3">
+              <summary>Une partie de la solution</summary>
+              <p>
+                Windows : ouvre la Calculatrice, puis son menu, les trois traits en haut à gauche.
+                Mac : ouvre la Calculette, puis son menu Présentation. Il te reste à choisir le
+                mode, puis à taper un nombre.
+              </p>
+              <details data-cran="4">
+                <summary>La solution entière</summary>
+                <p>
+                  Windows : Calculatrice, menu (les trois traits), Programmeur. Mac : Calculette,
+                  menu Présentation, Programmeur. Laisse DEC sélectionné, tape ton nombre : la ligne
+                  BIN en montre le binaire. Elle n’écrit pas les zéros de gauche : complète à 8
+                  bits. Par exemple, pour 76, tu lis 1001100, soit 01001100 sur 8 bits.
+                </p>
+              </details>
+            </details>
+          </details>
+        </details>
+      </div>
+      <div data-ecran="Trois couleurs">
+        <p class="accroche">
+          Une couleur d’une page web, ce sont trois octets. Ouvre un petit fichier qui en montre
+          trois, puis écris leurs octets en binaire.
+        </p>
+        <p>
+          Voici le fichier. Recopie-le tel quel dans un éditeur de texte tout simple, enregistre-le
+          sous le nom couleurs.html, puis ouvre-le avec ton navigateur. Tu n’as rien à comprendre de
+          son code aujourd’hui : seules les trois lignes rgb(…) comptent.
+        </p>
+        <div
+          class="defile"
+          data-lecture="Le fichier couleurs.html, cinq lignes. Les trois dernières dessinent chacune une bande de couleur : rgb 255, 128, 0 ; rgb 255, 210, 210 ; rgb 0, 110, 25."
+        >
+          <pre class="mono"><code>&lt;!doctype html&gt;
+&lt;title&gt;Couleurs&lt;/title&gt;
+&lt;div style="background: rgb(255, 128, 0); height: 60px"&gt;&lt;/div&gt;
+&lt;div style="background: rgb(255, 210, 210); height: 60px"&gt;&lt;/div&gt;
+&lt;div style="background: rgb(0, 110, 25); height: 60px"&gt;&lt;/div&gt;</code></pre>
+        </div>
+        <p>
+          Pour chaque bande, écris en binaire les trois nombres entre parenthèses, puis vérifie-les
+          avec la Calculatrice.
+        </p>
+        <details data-cran="1">
+          <summary>Un indice</summary>
+          <p>Quel logiciel écrit du texte tout simple, sans mise en forme ?</p>
+          <details data-cran="2">
+            <summary>Une piste détaillée</summary>
+            <p>
+              Le Bloc-notes, sous Windows ; TextEdit, sur un Mac, en texte brut. Le nom du fichier
+              doit finir par .html.
+            </p>
+            <details data-cran="3">
+              <summary>Une partie de la solution</summary>
+              <p>
+                Recopie les cinq lignes dans le Bloc-notes ou TextEdit. Il te reste à enregistrer
+                sous le bon nom, puis à ouvrir le fichier avec ton navigateur.
+              </p>
+              <details data-cran="4">
+                <summary>La solution entière</summary>
+                <ol>
+                  <li>
+                    Windows : ouvre le Bloc-notes. Mac : ouvre TextEdit, puis menu Format, Convertir
+                    au format Texte brut.
+                  </li>
+                  <li>Recopie les cinq lignes.</li>
+                  <li>
+                    Enregistre sous le nom couleurs.html. Sous Windows, choisis « Tous les
+                    fichiers » comme type, pour que le nom ne devienne pas couleurs.html.txt.
+                  </li>
+                  <li>
+                    Double-clique sur le fichier : il s’ouvre dans ton navigateur, avec trois bandes
+                    de couleur.
+                  </li>
+                  <li>
+                    Pour chaque bande, écris en binaire les trois nombres de son rgb(…), puis
+                    vérifie-les avec la Calculatrice : 255 donne 11111111, 128 donne 10000000, 0
+                    donne 00000000.
+                  </li>
+                </ol>
+              </details>
+            </details>
+          </details>
+        </details>
+      </div>
+    </template>
+
     <!-- ET13, aisance : des séries de 10 conversions, trois paliers, un par jour. -->
     <template data-etape="ET13">
       <p class="accroche">
@@ -5623,6 +5753,24 @@
           (data-justifier), et l’IA juge l’explication.
         </li>
       </ul>
+      <h3>Sur ta machine (atelier, AT1)</h3>
+      <ul>
+        <li>
+          L’atelier se fait sur la machine de l’apprenant, hors de la page : vérifier cinq
+          conversions avec la Calculatrice en mode Programmeur (0, 76, 128, 136, 255), puis recopier
+          un petit fichier de trois couleurs, l’enregistrer sous le nom couleurs.html, l’ouvrir dans
+          le navigateur et écrire en binaire les trois octets de chaque couleur. Le code du fichier
+          est fourni par la fiche : il n’y a rien à écrire ni à comprendre. Chaque écran ne donne
+          que la consigne : le geste est replié dans les crans. À la fin de l’étape, le gabarit
+          affiche le constat : les deux critères du manifeste (atelier.criteres) à cocher, et le
+          niveau d’aide reçu. L’aide se monte cran par cran, chaque cran replié dans le précédent :
+          « Un indice » (data-cran 1), « Une piste détaillée » (2), « Une partie de la solution »
+          (3), « La solution entière » (4) ; un cran ouvert fixe l’aide au moins à son niveau
+          pendant 20 minutes. L’atelier n’est réussi qu’avec les deux critères cochés, sans aide
+          (reussite_aide_max 0). La fiche n’utilise pas la console du navigateur, que la partie
+          présente plus loin.
+        </li>
+      </ul>
       <h3>Vitesse</h3>
       <ul>
         <li>
@@ -5704,7 +5852,7 @@
       {
         "schema": 2,
         "bloc": "B01",
-        "version": 67,
+        "version": 68,
         "type": "systemes",
         "titre": "L’information en bits",
         "titre_court": "Information en bits",
@@ -5814,6 +5962,11 @@
             "id": "ET12",
             "titre": "Entraînement",
             "type": "pratique"
+          },
+          {
+            "id": "ET16",
+            "titre": "Sur ta machine",
+            "type": "atelier"
           },
           {
             "id": "ET13",
@@ -6200,6 +6353,14 @@
             "reussite": 7
           }
         ],
+        "atelier": {
+          "id": "AT1",
+          "reussite_aide_max": 0,
+          "criteres": [
+            "J’ai ouvert la Calculatrice de mon ordinateur en mode Programmeur et vérifié cinq conversions que j’avais faites à la main : 0, 76, 128, 136 et 255, en lisant la ligne BIN.",
+            "J’ai enregistré le fichier couleurs.html, je l’ai ouvert dans mon navigateur, et j’ai écrit en binaire les trois octets de chacune de ses trois couleurs, puis je les ai vérifiés avec la Calculatrice."
+          ]
+        },
         "aisance": {
           "libelle": "Une série de 10 conversions justes, à 30 s, puis 20 s, puis 10 s chacune, un palier par jour",
           "paliers_s": [30, 20, 10]
@@ -6309,7 +6470,7 @@
             "id": "N5",
             "notion": "Écrire un nombre de 0 à 255 en binaire, à la main, en partant du poids 128 : 1 quand le poids rentre dans ce qui reste, 0 sinon, toujours 8 chiffres",
             "montree": ["ET6"],
-            "pratiquee": ["PR7", "PR8", "ET13"],
+            "pratiquee": ["PR7", "PR8", "ET13", "AT1"],
             "questions": ["R32", "C21", "Q22", "DE27b"]
           },
           {
@@ -6330,7 +6491,7 @@
             "id": "N8",
             "notion": "Lire un octet comme l’intensité d’une lumière, et écrire en binaire les trois octets de rgb(255, 136, 0) en disant ce que règle chacun : le rouge, le vert et le bleu, de 0 à 255",
             "montree": ["ET8"],
-            "pratiquee": ["PR8"],
+            "pratiquee": ["PR8", "AT1"],
             "questions": ["R32", "K28"]
           },
           {
