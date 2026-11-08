@@ -3014,8 +3014,8 @@ Retype new password:</pre>
           Le script agit avec les droits de Farid sur son Mac : il peut tout y faire. Ce qui compte
           est donc d’où il vient. Farid ne recopie cette ligne que de <strong>brew.sh</strong>, le
           site de Homebrew, jamais d’un forum, d’un blog ou d’un site dont le nom ressemble. Un
-          cadenas dans la barre d’adresse ne change rien : il dit que l’échange est chiffré, pas que
-          la page est honnête.
+          cadenas dans la barre d’adresse ne change rien : il dit que l’échange est chiffré
+          (illisible pour qui l’intercepterait), pas que la page est honnête.
         </p>
         <p data-si-essai="p4:faux">
           À la question sur le forum, tu avais répondu
@@ -3274,7 +3274,7 @@ brew not found</pre>
               <td class="mono">wsl --update</td>
               <td>
                 Se tape dans une fenêtre de Windows : met à jour WSL lui-même, dont son noyau Linux.
-                Aucun paquet d’Ubuntu ne change.
+                Aucun paquet d’Ubuntu ne change. WSL n’existe que sous Windows : un Mac n’en a pas.
               </td>
             </tr>
           </tbody>
@@ -3388,9 +3388,10 @@ brew not found</pre>
         </div>
         <p>
           Pour vérifier, dans les deux cas : <span class="mono">which tree</span> donne le chemin de
-          tree s’il est installé, et <span class="mono">tree --version</span> affiche sa version.
-          Sous Ubuntu, le chemin est /usr/bin/tree ; sur un Mac récent, c’est
-          /opt/homebrew/bin/tree.
+          tree s’il est installé, et <span class="mono">tree --version</span> affiche sa version. Si
+          <span class="mono">which tree</span> ne trouve rien, tree n’est pas installé, ou son
+          dossier manque au PATH. Sous Ubuntu, le chemin est /usr/bin/tree ; sur un Mac récent,
+          c’est /opt/homebrew/bin/tree.
         </p>
       </div>
       <div data-ecran="sudo">
@@ -3702,25 +3703,28 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           </ul>
         </div>
         <p class="q">
-          Yasmine a tapé <span class="mono">wsl -l -v</span> après l’installation. Que dit cette
-          sortie ?
+          Yasmine veut que son Ubuntu utilise un vrai noyau Linux. Elle a tapé
+          <span class="mono">wsl -l -v</span> après l’installation. Cette sortie le lui donne-t-elle
+          ?
         </p>
         <pre class="listing" data-lecture="Sortie de wsl -l -v. Une ligne : Ubuntu, Running, 1.">
   NAME      STATE           VERSION
 * Ubuntu    Running         1</pre>
         <ul class="options">
-          <li data-option="v1">Ubuntu tourne, mais avec WSL 1, pas WSL 2.</li>
+          <li data-option="v1">
+            Non : cet Ubuntu est sous la version qui traduit au lieu d’avoir son noyau.
+          </li>
           <li
             data-option="v2"
             data-retour="Running dit que la distribution tourne. Dans quelle colonne se lit la version ?"
           >
-            Ubuntu tourne avec WSL 2, puisqu’il est en Running.
+            Oui : Ubuntu est en Running, donc il a son noyau.
           </li>
           <li
             data-option="absent"
             data-retour="Une ligne porte son nom. Que dit une ligne d’une distribution absente ?"
           >
-            Ubuntu n’est pas installé.
+            On ne peut pas savoir : Ubuntu n’est pas installé.
           </li>
         </ul>
       </div>
@@ -3888,25 +3892,24 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
         data-justifier="Pourquoi tape-t-on brew update avant brew upgrade ?"
       >
         <p class="q">
-          Farid tape seulement <span class="mono">brew update</span>, et la commande se termine sans
-          erreur. Ses paquets installés sont-ils à jour ?
+          Le dépôt de Homebrew propose une version de tree plus récente que celle de Farid. Farid
+          tape seulement <span class="mono">brew update</span>, et la commande se termine sans
+          erreur. Quelle version de tree a-t-il ensuite sur son Mac ?
         </p>
         <ul class="options">
           <li
             data-option="oui"
-            data-retour="update a-t-elle touché un seul paquet installé, ou seulement la liste ?"
+            data-retour="La commande s’est terminée sans erreur : qu’a-t-elle changé dans ce qui est installé ?"
             data-erreur="E2"
           >
-            Oui : update met tout à jour.
+            La plus récente : la commande a remplacé tree.
           </li>
-          <li data-option="non">
-            Non : update ne met à jour que Homebrew et sa liste ; upgrade met à jour les paquets.
-          </li>
+          <li data-option="non">Celle d’avant : seule la liste des versions proposées a changé.</li>
           <li
             data-option="sudo"
-            data-retour="Qu’est-ce que cette commande a changé sur le Mac, avec ou sans sudo : des paquets, ou autre chose ?"
+            data-retour="Une commande qui se termine sans erreur a-t-elle retiré quelque chose du Mac ?"
           >
-            Non : il aurait fallu taper sudo brew update.
+            Aucune : la commande a retiré tree.
           </li>
         </ul>
       </div>
@@ -3923,26 +3926,24 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
         data-justifier="Pourquoi tape-t-on sudo apt update avant sudo apt upgrade ?"
       >
         <p class="q">
-          Yasmine tape seulement <span class="mono">sudo apt update</span>, et la commande se
-          termine sans erreur. Ses paquets installés sont-ils à jour ?
+          Le dépôt d’Ubuntu propose une version de tree plus récente que celle de Yasmine. Elle tape
+          seulement <span class="mono">sudo apt update</span>, et la commande se termine sans
+          erreur. Quelle version de tree a-t-elle ensuite dans Ubuntu ?
         </p>
         <ul class="options">
-          <li data-option="non">
-            Non : update ne fait qu’actualiser la liste ; upgrade installe les versions plus
-            récentes.
-          </li>
+          <li data-option="non">Celle d’avant : seule la liste des versions proposées a changé.</li>
           <li
             data-option="oui"
-            data-retour="update a-t-elle touché un seul paquet installé, ou seulement la liste ?"
+            data-retour="La commande s’est terminée sans erreur : qu’a-t-elle changé dans ce qui est installé ?"
             data-erreur="E2"
           >
-            Oui : update installe les versions plus récentes.
+            La plus récente : la commande a remplacé tree.
           </li>
           <li
             data-option="wsl"
-            data-retour="WSL est mis à jour dans une fenêtre de Windows. Avec quelle commande, et dans quelle fenêtre est tapée celle-ci ?"
+            data-retour="Une commande qui se termine sans erreur a-t-elle retiré quelque chose d’Ubuntu ?"
           >
-            Oui : sudo apt update remplace aussi WSL.
+            Aucune : la commande a retiré tree.
           </li>
         </ul>
       </div>
@@ -5564,7 +5565,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           {
             "id": "B08-C2",
             "type": "explication",
-            "consigne": "Un stagiaire, sur son Mac, dit : « J'ai tapé brew update, donc mes outils sont à jour. » Qu'est-ce qui ne va pas ?",
+            "consigne": "Un stagiaire, sur son Mac, tape brew update et voit que sa version de tree n'a pas changé alors que le dépôt en propose une plus récente. Il conclut : « Homebrew ne marche pas. » Qu'est-ce qui ne va pas ?",
             "attendu": "brew update met à jour Homebrew et sa liste de paquets, et ne change aucun paquet installé. Les versions récentes s'installent avec brew upgrade, après update. Erreur à repérer : croire que update installe les mises à jour. Déduit de l'étape « Des paquets ».",
             "erreurs": ["E2"]
           },
@@ -5687,8 +5688,8 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           },
           {
             "id": "B08-K4",
-            "recto": "Yasmine demande à apt d'installer le paquet git, et apt télécharge aussi git-man et liberror-perl, qu'elle n'a pas demandés. Pourquoi, et quel nom donne-t-on à ces deux paquets par rapport à git ?",
-            "verso": "git a besoin de git-man et de liberror-perl pour fonctionner : ce sont ses dépendances, que le gestionnaire installe avec lui. Déduit de l'étape « Des paquets »."
+            "recto": "Yasmine demande à apt d'installer le paquet curl, et apt télécharge aussi libcurl4 et zlib1g, qu'elle n'a pas demandés. Pourquoi apt les télécharge-t-il, et quel nom donne-t-on à ces deux paquets par rapport à curl ?",
+            "verso": "curl a besoin de libcurl4 et de zlib1g pour fonctionner : ce sont ses dépendances, que le gestionnaire installe avec lui. Déduit de l'étape « Des paquets »."
           },
           {
             "id": "B08-K5",
@@ -5712,8 +5713,8 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           },
           {
             "id": "B08-K9",
-            "recto": "Un camarade, sous Windows 11 Pro, qui a Hyper-V complet, se demande si WSL 2 en dépend. Que lui réponds-tu ?",
-            "verso": "Non : WSL 2 n'a besoin que de la fonctionnalité « Plateforme de machine virtuelle » et de la virtualisation du processeur activée. Hyper-V complet, avec ses outils pour créer ses propres machines virtuelles, n'est pas nécessaire, qu'il soit présent ou non. Déduit de l'étape « WSL 2 : Linux dans Windows »."
+            "recto": "Un camarade, sous Windows 11 Pro, désinstalle Hyper-V complet pour gagner de la place. WSL 2 va-t-il cesser de marcher, et qu'est-ce qui doit rester en place ?",
+            "verso": "Non, tant que la fonctionnalité « Plateforme de machine virtuelle » et la virtualisation du processeur restent activées : WSL 2 n'a besoin que d'elles. Hyper-V complet, avec ses outils pour créer ses propres machines virtuelles, n'est pas nécessaire, qu'il soit présent ou non. Déduit de l'étape « WSL 2 : Linux dans Windows »."
           }
         ]
       }
