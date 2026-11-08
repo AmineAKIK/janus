@@ -45,7 +45,7 @@ async function ouvrir(banc: BancContrat) {
 }
 
 /** Répond à chaque question d'une série avec le texte attendu du manifeste, puis rend le niveau de chacune. */
-async function repondre(banc: BancContrat, serie: 'restitution') {
+async function repondre(banc: BancContrat, serie: 'restitution' | 'explication') {
   const { manifeste, version } = await statutDuBloc(banc)
   const niveaux: string[] = []
   for (const question of manifeste[serie]) {
@@ -55,7 +55,11 @@ async function repondre(banc: BancContrat, serie: 'restitution') {
         serie,
         tentative: 1,
         question: question.id,
-        reponse: `${question.attendu} Voilà ce que j’en retiens, avec mes propres mots.`,
+        // Une explication qui reprend l'attendu à la suite est « recopiée » et ne compte pas : les mots sont renversés.
+        reponse:
+          serie === 'explication'
+            ? question.attendu.split(' ').reverse().join(' ')
+            : `${question.attendu} Voilà ce que j’en retiens, avec mes propres mots.`,
         confiance: 'sur',
         relance: '',
         support: { colle: false, retour_cours: false },
@@ -154,6 +158,8 @@ export function scenariosContrat(creer: CreerBanc): void {
       )) {
         await envoyerPage(banc, version, { type: 'pratique.resultat', ...item })
       }
+      // Une fiche réelle demande aussi d'expliquer certains items de pratique : l'item n'est fini qu'une fois expliqué.
+      await repondre(banc, 'explication')
       await envoyerPage(banc, version, { type: 'atelier.resultat' })
       const final = await statutDuBloc(banc)
 
