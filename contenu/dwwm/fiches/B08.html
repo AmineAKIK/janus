@@ -2004,7 +2004,10 @@
         <div class="cadre pour-lire">
           <p class="discret">Deux mots, pour lire :</p>
           <ul>
-            <li>Le terminal : la fenêtre où l’on tape des commandes.</li>
+            <li>
+              Le terminal : la fenêtre où l’on tape des commandes. Sur un Mac, c’est l’application
+              Terminal.
+            </li>
             <li>
               Une commande : une ligne de texte que l’ordinateur exécute quand on tape Entrée.
             </li>
@@ -2015,7 +2018,7 @@
           data-widget="deroule"
           data-id="yasmine-install"
           data-apres="Cinq moments, et un outil installé. Le bloc reprend chacun de ces moments, dans l’ordre, pour dire ce que Yasmine a fait."
-          data-lecture="Ce que fait Yasmine, sur son PC sous Windows, pour obtenir tree. Elle ouvre un terminal en administrateur et tape wsl --install ; Windows installe des composants et demande de redémarrer. Au redémarrage, une fenêtre noire demande un nom d’utilisateur puis un mot de passe, qui ne s’affiche pas. Dans une autre fenêtre, elle tape wsl -l -v et voit Ubuntu, Running, 2. Dans la fenêtre d’Ubuntu, elle tape sudo apt install tree, donne son mot de passe, et tree s’installe. Elle tape tree et l’arbre de ses dossiers apparaît."
+          data-lecture="Ce que fait Yasmine, sur son PC sous Windows, pour obtenir tree. Elle ouvre un terminal en administrateur et tape wsl --install ; Windows installe des composants et demande de redémarrer. Au redémarrage, une fenêtre noire demande un nom d’utilisateur puis un mot de passe, qui ne s’affiche pas. Dans une autre fenêtre, elle tape wsl -l -v et voit Ubuntu, Running, 2. Dans la fenêtre d’Ubuntu, elle tape sudo apt update, puis sudo apt install tree, donne son mot de passe, et tree s’installe. Elle tape tree et l’arbre de ses dossiers apparaît."
         >
           <p class="outil-titre">Yasmine installe tree</p>
           <ol class="pas-donnees" hidden>
@@ -2034,8 +2037,9 @@
               : Ubuntu, Running, 2.
             </li>
             <li>
-              Dans la fenêtre noire, qui porte le nom d’Ubuntu, elle tape sudo apt install tree.
-              L’ordinateur demande son mot de passe, télécharge tree et l’installe.
+              Dans la fenêtre noire, qui porte le nom d’Ubuntu, elle tape sudo apt update, puis sudo
+              apt install tree. L’ordinateur demande son mot de passe, télécharge tree et
+              l’installe.
             </li>
             <li>Elle tape tree, puis Entrée : l’arbre de ses dossiers apparaît.</li>
           </ol>
@@ -2051,13 +2055,13 @@
           data-widget="deroule"
           data-id="farid-install"
           data-apres="Quatre moments, le même outil au bout, un chemin différent de celui de Yasmine. Le bloc explique pourquoi les deux chemins ne se ressemblent pas."
-          data-lecture="Ce que fait Farid, sur son Mac, pour obtenir tree. Il ouvre le Terminal, va sur le site brew.sh, copie la commande d’installation qui s’y affiche, la colle et tape Entrée. Il donne son mot de passe ; l’installation dure plusieurs minutes et finit par quelques lignes sous le titre Next steps. Il copie ces lignes dans le Terminal, ferme la fenêtre, en ouvre une nouvelle et tape which brew : le Mac répond /opt/homebrew/bin/brew. Il tape brew install tree, puis tree : l’arbre de ses dossiers apparaît."
+          data-lecture="Ce que fait Farid, sur son Mac, pour obtenir tree. Il ouvre l’application Terminal, va sur le site brew.sh, copie la commande d’installation qui s’y affiche, la colle et tape Entrée. Il donne son mot de passe ; l’installation dure plusieurs minutes et finit par quelques lignes sous le titre Next steps. Il copie ces lignes dans le Terminal, ferme la fenêtre, en ouvre une nouvelle et tape which brew : le Mac répond /opt/homebrew/bin/brew. Il tape brew install tree, puis tree : l’arbre de ses dossiers apparaît."
         >
           <p class="outil-titre">Farid installe tree</p>
           <ol class="pas-donnees" hidden>
             <li>
-              Farid ouvre le Terminal de son Mac. Il va sur le site brew.sh, copie la commande
-              d’installation qui s’y affiche, la colle dans le Terminal et tape Entrée.
+              Farid ouvre l’application Terminal de son Mac. Il va sur le site brew.sh, copie la
+              commande d’installation qui s’y affiche, la colle dans le Terminal et tape Entrée.
             </li>
             <li>
               Il donne son mot de passe quand on le lui demande. L’installation dure plusieurs
@@ -2072,6 +2076,29 @@
               apparaît.
             </li>
           </ol>
+        </div>
+        <p>
+          Les deux chemins, côte à côte : le même départ, le même outil au bout, mais pas le même
+          milieu.
+        </p>
+        <div
+          class="schema-bloc"
+          data-lecture="Le chemin de Yasmine. Elle part de son PC sous Windows. Elle ouvre un terminal en administrateur, tape wsl --install et redémarre : elle a alors une fenêtre d’Ubuntu. Dans cette fenêtre, elle tape sudo apt update puis sudo apt install tree, et tree est installé."
+        >
+          <span class="boite-fixe">Le PC de Yasmine<small>sous Windows</small></span
+          ><span class="fleche">terminal en administrateur, wsl --install, redémarrage</span
+          ><span class="boite-fixe">Une fenêtre d’Ubuntu</span
+          ><span class="fleche">sudo apt update, puis sudo apt install tree</span
+          ><span class="boite-fixe">tree installé</span>
+        </div>
+        <div
+          class="schema-bloc"
+          data-lecture="Le chemin de Farid. Il part de son Mac. Il copie la commande du site brew.sh dans le Terminal, copie les lignes Next steps et ouvre un nouveau terminal : il a Homebrew. Il tape brew install tree, et tree est installé."
+        >
+          <span class="boite-fixe">Le Mac de Farid</span
+          ><span class="fleche">commande de brew.sh, lignes Next steps, nouveau terminal</span
+          ><span class="boite-fixe">Homebrew</span><span class="fleche">brew install tree</span
+          ><span class="boite-fixe">tree installé</span>
         </div>
       </div>
       <div data-ecran="Ton pari">
@@ -2102,29 +2129,26 @@
         fonctionnent, et t’apprend à y ajouter des outils sans rien casser.
       </p>
       <h3>Où tu es</h3>
-      <p>Ce bloc ouvre la partie « Le poste du développeur », qui tient en quatre idées :</p>
-      <ul class="carte-partie">
-        <li class="ici">
-          <strong>Un shell UNIX sur son poste</strong> : l’endroit où ton poste lit tes commandes,
-          et un outil qui en installe d’autres. Tu es ici. Les deux blocs d’après, « Lire la
-          documentation et se déplacer » et « Manipuler fichiers et dossiers », s’en servent.
-        </li>
-        <li><strong>Un éditeur</strong> pour écrire le code, indépendant de ce bloc.</li>
-        <li><strong>Un serveur local</strong> pour exécuter ton code comme sur un vrai serveur.</li>
-        <li><strong>Un compte GitHub</strong> pour conserver ton code et accéder à des outils.</li>
-      </ul>
+      <p>
+        Ce bloc ouvre la partie « Le poste du développeur ». Il pose l’endroit de ton poste qui lit
+        tes commandes, comme sur un serveur, et un outil qui en installe d’autres : tu es ici. Les
+        deux blocs d’après, « Lire la documentation et se déplacer » et « Manipuler fichiers et
+        dossiers », s’en servent. Un éditeur de code, un serveur local et un compte GitHub viennent
+        plus loin dans la partie, sans lien avec ce bloc.
+      </p>
       <h3>À quoi ça sert</h3>
       <p>
-        Un site tourne en général sur un serveur Linux, et les outils de la suite (le serveur local,
-        le langage PHP, la gestion des versions du code) se lancent depuis une fenêtre de commandes
-        comme celle d’un serveur. Savoir ce que fait chaque commande avant de la taper, c’est aussi
-        ne pas abîmer son poste en recopiant une ligne trouvée sur Internet.
+        Un site tourne en général sur un serveur, un ordinateur qui fait tourner Linux, et les
+        outils de la suite (le serveur local, le langage PHP, la gestion des versions du code) se
+        lancent depuis une fenêtre de commandes comme celle d’un serveur. Savoir ce que fait chaque
+        commande avant de la taper, c’est aussi ne pas abîmer son poste en recopiant une ligne
+        trouvée sur Internet.
       </p>
       <p>Une bonne partie du bloc se passe sur ta machine, pas sur cette page.</p>
       <h3>Ce que tu connais déjà</h3>
       <p>
-        Le terminal, la fenêtre où l’on tape des commandes, une par une, comme ipconfig ou ping :
-        c’est le point de départ.
+        Le terminal, la fenêtre où l’on tape des commandes (sur un Mac, l’application Terminal), une
+        par une, comme ipconfig ou ping : c’est le point de départ.
       </p>
       <h3>À la fin, tu sauras</h3>
       <ul>
@@ -2166,7 +2190,7 @@
           <ul class="options">
             <li
               data-option="oui"
-              data-retour="Si Ubuntu apportait ses commandes à l’Invite de commandes, pourquoi l’installer dans une fenêtre à part ?"
+              data-retour="Si Ubuntu apportait ses commandes à l’Invite de commandes, y aurait-il besoin d’une fenêtre à part pour lui ?"
               data-erreur="E1"
             >
               Oui : Ubuntu est installé dans Windows, donc ses commandes marchent partout dans
@@ -2178,7 +2202,7 @@
             </li>
             <li
               data-option="redemarrage"
-              data-retour="Le redémarrage installe quelque chose. Change-t-il ce que comprend une fenêtre déjà ouverte ?"
+              data-retour="Qu’est-ce qui décide des commandes qu’une fenêtre comprend : un redémarrage du PC, ou le programme qui tourne dans cette fenêtre ?"
             >
               Oui, mais seulement après avoir redémarré le PC.
             </li>
@@ -2209,7 +2233,7 @@
             </li>
             <li
               data-option="rien"
-              data-retour="Quel rapport y a-t-il entre le mot « update » et un mot de passe ?"
+              data-retour="Un mot de passe a-t-il un rapport avec ce que dit le mot « update » ?"
             >
               Rien : elle a seulement vérifié le mot de passe.
             </li>
@@ -2244,7 +2268,7 @@
             <li data-option="outil">Un outil qui installe d’autres outils, en une commande.</li>
             <li
               data-option="maj"
-              data-retour="Homebrew porte un nom de boisson, pas celui d’un système. Que met-on à jour avec lui : le Mac, ou des outils ajoutés ?"
+              data-retour="Que met-on à jour avec Homebrew : le Mac lui-même, ou des outils que l’on y ajoute ?"
             >
               Rien de nouveau : il sert seulement à mettre macOS à jour.
             </li>
@@ -2328,10 +2352,39 @@
           cette fenêtre noire, comprend ce qu’elle tape.
         </p>
         <p>
-          La fenêtre s’appelle le terminal : elle affiche du texte et reçoit les touches du clavier,
-          et elle ne comprend rien. Derrière elle tourne un programme qui lit chaque ligne tapée, la
-          comprend et la fait exécuter : le <strong>shell</strong>. Cmd et PowerShell sont des
-          shells de Windows ; bash est le shell d’Ubuntu ; zsh, celui du Terminal des Mac récents.
+          La fenêtre où elle tape s’appelle le <strong>terminal</strong> : elle affiche du texte et
+          reçoit les touches du clavier.
+        </p>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="shellqui"
+          data-reponse="shell"
+          data-aide1="Une fenêtre peut-elle comprendre quelque chose, ou affiche-t-elle seulement ce qu’un programme lui envoie ?"
+          data-aide2="Que fait la fenêtre d’une ligne tapée : l’afficher et la recevoir, ou aussi l’exécuter ?"
+          data-aide3="Relis ce que fait la fenêtre. Reste-t-il quelque chose à faire pour que la ligne soit exécutée, et qui le fait ?"
+          data-explication="Le terminal ne fait que montrer et recevoir du texte. Le programme qui tourne derrière lui, le shell, lit la ligne tapée et la fait exécuter."
+        >
+          <p class="q">
+            Farid tape une commande dans l’application Terminal de son Mac. Qu’est-ce qui la lit ?
+          </p>
+          <ul class="options">
+            <li data-option="terminal">La fenêtre du terminal, qui comprend les commandes.</li>
+            <li data-option="shell">
+              Un programme qui tourne derrière la fenêtre et lit chaque ligne tapée.
+            </li>
+            <li data-option="ecran">L’écran, qui affiche la ligne puis la renvoie au système.</li>
+          </ul>
+        </div>
+      </div>
+      <div data-ecran="Le shell et son invite">
+        <p class="accroche">
+          Ce programme qui lit les lignes tapées s’appelle le <strong>shell</strong>. Yasmine en
+          rencontrera plusieurs, et elle doit savoir lequel lui parle.
+        </p>
+        <p>
+          Cmd et PowerShell sont des shells de Windows ; bash est le shell d’Ubuntu ; zsh, celui de
+          l’application Terminal des Mac récents.
         </p>
         <p>
           Ce que le shell écrit au début de la ligne où tu tapes s’appelle
@@ -2346,25 +2399,6 @@
           Terminal de Windows 11, une même fenêtre peut ouvrir un onglet Cmd et un onglet Ubuntu :
           le terminal est le même, le shell change.
         </p>
-        <div
-          class="ex"
-          data-widget="choix"
-          data-id="shellqui"
-          data-reponse="shell"
-          data-aide1="Une fenêtre peut-elle comprendre quelque chose, ou affiche-t-elle seulement ce qu’un programme lui envoie ?"
-          data-aide2="Quel programme tourne derrière le guichet, et que fait-il de chaque ligne tapée ?"
-          data-aide3="Entre la fenêtre qui montre le texte et le système, il y a un programme qui traite chaque ligne tapée. Qui est-il ?"
-          data-explication="Le terminal ne fait que montrer et recevoir du texte. C’est le shell, derrière lui, qui lit la ligne tapée et la fait exécuter."
-        >
-          <p class="q">
-            Farid tape une commande dans le Terminal de son Mac. Qu’est-ce qui la lit ?
-          </p>
-          <ul class="options">
-            <li data-option="terminal">La fenêtre du terminal, qui comprend les commandes.</li>
-            <li data-option="shell">Le shell, un programme qui tourne derrière la fenêtre.</li>
-            <li data-option="ecran">L’écran, qui affiche la ligne puis la renvoie au système.</li>
-          </ul>
-        </div>
       </div>
       <div data-ecran="UNIX">
         <p class="accroche">
@@ -2406,7 +2440,7 @@
           data-reponse="distribution"
           data-aide1="Linux et une distribution sont deux mots pour deux choses. Laquelle est le moteur, laquelle la voiture entière ?"
           data-aide2="Qu’est-ce qui réunit un noyau et des outils ?"
-          data-aide3="Fedora, comme Ubuntu, est une distribution : que réunit-on dans une distribution, par rapport au noyau seul ?"
+          data-aide3="Relis le paragraphe : de quoi parle-t-on quand on dit « un noyau réuni avec des outils » ?"
           data-explication="Une distribution est le noyau Linux, avec des outils réunis autour de lui : c’est ce qu’on trouve dans Fedora comme dans Ubuntu."
         >
           <p class="q">
@@ -2439,22 +2473,15 @@
         </p>
         <pre
           class="listing"
-          data-lecture="Quatre invites, de haut en bas. La première, C:\Users\yasmine suivi d’un signe supérieur, est celle de Cmd. La deuxième, la même avec PS devant, est celle de PowerShell. La troisième, yasmine@PC-YASMINE:~$, est celle de bash, le shell d’Ubuntu : le nom de l’utilisateur Linux, le nom du PC, puis un signe dollar. La quatrième, farid@MacBook-Air ~ %, est celle de zsh, sur le Mac de Farid."
+          data-lecture="Quatre lignes, chacune avec le nom du shell, puis son invite. Cmd, le shell de Windows : C:\Users\yasmine suivi d’un signe supérieur. PowerShell, aussi un shell de Windows : la même chose avec PS devant. bash, le shell d’Ubuntu : yasmine@PC-YASMINE:~$, le nom de l’utilisateur Linux, le nom du PC, puis un signe dollar. zsh, le shell du Mac de Farid : farid@MacBook-Air ~ %."
         >
-C:\Users\yasmine>
-PS C:\Users\yasmine>
-yasmine@PC-YASMINE:~$
-farid@MacBook-Air ~ %</pre>
+Cmd          C:\Users\yasmine>
+PowerShell   PS C:\Users\yasmine>
+bash         yasmine@PC-YASMINE:~$
+zsh          farid@MacBook-Air ~ %</pre>
         <p>
-          De haut en bas : l’invite de Cmd, celle de PowerShell, celle de bash dans Ubuntu (le nom
-          de l’utilisateur Linux, le nom du PC, puis un dollar) et celle de zsh sur le Mac de Farid.
-        </p>
-        <p>
-          Cmd, PowerShell et bash sont trois shells différents : chacun ne comprend que ses
-          commandes. Cmd comprend ipconfig ; bash comprend apt, qui installe des outils, et sudo,
-          qui donne des droits d’administrateur ; aucun des deux ne comprend les commandes de
-          l’autre. Installer Ubuntu sur un PC ne change pas ce que comprend Cmd : l’installation
-          ajoute un deuxième shell, dans une autre fenêtre.
+          À gauche, le shell ; à droite, son invite. Celle de bash, dans Ubuntu, donne le nom de
+          l’utilisateur Linux, le nom du PC, puis un dollar.
         </p>
         <div
           class="ex"
@@ -2463,7 +2490,7 @@ farid@MacBook-Air ~ %</pre>
           data-reponse="inconnue"
           data-aide1="Pour quel système la commande ipconfig a-t-elle été écrite, et d’où vient le shell d’Ubuntu ?"
           data-aide2="Un shell ne comprend que ses propres commandes. ipconfig fait-elle partie de celles de bash ?"
-          data-aide3="Pour quel système ipconfig a-t-elle été écrite, et le shell d’Ubuntu est-il de ce monde ?"
+          data-aide3="Dans quelle fenêtre Yasmine tape-t-elle ipconfig, et quel shell y tourne : celui de Windows ou celui d’Ubuntu ?"
           data-explication="ipconfig est une commande du monde Windows : bash ne la connaît pas, comme Cmd ne connaît pas apt."
         >
           <p class="q">
@@ -2487,6 +2514,13 @@ farid@MacBook-Air ~ %</pre>
             </li>
           </ul>
         </div>
+        <p>
+          Cmd, PowerShell et bash sont trois shells différents : chacun ne comprend que ses
+          commandes. Cmd comprend ipconfig ; bash comprend apt, qui installe des outils, et sudo,
+          qui donne des droits d’administrateur ; aucun des deux ne comprend les commandes de
+          l’autre. Installer Ubuntu sur un PC ne change pas ce que comprend Cmd : l’installation
+          ajoute un deuxième shell, dans une autre fenêtre.
+        </p>
         <p data-si-essai="p1:faux">
           Au début, tu avais répondu <span data-essai-rappel="p1">autre chose</span> sur les deux
           fenêtres de Yasmine. Chaque fenêtre fait tourner son propre shell, et un shell ne comprend
@@ -2494,7 +2528,7 @@ farid@MacBook-Air ~ %</pre>
         </p>
       </div>
     </template>
-    <!-- ET5, explication : WSL 2 (machine virtuelle et noyau), ce qu’il lui faut, le terminal administrateur, wsl --install, wsl -l -v et wsl --update, un échec d’installation. -->
+    <!-- ET5, explication : WSL 2 (machine virtuelle et noyau), ce qu’il lui faut, le terminal administrateur, wsl --install, wsl -l -v, un échec d’installation. -->
     <template data-etape="ET5">
       <div data-ecran="Linux dans une machine virtuelle">
         <p class="accroche">
@@ -2732,18 +2766,48 @@ Retype new password:</pre>
         >
   NAME      STATE           VERSION
 * Ubuntu    Running         2</pre>
+        <pre
+          class="listing"
+          data-lecture="Sortie de wsl -l -v chez un camarade de Yasmine. Trois colonnes : NAME, STATE, VERSION. Une ligne : Ubuntu, Stopped, 2."
+        >
+  NAME      STATE           VERSION
+* Ubuntu    Stopped         2</pre>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="versionq"
+          data-reponse="oui"
+          data-aide1="Sous quel titre de colonne est écrit le mot Stopped, et ce titre parle-t-il d’une version ?"
+          data-aide2="Quelle colonne dit avec quelle version de WSL tourne la distribution ?"
+          data-aide3="Compare le chiffre écrit sous VERSION avec ce que Yasmine veut obtenir : de quelle version s’agit-il ?"
+          data-explication="La colonne VERSION dit sous quelle version de WSL est la distribution : ici 2. Stopped, sous STATE, dit seulement qu’elle ne tourne pas à cet instant."
+        >
+          <p class="q">Sur ce listing, l’Ubuntu du camarade est-il sous WSL 2 ?</p>
+          <ul class="options">
+            <li data-option="oui">
+              Oui : le chiffre 2 est sous le titre VERSION, et Stopped parle d’autre chose.
+            </li>
+            <li
+              data-option="arret"
+              data-retour="Stopped est écrit sous quel titre de colonne, et ce titre parle-t-il d’une version de WSL ?"
+            >
+              Non : Stopped dit que cet Ubuntu n’est pas sous WSL 2.
+            </li>
+            <li
+              data-option="etoile"
+              data-retour="À quoi sert la colonne dont le titre est VERSION, si l’étoile ne la cache pas ?"
+            >
+              On ne peut pas savoir : l’étoile cache la version.
+            </li>
+          </ul>
+        </div>
         <p>
           La colonne NAME donne la distribution, STATE dit si elle tourne (Running) ou non
-          (Stopped), VERSION dit avec quelle version de WSL elle tourne. Le titre des colonnes suit
-          la langue de Windows : il peut être en français ; la colonne VERSION se lit à la même
-          place. <strong>VERSION 2</strong> est la preuve que l’installation est du bon type. Un 1
-          dirait qu’Ubuntu tourne sous WSL 1.
-        </p>
-        <p>
-          La commande <span class="mono">wsl --update</span> se tape aussi dans une fenêtre de
-          Windows : elle met à jour WSL lui-même, dont son noyau Linux. Les outils installés dans
-          Ubuntu ne sont pas ceux de WSL : ils se mettent à jour depuis la fenêtre d’Ubuntu, par une
-          autre commande.
+          (Stopped), VERSION dit avec quelle version de WSL elle tourne. L’étoile devant un nom
+          marque la distribution par défaut. Le titre des colonnes suit la langue de Windows : il
+          peut être en français ; la colonne VERSION se lit à la même place.
+          <strong>VERSION 2</strong> est la preuve que l’installation est du bon type. Un 1 dirait
+          qu’Ubuntu tourne sous WSL 1.
         </p>
         <div
           class="schema-bloc"
@@ -2797,7 +2861,7 @@ Retype new password:</pre>
           data-reponse="fonction"
           data-aide1="La ligne Virtualisation dit « Activée » : le processeur est prêt. Que reste-t-il à vérifier ?"
           data-aide2="Après le processeur, de quoi Windows lui-même a-t-il besoin pour faire tourner une machine virtuelle ?"
-          data-aide3="Une fois le processeur prêt, il reste la partie de Windows qui gère les machines virtuelles."
+          data-aide3="Une fois le processeur prêt, que reste-t-il du côté de Windows pour faire tourner une machine virtuelle ?"
           data-explication="La virtualisation du processeur est prête ; il reste à vérifier la partie de Windows qui gère les machines virtuelles. Hyper-V complet n’y change rien."
         >
           <p class="q">
@@ -2814,7 +2878,7 @@ Retype new password:</pre>
             </li>
             <li
               data-option="hyperv"
-              data-retour="Son Windows est une édition Famille. Quel outil peut-elle y trouver, et que règle-t-il : le processeur ou Windows ?"
+              data-retour="Hyper-V sert à créer ses propres machines virtuelles : cela règle-t-il la partie de Windows qui en fait tourner une ?"
             >
               Elle installe Hyper-V complet.
             </li>
@@ -2838,6 +2902,39 @@ Retype new password:</pre>
           ses réglages réseau, ressemble à celles d’Ubuntu. Il n’y a pas de machine virtuelle à
           installer.
         </p>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="macunix"
+          data-reponse="deja"
+          data-aide1="Que fait déjà le Terminal du Mac de Farid, avant que quoi que ce soit soit installé ?"
+          data-aide2="Si le Mac a déjà un shell UNIX, que peut encore lui apporter l’affirmation du forum ?"
+          data-aide3="Relis le paragraphe précédent : à quelle famille de systèmes macOS appartient-il ?"
+          data-explication="macOS est déjà UNIX : ce qui manque au Mac de Farid n’est pas un système. Homebrew, lui, ajoute des outils."
+        >
+          <p class="q">
+            Un forum dit à Farid qu’il lui faut installer Homebrew pour que son Mac « devienne un
+            Linux ». Que peut répondre Farid ?
+          </p>
+          <ul class="options">
+            <li data-option="deja">
+              Ce n’est pas un système qui lui manque : son Mac est déjà de la famille UNIX.
+            </li>
+            <li
+              data-option="linux"
+              data-retour="Le Mac fait déjà tourner un shell UNIX : que viendrait faire un système de plus ?"
+              data-erreur="E3"
+            >
+              Qu’il lui faut en effet un système Linux, installé à côté de macOS.
+            </li>
+            <li
+              data-option="shell"
+              data-retour="Le Terminal fait tourner un shell avant toute installation. Que lui manquerait-il alors ?"
+            >
+              Qu’il lui manque un shell UNIX, que le Mac n’a pas.
+            </li>
+          </ul>
+        </div>
         <p>
           Ce qui manque au Mac de Farid, c’est un outil qui installe d’autres outils en une seule
           commande. Cet outil s’appelle <strong>Homebrew</strong>, « brew » dans le Terminal : il
@@ -2845,37 +2942,6 @@ Retype new password:</pre>
           que l’image ne dit pas : un rayon se range dans la boutique, alors que Homebrew a son
           propre dossier sur le Mac, à part des fichiers du système.
         </p>
-        <div
-          class="ex"
-          data-widget="choix"
-          data-id="macunix"
-          data-reponse="outils"
-          data-aide1="Avant Homebrew, le Mac de Farid avait-il déjà un shell, et que lui manquait-il vraiment ?"
-          data-aide2="Un rayon qu’on ajoute à une boutique change-t-il la boutique, ou ce qu’on peut y prendre ?"
-          data-aide3="Homebrew apporte des outils et la commande qui les installe. Le système, lui, reste macOS."
-          data-explication="Homebrew installe des outils sur le Mac. Il n’apporte ni Linux ni un autre système : macOS est déjà UNIX."
-        >
-          <p class="q">
-            Un forum dit : « Avec Homebrew, ton Mac devient un Linux. » Qu’est-ce que Homebrew
-            apporte à Farid ?
-          </p>
-          <ul class="options">
-            <li data-option="outils">Des outils, et une commande pour en installer d’autres.</li>
-            <li
-              data-option="linux"
-              data-retour="Un système a un noyau : Homebrew s’installe-t-il à la place de celui de macOS, ou par-dessus ?"
-              data-erreur="E3"
-            >
-              Un système Linux, installé à côté de macOS.
-            </li>
-            <li
-              data-option="shell"
-              data-retour="Le Terminal faisait déjà tourner un shell avant d’installer quoi que ce soit. Que lui manquait-il, alors ?"
-            >
-              Un shell UNIX, que le Mac n’avait pas.
-            </li>
-          </ul>
-        </div>
         <p data-si-essai="p3:faux">
           Au début, à la question sur ce que le Mac de Farid a de plus, tu avais répondu
           <span data-essai-rappel="p3">autre chose</span>. Le Mac était déjà UNIX avant Homebrew :
@@ -2960,8 +3026,10 @@ Retype new password:</pre>
       <div data-ecran="Le PATH">
         <p class="accroche">
           L’installation de Farid a duré plusieurs minutes. Le Terminal lui a demandé son mot de
-          passe de Mac, qui ne s’affiche pas non plus quand on le tape, puis la touche Entrée pour
-          continuer. À la fin, il affiche des lignes sous « Next steps ».
+          passe de Mac, qui ne s’affiche pas non plus quand on le tape : l’installateur crée le
+          dossier de Homebrew, ce qui demande les droits d’administrateur du Mac. Ce mot de passe ne
+          sert qu’à l’installation ; ensuite, brew s’utilise sans sudo. Il a ensuite appuyé sur
+          Entrée pour continuer. À la fin, il affiche des lignes sous « Next steps ».
         </p>
         <p>
           Quand Farid tape une commande, zsh la cherche dans une liste de dossiers : le
@@ -2999,8 +3067,15 @@ Retype new password:</pre>
         </div>
         <p>
           Si le dossier qui contient brew n’est pas dans le PATH, zsh ne trouve pas brew, même
-          installé. Sur un Mac récent, Homebrew s’installe dans le dossier /opt/homebrew, qui n’est
-          pas dans le PATH de départ. Les lignes « Next steps » l’y ajoutent.
+          installé. Sur un Mac à puce Apple (les Mac récents), Homebrew s’installe dans le dossier
+          /opt/homebrew, qui n’est pas dans le PATH de départ. Les lignes « Next steps » l’y
+          ajoutent.
+        </p>
+        <p>
+          Pour te le représenter : le PATH est une rangée de tiroirs, et zsh les ouvre un par un,
+          dans l’ordre, pour trouver l’outil demandé. Un outil rangé dans un tiroir qui n’est pas
+          dans la rangée reste introuvable. Ce que l’image ne dit pas : zsh ne cherche que dans ces
+          dossiers, pas dans tout le Mac, et il s’arrête au premier outil du nom demandé.
         </p>
       </div>
       <div data-ecran="Les lignes « Next steps »">
@@ -3025,11 +3100,12 @@ Retype new password:</pre>
           La ligne <span class="mono">eval "$(… brew shellenv)"</span> ajoute /opt/homebrew au PATH
           (<span class="mono">brew shellenv</span> est la commande de Homebrew qui donne le dossier
           à ajouter). Les deux premières lignes l’écrivent à la fin de .zprofile : le PATH sera bon
-          à chaque nouveau terminal. La troisième le rend bon tout de suite, dans la fenêtre
-          ouverte. Le texte exact de « Next steps » varie un peu selon la version de Homebrew et le
-          nom d’utilisateur : recopie toujours ce que ton Terminal affiche. Sur un Mac à processeur
-          Intel, Homebrew s’installe dans /usr/local, déjà dans le PATH, et ces lignes peuvent
-          manquer.
+          à chaque nouveau terminal. Farid les recopie parce que l’installateur ne les écrit pas
+          lui-même : sans elles, zsh ne chercherait pas dans /opt/homebrew. La troisième le rend bon
+          tout de suite, dans la fenêtre ouverte. Le texte exact de « Next steps » varie un peu
+          selon la version de Homebrew et le nom d’utilisateur : recopie toujours ce que ton
+          Terminal affiche. Sur un Mac à processeur Intel, Homebrew s’installe dans /usr/local, déjà
+          dans le PATH, et ces lignes peuvent manquer.
         </p>
       </div>
       <div data-ecran="which brew, dans un nouveau terminal">
@@ -3038,10 +3114,11 @@ Retype new password:</pre>
           seulement le sentiment qu’elle l’est.
         </p>
         <p>
-          La commande <span class="mono">which</span> dit où zsh trouve une commande, ou qu’il ne la
-          trouve pas. Farid ferme sa fenêtre, en ouvre une <strong>nouvelle</strong> : le fichier
-          .zprofile est lu à son ouverture, et c’est la preuve que le PATH est bon pour toutes les
-          fenêtres à venir, pas seulement pour celle de l’installation.
+          La commande <span class="mono">which</span> dit où zsh trouve une commande ; s’il ne la
+          trouve pas, zsh écrit « not found » (bash, dans Ubuntu, n’écrit alors rien). Farid ferme
+          sa fenêtre, en ouvre une <strong>nouvelle</strong> : le fichier .zprofile est lu à son
+          ouverture, et c’est la preuve que le PATH est bon pour toutes les fenêtres à venir, pas
+          seulement pour celle de l’installation.
         </p>
         <pre
           class="listing"
@@ -3059,7 +3136,7 @@ brew not found</pre>
           data-reponse="trouve"
           data-aide1="La commande which répond par un chemin. Que dit un chemin sur ce que zsh trouve ?"
           data-aide2="Le chemin est celui de brew, pas celui de tree. Que prouve-t-il, et que ne prouve-t-il pas ?"
-          data-aide3="Un chemin vers brew prouve que zsh trouve brew dans cette fenêtre. Il ne dit rien des autres outils."
+          data-aide3="Le chemin écrit est celui de quelle commande, et que dit-il de l’endroit où zsh la trouve ?"
           data-explication="La réponse est le chemin de brew : zsh le trouve dans le PATH de ce nouveau terminal. Elle ne dit rien de tree."
         >
           <p class="q">
@@ -3098,8 +3175,8 @@ brew not found</pre>
         </p>
         <p>
           Un <strong>paquet</strong> est ici un logiciel prêt à installer, avec ce qu’il faut pour
-          l’installer. Le mot a un autre sens dans les blocs sur le réseau, où un paquet est un
-          morceau de données qui voyage : ici, c’est toujours un logiciel.
+          l’installer. Le mot a un autre sens quand on parle de réseau, où un paquet est un morceau
+          de données qui voyage : ici, c’est toujours un logiciel.
         </p>
         <p>
           Le <strong>dépôt</strong> est le serveur, sur Internet, qui tient les paquets et la liste
@@ -3120,23 +3197,20 @@ brew not found</pre>
           télécharge un paquet et l’installe : <span class="mono">apt</span> dans Ubuntu,
           <span class="mono">brew</span> sur le Mac.
         </p>
-        <p>
-          Un paquet a parfois besoin d’un autre pour fonctionner. Cet autre paquet est une
-          <strong>dépendance</strong> : le gestionnaire l’installe avec lui.
-        </p>
         <div
           class="ex"
           data-widget="choix"
           data-id="depend"
           data-reponse="dependance"
           data-aide1="Qui a demandé ce second paquet : Yasmine, ou le premier paquet ?"
-          data-aide2="Un paquet qui a besoin d’un autre pour fonctionner l’entraîne avec lui."
-          data-aide3="Un paquet dont un autre a besoin pour fonctionner s’appelle une dépendance."
+          data-aide2="Que peut-on dire d’un paquet qui ne fonctionne pas sans un autre : de quel autre paquet « dépend »-il ?"
+          data-aide3="Parmi les trois mots, lequel désigne un paquet, et non un serveur ou un programme qui installe ?"
           data-explication="Le second paquet est une dépendance du premier : le gestionnaire l’installe avec lui."
         >
           <p class="q">
-            Yasmine demande à apt d’installer un paquet. apt en télécharge un second, dont le
-            premier a besoin pour fonctionner. Comment s’appelle ce second paquet ?
+            Yasmine demande à apt d’installer un paquet. apt en télécharge aussi un second, qu’elle
+            n’a pas demandé et dont le premier a besoin pour fonctionner. Comment nomme-t-on ce
+            second paquet, par rapport au premier ?
           </p>
           <ul class="options">
             <li
@@ -3154,6 +3228,11 @@ brew not found</pre>
             </li>
           </ul>
         </div>
+
+        <p>
+          Un paquet a parfois besoin d’un autre pour fonctionner. Cet autre paquet est une
+          <strong>dépendance</strong> : le gestionnaire l’installe avec lui.
+        </p>
       </div>
       <div data-ecran="update, puis upgrade">
         <p class="accroche">
@@ -3211,7 +3290,7 @@ brew not found</pre>
           data-reponse="deux"
           data-aide1="Que fait la première commande, que fait la seconde, et laquelle change des paquets installés ?"
           data-aide2="Pour installer une version récente, il faut d’abord savoir qu’elle existe. Quelle commande l’apprend à la machine ?"
-          data-aide3="D’abord la commande qui actualise la liste, ensuite celle qui installe les versions plus récentes."
+          data-aide3="Pour installer une version récente, faut-il d’abord que la machine sache qu’elle existe, ou l’inverse ?"
           data-explication="update actualise la liste des paquets, upgrade installe les versions plus récentes : dans cet ordre."
         >
           <p class="q">Yasmine veut que ses paquets soient à jour dans Ubuntu. Que tape-t-elle ?</p>
@@ -3273,8 +3352,9 @@ brew not found</pre>
         <p>
           Sur le Mac, <span class="mono">brew list</span> affiche les paquets installés avec
           Homebrew. Pour vérifier qu’un outil est là, on demande son emplacement avec
-          <span class="mono">which</span> : il donne le chemin de la commande, ou « not found » si
-          le shell ne la trouve pas. Homebrew range ses outils sous /opt/homebrew.
+          <span class="mono">which</span> : il donne le chemin de la commande. Si le shell ne la
+          trouve pas, zsh (Mac) écrit « not found » et bash (Ubuntu) n’écrit rien. Homebrew range
+          ses outils sous /opt/homebrew.
         </p>
         <div
           class="ex"
@@ -3283,7 +3363,7 @@ brew not found</pre>
           data-reponse="chemin"
           data-aide1="Quelle commande dit où le shell trouve un outil, et que répond-elle quand elle ne le trouve pas ?"
           data-aide2="Parmi les trois réponses, laquelle est un chemin vers tree lui-même ?"
-          data-aide3="which tree répond par un chemin quand tree est installé, et par « tree not found » sinon."
+          data-aide3="Parmi les trois réponses, lesquelles disent que le shell ne trouve pas tree, ou donnent le chemin d’un autre outil ?"
           data-explication="which tree répond par le chemin de tree quand il est installé."
         >
           <p class="q">
@@ -3318,22 +3398,54 @@ brew not found</pre>
           Dans la fenêtre d’Ubuntu, Yasmine met sudo devant presque toutes ses commandes. Le Mac de
           Farid, lui, n’en demande pas pour brew.
         </p>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="sudoq"
+          data-reponse="droits"
+          data-aide1="Installer un paquet change quoi : le fichier d’un utilisateur, ou le système de tous ?"
+          data-aide2="Un compte ordinaire peut-il changer ce qui sert à tous les utilisateurs ?"
+          data-aide3="Ce dont Yasmine a besoin ressemble à ce qu’elle a donné au terminal pour installer WSL : de quoi s’agissait-il ?"
+          data-explication="Installer un paquet change le système pour tous ses utilisateurs : il faut des droits d’administrateur."
+        >
+          <p class="q">
+            Dans Ubuntu, installer un paquet change le système pour tous ses utilisateurs. Que
+            faut-il à Yasmine pour l’installer ?
+          </p>
+          <ul class="options">
+            <li data-option="droits">
+              Que la commande s’exécute avec des droits d’administrateur.
+            </li>
+            <li
+              data-option="redemarre"
+              data-retour="Un redémarrage du PC donne-t-il des droits à une commande lancée ensuite ?"
+            >
+              Redémarrer le PC avant chaque installation.
+            </li>
+            <li
+              data-option="windows"
+              data-retour="Ubuntu connaît-il le mot de passe de Windows, un autre système ?"
+            >
+              Taper le mot de passe de son compte Windows.
+            </li>
+          </ul>
+        </div>
         <p>
-          Installer un paquet dans Ubuntu change le système pour tous ses utilisateurs : il faut des
-          droits d’administrateur. <strong>sudo</strong>, mis devant une commande, l’exécute avec
-          ces droits, après avoir demandé le mot de passe de l’utilisateur Linux de Yasmine, celui
-          qu’elle a créé à l’installation. Ce mot de passe sert à vérifier que c’est bien elle qui
-          demande ces droits. Comme à la création, rien ne s’affiche quand elle le tape. C’est
-          l’équivalent, dans Ubuntu, du terminal ouvert en administrateur sous Windows. Pour te le
-          représenter : sudo prête la clé de tout l’immeuble pour une seule commande, puis la
-          reprend. Ce que l’image ne dit pas : la clé ouvre aussi ce qu’on n’aurait pas dû toucher,
-          même si la commande n’a pas été comprise.
+          Il faut donc des droits d’administrateur. <strong>sudo</strong>, mis devant une commande,
+          l’exécute avec ces droits, après avoir demandé le mot de passe de l’utilisateur Linux de
+          Yasmine, celui qu’elle a créé à l’installation. Ce mot de passe sert à vérifier que c’est
+          bien elle qui demande ces droits. Comme à la création, rien ne s’affiche quand elle le
+          tape. C’est l’équivalent, dans Ubuntu, du terminal ouvert en administrateur sous Windows.
+          Pour te le représenter : sudo prête la clé de tout l’immeuble pour une seule commande,
+          puis la reprend. Ce que l’image ne dit pas : la clé ouvre aussi ce qu’on n’aurait pas dû
+          toucher, même si la commande n’a pas été comprise.
         </p>
         <p>
           Les droits qui permettent de tout modifier permettent aussi de tout casser. On ne met donc
           pas sudo devant une commande qu’on ne comprend pas, ni parce qu’un site le demande.
           Homebrew, lui, s’installe dans un dossier qui appartient à Farid : brew se lance sans
-          sudo.
+          sudo. Le mot de passe du Mac, demandé à l’installation de Homebrew, ne servait qu’à créer
+          ce dossier.
         </p>
       </div>
       <div data-ecran="Deux commandes en une ligne">
@@ -3362,8 +3474,8 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           data-id="etet"
           data-reponse="bonne"
           data-aide1="Quelle commande doit partir en premier, et laquelle ne doit partir que si la première a réussi ?"
-          data-aide2="Le signe qui relie deux commandes de cette façon s’écrit avec deux caractères identiques."
-          data-aide3="Laquelle des trois lignes relie deux commandes, avec la liste actualisée d’abord ?"
+          data-aide2="Quel signe la fiche a-t-elle montré pour relier deux commandes ?"
+          data-aide3="Dans chaque ligne, quelle commande part en premier, et travaille-t-elle sur une liste à jour ?"
           data-explication="update d’abord, install ensuite, reliées par && : l’installation ne part que si update a réussi."
         >
           <p class="q">
@@ -3497,7 +3609,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
         data-verifie
         data-aide1="Quelle fenêtre fait tourner le shell qui connaît apt ?"
         data-aide2="Cmd et PowerShell sont des shells de Windows. De quel monde vient apt ?"
-        data-aide3="apt est le gestionnaire de paquets d’Ubuntu : il se tape dans la fenêtre dont l’invite est celle de bash."
+        data-aide3="Parmi les trois invites, laquelle est celle du shell d’Ubuntu, et que sait faire ce shell que Cmd ne sait pas ?"
       >
         <div class="cadre pour-lire">
           <p class="discret">Trois invites, pour lire :</p>
@@ -3538,7 +3650,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
         data-verifie
         data-aide1="Quelle fenêtre fait tourner le shell qui connaît apt ?"
         data-aide2="Cmd et PowerShell sont des shells de Windows. De quel monde vient apt ?"
-        data-aide3="apt est le gestionnaire de paquets d’Ubuntu : il se tape dans la fenêtre dont l’invite est celle de bash."
+        data-aide3="Parmi les trois invites, laquelle est celle du shell d’Ubuntu, et que sait faire ce shell que Cmd ne sait pas ?"
       >
         <div class="cadre pour-lire">
           <p class="discret">Trois invites, pour lire :</p>
@@ -3579,7 +3691,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
         data-verifie
         data-aide1="Quelle colonne dit avec quelle version de WSL tourne Ubuntu ?"
         data-aide2="Running parle de l’état d’Ubuntu. La version se lit-elle dans la même colonne ?"
-        data-aide3="Lis le chiffre sous VERSION : 1 dit WSL 1, 2 dit WSL 2."
+        data-aide3="Dans la colonne dont le titre est VERSION, quel chiffre est écrit, et que dit-il de WSL ?"
       >
         <div class="cadre pour-lire">
           <p class="discret">Trois colonnes, pour lire :</p>
@@ -3597,9 +3709,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
   NAME      STATE           VERSION
 * Ubuntu    Running         1</pre>
         <ul class="options">
-          <li data-option="v1">
-            Ubuntu tourne, mais avec WSL 1 : ce n’est pas la preuve cherchée.
-          </li>
+          <li data-option="v1">Ubuntu tourne, mais avec WSL 1, pas WSL 2.</li>
           <li
             data-option="v2"
             data-retour="Running dit que la distribution tourne. Dans quelle colonne se lit la version ?"
@@ -3623,7 +3733,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
         data-verifie
         data-aide1="Quelle colonne dit avec quelle version de WSL tourne Ubuntu ?"
         data-aide2="Stopped parle de l’état d’Ubuntu. La version se lit-elle dans la même colonne ?"
-        data-aide3="Lis le chiffre sous VERSION : 1 dit WSL 1, 2 dit WSL 2."
+        data-aide3="Dans la colonne dont le titre est VERSION, quel chiffre est écrit, et que dit-il de WSL ?"
       >
         <div class="cadre pour-lire">
           <p class="discret">Trois colonnes, pour lire :</p>
@@ -3774,7 +3884,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
         data-verifie
         data-aide1="La commande se termine sans erreur : dit-elle pour autant qu’elle a remplacé des paquets ?"
         data-aide2="Parmi brew update et brew upgrade, laquelle remplace des paquets installés ?"
-        data-aide3="brew update met à jour Homebrew et sa liste de paquets. Un paquet déjà installé en fait-il partie ?"
+        data-aide3="Que touche brew update : ce qui est déjà installé, ou ce qui permet de savoir ce qui existe ?"
         data-justifier="Pourquoi tape-t-on brew update avant brew upgrade ?"
       >
         <p class="q">
@@ -3794,7 +3904,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           </li>
           <li
             data-option="sudo"
-            data-retour="Avec ou sans sudo, update fait-elle autre chose que mettre à jour la liste ?"
+            data-retour="Qu’est-ce que cette commande a changé sur le Mac, avec ou sans sudo : des paquets, ou autre chose ?"
           >
             Non : il aurait fallu taper sudo brew update.
           </li>
@@ -3809,7 +3919,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
         data-verifie
         data-aide1="La commande se termine sans erreur : dit-elle pour autant qu’elle a remplacé des paquets ?"
         data-aide2="Parmi sudo apt update et sudo apt upgrade, laquelle remplace des paquets installés ?"
-        data-aide3="sudo apt update actualise la liste des paquets du dépôt. Un paquet déjà installé en fait-il partie ?"
+        data-aide3="Que touche sudo apt update : ce qui est déjà installé, ou ce qui permet de savoir ce qui existe ?"
         data-justifier="Pourquoi tape-t-on sudo apt update avant sudo apt upgrade ?"
       >
         <p class="q">
@@ -3847,7 +3957,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
         data-valeurs="c1=eval &quot;$(/opt/homebrew/bin/brew shellenv)&quot;|c2=echo 'eval ...' &gt;&gt; .zprofile"
         data-aide1="Laquelle de ces lignes écrit dans un fichier, et laquelle agit tout de suite ?"
         data-aide2="La ligne qui écrit dans .zprofile contient &gt;&gt; et le nom du fichier."
-        data-aide3="Une des deux lignes demandées n’a pas de &gt;&gt; ; l’autre en a un, suivi du nom du fichier."
+        data-aide3="Que fait la ligne qui contient &gt;&gt; suivi d’un nom de fichier, et que fait celle qui n’en contient pas ?"
       >
         <div class="cadre pour-lire">
           <p class="discret">Quatre mots, pour lire :</p>
@@ -3904,7 +4014,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
         data-valeurs="c1=echo 'eval ...' &gt;&gt; .zprofile|c2=eval &quot;$(/opt/homebrew/bin/brew shellenv)&quot;"
         data-aide1="Laquelle de ces lignes écrit dans un fichier, et laquelle agit tout de suite ?"
         data-aide2="La ligne qui écrit dans .zprofile contient &gt;&gt; et le nom du fichier."
-        data-aide3="Une des deux lignes demandées n’a pas de &gt;&gt; ; l’autre en a un, suivi du nom du fichier."
+        data-aide3="Que fait la ligne qui contient &gt;&gt; suivi d’un nom de fichier, et que fait celle qui n’en contient pas ?"
       >
         <div class="cadre pour-lire">
           <p class="discret">Quatre mots, pour lire :</p>
@@ -3982,7 +4092,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           </li>
           <li
             data-option="boucle"
-            data-retour="Le shell attend-il, ou arrête-t-il la ligne dès la première commande qui échoue ?"
+            data-retour="Après l’échec de la deuxième commande, qu’est-ce qui reste à faire à la ligne : la troisième commande a-t-elle une raison de partir ?"
           >
             Elle attend que la deuxième commande soit refaite, puis part.
           </li>
@@ -4020,7 +4130,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           <li data-option="rien">Elle ne part pas.</li>
           <li
             data-option="boucle"
-            data-retour="Le shell attend-il, ou arrête-t-il la ligne dès la première commande qui échoue ?"
+            data-retour="Après l’échec de la deuxième commande, qu’est-ce qui reste à faire à la ligne : la troisième commande a-t-elle une raison de partir ?"
           >
             Elle attend que la deuxième commande soit refaite, puis part.
           </li>
@@ -4105,7 +4215,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
         data-aide1="Qui a écrit le script que cette ligne télécharge, et avec quels droits s’exécute-t-il ?"
         data-aide2="Le script s’exécute avec les droits de Farid. Sur quel site vaut-il mieux le prendre ?"
         data-aide3="Quelle adresse est celle de l’équipe qui a écrit Homebrew ?"
-        data-justifier="Pourquoi Farid ne lance-t-il pas cette ligne ?"
+        data-justifier="Pourquoi Farid ne lance-t-il pas la ligne qui télécharge un script d’installation de Homebrew depuis un site autre que brew.sh ?"
       >
         <p class="q">
           Un message envoie à Farid cette ligne pour installer Homebrew. Que fait-il ?
@@ -4144,7 +4254,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
         data-aide1="Qui a écrit le script que cette ligne télécharge, et avec quels droits s’exécute-t-il ?"
         data-aide2="Le script s’exécute avec les droits de Farid. Sur quel site vaut-il mieux le prendre ?"
         data-aide3="Quelle adresse est celle de l’équipe qui a écrit Homebrew ?"
-        data-justifier="Pourquoi Farid ne lance-t-il pas la ligne de la vidéo ?"
+        data-justifier="Pourquoi Farid ne lance-t-il pas la ligne d’installation de Homebrew qu’une vidéo très regardée lui donne, depuis un site autre que brew.sh ?"
       >
         <p class="q">
           Une vidéo très regardée donne à Farid cette ligne pour installer Homebrew. Que fait-il ?
@@ -4183,7 +4293,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
         data-reponse="comprend"
         data-verifie
         data-aide1="Un tutoriel peut-il savoir ce qu’une ligne fera sur ta machine ?"
-        data-aide2="sudo donne des droits qui permettent de tout modifier. Avant de les donner, que fait-on ?"
+        data-aide2="Quel risque court-on en donnant à une commande qu’on ne comprend pas la possibilité de changer le système ?"
         data-aide3="Que reste-t-il à Yasmine à faire avant de décider d’ajouter sudo, puisqu’elle ne sait pas ce que fait la commande ?"
         data-justifier="Pourquoi sudo demande-t-il un mot de passe avant d’exécuter une commande ?"
       >
@@ -4197,7 +4307,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           </li>
           <li
             data-option="sudo"
-            data-retour="Que peut faire sur sa machine une commande qu’elle ne comprend pas, avec des droits qui permettent de tout modifier ?"
+            data-retour="Que peut faire sur sa machine une commande qu’elle ne comprend pas, quand on lui donne les droits de l’administrateur ?"
           >
             Elle ajoute sudo : avec les droits d’administrateur, tout marche.
           </li>
@@ -4217,7 +4327,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
         data-reponse="comprend"
         data-verifie
         data-aide1="Un site peut-il savoir ce qu’une ligne fera sur ta machine ?"
-        data-aide2="Un terminal en administrateur donne aussi des droits qui permettent de tout modifier. Avant de l’ouvrir, que fait-on ?"
+        data-aide2="Ce terminal est ouvert avec des droits de plus : lesquels, et que risque-t-on si la ligne est mauvaise ?"
         data-aide3="Que reste-t-il à Yasmine à faire avant de décider d’ouvrir ce terminal en administrateur, puisqu’elle ne sait pas ce que fait la ligne ?"
         data-justifier="Pourquoi Windows demande-t-il une confirmation avant d’ouvrir un terminal en administrateur ?"
       >
@@ -4232,7 +4342,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           </li>
           <li
             data-option="admin"
-            data-retour="Des droits qui permettent de tout modifier permettent-ils aussi de tout casser ?"
+            data-retour="Avec des droits de plus, une ligne mal comprise peut-elle abîmer le PC ?"
           >
             Elle l’ouvre en administrateur : avec ces droits, tout marche.
           </li>
@@ -4544,8 +4654,8 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
             <details data-cran="2">
               <summary>Une piste détaillée</summary>
               <p>
-                Si le terminal répond brew not found, reviens à l’écran précédent : le PATH n’est
-                pas bon dans cette fenêtre.
+                Si le terminal répond brew not found, reviens aux lignes « Next steps » de ton
+                Terminal : le PATH n’est pas bon dans cette fenêtre.
               </p>
               <details data-cran="3">
                 <summary>Une partie de la solution</summary>
@@ -4785,7 +4895,8 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
       <p class="accroche">
         Yasmine met à jour ses outils presque chaque jour : la ligne doit sortir toute seule de ses
         doigts. Une série : six actions de ton système, dans le désordre, chacune avec la fenêtre où
-        la taper. Pour chacune, tu tapes la commande, puis Entrée.
+        la taper. Pour chacune, tu tapes la commande, puis Entrée ; l’action suivante te dit si la
+        précédente était juste, et laquelle était la bonne commande sinon.
       </p>
       <p>
         Une série est réussie quand toutes ses réponses sont justes, dans le temps que montre
@@ -4858,23 +4969,24 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
       </div>
       <div data-ecran="Le schéma, pour Noah">
         <p class="accroche">
-          Un cas nouveau : Noah, 29 ans, suit la même formation. Son PC est sous Windows 11 Famille
-          et il veut un outil appelé htop dans un shell UNIX.
+          Un cas où la suite n’est pas la même : Noah, 29 ans, suit la même formation. Son PC est
+          sous Windows 11 Famille et il veut un outil appelé htop dans un shell UNIX.
         </p>
         <p>
           <strong>Ce que tu fais</strong> : sur le schéma, tu suis Noah depuis son PC jusqu’à
           l’outil installé et prouvé.
         </p>
         <p>
-          Dans le Gestionnaire des tâches de Noah, la ligne Virtualisation dit « Activée ». Il n’a
-          encore rien installé d’autre.
+          Dans le Gestionnaire des tâches de Noah, la ligne Virtualisation dit « Désactivée ». Il
+          n’a encore rien installé d’autre.
         </p>
         <details class="cadre">
           <summary>Les outils et les mots, pour lire</summary>
           <ul>
             <li>htop : un outil, comme tree, disponible dans le dépôt d’Ubuntu.</li>
             <li>
-              which : donne l’emplacement d’une commande, ou rien si le shell ne la trouve pas.
+              which : donne l’emplacement d’une commande ; dans Ubuntu, bash n’écrit rien quand il
+              ne la trouve pas.
             </li>
             <li>sudo : exécute une commande avec les droits d’administrateur.</li>
           </ul>
@@ -4887,7 +4999,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           class="ex"
           data-widget="schema"
           data-id="f1"
-          data-cas="Windows n’est pas UNIX : Noah, la virtualisation étant activée, ouvre un terminal en administrateur et tape wsl --install ; le PC redémarre, il crée son utilisateur Linux. Cela lui apporte WSL 2, c’est-à-dire un vrai noyau Linux dans une machine virtuelle légère, avec Ubuntu et son shell bash, distinct de Cmd. Dans la fenêtre d’Ubuntu, pas dans Cmd, il actualise la liste puis installe : sudo apt update && sudo apt install htop (&& : la seconde commande ne part que si la première a réussi ; sudo donne les droits). Il prouve l’installation avec which htop, qui donne le chemin de htop. Déduit des étapes « WSL 2 : Linux dans Windows » et « Des paquets »."
+          data-cas="Windows n’est pas UNIX, et la virtualisation de Noah est désactivée : il l’active d’abord dans le BIOS ou l’UEFI, puis ouvre un terminal en administrateur et tape wsl --install ; le PC redémarre, il crée son utilisateur Linux. Cela lui apporte WSL 2, c’est-à-dire un vrai noyau Linux dans une machine virtuelle légère, avec Ubuntu et son shell bash, distinct de Cmd. Dans la fenêtre d’Ubuntu, pas dans Cmd, il actualise la liste puis installe : sudo apt update && sudo apt install htop (&& : la seconde commande ne part que si la première a réussi ; sudo donne les droits). Il prouve l’installation avec which htop, qui donne le chemin de htop. Déduit des étapes « WSL 2 : Linux dans Windows » et « Des paquets »."
         >
           <p class="q">
             Remplis la première flèche, la boîte du milieu et la flèche suivante, puis réponds sous
@@ -4895,10 +5007,12 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           </p>
           <ol class="depart" hidden>
             <li class="boite" data-pose>
-              le PC de Noah, sous Windows 11 Famille, qui veut htop dans un shell UNIX
+              le PC de Noah, sous Windows 11 Famille, virtualisation désactivée, qui veut htop dans
+              un shell UNIX
             </li>
             <li class="fleche">
-              Que fait Noah pour obtenir un shell UNIX, et dans quelle fenêtre ?
+              Que règle Noah avant d’installer WSL, puis que fait-il pour obtenir un shell UNIX, et
+              dans quelle fenêtre ?
             </li>
             <li class="boite">Qu’est-ce que cela apporte à son PC ?</li>
             <li class="fleche">
@@ -4915,14 +5029,15 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           <div class="modele" hidden>
             <div
               class="chaine"
-              data-lecture="Le schéma de la fiche, pour Noah. Le PC de Noah, sous Windows, veut htop dans un shell UNIX. Puis Noah ouvre un terminal en administrateur et tape wsl --install, ce qui apporte WSL 2 : un vrai noyau Linux dans une machine virtuelle légère, avec Ubuntu et son shell bash. Puis, dans la fenêtre d’Ubuntu, il tape sudo apt update puis sudo apt install htop, reliés par deux esperluettes. Il prouve l’installation avec which htop, qui donne le chemin de htop."
+              data-lecture="Le schéma de la fiche, pour Noah. Le PC de Noah, sous Windows, avec la virtualisation désactivée, veut htop dans un shell UNIX. Puis Noah active la virtualisation dans le BIOS ou l’UEFI, ouvre un terminal en administrateur et tape wsl --install, ce qui apporte WSL 2 : un vrai noyau Linux dans une machine virtuelle légère, avec Ubuntu et son shell bash. Puis, dans la fenêtre d’Ubuntu, il tape sudo apt update puis sudo apt install htop, reliés par deux esperluettes. Il prouve l’installation avec which htop, qui donne le chemin de htop."
             >
               <span class="boite"
-                >le PC de Noah, sous Windows 11 Famille, qui veut htop dans un shell UNIX</span
+                >le PC de Noah, sous Windows 11 Famille, virtualisation désactivée, qui veut htop
+                dans un shell UNIX</span
               >
               <span class="fleche"
-                >puis il ouvre un terminal en administrateur et tape wsl --install, ce qui
-                apporte</span
+                >puis il active la virtualisation dans le BIOS ou l’UEFI, ouvre un terminal en
+                administrateur et tape wsl --install, ce qui apporte</span
               >
               <span class="boite"
                 >WSL 2 : un vrai noyau Linux dans une machine virtuelle légère, avec Ubuntu et son
@@ -5063,19 +5178,19 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
       <h3>La charge, comptée sur la page</h3>
       <ul>
         <li>
-          45 écrans : perception 3, carte 1, prétest 5, explications 23 (ET4 4, ET5 7, ET6 6, ET7
+          46 écrans : perception 3, carte 1, prétest 5, explications 24 (ET4 5, ET5 7, ET6 6, ET7
           6), atelier 7, aisance 1, ensemble 5 ; plus les dix items de la pratique et les pages de
           la restitution et du bilan, que le gabarit dessine.
         </li>
         <li>
           Les saisies, comptées une par geste (un bouton qui dévoile un moment, une option, une
           ligne d’un appariement, deux touches par information relevée, une pièce de chaîne
-          déplaçable, une case du schéma, une explication écrite, un critère à cocher) : 35 dans le
-          cours (déroulés 9, paris 2, prétest 5, 15 exercices d’explication, schéma de Noah 4), 23
+          déplaçable, une case du schéma, une explication écrite, un critère à cocher) : 37 dans le
+          cours (déroulés 9, paris 2, prétest 5, 17 exercices d’explication, schéma de Noah 4), 23
           dans la pratique (dix items, dont trois explications écrites ; une variante seulement
           après une solution vue), 5 en restitution, 13 critères à cocher au constat de l’atelier,
-          et 18 réponses d’aisance (trois séries de six, trois jours différents). Soit 94 saisies
-          dans la page, dont 76 hors aisance. L’atelier y ajoute une vingtaine de notes sur papier.
+          et 18 réponses d’aisance (trois séries de six, trois jours différents). Soit 96 saisies
+          dans la page, dont 78 hors aisance. L’atelier y ajoute une vingtaine de notes sur papier.
           Hors séance : huit rappels, sept vérifications différées, neuf cartes.
         </li>
       </ul>
@@ -5106,24 +5221,29 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           (wsl -l -v ou wsl --list --verbose pour la première). Le seuil de temps et le nombre de
           séries viennent des paliers du manifeste, et c’est l’outil qui les affiche : le texte de
           l’écran n’écrit aucune de ces valeurs. Chaque série finie part à l’appli
-          (aisance.resultat) ; la liste des fautes dit la commande attendue.
+          (aisance.resultat) ; la liste des fautes dit la commande attendue, et chaque action
+          suivante dit si la précédente était juste, avec la commande attendue quand elle ne l’était
+          pas.
         </li>
       </ul>
       <h3>Le schéma de fin de bloc</h3>
       <ul>
         <li>
           Construit pour Noah, sous Windows 11 Famille, qui veut htop : la virtualisation est
-          activée, rien n’est encore installé. La première case est donnée, la dernière est posée
-          sans sa valeur (la preuve, which htop). L’apprenant remplit la première flèche, la boîte
-          du milieu et la flèche suivante, et répond sous la dernière boîte. L’IA le juge sur la
-          chaîne du cas (data-cas), puis le schéma de la fiche s’affiche pour comparer. Il ne compte
-          pas pour le statut. Le schéma du cours (le PC avec Windows et, à côté, la machine
-          virtuelle de WSL 2) est celui de l’écran « Linux dans une machine virtuelle » ; deux
-          chaînes remplies, de la même forme que celle de Noah, le reprennent pour d’autres cas :
-          celle de Yasmine à la fin de l’écran « Prouver la version » (du PC sous Windows à Ubuntu
-          en VERSION 2) et celle de Farid à la fin de l’écran « Deux commandes en une ligne » (du
-          Mac à tree prouvé par which tree). Le Mac, déjà UNIX avec Homebrew comme rayon d’outils,
-          est dit en mots à l’écran « Un Mac est déjà UNIX » et redit dans l’exercice PR1-5.
+          désactivée, l’autre branche de la panne d’ET5, et rien n’est encore installé. La première
+          case est donnée, la dernière est posée sans sa valeur (la preuve, which htop). L’apprenant
+          remplit la première flèche, la boîte du milieu et la flèche suivante, et répond sous la
+          dernière boîte. L’IA le juge sur la chaîne du cas (data-cas), puis le schéma de la fiche
+          s’affiche pour comparer. Il ne compte pas pour le statut. Le schéma du cours (le PC avec
+          Windows et, à côté, la machine virtuelle de WSL 2) est celui de l’écran « Linux dans une
+          machine virtuelle » ; dès la première étape, deux chaînes remplies avec les seuls mots de
+          l’étape (celles de Yasmine et de Farid, sous leurs déroulés) montrent la forme ; deux
+          autres chaînes remplies, de la même forme que celle de Noah, le reprennent pour d’autres
+          cas : celle de Yasmine à la fin de l’écran « Prouver la version » (du PC sous Windows à
+          Ubuntu en VERSION 2) et celle de Farid à la fin de l’écran « Deux commandes en une ligne »
+          (du Mac à tree prouvé par which tree). Le Mac, déjà UNIX avec Homebrew comme rayon
+          d’outils, est dit en mots à l’écran « Un Mac est déjà UNIX » et redit dans l’exercice
+          PR1-5.
         </li>
       </ul>
       <h3>Les erreurs critiques et le prétest</h3>
@@ -5324,14 +5444,14 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           },
           {
             "id": "PR1-9",
-            "question": "Pourquoi Farid ne lance-t-il pas cette ligne ?",
+            "question": "Pourquoi Farid ne lance-t-il pas la ligne qui télécharge un script d'installation de Homebrew depuis un site autre que brew.sh ?",
             "attendu": "La ligne télécharge un script et l'exécute avec les droits de Farid : seul le site de l'outil, brew.sh, garantit qui l'a écrit. Déduit de l'étape « Le Mac : Homebrew ».",
             "erreurs": ["E4"],
             "item": "PR1-9"
           },
           {
             "id": "PR1-9:variante",
-            "question": "Pourquoi Farid ne lance-t-il pas la ligne de la vidéo ?",
+            "question": "Pourquoi Farid ne lance-t-il pas la ligne d'installation de Homebrew qu'une vidéo très regardée lui donne, depuis un site autre que brew.sh ?",
             "attendu": "La ligne télécharge un script et l'exécute avec les droits de Farid : le nombre de vues ne dit pas qui l'a écrit, seul brew.sh le garantit. Déduit de l'étape « Le Mac : Homebrew ».",
             "erreurs": ["E4"],
             "item": "PR1-9"
@@ -5354,21 +5474,21 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
         "restitution": [
           {
             "id": "B08-R1",
-            "question": "Pour lire : un gestionnaire de paquets installe des outils depuis un dépôt. Une personne sous Windows et une autre sur un Mac, sans rien d'installé au départ, veulent chacune installer l'outil jq. Dis dans quel ordre chacune procède, depuis son poste jusqu'à jq installé.",
+            "question": "Pour lire : un gestionnaire de paquets installe des outils depuis un dépôt. Une personne sous Windows et une autre sur un Mac, sans rien d'installé au départ, veulent chacune installer l'outil jq, que leur gestionnaire de paquets propose. Dis dans quel ordre chacune procède, depuis son poste jusqu'à jq installé, et ce qui change entre elles.",
             "attendu": "Sous Windows : Windows n'est pas UNIX, donc on installe WSL 2 (terminal en administrateur, wsl --install, redémarrage, utilisateur Linux), puis, dans la fenêtre d'Ubuntu, on actualise la liste avec sudo apt update avant d'installer avec sudo apt install jq, sudo donnant les droits. Sur le Mac : il est déjà UNIX, donc on n'installe pas de système mais Homebrew (commande de brew.sh, lignes « Next steps » pour le PATH, which brew dans un nouveau terminal), puis brew update et brew install jq, sans sudo. Ce qui change entre elles : le système à installer (WSL 2 ou rien) et le gestionnaire (apt avec sudo, brew sans). Dans les deux cas : le bon shell d'abord, puis le gestionnaire de paquets, la liste avant les paquets. Erreur à repérer : croire que Homebrew installe Linux. Déduit des étapes « WSL 2 : Linux dans Windows », « Le Mac : Homebrew » et « Des paquets ».",
             "erreurs": ["E3"]
           },
           {
             "id": "B08-R2",
-            "question": "Pour lire : && est le signe qui relie deux commandes sur une même ligne. Le formateur demande à Yasmine, sous Ubuntu : « Tu as tapé sudo apt update ce matin, donc tes outils sont à jour ? » Que répond-elle, et quelles commandes tape-t-elle pour les mettre à jour, dans quel ordre ?",
-            "attendu": "Non : sudo apt update actualise seulement la liste des paquets disponibles et ne change aucun paquet installé. Les versions récentes s'installent avec sudo apt upgrade. Dans l'ordre : sudo apt update, puis sudo apt upgrade. Elle peut les relier en une ligne avec && (sudo apt update && sudo apt upgrade), qui ne lance upgrade que si update a réussi. Erreur à repérer : croire que update installe les mises à jour. Déduit de l'étape « Des paquets ».",
+            "question": "Le formateur demande à Yasmine, sous Ubuntu : « Tu as tapé sudo apt update ce matin, donc tes outils sont à jour ? » Que répond-elle, et quelles commandes tape-t-elle pour les mettre à jour, dans quel ordre ?",
+            "attendu": "Non : sudo apt update actualise seulement la liste des paquets disponibles et ne change aucun paquet installé. Les versions récentes s'installent avec sudo apt upgrade. Dans l'ordre : sudo apt update, puis sudo apt upgrade. Erreur à repérer : croire que update installe les mises à jour. Déduit de l'étape « Des paquets ».",
             "erreurs": ["E2"]
           },
           {
             "id": "B08-R3",
             "question": "Pour lire : une commande de WSL affiche la liste des distributions en trois colonnes, NAME, STATE et VERSION. Après l'installation de WSL, Yasmine veut prouver que son Ubuntu tourne avec WSL 2. Que tape-t-elle, et que lit-elle dans la réponse ?",
-            "attendu": "Elle tape wsl -l -v, dans une fenêtre de Windows (pas dans Ubuntu : le shell de Windows et celui d'Ubuntu sont distincts) et lit Ubuntu avec le chiffre 2 dans la colonne VERSION. Un 1 dirait qu'Ubuntu tourne sous WSL 1. Erreur à repérer : croire qu'Ubuntu et Cmd comprennent les mêmes commandes. Déduit de l'étape « WSL 2 : Linux dans Windows ».",
-            "erreurs": ["E1"]
+            "attendu": "Elle tape wsl -l -v, dans une fenêtre de Windows (pas dans Ubuntu : le shell de Windows et celui d'Ubuntu sont distincts) et lit Ubuntu avec le chiffre 2 dans la colonne VERSION. Un 1 dirait qu'Ubuntu tourne sous WSL 1. Déduit de l'étape « WSL 2 : Linux dans Windows ».",
+            "erreurs": []
           },
           {
             "id": "B08-R4",
@@ -5386,8 +5506,8 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
         "rappel": [
           {
             "id": "B08-Q1",
-            "question": "Pour lire : une fenêtre de commandes s'appelle le terminal. Qu'est-ce qui lit et exécute ce que Farid tape dans le Terminal de son Mac, et comment Yasmine sait-elle quel programme lui parle dans l'une de ses fenêtres ?",
-            "attendu": "Le shell, un programme qui tourne derrière la fenêtre (zsh sur le Mac). Yasmine le reconnaît à l'invite, ce que le shell écrit au début de la ligne : C:\\Users\\yasmine> pour Cmd, yasmine@PC-YASMINE:~$ pour bash dans Ubuntu. Déduit de l'étape « Un shell, un terminal ».",
+            "question": "Une camarade de Yasmine lui montre une fenêtre dont la ligne commence par PS C:\\Users\\lea>. Quel programme lit ce que la camarade tape dans cette fenêtre, et comment Yasmine l'a-t-elle reconnu ?",
+            "attendu": "PowerShell, un shell de Windows : le shell est le programme qui lit et exécute les commandes derrière la fenêtre. Yasmine l'a reconnu à l'invite, ce que le shell écrit au début de la ligne : le PS en tête dit PowerShell, alors que C:\\Users\\yasmine> seul serait celle de Cmd et yasmine@PC-YASMINE:~$ celle de bash dans Ubuntu. Déduit de l'étape « Un shell, un terminal ».",
             "erreurs": []
           },
           {
@@ -5398,14 +5518,14 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           },
           {
             "id": "B08-Q3",
-            "question": "Pour lire : un noyau est la partie d'un système qui parle au matériel. Qu'est-ce qu'Ubuntu par rapport à Linux ?",
-            "attendu": "Une distribution : un noyau Linux réuni avec des outils. Ubuntu n'est pas le noyau seul, ni un simple shell. Déduit de l'étape « Un shell, un terminal ».",
+            "question": "Pour lire : un noyau est la partie d'un système qui parle au matériel. Linux Mint, que Léo a sur son vieux portable, a son propre logo et ses propres réglages, mais fait tourner le noyau Linux comme Ubuntu. Qu'est-ce que Linux Mint est, par rapport à Linux, et en quoi ressemble-t-il à Ubuntu ?",
+            "attendu": "Une distribution, comme Ubuntu : un noyau Linux réuni avec des outils. Ni l'une ni l'autre n'est le noyau seul, ni un simple shell. Déduit de l'étape « Un shell, un terminal ».",
             "erreurs": []
           },
           {
             "id": "B08-Q4",
-            "question": "Pour lire : le noyau est la partie d'un système qui parle au matériel. Qu'est-ce que WSL 2 fait tourner sous Windows, et en quoi la version 2 diffère-t-elle de la version 1 ?",
-            "attendu": "Un vrai noyau Linux dans une machine virtuelle légère, avec une distribution comme Ubuntu. La version 1 n'avait pas de noyau Linux : elle traduisait les demandes de Linux pour Windows. La colonne VERSION de wsl -l -v distingue les deux. Déduit de l'étape « WSL 2 : Linux dans Windows ».",
+            "question": "Pour lire : le noyau est la partie d'un système qui parle au matériel ; wsl -l -v affiche une colonne VERSION. Chez un camarade, la ligne d'Ubuntu affiche 1 sous VERSION. Qu'est-ce qui diffère de ce que Yasmine veut obtenir, et que fait tourner la version qu'elle veut ?",
+            "attendu": "Il a WSL 1, pas WSL 2. La version 1 n'avait pas de noyau Linux : elle traduisait les demandes de Linux pour Windows. La version 2 fait tourner un vrai noyau Linux dans une machine virtuelle légère, avec une distribution comme Ubuntu. Déduit de l'étape « WSL 2 : Linux dans Windows ».",
             "erreurs": []
           },
           {
@@ -5416,14 +5536,14 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           },
           {
             "id": "B08-Q6",
-            "question": "Pour lire : which donne l'emplacement d'une commande. Farid tape which brew dans un nouveau terminal et zsh répond « brew not found », alors que Homebrew est installé. Que manque-t-il ?",
+            "question": "Pour lire : which donne l'emplacement d'une commande, ou « not found » si zsh ne la trouve pas. Farid tape which brew dans un nouveau terminal et zsh répond « brew not found », alors que Homebrew est installé. Que manque-t-il ?",
             "attendu": "Le dossier de Homebrew n'est pas dans le PATH de ce terminal : les lignes « Next steps » n'ont pas été écrites dans .zprofile, que zsh lit à chaque nouveau terminal. brew est installé, mais zsh ne cherche pas au bon endroit. Déduit de l'étape « Le Mac : Homebrew ».",
             "erreurs": []
           },
           {
             "id": "B08-Q7",
-            "question": "Pour lire : dans ce bloc, un paquet est un logiciel installable. Qu'est-ce qu'un dépôt, et qu'est-ce qu'une dépendance ?",
-            "attendu": "Le dépôt est le serveur qui tient les paquets et leur liste ; une dépendance est un autre paquet dont un paquet a besoin, installé avec lui. Déduit de l'étape « Des paquets ».",
+            "question": "Pour lire : dans ce bloc, un paquet est un logiciel installable. Un tutoriel écrit : « apt va chercher le paquet dans le dépôt et installe aussi ses dépendances ». Que désignent ces deux mots dans cette phrase ?",
+            "attendu": "Le dépôt est le serveur qui tient les paquets et leur liste, où apt va chercher ; les dépendances sont les autres paquets dont le paquet a besoin, installés avec lui. Déduit de l'étape « Des paquets ».",
             "erreurs": []
           },
           {
@@ -5466,8 +5586,8 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
             "id": "B08-T1",
             "type": "transfert",
             "forme": "choisir_methode",
-            "consigne": "Pour lire : 0x80370102 est le code d'un échec de wsl --install. Une camarade de Yasmine, sous Windows 11 Famille, obtient ce code. Elle veut installer Hyper-V complet, qu'elle croit manquer. Par quoi lui proposes-tu de commencer, et pourquoi n'a-t-elle pas besoin d'Hyper-V ?",
-            "attendu": "Vérifier d'abord la ligne Virtualisation du Gestionnaire des tâches : si elle est « Désactivée », l'activer dans le BIOS ou l'UEFI, car c'est le matériel et aucun réglage de Windows ne la remplace. Puis vérifier que la fonctionnalité « Plateforme de machine virtuelle » est cochée, redémarrer, et relancer wsl --install. Hyper-V complet sert à créer ses propres machines virtuelles ; WSL 2 n'en a pas besoin, et Windows Famille, qui n'en a pas, le fait tourner. Déduit de l'étape « WSL 2 : Linux dans Windows ».",
+            "consigne": "Pour lire : 0x80370102 est le code d'un échec de wsl --install. Un camarade de Yasmine, sous Windows 11 Pro avec Hyper-V déjà activé, obtient ce code ; la ligne Virtualisation du Gestionnaire des tâches dit « Désactivée ». Il croit que son Hyper-V est mal réglé. Par quoi lui proposes-tu de commencer, et pourquoi Hyper-V ne règle-t-il pas son problème ?",
+            "attendu": "Vérifier d'abord la ligne Virtualisation du Gestionnaire des tâches : si elle est « Désactivée », l'activer dans le BIOS ou l'UEFI, car c'est le matériel et aucun réglage de Windows ne la remplace. Puis vérifier que la fonctionnalité « Plateforme de machine virtuelle » est cochée, redémarrer, et relancer wsl --install. Hyper-V complet sert à créer ses propres machines virtuelles : il ne remplace pas la virtualisation du processeur, que WSL 2 demande, et Windows Famille, qui n'en a pas, fait tourner WSL 2. Déduit de l'étape « WSL 2 : Linux dans Windows ».",
             "erreurs": []
           },
           {
@@ -5482,7 +5602,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
             "id": "B08-T3",
             "type": "transfert",
             "forme": "hors_champ",
-            "consigne": "Pour lire : pacman est le gestionnaire de paquets d'une autre distribution Linux. Un tutoriel donne à Yasmine, sous Ubuntu, la ligne sudo pacman -S tree. Que lui indique le sudo qui commence la ligne, et que fait-elle avant de la taper ?",
+            "consigne": "Pour lire : pacman est le gestionnaire de paquets d'une autre distribution Linux, pas d'Ubuntu. Un tutoriel donne à Yasmine, sous Ubuntu, la ligne sudo pacman -S tree. Que lui indique le sudo qui commence la ligne, et que fait-elle avant de la taper ?",
             "attendu": "sudo donne les droits d'administrateur à la commande, qui peut alors tout modifier. Dans Ubuntu, le gestionnaire est apt, pas pacman : elle ne la tape pas sans savoir ce qu'elle fait, et cherche d'abord ce que fait cette commande. Déduit des étapes « Des paquets » et « Un shell, un terminal ».",
             "erreurs": []
           }
@@ -5541,7 +5661,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
             "J’ai installé tree avec sudo apt install tree ou brew install tree, et noté si la commande s’est terminée sans erreur.",
             "J’ai tapé which tree et noté le chemin qu’il donne.",
             "J’ai tapé tree --version et noté la première ligne de la réponse.",
-            "J’ai retiré tree (sudo apt remove tree ou brew uninstall tree) et noté ce que which tree a répondu ensuite.",
+            "J’ai retiré tree (sudo apt remove tree ou brew uninstall tree) et noté ce que which tree a répondu ensuite (rien sous Ubuntu, « not found » sous macOS).",
             "J’ai remis tree (sudo apt install tree ou brew install tree) et noté le chemin que which tree redonne ; sous macOS, j’ai aussi noté ce que montre brew list avec tree remis."
           ]
         },
@@ -5552,7 +5672,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
         "cartes": [
           {
             "id": "B08-K1",
-            "recto": "Pour lire : zsh est le shell des Mac récents ; l'invite de bash ressemble à yasmine@PC-YASMINE:~$. Une fenêtre affiche l'invite farid@MacBook-Air ~ %. Farid peut-il y taper sudo apt install tree ? Pourquoi ?",
+            "recto": "Pour lire : l'invite de bash ressemble à yasmine@PC-YASMINE:~$. Une fenêtre affiche l'invite farid@MacBook-Air ~ %. Farid peut-il y taper sudo apt install tree ? Pourquoi ?",
             "verso": "Non : l'invite est celle de zsh, le shell du Terminal d'un Mac sous macOS, pas celle de bash. apt est le gestionnaire de paquets d'Ubuntu ; celui du Mac, une fois installé, est brew. Déduit de l'étape « Un shell, un terminal »."
           },
           {
@@ -5572,8 +5692,8 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           },
           {
             "id": "B08-K5",
-            "recto": "Yasmine veut mettre à jour WSL, puis les paquets d'Ubuntu. Quelle commande tape-t-elle dans une fenêtre de Windows, laquelle dans Ubuntu ?",
-            "verso": "wsl --update dans une fenêtre de Windows : elle met à jour WSL lui-même, dont son noyau Linux. sudo apt upgrade dans Ubuntu : elle met à jour les paquets d'Ubuntu, après sudo apt update. Seule la seconde touche ses paquets. Déduit des étapes « WSL 2 : Linux dans Windows » et « Des paquets »."
+            "recto": "Noah, un camarade, veut mettre à jour WSL et tape sudo apt upgrade dans Ubuntu. Met-il WSL à jour ? Quelle commande faut-il pour WSL, dans quelle fenêtre, et que met à jour celle qu'il a tapée ?",
+            "verso": "Non : sudo apt upgrade met à jour les paquets d'Ubuntu, pas WSL. Pour WSL lui-même, dont son noyau Linux, il faut wsl --update, dans une fenêtre de Windows et non dans Ubuntu. apt upgrade se tape après sudo apt update. Déduit des étapes « WSL 2 : Linux dans Windows » et « Des paquets »."
           },
           {
             "id": "B08-K6",
@@ -5587,7 +5707,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           },
           {
             "id": "B08-K8",
-            "recto": "Pour lire : which donne l'emplacement d'une commande, ou « not found » si le shell ne la trouve pas. Farid tape which tree et zsh répond « tree not found ». Que peut-il en conclure, et quelle commande de Homebrew lui dit si tree est installé ?",
+            "recto": "Pour lire : which donne l'emplacement d'une commande, ou « not found » si zsh ne la trouve pas. Farid tape which tree et zsh répond « tree not found ». Que peut-il en conclure, et quelle commande de Homebrew lui dit si tree est installé ?",
             "verso": "Que zsh ne trouve pas tree : il n'est pas installé, ou son dossier manque au PATH. brew list lui dit si tree est installé. Déduit des étapes « Le Mac : Homebrew » et « Des paquets »."
           },
           {
@@ -5683,7 +5803,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           {
             "id": "N11",
             "notion": "wsl --update met à jour le composant WSL de Windows, apt upgrade les paquets d’Ubuntu",
-            "montree": ["ET5"],
+            "montree": ["ET7"],
             "pratiquee": ["AT1"],
             "questions": ["B08-K5", "B08-T2"]
           },
@@ -5710,7 +5830,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
           },
           {
             "id": "N15",
-            "notion": "which donne l’emplacement d’une commande, ou rien (« not found ») si le shell ne la trouve pas ; which brew dans un nouveau terminal prouve l’installation",
+            "notion": "which donne l’emplacement d’une commande ; s’il ne la trouve pas, zsh écrit « not found » et bash n’écrit rien ; which brew dans un nouveau terminal prouve l’installation",
             "montree": ["ET6"],
             "pratiquee": ["AT1"],
             "questions": ["B08-Q6", "B08-R4", "B08-K8"]
@@ -5780,7 +5900,7 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
             "de": "N11",
             "vers": "N17",
             "type": "opposition",
-            "montree": "ET5",
+            "montree": "ET7",
             "questions": ["B08-K5", "B08-T2"]
           },
           {
@@ -9491,7 +9611,21 @@ sudo apt update &amp;&amp; sudo apt upgrade</pre>
                 valider()
               }
             })
+            const precedente = reponses.length ? serie[reponses.length - 1] : null
+            const retourPrecedent = precedente
+              ? el('p', {
+                  class: juste(reponses[reponses.length - 1], precedente) ? 'retour bon' : 'retour',
+                  text: juste(reponses[reponses.length - 1], precedente)
+                    ? 'Action précédente : juste.'
+                    : 'Action précédente : fausse. Tu as tapé « ' +
+                      reponses[reponses.length - 1] +
+                      ' » ; la commande était « ' +
+                      precedente.ok[0] +
+                      ' ».',
+                })
+              : null
             question.replaceChildren(
+              ...(retourPrecedent ? [retourPrecedent] : []),
               el('p', {
                 class: 'discret',
                 text: 'Action ' + (reponses.length + 1) + ' sur ' + N_AISANCE,
