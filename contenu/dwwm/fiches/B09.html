@@ -2397,11 +2397,14 @@
         </p>
         <p>
           Ce que Yasmine tape avant Entrée est une <strong>ligne de commande</strong>. Le shell la
-          découpe en morceaux, à chaque espace, lance la commande et lui passe les autres morceaux.
+          découpe en morceaux, à chaque espace, exécute la commande et lui passe les autres
+          morceaux.
         </p>
         <ul>
           <li>
-            Le premier morceau est la <strong>commande</strong> : le programme à lancer. Ici, tree.
+            Le premier morceau est la <strong>commande</strong> : le programme ou la commande
+            interne du shell à lancer. Un programme est rangé sur le disque ; une commande interne
+            n’en a pas : le shell l’exécute lui-même. Ici, tree, un programme.
           </li>
           <li>
             Un morceau qui commence par un tiret est une <strong>option</strong> : elle dit comment
@@ -2425,7 +2428,7 @@
           data-colonnes="cmd=La commande|opt=Une option|arg=Un argument"
           data-reponse="a=cmd,b=opt,c=arg"
           data-aide1="Combien de morceaux le shell voit-il dans cette ligne, et lequel vient en premier ?"
-          data-aide2="Le premier morceau est toujours le programme à lancer, et le tiret marque ce qui règle sa façon de travailler."
+          data-aide2="Le premier morceau est toujours ce que le shell lance, et le tiret marque ce qui règle sa façon de travailler."
           data-aide3="Prends les morceaux de gauche à droite et, pour chacun, demande-toi : est-il en tête, porte-t-il un tiret, ou n’en porte-t-il pas ?"
           data-explication="ls est le programme lancé, -l porte un tiret et dit comment travailler, /usr dit sur quoi."
           data-variante-enonce="Yasmine tape tree -a /etc dans Ubuntu. Dis ce qu’est chaque morceau de sa ligne."
@@ -2435,7 +2438,7 @@
           data-variante-retours="a=Regarde la place de ce morceau : que lance le shell en premier ?|b=Ce morceau commence par un tiret. Que dit ce tiret à tree ?|c=Ce morceau n’est pas en tête et ne porte pas de tiret. Que reste-t-il ?"
           data-variante-erreurs="b=E3"
           data-variante-aide1="Combien de morceaux le shell voit-il dans cette ligne, et lequel vient en premier ?"
-          data-variante-aide2="Le premier morceau est le programme à lancer ; le tiret marque ce qui règle sa façon de travailler."
+          data-variante-aide2="Le premier morceau est ce que le shell lance ; le tiret marque ce qui règle sa façon de travailler."
           data-variante-aide3="Prends les trois morceaux de gauche à droite et, pour chacun, demande-toi s’il est en tête, s’il porte un tiret, ou ni l’un ni l’autre."
           data-variante-explication="tree est le programme lancé, -a porte un tiret et dit comment travailler, /etc dit sur quoi."
         >
@@ -2468,16 +2471,19 @@
       </div>
       <div data-ecran="Sans le tiret">
         <p class="accroche">
-          Farid veut voir tout ce que contient le dossier /etc de son Mac. Le formateur lui a donné
-          la ligne <span class="mono">ls -a /etc</span>. Il tape trop vite et oublie le tiret.
+          Farid range ses essais dans un dossier qu’il a appelé a, dans le dossier où il se trouve.
+          Pour voir ce que contient a, il tape <span class="mono">ls -a</span>.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
           <ul>
-            <li>ls affiche le contenu d’un dossier.</li>
             <li>
-              La ligne du formateur, ls -a /etc, lui fait afficher aussi les noms qui commencent par
-              un point, qu’il ne montre pas d’habitude.
+              ls affiche le contenu du dossier qu’on lui donne ; sans nom de dossier, celui où l’on
+              se trouve.
+            </li>
+            <li>
+              L’option -a de ls lui fait afficher aussi les noms qui commencent par un point. ls les
+              cache d’habitude : c’est une convention, un nom à point est un nom caché.
             </li>
           </ul>
         </div>
@@ -2486,52 +2492,52 @@
           data-widget="choix"
           data-id="sanstiret"
           data-prediction
-          data-reponse="nom"
+          data-reponse="courant"
           data-aide1="À quoi ls reconnaît-il une option ?"
-          data-aide2="Un morceau sans tiret, après la commande, est un argument : ls le prend pour un nom à chercher."
-          data-aide3="Range chaque morceau de ls a /etc, l’un après l’autre : commande, option ou argument. Puis suis ce que ls fait de chaque argument, dans l’ordre de la ligne."
-          data-explication="Sans tiret, a n’est pas une option : c’est un argument de plus, un nom que ls cherche sans le trouver, avant d’afficher /etc."
-          data-variante-enonce="Pour lire : l’option -l de ls donne une ligne de détail par nom. Farid veut le détail de /usr et tape ls l /usr. À ton avis, qu’affiche ls ?"
-          data-variante-reponse="nom"
-          data-variante-options="option=Le contenu de /usr, avec une ligne de détail par nom.|nom=Un message, rien ne s’appelle l ici, puis le contenu de /usr sans détail.|refus=Un refus, et rien d’autre : une lettre seule est interdite."
-          data-variante-retours="option=Sans tiret, à quel signe ls reconnaîtrait-il une option ?|refus=Un dossier peut-il porter un nom d’une seule lettre ?"
-          data-variante-erreurs="option=E3"
+          data-aide2="Le tiret décide seul : ls ne regarde pas si un dossier porte le nom de la lettre."
+          data-aide3="Range chaque morceau de ls -a : commande, option ou argument. Puis relis, dans l’encadré, ce que ls affiche quand on ne lui donne aucun nom de dossier."
+          data-explication="Avec son tiret, a est une option : ls n’a reçu aucun argument et affiche le dossier où Farid se trouve, avec les noms à point."
+          data-variante-enonce="Pour lire : l’option -l de ls donne une ligne de détail par nom. Yasmine a un dossier nommé l, là où elle se trouve. Pour voir ce qu’il contient, elle tape ls -l. À ton avis, qu’affiche ls ?"
+          data-variante-reponse="courant"
+          data-variante-options="courant=Le dossier où elle se trouve, avec une ligne de détail par nom.|dossierl=Le contenu du dossier l.|refus=Un refus : il manque le nom du dossier."
+          data-variante-retours="dossierl=Qu’est-ce qui, dans -l, dit à ls s’il s’agit d’un nom ou d’une option ?|refus=ls a-t-il besoin d’un nom de dossier pour travailler ?"
+          data-variante-erreurs="dossierl=E3"
           data-variante-aide1="À quoi ls reconnaît-il une option ?"
-          data-variante-aide2="Un morceau sans tiret, après la commande, est un argument : ls le prend pour un nom à chercher."
-          data-variante-aide3="Range chaque morceau de ls l /usr : commande, option ou argument. Puis suis ce que ls fait de chaque argument, dans l’ordre de la ligne."
-          data-variante-explication="Sans tiret, l n’est pas une option : ls le cherche comme un nom, ne le trouve pas, le dit, puis affiche /usr sans détail."
+          data-variante-aide2="Le tiret décide seul : ls ne regarde pas si un dossier porte le nom de la lettre."
+          data-variante-aide3="Range chaque morceau de ls -l : commande, option ou argument. Puis demande-toi ce que ls affiche quand on ne lui donne aucun nom de dossier."
+          data-variante-explication="Avec son tiret, l est une option : ls n’a reçu aucun argument et détaille le dossier où se trouve Yasmine, pas le dossier l."
         >
-          <p class="q">
-            Farid tape <span class="mono">ls a /etc</span>. À ton avis, qu’affiche ls ?
-          </p>
+          <p class="q">À ton avis, qu’affiche ls ?</p>
           <ul class="options">
             <li
-              data-option="option"
-              data-retour="Si la lettre suffisait, comment ls distinguerait-il une option d’un dossier qui s’appellerait a ?"
+              data-option="dossiera"
+              data-retour="Qu’est-ce qui, dans -a, dit à ls s’il s’agit d’un nom ou d’une option ?"
               data-erreur="E3"
             >
-              Tout le contenu de /etc, noms à point compris, comme avec -a.
+              Le contenu du dossier a.
             </li>
-            <li data-option="nom">
-              Un message, rien ne s’appelle a ici, puis le contenu de /etc sans les noms à point.
+            <li data-option="courant">
+              Le contenu du dossier où Farid se trouve, noms à point compris.
             </li>
             <li
               data-option="refus"
-              data-retour="Une lettre seule peut-elle être le nom d’un dossier ?"
+              data-retour="D’après l’encadré, ls a-t-il besoin d’un nom de dossier ?"
             >
-              Un refus, et rien d’autre : une lettre seule est interdite.
+              Un refus : il manque le nom du dossier.
             </li>
           </ul>
         </div>
         <p>
-          Sans son tiret, a est un argument comme /etc. ls cherche donc, là où Farid se trouve,
-          quelque chose qui s’appelle a, ne le trouve pas et le signale. Puis il affiche /etc sans
-          les noms à point.
+          Avec son tiret, a est une option, même si un dossier porte ce nom : ls n’a reçu aucun
+          argument, et il affiche le dossier où Farid se trouve. Pour voir le dossier a, il fallait
+          l’écrire sans tiret : <span class="mono">ls a</span>. Sans son tiret, une lettre est un
+          argument comme un autre, un nom que ls cherche. C’est le tiret, et lui seul, qui en fait
+          une option.
         </p>
         <p data-si-essai="p3:faux">
           Pour tree d /usr, tu avais répondu <span data-essai-rappel="p3">autre chose</span>. C’est
-          le même cas : sans tiret, la lettre d n’est pas une option, tree la lit comme un argument,
-          le nom d’un dossier à afficher.
+          la même règle : sans tiret, la lettre d n’est pas une option, tree la lit comme un
+          argument, le nom d’un dossier à afficher.
         </p>
       </div>
       <div data-ecran="Plusieurs options">
@@ -2558,11 +2564,11 @@
           data-si-e3="0|zéro|aucune|Aucune"
           data-retour-e3="Le morceau da est-il précédé d’un tiret ?"
           data-aide1="Combien de tirets y a-t-il dans la ligne, et combien de lettres derrière ?"
-          data-aide2="Chaque lettre de l’encadré est une option à elle seule."
+          data-aide2="Une option de l’encadré s’écrit-elle avec une lettre, ou avec plusieurs ?"
           data-aide3="Récris la ligne avec un tiret devant chaque lettre qui suit le tiret, puis compte les morceaux à tiret."
           data-sinon="Pas encore. Combien de lettres suivent le tiret, et chacune est-elle une option de l’encadré ?"
           data-explication="-da se lit -d -a : deux options derrière un seul tiret, et un argument, /usr."
-          data-variante-enonce="Pour lire : tree a aussi l’option -f, qui écrit le chemin entier de chaque nom. Yasmine tape tree -daf /usr. Combien d’options tree reçoit-il ?"
+          data-variante-enonce="Pour lire : tree a aussi l’option -f, qui écrit devant chaque nom tous les dossiers qui y mènent. Yasmine tape tree -daf /usr. Combien d’options tree reçoit-il ?"
           data-variante-accepte="3|trois|Trois"
           data-variante-clavier="Le nombre d’options"
           data-variante-si-une="1|un|une|Une"
@@ -2570,7 +2576,7 @@
           data-variante-si-e3="0|zéro|aucune|Aucune"
           data-variante-retour-e3="Le morceau daf est-il précédé d’un tiret ?"
           data-variante-aide1="Combien de lettres suivent le tiret ?"
-          data-variante-aide2="Chaque lettre collée derrière le tiret est une option de tree à elle seule."
+          data-variante-aide2="Une option de tree s’écrit-elle avec une lettre, ou avec plusieurs ?"
           data-variante-aide3="Récris la ligne en mettant un tiret devant chacune des lettres collées, puis compte les morceaux qui portent un tiret."
           data-variante-sinon="Pas encore. Combien de lettres suivent le tiret, et chacune est-elle une option de tree ?"
           data-variante-explication="-daf se lit -d -a -f : trois options derrière un seul tiret, et un argument, /usr."
@@ -2584,8 +2590,7 @@
           Plusieurs options d’une seule lettre peuvent se coller derrière un seul tiret : c’est une
           convention des commandes UNIX. <span class="mono">ls -la</span> se lit donc
           <span class="mono">ls -l -a</span>, où -l affiche une ligne de détail par nom, et
-          <span class="mono">ls -al</span> aussi : l’ordre de ces deux lettres ne compte pas. Il
-          compte pour une option qui attend un argument, comme dans la ligne de Yasmine.
+          <span class="mono">ls -al</span> aussi : l’ordre de ces deux lettres ne compte pas.
         </p>
       </div>
       <div data-ecran="Une option qui attend un argument">
@@ -2668,8 +2673,8 @@ tree    la commande
           pas au shell : les flèches la font défiler ligne par ligne, la barre d’espace page par
           page, et <span class="mono">q</span>, comme quit, la ferme. C’est une convention du
           programme qui affiche les pages de manuel : la même touche pour toutes. La page est
-          découpée en <strong>sections</strong>, dont le titre est en majuscules. Voici le début de
-          celle de tree :
+          découpée en <strong>sections</strong>, dont le titre est en majuscules : une convention
+          des manuels. Voici le début de celle de tree :
         </p>
         <pre
           class="listing"
@@ -2866,8 +2871,8 @@ ls [OPTION]... [FILE]...</pre>
           Les <strong>points de suspension</strong> disent que l’élément écrit juste avant eux peut
           être répété. Même convention que les crochets : ils décrivent la ligne et ne se tapent
           pas. Crochets et points se combinent. Dans le tableau, seq affiche une suite de nombres,
-          mktemp crée un fichier au nom tiré au hasard, et realpath écrit le chemin entier d’un
-          fichier.
+          mktemp crée un fichier au nom tiré au hasard, et realpath écrit l’adresse complète d’un
+          fichier, depuis le premier dossier de la machine.
         </p>
         <table
           class="table-lue"
@@ -2907,7 +2912,9 @@ ls [OPTION]... [FILE]...</pre>
       <div data-ecran="Deux écritures, une notation">
         <p class="accroche">
           Farid voudrait savoir si son ls se tape comme celui de Yasmine. Il tape à son tour
-          <span class="mono">man ls</span>, sur son Mac. Il ne lit pas la même ligne qu’elle.
+          <span class="mono">man ls</span>, sur son Mac. Il ne lit pas la même ligne qu’elle : chez
+          lui, une longue suite de lettres et de signes, qu’il n’a pas besoin de lire en entier. Il
+          n’en regarde qu’un morceau.
         </p>
         <pre
           class="listing"
@@ -2985,8 +2992,10 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
             l’autre : inutile de la lire en entier.
           </li>
           <li>
-            [--color=when] : une option écrite avec deux tirets et un mot entier, rare sur un Mac ;
-            son argument s’écrit après le signe égal, à la place de when.
+            [--color=when] : une option elle aussi, rare sur un Mac. Au lieu d’une lettre derrière
+            un tiret, elle s’écrit en un mot entier, color (couleur), derrière deux tirets. Son
+            argument s’écrit collé après un signe égal, à la place de when : ce signe égal est une
+            convention des options écrites en mots entiers.
           </li>
           <li>
             Ce que tu choisis y est en minuscules (file, format) : choisir des majuscules ou des
@@ -3451,8 +3460,8 @@ zsh    farid@MacBook-Air man %</pre>
         <p>
           Suivi d’un chemin, <span class="mono">ls</span> affiche le contenu de ce dossier-là, sans
           que tu bouges. Avec l’option <span class="mono">-a</span>, il montre aussi les noms qui
-          commencent par un point, qu’il cache d’habitude : dans un Ubuntu tout neuf,
-          <span class="mono">ls</span> tapé dans le dossier personnel n’affiche rien, et
+          commencent par un point, qu’il cache d’habitude, par convention : dans un Ubuntu tout
+          neuf, <span class="mono">ls</span> tapé dans le dossier personnel n’affiche rien, et
           <span class="mono">ls -a</span> y montre ces noms à point.
         </p>
       </div>
@@ -3491,18 +3500,18 @@ zsh    farid@MacBook-Air man %</pre>
           data-aide3="Sur le dessin, pars de la racine et descends jusqu’à bin ; écris une barre pour la racine, puis chaque dossier traversé, séparé du suivant par une barre."
           data-sinon="Pas encore. Suis le dessin depuis la racine : par quels dossiers passes-tu ?"
           data-explication="Depuis la racine, on traverse usr puis on arrive à bin : /usr/bin, d’où que parte Yasmine."
-          data-variante-enonce="Yasmine est maintenant dans /usr/bin. Quel chemin absolu écrit-elle après cd pour aller dans le dossier man du dessin ?"
-          data-variante-accepte="/usr/share/man|/usr/share/man/|cd /usr/share/man|cd /usr/share/man/"
+          data-variante-enonce="Un autre jour, Yasmine est dans /home/yasmine. Quel chemin absolu écrit-elle après cd pour aller dans le dossier share du dessin ?"
+          data-variante-accepte="/usr/share|/usr/share/|cd /usr/share|cd /usr/share/"
           data-variante-clavier="Le chemin"
-          data-variante-si-e1="man|man/|cd man|share/man|share/man/|cd share/man|usr/share/man|usr/share/man/|cd usr/share/man"
+          data-variante-si-e1="share|share/|cd share|cd share/|usr/share|usr/share/|cd usr/share|cd usr/share/"
           data-variante-retour-e1="Ton chemin ne commence pas par une barre : de quel dossier part-il alors ?"
-          data-variante-si-ailleurs="../share/man|../share/man/|cd ../share/man|cd ../share/man/"
-          data-variante-retour-ailleurs="Ton chemin mène bien dans man, mais il part du dossier où elle est. La question demande un chemin qui part de la racine : par quel signe commence-t-il ?"
+          data-variante-si-ailleurs="../../usr/share|../../usr/share/|cd ../../usr/share|cd ../../usr/share/"
+          data-variante-retour-ailleurs="Ton chemin mène bien dans share, mais il part du dossier où elle est. La question demande un chemin qui part de la racine : par quel signe commence-t-il ?"
           data-variante-aide1="Par quel signe commence un chemin absolu, et que désigne ce signe ?"
           data-variante-aide2="Un chemin absolu nomme chaque dossier traversé depuis la racine, séparés par des barres."
-          data-variante-aide3="Sur le dessin, pars de la racine et descends jusqu’à man ; écris une barre pour la racine, puis chaque dossier traversé, séparé du suivant par une barre."
+          data-variante-aide3="Sur le dessin, pars de la racine et descends jusqu’à share ; écris une barre pour la racine, puis chaque dossier traversé, séparé du suivant par une barre."
           data-variante-sinon="Pas encore. Suis le dessin depuis la racine : par quels dossiers passes-tu ?"
-          data-variante-explication="Depuis la racine, on traverse usr puis share, et on arrive à man : /usr/share/man, d’où que parte Yasmine."
+          data-variante-explication="Depuis la racine, on traverse usr et on arrive à share : /usr/share, d’où que parte Yasmine, même de son dossier personnel."
         >
           <p class="q">
             Yasmine est maintenant dans /usr/share/man. Quel chemin absolu écrit-elle après cd pour
@@ -3543,15 +3552,15 @@ zsh    farid@MacBook-Air man %</pre>
           data-aide2="Quand cd share a marché, Yasmine était dans /usr, le dossier qui contient share."
           data-aide3="Sur le dessin, pose le doigt sur le dossier marqué « tu es ici », puis cherche share juste au-dessous de lui."
           data-explication="share est un chemin relatif : le shell le cherche dans /home/yasmine, où il n’y en a pas."
-          data-variante-enonce="Un autre jour, Yasmine est dans /home. Elle tape cd yasmine. À ton avis, que se passe-t-il ?"
-          data-variante-reponse="arrive"
-          data-variante-options="arrive=Elle arrive dans /home/yasmine.|barre=La commande échoue : il manque la barre du début.|racine=Elle arrive dans /yasmine, sous la racine."
-          data-variante-retours="barre=Un chemin sans barre au début est-il interdit, ou part-il d’un autre dossier ?|racine=Le chemin yasmine commence-t-il par une barre ? De quel dossier part-il alors ?"
-          data-variante-erreurs="barre=E1|racine=E1"
+          data-variante-enonce="Toujours dans /home/yasmine, marqué sur le dessin, Yasmine tape cd usr. À ton avis, que se passe-t-il ?"
+          data-variante-reponse="echoue"
+          data-variante-options="echoue=La commande échoue et elle reste dans /home/yasmine.|arrive=Elle arrive dans /usr, sous la racine.|cherche=Le shell cherche usr dans tout l’arbre et l’y emmène."
+          data-variante-retours="arrive=Le chemin usr commence-t-il par une barre ? De quel dossier part-il alors ?|cherche=Le shell fouille-t-il tout l’arbre, ou suit-il le chemin depuis un seul dossier ?"
+          data-variante-erreurs="arrive=E1|cherche=E1"
           data-variante-aide1="Le chemin tapé commence-t-il par une barre ?"
-          data-variante-aide2="Un chemin sans barre au début se suit depuis le dossier où l’on est."
-          data-variante-aide3="Sur le dessin, pose le doigt sur home, puis cherche yasmine juste au-dessous."
-          data-variante-explication="yasmine est un chemin relatif : le shell le cherche dans /home, qui le contient."
+          data-variante-aide2="Un chemin sans barre au début se suit depuis un seul dossier : lequel ?"
+          data-variante-aide3="Sur le dessin, pose le doigt sur le dossier marqué « tu es ici », puis cherche usr juste au-dessous de lui."
+          data-variante-explication="usr, sans barre, est un chemin relatif : le shell le cherche dans /home/yasmine, qui ne contient aucun dossier usr."
         >
           <p class="q">
             Elle tape <span class="mono">cd share</span>. À ton avis, que se passe-t-il ?
@@ -3621,18 +3630,18 @@ zsh    farid@MacBook-Air man %</pre>
           data-aide3="Sur le dessin, depuis bin, note où mène une remontée, puis quel nom il faut descendre de là ; écris ces deux pas l’un après l’autre, séparés par une barre."
           data-sinon="Pas encore. Depuis bin, faut-il d’abord monter ou descendre pour atteindre share ?"
           data-explication="Depuis /usr/bin, .. remonte à /usr, puis share y redescend : ../share."
-          data-variante-enonce="Cette fois, Yasmine est dans /usr/share. Quel chemin relatif écrit-elle après cd pour aller dans /usr/bin ?"
-          data-variante-accepte="../bin|../bin/|cd ../bin|cd ../bin/|./../bin|../../usr/bin|../../usr/bin/|cd ../../usr/bin|cd ../../usr/bin/"
+          data-variante-enonce="Yasmine est toujours dans /usr/bin, marqué sur le dessin. Quel chemin relatif écrit-elle après cd pour aller dans /usr/share/man ?"
+          data-variante-accepte="../share/man|../share/man/|cd ../share/man|cd ../share/man/|./../share/man|../../usr/share/man|../../usr/share/man/|cd ../../usr/share/man|cd ../../usr/share/man/"
           data-variante-clavier="Le chemin"
-          data-variante-si-e1="bin|bin/|cd bin|/bin|cd /bin"
-          data-variante-retour-e1="Regarde le début de ton chemin : de quel dossier part-il, et bin y est-il ?"
-          data-variante-si-ailleurs="/usr/bin|/usr/bin/|cd /usr/bin|cd /usr/bin/"
-          data-variante-retour-ailleurs="Ton chemin arrive bien dans /usr/bin, mais il part de la racine. La question demande un chemin qui part de share : quel nom fait remonter d’un dossier ?"
-          data-variante-aide1="Sur le dessin, bin est-il au-dessous de share, ou à côté ?"
-          data-variante-aide2="Pour aller dans un dossier voisin, on remonte d’abord au dossier parent commun, puis on redescend."
-          data-variante-aide3="Sur le dessin, depuis share, note où mène une remontée, puis quel nom il faut descendre de là ; écris ces deux pas l’un après l’autre, séparés par une barre."
-          data-variante-sinon="Pas encore. Depuis share, faut-il d’abord monter ou descendre pour atteindre bin ?"
-          data-variante-explication="Depuis /usr/share, .. remonte à /usr, puis bin y redescend : ../bin."
+          data-variante-si-e1="man|man/|cd man|share/man|share/man/|cd share/man|/share/man|cd /share/man"
+          data-variante-retour-e1="Regarde le début de ton chemin : de quel dossier part-il, et ce qui suit y est-il ?"
+          data-variante-si-ailleurs="/usr/share/man|/usr/share/man/|cd /usr/share/man|cd /usr/share/man/"
+          data-variante-retour-ailleurs="Ton chemin arrive bien dans /usr/share/man, mais il part de la racine. La question demande un chemin qui part de bin : quel nom fait remonter d’un dossier ?"
+          data-variante-aide1="Sur le dessin, man est-il au-dessous de bin, ou dans une autre branche ?"
+          data-variante-aide2="Pour aller dans une autre branche, on remonte d’abord au dossier parent commun, puis on redescend."
+          data-variante-aide3="Sur le dessin, depuis bin, note où mène une remontée, puis quels noms il faut descendre de là ; écris ces pas l’un après l’autre, séparés par des barres."
+          data-variante-sinon="Pas encore. Depuis bin, faut-il d’abord monter ou descendre pour atteindre man ?"
+          data-variante-explication="Depuis /usr/bin, .. remonte à /usr, puis share et man y redescendent l’un après l’autre : ../share/man."
         >
           <p class="q">
             Yasmine est dans /usr/bin, marqué sur le dessin. Quel chemin relatif écrit-elle après cd
@@ -3661,7 +3670,7 @@ bin       on descend : /usr/bin</pre>
         <p class="accroche">
           Dernière consigne : « Reviens dans ton dossier. » Yasmine est alors dans /usr/bin, loin de
           son dossier personnel, que le tilde marque sur le dessin. Elle tape
-          <span class="mono">cd</span>, tout seul, puis pwd : la fenêtre répond /home/yasmine.
+          <span class="mono">cd</span>, tout seul, sans chemin.
         </p>
         <figure
           class="arbre"
@@ -3671,6 +3680,37 @@ bin       on descend : /usr/bin</pre>
           data-ici="/usr/bin"
           data-maison="/home/yasmine"
         ></figure>
+        <div
+          class="ex"
+          data-widget="saisie"
+          data-id="cdseul"
+          data-prediction
+          data-accepte="/home/yasmine|/home/yasmine/"
+          data-clavier="Ce que répond pwd"
+          data-si-reste="/usr/bin|/usr/bin/"
+          data-retour-reste="La consigne disait « Reviens dans ton dossier » : Yasmine taperait-elle une ligne qui ne fait rien ?"
+          data-si-racine="/"
+          data-retour-racine="La racine est-elle le dossier d’une personne ?"
+          data-aide1="Que demandait la dernière consigne de Yasmine ?"
+          data-aide2="La consigne parle de « ton dossier » : sur le dessin, quel dossier est marqué comme celui de Yasmine ?"
+          data-aide3="Cherche sur le dessin le dossier qui porte le tilde, puis écris son chemin depuis la racine, une barre entre chaque nom."
+          data-sinon="Pas encore. Vers quel dossier la consigne voulait-elle ramener Yasmine ?"
+          data-explication="cd sans chemin ramène Yasmine dans son dossier personnel : pwd répond /home/yasmine."
+          data-variante-enonce="Sur son Mac, Farid, dont le dossier personnel est /Users/farid, est dans /usr/share. Il tape cd, tout seul, puis pwd. À ton avis, que répond pwd ?"
+          data-variante-accepte="/Users/farid|/Users/farid/"
+          data-variante-clavier="Ce que répond pwd"
+          data-variante-si-reste="/usr/share|/usr/share/"
+          data-variante-retour-reste="cd sans chemin laisse-t-il Farid où il est, ou le mène-t-il vers un dossier fixe ?"
+          data-variante-si-racine="/"
+          data-variante-retour-racine="La racine est-elle le dossier d’une personne ?"
+          data-variante-aide1="Quel dossier, sur un Mac, appartient à Farid ?"
+          data-variante-aide2="cd sans chemin mène toujours au même dossier, celui de la personne qui tape."
+          data-variante-aide3="Relis l’énoncé : il donne le chemin du dossier de Farid. Recopie-le tel qu’il est écrit."
+          data-variante-sinon="Pas encore. Vers quel dossier cd sans chemin mène-t-il celui qui tape ?"
+          data-variante-explication="cd sans chemin ramène Farid dans son dossier personnel, même depuis /usr/share : pwd répond /Users/farid."
+        >
+          <p class="q">Elle tape ensuite pwd. À ton avis, que répond pwd ?</p>
+        </div>
         <p>
           <span class="mono">cd</span> tout seul ramène au dossier personnel, d’où que l’on parte :
           c’est un choix de la commande cd, une convention, pas une règle des chemins.
@@ -3708,18 +3748,18 @@ bin       on descend : /usr/bin</pre>
           data-aide3="Sur le dessin, pose le doigt sur le dossier marqué « tu es ici », puis demande-toi si la ligne refusée a pu l’en faire partir."
           data-sinon="Pas encore. Où Yasmine était-elle avant de taper cette ligne, et la ligne a-t-elle réussi ?"
           data-explication="La commande a échoué : Yasmine n’a pas bougé, et pwd répond toujours /usr/bin."
-          data-variante-enonce="Un autre jour, Yasmine est dans /usr. Elle tape cd man, et la fenêtre répond par une ligne qui finit par « No such file or directory ». Puis elle tape pwd. À ton avis, que répond pwd ?"
-          data-variante-accepte="/usr|/usr/"
+          data-variante-enonce="Toujours dans /usr/bin, Yasmine tape cd man, et la fenêtre répond par une ligne qui finit par « No such file or directory ». Elle tape ensuite cd ../share, puis pwd. À ton avis, que répond pwd ?"
+          data-variante-accepte="/usr/share|/usr/share/"
           data-variante-clavier="Ce que répond pwd"
-          data-variante-si-e1="/usr/share/man|/usr/share/man/"
-          data-variante-retour-e1="Le chemin man ne commence pas par une barre : le dossier /usr contient-il man ?"
-          data-variante-si-bouge="/usr/man|/usr/man/"
-          data-variante-retour-bouge="La fenêtre a répondu que ce dossier n’existe pas : Yasmine a-t-elle pu y entrer ?"
-          data-variante-aide1="La commande a-t-elle réussi, ou échoué ?"
-          data-variante-aide2="pwd affiche le répertoire courant : une ligne refusée a-t-elle pu le changer ?"
-          data-variante-aide3="Note où Yasmine était avant de taper cd man, puis demande-toi si la ligne refusée a pu l’en faire partir."
-          data-variante-sinon="Pas encore. Où Yasmine était-elle avant de taper cette ligne, et la ligne a-t-elle réussi ?"
-          data-variante-explication="La commande a échoué : Yasmine n’a pas bougé, et pwd répond toujours /usr."
+          data-variante-si-e1="/usr/share/share|/usr/share/share/"
+          data-variante-retour-e1="Le chemin man ne commence pas par une barre : depuis bin, la première ligne a-t-elle trouvé un dossier man ?"
+          data-variante-si-bouge="/usr/bin/share|/usr/bin/share/"
+          data-variante-retour-bouge="La fenêtre a répondu que man n’existe pas là : Yasmine a-t-elle pu y entrer avant de taper cd ../share ?"
+          data-variante-aide1="La première commande a-t-elle réussi, ou échoué ?"
+          data-variante-aide2="Une ligne refusée laisse le répertoire courant tel qu’il était : d’où part donc la ligne suivante ?"
+          data-variante-aide3="Sur le dessin, pose le doigt sur le dossier marqué « tu es ici », laisse-le là pour la ligne refusée, puis suis ../share depuis ce dossier."
+          data-variante-sinon="Pas encore. Où était Yasmine après la ligne refusée, et où mène ../share depuis là ?"
+          data-variante-explication="cd man a échoué : Yasmine est restée dans /usr/bin, et cd ../share l’a menée dans /usr/share."
         >
           <p class="q">Elle tape ensuite pwd. À ton avis, que répond pwd ?</p>
         </div>
@@ -3845,43 +3885,42 @@ bin       on descend : /usr/bin</pre>
           data-widget="choix"
           data-id="cassenom"
           data-prediction
-          data-reponse="farid"
-          data-aide1="D’après l’encadré, que fait le disque du Mac des majuscules quand on lui demande un nom ?"
-          data-aide2="Linux et le disque du Mac ne lisent pas les noms de la même façon : l’encadré le montre avec la page de Farid."
-          data-aide3="Prends les deux machines l’une après l’autre : pour chacune, demande-toi si elle trouve un dossier écrit usr quand on lui demande USR."
-          data-explication="Le disque du Mac trouve usr quand on demande USR ; Ubuntu cherche un dossier nommé exactement USR, qui n’existe pas."
-          data-variante-enonce="Farid range une photo sous le nom Plage.jpg. Il tape ls plage.jpg sur son Mac, puis la même ligne sur le serveur Linux où il l’a copiée. À ton avis, quelle machine trouve la photo ?"
-          data-variante-reponse="mac"
-          data-variante-options="mac=Le Mac seulement.|deux=Les deux machines.|aucune=Aucune des deux."
-          data-variante-retours="deux=Sous Linux, plage.jpg et Plage.jpg sont-ils le même nom ? Qu’a répondu le serveur Linux à Farid pour sa page ?|aucune=D’après l’encadré, la page de Farid s’affichait-elle sur son Mac malgré la majuscule ?"
-          data-variante-erreurs="deux=E2"
-          data-variante-aide1="D’après l’encadré, que fait le disque du Mac des majuscules quand on lui demande un nom ?"
-          data-variante-aide2="Linux et le disque du Mac ne lisent pas les noms de la même façon : l’encadré le montre avec la page de Farid."
-          data-variante-aide3="Prends les deux machines l’une après l’autre : pour chacune, demande-toi si elle trouve Plage.jpg quand on lui demande plage.jpg."
-          data-variante-explication="Le disque du Mac trouve Plage.jpg quand on demande plage.jpg ; le serveur Linux cherche un fichier nommé exactement plage.jpg, qui n’existe pas."
+          data-reponse="arrive"
+          data-aide1="D’après l’encadré, la page de Farid s’affichait-elle sur son Mac malgré l’écart de majuscule ?"
+          data-aide2="Le disque du Mac cherche les noms de la même façon pour une page et pour un dossier."
+          data-aide3="Compare les deux cas : un nom demandé avec un i minuscule pour un fichier écrit Index.html, et un nom demandé USR pour un dossier écrit usr. Puis demande-toi ce que le Mac a fait du premier."
+          data-explication="Le disque du Mac ne tient pas compte de la casse quand on lui demande un nom : il trouve usr quand Farid demande USR."
+          data-variante-enonce="Sur son Mac, Farid range une photo sous le nom Plage.jpg. Il tape ls plage.jpg, en minuscules. À ton avis, que répond ls ?"
+          data-variante-reponse="trouve"
+          data-variante-options="trouve=ls trouve la photo.|absent=ls répond que rien ne s’appelle plage.jpg.|corrige=ls répond que le nom est mal écrit et propose Plage.jpg."
+          data-variante-retours="absent=D’après l’encadré, la page de Farid s’affichait-elle sur son Mac malgré l’écart de majuscule ?|corrige=ls corrige-t-il ce que tu tapes, ou cherche-t-il le nom donné ?"
+          data-variante-aide1="D’après l’encadré, la page de Farid s’affichait-elle sur son Mac malgré l’écart de majuscule ?"
+          data-variante-aide2="Le disque du Mac cherche les noms de la même façon pour une page, un dossier ou une photo."
+          data-variante-aide3="Compare les deux cas : index.html demandé pour un fichier écrit Index.html, et plage.jpg demandé pour une photo écrite Plage.jpg. Puis demande-toi ce que le Mac a fait du premier."
+          data-variante-explication="Le disque du Mac ne tient pas compte de la casse quand on lui demande un nom : ls trouve Plage.jpg quand Farid demande plage.jpg."
         >
-          <p class="q">À ton avis, qui arrive dans le dossier usr ?</p>
+          <p class="q">À ton avis, que se passe-t-il pour Farid, sur son Mac ?</p>
           <ul class="options">
+            <li data-option="arrive">Il arrive dans le dossier usr.</li>
             <li
-              data-option="deux"
-              data-retour="Sous Linux, USR et usr sont-ils le même nom ? Qu’a répondu le serveur Linux à Farid ?"
-              data-erreur="E2"
+              data-option="refus"
+              data-retour="D’après l’encadré, la page de Farid s’affichait-elle sur son Mac malgré l’écart de majuscule ?"
             >
-              Les deux.
+              cd échoue : rien ne s’appelle USR.
             </li>
-            <li data-option="farid">Farid seulement.</li>
             <li
-              data-option="aucun"
-              data-retour="D’après l’encadré, la page de Farid s’affichait-elle sur son Mac malgré la majuscule ?"
+              data-option="cree"
+              data-retour="cd fabrique-t-il un dossier, ou va-t-il dans un dossier qui existe ?"
             >
-              Ni l’un ni l’autre.
+              Il arrive dans un nouveau dossier, nommé USR.
             </li>
           </ul>
         </div>
         <p>
-          Sous Linux, donc dans Ubuntu et sur la plupart des serveurs, deux noms de fichiers ou de
-          dossiers qui ne diffèrent que par la casse sont deux noms : un même dossier peut contenir
-          Index.html et index.html.
+          Farid arrive dans usr. Yasmine, elle, lit un refus. Sous Linux, donc dans Ubuntu et sur la
+          plupart des serveurs, deux noms de fichiers ou de dossiers qui ne diffèrent que par la
+          casse sont deux noms : un même dossier peut contenir Index.html et index.html. C’est vrai
+          aussi dans la fenêtre d’Ubuntu d’un PC sous Windows : ses dossiers sont ceux de Linux.
         </p>
         <p>
           Le disque d’un Mac ou de Windows, tel qu’il est réglé d’habitude, fait autrement : il
@@ -3899,8 +3938,49 @@ bin       on descend : /usr/bin</pre>
           Retour à la page de Farid. Son fichier s’appelle Index.html. Sur son Mac, il s’affichait
           quand le navigateur demandait index.html. Sur le serveur de la formation, sous Linux, la
           même demande reçoit 404, le code par lequel un serveur web répond qu’il n’a rien trouvé à
-          cette adresse.
+          cette adresse. Ce numéro est une convention des serveurs web.
         </p>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="source404"
+          data-prediction
+          data-reponse="deja"
+          data-aide1="Quel nom le navigateur demandait-il, et quel nom porte le fichier ?"
+          data-aide2="Sur le Mac comme sur le serveur, la page demandait le même nom ; seule la machine qui cherche a changé."
+          data-aide3="Compare, lettre par lettre, le nom demandé et le nom du fichier. Puis demande-toi, pour chaque machine, si elle tient compte de l’écart."
+          data-explication="La page demandait index.html, le fichier s’appelait Index.html : l’écart existait sur le Mac, qui ne le montrait pas ; Linux cherche le nom exact."
+          data-variante-enonce="Sur son PC, dans un dossier de Windows, Yasmine a une image Logo.png que sa page demande sous le nom logo.png. L’image s’affiche chez elle et manque sur le serveur Linux. À ton avis, d’où vient le problème ?"
+          data-variante-reponse="deja"
+          data-variante-options="deja=De son PC : la page demande un autre nom que celui de l’image, et Windows ne le montrait pas.|copie=De la copie : l’image s’est abîmée en route.|linux=De Linux : il ne sait pas lire un nom qui commence par une majuscule."
+          data-variante-retours="copie=L’image copiée porte-t-elle encore son nom, Logo.png ? Est-ce ce nom que la page demande ?|linux=Si la page demandait Logo.png, avec sa majuscule, le serveur la trouverait-il ?"
+          data-variante-erreurs="copie=E2"
+          data-variante-aide1="Quel nom la page demande-t-elle, et quel nom porte l’image ?"
+          data-variante-aide2="Sur le PC comme sur le serveur, la page demande le même nom ; seule la machine qui cherche change."
+          data-variante-aide3="Compare, lettre par lettre, le nom demandé et le nom de l’image. Puis demande-toi, pour chaque machine, si elle tient compte de l’écart."
+          data-variante-explication="La page demande logo.png et l’image s’appelle Logo.png : l’écart existe déjà sous Windows, qui ne le montre pas ; le serveur Linux cherche le nom exact."
+        >
+          <p class="q">À ton avis, d’où vient la 404 de Farid ?</p>
+          <ul class="options">
+            <li
+              data-option="copie"
+              data-retour="Le fichier copié porte-t-il encore son nom, Index.html ? Est-ce ce nom que le navigateur demande ?"
+              data-erreur="E2"
+            >
+              De la copie : le fichier s’est abîmé en route.
+            </li>
+            <li data-option="deja">
+              De son Mac : la page demandait un autre nom que celui du fichier, et le Mac ne le
+              montrait pas.
+            </li>
+            <li
+              data-option="linux"
+              data-retour="Si le navigateur demandait Index.html, avec sa majuscule, le serveur le trouverait-il ?"
+            >
+              De Linux : il ne sait pas lire un nom qui commence par une majuscule.
+            </li>
+          </ul>
+        </div>
         <p>
           Sous Linux, Index.html et index.html sont deux noms. Le serveur cherche un fichier nommé
           exactement index.html ; celui de Farid s’appelle Index.html, un autre nom. Le serveur ne
@@ -3943,7 +4023,8 @@ bin       on descend : /usr/bin</pre>
           <li data-element="a" data-donne>
             <span class="mono">tree</span>
             <span class="raison"
-              >Classé par Yasmine : le premier morceau, le programme à lancer.</span
+              >Classé par Yasmine : le premier morceau, ce que le shell lance (ici un
+              programme).</span
             >
           </li>
           <li
@@ -4001,7 +4082,8 @@ bin       on descend : /usr/bin</pre>
           <li data-element="a" data-donne>
             <span class="mono">head</span>
             <span class="raison"
-              >Classé par Farid : le premier morceau, le programme à lancer.</span
+              >Classé par Farid : le premier morceau, ce que le shell lance (ici un
+              programme).</span
             >
           </li>
           <li
@@ -4104,26 +4186,26 @@ bin       on descend : /usr/bin</pre>
         class="ex"
         data-widget="classer"
         data-verifie
-        data-colonnes="meme=La même liste|autre=Une autre ligne"
+        data-colonnes="meme=La même liste|autre=Une autre liste"
         data-reponse="a=meme,b=meme,c=autre"
         data-aide1="Dans chaque ligne, quelles lettres portent un tiret, seul ou partagé ?"
         data-aide2="Des lettres collées derrière un même tiret sont autant d’options ; quand aucune n’attend d’argument, leur ordre ne compte pas."
-        data-aide3="Récris chaque ligne avec un tiret devant chaque lettre d’option, puis compare-la à ls -l -a /usr."
+        data-aide3="Récris chaque ligne avec un tiret devant chaque lettre d’option, puis compare-la à ls -l -t /usr."
       >
         <div class="cadre pour-lire">
           <p class="discret">Pour lire, deux options de ls :</p>
           <ul>
             <li>-l : une ligne de détail par nom.</li>
-            <li>-a : aussi les noms qui commencent par un point.</li>
+            <li>-t : ranger les noms par date, du plus récent au plus ancien.</li>
           </ul>
         </div>
         <p class="q">
-          Farid cherche une autre façon d’écrire <span class="mono">ls -l -a /usr</span>. Il a déjà
+          Farid cherche une autre façon d’écrire <span class="mono">ls -l -t /usr</span>. Il a déjà
           classé la première ligne : pour chacune des deux autres, dis si elle donne la même liste.
         </p>
         <ul class="a-classer">
           <li data-element="a" data-donne>
-            <span class="mono">ls -la /usr</span>
+            <span class="mono">ls -lt /usr</span>
             <span class="raison"
               >Classée par Farid : les deux lettres derrière un seul tiret, deux options.</span
             >
@@ -4132,14 +4214,14 @@ bin       on descend : /usr/bin</pre>
             data-element="b"
             data-retour="Combien de lettres suivent le tiret, et l’ordre des lettres change-t-il les options ?"
           >
-            <span class="mono">ls -al /usr</span>
+            <span class="mono">ls -tl /usr</span>
           </li>
           <li
             data-element="c"
-            data-retour="Dans cette ligne, la lettre a porte-t-elle un tiret ?"
+            data-retour="Dans cette ligne, la lettre t porte-t-elle un tiret ?"
             data-erreur="E3"
           >
-            <span class="mono">ls -l a /usr</span>
+            <span class="mono">ls -l t /usr</span>
           </li>
         </ul>
       </div>
@@ -4149,7 +4231,7 @@ bin       on descend : /usr/bin</pre>
         class="ex"
         data-widget="classer"
         data-verifie
-        data-colonnes="meme=La même liste|autre=Une autre ligne"
+        data-colonnes="meme=La même liste|autre=Une autre liste"
         data-reponse="a=meme,b=autre,c=meme"
         data-aide1="Dans chaque ligne, quelles lettres portent un tiret, seul ou partagé ?"
         data-aide2="Des lettres collées derrière un même tiret sont autant d’options ; quand aucune n’attend d’argument, leur ordre ne compte pas."
@@ -4489,10 +4571,10 @@ bin       on descend : /usr/bin</pre>
         data-widget="classer"
         data-verifie
         data-colonnes="oui=Son Mac l’accepte|non=Son Mac la refuse"
-        data-reponse="a=oui,b=oui,c=non,d=oui,e=non"
-        data-aide1="Pour chaque ligne, l’option tapée est-elle écrite dans le SYNOPSIS du Mac ?"
-        data-aide2="Une commande n’accepte que les options de son propre manuel ; sur ce Mac, les options d’une lettre sont dans le premier crochet."
-        data-aide3="Pour une option d’une lettre, cherche cette lettre, avec sa casse, dans le premier crochet ; pour une option longue, cherche le mot entier dans toute la ligne."
+        data-reponse="a=oui,b=oui,c=non,d=oui,e=non,f=oui,g=non"
+        data-aide1="Pour chaque ligne de ls, l’option tapée est-elle écrite dans le SYNOPSIS du Mac ? Pour les lignes sur cd, quel shell répond sur un Mac ?"
+        data-aide2="Une commande n’accepte que les options de son propre manuel ; sur ce Mac, les options d’une lettre sont dans le premier crochet. L’aide de cd ne vient pas d’un programme du disque."
+        data-aide3="Pour une option d’une lettre, cherche cette lettre, avec sa casse, dans le premier crochet ; pour une option longue, cherche le mot entier dans toute la ligne. Pour help cd, demande-toi si zsh, le shell du Mac, a une commande help."
       >
         <div class="cadre pour-lire">
           <p class="discret">Le SYNOPSIS de ls, lu sur le Mac de Farid :</p>
@@ -4504,8 +4586,8 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
    [--color=when] [-D format] [file ...]</pre>
         </div>
         <p class="q">
-          Farid trouve cinq lignes dans un tutoriel écrit pour Ubuntu. Il a déjà classé la première
-          : pour chacune des autres, dis si son Mac l’acceptera.
+          Farid trouve sept lignes dans un tutoriel écrit pour Ubuntu. Il en a déjà classé deux :
+          pour chacune des autres, dis si son Mac l’acceptera.
         </p>
         <ul class="a-classer">
           <li data-element="a" data-donne>
@@ -4532,6 +4614,19 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           <li data-element="e" data-retour="Le SYNOPSIS du Mac écrit-il quelque part --size ?">
             <span class="mono">ls --size /usr</span>
           </li>
+          <li data-element="f" data-donne>
+            <span class="mono">man cd</span>
+            <span class="raison"
+              >Classée par Farid : cd est une commande interne du shell ; sur un Mac, man cd ouvre
+              une page générale sur ces commandes.</span
+            >
+          </li>
+          <li
+            data-element="g"
+            data-retour="Dans quel shell la commande help existe-t-elle : bash, ou zsh, celui du Mac ?"
+          >
+            <span class="mono">help cd</span>
+          </li>
         </ul>
       </div>
     </template>
@@ -4541,10 +4636,10 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
         data-widget="classer"
         data-verifie
         data-colonnes="oui=Son Mac l’accepte|non=Son Mac la refuse"
-        data-reponse="a=oui,b=non,c=oui,d=non"
-        data-aide1="Pour chaque ligne, l’option tapée est-elle écrite dans le SYNOPSIS du Mac ?"
-        data-aide2="Une commande n’accepte que les options de son propre manuel ; sur ce Mac, les options d’une lettre sont dans le second crochet."
-        data-aide3="Pour une option d’une lettre, cherche cette lettre, avec sa casse, dans le crochet des lettres ; pour une option longue, cherche le mot entier dans toute la ligne."
+        data-reponse="a=oui,b=non,c=oui,d=non,e=oui,f=non"
+        data-aide1="Pour chaque ligne de wc, l’option tapée est-elle écrite dans le SYNOPSIS du Mac ? Pour les lignes sur pwd, quel shell répond sur un Mac ?"
+        data-aide2="Une commande n’accepte que les options de son propre manuel ; sur ce Mac, les options d’une lettre sont dans le second crochet. L’aide d’une commande interne ne vient pas d’un programme du disque."
+        data-aide3="Pour une option d’une lettre, cherche cette lettre, avec sa casse, dans le crochet des lettres ; pour une option longue, cherche le mot entier dans toute la ligne. Pour help pwd, demande-toi si zsh, le shell du Mac, a une commande help."
       >
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -4557,8 +4652,8 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           </ul>
         </div>
         <p class="q">
-          Farid trouve quatre lignes dans un tutoriel écrit pour Ubuntu. Il a déjà classé la
-          première : pour chacune des autres, dis si son Mac l’acceptera.
+          Farid trouve six lignes dans un tutoriel écrit pour Ubuntu. Il en a déjà classé deux :
+          pour chacune des autres, dis si son Mac l’acceptera.
         </p>
         <ul class="a-classer">
           <li data-element="a" data-donne>
@@ -4577,18 +4672,32 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           >
             <span class="mono">wc --help</span>
           </li>
+          <li data-element="e" data-donne>
+            <span class="mono">man cd</span>
+            <span class="raison"
+              >Classée par Farid : cd est une commande interne du shell ; sur un Mac, man cd ouvre
+              une page générale sur ces commandes.</span
+            >
+          </li>
+          <li
+            data-element="f"
+            data-retour="Dans quel shell la commande help existe-t-elle : bash, ou zsh, celui du Mac ?"
+          >
+            <span class="mono">help pwd</span>
+          </li>
         </ul>
       </div>
     </template>
     <template data-item="PR1-8">
       <div
         class="ex"
-        data-widget="choix"
-        data-reponse="help"
+        data-widget="classer"
         data-verifie
-        data-aide1="Où lit-on si une commande accepte une option donnée ?"
-        data-aide2="Une commande n’accepte que les options écrites dans son SYNOPSIS, et man suivi d’un programme ouvre sa page."
-        data-aide3="Pour chaque ligne, cherche dans le SYNOPSIS l’option qu’elle écrit, lettre par lettre ou mot par mot ; pour la ligne man, demande-toi si which est un programme rangé sur le disque."
+        data-colonnes="oui=Son Mac l’accepte|non=Son Mac la refuse"
+        data-reponse="a=oui,b=non,d=non"
+        data-aide1="Où lit-on si une commande accepte une option donnée, et qui donne l’aide d’une commande sur un Mac ?"
+        data-aide2="Une commande n’accepte que les options écrites dans son SYNOPSIS ; help est l’aide d’un shell, pas de tous."
+        data-aide3="Pour chaque ligne de which, cherche dans le SYNOPSIS l’option qu’elle écrit, lettre par lettre ou mot par mot. Pour help, demande-toi quel shell répond sur un Mac, et s’il a cette commande."
       >
         <div class="cadre pour-lire">
           <p class="discret">Pour lire, sur le Mac de Farid :</p>
@@ -4598,19 +4707,21 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           </ul>
         </div>
         <p class="q">
-          Sur son Mac, Farid veut en savoir plus sur which. Laquelle de ces trois lignes sa machine
-          refusera-t-elle ?
+          Sur son Mac, Farid veut en savoir plus sur which. Pour chacune de ces trois lignes, dis si
+          sa machine l’acceptera.
         </p>
-        <ul class="options">
-          <li data-option="option" data-retour="La lettre a est-elle dans le crochet du SYNOPSIS ?">
+        <ul class="a-classer">
+          <li data-element="a" data-retour="La lettre a est-elle dans le crochet du SYNOPSIS ?">
             <span class="mono">which -a tree</span>
           </li>
-          <li data-option="help"><span class="mono">which --help</span></li>
+          <li data-element="b" data-retour="Le SYNOPSIS de which écrit-il --help ?">
+            <span class="mono">which --help</span>
+          </li>
           <li
-            data-option="man"
-            data-retour="which est un programme du Mac. Que fait man, suivi du nom d’un programme ?"
+            data-element="d"
+            data-retour="Dans quel shell la commande help existe-t-elle : bash, ou zsh, celui du Mac ?"
           >
-            <span class="mono">man which</span>
+            <span class="mono">help which</span>
           </li>
         </ul>
       </div>
@@ -4618,12 +4729,13 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
     <template data-variante="PR1-8">
       <div
         class="ex"
-        data-widget="choix"
-        data-reponse="longue"
+        data-widget="classer"
         data-verifie
-        data-aide1="Où lit-on si une commande accepte une option donnée ?"
-        data-aide2="Une commande n’accepte que les options écrites dans son SYNOPSIS, et man suivi d’un programme ouvre sa page."
-        data-aide3="Pour chaque ligne, cherche dans le SYNOPSIS l’option qu’elle écrit, lettre par lettre ou mot par mot ; pour la ligne man, demande-toi si wc est un programme rangé sur le disque."
+        data-colonnes="oui=Son Mac l’accepte|non=Son Mac la refuse"
+        data-reponse="a=oui,c=non,d=non"
+        data-aide1="Où lit-on si une commande accepte une option donnée, et qui donne l’aide d’une commande sur un Mac ?"
+        data-aide2="Une commande n’accepte que les options écrites dans son SYNOPSIS ; help est l’aide d’un shell, pas de tous."
+        data-aide3="Pour chaque ligne de wc, cherche dans le SYNOPSIS l’option qu’elle écrit, lettre par lettre ou mot par mot. Pour help, demande-toi quel shell répond sur un Mac, et s’il a cette commande."
       >
         <div class="cadre pour-lire">
           <p class="discret">Pour lire, sur le Mac de Farid :</p>
@@ -4633,20 +4745,22 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           </ul>
         </div>
         <p class="q">
-          Sur son Mac, Farid veut compter les mots de notes.txt avec wc. Laquelle de ces trois
-          lignes sa machine refusera-t-elle ?
+          Sur son Mac, Farid veut compter les mots de notes.txt avec wc. Pour chacune de ces trois
+          lignes, dis si sa machine l’acceptera.
         </p>
-        <ul class="options">
-          <li data-option="courte" data-retour="La lettre w est-elle dans le crochet des lettres ?">
+        <ul class="a-classer">
+          <li data-element="a" data-retour="La lettre w est-elle dans le crochet des lettres ?">
             <span class="mono">wc -w notes.txt</span>
           </li>
-          <li
-            data-option="man"
-            data-retour="wc est un programme du Mac. Que fait man, suivi du nom d’un programme ?"
-          >
-            <span class="mono">man wc</span>
+          <li data-element="c" data-retour="Le SYNOPSIS du Mac écrit-il quelque part --words ?">
+            <span class="mono">wc --words notes.txt</span>
           </li>
-          <li data-option="longue"><span class="mono">wc --words notes.txt</span></li>
+          <li
+            data-element="d"
+            data-retour="Dans quel shell la commande help existe-t-elle : bash, ou zsh, celui du Mac ?"
+          >
+            <span class="mono">help wc</span>
+          </li>
         </ul>
       </div>
     </template>
@@ -4790,15 +4904,21 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
         data-widget="apparier"
         data-verifie
         data-options="home=/home/yasmine|usr=/usr|share=/usr/share|racine=/ (la racine)|bin=/usr/bin"
-        data-reponse="a1=home,a2=usr,a3=share,a4=racine,a5=bin"
+        data-reponse="a1=home,a2=usr,a3=share,a4=racine,a5=bin,a6=share,a7=share"
         data-aide1="Pour chaque ligne : y a-t-il un chemin après cd, et commence-t-il par une barre ?"
         data-aide2=". et .. existent dans chaque dossier et désignent des dossiers proches du répertoire courant ; cd sans chemin, comme une barre seule, mène à un dossier fixe."
         data-aide3="Pour chaque ligne, pars de /usr/share et suis le chemin un morceau à la fois, en notant le dossier atteint après chacun ; une ligne sans chemin, ou qui commence par une barre, ne part pas de là."
       >
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire, l’Ubuntu de Yasmine :</p>
+          <ul>
+            <li>La racine contient usr, mais aucun dossier share.</li>
+            <li>/usr contient bin et share.</li>
+          </ul>
+        </div>
         <p class="q">
-          Yasmine, dont le dossier personnel est /home/yasmine, est dans /usr/share, dans son Ubuntu
-          ; /usr contient bin et share. Pour chaque ligne tapée depuis ce dossier, dis où elle
-          arrive.
+          Yasmine, dont le dossier personnel est /home/yasmine, est dans /usr/share. Elle a déjà
+          associé une ligne : pour chaque autre ligne tapée depuis ce dossier, dis où elle arrive.
         </p>
         <ul class="a-apparier">
           <li
@@ -4831,6 +4951,19 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           >
             <span class="mono">cd ../bin</span>
           </li>
+          <li data-element="a6" data-donne>
+            <span class="mono">cd ../Bin</span>
+            <span class="raison"
+              >Associée par Yasmine : rien ne s’appelle Bin dans /usr, cd échoue, et elle reste où
+              elle était.</span
+            >
+          </li>
+          <li
+            data-element="a7"
+            data-retour="Ce chemin commence par une barre : la racine contient-elle un dossier share ? Et si cd échoue, Yasmine a-t-elle bougé ?"
+          >
+            <span class="mono">cd /share</span>
+          </li>
         </ul>
       </div>
     </template>
@@ -4840,15 +4973,22 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
         data-widget="apparier"
         data-verifie
         data-options="home=/Users/farid|usr=/usr|share=/usr/share|man=/usr/share/man|man1=/usr/share/man/man1"
-        data-reponse="a1=home,a2=share,a3=man,a4=usr,a5=man1"
+        data-reponse="a1=home,a2=share,a3=man,a4=usr,a5=man1,a6=man,a7=man"
         data-aide1="Pour chaque ligne : le chemin commence-t-il par un tilde, un point, deux points ou un nom ?"
         data-aide2=". et .. existent dans chaque dossier et désignent des dossiers proches du répertoire courant ; le tilde, lui, désigne un dossier fixe."
         data-aide3="Pour chaque ligne, pars de /usr/share/man et suis le chemin un morceau à la fois, en notant le dossier atteint après chacun ; une ligne qui commence par un tilde ne part pas de là."
       >
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire, le Mac de Farid :</p>
+          <ul>
+            <li>La racine contient usr, mais aucun dossier share ni man.</li>
+            <li>/usr/share/man contient un dossier man1.</li>
+          </ul>
+        </div>
         <p class="q">
-          Farid, dont le dossier personnel est /Users/farid, est dans /usr/share/man, sur son Mac ;
-          ce dossier contient un dossier man1. Pour chaque ligne tapée depuis /usr/share/man, dis où
-          il arrive.
+          Farid, dont le dossier personnel est /Users/farid, est dans /usr/share/man, sur son Mac.
+          Il a déjà associé une ligne : pour chaque autre ligne tapée depuis ce dossier, dis où il
+          arrive.
         </p>
         <ul class="a-apparier">
           <li data-element="a1" data-retour="Que désigne le tilde, pour celui qui tape ?">
@@ -4877,6 +5017,19 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
             data-retour="Ce chemin commence par un point, puis descend. De quel dossier part-il ?"
           >
             <span class="mono">cd ./man1</span>
+          </li>
+          <li data-element="a6" data-donne>
+            <span class="mono">cd /share</span>
+            <span class="raison"
+              >Associée par Farid : la racine ne contient aucun dossier share, cd échoue, et il
+              reste où il était.</span
+            >
+          </li>
+          <li
+            data-element="a7"
+            data-retour="Ce chemin commence par une barre : la racine contient-elle un dossier man ? Et si cd échoue, Farid a-t-il bougé ?"
+          >
+            <span class="mono">cd /man</span>
           </li>
         </ul>
       </div>
@@ -5132,7 +5285,7 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
       <div data-ecran="Le manuel, sur ta machine">
         <p class="accroche">
           Yasmine a ouvert le manuel de tree avant de taper sa ligne. À toi : trois pages à ouvrir,
-          et deux aides à demander.
+          deux aides à demander, et une option à essayer sous ses deux formes.
         </p>
         <ol>
           <li>
@@ -5153,6 +5306,10 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
             Tape <span class="mono">ls --help</span>. Note la première ligne de la réponse, même si
             c’est un refus.
           </li>
+          <li>
+            Tape <span class="mono">ls -a</span>, puis <span class="mono">ls --all</span>. Note si
+            ta machine en refuse une, et laquelle.
+          </li>
         </ol>
         <p data-os="windows">
           <strong>Sous Windows :</strong> si man répond par un message au lieu d’ouvrir une page,
@@ -5162,8 +5319,8 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
         <details data-cran="1">
           <summary>Une question</summary>
           <p>
-            Une page de manuel prend toute la fenêtre. Tant qu’elle est ouverte, ce que tu tapes ne
-            va pas au shell : quelle touche la ferme ?
+            Le SYNOPSIS que tu recopies s’arrête-t-il à la fin de sa première ligne, ou au titre en
+            majuscules qui le suit ?
           </p>
           <details data-cran="2">
             <summary>Un indice</summary>
@@ -5177,6 +5334,7 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
                 Pour chaque ligne, lis toute la première phrase que ta machine affiche avant de
                 noter : un refus nomme souvent ce qu’il refuse. Si une page s’ouvre, lis ce qui suit
                 son titre NAME pour savoir de quelle commande elle parle, puis quitte-la avec q.
+                Pour ls --all, regarde si la liste vient, ou un message qui parle d’option.
               </p>
             </details>
           </details>
@@ -5243,16 +5401,13 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
       <div data-ecran="La casse, sur ta machine">
         <p class="accroche">
           Yasmine et Farid n’ont pas la même machine, et la casse ne s’y comporte pas pareil.
-          Regarde ce que fait la tienne.
+          Regarde ce que fait la tienne. Sous Windows, c’est la fenêtre d’Ubuntu qui répond, pas
+          l’Explorateur de Windows.
         </p>
         <ol>
           <li>
-            Tape <span class="mono">cd /USR</span>, en majuscules. Note si ta machine refuse ou
-            accepte.
-          </li>
-          <li>
-            Tape <span class="mono">ls -a</span>, puis <span class="mono">ls --all</span>. Note si
-            ta machine en refuse une, et laquelle.
+            Tape <span class="mono">cd /USR</span>, en majuscules, puis
+            <span class="mono">pwd</span>. Note si ta machine refuse ou accepte.
           </li>
         </ol>
         <details data-cran="1">
@@ -5264,14 +5419,14 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           <details data-cran="2">
             <summary>Un indice</summary>
             <p>
-              Les deux systèmes ne répondent pas de la même façon à ces lignes : une réponse
-              différente de celle d’un camarade n’est pas une panne.
+              Si cd /USR réussit, l’invite ou pwd montre un nouveau dossier ; s’il échoue, une ligne
+              cite /USR.
             </p>
             <details data-cran="3">
               <summary>L’étape détaillée</summary>
               <p>
-                Pour cd /USR, regarde si l’invite change ou si une ligne de refus s’affiche. Pour ls
-                --all, regarde si la liste vient, ou un message qui parle d’option.
+                Compare ce que pwd répond avec le dossier où tu étais avant cd /USR : le même
+                dossier, c’est que la ligne a été refusée ; un autre, c’est qu’elle a été acceptée.
               </p>
             </details>
           </details>
@@ -5283,24 +5438,26 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           retour, vite, trois jours différents, par trois trajets.
         </p>
         <p>
-          Prends un chronomètre, celui de ton téléphone par exemple. Un trajet part de ton dossier
-          personnel : tu rejoins son départ par un chemin absolu, tu descends trois dossiers, un à
-          la fois, tu vérifies avec pwd, puis tu reviens dans ton dossier personnel et tu vérifies
-          avec pwd. Fais un trajet par jour, en moins de 30 secondes, et note sur ton papier la date
-          et ton temps.
+          <strong>Le geste</strong>, un trajet par jour, chronomètre lancé (celui de ton téléphone,
+          par exemple), en moins de 30 secondes, depuis ton dossier personnel :
         </p>
         <ol>
+          <li>Rejoins le départ du jour par un chemin absolu.</li>
+          <li>Descends ses trois dossiers, un à la fois.</li>
+          <li>Vérifie avec pwd.</li>
+          <li>Reviens dans ton dossier personnel, et vérifie avec pwd.</li>
+        </ol>
+        <p><strong>Les trois trajets</strong>, un par jour, trois jours différents :</p>
+        <ul>
           <li>Premier jour : départ /, puis usr, share et man ; retour avec cd ~.</li>
           <li>Deuxième jour : départ /usr, puis share, man et man1 ; retour avec cd tout seul.</li>
           <li>Troisième jour : départ /usr, puis share, man et man8 ; retour avec cd ~.</li>
-        </ol>
+        </ul>
         <p class="discret">
-          Note aussi, chaque jour, l’aide la plus forte que tu as ouverte ici. La page ne la garde
-          pas d’un jour à l’autre : c’est ton papier qui la garde, et ton constat la déclare.
-        </p>
-        <p class="discret">
-          Le dernier critère du constat se coche le troisième jour : reviens alors ici, coche-le et
-          renvoie ton constat.
+          <strong>Le suivi</strong>, sur ton papier, chaque jour : la date, ton temps, et l’aide la
+          plus forte que tu as ouverte ici. La page ne garde pas cette aide d’un jour à l’autre :
+          c’est ton papier qui la garde, et ton constat la déclare. Le troisième jour, reviens ici,
+          coche le dernier critère du constat et renvoie-le.
         </p>
         <details data-cran="1">
           <summary>Une question</summary>
@@ -5446,14 +5603,6 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
         <p class="discret">
           Écris avec tes mots. Une version écrite paraît ensuite, pour que tu compares.
         </p>
-        <details>
-          <summary>La casse, si tu l’as oubliée</summary>
-          <p>
-            Sous Linux, la casse compte : deux noms qui ne diffèrent que par une majuscule sont deux
-            noms différents. Le disque d’un Mac ou de Windows, réglé comme à l’achat, les prend pour
-            le même nom.
-          </p>
-        </details>
         <div
           class="ex"
           data-widget="schema"
@@ -5521,7 +5670,8 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           <ul>
             <li>
               Un chemin qui commence par une barre part de la racine ; sans barre, il part du
-              répertoire courant.
+              répertoire courant, sauf s’il commence par le tilde, que le shell remplace par le
+              chemin de ton dossier personnel.
             </li>
             <li>
               La commande reconnaît une option à son tiret ; sans tiret, le morceau est un argument
@@ -5577,14 +5727,17 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           le soit. Le texte placé après un exercice paraît donc une fois l’exercice fini ; c’est là
           que vont les reprises d’un essai du prétest (data-si-essai) : p3 après sanstiret, p4 après
           seq, p1 après absolu, p2 après cassenom et le texte qui l’explique. Chaque écran
-          d’explication porte un exercice au plus, soit vingt et un ; « Revenir au dossier personnel
-          » et « La 404 de Farid » expliquent sans question (rentrer et la404 retirés en manche 4).
-          Treize sont des prédictions (data-prediction : sanstiret, collees, valeur, points,
-          dformat, longue, mancd, invite, lsloin, relatif, echoue, casseopt, cassenom) : chacune est
-          posée avant le texte qui y répond, sur un pas de Yasmine ou de Farid que l’écran n’a
-          encore ni résolu ni écrit. Les huit autres (morceaux, section, seq, barre, parent, tilde,
-          absolu, remonter) font appliquer une règle écrite plus haut sur l’écran (une convention :
-          la notation d’un SYNOPSIS, la racine, le dossier parent, le tilde ; ou une définition :
+          d’explication porte un exercice, soit vingt-trois. Quinze sont des prédictions
+          (data-prediction : sanstiret, collees, valeur, points, dformat, longue, mancd, invite,
+          lsloin, relatif, cdseul, echoue, casseopt, cassenom, source404) : chacune est posée avant
+          le texte qui y répond, sur un pas de Yasmine ou de Farid que l’écran n’a encore ni résolu
+          ni écrit, ni la correction du prétest avant lui (manche 5 : sanstiret porte sur ls -a tapé
+          pour voir un dossier nommé a, et non plus sur une lettre sans tiret, que la correction de
+          p3 donnait ; cassenom porte sur ce que fait le Mac de cd /USR, que la correction de p2 ne
+          dit pas ; cdseul et source404 font anticiper les deux écrans qui expliquaient sans
+          question). Les huit autres (morceaux, section, seq, barre, parent, tilde, absolu,
+          remonter) font appliquer une règle écrite plus haut sur l’écran (une convention : la
+          notation d’un SYNOPSIS, la racine, le dossier parent, le tilde ; ou une définition :
           commande, option, argument) à un cas que l’écran n’a pas résolu. Tout exercice du cours
           dont l’apprenant a vu la solution, prédiction comprise, lui fait refaire sans regarder un
           autre cas écrit dans la fiche (data-variante-…, outils-bloc, autreCas ; pour un choix,
@@ -5649,13 +5802,13 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           Les saisies, comptées une par geste du point de vue de l’apprenant (un bouton qui dévoile
           un moment, une option, une ligne d’un classement ou d’un appariement, une réponse tapée,
           une case du schéma, une explication écrite, un choix de confiance, un bouton de système,
-          un critère à cocher, l’aide déclarée) : 47 dans le cours (déroulés 10, paris 2, prétest 4,
-          21 exercices d’explication pour 26 saisies, schéma de Noah 4 et sa confiance 1), 36 dans
+          un critère à cocher, l’aide déclarée) : 49 dans le cours (déroulés 10, paris 2, prétest 4,
+          23 exercices d’explication pour 28 saisies, schéma de Noah 4 et sa confiance 1), 40 dans
           la pratique (treize items ; les lignes déjà classées ou associées ne se saisissent pas ;
           deux explications écrites, chacune avec sa confiance ; une variante seulement après une
           solution vue), 12 en restitution (six réponses, six confiances), 10 au constat de
           l’atelier (le système, huit critères, l’aide déclarée), et 31 à l’aisance (le système,
-          puis trois séries de dix, trois jours différents). Soit 136 saisies dans la page, dont 105
+          puis trois séries de dix, trois jours différents). Soit 142 saisies dans la page, dont 111
           hors aisance. Une explication demandée après une solution vue s’y ajoute quand elle
           arrive, et, dans le cours, l’autre cas refait avant elle. L’atelier y ajoute une vingtaine
           de notes sur papier, dont la date et le temps de chacun des trois trajets chronométrés.
@@ -5666,9 +5819,9 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
       <ul>
         <li>
           Une réponse à taper (outil saisie : collees, section, parent, tilde, lsloin, absolu,
-          remonter, echoue, PR1-2, PR1-4, PR1-9, PR1-10) : un champ et « Vérifier » (ou Entrée). La
-          réponse est juste si, espaces superflus retirés, elle égale une des écritures de
-          data-accepte ; un champ vide est refusé sans rien compter. Chaque réponse fausse compte
+          remonter, cdseul, echoue, PR1-2, PR1-4, PR1-9, PR1-10) : un champ et « Vérifier » (ou
+          Entrée). La réponse est juste si, espaces superflus retirés, elle égale une des écritures
+          de data-accepte ; un champ vide est refusé sans rien compter. Chaque réponse fausse compte
           une tentative : une saisie ne se résout pas en éliminant des options. Une réponse fausse
           listée dans data-si-e1 (ou e2, e3) reçoit le retour data-retour-e1 et signale l’erreur
           critique ; une réponse fausse listée sous une autre clé (data-si-ailleurs, data-si-casse)
@@ -5688,19 +5841,20 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           fiche reprennent.
         </li>
         <li>
-          Classer (outil classer : morceaux, barre, PR1-1, PR1-3, PR1-6, PR1-7, PR1-12) : une ligne
-          par élément, un bouton par colonne. « Vérifier » refuse tant qu’une ligne n’est pas
+          Classer (outil classer : morceaux, barre, PR1-1, PR1-3, PR1-6, PR1-7, PR1-8, PR1-12) : une
+          ligne par élément, un bouton par colonne. « Vérifier » refuse tant qu’une ligne n’est pas
           classée. La première ligne fausse donne son retour, une question sur cet élément ; une
           ligne qui porte data-erreur signale l’erreur critique quand elle est mal classée. Une
-          ligne data-donne (dans PR1-1, PR1-3, PR1-7, PR1-12 et leurs variantes) est déjà classée,
-          bloquée, avec sa raison écrite en petit : l’apprenant complète les autres. PR1-6 et sa
-          variante n’en ont pas : c’est l’exercice seul du SYNOPSIS.
+          ligne data-donne (dans PR1-1, PR1-3, PR1-7, PR1-12 et leurs variantes ; deux dans PR1-7,
+          dont man cd) est déjà classée, bloquée, avec sa raison écrite en petit : l’apprenant
+          complète les autres. PR1-6, PR1-8 et leurs variantes n’en ont pas : ce sont les exercices
+          seuls du SYNOPSIS, puis du manuel de la machine et de help.
         </li>
         <li>
           Associer (outil apparier, PR1-5 et PR1-11) : une ligne par élément, une liste déroulante.
           La même réponse peut servir à plusieurs lignes. À la solution vue, la bonne valeur est
-          posée dans chaque ligne. Une ligne data-donne (PR1-5 et sa variante) est déjà associée,
-          bloquée, avec sa raison.
+          posée dans chaque ligne. Une ligne data-donne (PR1-5, PR1-11 et leurs variantes) est déjà
+          associée, bloquée, avec sa raison.
         </li>
         <li>
           L’aisance (outil aisance, « Où arrives-tu ? ») : dix lignes cd sur l’arbre de son système
@@ -5745,14 +5899,15 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
         <li>
           E1 (chemin absolu et chemin relatif) est marquée en p1, dans absolu (réponses relatives
           listées), relatif, remonter et echoue, et en PR1-9 et PR1-10. E2 (la casse) en p2, dans
-          cassenom, et en PR1-12 et PR1-13. E3 (une option prise pour un argument) en p3, dans
-          morceaux, sanstiret, collees et dformat, et en PR1-1, PR1-2, PR1-3 et PR1-4. Sur une
-          saisie, la marque data-erreur est portée par l’outil, et data-si-e1 (ou e3) liste les
-          réponses qui la montrent. Chaque variante d’item garde la même marque. Une réponse fausse
-          qui ne montre pas l’erreur (un chemin juste depuis un autre dossier, une faute de casse
-          dans une option) a son retour, sans marque. Le prétest touche les trois avant toute
-          explication (p4, les crochets, n’est pas une erreur critique), et chaque essai est repris
-          au moment où le cours y répond.
+          source404 (une copie qui aurait abîmé le fichier), et en PR1-12 et PR1-13 ; cassenom ne
+          pose plus que la question du Mac, où USR et usr sont le même nom. E3 (une option prise
+          pour un argument) en p3, dans morceaux, sanstiret, collees et dformat, et en PR1-1, PR1-2,
+          PR1-3 et PR1-4. Sur une saisie, la marque data-erreur est portée par l’outil, et
+          data-si-e1 (ou e3) liste les réponses qui la montrent. Chaque variante d’item garde la
+          même marque. Une réponse fausse qui ne montre pas l’erreur (un chemin juste depuis un
+          autre dossier, une faute de casse dans une option) a son retour, sans marque. Le prétest
+          touche les trois avant toute explication (p4, les crochets, n’est pas une erreur
+          critique), et chaque essai est repris au moment où le cours y répond.
         </li>
       </ul>
       <h3>Les coups de pouce et la pratique</h3>
@@ -5780,41 +5935,45 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           ni notation repliée : seul exercice où l’apprenant lit crochets, points et barre sans
           appui. Sur les écrans guidés du cours et en PR1-5, la notation est repliée sous « La
           notation, si tu l’as oubliée », que l’apprenant ouvre s’il le veut. Le manuel de la
-          machine et --help : PR1-7 à compléter, PR1-8 seul (le SYNOPSIS de which, donné en entier).
-          Les chemins : PR1-9 à compléter (le premier pas du chemin déjà suivi), PR1-10 (à taper) et
-          PR1-11 seuls. La casse : PR1-12 à compléter, qui mêle options, commandes et noms de
-          fichier (une paire déjà classée), PR1-13 seul. Les encadrés « Pour lire » redonnent ce que
-          fait chaque option et chaque SYNOPSIS en entier, jamais la règle vérifiée ; une option y
-          est nommée par sa lettre et son tiret, ou par son effet. Deux items sur treize portent une
-          demande d’explication (data-justifier : PR1-10 et PR1-13), sur ce que l’écran ne montre
-          pas ; l’item n’est réussi qu’avec une explication Solide, et la variante pose une autre
-          question que l’item.
+          machine, --help et la commande interne : PR1-7 à compléter (deux lignes déjà classées,
+          dont man cd), PR1-8 seul (le SYNOPSIS de which, donné en entier, et help which). ls :
+          PR1-3 à compléter (ls -l -t), PR1-4 seul. Les chemins et ce que répond pwd : PR1-9 à
+          compléter (le premier pas du chemin déjà suivi), PR1-10 (à taper) et PR1-11 seuls. Quand
+          cd échoue : PR1-11, où cd ../Bin est déjà associée, puis cd /share à associer seul. La
+          casse : PR1-12 à compléter, qui mêle options, commandes et noms de fichier (une paire déjà
+          classée), PR1-13 seul. Les encadrés « Pour lire » redonnent ce que fait chaque option et
+          chaque SYNOPSIS en entier, jamais la règle vérifiée ; une option y est nommée par sa
+          lettre et son tiret, ou par son effet. Deux items sur treize portent une demande
+          d’explication (data-justifier : PR1-10 et PR1-13), sur ce que l’écran ne montre pas ;
+          l’item n’est réussi qu’avec une explication Solide, et la variante pose une autre question
+          que l’item.
         </li>
         <li>
           L’atelier se fait sur la machine de l’apprenant : cinq écrans de guidage (le dossier
-          personnel et ls -a ; man tree, man ls, man cd, help cd et ls --help ; trois façons de
-          rejoindre /usr/bin et tree -d -L 1 /usr ; la casse ; trois trajets chronométrés, un par
-          jour), chacun avec ses crans emboîtés : une question, un indice, l’étape détaillée. Aucun
-          cran ne donne la ligne à taper ni ce que la machine répond : le dernier, l’étape
-          détaillée, dit comment trouver (quoi lire dans la réponse, quoi comparer). Les crans 4,
-          qui donnaient l’une ou l’autre ligne par ligne, sont retirés en manche 4. La page ne voit
-          pas le terminal : ouvrir un cran fixe l’aide déclarée pour vingt minutes, et l’atelier ne
-          compte qu’à « Aucune aide » ; le dernier écran demande de noter chaque jour l’aide la plus
-          forte ouverte, que la page ne garde pas d’un jour à l’autre. Les noms courts (., .., ~)
-          sont repliés sur le premier écran et sur celui des trois façons. Rien n’est créé ni
-          supprimé : tous les dossiers existent déjà sur les deux systèmes. Les cas où la machine ne
-          répond pas comme prévu ont leur consigne ou leur cran : un Ubuntu sans pages de manuel (le
-          message donne la commande qui les remet), une fenêtre d’Ubuntu qui ne s’ouvre pas dans le
-          dossier personnel, tree absent (la commande d’installation de chaque système est redonnée,
-          avec ce que font apt, brew et sudo). help cd et ls --help se tapent sur les deux systèmes
-          ; la consigne demande de noter la réponse, même si c’est un refus, sans dire ce que répond
-          un Mac. Chaque trajet chronométré part du dossier personnel, rejoint son départ par un
-          chemin absolu (/ le premier jour, /usr les deux autres), descend trois dossiers un à la
-          fois, puis revient par cd ~ ou cd tout seul : trois trajets différents, trois jours
-          différents, chacun en moins de 30 secondes, avec la date et le temps notés. Tous ces
-          dossiers existent sur les deux systèmes, et aucune ligne de la consigne n’échoue si on la
-          suit à la lettre. Le constat porte sur huit critères observables, valables pour les deux
-          systèmes ; le dernier, celui des trois trajets, se coche le troisième jour.
+          personnel et ls -a ; man tree, man ls, man cd, help cd, ls --help, puis ls -a et ls --all
+          ; trois façons de rejoindre /usr/bin et tree -d -L 1 /usr ; la casse, cd /USR seul ; trois
+          trajets chronométrés, un par jour, le geste, les trajets et le suivi séparés), chacun avec
+          ses crans emboîtés : une question, un indice, l’étape détaillée. Aucun cran ne donne la
+          ligne à taper ni ce que la machine répond : le dernier, l’étape détaillée, dit comment
+          trouver (quoi lire dans la réponse, quoi comparer). Les crans 4, qui donnaient l’une ou
+          l’autre ligne par ligne, sont retirés en manche 4. La page ne voit pas le terminal :
+          ouvrir un cran fixe l’aide déclarée pour vingt minutes, et l’atelier ne compte qu’à «
+          Aucune aide » ; le dernier écran demande de noter chaque jour l’aide la plus forte
+          ouverte, que la page ne garde pas d’un jour à l’autre. Les noms courts (., .., ~) sont
+          repliés sur le premier écran et sur celui des trois façons. Rien n’est créé ni supprimé :
+          tous les dossiers existent déjà sur les deux systèmes. Les cas où la machine ne répond pas
+          comme prévu ont leur consigne ou leur cran : un Ubuntu sans pages de manuel (le message
+          donne la commande qui les remet), une fenêtre d’Ubuntu qui ne s’ouvre pas dans le dossier
+          personnel, tree absent (la commande d’installation de chaque système est redonnée, avec ce
+          que font apt, brew et sudo). help cd et ls --help se tapent sur les deux systèmes ; la
+          consigne demande de noter la réponse, même si c’est un refus, sans dire ce que répond un
+          Mac. Chaque trajet chronométré part du dossier personnel, rejoint son départ par un chemin
+          absolu (/ le premier jour, /usr les deux autres), descend trois dossiers un à la fois,
+          puis revient par cd ~ ou cd tout seul : trois trajets différents, trois jours différents,
+          chacun en moins de 30 secondes, avec la date et le temps notés. Tous ces dossiers existent
+          sur les deux systèmes, et aucune ligne de la consigne n’échoue si on la suit à la lettre.
+          Le constat porte sur huit critères observables, valables pour les deux systèmes ; le
+          dernier, celui des trois trajets, se coche le troisième jour.
         </li>
       </ul>
     </template>
@@ -5830,7 +5989,7 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
         "objectif": "Ouvrir la page de manuel d'une commande avec `man`, y trouver le SYNOPSIS et la quitter, et demander l'aide courte avec `--help` quand la commande l'accepte ; lire le SYNOPSIS d'une commande inconnue (crochets, barre, points de suspension) et en déduire arguments obligatoires, optionnels et répétables ; distinguer une option d'un argument, et dire pourquoi une option longue du manuel d'Ubuntu peut manquer sur un Mac ; dire ce que sont la racine `/`, le répertoire courant et le dossier personnel ; se déplacer avec `pwd`, `cd`, `ls` en chemins absolus et relatifs en prédisant chaque arrivée ; expliquer `.`, `..`, `~` ; dire que la casse compte dans les commandes, les options et les noms de fichiers, et pourquoi `Index.html` demandé sous le nom `index.html` donne une 404 sur un serveur Linux alors qu'un Mac ou Windows ne montre pas l'erreur. Aisance : 10 arrivées de `cd` prédites justes sur 10, et trois niveaux descendus puis retour au dossier personnel en moins de 30 secondes.",
         "prerequis": ["B08"],
         "pont": 9,
-        "contexte_ia": "Bloc B09 du module « Écosystème et outils du développeur » (DWWM), deuxième bloc de la partie « Le poste du développeur », après « Un shell UNIX sur son poste » et avant « Manipuler fichiers et dossiers ». Le fil : Yasmine, en formation, dans la fenêtre d’Ubuntu de son PC ; Farid, son ami, sur un Mac ; une feuille de route (aller dans /usr/share/man, rejoindre /usr/bin, afficher les dossiers de /usr avec tree sur un niveau, revenir dans son dossier) ; la page de Farid, en 404 sur le serveur ; Noah, au cas inédit de l’étape d’ensemble.\nLe modèle du bloc : le shell exécute la ligne telle qu’elle est écrite. Une ligne de commande se découpe aux espaces : la commande (le programme à lancer), des options (un morceau qui commence par un tiret, qui dit comment la commande travaille) et des arguments (sur quoi elle travaille). Sans son tiret, une lettre n’est pas une option : la commande la lit comme un argument, un nom à chercher. Plusieurs options d’une lettre se collent derrière un seul tiret (ls -la). Une option peut attendre un argument, écrit juste après elle : l’argument de l’option (tree -L 1 : le 1 est l’argument de -L, pas un argument de tree). Coller des options derrière un seul tiret est une convention des commandes UNIX ; une option qui attend un argument se met en dernier dans le groupe (tree -dL 1 /usr), et l’ordre des autres lettres ne compte pas.\nLe manuel : man suivi du nom d’une commande ouvre sa page, en anglais, découpée en sections (NAME, SYNOPSIS, DESCRIPTION) ; flèches et barre d’espace pour défiler, q pour quitter. Le SYNOPSIS donne la forme de la ligne. Les crochets entourent ce qui est facultatif (l’objectif dit « optionnel ») ; ce qui n’est pas entre crochets est obligatoire. Les points de suspension disent que l’élément qui précède peut être répété. La barre verticale sépare des choix dont on ne prend qu’un. Crochets, points et barre décrivent la ligne et ne se tapent pas. Un mot en majuscules (Ubuntu : FILE, OPTION) ou en minuscules (macOS : file, count) tient la place de ce que l’on choisit. La même commande a deux écritures : sous Ubuntu, ls [OPTION]... [FILE]... ; sur un Mac, ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,] [--color=when] [-D format] [file ...], où toutes les options d’une lettre sont dans un seul crochet et les points à l’intérieur du crochet. Autres SYNOPSIS de la fiche : seq [OPTION]... LAST, mktemp [OPTION]... [TEMPLATE], nohup COMMAND [ARG]..., basename NAME [SUFFIX], dirname [OPTION] NAME..., realpath [OPTION]... FILE..., readlink [OPTION]... FILE..., uname [OPTION]..., cut OPTION... [FILE]..., wc [OPTION]... [FILE]... (Ubuntu) ; head [-n count | -c bytes] [file ...], pwd [-L | -P], which [-as] program ..., cat [-belnstuv] [file ...], seq [-w] [-f format] [-s string] [-t string] [first [incr]] last, tail [-F | -f | -r] [-qv] [-b number | -c number | -n number] [file ...] et basename string [suffix] (macOS) ; help pushd : pushd [-n] [+N | -N | dir] (Ubuntu). Sous Ubuntu, beaucoup d’options ont deux écritures : une option courte (-a) et une option longue (--all) ; les commandes de base d’un Mac viennent d’une autre famille d’outils et n’ont presque que des options courtes : ls --all et ls --help échouent sur un Mac, ls -a marche partout, et le manuel de sa propre machine fait foi. --help affiche une aide courte quand la commande l’accepte (ls sous Ubuntu, tree sur les deux systèmes). cd est une commande interne du shell : le shell l’exécute lui-même. Dans Ubuntu, man cd répond « No manual entry for cd » ; help suivi du nom d’une commande interne de bash affiche l’aide de bash sur elle (help cd : cd: cd [-L|[-P [-e]] [-@]] [dir] ; help exit pour exit). Sur un Mac, man cd ouvre une page générale et help n’existe pas dans zsh.\nL’arbre : tous les dossiers tiennent dans un seul arbre qui part de la racine, / ; chaque dossier a un dossier parent, sauf la racine. Le shell est toujours dans un dossier, le répertoire courant ; pwd affiche son chemin (la suite des dossiers depuis la racine, séparés par des barres) ; l’invite de bash écrit ce chemin, celle de zsh sur un Mac seulement son dernier nom (un réglage de chaque shell, une convention). Le dossier personnel est /home/yasmine dans Ubuntu, /Users/farid sur le Mac ; le tilde ~ le désigne. ls affiche le contenu du répertoire courant ou du dossier donné ; -l détaille, -a montre aussi les noms qui commencent par un point, dont . et ..\nLes chemins : cd suivi d’un chemin change de répertoire courant ; cd seul ou cd ~ ramène au dossier personnel (cd seul : un choix de la commande cd, une convention). Un chemin qui commence par une barre est absolu : il part de la racine et mène au même dossier d’où que l’on parte. Un chemin sans barre au début est relatif : il part du répertoire courant, et le shell ne cherche nulle part ailleurs. . désigne le répertoire courant, .. son dossier parent (depuis /usr/share/man, cd ../../bin mène dans /usr/bin). Quand cd échoue (« No such file or directory »), on ne bouge pas, et on vérifie dans l’ordre : où suis-je (pwd), mon chemin part-il d’où je crois (barre ou non), chaque nom est-il écrit exactement, majuscules comprises (ls).\nLa casse : majuscule ou minuscule. Elle compte dans les options (ls -r inverse l’ordre, ls -R descend dans les sous-dossiers ; tree -L level limite la profondeur, tree -l suit les liens) et, dans Ubuntu, dans le nom des commandes. Sous Linux, deux noms qui ne diffèrent que par la casse sont deux noms ; le disque d’un Mac ou de Windows, tel qu’il est réglé d’habitude, affiche les majuscules mais n’en tient pas compte quand on lui demande un nom (cd /USR échoue dans Ubuntu et réussit sur un Mac). D’où la 404 de Farid : son fichier s’appelle Index.html, l’adresse demande index.html ; son Mac trouvait le fichier, le serveur Linux cherche le nom exact, ne trouve rien et répond 404. L’erreur était déjà là sur le Mac, cachée. Habitude de métier : noms en minuscules, chaque fichier demandé exactement sous son nom.\nRelation centrale : le shell lit la ligne morceau par morceau, exactement comme elle est écrite ; un chemin part de la racine s’il commence par une barre, du répertoire courant sinon ; chaque lettre compte. On peut donc dire où l’on arrive avant de taper Entrée : d’où tu pars, ce que tu tapes, où tu arrives.\nLe vocabulaire : « dossier » (et « répertoire » seulement dans « répertoire courant »), « dossier personnel », « dossier parent », « barre » pour / et « barre verticale » pour le signe des SYNOPSIS, « facultatif » pour ce qui est entre crochets, « argument de l’option », « option courte » et « option longue », « casse », « invite ». Hors du bloc, à ne pas exiger : créer, copier, déplacer, supprimer (bloc suivant) ; le tube, les jokers, les redirections ; la touche Tab ; les noms avec espaces ; au-delà de sa racine (C:\\ : la lettre du disque, deux-points, un antislash), la façon dont Windows lit ses chemins, relatifs compris.\nLes pièges : les trois erreurs critiques (cd bin pris pour un chemin absolu ; Index.html et index.html pris pour un même fichier sous Linux ; tree d /usr pris pour tree -d /usr) ; taper les crochets, les points ou la barre d’un SYNOPSIS ; croire qu’une option du manuel d’Ubuntu existe forcément sur un Mac ; croire qu’un cd qui échoue déplace quand même.\nUne réponse Solide, pour la question posée et seulement pour elle : dit l’idée en mots simples ; retrouve la relation en jeu dans le cas posé (quel morceau est quoi, d’où part le chemin, quel nom exact est cherché) ; dit la condition qui la rend vraie (le tiret, la barre au début, le répertoire courant, le système dont le disque tient compte de la casse, le manuel de la machine) ; nomme chaque notion par son terme exact : commande, option, argument, argument de l’option, SYNOPSIS, crochets, points de suspension, barre verticale, facultatif, obligatoire, racine, répertoire courant, dossier personnel, dossier parent, chemin absolu, chemin relatif, casse ; et, quand la question le demande, relie la notion à une autre (un chemin relatif dépend du répertoire courant ; une option longue dépend de la famille d’outils de la machine) ou donne un exemple ou une limite (la ligne qui aurait marché ; un chemin relatif ne vaut que depuis le bon dossier ; un Mac cache la faute de casse que le serveur montre). Ce que la question ne demande pas ne s’exige pas. Les chemins et les lignes s’écrivent exactement. Exemple, sur un cas que la fiche ne pose pas : à « Yasmine est dans /usr et tape cd log ; que répond pwd ? », « /usr : log n’a pas de barre au début, c’est un chemin relatif cherché dans /usr, qui n’a pas de dossier log ; cd échoue et elle ne bouge pas » est Solide ; « ça ne marche pas » ne l’est pas, ni « le truc avec le tiret » ou « le dossier du haut » à la place du terme.",
+        "contexte_ia": "Bloc B09 du module « Écosystème et outils du développeur » (DWWM), deuxième bloc de la partie « Le poste du développeur », après « Un shell UNIX sur son poste » et avant « Manipuler fichiers et dossiers ». Le fil : Yasmine, en formation, dans la fenêtre d’Ubuntu de son PC ; Farid, son ami, sur un Mac ; une feuille de route (aller dans /usr/share/man, rejoindre /usr/bin, afficher les dossiers de /usr avec tree sur un niveau, revenir dans son dossier) ; la page de Farid, en 404 sur le serveur ; Noah, au cas inédit de l’étape d’ensemble.\nLe modèle du bloc : le shell exécute la ligne telle qu’elle est écrite. Une ligne de commande se découpe aux espaces : la commande (le programme ou la commande interne du shell à lancer), des options (un morceau qui commence par un tiret, qui dit comment la commande travaille) et des arguments (sur quoi elle travaille). Sans son tiret, une lettre n’est pas une option : la commande la lit comme un argument, un nom à chercher. Plusieurs options d’une lettre se collent derrière un seul tiret (ls -la). Une option peut attendre un argument, écrit juste après elle : l’argument de l’option (tree -L 1 : le 1 est l’argument de -L, pas un argument de tree). Coller des options derrière un seul tiret est une convention des commandes UNIX ; une option qui attend un argument se met en dernier dans le groupe (tree -dL 1 /usr), et l’ordre des autres lettres ne compte pas.\nLe manuel : man suivi du nom d’une commande ouvre sa page, en anglais, découpée en sections (NAME, SYNOPSIS, DESCRIPTION) ; flèches et barre d’espace pour défiler, q pour quitter. Le SYNOPSIS donne la forme de la ligne. Les crochets entourent ce qui est facultatif (l’objectif dit « optionnel ») ; ce qui n’est pas entre crochets est obligatoire. Les points de suspension disent que l’élément qui précède peut être répété. La barre verticale sépare des choix dont on ne prend qu’un. Crochets, points et barre décrivent la ligne et ne se tapent pas. Un mot en majuscules (Ubuntu : FILE, OPTION) ou en minuscules (macOS : file, count) tient la place de ce que l’on choisit. La même commande a deux écritures : sous Ubuntu, ls [OPTION]... [FILE]... ; sur un Mac, ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,] [--color=when] [-D format] [file ...], où toutes les options d’une lettre sont dans un seul crochet et les points à l’intérieur du crochet. Autres SYNOPSIS de la fiche : seq [OPTION]... LAST, mktemp [OPTION]... [TEMPLATE], nohup COMMAND [ARG]..., basename NAME [SUFFIX], dirname [OPTION] NAME..., realpath [OPTION]... FILE..., readlink [OPTION]... FILE..., uname [OPTION]..., cut OPTION... [FILE]..., wc [OPTION]... [FILE]... (Ubuntu) ; head [-n count | -c bytes] [file ...], pwd [-L | -P], which [-as] program ..., cat [-belnstuv] [file ...], seq [-w] [-f format] [-s string] [-t string] [first [incr]] last, tail [-F | -f | -r] [-qv] [-b number | -c number | -n number] [file ...] et basename string [suffix] (macOS) ; help pushd : pushd [-n] [+N | -N | dir] (Ubuntu). Sous Ubuntu, beaucoup d’options ont deux écritures : une option courte (-a) et une option longue (--all) ; les commandes de base d’un Mac viennent d’une autre famille d’outils et n’ont presque que des options courtes : ls --all et ls --help échouent sur un Mac, ls -a marche partout, et le manuel de sa propre machine fait foi. --help affiche une aide courte quand la commande l’accepte (ls sous Ubuntu, tree sur les deux systèmes). cd est une commande interne du shell : le shell l’exécute lui-même. Dans Ubuntu, man cd répond « No manual entry for cd » ; help suivi du nom d’une commande interne de bash affiche l’aide de bash sur elle (help cd : cd: cd [-L|[-P [-e]] [-@]] [dir] ; help exit pour exit). Sur un Mac, man cd ouvre une page générale et help n’existe pas dans zsh.\nL’arbre : tous les dossiers tiennent dans un seul arbre qui part de la racine, / ; chaque dossier a un dossier parent, sauf la racine. Le shell est toujours dans un dossier, le répertoire courant ; pwd affiche son chemin (la suite des dossiers depuis la racine, séparés par des barres) ; l’invite de bash écrit ce chemin, celle de zsh sur un Mac seulement son dernier nom (un réglage de chaque shell, une convention). Le dossier personnel est /home/yasmine dans Ubuntu, /Users/farid sur le Mac ; le tilde ~ le désigne. ls affiche le contenu du répertoire courant ou du dossier donné ; -l détaille, -a montre aussi les noms qui commencent par un point, dont . et ..\nLes chemins : cd suivi d’un chemin change de répertoire courant ; cd seul ou cd ~ ramène au dossier personnel (cd seul : un choix de la commande cd, une convention). Un chemin qui commence par une barre est absolu : il part de la racine et mène au même dossier d’où que l’on parte. Un chemin sans barre au début est relatif : il part du répertoire courant, et le shell ne cherche nulle part ailleurs. . désigne le répertoire courant, .. son dossier parent (depuis /usr/share/man, cd ../../bin mène dans /usr/bin). Quand cd échoue (« No such file or directory »), on ne bouge pas, et on vérifie dans l’ordre : où suis-je (pwd), mon chemin part-il d’où je crois (barre ou non), chaque nom est-il écrit exactement, majuscules comprises (ls).\nLa casse : majuscule ou minuscule. Elle compte dans les options (ls -r inverse l’ordre, ls -R descend dans les sous-dossiers ; tree -L level limite la profondeur, tree -l suit les liens) et, dans Ubuntu, dans le nom des commandes. Sous Linux, deux noms qui ne diffèrent que par la casse sont deux noms ; le disque d’un Mac ou de Windows, tel qu’il est réglé d’habitude, affiche les majuscules mais n’en tient pas compte quand on lui demande un nom (cd /USR échoue dans Ubuntu et réussit sur un Mac). D’où la 404 de Farid : son fichier s’appelle Index.html, l’adresse demande index.html ; son Mac trouvait le fichier, le serveur Linux cherche le nom exact, ne trouve rien et répond 404. L’erreur était déjà là sur le Mac, cachée. Habitude de métier : noms en minuscules, chaque fichier demandé exactement sous son nom.\nRelation centrale : le shell lit la ligne morceau par morceau, exactement comme elle est écrite ; un chemin part de la racine s’il commence par une barre, du répertoire courant sinon ; chaque lettre compte. On peut donc dire où l’on arrive avant de taper Entrée : d’où tu pars, ce que tu tapes, où tu arrives.\nLe vocabulaire : « dossier » (et « répertoire » seulement dans « répertoire courant »), « dossier personnel », « dossier parent », « barre » pour / et « barre verticale » pour le signe des SYNOPSIS, « facultatif » pour ce qui est entre crochets, « argument de l’option », « option courte » et « option longue », « casse », « invite ». Hors du bloc, à ne pas exiger : créer, copier, déplacer, supprimer (bloc suivant) ; le tube, les jokers, les redirections ; la touche Tab ; les noms avec espaces ; au-delà de sa racine (C:\\ : la lettre du disque, deux-points, un antislash), la façon dont Windows lit ses chemins, relatifs compris.\nLes pièges : les trois erreurs critiques (cd bin pris pour un chemin absolu ; Index.html et index.html pris pour un même fichier sous Linux ; tree d /usr pris pour tree -d /usr) ; taper les crochets, les points ou la barre d’un SYNOPSIS ; croire qu’une option du manuel d’Ubuntu existe forcément sur un Mac ; croire qu’un cd qui échoue déplace quand même.\nUne réponse Solide, pour la question posée et seulement pour elle : dit l’idée en mots simples ; retrouve la relation en jeu dans le cas posé (quel morceau est quoi, d’où part le chemin, quel nom exact est cherché) ; dit la condition qui la rend vraie (le tiret, la barre au début, le répertoire courant, le système dont le disque tient compte de la casse, le manuel de la machine) ; nomme chaque notion par son terme exact : commande, option, argument, argument de l’option, SYNOPSIS, crochets, points de suspension, barre verticale, facultatif, obligatoire, racine, répertoire courant, dossier personnel, dossier parent, chemin absolu, chemin relatif, casse ; et, quand la question le demande, relie la notion à une autre (un chemin relatif dépend du répertoire courant ; une option longue dépend de la famille d’outils de la machine) ou donne un exemple ou une limite (la ligne qui aurait marché ; un chemin relatif ne vaut que depuis le bon dossier ; un Mac cache la faute de casse que le serveur montre). Ce que la question ne demande pas ne s’exige pas. Les chemins et les lignes s’écrivent exactement. Exemple, sur un cas que la fiche ne pose pas : à « Yasmine est dans /usr et tape cd log ; que répond pwd ? », « /usr : log n’a pas de barre au début, c’est un chemin relatif cherché dans /usr, qui n’a pas de dossier log ; cd échoue et elle ne bouge pas » est Solide ; « ça ne marche pas » ne l’est pas, ni « le truc avec le tiret » ou « le dossier du haut » à la place du terme.",
         "sources": [
           {
             "id": "S1",
@@ -6013,7 +6172,7 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           },
           {
             "id": "B09-R4",
-            "question": "Farid, dont le dossier personnel est /Users/farid, se trouve dans /Users/farid/projet. Il tape cd .., revient, puis tape cd ~. Pourquoi arrive-t-il les deux fois dans /Users/farid, et laquelle des deux lignes l’y mènerait encore depuis /var/log ?",
+            "question": "Farid, dont le dossier personnel est /Users/farid, se trouve dans /Users/farid/projet. Il tape cd .., retourne dans /Users/farid/projet, puis tape cd ~. Pourquoi arrive-t-il les deux fois dans /Users/farid, et laquelle des deux lignes l’y mènerait encore depuis /var/log ?",
             "attendu": "Les deux points désignent le dossier parent du répertoire courant, et le parent de /Users/farid/projet se trouve être son dossier personnel ; le tilde désigne le dossier personnel, quel que soit le répertoire courant. Depuis /var/log, seul cd ~ le ramène dans /Users/farid : cd .. mènerait dans /var. Déduit des étapes « L’arbre et là où tu es » et « Les chemins ».",
             "erreurs": []
           },
@@ -6045,7 +6204,7 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           },
           {
             "id": "B09-Q3",
-            "question": "Un tutoriel écrit pour Ubuntu dit de taper cat --help. Farid, sur son Mac, lit dans son manuel : cat [-belnstuv] [file ...]. Que peut-il prévoir avant de taper cette ligne, et que tape-t-il pour lire le détail des options de son cat ?",
+            "question": "Pour lire : dans une page de manuel, la section DESCRIPTION détaille chaque option. Un tutoriel écrit pour Ubuntu dit de taper cat --help. Farid, sur son Mac, lit dans son manuel : cat [-belnstuv] [file ...]. Que peut-il prévoir avant de taper cette ligne, et que tape-t-il pour lire le détail des options de son cat ?",
             "attendu": "Que cat refusera --help : le SYNOPSIS de son Mac ne prévoit que des options d’une lettre, et une commande n’accepte que les options de son propre manuel. Pour le détail, il tape man cat et lit la section DESCRIPTION. Déduit de l’étape « Le manuel ».",
             "erreurs": []
           },
@@ -6069,14 +6228,14 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           },
           {
             "id": "B09-Q7",
-            "question": "Pour lire : dans le manuel de ls, -a fait afficher aussi les noms qui commencent par un point. Farid tape ls dans un dossier de son Mac et voit trois noms. Il tape ls -a et en voit six : les trois mêmes, plus ., .. et .cache. Lesquels de ces trois noms trouverait-il dans n’importe quel dossier, et que désignent-ils ?",
-            "attendu": "Le point et les deux points existent dans tous les dossiers : le point désigne le dossier lui-même, ici le répertoire courant, et les deux points son dossier parent. .cache est un nom à point propre à ce dossier. Déduit des étapes « L’arbre et là où tu es » et « Les chemins ».",
+            "question": "Sur son Mac, le dossier /Users/farid/projet contient images et pages. Farid est dans /Users/farid/projet/pages et tape cd ./../images. Où arrive-t-il, et que fait chacun des deux noms courts de cette ligne ?",
+            "attendu": "Il arrive dans /Users/farid/projet/images. Le point désigne le répertoire courant, pages : il ne fait pas bouger. Les deux points désignent son dossier parent, projet : ils font remonter d’un dossier, puis images y redescend. Déduit des étapes « L’arbre et là où tu es » et « Les chemins ».",
             "erreurs": []
           },
           {
             "id": "B09-Q8",
-            "question": "Pour lire : dans le manuel de ls, -a montre aussi les noms qui commencent par un point. Farid tape ls -A, avec un A majuscule, en pensant que c’est la même option. A-t-il raison, et où lit-il ce que fait -A ?",
-            "attendu": "Non : la casse compte dans les options, et -A, en majuscule, est une autre option que -a, en minuscule. Ce que fait -A, il le lit dans le manuel de sa machine, man ls, à la section DESCRIPTION. Déduit des étapes « Majuscules et minuscules » et « Le manuel ».",
+            "question": "Pour lire : dans le manuel de ls d’Ubuntu, -I attend un argument, un nom à ne pas afficher ; -i affiche un numéro devant chaque nom. Yasmine veut cacher le dossier tmp et tape ls -i tmp, avec un i minuscule. Que fait ls de tmp, et pourquoi ?",
+            "attendu": "Il l’affiche au lieu de le cacher. La casse compte dans les options : -i, en minuscule, n’est pas -I, et n’attend pas d’argument. tmp n’est donc l’argument d’aucune option : c’est un argument de ls, le dossier à afficher, et ls montre son contenu, un numéro devant chaque nom. Déduit des étapes « Une ligne, des morceaux » et « Majuscules et minuscules ».",
             "erreurs": []
           }
         ],
@@ -6091,8 +6250,8 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           {
             "id": "B09-C2",
             "type": "explication",
-            "consigne": "Une stagiaire dit : « Mon site marche sur mon Mac, donc il marchera sur le serveur. Accueil.html ou accueil.html, c’est le même fichier. » Qu’est-ce qui ne va pas ?",
-            "attendu": "C’est vrai sur son Mac, dont le disque ne tient pas compte de la casse quand on lui demande un nom, et faux sur un serveur Linux, où Accueil.html et accueil.html sont deux noms. Si une page demande l’un et que le fichier porte l’autre, le serveur répondra 404 : l’erreur existe déjà, son Mac la cache. Erreur à repérer : ignorer la casse. Déduit de l’étape « Majuscules et minuscules ».",
+            "consigne": "Sur le serveur Linux de la formation, un dossier contient deux pages différentes, Menu.html et menu.html. Une stagiaire copie ce dossier sur son Mac et dit : « J’ai maintenant mes deux pages sur mon Mac. » Qu’est-ce qui ne va pas ?",
+            "attendu": "Sous Linux, Menu.html et menu.html sont deux noms, donc deux fichiers qui peuvent vivre dans le même dossier. Le disque de son Mac ne tient pas compte de la casse : pour lui, c’est le même nom, un seul fichier. Une copie se heurte à l’autre, et elle ne garde qu’une des deux pages. Erreur à repérer : ignorer la casse. Déduit de l’étape « Majuscules et minuscules ».",
             "erreurs": ["E2"]
           },
           {
@@ -6190,10 +6349,10 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
             "J’ai tapé cd puis pwd, et noté le chemin de mon dossier personnel.",
             "J’ai tapé ls -a dans mon dossier personnel, et noté si . et .. sont dans la liste.",
             "J’ai ouvert man tree puis man ls, repéré le titre SYNOPSIS, recopié celui de ls, et quitté chaque page avec q.",
-            "J’ai tapé man cd, help cd et ls --help, et noté ce que ma machine répond à chacune.",
+            "J’ai tapé man cd, help cd, ls --help, ls -a et ls --all, et noté ce que ma machine répond à chacune.",
             "Depuis /usr/share/man, j’ai rejoint /usr/bin par un chemin absolu, puis par un chemin relatif en une ligne, puis avec cd .. deux fois et cd bin, en vérifiant chaque arrivée avec pwd.",
             "J’ai tapé tree -d -L 1 /usr, et noté si bin et share sont dans ce que tree affiche.",
-            "J’ai tapé cd /USR, puis ls -a et ls --all, et noté ce que ma machine refuse.",
+            "J’ai tapé cd /USR puis pwd, et noté si ma machine refuse ou accepte cd /USR.",
             "Trois jours différents, j’ai fait un des trois trajets chronométrés, chacun en moins de 30 secondes, en vérifiant l’arrivée et le retour avec pwd, et j’ai noté la date et mon temps."
           ]
         },
@@ -6234,8 +6393,8 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           },
           {
             "id": "B09-K7",
-            "recto": "Sur le PC de Yasmine, sous Windows, une page demande logo.png alors que le fichier s’appelle Logo.png : l’image s’affiche. Une fois le site copié sur un serveur Linux, l’image manque. Qu’est-ce qui diffère entre les deux machines, et l’erreur est-elle née pendant la copie ?",
-            "verso": "Le disque de Windows ne tient pas compte de la casse quand on lui demande un nom ; Linux, si : logo.png et Logo.png y sont deux noms, et le serveur ne trouve aucun logo.png. L’erreur n’est pas née pendant la copie : la page demandait déjà un autre nom que celui du fichier, et le PC la cachait. Déduit de l’étape « Majuscules et minuscules »."
+            "recto": "Sur le serveur Linux de la formation, la page de Yasmine demande Bandeau.png, et l’image s’appelle Bandeau.png : elle s’affiche. Yasmine renomme l’image bandeau.png sur le serveur, sans toucher à la page. L’image s’affiche-t-elle encore, et pourquoi ?",
+            "verso": "Non. La page demande toujours Bandeau.png, et l’image s’appelle maintenant bandeau.png. Sous Linux, ce sont deux noms : le serveur cherche le nom exact, Bandeau.png, et ne le trouve plus. Le nom demandé et le nom du fichier doivent être identiques, majuscules comprises. Déduit de l’étape « Majuscules et minuscules »."
           },
           {
             "id": "B09-K8",
@@ -6364,8 +6523,8 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
             "id": "N15",
             "notion": "ls affiche le contenu du répertoire courant ou du dossier donné ; -a montre aussi les noms à point, -l détaille",
             "montree": ["ET6"],
-            "pratiquee": ["AT1"],
-            "questions": ["B09-Q7", "B09-K9"]
+            "pratiquee": ["PR1", "AT1"],
+            "questions": ["B09-K9", "B09-Q8"]
           },
           {
             "id": "N16",
@@ -6421,13 +6580,13 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
             "notion": "Index.html demandé sous le nom index.html donne une 404 sur un serveur Linux, alors qu’un Mac ou Windows cachait l’erreur",
             "montree": ["ET8"],
             "pratiquee": ["PR1"],
-            "questions": ["B09-R5", "B09-C2", "B09-K7"]
+            "questions": ["B09-R5", "B09-K7"]
           },
           {
             "id": "N24",
             "notion": "Quand cd échoue, on ne bouge pas, et on vérifie le répertoire courant, le départ du chemin, puis la casse",
             "montree": ["ET7"],
-            "pratiquee": ["AT1", "ET11"],
+            "pratiquee": ["PR1", "AT1", "ET11"],
             "questions": ["B09-K8"]
           }
         ],
@@ -6454,7 +6613,7 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
             "vers": "N23",
             "type": "cause",
             "montree": "ET8",
-            "questions": ["B09-R5", "B09-C2", "B09-K7"]
+            "questions": ["B09-R5", "B09-K7"]
           },
           {
             "id": "L4",
@@ -6492,6 +6651,86 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
             "id": "L8",
             "de": "N14",
             "vers": "N22",
+            "type": "sequence",
+            "montree": "ET7",
+            "questions": ["B09-K8"]
+          },
+          {
+            "id": "L9",
+            "de": "N12",
+            "vers": "N1",
+            "type": "cause",
+            "montree": "ET5",
+            "questions": ["B09-Q4"]
+          },
+          {
+            "id": "L10",
+            "de": "N21",
+            "vers": "N9",
+            "type": "cause",
+            "montree": "ET8",
+            "questions": ["B09-Q8"]
+          },
+          {
+            "id": "L11",
+            "de": "N4",
+            "vers": "N2",
+            "type": "categorie",
+            "montree": "ET5",
+            "questions": ["B09-R2", "B09-K3"]
+          },
+          {
+            "id": "L12",
+            "de": "N20",
+            "vers": "N17",
+            "type": "equivalence",
+            "montree": "ET7",
+            "questions": ["B09-K6"]
+          },
+          {
+            "id": "L13",
+            "de": "N6",
+            "vers": "N5",
+            "type": "equivalence",
+            "montree": "ET5",
+            "questions": ["B09-K4"]
+          },
+          {
+            "id": "L14",
+            "de": "N8",
+            "vers": "N7",
+            "type": "composition",
+            "montree": "ET4",
+            "questions": ["B09-K9"]
+          },
+          {
+            "id": "L15",
+            "de": "N17",
+            "vers": "N13",
+            "type": "composition",
+            "montree": "ET7",
+            "questions": ["B09-Q6", "B09-T4"]
+          },
+          {
+            "id": "L16",
+            "de": "N19",
+            "vers": "N13",
+            "type": "equivalence",
+            "montree": "ET7",
+            "questions": ["B09-R4", "B09-Q7"]
+          },
+          {
+            "id": "L17",
+            "de": "N15",
+            "vers": "N14",
+            "type": "condition",
+            "montree": "ET6",
+            "questions": ["B09-Q8"]
+          },
+          {
+            "id": "L18",
+            "de": "N24",
+            "vers": "N14",
             "type": "sequence",
             "montree": "ET7",
             "questions": ["B09-K8"]
