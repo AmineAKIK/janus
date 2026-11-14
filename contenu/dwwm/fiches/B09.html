@@ -2427,7 +2427,7 @@
           data-reponse="a=cmd,b=opt,c=arg"
           data-aide1="Combien de morceaux le shell voit-il dans cette ligne, et lequel vient en premier ?"
           data-aide2="Le premier morceau est toujours le programme à lancer, et le tiret marque ce qui règle sa façon de travailler."
-          data-aide3="ls est en tête : c’est la commande. Il reste -l, qui porte un tiret, et /usr, qui n’en porte pas."
+          data-aide3="Prends les morceaux de gauche à droite et, pour chacun, demande-toi : est-il en tête, porte-t-il un tiret, ou n’en porte-t-il pas ?"
           data-explication="ls est le programme lancé, -l porte un tiret et dit comment travailler, /usr dit sur quoi."
         >
           <p class="q">
@@ -2949,7 +2949,7 @@ head [-n count | -c bytes] [file ...]</pre>
           data-reponse="a=oui,b=oui,c=non,d=oui"
           data-aide1="Pour chaque ligne, quels morceaux du SYNOPSIS sont écrits, et lesquels sont laissés de côté ?"
           data-aide2="Tout est entre crochets, et les noms de fichiers sont suivis de points ; seule la barre interdit quelque chose."
-          data-aide3="Une ligne qui écrit à la fois ce qui est à gauche et ce qui est à droite de la barre n’est pas prévue ; les autres le sont."
+          data-aide3="Pose chaque ligne sous le SYNOPSIS de head et vérifie, dans l’ordre : rien d’obligatoire ne manque, rien n’est répété sans points, un seul côté de chaque barre."
           data-explication="Tout est facultatif, les noms de fichiers se répètent, mais -n et -c sont de part et d’autre de la barre : une seule des deux à la fois."
         >
           <p class="q">
@@ -3246,7 +3246,7 @@ zsh    farid@MacBook-Air man %</pre>
           data-clavier="Le chemin"
           data-aide1="Qui tape la ligne, et quel est son dossier personnel ?"
           data-aide2="Le tilde vaut le chemin entier du dossier personnel de celui qui tape ; le reste du chemin suit tel quel."
-          data-aide3="Remplace le tilde par /Users/farid, puis garde la barre et le nom qui suivent."
+          data-aide3="Remplace le tilde par le chemin entier du dossier personnel de Farid, depuis la racine, puis garde la barre et le nom qui suivent."
           data-sinon="Pas encore. Par quoi le shell de Farid remplace-t-il le tilde ?"
           data-explication="Pour Farid, le tilde vaut /Users/farid : ~/Documents est donc /Users/farid/Documents."
         >
@@ -3319,7 +3319,7 @@ zsh    farid@MacBook-Air man %</pre>
           data-retour-ailleurs="Ton chemin mène bien dans bin, mais il part du dossier où elle est. La question demande un chemin qui part de la racine : par quel signe commence-t-il ?"
           data-aide1="Par quel signe commence un chemin absolu, et que désigne ce signe ?"
           data-aide2="Un chemin absolu nomme chaque dossier traversé depuis la racine, séparés par des barres."
-          data-aide3="Sur le dessin, de la racine on descend dans usr, puis dans bin : écris la barre, usr, une barre, bin."
+          data-aide3="Sur le dessin, pars de la racine et descends jusqu’à bin ; écris une barre pour la racine, puis chaque dossier traversé, séparé du suivant par une barre."
           data-sinon="Pas encore. Suis le dessin depuis la racine : par quels dossiers passes-tu ?"
           data-explication="Depuis la racine, on traverse usr puis on arrive à bin : /usr/bin, d’où que parte Yasmine."
         >
@@ -3428,7 +3428,7 @@ zsh    farid@MacBook-Air man %</pre>
           data-retour-ailleurs="Ton chemin arrive bien dans /usr/share, mais il part de la racine. La question demande un chemin qui part de bin : quel nom fait remonter d’un dossier ?"
           data-aide1="Sur le dessin, share est-il au-dessous de bin, ou à côté ?"
           data-aide2="Pour aller dans un dossier voisin, on remonte d’abord au dossier parent commun, puis on redescend."
-          data-aide3="Depuis bin, .. mène dans /usr ; de là, share est juste au-dessous : écris .., une barre, puis share."
+          data-aide3="Sur le dessin, depuis bin, note où mène une remontée, puis quel nom il faut descendre de là ; écris ces deux pas l’un après l’autre, séparés par une barre."
           data-sinon="Pas encore. Depuis bin, faut-il d’abord monter ou descendre pour atteindre share ?"
           data-explication="Depuis /usr/bin, .. remonte à /usr, puis share y redescend : ../share."
         >
@@ -3477,7 +3477,7 @@ bin       on descend : /usr/bin</pre>
           data-clavier="Ce que répond pwd"
           data-aide1="Sur le dessin, quel dossier porte la marque du tilde ?"
           data-aide2="cd sans chemin ne laisse pas Yasmine sur place : il la mène toujours au même dossier, celui que marque le tilde."
-          data-aide3="Le tilde marque yasmine, rangé dans home : écris ce chemin depuis la racine."
+          data-aide3="Sur le dessin, repère le dossier que marque le tilde, puis écris son chemin depuis la racine, dossier par dossier."
           data-sinon="Pas encore. cd sans chemin mène-t-il au même dossier d’où que l’on parte ? Lequel le dessin marque-t-il ?"
           data-explication="cd tout seul ramène au dossier personnel : pwd répond /home/yasmine."
         >
@@ -3514,7 +3514,7 @@ bin       on descend : /usr/bin</pre>
           data-reponse="a=oui,b=non,c=oui,d=non"
           data-aide1="Pour chaque ligne, le chemin commence-t-il par une barre ?"
           data-aide2="Un chemin avec une barre se suit depuis la racine ; sans barre, depuis bin."
-          data-aide3="La racine ne contient pas share, et bin non plus : seules arrivent la ligne qui passe par usr depuis la racine et celle qui remonte d’abord."
+          data-aide3="Pour chaque ligne, regarde si elle commence par une barre, pose le doigt sur la racine ou sur bin selon le cas, puis suis chaque morceau sur le dessin : arrives-tu dans un dossier qui existe ?"
           data-explication="Deux chemins arrivent : l’absolu, depuis la racine par usr, et le relatif qui remonte d’abord. Les deux autres cherchent share là où il n’est pas."
         >
           <p class="q">
@@ -3751,7 +3751,7 @@ bin       on descend : /usr/bin</pre>
         data-reponse="a=cmd,b=opt,c=opt,d=val,e=arg"
         data-aide1="Après la commande, quels morceaux commencent par un tiret ?"
         data-aide2="Une option qui attend une valeur la prend dans le morceau qui la suit, même sans tiret."
-        data-aide3="D’après l’encadré, -L attend un nombre : le 2 qui la suit est à elle. Il reste un seul morceau, /etc."
+        data-aide3="Relis l’encadré : laquelle des deux options attend une valeur ? Puis range les morceaux de gauche à droite, en te demandant pour chacun à qui il appartient."
       >
         <div class="cadre pour-lire">
           <p class="discret">Pour lire, deux options de tree :</p>
@@ -3809,7 +3809,7 @@ bin       on descend : /usr/bin</pre>
         data-reponse="a=cmd,b=opt,c=val,d=arg,e=arg"
         data-aide1="Après la commande, quel morceau commence par un tiret ?"
         data-aide2="Une option qui attend une valeur la prend dans le morceau qui la suit ; une commande peut recevoir plusieurs noms sur lesquels travailler."
-        data-aide3="D’après l’encadré, -n attend un nombre : le 3 est à elle. Les deux noms de fichiers qui restent disent sur quoi travailler."
+        data-aide3="Relis l’encadré : laquelle des options attend une valeur ? Puis range les morceaux de gauche à droite, en te demandant pour chacun à qui il appartient."
       >
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -4029,7 +4029,7 @@ bin       on descend : /usr/bin</pre>
         data-retour-casse="Regarde la taille de tes lettres : sont-elles écrites comme dans l’encadré ?"
         data-aide1="Combien d’options cette ligne donne-t-elle à ls, et combien de tirets faut-il pour les écrire ?"
         data-aide2="Plusieurs options d’une lettre peuvent partager un seul tiret, dans n’importe quel ordre, chacune avec sa casse."
-        data-aide3="Garde ls au début et /etc à la fin ; entre les deux, un seul tiret suivi des deux lettres, sans espace."
+        data-aide3="Repère dans la ligne de Farid la commande, les lettres d’option et l’argument, puis récris-la dans cet ordre, avec un tiret commun pour les lettres."
         data-sinon="Pas encore. Combien de tirets ta ligne garde-t-elle, et où sont les deux lettres ?"
       >
         <div class="cadre pour-lire">
@@ -4059,7 +4059,7 @@ bin       on descend : /usr/bin</pre>
         data-retour-casse="Regarde la taille de tes lettres : sont-elles écrites comme dans l’encadré ?"
         data-aide1="Combien d’options cette ligne donne-t-elle à tree, et combien de tirets faut-il pour les écrire ?"
         data-aide2="Plusieurs options d’une lettre peuvent partager un seul tiret, dans n’importe quel ordre, chacune avec sa casse."
-        data-aide3="Garde tree au début et /usr à la fin ; entre les deux, un seul tiret suivi des deux lettres, sans espace."
+        data-aide3="Repère dans la ligne de Yasmine la commande, les lettres d’option et l’argument, puis récris-la dans cet ordre, avec un tiret commun pour les lettres."
         data-sinon="Pas encore. Combien de tirets ta ligne garde-t-elle, et où sont les deux lettres ?"
       >
         <div class="cadre pour-lire">
@@ -4084,7 +4084,7 @@ bin       on descend : /usr/bin</pre>
         data-reponse="a1=fac1,a2=obl1,a3=facn,a4=obln"
         data-aide1="Pour chaque élément : est-il entre crochets, et est-il suivi de trois points ?"
         data-aide2="Les crochets décident de facultatif ou obligatoire ; les points, de une fois ou plusieurs."
-        data-aide3="DURATION et FILE... n’ont pas de crochets ; seul FILE... a des points. [ARG]... a les deux signes."
+        data-aide3="Pour chaque élément, réponds à deux questions, dans l’ordre : est-il entre crochets ? est-il suivi de points ? Puis lis chacune de tes réponses dans la notation."
       >
         <div class="cadre pour-lire">
           <p class="discret">Deux SYNOPSIS lus dans Ubuntu :</p>
@@ -4148,7 +4148,7 @@ bin       on descend : /usr/bin</pre>
         data-reponse="a1=fac1,a2=obln,a3=facn,a4=obl1"
         data-aide1="Pour chaque élément : est-il entre crochets, et est-il suivi de trois points ?"
         data-aide2="Les crochets décident de facultatif ou obligatoire ; les points, de une fois ou plusieurs, qu’ils soient dans le crochet ou derrière."
-        data-aide3="program ... et last n’ont pas de crochets ; seul program ... a des points. [file ...] a les deux signes."
+        data-aide3="Pour chaque élément, réponds à deux questions, dans l’ordre : est-il entre crochets ? est-il suivi de points ? Puis lis chacune de tes réponses dans la notation."
       >
         <div class="cadre pour-lire">
           <p class="discret">Trois SYNOPSIS lus sur un Mac :</p>
@@ -4489,7 +4489,7 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
         data-retour-ailleurs="Où mène chaque paire de points, et que répond pwd : les dossiers traversés, ou celui où l’on arrive ?"
         data-aide1="Le chemin tapé commence-t-il par une barre ? D’où part-il donc ?"
         data-aide2="Chaque paire de points fait remonter d’un dossier, puis le nom qui suit fait descendre."
-        data-aide3="De /var/www, la seconde paire de points mène dans /var ; de là, on descend dans log."
+        data-aide3="Sur le dessin, pars de /var/www et suis le reste du chemin un morceau à la fois, en notant le dossier atteint après chacun."
         data-sinon="Pas encore. Suis le chemin sur le dessin, un morceau à la fois, depuis le dossier de départ."
       >
         <figure
@@ -4520,7 +4520,7 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
         data-retour-ailleurs="Où mène la paire de points, et que répond pwd : les dossiers traversés, ou celui où l’on arrive ?"
         data-aide1="Le chemin tapé commence-t-il par une barre ? D’où part-il donc ?"
         data-aide2="Une paire de points fait remonter d’un dossier, puis chaque nom qui suit fait descendre."
-        data-aide3="De /var, on descend dans www, puis dans site."
+        data-aide3="Sur le dessin, pars de /var et suis le reste du chemin un morceau à la fois, en notant le dossier atteint après chacun."
         data-sinon="Pas encore. Suis le chemin sur le dessin, un morceau à la fois, depuis le dossier de départ."
       >
         <figure
@@ -4603,8 +4603,8 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
         data-options="home=/home/yasmine|usr=/usr|share=/usr/share|racine=/ (la racine)|bin=/usr/bin"
         data-reponse="a1=home,a2=usr,a3=share,a4=racine,a5=bin"
         data-aide1="Pour chaque ligne : y a-t-il un chemin après cd, et commence-t-il par une barre ?"
-        data-aide2="Un point seul désigne le répertoire courant, deux points son dossier parent ; cd sans chemin et une barre seule ne dépendent pas du départ."
-        data-aide3="Depuis /usr/share, .. mène dans /usr ; ../bin y remonte aussi, puis descend dans bin."
+        data-aide2=". et .. existent dans chaque dossier et désignent des dossiers proches du répertoire courant ; cd sans chemin, comme une barre seule, mène à un dossier fixe."
+        data-aide3="Pour chaque ligne, pars de /usr/share et suis le chemin un morceau à la fois, en notant le dossier atteint après chacun ; une ligne sans chemin, ou qui commence par une barre, ne part pas de là."
       >
         <p class="q">
           Yasmine, dont le dossier personnel est /home/yasmine, est dans /usr/share, dans son
@@ -4652,8 +4652,8 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
         data-options="home=/Users/farid|usr=/usr|share=/usr/share|man=/usr/share/man|man1=/usr/share/man/man1"
         data-reponse="a1=home,a2=share,a3=man,a4=usr,a5=man1"
         data-aide1="Pour chaque ligne : le chemin commence-t-il par un tilde, un point, deux points ou un nom ?"
-        data-aide2="Un point seul désigne le répertoire courant, deux points son dossier parent ; le tilde ne dépend pas du départ."
-        data-aide3="Depuis /usr/share/man, .. mène dans /usr/share et ../.. dans /usr ; ./man1 descend dans man1."
+        data-aide2=". et .. existent dans chaque dossier et désignent des dossiers proches du répertoire courant ; le tilde, lui, désigne un dossier fixe."
+        data-aide3="Pour chaque ligne, pars de /usr/share/man et suis le chemin un morceau à la fois, en notant le dossier atteint après chacun ; une ligne qui commence par un tilde ne part pas de là."
       >
         <p class="q">
           Farid, dont le dossier personnel est /Users/farid, est dans /usr/share/man, sur son Mac ;
