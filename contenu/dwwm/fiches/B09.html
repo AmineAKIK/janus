@@ -2201,9 +2201,9 @@
     <!-- ET2, carte : la partie « Le poste du développeur », à quoi sert le bloc, ce que l’apprenant sait déjà, ce qu’il saura faire. -->
     <template data-etape="ET2">
       <p class="accroche">
-        Pourquoi la même ligne mène-t-elle Yasmine au bon dossier un jour, et nulle part le
-        lendemain ? Ce bloc t’apprend à savoir où une commande va agir avant de taper Entrée, et à
-        trouver seul comment une commande s’écrit.
+        Comment Yasmine pouvait-elle savoir, avant de taper Entrée, où chaque ligne allait la mener
+        ? Ce bloc t’apprend à prévoir où une commande va agir, et à trouver seul comment une
+        commande s’écrit.
       </p>
       <h3>Où tu es</h3>
       <p>
@@ -4088,11 +4088,11 @@ bin       on descend : /usr/bin</pre>
       <div
         class="ex"
         data-widget="choix"
-        data-reponse="bonne"
+        data-reponse="which"
         data-verifie
         data-aide1="Où lit-on si une commande accepte une option donnée ?"
-        data-aide2="D’après l’encadré, laquelle des deux commandes prévoit l’option demandée, sur ce Mac ?"
-        data-aide3="Quand une commande ne prévoit pas d’aide courte, quelle autre commande ouvre sa documentation ?"
+        data-aide2="Cherche l’option tapée dans chacun des deux SYNOPSIS de l’encadré : où est-elle écrite, où ne l’est-elle pas ?"
+        data-aide3="Une des trois lignes ne tape aucune option : elle ouvre une page. Des deux autres, laquelle tape une option que son SYNOPSIS n’écrit pas ?"
       >
         <details class="cadre">
           <summary>Deux SYNOPSIS du Mac de Farid, pour lire</summary>
@@ -4101,31 +4101,26 @@ bin       on descend : /usr/bin</pre>
               <span class="mono">tree</span> : une suite de crochets, dont
               <span class="mono">[--help]</span>.
             </li>
-            <li>
-              <span class="mono">ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]</span>
-              <span class="mono">[--color=when] [-D format] [file ...]</span>
-            </li>
+            <li><span class="mono">which [-as] program ...</span></li>
           </ul>
         </details>
         <p class="q">
-          Sur son Mac, Farid veut un rappel sur tree, puis sur ls. Quelles lignes lui répondent
-          toutes les deux ?
+          Sur son Mac, Farid cherche un rappel sur deux commandes, tree et which. Laquelle de ces
+          trois lignes sa machine refusera-t-elle ?
         </p>
         <ul class="options">
-          <li data-option="bonne">
-            <span class="mono">tree --help</span>, puis <span class="mono">man ls</span>
-          </li>
           <li
-            data-option="help2"
-            data-retour="Le SYNOPSIS de ls, sur ce Mac, écrit-il quelque part la seconde option tapée ?"
+            data-option="tree"
+            data-retour="Le SYNOPSIS de tree écrit-il cette option entre ses crochets ?"
           >
-            <span class="mono">tree --help</span>, puis <span class="mono">ls --help</span>
+            <span class="mono">tree --help</span>
           </li>
+          <li data-option="which"><span class="mono">which --help</span></li>
           <li
-            data-option="interne"
-            data-retour="La commande help appartient à un shell précis. Est-ce celui du Terminal d’un Mac ?"
+            data-option="man"
+            data-retour="which est un programme du Mac. Que fait man, suivi du nom d’un programme ?"
           >
-            <span class="mono">help tree</span>, puis <span class="mono">help ls</span>
+            <span class="mono">man which</span>
           </li>
         </ul>
       </div>
@@ -4134,39 +4129,38 @@ bin       on descend : /usr/bin</pre>
       <div
         class="ex"
         data-widget="choix"
-        data-reponse="bonne"
+        data-reponse="helpls"
         data-verifie
         data-aide1="Les deux commandes sont-elles de la même sorte : un programme du disque, ou une commande interne du shell ?"
-        data-aide2="Pour une commande interne de bash, quelle commande donne l’aide ?"
-        data-aide3="D’après l’encadré, laquelle des deux a une page de manuel, et laquelle n’en a pas ?"
+        data-aide2="D’après l’encadré, de quelles commandes help connaît-il l’aide ?"
+        data-aide3="Une des trois lignes demande à help l’aide d’un programme rangé sur le disque. Laquelle ?"
       >
         <details class="cadre">
           <summary>Ce que Yasmine sait, pour lire</summary>
           <ul>
+            <li>help est l’aide de bash sur ses commandes internes, et seulement sur elles.</li>
             <li>cd est une commande interne de bash ; ls est un programme rangé sur le disque.</li>
             <li>Dans Ubuntu, la page de manuel de ls liste l’option --help.</li>
           </ul>
         </details>
         <p class="q">
-          Dans Ubuntu, Yasmine veut un rappel sur cd, puis sur ls. Quelles lignes lui répondent
-          toutes les deux ?
+          Dans Ubuntu, Yasmine cherche un rappel sur deux commandes, cd et ls. Laquelle de ces trois
+          lignes ne lui donnera aucune aide ?
         </p>
         <ul class="options">
           <li
-            data-option="man2"
-            data-retour="Une commande que le shell exécute lui-même a-t-elle sa page de manuel dans Ubuntu ?"
+            data-option="helpcd"
+            data-retour="cd est-elle une commande que bash exécute lui-même ?"
           >
-            <span class="mono">man cd</span>, puis <span class="mono">man ls</span>
+            <span class="mono">help cd</span>
           </li>
           <li
-            data-option="help2"
-            data-retour="La commande help ne connaît que les commandes internes du shell. ls en est-elle une ?"
+            data-option="lshelp"
+            data-retour="Le manuel de ls, dans Ubuntu, liste-t-il cette option ?"
           >
-            <span class="mono">help cd</span>, puis <span class="mono">help ls</span>
+            <span class="mono">ls --help</span>
           </li>
-          <li data-option="bonne">
-            <span class="mono">help cd</span>, puis <span class="mono">ls --help</span>
-          </li>
+          <li data-option="helpls"><span class="mono">help ls</span></li>
         </ul>
       </div>
     </template>
@@ -5343,8 +5337,8 @@ bin       on descend : /usr/bin</pre>
         "rappel": [
           {
             "id": "B09-Q1",
-            "question": "Farid a ouvert man ls sur son Mac pour vérifier une option. La page remplit la fenêtre, et ce qu’il tape n’arrive plus au shell. Comment descend-il dans la page, et comment retrouve-t-il son invite ?",
-            "attendu": "Il descend avec la flèche du bas (ligne par ligne) ou la barre d’espace (page par page), et tape q pour fermer la page : l’invite revient. Déduit de l’étape « Le manuel ».",
+            "question": "Farid a ouvert man ls sur son Mac. Sans la fermer, il tape ls -a pour essayer une option : ses dossiers ne s’affichent pas. Pourquoi, et que fait-il d’abord ?",
+            "attendu": "La page de manuel occupe encore la fenêtre : tant qu’elle est ouverte, ses touches vont à la page, pas au shell, et l’invite n’est pas revenue. Il tape d’abord q, qui ferme la page et rend l’invite, puis sa ligne. Déduit de l’étape « Le manuel ».",
             "erreurs": []
           },
           {
@@ -5355,14 +5349,14 @@ bin       on descend : /usr/bin</pre>
           },
           {
             "id": "B09-Q3",
-            "question": "Un tutoriel écrit pour Ubuntu dit de taper ls --help pour voir l’aide de ls. Farid le tape sur son Mac, et ls refuse. Pourquoi, et que tape-t-il à la place pour lire comment ls s’écrit sur sa machine ?",
-            "attendu": "Les commandes de base d’un Mac ne viennent pas de la même famille d’outils que celles d’Ubuntu : elles n’ont presque que des formes courtes, et le ls du Mac ne prévoit pas --help. --help ne répond que si la commande l’accepte. Il tape man ls : le manuel de sa machine fait foi. Déduit de l’étape « Le manuel ».",
+            "question": "Un tutoriel écrit pour Ubuntu dit de taper cat --help. Farid, sur son Mac, lit dans son manuel : cat [-belnstuv] [file ...]. Que peut-il prévoir avant de taper cette ligne, et que tape-t-il pour lire le détail des options de son cat ?",
+            "attendu": "Que cat refusera --help : le SYNOPSIS de son Mac ne prévoit que des options d’une lettre, et une commande n’accepte que les options de son propre manuel. Les commandes de base d’un Mac n’ont presque que des formes courtes ; --help ne répond que si la commande l’accepte. Pour le détail, il tape man cat et lit la section DESCRIPTION. Déduit de l’étape « Le manuel ».",
             "erreurs": []
           },
           {
             "id": "B09-Q4",
-            "question": "Dans Ubuntu, Yasmine tape man cd et lit qu’il n’y a aucune page pour cd, alors que man ls en ouvre une. Qu’est-ce qui distingue cd de ls, et que tape-t-elle pour lire comment cd s’écrit ?",
-            "attendu": "ls est un programme rangé sur le disque, avec sa page de manuel ; cd est une commande interne du shell, que bash exécute lui-même. Elle tape help cd, l’aide de bash. Déduit de l’étape « Le manuel ».",
+            "question": "Yasmine apprend que pwd est, comme cd, une commande interne de bash. Quelle ligne lui affiche l’aide que bash a sur pwd, et pourquoi Farid ne peut-il pas taper la même dans le Terminal de son Mac ?",
+            "attendu": "help pwd : bash a sa propre aide pour ses commandes internes, celles qu’il exécute lui-même sans lancer de programme. Le Terminal du Mac fait tourner zsh, où la commande help n’existe pas. Déduit de l’étape « Le manuel ».",
             "erreurs": []
           },
           {
@@ -5379,8 +5373,8 @@ bin       on descend : /usr/bin</pre>
           },
           {
             "id": "B09-Q7",
-            "question": "Dans un Ubuntu tout neuf, Yasmine tape ls dans son dossier personnel et rien ne s’affiche. Elle tape ls -a et voit plusieurs noms, dont . et .. Pourquoi la première ligne n’affichait-elle rien, et que désignent ces deux noms ?",
-            "attendu": "ls ne montre pas les noms qui commencent par un point, et le dossier personnel d’un Ubuntu neuf ne contient que ceux-là ; l’option -a les fait paraître. Le point désigne le répertoire courant lui-même, les deux points son dossier parent (ici /home). Déduit des étapes « L’arbre et là où tu es » et « Les chemins ».",
+            "question": "Farid tape ls dans un dossier de son Mac et voit trois noms. Il tape ls -a et en voit six : les trois mêmes, plus ., .. et .cache. D’où viennent les trois noms de plus, et lesquels trouverait-il dans n’importe quel dossier ?",
+            "attendu": "L’option -a fait afficher aussi les noms qui commencent par un point, que ls ne montre pas d’habitude. Le point et les deux points existent dans tous les dossiers : le point désigne le répertoire courant lui-même, les deux points son dossier parent. .cache est un nom à point propre à ce dossier. Déduit des étapes « L’arbre et là où tu es » et « Les chemins ».",
             "erreurs": []
           },
           {
@@ -5509,8 +5503,8 @@ bin       on descend : /usr/bin</pre>
         "cartes": [
           {
             "id": "B09-K1",
-            "recto": "Pour lire : tree dessine l’arbre d’un dossier. Dans la ligne tree -d /usr, qu’est-ce qui fait de -d une option et de /usr un argument, et que dit chacun à tree ?",
-            "verso": "-d commence par un tiret : c’est une option, elle dit comment tree travaille (ne montrer que les dossiers). /usr n’a pas de tiret et n’est pas en tête : c’est un argument, il dit sur quoi tree travaille. Déduit de l’étape « Une ligne, des morceaux »."
+            "recto": "Pour lire : wc compte ce que contient un fichier. Dans la ligne wc -l notes.txt, qu’est-ce qui fait de -l une option et de notes.txt un argument, et que deviendrait la lettre l sans son tiret ?",
+            "verso": "-l commence par un tiret : c’est une option, elle dit comment wc travaille. notes.txt n’a pas de tiret et n’est pas en tête : c’est un argument, il dit sur quoi wc travaille. Sans tiret, l serait lu comme un argument de plus : un fichier nommé l. Déduit de l’étape « Une ligne, des morceaux »."
           },
           {
             "id": "B09-K2",
@@ -5524,8 +5518,8 @@ bin       on descend : /usr/bin</pre>
           },
           {
             "id": "B09-K4",
-            "recto": "Yasmine lit ls [OPTION]... [FILE]... dans Ubuntu. Farid, sur son Mac, lit ls, puis un crochet plein de lettres derrière un tiret, puis [file ...]. Qu’est-ce qui est pareil dans les deux lignes, et qu’est-ce qui change ?",
-            "verso": "La notation est la même : crochets pour le facultatif, points pour ce qui se répète. L’écriture change : le Mac liste toutes les options d’une lettre dans un seul crochet, écrit en minuscules ce que l’on choisit (file), et met les points dans le crochet. Les options elles-mêmes ne sont pas toutes les mêmes : le manuel de sa machine fait foi. Déduit de l’étape « Le manuel »."
+            "recto": "Sur un Mac, le manuel écrit cat [-belnstuv] [file ...]. Dans Ubuntu, il écrit cat [OPTION]... [FILE]... Farid dit : « Ce n’est pas la même commande. » Que lui montres-tu de commun entre les deux lignes, morceau par morceau ?",
+            "verso": "La notation est la même, seule l’écriture change. [-belnstuv] et [OPTION]... disent tous deux : des options, facultatives, aucune, une ou plusieurs ; le Mac en donne la liste, collée derrière un tiret. [file ...] et [FILE]... disent tous deux : des noms de fichiers, facultatifs et répétables ; le Mac les écrit en minuscules, les points dans le crochet. Déduit de l’étape « Le manuel »."
           },
           {
             "id": "B09-K5",
@@ -5539,8 +5533,8 @@ bin       on descend : /usr/bin</pre>
           },
           {
             "id": "B09-K7",
-            "recto": "Une page s’affiche sur un Mac, puis répond 404 une fois copiée, sans aucun changement, sur un serveur Linux. Quelle différence entre les deux machines l’explique, et où était l’erreur ?",
-            "verso": "Le disque du Mac ne tient pas compte de la casse quand on lui demande un nom ; Linux, si. L’erreur était dans les noms : le lien demande un nom (index.html) et le fichier en porte un autre (Index.html). Le Mac la cachait, le serveur la montre. Déduit de l’étape « Majuscules et minuscules »."
+            "recto": "Sur le PC de Yasmine, sous Windows, une page demande logo.png alors que le fichier s’appelle Logo.png : l’image s’affiche. Une fois le site copié sur un serveur Linux, l’image manque. Qu’est-ce qui diffère entre les deux machines, et l’erreur est-elle née pendant la copie ?",
+            "verso": "Le disque de Windows ne tient pas compte de la casse quand on lui demande un nom ; Linux, si : logo.png et Logo.png y sont deux noms, et le serveur ne trouve aucun logo.png. L’erreur n’est pas née pendant la copie : la page demandait déjà un autre nom que celui du fichier, et le PC la cachait. Déduit de l’étape « Majuscules et minuscules »."
           },
           {
             "id": "B09-K8",
@@ -5549,8 +5543,8 @@ bin       on descend : /usr/bin</pre>
           },
           {
             "id": "B09-K9",
-            "recto": "Pour lire : l’option -l de ls détaille chaque nom, son option -a montre aussi les noms à point. Yasmine tape ls -la /etc, Farid tape ls -a -l /etc. Obtiennent-ils la même liste, et pourquoi ?",
-            "verso": "Oui : plusieurs options d’une lettre peuvent se coller derrière un seul tiret, et leur ordre ne change rien. -la se lit -l -a. Déduit de l’étape « Une ligne, des morceaux »."
+            "recto": "Pour lire : l’option -l de ls détaille chaque nom, son option -R descend dans les sous-dossiers. Combien d’options y a-t-il dans la ligne ls -lR /etc, et quelle autre écriture de cette ligne donne la même liste ?",
+            "verso": "Deux : plusieurs options d’une lettre peuvent se coller derrière un seul tiret. -lR se lit -l -R, et ls -l -R /etc (ou ls -Rl /etc) donne la même liste. /etc reste l’argument. Déduit de l’étape « Une ligne, des morceaux »."
           }
         ]
       }
@@ -5635,7 +5629,7 @@ bin       on descend : /usr/bin</pre>
             "notion": "Sous Ubuntu, beaucoup d’options ont une forme longue ; les commandes de base d’un Mac n’ont presque que des formes courtes, et le manuel de sa machine fait foi",
             "montree": ["ET5"],
             "pratiquee": ["PR1", "AT1"],
-            "questions": ["B09-Q3", "B09-T3", "B09-K4"]
+            "questions": ["B09-Q3", "B09-T3"]
           },
           {
             "id": "N11",
