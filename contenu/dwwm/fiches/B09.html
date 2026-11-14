@@ -2231,7 +2231,7 @@
         manuel. Et un nom mal écrit, à une majuscule près, peut casser un site le jour où il est mis
         en ligne.
       </p>
-      <p>Une partie du bloc se passe sur ta machine, pas sur cette page.</p>
+      <p>Une partie du travail se fait sur ton ordinateur, dans ton terminal.</p>
       <h3>Ce que tu connais déjà</h3>
       <p>
         Le terminal, la fenêtre où l’on tape des commandes ; le shell, le programme qui les lit
@@ -2258,8 +2258,8 @@
       <div data-ecran="D’un dossier à l’autre">
         <p class="accroche">
           Essaie avec ton bon sens. Personne ne te note : réponds comme tu penses, ou « Je ne sais
-          pas ». À la fin de cette étape, la page te montre tes réponses et ce qui était attendu ;
-          les étapes suivantes expliquent pourquoi.
+          pas ». Ensuite, tu vois tes réponses à côté de ce qui était attendu, et la suite du bloc
+          t’explique pourquoi.
         </p>
         <div
           class="ex"
@@ -5058,37 +5058,42 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           <strong>Sous macOS :</strong> ouvre le Terminal (touche Commande ⌘ + Espace, puis «
           Terminal »).
         </p>
-        <p>
-          Tape <span class="mono">cd</span>, puis Entrée, puis <span class="mono">pwd</span> : note
-          sur ton papier le chemin affiché, celui de ton dossier personnel. Tape ensuite
-          <span class="mono">ls -a</span> : note si <span class="mono">.</span> et
-          <span class="mono">..</span> sont dans la liste, et recopie un autre nom qui commence par
-          un point.
+        <ol>
+          <li>
+            Tape <span class="mono">cd</span>, puis Entrée, puis <span class="mono">pwd</span> :
+            note sur ton papier le chemin affiché, celui de ton dossier personnel.
+          </li>
+          <li>
+            Tape <span class="mono">ls -a</span> : note si <span class="mono">.</span> et
+            <span class="mono">..</span> sont dans la liste, et recopie un autre nom qui commence
+            par un point.
+          </li>
+        </ol>
+        <p class="discret">
+          Tape chaque ligne et note ce que ta machine répond avant d’ouvrir une aide.
         </p>
         <details data-cran="1">
-          <summary>Un indice</summary>
-          <p>
-            Le chemin d’un dossier personnel commence par /home/ dans Ubuntu, par /Users/ sur un
-            Mac. Si pwd répond autre chose, as-tu tapé cd tout seul juste avant ?
-          </p>
+          <summary>Une question</summary>
+          <p>Si pwd ne répond pas ton dossier personnel, qu’as-tu tapé juste avant ?</p>
           <details data-cran="2">
-            <summary>Une piste détaillée</summary>
+            <summary>Un indice</summary>
             <p>
-              Sous Windows, la fenêtre d’Ubuntu s’ouvre parfois dans un autre dossier que ton
-              dossier personnel : cd, sans rien derrière, t’y ramène.
+              cd tout seul, sans rien derrière, ramène dans le dossier personnel. Son chemin
+              commence par /home/ dans Ubuntu, par /Users/ sur un Mac.
             </p>
             <details data-cran="3">
-              <summary>Une partie de la solution</summary>
+              <summary>L’étape détaillée</summary>
               <p>
-                Pour la liste : ls, un espace, un tiret, puis la lettre a en minuscule. Les deux
-                noms faits de points viennent en tête de la liste.
+                Sous Windows, la fenêtre d’Ubuntu s’ouvre parfois dans un autre dossier : tape cd,
+                Entrée, puis pwd, Entrée. Pour la liste : ls, un espace, un tiret, puis la lettre a
+                en minuscule.
               </p>
               <details data-cran="4">
-                <summary>La solution entière</summary>
+                <summary>Ce que répond la machine, une fois ta ligne tapée</summary>
                 <p>
-                  Tape cd, Entrée, puis pwd, Entrée : la réponse est /home/ ou /Users/ suivi de ton
-                  nom d’utilisateur. Tape ls -a, Entrée : la liste commence par . et .., puis
-                  viennent des noms à point.
+                  pwd répond /home/ ou /Users/ suivi de ton nom d’utilisateur. ls -a commence par .
+                  et .., puis viennent des noms à point. Referme, retape les deux lignes sans
+                  regarder, et note pourquoi . et .. sont dans la liste.
                 </p>
               </details>
             </details>
@@ -5126,32 +5131,37 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           qui les remet. Tape-la, puis reprends à man tree.
         </p>
         <details data-cran="1">
-          <summary>Un indice</summary>
+          <summary>Une question</summary>
           <p>
             Une page de manuel prend toute la fenêtre. Tant qu’elle est ouverte, ce que tu tapes ne
             va pas au shell : quelle touche la ferme ?
           </p>
           <details data-cran="2">
-            <summary>Une piste détaillée</summary>
+            <summary>Un indice</summary>
             <p>
               Le SYNOPSIS de ls s’arrête au titre suivant, DESCRIPTION. Recopie tout ce qui est
               entre les deux titres, même si cela tient sur plusieurs lignes.
             </p>
             <details data-cran="3">
-              <summary>Une partie de la solution</summary>
+              <summary>L’étape détaillée</summary>
               <p>
                 Pour man cd, deux réponses sont normales : une phrase qui dit qu’il n’y a pas de
                 page, dans Ubuntu ; une page qui parle de plusieurs commandes à la fois, sur un Mac,
                 à quitter avec q.
               </p>
               <details data-cran="4">
-                <summary>La solution entière</summary>
+                <summary>Ce que répond Ubuntu, une fois les cinq lignes tapées</summary>
                 <p>
-                  man tree, barre d’espace, q. man ls, recopie du SYNOPSIS, q : mots en majuscules
-                  dans Ubuntu, longue suite de lettres sur un Mac. man cd : note la phrase ou le
-                  titre de la page. help cd : une ligne à crochets dans Ubuntu ; sur un Mac, le
-                  shell répond qu’il ne connaît pas cette commande. ls --help : une ligne qui
-                  commence par Usage dans Ubuntu ; un refus sur un Mac.
+                  man ls : des mots en majuscules, ls [OPTION]... [FILE].... help cd : une ligne à
+                  crochets qui commence par cd:. ls --help : une ligne qui commence par Usage.
+                </p>
+              </details>
+              <details data-cran="4">
+                <summary>Ce que répond un Mac, une fois les cinq lignes tapées</summary>
+                <p>
+                  man ls : une longue suite de lettres dans un crochet. help cd : le shell répond
+                  qu’il ne connaît pas la commande help. ls --help : un refus, suivi d’une ligne
+                  usage.
                 </p>
               </details>
             </details>
@@ -5186,39 +5196,41 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           Si ta machine répond qu’elle ne connaît pas tree, installe-le : dans Ubuntu,
           <span class="mono">sudo apt update</span> puis
           <span class="mono">sudo apt install tree</span> ; sur un Mac,
-          <span class="mono">brew install tree</span>. Puis reprends.
+          <span class="mono">brew install tree</span>. apt et brew installent des programmes ; sudo
+          donne à apt le droit de le faire, et te demande ton mot de passe. Puis reprends.
         </p>
         <details data-cran="1">
-          <summary>Un indice</summary>
+          <summary>Une question</summary>
           <p>Par quel signe commence un chemin absolu, et d’où part un chemin qui ne l’a pas ?</p>
           <details data-cran="2">
-            <summary>Une piste détaillée</summary>
+            <summary>Un indice</summary>
             <p>
-              Depuis man, le dossier bin n’est pas au-dessous de toi. Combien de niveaux faut-il
-              remonter avant de pouvoir y redescendre ?
+              Depuis man, le dossier bin n’est pas au-dessous de toi : il faut remonter avant d’y
+              redescendre, et chaque paire de points remonte d’un dossier.
             </p>
             <details data-cran="3">
-              <summary>Une partie de la solution</summary>
+              <summary>L’étape détaillée</summary>
               <p>
                 Le chemin absolu est celui que pwd affiche quand on est dans bin. Le chemin relatif
-                remonte deux fois, puis descend une fois, le tout séparé par des barres.
+                remonte deux fois, de man à share puis de share à usr, puis descend une fois, le
+                tout séparé par des barres.
               </p>
               <details data-cran="4">
-                <summary>La solution entière</summary>
-                <p>
-                  cd /usr/share/man, pwd. Puis cd /usr/bin, pwd. Puis cd /usr/share/man, cd
-                  ../../bin, pwd. Puis cd /usr/share/man, cd .., pwd (/usr/share), cd .., pwd
-                  (/usr), cd bin, pwd (/usr/bin). Enfin tree -d -L 1 /usr.
-                </p>
+                <summary>La ligne absolue, une fois la tienne tapée</summary>
+                <p>cd /usr/bin. Referme, retape-la sans regarder, et note pourquoi elle marche.</p>
+              </details>
+              <details data-cran="4">
+                <summary>La ligne relative, une fois la tienne tapée</summary>
+                <p>cd ../../bin. Referme, retape-la sans regarder, et note d’où part ce chemin.</p>
               </details>
             </details>
           </details>
         </details>
       </div>
-      <div data-ecran="La casse, puis le retour">
+      <div data-ecran="La casse, sur ta machine">
         <p class="accroche">
           Yasmine et Farid n’ont pas la même machine, et la casse ne s’y comporte pas pareil.
-          Regarde ce que fait la tienne, puis rentre chez toi, vite.
+          Regarde ce que fait la tienne.
         </p>
         <ol>
           <li>
@@ -5229,41 +5241,71 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
             Tape <span class="mono">ls -a</span>, puis <span class="mono">ls --all</span>. Note si
             ta machine en refuse une, et laquelle.
           </li>
-          <li>
-            Tape <span class="mono">cd ~</span>, puis pwd : tu dois retrouver le chemin noté au
-            début.
-          </li>
-          <li>
-            Prends un chronomètre, celui de ton téléphone par exemple. Depuis ton dossier personnel,
-            descends de trois niveaux, un dossier à la fois (usr, puis share, puis man), vérifie
-            avec pwd, reviens dans ton dossier personnel et vérifie encore avec pwd. Recommence
-            jusqu’à le faire en moins de 30 secondes, et note ton temps.
-          </li>
         </ol>
         <details data-cran="1">
-          <summary>Un indice</summary>
+          <summary>Une question</summary>
           <p>
-            Les deux systèmes ne répondent pas de la même façon à ces lignes : une réponse
-            différente de celle d’un camarade n’est pas une panne.
+            Ta machine a-t-elle un disque qui tient compte de la casse, comme Linux, ou qui n’en
+            tient pas compte, comme celui d’un Mac ?
           </p>
           <details data-cran="2">
-            <summary>Une piste détaillée</summary>
+            <summary>Un indice</summary>
             <p>
-              Pour le chronomètre : le premier dossier se rejoint par un chemin absolu, les deux
-              suivants par un chemin relatif d’un seul nom. Le retour le plus court ne demande aucun
-              chemin.
+              Les deux systèmes ne répondent pas de la même façon à ces lignes : une réponse
+              différente de celle d’un camarade n’est pas une panne.
             </p>
             <details data-cran="3">
-              <summary>Une partie de la solution</summary>
+              <summary>L’étape détaillée</summary>
               <p>
-                Dans Ubuntu, cd /USR est refusé et ls --all accepté. Sur un Mac, c’est l’inverse :
-                cd /USR est accepté et ls --all refusé.
+                Pour cd /USR, regarde si l’invite change ou si une ligne de refus s’affiche. Pour ls
+                --all, regarde si la liste vient, ou un message qui parle d’option.
               </p>
               <details data-cran="4">
-                <summary>La solution entière</summary>
+                <summary>Ce que répond chaque système, une fois les deux lignes tapées</summary>
                 <p>
-                  Pour le chronomètre : cd /usr, cd share, cd man, pwd (/usr/share/man), cd, pwd
-                  (ton dossier personnel). Six lignes, moins de 30 secondes.
+                  Dans Ubuntu, cd /USR est refusé et ls --all accepté. Sur un Mac, c’est l’inverse :
+                  cd /USR est accepté et ls --all refusé.
+                </p>
+              </details>
+            </details>
+          </details>
+        </details>
+      </div>
+      <div data-ecran="Le retour, chronomètre en main">
+        <p class="accroche">
+          Yasmine finit sa feuille de route en rentrant chez elle. À toi de faire l’aller et le
+          retour, vite.
+        </p>
+        <p>
+          Prends un chronomètre, celui de ton téléphone par exemple. Depuis ton dossier personnel,
+          va dans /usr par un chemin absolu, puis descends un dossier à la fois dans share, puis
+          dans man. Vérifie avec pwd. Reviens dans ton dossier personnel avec
+          <span class="mono">cd ~</span>, et vérifie avec pwd que tu retrouves le chemin noté au
+          début. Recommence jusqu’à le faire en moins de 30 secondes, et note ton temps.
+        </p>
+        <details data-cran="1">
+          <summary>Une question</summary>
+          <p>
+            share est-il rangé dans ton dossier personnel, ou dans /usr ? Depuis quel dossier cd
+            share peut-il marcher ?
+          </p>
+          <details data-cran="2">
+            <summary>Un indice</summary>
+            <p>
+              Le premier dossier se rejoint par un chemin absolu ; une fois dans /usr, share et man
+              se rejoignent chacun par un chemin relatif d’un seul nom.
+            </p>
+            <details data-cran="3">
+              <summary>L’étape détaillée</summary>
+              <p>
+                Trois lignes cd pour l’aller, une ligne pwd, une ligne pour le retour, une dernière
+                ligne pwd. Six lignes en tout.
+              </p>
+              <details data-cran="4">
+                <summary>Les six lignes, une fois ton premier essai fait</summary>
+                <p>
+                  cd /usr, cd share, cd man, pwd (/usr/share/man), cd ~, pwd (ton dossier
+                  personnel). Referme, et refais le trajet chronomètre en main sans regarder.
                 </p>
               </details>
             </details>
@@ -5286,7 +5328,7 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
         était juste, et quel était le bon chemin sinon ; à la fin, la page liste tes fautes. Une
         série est réussie quand ses dix réponses sont justes, dans le temps que montre l’outil. Il
         en faut plusieurs, chacune un jour différent : la liste sous l’arbre montre celles qui
-        restent. Tu peux continuer le bloc sans attendre et revenir ici les jours suivants.
+        restent. Tu peux passer à la suite et revenir ici un autre jour.
       </p>
       <div
         class="outil"
@@ -5371,8 +5413,8 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
       </div>
       <div data-ecran="Le schéma, pour Noah">
         <p class="accroche">
-          Un cas où la suite n’est pas la même : Noah, 29 ans, suit la même formation. Il est
-          connecté à un serveur Linux, où sa promotion range son site.
+          Un cas nouveau, qui ne finit pas comme ceux de Yasmine : Noah, 29 ans, suit la même
+          formation. Il est connecté à un serveur Linux, où sa promotion range son site.
         </p>
         <p>
           <strong>Ce que tu fais</strong> : sur le schéma, tu suis la ligne de Noah depuis son
@@ -5381,17 +5423,17 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
         <figure
           class="arbre"
           role="img"
-          aria-label="L’arbre du serveur de Noah. La racine contient srv. Le dossier srv contient promo. Le dossier promo contient pages et photos, écrits en minuscules. Noah est dans pages, marqué « tu es ici »."
+          aria-label="L’arbre du serveur de Noah. La racine contient srv. Le dossier srv contient promo. Le dossier promo contient pages et photos. Noah est dans pages, marqué « tu es ici »."
           data-arbre="srv/promo/pages srv/promo/photos"
           data-ici="/srv/promo/pages"
         ></figure>
         <p>
           Noah est dans /srv/promo/pages. Pour aller voir les photos, il tape
-          <span class="mono">cd ../Photos</span>, avec un P majuscule.
+          <span class="mono">cd ../Photos</span>.
         </p>
         <p class="discret">
-          Cet exercice n’est pas noté. Tes mots peuvent différer de ceux de la fiche ; le schéma de
-          la fiche, qui s’affiche ensuite, sert à comparer.
+          Ça ne compte pas dans ta note : écris avec tes mots. Une version écrite paraît ensuite,
+          pour que tu compares.
         </p>
         <div
           class="ex"
@@ -5415,13 +5457,13 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
               data-pose
               data-champ="Que répond pwd, et quelle ligne Noah aurait-il dû taper ?"
             >
-              là où se trouve Noah après avoir tapé Entrée
+              L’arrivée de Noah, à toi de l’écrire
             </li>
           </ol>
           <div class="modele" hidden>
             <div
               class="chaine"
-              data-lecture="Le schéma de la fiche, pour Noah. Noah est dans /srv/promo/pages, sur un serveur Linux, et tape cd ../Photos. Le shell lit la commande cd et un chemin sans barre au début, donc relatif. Il part du répertoire courant, /srv/promo/pages, et les deux points le font remonter à /srv/promo. Là, il cherche un dossier nommé exactement Photos ; sous Linux la casse compte, et le dossier s’appelle photos. La commande échoue : Noah reste dans /srv/promo/pages, et pwd le dit. La ligne juste est cd ../photos."
+              data-lecture="Le schéma, pour Noah. Noah est dans /srv/promo/pages, sur un serveur Linux, et tape cd ../Photos. Le shell lit la commande cd et un chemin sans barre au début, donc relatif. Il part du répertoire courant, /srv/promo/pages, et les deux points le font remonter à /srv/promo. Là, il cherche un dossier nommé exactement Photos ; sous Linux la casse compte, et le dossier s’appelle photos. La commande échoue : Noah reste dans /srv/promo/pages, et pwd le dit. La ligne juste est cd ../photos."
             >
               <span class="boite"
                 >Noah est dans /srv/promo/pages, sur un serveur Linux, et tape cd ../Photos</span
@@ -5515,13 +5557,17 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           Dans un écran, tout ce qui suit un exercice pas encore fini reste caché jusqu’à ce qu’il
           le soit. Le texte placé après un exercice paraît donc une fois l’exercice fini ; c’est là
           que vont les reprises d’un essai du prétest (data-si-essai) : p3 après sanstiret, p4 après
-          seq, p1 après absolu, p2 après cassenom et le texte qui l’explique. Douze exercices sont
-          des prédictions (data-prediction : collees, valeur, points, dformat, longue, lsloin,
-          relatif, remonter, rentrer, echecs, casseopt, cassenom) : chacun est posé avant le texte
-          qui y répond, et une solution vue n’y demande pas d’explication écrite. Les onze autres
-          font appliquer une règle écrite plus haut sur l’écran (une convention : la notation d’un
-          SYNOPSIS, la racine, le dossier parent, le chemin absolu) à un cas que l’écran n’a pas
-          résolu.
+          seq, p1 après absolu, p2 après cassenom et le texte qui l’explique. Seize des vingt-six
+          exercices du cours sont des prédictions (data-prediction : sanstiret, collees, valeur,
+          quitter, points, dformat, longue, mancd, invite, lsloin, depart, relatif, rentrer, echecs,
+          casseopt, cassenom) : chacun est posé avant le texte qui y répond, sur l’étape de Yasmine
+          ou de Farid encore non résolue. Les dix autres (morceaux, section, seq, barre, helpcd,
+          parent, tilde, absolu, remonter, la404) font appliquer une règle écrite plus haut sur
+          l’écran (une convention : la notation d’un SYNOPSIS, la racine, le dossier parent, le
+          tilde ; ou une définition : commande, option, argument) à un cas que l’écran n’a pas
+          résolu. Tout exercice du cours dont l’apprenant a vu la solution, prédiction comprise, lui
+          demande ensuite d’expliquer cette solution (outils-bloc, avecReprise) ; seuls les essais
+          du prétest en sont dispensés.
         </li>
         <li>
           Le gabarit mélange les options de chaque choix à l’affichage, à chaque visite. Seuls les
@@ -5573,33 +5619,39 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
       <h3>La charge, comptée sur la page</h3>
       <ul>
         <li>
-          40 écrans : perception 3, carte 1, prétest 4, explications 23 (ET4 4, ET5 7, ET6 4, ET7 5,
-          ET8 3), atelier 4, aisance 1, ensemble 4 ; plus les neuf items de la pratique et les pages
-          de la restitution et du bilan, que le gabarit dessine.
+          41 écrans : perception 3, carte 1, prétest 4, explications 23 (ET4 4, ET5 7, ET6 4, ET7 5,
+          ET8 3), atelier 5, aisance 1, ensemble 4 ; plus les quatorze items de la pratique et les
+          pages de la restitution et du bilan, que le gabarit dessine.
         </li>
         <li>
-          Les saisies, comptées une par geste (un bouton qui dévoile un moment, une option, une
-          ligne d’un classement ou d’un appariement, une réponse tapée, une case du schéma, une
-          explication écrite, un critère à cocher) : 51 dans le cours (déroulés 10, paris 2, prétest
-          4, 23 exercices d’explication pour 31 saisies, schéma de Noah 4), 22 dans la pratique
-          (neuf items, dont deux explications écrites, et trois lignes déjà classées qui ne se
-          saisissent pas ; une variante seulement après une solution vue), 6 en restitution, 16
-          critères à cocher au constat de l’atelier, et 30 réponses d’aisance (trois séries de dix,
-          trois jours différents). Soit 125 saisies dans la page, dont 95 hors aisance. L’atelier y
-          ajoute une quinzaine de notes sur papier. Hors séance : huit rappels, sept vérifications
-          différées, neuf cartes.
+          Les saisies, comptées une par geste du point de vue de l’apprenant (un bouton qui dévoile
+          un moment, une option, une ligne d’un classement ou d’un appariement, une réponse tapée,
+          une case du schéma, une explication écrite, un choix de confiance, un bouton de système,
+          un critère à cocher, l’aide déclarée) : 55 dans le cours (déroulés 10, paris 2, prétest 4,
+          26 exercices d’explication pour 34 saisies, schéma de Noah 4 et sa confiance 1), 36 dans
+          la pratique (quatorze items ; les lignes déjà classées ou associées ne se saisissent pas ;
+          deux explications écrites, chacune avec sa confiance ; une variante seulement après une
+          solution vue), 12 en restitution (six réponses, six confiances), 17 au constat de
+          l’atelier (le système, quinze critères, l’aide déclarée), et 31 à l’aisance (le système,
+          puis trois séries de dix, trois jours différents). Soit 151 saisies dans la page, dont 120
+          hors aisance. Une explication demandée après une solution vue s’y ajoute quand elle
+          arrive. L’atelier y ajoute une quinzaine de notes sur papier. Hors séance : huit rappels,
+          sept vérifications différées, neuf cartes.
         </li>
       </ul>
       <h3>Les outils</h3>
       <ul>
         <li>
-          Une réponse à taper (outil saisie : tilde, lsloin, absolu, remonter, rentrer, PR1-6) : un
-          champ et « Vérifier » (ou Entrée). La réponse est juste si, espaces superflus retirés,
-          elle égale une des écritures de data-accepte ; un champ vide est refusé sans rien compter.
-          Une réponse fausse listée dans data-si-e1 reçoit le retour data-retour-e1 et signale
-          l’erreur critique E1 ; toute autre réponse fausse reçoit data-sinon. Puis l’échelle du
-          gabarit : data-aide1 à data-aide3, puis la solution, qui est la première écriture
-          acceptée, montrée entre guillemets.
+          Une réponse à taper (outil saisie : tilde, lsloin, absolu, remonter, rentrer, PR1-4,
+          PR1-9) : un champ et « Vérifier » (ou Entrée). La réponse est juste si, espaces superflus
+          retirés, elle égale une des écritures de data-accepte ; un champ vide est refusé sans rien
+          compter. Une réponse fausse listée dans data-si-e1 (ou e2, e3) reçoit le retour
+          data-retour-e1 et signale l’erreur critique ; une réponse fausse listée sous une autre clé
+          (data-si-ailleurs, data-si-casse) reçoit son retour (data-retour-ailleurs,
+          data-retour-casse) sans erreur critique : c’est là que vont les réponses fausses qui ne
+          montrent pas l’erreur, par exemple un chemin juste depuis un autre dossier (outils-bloc).
+          Toute autre réponse fausse reçoit data-sinon. Puis l’échelle : data-aide1 à data-aide3,
+          puis la solution, qui est la première écriture acceptée, montrée entre guillemets.
         </li>
         <li>
           L’arbre (figure à data-arbre) : l’outil dessine la racine en haut et une boîte par
@@ -5611,17 +5663,17 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           fiche reprennent.
         </li>
         <li>
-          Classer (outil classer : morceaux, barre, echecs, PR1-1, PR1-4) : une ligne par élément,
-          un bouton par colonne. « Vérifier » refuse tant qu’une ligne n’est pas classée. La
-          première ligne fausse donne son retour, une question sur cet élément ; une ligne qui porte
-          data-erreur signale l’erreur critique quand elle est mal classée. Une ligne data-donne
-          (PR1-1, PR1-4 et leurs variantes) est déjà classée, bloquée, avec sa raison écrite en
-          petit : l’apprenant complète les autres.
+          Classer (outil classer : morceaux, barre, echecs, PR1-1, PR1-3, PR1-6, PR1-7, PR1-12) :
+          une ligne par élément, un bouton par colonne. « Vérifier » refuse tant qu’une ligne n’est
+          pas classée. La première ligne fausse donne son retour, une question sur cet élément ; une
+          ligne qui porte data-erreur signale l’erreur critique quand elle est mal classée. Une
+          ligne data-donne (dans chacun de ces items et leurs variantes) est déjà classée, bloquée,
+          avec sa raison écrite en petit : l’apprenant complète les autres.
         </li>
         <li>
-          Associer (outil apparier, PR1-3 et PR1-8) : une ligne par élément, une liste déroulante.
+          Associer (outil apparier, PR1-5 et PR1-11) : une ligne par élément, une liste déroulante.
           La même réponse peut servir à plusieurs lignes. À la solution vue, la bonne valeur est
-          posée dans chaque ligne. Une ligne data-donne (PR1-3 et sa variante) est déjà associée,
+          posée dans chaque ligne. Une ligne data-donne (PR1-5 et sa variante) est déjà associée,
           bloquée, avec sa raison.
         </li>
         <li>
@@ -5665,11 +5717,13 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
       <h3>Les erreurs critiques et le prétest</h3>
       <ul>
         <li>
-          E1 (chemin absolu et chemin relatif) est marquée en p1, dans absolu (réponses relatives
-          listées), relatif, remonter et echecs, et en PR1-6 et PR1-7. E2 (la casse) en p2, dans
-          cassenom et la404, et en PR1-9. E3 (une option prise pour un argument) en p3, dans
-          morceaux, sanstiret, collees et dformat, et en PR1-1 et PR1-2. Chaque variante d’item
-          garde la même marque. Le prétest touche les trois avant toute explication (p4, les
+          E1 (chemin absolu et chemin relatif) est marquée en p1, dans depart, absolu (réponses
+          relatives listées), relatif, remonter et echecs, et en PR1-9 et PR1-10. E2 (la casse) en
+          p2, dans cassenom et la404, et en PR1-12 et PR1-14. E3 (une option prise pour un argument)
+          en p3, dans morceaux, sanstiret, collees et dformat, et en PR1-1, PR1-2, PR1-3, PR1-4 et
+          PR1-13. Chaque variante d’item garde la même marque. Une réponse fausse qui ne montre pas
+          l’erreur (un chemin juste depuis un autre dossier, une faute de casse dans une option) a
+          son retour, sans marque. Le prétest touche les trois avant toute explication (p4, les
           crochets, n’est pas une erreur critique), et chaque essai est repris au moment où le cours
           y répond.
         </li>
@@ -5677,36 +5731,52 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
       <h3>Les coups de pouce et la pratique</h3>
       <ul>
         <li>
-          L’échelle est celle du gabarit. Un choix : chaque option fausse est retirée, avec son
-          retour ; « Un coup de pouce » donne data-aide1, puis data-aide2, puis data-aide3, puis la
-          solution. Classer, associer et taper : rien avant une réponse fausse, puis les trois
-          aides, puis la solution. Après une solution vue, l’apprenant refait sur la variante, puis
-          explique la solution quand l’item le demande.
+          L’échelle suit la règle F03 : la première aide (data-aide1) est une question qui oriente,
+          la deuxième (data-aide2) un indice sur la notion en cause, la troisième (data-aide3)
+          l’étape détaillée, puis la solution. Un choix : chaque option fausse est retirée, avec son
+          retour, qui est lui aussi une question ; après une première réponse fausse, « Un coup de
+          pouce » ouvre les crans suivants à la demande, sans nouvelle tentative entre deux crans :
+          c’est le comportement du gabarit, que la fiche ne change pas. Classer, associer et taper :
+          rien avant une réponse fausse, puis les trois aides, puis la solution. Après une solution
+          vue, dans le cours, l’apprenant explique la solution ; dans la pratique, il refait sur la
+          variante, puis explique (expliquerApres).
         </li>
         <li>
-          L’ordre des items suit les notions, chacune de l’exercice à compléter à l’exercice seul.
-          La ligne : PR1-1 à compléter (la commande déjà classée), PR1-2 seul. Le SYNOPSIS : PR1-3
-          et PR1-4 à compléter (une ligne déjà associée ou classée, avec sa raison), PR1-5 seul,
-          SYNOPSIS replié. Les chemins : PR1-6 à compléter (le premier pas du chemin déjà suivi),
-          PR1-7 et PR1-8 seuls. La casse : PR1-9 seul. Les encadrés « Pour lire » de PR1-1, PR1-2 et
-          PR1-5 redonnent ce que fait chaque option, une convention, jamais la règle vérifiée. Deux
-          items sur neuf portent une demande d’explication (data-justifier : PR1-7 et PR1-9), sur ce
-          que l’écran ne montre pas ; l’item n’est réussi qu’avec une explication Solide, et la
-          variante pose une autre question que l’item.
+          L’ordre des items suit les notions, chacune de l’exercice à compléter (une ligne déjà
+          classée ou associée, avec sa raison) à l’exercice seul. La ligne : PR1-1 à compléter,
+          PR1-2 seul. Les options collées : PR1-3 à compléter, PR1-4 seul (à taper). Le SYNOPSIS :
+          PR1-5 à compléter, PR1-6 seul, sur un SYNOPSIS donné en entier. Le manuel de la machine et
+          --help : PR1-7 à compléter, PR1-8 seul (le SYNOPSIS de which, donné en entier). Les
+          chemins : PR1-9 à compléter (le premier pas du chemin déjà suivi), PR1-10 et PR1-11 seuls.
+          La casse des noms : PR1-12 à compléter, PR1-14 seul ; la casse des options : PR1-13 seul,
+          après PR1-12 qui la classe déjà (-l et -L). Les encadrés « Pour lire » redonnent ce que
+          fait chaque option et chaque SYNOPSIS en entier, jamais la règle vérifiée ; une option y
+          est nommée par sa lettre et son tiret, ou par son effet. Deux items sur quatorze portent
+          une demande d’explication (data-justifier : PR1-10 et PR1-14), sur ce que l’écran ne
+          montre pas ; l’item n’est réussi qu’avec une explication Solide, et la variante pose une
+          autre question que l’item.
         </li>
         <li>
-          L’atelier se fait sur la machine de l’apprenant : quatre écrans de guidage (le dossier
-          personnel et ls -a ; man tree, man ls, man cd et help cd ; trois façons de rejoindre
-          /usr/bin et tree -d -L 1 /usr ; la casse, le retour et le chronomètre), chacun avec quatre
-          crans d’aide emboîtés. Rien n’est créé ni supprimé : tous les dossiers existent déjà sur
-          les deux systèmes. Les cas où la machine ne répond pas comme prévu ont leur consigne ou
-          leur coup de pouce : un Ubuntu sans pages de manuel (le message donne la commande qui les
-          remet ; on la tape, puis on reprend man tree : la page reste à ouvrir), une fenêtre
-          d’Ubuntu qui ne s’ouvre pas dans le dossier personnel, tree absent (la commande
-          d’installation de chaque système est redonnée). help cd et ls --help se tapent sur les
-          deux systèmes ; sur un Mac, le refus est la réponse à noter. Le constat porte sur seize
-          critères observables, valables pour les deux systèmes, et l’atelier ne compte réussi que
-          sans aide.
+          L’atelier se fait sur la machine de l’apprenant : cinq écrans de guidage (le dossier
+          personnel et ls -a ; man tree, man ls, man cd, help cd et ls --help ; trois façons de
+          rejoindre /usr/bin et tree -d -L 1 /usr ; la casse ; le retour chronométré), chacun avec
+          ses crans emboîtés : une question, un indice, l’étape détaillée. Le dernier cran ne donne
+          jamais toute la suite d’un écran : il est coupé en morceaux (la ligne absolue, la ligne
+          relative ; ce que répond Ubuntu, ce que répond un Mac), chacun dans son propre cran 4,
+          dont le titre dit qu’il s’ouvre une fois sa ligne tapée, et qui demande de refermer, de
+          refaire sans regarder et d’expliquer. La page ne voit pas le terminal et le gabarit n’a
+          pas d’attribut qui retienne un cran jusqu’à une tentative : ouvrir un cran 4 fixe l’aide
+          déclarée à 4 pour vingt minutes, et l’atelier ne compte qu’à « Aucune aide ». Rien n’est
+          créé ni supprimé : tous les dossiers existent déjà sur les deux systèmes. Les cas où la
+          machine ne répond pas comme prévu ont leur consigne ou leur cran : un Ubuntu sans pages de
+          manuel (le message donne la commande qui les remet), une fenêtre d’Ubuntu qui ne s’ouvre
+          pas dans le dossier personnel, tree absent (la commande d’installation de chaque système
+          est redonnée, avec ce que font apt, brew et sudo). help cd et ls --help se tapent sur les
+          deux systèmes ; sur un Mac, le refus est la réponse à noter. Le trajet chronométré part du
+          dossier personnel par un chemin absolu (/usr), puis descend dans share et man : aucune
+          ligne de la consigne n’échoue si on la suit à la lettre. Le constat porte sur quinze
+          critères observables, valables pour les deux systèmes (cd puis pwd au début, et cd ~ puis
+          pwd au retour chronométré, ne font qu’un geste chacun).
         </li>
       </ul>
     </template>
@@ -5722,7 +5792,7 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
         "objectif": "Ouvrir la page de manuel d'une commande avec `man`, y trouver le SYNOPSIS et la quitter, et demander l'aide courte avec `--help` quand la commande l'accepte ; lire le SYNOPSIS d'une commande inconnue (crochets, barre, points de suspension) et en déduire arguments obligatoires, optionnels et répétables ; distinguer une option d'un argument, et dire pourquoi une option longue du manuel d'Ubuntu peut manquer sur un Mac ; dire ce que sont la racine `/`, le répertoire courant et le dossier personnel ; se déplacer avec `pwd`, `cd`, `ls` en chemins absolus et relatifs en prédisant chaque arrivée ; expliquer `.`, `..`, `~` ; dire que la casse compte dans les commandes, les options et les noms de fichiers, et pourquoi `Index.html` demandé sous le nom `index.html` donne une 404 sur un serveur Linux alors qu'un Mac ou Windows ne montre pas l'erreur. Aisance : 10 arrivées de `cd` prédites justes sur 10, et trois niveaux descendus puis retour au dossier personnel en moins de 30 secondes.",
         "prerequis": ["B08"],
         "pont": 9,
-        "contexte_ia": "Bloc B09 du module « Écosystème et outils du développeur » (DWWM), deuxième bloc de la partie « Le poste du développeur », après « Un shell UNIX sur son poste » et avant « Manipuler fichiers et dossiers ». Le fil : Yasmine, en formation, dans la fenêtre d’Ubuntu de son PC ; Farid, son ami, sur un Mac ; une feuille de route (aller dans /usr/share/man, rejoindre /usr/bin, afficher les dossiers de /usr avec tree sur un niveau, revenir dans son dossier) ; la page de Farid, en 404 sur le serveur ; Noah, au cas inédit de l’étape d’ensemble.\nLe modèle du bloc : le shell exécute la ligne telle qu’elle est écrite. Une ligne de commande se découpe aux espaces : la commande (le programme à lancer), des options (un morceau qui commence par un tiret, qui dit comment la commande travaille) et des arguments (sur quoi elle travaille). Sans son tiret, une lettre n’est pas une option : la commande la lit comme un argument, un nom à chercher. Plusieurs options d’une lettre se collent derrière un seul tiret (ls -la). Une option peut attendre une valeur, écrite juste après elle (tree -L 1 : le 1 est la valeur de -L, pas un argument).\nLe manuel : man suivi du nom d’une commande ouvre sa page, en anglais, découpée en sections (NAME, SYNOPSIS, DESCRIPTION) ; flèches et barre d’espace pour défiler, q pour quitter. Le SYNOPSIS donne la forme de la ligne. Les crochets entourent ce qui est facultatif (l’objectif dit « optionnel ») ; ce qui n’est pas entre crochets est obligatoire. Les points de suspension disent que l’élément qui précède peut être répété. La barre verticale sépare des choix dont on ne prend qu’un. Crochets, points et barre décrivent la ligne et ne se tapent pas. Un mot en majuscules (Ubuntu : FILE, OPTION) ou en minuscules (macOS : file, count) tient la place de ce que l’on choisit. La même commande a deux écritures : sous Ubuntu, ls [OPTION]... [FILE]... ; sur un Mac, ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,] [--color=when] [-D format] [file ...], où toutes les options d’une lettre sont dans un seul crochet et les points à l’intérieur du crochet. Autres SYNOPSIS de la fiche : seq [OPTION]... LAST, basename NAME [SUFFIX], dirname [OPTION] NAME..., timeout [OPTION] DURATION COMMAND [ARG]..., realpath [OPTION]... FILE..., readlink [OPTION]... FILE..., uname [OPTION]..., cut OPTION... [FILE]..., wc [OPTION]... [FILE]... (Ubuntu) ; head [-n count | -c bytes] [file ...], pwd [-L | -P], which [-as] program ..., cat [-belnstuv] [file ...], seq [-w] [-f format] [-s string] [-t string] [first [incr]] last, tail [-F | -f | -r] [-qv] [-b number | -c number | -n number] [file ...] (macOS). Sous Ubuntu, beaucoup d’options ont une forme courte (-a) et une forme longue (--all) ; les commandes de base d’un Mac viennent d’une autre famille d’outils et n’ont presque que des formes courtes : ls --all et ls --help échouent sur un Mac, ls -a marche partout, et le manuel de sa propre machine fait foi. --help affiche une aide courte quand la commande l’accepte (ls sous Ubuntu, tree sur les deux systèmes). cd est une commande interne du shell : le shell l’exécute lui-même. Dans Ubuntu, man cd répond « No manual entry for cd » ; help suivi du nom d’une commande interne de bash affiche l’aide de bash sur elle (help cd : cd: cd [-L|[-P [-e]] [-@]] [dir] ; help exit pour exit). Sur un Mac, man cd ouvre une page générale et help n’existe pas dans zsh.\nL’arbre : tous les dossiers tiennent dans un seul arbre qui part de la racine, / ; chaque dossier a un dossier parent, sauf la racine. Le shell est toujours dans un dossier, le répertoire courant ; pwd affiche son chemin (la suite des dossiers depuis la racine, séparés par des barres) ; l’invite de bash écrit ce chemin, celle de zsh sur un Mac seulement son dernier nom. Le dossier personnel est /home/yasmine dans Ubuntu, /Users/farid sur le Mac ; le tilde ~ le désigne. ls affiche le contenu du répertoire courant ou du dossier donné ; -l détaille, -a montre aussi les noms qui commencent par un point, dont . et ..\nLes chemins : cd suivi d’un chemin change de répertoire courant ; cd seul ou cd ~ ramène au dossier personnel. Un chemin qui commence par une barre est absolu : il part de la racine et mène au même dossier d’où que l’on parte. Un chemin sans barre au début est relatif : il part du répertoire courant, et le shell ne cherche nulle part ailleurs. . désigne le répertoire courant, .. son dossier parent (depuis /usr/share/man, cd ../../bin mène dans /usr/bin). Quand cd échoue (« No such file or directory »), on ne bouge pas, et on vérifie dans l’ordre : où suis-je (pwd), mon chemin part-il d’où je crois (barre ou non), chaque nom est-il écrit exactement, majuscules comprises (ls).\nLa casse : majuscule ou minuscule. Elle compte dans les options (ls -r inverse l’ordre, ls -R descend dans les sous-dossiers ; tree -L level limite la profondeur, tree -l suit les liens) et, dans Ubuntu, dans le nom des commandes. Sous Linux, deux noms qui ne diffèrent que par la casse sont deux noms ; le disque d’un Mac ou de Windows, tel qu’il est réglé d’habitude, affiche les majuscules mais n’en tient pas compte quand on lui demande un nom (cd /USR échoue dans Ubuntu et réussit sur un Mac). D’où la 404 de Farid : son fichier s’appelle Index.html, l’adresse demande index.html ; son Mac trouvait le fichier, le serveur Linux cherche le nom exact, ne trouve rien et répond 404. L’erreur était déjà là sur le Mac, cachée. Habitude de métier : noms en minuscules, chaque fichier demandé exactement sous son nom.\nRelation centrale : le shell lit la ligne morceau par morceau, exactement comme elle est écrite ; un chemin part de la racine s’il commence par une barre, du répertoire courant sinon ; chaque lettre compte. On peut donc dire où l’on arrive avant de taper Entrée : d’où tu pars, ce que tu tapes, où tu arrives.\nLe vocabulaire : « dossier » (et « répertoire » seulement dans « répertoire courant »), « dossier personnel », « dossier parent », « barre » pour / et « barre verticale » pour le signe des SYNOPSIS, « facultatif » pour ce qui est entre crochets, « forme courte » et « forme longue », « casse », « invite ». Hors du bloc, à ne pas exiger : créer, copier, déplacer, supprimer (bloc suivant) ; le tube, les jokers, les redirections ; la touche Tab ; les noms avec espaces ; la façon dont Windows lit ses chemins (C:\\Users\\…), que le bloc nomme seulement : chaque disque de Windows a sa lettre.\nLes pièges : les trois erreurs critiques (cd bin pris pour un chemin absolu ; Index.html et index.html pris pour un même fichier sous Linux ; tree d /usr pris pour tree -d /usr) ; taper les crochets, les points ou la barre d’un SYNOPSIS ; croire qu’une option du manuel d’Ubuntu existe forcément sur un Mac ; croire qu’un cd qui échoue déplace quand même.\nUne réponse Solide, pour la question posée et seulement pour elle : dit l’idée en mots simples ; retrouve la relation en jeu dans le cas posé (quel morceau est quoi, d’où part le chemin, quel nom exact est cherché) ; dit la condition qui la rend vraie (le tiret, la barre au début, le répertoire courant, le système dont le disque tient compte de la casse, le manuel de la machine) ; nomme chaque notion par son terme exact : commande, option, argument, valeur, SYNOPSIS, crochets, points de suspension, barre verticale, facultatif, obligatoire, racine, répertoire courant, dossier personnel, dossier parent, chemin absolu, chemin relatif, casse ; et, quand la question le demande, relie la notion à une autre (un chemin relatif dépend du répertoire courant ; une option longue dépend de la famille d’outils de la machine) ou donne un exemple ou une limite (la ligne qui aurait marché ; un chemin relatif ne vaut que depuis le bon dossier ; un Mac cache la faute de casse que le serveur montre). Ce que la question ne demande pas ne s’exige pas. Les chemins et les lignes s’écrivent exactement. Exemple, sur un cas que la fiche ne pose pas : à « Yasmine est dans /usr et tape cd log ; que répond pwd ? », « /usr : log n’a pas de barre au début, c’est un chemin relatif cherché dans /usr, qui n’a pas de dossier log ; cd échoue et elle ne bouge pas » est Solide ; « ça ne marche pas » ne l’est pas, ni « le truc avec le tiret » ou « le dossier du haut » à la place du terme.",
+        "contexte_ia": "Bloc B09 du module « Écosystème et outils du développeur » (DWWM), deuxième bloc de la partie « Le poste du développeur », après « Un shell UNIX sur son poste » et avant « Manipuler fichiers et dossiers ». Le fil : Yasmine, en formation, dans la fenêtre d’Ubuntu de son PC ; Farid, son ami, sur un Mac ; une feuille de route (aller dans /usr/share/man, rejoindre /usr/bin, afficher les dossiers de /usr avec tree sur un niveau, revenir dans son dossier) ; la page de Farid, en 404 sur le serveur ; Noah, au cas inédit de l’étape d’ensemble.\nLe modèle du bloc : le shell exécute la ligne telle qu’elle est écrite. Une ligne de commande se découpe aux espaces : la commande (le programme à lancer), des options (un morceau qui commence par un tiret, qui dit comment la commande travaille) et des arguments (sur quoi elle travaille). Sans son tiret, une lettre n’est pas une option : la commande la lit comme un argument, un nom à chercher. Plusieurs options d’une lettre se collent derrière un seul tiret (ls -la). Une option peut attendre une valeur, écrite juste après elle (tree -L 1 : le 1 est la valeur de -L, pas un argument).\nLe manuel : man suivi du nom d’une commande ouvre sa page, en anglais, découpée en sections (NAME, SYNOPSIS, DESCRIPTION) ; flèches et barre d’espace pour défiler, q pour quitter. Le SYNOPSIS donne la forme de la ligne. Les crochets entourent ce qui est facultatif (l’objectif dit « optionnel ») ; ce qui n’est pas entre crochets est obligatoire. Les points de suspension disent que l’élément qui précède peut être répété. La barre verticale sépare des choix dont on ne prend qu’un. Crochets, points et barre décrivent la ligne et ne se tapent pas. Un mot en majuscules (Ubuntu : FILE, OPTION) ou en minuscules (macOS : file, count) tient la place de ce que l’on choisit. La même commande a deux écritures : sous Ubuntu, ls [OPTION]... [FILE]... ; sur un Mac, ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,] [--color=when] [-D format] [file ...], où toutes les options d’une lettre sont dans un seul crochet et les points à l’intérieur du crochet. Autres SYNOPSIS de la fiche : seq [OPTION]... LAST, basename NAME [SUFFIX], dirname [OPTION] NAME..., timeout [OPTION] DURATION COMMAND [ARG]..., realpath [OPTION]... FILE..., readlink [OPTION]... FILE..., uname [OPTION]..., cut OPTION... [FILE]..., wc [OPTION]... [FILE]... (Ubuntu) ; head [-n count | -c bytes] [file ...], pwd [-L | -P], which [-as] program ..., cat [-belnstuv] [file ...], seq [-w] [-f format] [-s string] [-t string] [first [incr]] last, tail [-F | -f | -r] [-qv] [-b number | -c number | -n number] [file ...] (macOS). Sous Ubuntu, beaucoup d’options ont une forme courte (-a) et une forme longue (--all) ; les commandes de base d’un Mac viennent d’une autre famille d’outils et n’ont presque que des formes courtes : ls --all et ls --help échouent sur un Mac, ls -a marche partout, et le manuel de sa propre machine fait foi. --help affiche une aide courte quand la commande l’accepte (ls sous Ubuntu, tree sur les deux systèmes). cd est une commande interne du shell : le shell l’exécute lui-même. Dans Ubuntu, man cd répond « No manual entry for cd » ; help suivi du nom d’une commande interne de bash affiche l’aide de bash sur elle (help cd : cd: cd [-L|[-P [-e]] [-@]] [dir] ; help exit pour exit). Sur un Mac, man cd ouvre une page générale et help n’existe pas dans zsh.\nL’arbre : tous les dossiers tiennent dans un seul arbre qui part de la racine, / ; chaque dossier a un dossier parent, sauf la racine. Le shell est toujours dans un dossier, le répertoire courant ; pwd affiche son chemin (la suite des dossiers depuis la racine, séparés par des barres) ; l’invite de bash écrit ce chemin, celle de zsh sur un Mac seulement son dernier nom. Le dossier personnel est /home/yasmine dans Ubuntu, /Users/farid sur le Mac ; le tilde ~ le désigne. ls affiche le contenu du répertoire courant ou du dossier donné ; -l détaille, -a montre aussi les noms qui commencent par un point, dont . et ..\nLes chemins : cd suivi d’un chemin change de répertoire courant ; cd seul ou cd ~ ramène au dossier personnel. Un chemin qui commence par une barre est absolu : il part de la racine et mène au même dossier d’où que l’on parte. Un chemin sans barre au début est relatif : il part du répertoire courant, et le shell ne cherche nulle part ailleurs. . désigne le répertoire courant, .. son dossier parent (depuis /usr/share/man, cd ../../bin mène dans /usr/bin). Quand cd échoue (« No such file or directory »), on ne bouge pas, et on vérifie dans l’ordre : où suis-je (pwd), mon chemin part-il d’où je crois (barre ou non), chaque nom est-il écrit exactement, majuscules comprises (ls).\nLa casse : majuscule ou minuscule. Elle compte dans les options (ls -r inverse l’ordre, ls -R descend dans les sous-dossiers ; tree -L level limite la profondeur, tree -l suit les liens) et, dans Ubuntu, dans le nom des commandes. Sous Linux, deux noms qui ne diffèrent que par la casse sont deux noms ; le disque d’un Mac ou de Windows, tel qu’il est réglé d’habitude, affiche les majuscules mais n’en tient pas compte quand on lui demande un nom (cd /USR échoue dans Ubuntu et réussit sur un Mac). D’où la 404 de Farid : son fichier s’appelle Index.html, l’adresse demande index.html ; son Mac trouvait le fichier, le serveur Linux cherche le nom exact, ne trouve rien et répond 404. L’erreur était déjà là sur le Mac, cachée. Habitude de métier : noms en minuscules, chaque fichier demandé exactement sous son nom.\nRelation centrale : le shell lit la ligne morceau par morceau, exactement comme elle est écrite ; un chemin part de la racine s’il commence par une barre, du répertoire courant sinon ; chaque lettre compte. On peut donc dire où l’on arrive avant de taper Entrée : d’où tu pars, ce que tu tapes, où tu arrives.\nLe vocabulaire : « dossier » (et « répertoire » seulement dans « répertoire courant »), « dossier personnel », « dossier parent », « barre » pour / et « barre verticale » pour le signe des SYNOPSIS, « facultatif » pour ce qui est entre crochets, « forme courte » et « forme longue », « casse », « invite ». Hors du bloc, à ne pas exiger : créer, copier, déplacer, supprimer (bloc suivant) ; le tube, les jokers, les redirections ; la touche Tab ; les noms avec espaces ; au-delà de sa racine (C:\\ : la lettre du disque, deux-points, un antislash), la façon dont Windows lit ses chemins, relatifs compris.\nLes pièges : les trois erreurs critiques (cd bin pris pour un chemin absolu ; Index.html et index.html pris pour un même fichier sous Linux ; tree d /usr pris pour tree -d /usr) ; taper les crochets, les points ou la barre d’un SYNOPSIS ; croire qu’une option du manuel d’Ubuntu existe forcément sur un Mac ; croire qu’un cd qui échoue déplace quand même.\nUne réponse Solide, pour la question posée et seulement pour elle : dit l’idée en mots simples ; retrouve la relation en jeu dans le cas posé (quel morceau est quoi, d’où part le chemin, quel nom exact est cherché) ; dit la condition qui la rend vraie (le tiret, la barre au début, le répertoire courant, le système dont le disque tient compte de la casse, le manuel de la machine) ; nomme chaque notion par son terme exact : commande, option, argument, valeur, SYNOPSIS, crochets, points de suspension, barre verticale, facultatif, obligatoire, racine, répertoire courant, dossier personnel, dossier parent, chemin absolu, chemin relatif, casse ; et, quand la question le demande, relie la notion à une autre (un chemin relatif dépend du répertoire courant ; une option longue dépend de la famille d’outils de la machine) ou donne un exemple ou une limite (la ligne qui aurait marché ; un chemin relatif ne vaut que depuis le bon dossier ; un Mac cache la faute de casse que le serveur montre). Ce que la question ne demande pas ne s’exige pas. Les chemins et les lignes s’écrivent exactement. Exemple, sur un cas que la fiche ne pose pas : à « Yasmine est dans /usr et tape cd log ; que répond pwd ? », « /usr : log n’a pas de barre au début, c’est un chemin relatif cherché dans /usr, qui n’a pas de dossier log ; cd échoue et elle ne bouge pas » est Solide ; « ça ne marche pas » ne l’est pas, ni « le truc avec le tiret » ou « le dossier du haut » à la place du terme.",
         "sources": [
           {
             "id": "S1",
@@ -5905,8 +5975,8 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           },
           {
             "id": "B09-R4",
-            "question": "Farid, dont le dossier personnel est /Users/farid, se trouve dans /Users/farid/projet. Explique à un camarade ce que désignent pour lui ., .. et ~, en donnant le dossier que chacun désigne ici.",
-            "attendu": "Le point désigne le répertoire courant : ici /Users/farid/projet. Les deux points désignent le dossier parent du répertoire courant : ici /Users/farid. Le tilde désigne le dossier personnel de celui qui tape, d’où qu’il soit : /Users/farid. Déduit des étapes « L’arbre et là où tu es » et « Les chemins ».",
+            "question": "Farid, dont le dossier personnel est /Users/farid, se trouve dans /Users/farid/projet. Il tape cd .., revient, puis tape cd ~. Pourquoi arrive-t-il les deux fois dans /Users/farid, et laquelle des deux lignes l’y mènerait encore depuis /usr/bin ?",
+            "attendu": "Les deux points désignent le dossier parent du répertoire courant, et le parent de /Users/farid/projet se trouve être son dossier personnel ; le tilde désigne le dossier personnel, quel que soit le répertoire courant. Depuis /usr/bin, seul cd ~ le ramène dans /Users/farid : cd .. mènerait dans /usr. Déduit des étapes « L’arbre et là où tu es » et « Les chemins ».",
             "erreurs": []
           },
           {
@@ -5943,8 +6013,8 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           },
           {
             "id": "B09-Q4",
-            "question": "La commande exit, qui ferme le shell, est comme cd une commande interne de bash. Quelle ligne affiche à Yasmine l’aide que bash a sur exit, et pourquoi Farid ne peut-il pas taper la même dans le Terminal de son Mac ?",
-            "attendu": "help exit : dans bash, help suivi du nom d’une commande interne affiche l’aide que bash a sur elle. Le Terminal du Mac fait tourner zsh, où la commande help n’existe pas. Déduit de l’étape « Le manuel ».",
+            "question": "Pour lire : help est une commande de bash, le shell d’Ubuntu ; zsh, le shell du Mac, ne l’a pas. La commande exit, qui ferme le shell, est comme cd une commande interne de bash. Quelle ligne affiche à Yasmine l’aide que bash a sur exit, et pourquoi cette aide vient-elle de bash plutôt que d’une page de manuel ?",
+            "attendu": "help exit : help suivi du nom d’une commande interne affiche l’aide que bash a sur elle. exit est une commande interne : c’est le shell lui-même qui l’exécute, ce n’est pas un programme à part, et elle n’a donc pas sa propre page de manuel ; c’est bash qui porte son aide. Déduit de l’étape « Le manuel ».",
             "erreurs": []
           },
           {
@@ -5961,8 +6031,8 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           },
           {
             "id": "B09-Q7",
-            "question": "Farid tape ls dans un dossier de son Mac et voit trois noms. Il tape ls -a et en voit six : les trois mêmes, plus ., .. et .cache. D’où viennent les trois noms de plus, et lesquels trouverait-il dans n’importe quel dossier ?",
-            "attendu": "L’option -a fait afficher aussi les noms qui commencent par un point, que ls ne montre pas d’habitude. Le point et les deux points existent dans tous les dossiers : le point désigne le répertoire courant lui-même, les deux points son dossier parent. .cache est un nom à point propre à ce dossier. Déduit des étapes « L’arbre et là où tu es » et « Les chemins ».",
+            "question": "Pour lire : dans le manuel de ls, -a fait afficher aussi les noms qui commencent par un point. Farid tape ls dans un dossier de son Mac et voit trois noms. Il tape ls -a et en voit six : les trois mêmes, plus ., .. et .cache. Lesquels de ces trois noms trouverait-il dans n’importe quel dossier, et que désignent-ils ?",
+            "attendu": "Le point et les deux points existent dans tous les dossiers : le point désigne le dossier lui-même, ici le répertoire courant, et les deux points son dossier parent. .cache est un nom à point propre à ce dossier. Déduit des étapes « L’arbre et là où tu es » et « Les chemins ».",
             "erreurs": []
           },
           {
@@ -5998,7 +6068,7 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
             "id": "B09-T1",
             "type": "transfert",
             "forme": "trouver_erreur",
-            "consigne": "Pour lire : which donne l’emplacement d’une commande ; sur un Mac, son manuel écrit which [-as] program ... Farid veut tous les emplacements de tree, ce que fait l’option a, et tape which a tree. Trouve l’erreur de sa ligne et dis ce que which fait de la lettre a.",
+            "consigne": "Pour lire : which donne l’emplacement d’une commande ; sur un Mac, son manuel écrit which [-as] program ... Farid veut tous les emplacements de tree, ce que fait l’option de which écrite avec la lettre a, et tape which a tree. Trouve l’erreur de sa ligne et dis ce que which fait de la lettre a.",
             "attendu": "Il manque le tiret devant a. Sans tiret, a n’est pas une option : which le lit comme un argument, à la place de program, c’est-à-dire comme le nom d’une commande à chercher, en plus de tree (les points permettent plusieurs noms). La ligne juste est which -a tree. Erreur à repérer : prendre une option pour un argument. Déduit des étapes « Une ligne, des morceaux » et « Le manuel ».",
             "erreurs": ["E3"]
           },
@@ -6023,7 +6093,7 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
             "type": "transfert",
             "forme": "hors_champ",
             "consigne": "Sur son PC, dans une fenêtre de Windows, Yasmine lit le chemin C:\\Users\\yasmine\\Documents. Elle se dit : « Il ne commence pas par une barre, c’est donc un chemin relatif. » Peut-elle appliquer ici la règle de la barre, et pourquoi ?",
-            "attendu": "Non : la règle de la barre vaut pour les chemins d’Ubuntu et du Mac, où tous les dossiers partent d’une seule racine, /. Ce chemin est un chemin de Windows, qui part de la lettre d’un disque, C: ; le bloc n’a pas appris à lire ces chemins-là, et elle ne peut pas conclure avec la règle de la barre. Déduit des étapes « L’arbre et là où tu es » et « Les chemins ».",
+            "attendu": "Non : la règle de la barre vaut pour les chemins d’Ubuntu et du Mac, où tous les dossiers partent d’une seule racine, /. Ce chemin est un chemin de Windows : il commence par la lettre du disque, deux-points et un antislash, C:\\, qui est la racine du disque C. Il part donc de cette racine : c’est un chemin absolu, même sans barre /. Déduit des étapes « L’arbre et là où tu es » et « Les chemins ».",
             "erreurs": []
           }
         ],
@@ -6096,8 +6166,7 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
             "J’ai tapé tree -d -L 1 /usr, et noté si bin et share sont dans ce que tree affiche.",
             "J’ai tapé cd /USR en majuscules, et noté si ma machine refuse ou accepte.",
             "J’ai tapé ls -a puis ls --all, et noté si ma machine en refuse une, et laquelle.",
-            "J’ai tapé cd ~ puis pwd, et retrouvé le chemin de mon dossier personnel noté au début.",
-            "Chronomètre en main, je suis descendu de trois niveaux (usr, share, man), j’ai vérifié avec pwd, puis je suis revenu dans mon dossier personnel, le tout en moins de 30 secondes."
+            "Chronomètre en main, je suis allé dans /usr, puis share, puis man, un dossier à la fois, j’ai vérifié avec pwd, puis je suis revenu dans mon dossier personnel avec cd ~ et j’ai retrouvé avec pwd le chemin noté au début, le tout en moins de 30 secondes."
           ]
         },
         "aisance": {
@@ -6112,8 +6181,8 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           },
           {
             "id": "B09-K2",
-            "recto": "Sous Ubuntu, un manuel écrit readlink [OPTION]... FILE... et un autre uname [OPTION]... Pourquoi readlink tout seul est-il une ligne incomplète, alors que uname tout seul ne l’est pas ?",
-            "verso": "Dans readlink, FILE n’est pas entre crochets : il est obligatoire (et ses points disent qu’on peut en écrire plusieurs). Dans uname, tout ce qui suit le nom de la commande est entre crochets, donc facultatif. Déduit de l’étape « Le manuel »."
+            "recto": "Sous Ubuntu, un manuel écrit readlink [OPTION]... FILE... et un autre uname [OPTION]... readlink tout seul et uname tout seul : lesquelles sont des lignes complètes, et à quoi le vois-tu ?",
+            "verso": "uname tout seul est complet : tout ce qui suit son nom est entre crochets, donc facultatif. readlink tout seul ne l’est pas : FILE n’est pas entre crochets, il est obligatoire (et ses points disent qu’on peut en écrire plusieurs). Déduit de l’étape « Le manuel »."
           },
           {
             "id": "B09-K3",
@@ -6127,8 +6196,8 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           },
           {
             "id": "B09-K5",
-            "recto": "Le dossier /usr/share contient man ; la racine ne contient pas de dossier man. Yasmine, dans /usr/share, tape cd man, revient, puis tape cd /man. Pourquoi la première ligne réussit-elle et pas la seconde, alors qu’un seul signe les sépare ?",
-            "verso": "man, sans barre, est un chemin relatif : il part du répertoire courant, /usr/share, qui contient man. /man commence par une barre : chemin absolu, suivi depuis la racine, qui n’a pas de dossier man. La barre du début change le point de départ. Déduit de l’étape « Les chemins »."
+            "recto": "Le dossier /usr/share contient man ; la racine ne contient pas de dossier man. Yasmine, dans /usr/share, tape cd man, revient, puis tape cd /man. Où mène chacune des deux lignes, et pourquoi ?",
+            "verso": "cd man mène dans /usr/share/man : man, sans barre, est un chemin relatif, qui part du répertoire courant, /usr/share, qui contient man. cd /man échoue et elle reste dans /usr/share : /man commence par une barre, c’est un chemin absolu, suivi depuis la racine, qui n’a pas de dossier man. La barre du début change le point de départ. Déduit de l’étape « Les chemins »."
           },
           {
             "id": "B09-K6",
@@ -6142,8 +6211,8 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           },
           {
             "id": "B09-K8",
-            "recto": "Le dossier /usr contient share, en minuscules. Yasmine, dans /usr, tape cd Share/man et lit « No such file or directory ». Que vérifie-t-elle, dans quel ordre, et quelle vérification trouve la faute ?",
-            "verso": "Elle n’a pas bougé. Un : où suis-je ? pwd. Deux : mon chemin part-il d’où je crois ? Sans barre, du répertoire courant. Trois : chaque nom est-il écrit exactement, majuscules comprises ? ls montre share : c’est la troisième qui trouve la faute, Share au lieu de share. Déduit des étapes « Les chemins » et « Majuscules et minuscules »."
+            "recto": "Le dossier /usr contient share, en minuscules. Yasmine, dans /usr, tape cd Share/man et lit « No such file or directory ». Elle reprend dans l’ordre les trois vérifications de « Quand cd échoue » : où suis-je, mon chemin part-il d’où je crois, chaque nom est-il écrit exactement. Laquelle trouve la faute, et pourquoi les deux premières ne la trouvent-elles pas ?",
+            "verso": "La troisième : ls montre share, en minuscules, et elle a écrit Share. Les deux premières passent : pwd répond /usr, le bon départ, et Share/man, sans barre, part bien de /usr, comme elle le voulait. Seul le nom est faux, à une majuscule près. Déduit des étapes « Les chemins » et « Majuscules et minuscules »."
           },
           {
             "id": "B09-K9",
@@ -6218,7 +6287,7 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
             "id": "N8",
             "notion": "Plusieurs options d’une lettre se collent derrière un seul tiret",
             "montree": ["ET4"],
-            "pratiquee": [],
+            "pratiquee": ["PR1"],
             "questions": ["B09-K9"]
           },
           {
@@ -6309,7 +6378,7 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
             "id": "N21",
             "notion": "La casse compte dans les options et dans le nom des commandes",
             "montree": ["ET8"],
-            "pratiquee": [],
+            "pratiquee": ["PR1"],
             "questions": ["B09-Q8", "B09-T3"]
           },
           {
@@ -6411,7 +6480,7 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
           "cd -, la touche Tab, l’historique, les noms avec espaces : la touche Tab et les espaces sont nommés dans « À explorer plus tard », sans question",
           "Les accolades d’un SYNOPSIS, les numéros de section, la recherche dans une page, man -k, apropos, run-help : jamais nommés ou seulement dans « À explorer plus tard »",
           "Lire en anglais la section DESCRIPTION en entier : la fiche traduit les quelques lignes qu’elle cite",
-          "/mnt/c, l’Explorateur et le Finder : retrouver les dossiers de Windows depuis Ubuntu est nommé dans « À explorer plus tard » ; lire un chemin de Windows (C:\\Users\\…) n’est pas enseigné, et le transfert hors champ B09-T4 demande seulement de reconnaître que la règle de la barre ne s’y applique pas",
+          "/mnt/c, l’Explorateur et le Finder : retrouver les dossiers de Windows depuis Ubuntu est nommé dans « À explorer plus tard » ; la fiche montre seulement la racine d’un disque de Windows (C:\\, dans « L’arbre et là où tu es ») ; les chemins relatifs de Windows ne sont pas enseignés, et le transfert hors champ B09-T4 demande seulement de reconnaître qu’un chemin qui commence par C:\\ part de cette racine, sans la barre /",
           "GNU et BSD comme noms : la fiche dit « une autre famille d’outils », sans nommer ni interroger",
           "Le PATH, apt, brew, && : acquis du bloc précédent, pas de matière nouvelle",
           "Écrire du HTML, publier un site, les liens entre fichiers : la page de Farid sert de cas, rien n’est demandé sur son contenu"
