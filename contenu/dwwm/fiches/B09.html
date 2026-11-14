@@ -2089,7 +2089,7 @@
         <div class="cadre pour-lire">
           <p class="discret">Deux mots, pour lire :</p>
           <ul>
-            <li>Un dossier : une boîte qui range des fichiers et d’autres dossiers.</li>
+            <li>Un dossier : des fichiers et d’autres dossiers, rangés sous un même nom.</li>
             <li>
               /usr/share/man : le dossier man, rangé dans le dossier share, lui-même rangé dans le
               dossier usr.
@@ -2386,7 +2386,7 @@
         </p>
         <p>
           Ce que Yasmine tape avant Entrée est une <strong>ligne de commande</strong>. Le shell la
-          découpe en morceaux, à chaque espace.
+          découpe en morceaux, à chaque espace, lance la commande et lui passe les autres morceaux.
         </p>
         <ul>
           <li>
@@ -2404,8 +2404,8 @@
         <p>
           Pour te le représenter : dans « range soigneusement la chambre », le verbe est la
           commande, « soigneusement » est l’option, « la chambre » est l’argument. Ce que l’image ne
-          dit pas : en français, tu reconnais « soigneusement » sans aucun signe. Le shell, lui, ne
-          reconnaît une option qu’à son tiret.
+          dit pas : en français, tu reconnais « soigneusement » sans aucun signe. La commande, elle,
+          ne reconnaît une option qu’à son tiret.
         </p>
         <div
           class="ex"
@@ -2416,10 +2416,10 @@
           data-aide1="Combien de morceaux le shell voit-il dans cette ligne, et lequel vient en premier ?"
           data-aide2="Quel morceau commence par un tiret ?"
           data-aide3="Un morceau dit quel programme lancer, un autre comment travailler, le dernier sur quoi. Lequel porte un tiret, lequel est en tête ?"
-          data-explication="ls est le programme lancé, -l porte un tiret et dit comment travailler, /etc dit sur quoi."
+          data-explication="ls est le programme lancé, -l porte un tiret et dit comment travailler, /usr dit sur quoi."
         >
           <p class="q">
-            Farid tape <span class="mono">ls -l /etc</span> sur son Mac. Dis ce qu’est chaque
+            Farid tape <span class="mono">ls -l /usr</span> sur son Mac. Dis ce qu’est chaque
             morceau de sa ligne.
           </p>
           <ul class="a-classer">
@@ -2431,7 +2431,7 @@
             </li>
             <li
               data-element="b"
-              data-retour="Ce morceau commence par un signe que les autres n’ont pas. Que dit ce signe au shell ?"
+              data-retour="Ce morceau commence par un signe que les autres n’ont pas. Que dit ce signe à ls ?"
               data-erreur="E3"
             >
               <span class="mono">-l</span>
@@ -2440,7 +2440,7 @@
               data-element="c"
               data-retour="Ce morceau n’est pas en tête et ne porte pas de tiret. Que reste-t-il ?"
             >
-              <span class="mono">/etc</span>
+              <span class="mono">/usr</span>
             </li>
           </ul>
         </div>
@@ -2465,7 +2465,7 @@
           data-widget="choix"
           data-id="sanstiret"
           data-reponse="nom"
-          data-aide1="À quoi le shell reconnaît-il une option ?"
+          data-aide1="À quoi ls reconnaît-il une option ?"
           data-aide2="Dans la ligne de Farid, la lettre a porte-t-elle ce signe ?"
           data-aide3="Un morceau qui n’est ni la commande ni une option, qu’est-ce que c’est, et que fait ls de ce genre de morceau ?"
           data-explication="Sans tiret, a n’est pas une option : c’est un argument de plus, donc un nom que ls va chercher."
@@ -2503,13 +2503,9 @@
       </div>
       <div data-ecran="Plusieurs options">
         <p class="accroche">
-          Dans un tutoriel, Yasmine lit la ligne <span class="mono">ls -la</span>. Elle connaît -l
-          et -a, pas « -la ».
-        </p>
-        <p>
-          Plusieurs options d’une seule lettre peuvent se coller derrière un seul tiret.
-          <span class="mono">ls -la</span> et <span class="mono">ls -l -a</span> sont la même ligne,
-          et l’ordre des lettres ne change rien.
+          Dans un tutoriel, Yasmine lit la ligne <span class="mono">ls -la</span>. Elle connaît
+          l’option -a de ls, pas « -la ». Avant de la taper, elle essaie de comprendre une ligne de
+          tree écrite de la même façon.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire, deux options de tree :</p>
@@ -2522,14 +2518,16 @@
           class="ex"
           data-widget="choix"
           data-id="collees"
+          data-prediction
           data-reponse="deux"
           data-aide1="Combien de tirets y a-t-il dans la ligne, et combien de lettres derrière ?"
-          data-aide2="Que vient de dire l’écran sur plusieurs lettres derrière un seul tiret ?"
+          data-aide2="Chaque lettre derrière le tiret est-elle une option de l’encadré ?"
           data-aide3="Récris la ligne avec un tiret par lettre : qu’obtiens-tu ?"
           data-explication="-da se lit -d -a : deux options derrière un seul tiret, et un argument, /usr."
         >
           <p class="q">
-            Yasmine tape <span class="mono">tree -da /usr</span>. Combien d’options tree reçoit-il ?
+            Yasmine tape <span class="mono">tree -da /usr</span>. À ton avis, combien d’options tree
+            reçoit-il ?
           </p>
           <ul class="options">
             <li
@@ -2548,13 +2546,46 @@
             </li>
           </ul>
         </div>
+        <p>
+          Plusieurs options d’une seule lettre peuvent se coller derrière un seul tiret. Pour ls,
+          dont l’option -l affiche une ligne de détail par nom, <span class="mono">ls -la</span> et
+          <span class="mono">ls -l -a</span> sont la même ligne, et l’ordre des lettres ne change
+          rien.
+        </p>
       </div>
       <div data-ecran="Une option qui attend une valeur">
         <p class="accroche">
-          Yasmine revient à sa ligne de la troisième consigne :
-          <span class="mono">tree -d -L 1 /usr</span>. Elle y compte deux tirets, et un 1 qui n’en
-          porte pas.
+          Yasmine revient à sa ligne de la troisième consigne, « Affiche les dossiers de /usr avec
+          tree, sur un seul niveau » : <span class="mono">tree -d -L 1 /usr</span>. Elle y compte
+          deux tirets, et un 1 qui n’en porte pas.
         </p>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="valeur"
+          data-prediction
+          data-reponse="valeur"
+          data-aide1="Quel morceau précède le 2 dans la ligne ?"
+          data-aide2="La consigne de Yasmine parlait d’un nombre de niveaux : quel morceau de sa ligne l’écrivait ?"
+          data-aide3="Si le 2 était un argument, que chercherait tree, et que resterait-il à -L ?"
+          data-explication="Le 2 suit -L, qui attend un nombre : tree descend de deux niveaux dans /home."
+        >
+          <p class="q">
+            Yasmine tape <span class="mono">tree -L 2 /home</span>. À ton avis, que désigne le 2 ?
+          </p>
+          <ul class="options">
+            <li data-option="valeur">Le nombre de niveaux que demande -L.</li>
+            <li
+              data-option="argument"
+              data-retour="L’option -L attend un nombre. Où le prend-elle, si le 2 est un dossier ?"
+            >
+              Un argument : un dossier nommé 2.
+            </li>
+            <li data-option="option" data-retour="À quel signe tree reconnaît-il une option ?">
+              Une deuxième option.
+            </li>
+          </ul>
+        </div>
         <p>
           Certaines options attendent une <strong>valeur</strong>, écrite juste après elles.
           L’option -L de tree attend un nombre : combien de niveaux de dossiers descendre. Dans la
@@ -2573,32 +2604,6 @@ tree    la commande
           Comment savoir qu’une option attend une valeur ? Le manuel de la commande le dit : c’est
           ce que Yasmine apprend à lire juste après.
         </p>
-        <div
-          class="ex"
-          data-widget="choix"
-          data-id="valeur"
-          data-reponse="valeur"
-          data-aide1="Quel morceau précède le 2 dans la ligne, et qu’attend-il ?"
-          data-aide2="Une option qui attend un nombre le trouve où, par rapport à elle ?"
-          data-aide3="Si le 2 était un argument, que chercherait tree, et que resterait-il à -L ?"
-          data-explication="Le 2 suit -L, qui attend un nombre : c’est sa valeur. tree descend de deux niveaux dans /home."
-        >
-          <p class="q">
-            Yasmine tape <span class="mono">tree -L 2 /home</span>. Que désigne le 2 ?
-          </p>
-          <ul class="options">
-            <li data-option="valeur">La valeur de l’option -L.</li>
-            <li
-              data-option="argument"
-              data-retour="L’option -L attend un nombre. Où le prend-elle, si le 2 est un dossier ?"
-            >
-              Un argument : un dossier nommé 2.
-            </li>
-            <li data-option="option" data-retour="À quel signe le shell reconnaît-il une option ?">
-              Une deuxième option.
-            </li>
-          </ul>
-        </div>
       </div>
     </template>
     <!-- ET5, explication : man, les sections et q ; les crochets ; les points de suspension ; les deux écritures ; la barre verticale ; les formes longues et --help ; cd, commande interne. -->
@@ -2654,8 +2659,8 @@ SYNOPSIS
         </table>
         <p>
           La page ne tient pas dans la fenêtre : les flèches haut et bas la font défiler ligne par
-          ligne, la barre d’espace page par page. La touche <span class="mono">q</span> la ferme et
-          rend l’invite.
+          ligne, la barre d’espace page par page. Tant qu’elle est ouverte, ce que tu tapes va à la
+          page, pas au shell. La touche <span class="mono">q</span> la ferme et rend l’invite.
         </p>
         <div
           class="ex"
@@ -2668,8 +2673,9 @@ SYNOPSIS
           data-explication="Le SYNOPSIS donne, en une ou deux lignes, la forme de la ligne : c’est là qu’on voit si un nom de fichier est attendu."
         >
           <p class="q">
-            Farid tape <span class="mono">man head</span>. Il veut seulement savoir si head attend
-            un nom de fichier après ses options. Quelle section lit-il ?
+            Farid tape <span class="mono">man head</span>, le manuel de la commande qui affiche le
+            début d’un fichier. Il veut seulement savoir si head attend un nom de fichier après ses
+            options. Quelle section lit-il ?
           </p>
           <ul class="options">
             <li
@@ -2690,8 +2696,9 @@ SYNOPSIS
       </div>
       <div data-ecran="Les crochets">
         <p class="accroche">
-          Yasmine ouvre le manuel de ls dans Ubuntu. Le SYNOPSIS tient en une ligne, pleine de
-          crochets.
+          Pour la première consigne, Yasmine a tapé ls tout seul, sans nom de dossier. Était-ce
+          permis ? Elle ouvre le manuel de ls dans Ubuntu : le SYNOPSIS tient en une ligne, pleine
+          de crochets.
         </p>
         <pre
           class="listing"
@@ -2748,7 +2755,8 @@ ls [OPTION]... [FILE]...</pre>
       </div>
       <div data-ecran="Les points de suspension">
         <p class="accroche">
-          Dans le SYNOPSIS de ls, Yasmine remarque trois points derrière chaque crochet :
+          Yasmine voudrait voir d’un coup ce que contiennent /usr et /etc. Dans le SYNOPSIS de ls,
+          elle remarque trois points derrière chaque crochet :
           <span class="mono">ls [OPTION]... [FILE]...</span>
         </p>
         <div
@@ -2758,7 +2766,7 @@ ls [OPTION]... [FILE]...</pre>
           data-prediction
           data-reponse="deux"
           data-aide1="Dans la ligne de Yasmine, combien de noms de dossiers suivent ls ?"
-          data-aide2="Trois points, dans une phrase, annoncent que la liste continue. Que peuvent-ils dire ici ?"
+          data-aide2="Le SYNOPSIS écrit quelque chose juste derrière le crochet de FILE. Qu’est-ce que cela pourrait dire du nombre de noms ?"
           data-aide3="Si ls n’acceptait qu’un seul nom, le manuel aurait-il besoin d’écrire quelque chose derrière le crochet de FILE ?"
           data-explication="ls accepte plusieurs noms : il affiche le contenu de /usr, puis celui de /etc."
         >
@@ -2784,7 +2792,8 @@ ls [OPTION]... [FILE]...</pre>
         <p>
           Les <strong>points de suspension</strong> disent que l’élément écrit juste avant eux peut
           être répété. Comme les crochets, ils décrivent la ligne et ne se tapent pas. Crochets et
-          points se combinent :
+          points se combinent. Dans ces lignes, NAME tient la place d’un nom à écrire : ce n’est pas
+          la section NAME de la page.
         </p>
         <table
           class="table-lue"
@@ -2823,8 +2832,8 @@ ls [OPTION]... [FILE]...</pre>
       </div>
       <div data-ecran="Deux écritures, une notation">
         <p class="accroche">
-          Farid tape à son tour <span class="mono">man ls</span>, sur son Mac. Il ne lit pas la même
-          ligne que Yasmine.
+          Farid voudrait savoir si son ls se tape comme celui de Yasmine. Il tape à son tour
+          <span class="mono">man ls</span>, sur son Mac. Il ne lit pas la même ligne qu’elle.
         </p>
         <pre
           class="listing"
@@ -2836,34 +2845,20 @@ ls [OPTION]... [FILE]...
 Mac
 ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
    [--color=when] [-D format] [file ...]</pre>
-        <p>
-          La commande est la même, et la notation aussi : des crochets pour le facultatif, des
-          points pour ce qui se répète. Seule l’écriture change :
-        </p>
-        <ul>
-          <li>
-            Le manuel du Mac écrit toutes les options d’une lettre dans un seul crochet, collées
-            derrière un tiret : tu en prends aucune, une ou plusieurs. Cette liste change un peu
-            d’une version de macOS à l’autre.
-          </li>
-          <li>
-            Ce que tu choisis y est écrit en minuscules (file) et non en majuscules (FILE). La
-            valeur qu’attend une option aussi : format, après -D.
-          </li>
-          <li>Les points y sont à l’intérieur du crochet : [file ...] se lit comme [FILE]...</li>
-        </ul>
         <div
           class="ex"
           data-widget="choix"
           data-id="dformat"
+          data-prediction
           data-reponse="valeur"
           data-aide1="Que disent les crochets autour de ce morceau ?"
-          data-aide2="Le mot format est écrit en minuscules, sans tiret. Que tient la place d’un mot écrit ainsi, dans le manuel du Mac ?"
+          data-aide2="Dans la ligne d’Ubuntu, que fait un mot en majuscules comme FILE ? Le Mac écrit file à la même place."
           data-aide3="Qu’est-ce qui, dans une ligne, s’écrit juste après une option et lui appartient ?"
           data-explication="Les crochets rendent -D facultative, et format tient la place de la valeur qu’elle attend."
         >
           <p class="q">
-            Dans la ligne du Mac, que dit le morceau <span class="mono">[-D format]</span> ?
+            Dans la ligne du Mac, à ton avis, que dit le morceau
+            <span class="mono">[-D format]</span> ?
           </p>
           <ul class="options">
             <li data-option="valeur">
@@ -2871,7 +2866,7 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
             </li>
             <li
               data-option="mot"
-              data-retour="Un mot en minuscules, dans le manuel du Mac, se tape-t-il tel quel ?"
+              data-retour="Dans la ligne d’Ubuntu, tape-t-on le mot FILE tel quel ? Le Mac écrit file à la même place."
             >
               Il faut taper le mot format après -D.
             </li>
@@ -2884,11 +2879,27 @@ ls [-@ABCFGHILOPRSTUWabcdefghiklmnopqrstuvwxy1%,]
             </li>
           </ul>
         </div>
+        <p>
+          La commande est la même, et la notation aussi : des crochets pour le facultatif, des
+          points pour ce qui se répète. Seule l’écriture change :
+        </p>
+        <ul>
+          <li>
+            Le manuel du Mac écrit toutes les options d’une lettre dans un seul crochet, collées
+            derrière un tiret : tu en prends aucune, une ou plusieurs. Cette liste change un peu
+            d’une version de macOS à l’autre.
+          </li>
+          <li>
+            Ce que tu choisis y est écrit en minuscules (file) et non en majuscules (FILE) ; la
+            valeur qu’attend une option aussi.
+          </li>
+          <li>Les points y sont à l’intérieur du crochet : [file ...] se lit comme [FILE]...</li>
+        </ul>
       </div>
       <div data-ecran="La barre verticale">
         <p class="accroche">
-          Sur son Mac, Farid ouvre le manuel de head, la commande qui affiche le début d’un fichier.
-          Son SYNOPSIS porte un signe de plus : une barre verticale.
+          Farid veut afficher le début de son fichier notes.txt. Sur son Mac, il ouvre le manuel de
+          head : son SYNOPSIS porte un signe de plus, une barre verticale.
         </p>
         <pre
           class="listing"
@@ -2950,8 +2961,8 @@ head [-n count | -c bytes] [file ...]</pre>
       </div>
       <div data-ecran="Les formes longues">
         <p class="accroche">
-          Yasmine descend dans la page de ls, jusqu’à la section DESCRIPTION. Chaque option y a
-          souvent deux écritures.
+          Farid suit un tutoriel écrit pour Ubuntu. Le tutoriel recopie un passage de la page de ls
+          d’Ubuntu, dans la section DESCRIPTION :
         </p>
         <pre
           class="listing"
@@ -2963,11 +2974,6 @@ head [-n count | -c bytes] [file ...]</pre>
           Sous Ubuntu, beaucoup d’options ont une <strong>forme courte</strong>, un tiret et une
           lettre (-a), et une <strong>forme longue</strong>, deux tirets et un mot entier (--all).
           Les deux font la même chose.
-        </p>
-        <p>
-          Une forme longue très répandue est <span class="mono">--help</span> : la commande, au lieu
-          de travailler, affiche une aide courte. Sous Ubuntu, celle de ls commence par la ligne
-          <span class="mono">Usage: ls [OPTION]... [FILE]...</span>
         </p>
         <div
           class="ex"
@@ -2981,9 +2987,8 @@ head [-n count | -c bytes] [file ...]</pre>
           data-explication="Une commande n’accepte que les options de son propre manuel : sur ce Mac, ls ne connaît pas --all."
         >
           <p class="q">
-            Farid suit un tutoriel écrit pour Ubuntu et tape, sur son Mac,
-            <span class="mono">ls --all</span>. Le manuel de ls, sur son Mac, n’écrit que -a. À ton
-            avis, que se passe-t-il ?
+            Sur son Mac, Farid tape <span class="mono">ls --all</span>, comme le tutoriel. Le manuel
+            de ls, sur son Mac, n’écrit que -a. À ton avis, que se passe-t-il ?
           </p>
           <ul class="options">
             <li data-option="pareil" data-retour="Le ls du Mac a-t-il lu le manuel d’Ubuntu ?">
@@ -3001,14 +3006,18 @@ head [-n count | -c bytes] [file ...]</pre>
         <p>
           Les commandes de base d’un Mac ne viennent pas de la même famille d’outils que celles
           d’Ubuntu : elles n’ont presque que des formes courtes. Sur un Mac,
-          <span class="mono">ls --all</span> échoue, et <span class="mono">ls --help</span> aussi ;
-          <span class="mono">ls -a</span> marche partout. Devant un tutoriel, le manuel de ta
-          machine fait foi : <span class="mono">man ls</span>.
+          <span class="mono">ls --all</span> échoue ; <span class="mono">ls -a</span> marche
+          partout. Devant un tutoriel, le manuel de ta machine fait foi :
+          <span class="mono">man ls</span>.
         </p>
         <p>
+          Une forme longue très répandue est <span class="mono">--help</span> : la commande, au lieu
+          de travailler, affiche une aide courte. Sous Ubuntu, celle de ls commence par la ligne
+          <span class="mono">Usage: ls [OPTION]... [FILE]...</span> ; sur un Mac,
+          <span class="mono">ls --help</span> échoue, comme <span class="mono">ls --all</span>.
           tree, lui, est le même logiciel sur les deux systèmes : son SYNOPSIS écrit [--help], et
-          <span class="mono">tree --help</span> répond partout. C’est le sens de « quand la commande
-          l’accepte ».
+          <span class="mono">tree --help</span> répond partout. --help ne répond donc que si la
+          commande l’accepte : son manuel le dit.
         </p>
       </div>
       <div data-ecran="cd n’a pas sa page">
@@ -3024,8 +3033,9 @@ head [-n count | -c bytes] [file ...]</pre>
         </p>
         <ul>
           <li>
-            Dans Ubuntu, le shell bash a sa propre aide : <span class="mono">help cd</span>. Elle
-            commence par la ligne <span class="mono">cd: cd [-L|[-P [-e]] [-@]] [dir]</span>, qui se
+            Dans Ubuntu, le shell bash a sa propre aide : help, suivi du nom d’une commande
+            interne, affiche l’aide de bash sur elle. <span class="mono">help cd</span> commence par
+            la ligne <span class="mono">cd: cd [-L|[-P [-e]] [-@]] [dir]</span>, qui se
             lit comme un SYNOPSIS.
           </li>
           <li>
@@ -3122,7 +3132,7 @@ head [-n count | -c bytes] [file ...]</pre>
           était.
         </p>
         <p>
-          Le shell est toujours « dans » un dossier : c’est le
+          Le shell travaille toujours depuis un dossier : c’est le
           <strong>répertoire courant</strong> (répertoire est l’autre nom d’un dossier). Une
           commande travaille là, sauf si on lui dit autre chose.
         </p>
@@ -3146,6 +3156,10 @@ head [-n count | -c bytes] [file ...]</pre>
         >
 bash   yasmine@PC-YASMINE:/usr/share/man$
 zsh    farid@MacBook-Air man %</pre>
+        <p>
+          L’invite de bash écrit le chemin entier du répertoire courant. Celle de zsh, sur un Mac,
+          n’en écrit que le dernier nom.
+        </p>
         <div
           class="ex"
           data-widget="choix"
@@ -3227,12 +3241,29 @@ zsh    farid@MacBook-Air man %</pre>
       <div data-ecran="Voir ce qu’un dossier contient">
         <p class="accroche">
           La première consigne demandait aussi de regarder ce que /usr/share/man contient. Yasmine a
-          tapé ls.
+          tapé ls, qui affiche le contenu du répertoire courant.
         </p>
+        <div
+          class="ex"
+          data-widget="saisie"
+          data-id="lsloin"
+          data-prediction
+          data-accepte="ls /usr/share|ls /usr/share/"
+          data-clavier="La ligne à taper"
+          data-aide1="Quelle commande affiche le contenu d’un dossier ?"
+          data-aide2="Yasmine ne veut pas le contenu de son répertoire courant. Que peut-elle écrire après la commande ?"
+          data-aide3="Écris la commande, un espace, puis le chemin du dossier à regarder, depuis la racine."
+          data-sinon="Pas encore. Sans rien après elle, la commande regarde le répertoire courant : que faut-il lui donner ?"
+          data-explication="ls suivi d’un chemin affiche ce dossier-là : Yasmine reste dans /home/yasmine."
+        >
+          <p class="q">
+            Un autre jour, Yasmine est dans /home/yasmine. Elle veut voir ce que contient
+            /usr/share, sans se déplacer. À ton avis, quelle ligne, sans option, tape-t-elle ?
+          </p>
+        </div>
         <p>
-          <span class="mono">ls</span> affiche le contenu du répertoire courant. Suivi d’un chemin,
-          il affiche le contenu de ce dossier-là, sans que tu bouges. Deux options servent tous les
-          jours :
+          Suivi d’un chemin, <span class="mono">ls</span> affiche le contenu de ce dossier-là, sans
+          que tu bouges. Deux options servent tous les jours :
         </p>
         <ul>
           <li><span class="mono">-l</span> : une ligne de détail par nom.</li>
@@ -3248,23 +3279,6 @@ zsh    farid@MacBook-Air man %</pre>
           points, <span class="mono">.</span> et <span class="mono">..</span>, qui serviront à se
           déplacer.
         </p>
-        <div
-          class="ex"
-          data-widget="saisie"
-          data-id="lsloin"
-          data-accepte="ls /usr/share|ls /usr/share/"
-          data-clavier="La ligne à taper"
-          data-aide1="Quelle commande affiche le contenu d’un dossier ?"
-          data-aide2="Yasmine ne veut pas le contenu de son répertoire courant. Que peut-elle écrire après la commande ?"
-          data-aide3="Écris la commande, un espace, puis le chemin du dossier à regarder, depuis la racine."
-          data-sinon="Pas encore. Sans rien après elle, la commande regarde le répertoire courant : que faut-il lui donner ?"
-          data-explication="ls suivi d’un chemin affiche ce dossier-là : Yasmine reste dans /home/yasmine."
-        >
-          <p class="q">
-            Yasmine est dans /home/yasmine. Elle veut voir ce que contient /usr/share, sans se
-            déplacer. Quelle ligne tape-t-elle ?
-          </p>
-        </div>
       </div>
     </template>
     <!-- ET7, explication : cd, le chemin absolu, le chemin relatif, .. et ., cd seul et ~, quand cd échoue. -->
@@ -3275,8 +3289,8 @@ zsh    farid@MacBook-Air man %</pre>
           <span class="mono">cd /usr/share/man</span>.
         </p>
         <p>
-          <span class="mono">cd</span>, suivi d’un chemin, change de répertoire courant : le shell «
-          va » dans ce dossier. Un chemin qui commence par une barre est un
+          <span class="mono">cd</span>, suivi d’un chemin, change de répertoire courant : ce dossier
+          devient celui d’où le shell travaille. Un chemin qui commence par une barre est un
           <strong>chemin absolu</strong> : il part de la racine. Il mène donc au même dossier, où
           que tu sois.
         </p>
@@ -3316,20 +3330,8 @@ zsh    farid@MacBook-Air man %</pre>
       </div>
       <div data-ecran="Depuis là où tu es">
         <p class="accroche">
-          Yasmine est dans /usr. Pour descendre dans share, elle n’écrit pas tout le chemin : elle
-          tape <span class="mono">cd share</span>, et pwd répond /usr/share.
-        </p>
-        <p>
-          Un chemin qui ne commence pas par une barre est un <strong>chemin relatif</strong> : il
-          part du répertoire courant. Le shell cherche share dans le dossier où Yasmine se trouve,
-          et nulle part ailleurs.
-        </p>
-        <p>
-          Pour te le représenter : un chemin absolu est une adresse complète, bonne d’où que l’on
-          parte. Un chemin relatif est une indication, « la deuxième porte à gauche » : elle n’est
-          juste que depuis l’endroit où on la donne. Ce que l’image ne dit pas : un passant qui se
-          trompe de porte regarde autour de lui et se rattrape. Le shell ne cherche pas : si le
-          dossier n’est pas là, la commande échoue.
+          Un autre jour, Yasmine est dans /usr. Pour descendre dans share, elle n’écrit pas tout le
+          chemin : elle tape <span class="mono">cd share</span>, et pwd répond /usr/share.
         </p>
         <figure
           class="arbre"
@@ -3343,15 +3345,16 @@ zsh    farid@MacBook-Air man %</pre>
           class="ex"
           data-widget="choix"
           data-id="relatif"
+          data-prediction
           data-reponse="echoue"
           data-aide1="Le chemin tapé commence-t-il par une barre ?"
-          data-aide2="D’où part un chemin sans barre au début ?"
+          data-aide2="La veille, dans quel dossier était Yasmine quand cd share a marché ?"
           data-aide3="Sur le dessin, le dossier où se trouve Yasmine contient-il un dossier share ?"
           data-explication="share est un chemin relatif : le shell le cherche dans /home/yasmine, où il n’y en a pas."
         >
           <p class="q">
             Le lendemain, Yasmine ouvre sa fenêtre : elle est dans /home/yasmine. Elle tape
-            <span class="mono">cd share</span>. Que se passe-t-il ?
+            <span class="mono">cd share</span>. À ton avis, que se passe-t-il ?
           </p>
           <ul class="options">
             <li
@@ -3371,6 +3374,18 @@ zsh    farid@MacBook-Air man %</pre>
             </li>
           </ul>
         </div>
+        <p>
+          Un chemin qui ne commence pas par une barre est un <strong>chemin relatif</strong> : il
+          part du répertoire courant. Le shell cherche share dans le dossier où Yasmine se trouve,
+          et nulle part ailleurs.
+        </p>
+        <p>
+          Pour te le représenter : un chemin absolu est une adresse complète, bonne d’où que l’on
+          parte. Un chemin relatif est une indication, « la deuxième porte à gauche » : elle n’est
+          juste que depuis l’endroit où on la donne. Ce que l’image ne dit pas : un passant qui se
+          trompe de porte regarde autour de lui et se rattrape. Le shell ne cherche pas : si le
+          dossier n’est pas là, la commande échoue.
+        </p>
       </div>
       <div data-ecran="Remonter">
         <p class="accroche">
@@ -3383,6 +3398,34 @@ zsh    farid@MacBook-Air man %</pre>
           lui-même. Ils s’écrivent dans un chemin relatif comme des noms de dossiers :
           <span class="mono">cd ..</span> remonte d’un niveau.
         </p>
+        <figure
+          class="arbre"
+          role="img"
+          aria-label="L’arbre de Yasmine : la racine contient home et usr, home contient yasmine, usr contient bin et share, share contient man. Yasmine est dans bin, marqué « tu es ici »."
+          data-arbre="home/yasmine usr/bin usr/share/man"
+          data-ici="/usr/bin"
+        ></figure>
+        <div
+          class="ex"
+          data-widget="saisie"
+          data-id="remonter"
+          data-prediction
+          data-accepte="../share|../share/|cd ../share|cd ../share/|./../share|../../usr/share|../../usr/share/|cd ../../usr/share|cd ../../usr/share/"
+          data-clavier="Le chemin"
+          data-si-e1="/usr/share|/usr/share/|cd /usr/share|share|share/|cd share|/share|cd /share"
+          data-retour-e1="Regarde le début de ton chemin : part-il de la racine ou du répertoire courant, et de là, share est-il au-dessous ?"
+          data-aide1="Sur le dessin, share est-il au-dessous de bin, ou à côté ?"
+          data-aide2="Quel nom, fait de deux points, fait remonter au dossier parent ?"
+          data-aide3="Remonte d’abord d’un niveau, mets une barre, puis écris le dossier où redescendre."
+          data-sinon="Pas encore. Depuis bin, faut-il d’abord monter ou descendre pour atteindre share ?"
+          data-explication="Depuis /usr/bin, .. remonte à /usr, puis share y redescend : ../share."
+        >
+          <p class="q">
+            Pour s’exercer, Yasmine part de /usr/bin, marqué sur le dessin. Quel chemin relatif
+            écrit-elle après cd pour aller dans /usr/share ?
+          </p>
+        </div>
+        <p>Pour la deuxième consigne, c’est le même geste, avec une remontée de plus :</p>
         <pre
           class="listing"
           data-lecture="Le chemin ../../bin, suivi depuis /usr/share/man. Premier point point : on remonte de man à share. Second point point : on remonte de share à usr. Puis bin : on descend de usr dans bin. Arrivée : /usr/bin."
@@ -3399,31 +3442,27 @@ bin       on descend : /usr/bin</pre>
           data-ici="/usr/share/man"
           data-relatif="/usr/bin"
         ></figure>
-        <div
-          class="ex"
-          data-widget="saisie"
-          data-id="remonter"
-          data-accepte="../share|../share/|cd ../share|cd ../share/|./../share"
-          data-clavier="Le chemin"
-          data-si-e1="/usr/share|/usr/share/|cd /usr/share|share|share/|cd share|/share|cd /share"
-          data-retour-e1="Regarde le début de ton chemin : part-il de la racine ou du répertoire courant, et de là, share est-il au-dessous ?"
-          data-aide1="Sur le dessin, share est-il au-dessous de bin, ou à côté ?"
-          data-aide2="Quel nom, fait de deux points, fait remonter au dossier parent ?"
-          data-aide3="Remonte d’abord d’un niveau, mets une barre, puis écris le dossier où redescendre."
-          data-sinon="Pas encore. Depuis bin, faut-il d’abord monter ou descendre pour atteindre share ?"
-          data-explication="Depuis /usr/bin, .. remonte à /usr, puis share y redescend : ../share."
-        >
-          <p class="q">
-            Yasmine est dans /usr/bin. Quel chemin relatif écrit-elle après cd pour aller dans
-            /usr/share ?
-          </p>
-        </div>
       </div>
-      <div data-ecran="Rentrer chez soi">
+      <div data-ecran="Revenir au dossier personnel">
         <p class="accroche">
-          Dernière consigne : « Reviens dans ton dossier. » Yasmine est alors dans /usr/bin, à
-          plusieurs niveaux de chez elle.
+          Dernière consigne : « Reviens dans ton dossier. » Yasmine est alors dans /usr/bin, loin de
+          son dossier personnel.
         </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>Le tilde, ~, désigne le dossier personnel de celui qui tape.</li>
+            <li>Celui de Yasmine, dans Ubuntu, est /home/yasmine.</li>
+          </ul>
+        </div>
+        <figure
+          class="arbre"
+          role="img"
+          aria-label="L’arbre de Yasmine : la racine contient home et usr, home contient yasmine, usr contient bin et share, share contient man. Yasmine est dans bin, marqué « tu es ici ». Le dossier yasmine porte la marque du tilde."
+          data-arbre="home/yasmine usr/bin usr/share/man"
+          data-ici="/usr/bin"
+          data-maison="/home/yasmine"
+        ></figure>
         <div
           class="ex"
           data-widget="saisie"
@@ -3450,25 +3489,9 @@ bin       on descend : /usr/bin</pre>
       </div>
       <div data-ecran="Quand cd échoue">
         <p class="accroche">
-          Yasmine est dans /usr/bin et veut retourner dans /usr/share/man. Elle tape
-          <span class="mono">cd share/man</span>. Le shell répond par une ligne qui finit par « No
-          such file or directory » : ce fichier ou ce dossier n’existe pas.
+          Yasmine est dans /usr/bin et veut retourner dans /usr/share/man. Elle hésite entre
+          quatre lignes.
         </p>
-        <p>
-          Quand cd échoue, tu ne bouges pas : le répertoire courant reste le même. Trois
-          vérifications, dans cet ordre :
-        </p>
-        <ol>
-          <li>Où suis-je ? <span class="mono">pwd</span> le dit.</li>
-          <li>
-            Mon chemin part-il d’où je crois ? Avec une barre au début, de la racine ; sans barre,
-            du répertoire courant.
-          </li>
-          <li>
-            Chaque nom est-il écrit exactement comme dans le dossier, majuscules comprises ?
-            <span class="mono">ls</span> montre les noms.
-          </li>
-        </ol>
         <figure
           class="arbre"
           role="img"
@@ -3480,6 +3503,7 @@ bin       on descend : /usr/bin</pre>
           class="ex"
           data-widget="classer"
           data-id="echecs"
+          data-prediction
           data-colonnes="oui=Elle arrive dans /usr/share/man|non=La commande échoue"
           data-reponse="a=oui,b=non,c=oui,d=non"
           data-aide1="Pour chaque ligne, le chemin commence-t-il par une barre ?"
@@ -3488,7 +3512,7 @@ bin       on descend : /usr/bin</pre>
           data-explication="Deux chemins arrivent : l’absolu, depuis la racine par usr, et le relatif qui remonte d’abord. Les deux autres cherchent share là où il n’est pas."
         >
           <p class="q">
-            Yasmine, toujours dans /usr/bin, essaie quatre lignes. Pour chacune, dis où elle mène.
+            Yasmine, dans /usr/bin, regarde quatre lignes. Pour chacune, dis où elle mènerait.
           </p>
           <ul class="a-classer">
             <li
@@ -3519,6 +3543,26 @@ bin       on descend : /usr/bin</pre>
             </li>
           </ul>
         </div>
+        <p>
+          Yasmine avait d’abord tapé <span class="mono">cd share/man</span>. Le shell a répondu par
+          une ligne qui finit par « No such file or directory » : ce fichier ou ce dossier n’existe
+          pas.
+        </p>
+        <p>
+          Quand cd échoue, tu ne bouges pas : le répertoire courant reste le même. Trois
+          vérifications, dans cet ordre :
+        </p>
+        <ol>
+          <li>Où suis-je ? <span class="mono">pwd</span> le dit.</li>
+          <li>
+            Mon chemin part-il d’où je crois ? Avec une barre au début, de la racine ; sans barre,
+            du répertoire courant.
+          </li>
+          <li>
+            Chaque nom est-il écrit exactement comme dans le dossier, majuscules comprises ?
+            <span class="mono">ls</span> montre les noms.
+          </li>
+        </ol>
         <p>La ligne qui réussit avec un chemin relatif, en un trait :</p>
         <div
           class="schema-bloc"
@@ -3541,35 +3585,24 @@ bin       on descend : /usr/bin</pre>
     <template data-etape="ET8">
       <div data-ecran="Dans les commandes et les options">
         <p class="accroche">
-          Dans la page de manuel de ls, sous Ubuntu, Yasmine tombe sur deux options qui ne diffèrent
-          que par la taille d’une lettre.
-        </p>
-        <pre
-          class="listing"
-          data-lecture="Deux options de ls, lues dans son manuel sous Ubuntu. -r minuscule, ou --reverse : reverse order while sorting, inverser l’ordre du tri. -R majuscule, ou --recursive : list subdirectories recursively, afficher aussi le contenu des sous-dossiers."
-        >
--r, --reverse
-       reverse order while sorting
--R, --recursive
-       list subdirectories recursively</pre>
-        <p>
-          La <strong>casse</strong> d’une lettre, c’est le fait qu’elle soit en majuscule ou en
-          minuscule. Le shell et les commandes en tiennent compte :
-          <span class="mono">-r</span> inverse l’ordre de la liste,
-          <span class="mono">-R</span> descend dans tous les sous-dossiers. Ce sont deux options,
-          sur un Mac aussi. Dans Ubuntu, le nom d’une commande suit la même règle : LS n’est pas ls.
+          Yasmine veut limiter tree à deux niveaux. Dans le manuel de tree, elle trouve deux options
+          qui ne diffèrent que par la taille d’une lettre.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire, deux options de tree :</p>
           <ul>
             <li>-L level : descendre de ce nombre de niveaux, pas plus.</li>
-            <li>-l : suivre les liens vers d’autres dossiers. Elle n’attend pas de valeur.</li>
+            <li>
+              -l : suivre les liens, ces noms qui renvoient vers un autre dossier. Elle n’attend pas
+              de valeur.
+            </li>
           </ul>
         </div>
         <div
           class="ex"
           data-widget="choix"
           data-id="casseopt"
+          data-prediction
           data-reponse="dossier"
           data-aide1="Les deux lettres de l’encadré sont-elles la même option ?"
           data-aide2="L’option que Yasmine a tapée attend-elle une valeur ?"
@@ -3577,8 +3610,8 @@ bin       on descend : /usr/bin</pre>
           data-explication="-l minuscule n’attend pas de valeur : le 2 devient un argument, donc un dossier que tree cherche."
         >
           <p class="q">
-            Yasmine veut limiter tree à deux niveaux et tape
-            <span class="mono">tree -l 2 /usr</span>, avec un l minuscule. Que fait tree du 2 ?
+            Yasmine tape <span class="mono">tree -l 2 /usr</span>, avec un l minuscule. À ton avis,
+            que fait tree du 2 ?
           </p>
           <ul class="options">
             <li
@@ -3596,11 +3629,62 @@ bin       on descend : /usr/bin</pre>
             </li>
           </ul>
         </div>
+        <p>
+          La <strong>casse</strong> d’une lettre, c’est le fait qu’elle soit en majuscule ou en
+          minuscule. Les commandes en tiennent compte : pour tree, -l et -L sont deux options. Le
+          manuel de ls, sous Ubuntu, en montre deux autres :
+        </p>
+        <pre
+          class="listing"
+          data-lecture="Deux options de ls, lues dans son manuel sous Ubuntu. -r minuscule, ou --reverse : reverse order while sorting, inverser l’ordre du tri. -R majuscule, ou --recursive : list subdirectories recursively, afficher aussi le contenu des sous-dossiers."
+        >
+-r, --reverse
+       reverse order while sorting
+-R, --recursive
+       list subdirectories recursively</pre>
+        <p>
+          <span class="mono">-r</span> inverse l’ordre de la liste, <span class="mono">-R</span>
+          descend dans tous les sous-dossiers : deux options, sur un Mac aussi. Dans Ubuntu, le nom
+          d’une commande suit la même règle : LS n’est pas ls.
+        </p>
       </div>
       <div data-ecran="Dans les noms">
         <p class="accroche">
-          La casse compte aussi dans les noms de fichiers et de dossiers. Mais là, Yasmine et Farid
-          n’ont pas la même machine.
+          Le formateur demande à Yasmine, dans Ubuntu, et à Farid, sur son Mac, de taper
+          <span class="mono">cd /USR</span>, en majuscules. Le dossier, lui, s’appelle usr.
+        </p>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="cassenom"
+          data-prediction
+          data-reponse="farid"
+          data-aide1="Sur le Mac de Farid, sa page Index.html s’affichait quand on demandait index.html. Que fait donc son disque des majuscules ?"
+          data-aide2="Sur le serveur Linux, la même demande recevait 404. Que fait donc Linux des majuscules ?"
+          data-aide3="Dans Ubuntu, la racine contient-elle un dossier écrit USR, en majuscules ?"
+          data-explication="Le disque du Mac trouve usr quand on demande USR ; Ubuntu cherche un dossier nommé exactement USR, qui n’existe pas."
+        >
+          <p class="q">À ton avis, qui arrive dans le dossier usr ?</p>
+          <ul class="options">
+            <li
+              data-option="deux"
+              data-retour="Sous Linux, USR et usr sont-ils le même nom ? Pense au serveur de Farid."
+              data-erreur="E2"
+            >
+              Les deux.
+            </li>
+            <li data-option="farid">Farid seulement.</li>
+            <li
+              data-option="aucun"
+              data-retour="Sur son Mac, la page de Farid s’affichait-elle malgré la majuscule ?"
+            >
+              Ni l’un ni l’autre.
+            </li>
+          </ul>
+        </div>
+        <p>
+          La casse compte aussi dans les noms de fichiers et de dossiers, mais pas de la même façon
+          sur toutes les machines.
         </p>
         <p>
           Sous Linux, donc dans Ubuntu et sur la plupart des serveurs, deux noms qui ne diffèrent
@@ -3611,37 +3695,6 @@ bin       on descend : /usr/bin</pre>
           affiche le nom avec ses majuscules, mais ne tient pas compte de la casse quand on le lui
           demande. Index.html et index.html y désignent le même fichier.
         </p>
-        <div
-          class="ex"
-          data-widget="choix"
-          data-id="cassenom"
-          data-reponse="farid"
-          data-aide1="Le dossier s’appelle usr, en minuscules. Sur quelle machine USR est-il un autre nom ?"
-          data-aide2="Quel disque ne tient pas compte de la casse quand on lui demande un nom ?"
-          data-aide3="Dans Ubuntu, la racine contient-elle un dossier écrit USR, en majuscules ?"
-          data-explication="Le disque du Mac trouve usr quand on demande USR ; Ubuntu cherche un dossier nommé exactement USR, qui n’existe pas."
-        >
-          <p class="q">
-            Farid, sur son Mac, et Yasmine, dans Ubuntu, tapent chacun
-            <span class="mono">cd /USR</span>, en majuscules. Qui arrive dans le dossier usr ?
-          </p>
-          <ul class="options">
-            <li
-              data-option="deux"
-              data-retour="Sous Linux, USR et usr sont-ils le même nom ?"
-              data-erreur="E2"
-            >
-              Les deux.
-            </li>
-            <li data-option="farid">Farid seulement.</li>
-            <li
-              data-option="aucun"
-              data-retour="Le disque d’un Mac tient-il compte de la casse quand on lui demande un nom ?"
-            >
-              Ni l’un ni l’autre.
-            </li>
-          </ul>
-        </div>
         <p data-si-essai="p2:faux">
           Pour les deux fichiers du serveur, tu avais répondu
           <span data-essai-rappel="p2">autre chose</span>. Sous Linux, Index.html et index.html sont
@@ -3684,13 +3737,13 @@ bin       on descend : /usr/bin</pre>
           </ul>
         </div>
         <p>
-          L’erreur était déjà là sur le Mac : le lien demandait un nom, le fichier en portait un
+          L’erreur était déjà là sur le Mac : l’adresse demandait un nom, le fichier en portait un
           autre. Le disque du Mac la cachait, parce qu’il ne tient pas compte de la casse ; le
           serveur Linux la montre. Windows l’aurait cachée de la même façon.
         </p>
         <p>
           D’où une habitude de métier : nommer les fichiers et les dossiers d’un site tout en
-          minuscules, et écrire chaque lien exactement comme le nom du fichier.
+          minuscules, et demander chaque fichier exactement sous son nom.
         </p>
       </div>
     </template>
@@ -3822,23 +3875,23 @@ bin       on descend : /usr/bin</pre>
           </ul>
         </div>
         <p class="q">
-          Farid veut le détail de ce que contient le dossier /etc de son Mac. Quelle ligne tape-t-il
-          ?
+          Farid veut le détail de ce que contient son dossier personnel, /Users/farid, sur son Mac.
+          Quelle ligne tape-t-il ?
         </p>
         <ul class="options">
-          <li data-option="bonne"><span class="mono">ls -l /etc</span></li>
+          <li data-option="bonne"><span class="mono">ls -l /Users/farid</span></li>
           <li
             data-option="sans"
             data-retour="Dans cette ligne, qu’est-ce qui dit à ls que la lettre l n’est pas un nom à chercher ?"
             data-erreur="E3"
           >
-            <span class="mono">ls l /etc</span>
+            <span class="mono">ls l /Users/farid</span>
           </li>
           <li
             data-option="envers"
             data-retour="Quel morceau le shell prend-il pour la commande à lancer ?"
           >
-            <span class="mono">-l ls /etc</span>
+            <span class="mono">-l ls /Users/farid</span>
           </li>
         </ul>
       </div>
@@ -5543,8 +5596,8 @@ bin       on descend : /usr/bin</pre>
           },
           {
             "id": "B09-K9",
-            "recto": "Pour lire : l’option -l de ls détaille chaque nom, son option -R descend dans les sous-dossiers. Combien d’options y a-t-il dans la ligne ls -lR /etc, et quelle autre écriture de cette ligne donne la même liste ?",
-            "verso": "Deux : plusieurs options d’une lettre peuvent se coller derrière un seul tiret. -lR se lit -l -R, et ls -l -R /etc (ou ls -Rl /etc) donne la même liste. /etc reste l’argument. Déduit de l’étape « Une ligne, des morceaux »."
+            "recto": "Pour lire : l’option -l de ls détaille chaque nom, son option -R descend dans les sous-dossiers. Combien d’options y a-t-il dans la ligne ls -lR /usr, et quelle autre écriture de cette ligne donne la même liste ?",
+            "verso": "Deux : plusieurs options d’une lettre peuvent se coller derrière un seul tiret. -lR se lit -l -R, et ls -l -R /usr (ou ls -Rl /usr) donne la même liste. /usr reste l’argument. Déduit de l’étape « Une ligne, des morceaux »."
           }
         ]
       }
