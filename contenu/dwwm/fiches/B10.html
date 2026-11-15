@@ -2845,6 +2845,7 @@ site/img:</pre>
           data-explication="Le chemin part d’atelier : site, puis css, puis le nom du fichier. touch site/css/style.css crée style.css dans css."
           data-variante-enonce="Pour lire : le projet impose logo.png dans le dossier img de site. Farid est dans atelier, sur son Mac, avec les dossiers site, css et img déjà créés. Écris la ligne qui crée logo.png dans img."
           data-variante-accepte="touch site/img/logo.png|touch ./site/img/logo.png"
+          data-variante-reponse="touch site/img/logo.png"
           data-variante-clavier="La ligne"
           data-variante-si-ici="touch logo.png"
           data-variante-retour-ici="Dans quel dossier ta ligne crée-t-elle logo.png ?"
@@ -2959,7 +2960,7 @@ docs/js:</pre>
         </div>
         <pre
           class="listing"
-          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient rien."
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, index.html ; site/css contient style.css."
         >
 $ ls -R site
 site:
@@ -2986,6 +2987,7 @@ site/img:</pre>
           data-explication="style.css est sous le titre site/css : il est rangé dans le dossier css de site. Le titre site/img n’a pas de nom dessous : img est vide."
           data-variante-enonce="Pour lire : ls -R écrit un titre par dossier, puis ses noms. Farid lit : cours: img js ; cours/img: rien ; cours/js: app.js. Dans quel dossier est rangé app.js ?"
           data-variante-accepte="js|cours/js|le dossier js"
+          data-variante-reponse="js"
           data-variante-clavier="Le nom du dossier"
           data-variante-si-site="cours|le dossier cours"
           data-variante-retour-site="Le fichier est-il sous le titre cours:, ou sous un titre plus long ?"
@@ -3045,6 +3047,7 @@ logo.png  style.css</pre>
           data-explication="style.css est rangé sous le titre site/img, alors que le formateur le veut dans css : site/css n’a que son titre, il est vide."
           data-variante-enonce="Pour lire : le formateur impose index.html, style.css et logo.png. Farid tape ls -R site et lit : site contient css, img et index.htm ; site/css contient style.css ; site/img contient logo.png. Quel nom est mal écrit ?"
           data-variante-accepte="index.htm"
+          data-variante-reponse="index.htm"
           data-variante-clavier="Le nom du fichier"
           data-variante-aide1="Compare chaque nom du listing avec celui que le formateur impose, lettre à lettre."
           data-variante-aide2="Un nom du listing ressemble à un nom imposé, sans lui être identique."
@@ -3386,6 +3389,7 @@ logo.png</pre>
           data-explication="cp copie le dossier img, puis son seul fichier, logo.png : deux éléments, donc deux lignes."
           data-variante-enonce="Pour lire : sous Ubuntu, l’option -v de cp fait écrire une ligne par élément copié, le dossier compris. Farid copie un dossier css qui contient style.css et reset.css, avec cp -Rv css css-copie. Combien de lignes sont écrites sous Ubuntu ?"
           data-variante-accepte="3|trois|Trois"
+          data-variante-reponse="3"
           data-variante-clavier="Le nombre de lignes"
           data-variante-si-deux="2|deux|Deux"
           data-variante-retour-deux="Le dossier css, qu’on copie, compte-t-il pour un élément, d’après la phrase « pour lire » ?"
@@ -4138,6 +4142,7 @@ $ pwd
           data-explication="Yasmine est dans site/css : .. désigne site, et ../img est site/img. La ligne détruit img et logo.png."
           data-variante-enonce="Farid est dans /Users/farid/atelier/site/img, sur son Mac (pwd le dit). Un forum lui conseille la ligne rm -rf ../css, qu’il ne tape pas. Écris le chemin du dossier que détruit cette ligne, depuis atelier."
           data-variante-accepte="site/css|./site/css|/Users/farid/atelier/site/css"
+          data-variante-reponse="site/css"
           data-variante-clavier="Le chemin"
           data-variante-si-css="site/img/css|img/css"
           data-variante-retour-css="Les deux points désignent-ils le répertoire courant, ou son parent ?"
@@ -4364,6 +4369,7 @@ C:\atelier&gt; rmdir /s site\css2</pre>
           data-explication="mv se dit move dans Cmd, et les chemins s’écrivent avec l’antislash : move site\css site\styles."
           data-variante-enonce="Pour lire : Cmd écrit les chemins avec l’antislash ; copy est son nom pour cp. Farid lit en bash la ligne cp site/index.html site/home.html. Écris la ligne équivalente, pour Cmd."
           data-variante-accepte="copy site\index.html site\home.html"
+          data-variante-reponse="copy site\index.html site\home.html"
           data-variante-clavier="La ligne de Cmd"
           data-variante-si-barres="copy site/index.html site/home.html"
           data-variante-retour-barres="Dans ta ligne, les chemins sont-ils écrits avec la barre de Cmd ?"
@@ -4498,19 +4504,21 @@ C:\atelier&gt; rmdir /s site\css2</pre>
         class="ex"
         data-widget="saisie"
         data-verifie
-        data-accepte="mkdir -p docs/js/lib|mkdir -p ./docs/js/lib"
+        data-accepte="mkdir -p app/js/lib app/img|mkdir -p app/img app/js/lib|mkdir -p ./app/js/lib ./app/img|mkdir -p ./app/img ./app/js/lib"
         data-clavier="La ligne"
-        data-si-sansp="mkdir docs/js/lib|mkdir ./docs/js/lib"
-        data-retour-sansp="Dans un atelier vide, docs et js existent-ils quand mkdir crée lib ?"
-        data-aide1="Quels dossiers du chemin docs/js/lib existent déjà, dans un atelier vide ?"
+        data-si-sansp="mkdir app/js/lib app/img|mkdir app/img app/js/lib"
+        data-retour-sansp="Dans un atelier vide, app et js existent-ils quand mkdir crée lib ?"
+        data-si-seul="mkdir -p app/js/lib|mkdir -p app/img"
+        data-retour-seul="Combien de dossiers la consigne demande-t-elle de créer, sans compter ceux qui les contiennent ?"
+        data-aide1="Quels dossiers des chemins app/js/lib et app/img existent déjà, dans un atelier vide ?"
         data-aide2="Une option de mkdir crée les dossiers du chemin qui manquent."
-        data-aide3="Écris la commande, l’option qui crée les dossiers manquants, puis le chemin complet, séparés par des espaces."
-        data-sinon="Pas encore. Ta ligne a-t-elle la commande, une option qui crée les dossiers manquants, puis le chemin ?"
+        data-aide3="Écris la commande, l’option qui crée les dossiers manquants, puis les deux chemins complets, séparés par des espaces."
+        data-sinon="Pas encore. Ta ligne a-t-elle la commande, une option qui crée les dossiers manquants, puis un chemin par dossier demandé ?"
       >
         <p class="discret">Atelier est vide.</p>
         <p class="q">
-          Dans atelier, qui est vide, écris une seule ligne qui crée le dossier docs, le dossier js
-          dedans, puis le dossier lib dans js.
+          Dans atelier, qui est vide, écris une seule ligne qui crée le dossier app avec, dedans, un
+          dossier img et un dossier js, puis le dossier lib dans js.
         </p>
       </div>
     </template>
@@ -4519,59 +4527,81 @@ C:\atelier&gt; rmdir /s site\css2</pre>
         class="ex"
         data-widget="saisie"
         data-verifie
-        data-accepte="mkdir -p cours/css/fonts|mkdir -p ./cours/css/fonts"
+        data-accepte="mkdir -p cours/css/fonts cours/js|mkdir -p cours/js cours/css/fonts|mkdir -p ./cours/css/fonts ./cours/js|mkdir -p ./cours/js ./cours/css/fonts"
         data-clavier="La ligne"
-        data-si-sansp="mkdir cours/css/fonts|mkdir ./cours/css/fonts"
+        data-si-sansp="mkdir cours/css/fonts cours/js|mkdir cours/js cours/css/fonts"
         data-retour-sansp="Dans un atelier vide, cours et css existent-ils quand mkdir crée fonts ?"
-        data-aide1="Quels dossiers du chemin cours/css/fonts existent déjà, dans un atelier vide ?"
+        data-si-seul="mkdir -p cours/css/fonts|mkdir -p cours/js"
+        data-retour-seul="Combien de dossiers la consigne demande-t-elle de créer, sans compter ceux qui les contiennent ?"
+        data-aide1="Quels dossiers des chemins cours/css/fonts et cours/js existent déjà, dans un atelier vide ?"
         data-aide2="Une option de mkdir crée les dossiers du chemin qui manquent."
-        data-aide3="Écris la commande, l’option qui crée les dossiers manquants, puis le chemin complet, séparés par des espaces."
-        data-sinon="Pas encore. Ta ligne a-t-elle la commande, une option qui crée les dossiers manquants, puis le chemin ?"
+        data-aide3="Écris la commande, l’option qui crée les dossiers manquants, puis les deux chemins complets, séparés par des espaces."
+        data-sinon="Pas encore. Ta ligne a-t-elle la commande, une option qui crée les dossiers manquants, puis un chemin par dossier demandé ?"
       >
         <p class="discret">Atelier est vide.</p>
         <p class="q">
-          Farid, dans atelier qui est vide, veut d’un coup le dossier cours, le dossier css dedans,
-          puis le dossier fonts dans css. Écris la ligne qu’il tape.
+          Farid, dans atelier qui est vide, veut d’un coup le dossier cours avec, dedans, un dossier
+          js et un dossier css, puis le dossier fonts dans css. Écris la ligne qu’il tape.
         </p>
       </div>
     </template>
     <template data-item="PR1-2">
       <div
         class="ex"
-        data-widget="choix"
+        data-widget="classer"
         data-verifie
-        data-reponse="rien"
-        data-aide1="Que répond une commande UNIX qui réussit ?"
-        data-aide2="Qu’as-tu lu sur touch, quand le fichier existe déjà ?"
-        data-aide3="Relis ce que touch fait d’un fichier qui existe : change-t-il son contenu ? sa date ?"
+        data-colonnes="cree=Réussit et crée un élément|date=Réussit sans rien créer|echec=Échoue, avec un message"
+        data-reponse="a=cree,b=cree,c=date,d=echec,e=echec"
+        data-aide1="Pour chaque ligne, cherche dans le listing le dossier où elle veut créer, puis le nom qu’elle veut créer."
+        data-aide2="Un nom déjà présent n’est pas créé ; un dossier absent ne peut rien contenir."
+        data-aide3="Pour chaque ligne, écris le dossier du chemin et le nom à créer, puis cherche les deux dans le listing : le dossier existe-t-il, le nom y est-il déjà ?"
       >
+        <div class="cadre pour-lire"><p class="discret">L’état de départ, dans atelier :</p></div>
         <pre
           class="listing"
-          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, index.html ; site/css contient style.css."
         >
 $ ls -R site
 site:
-css  img  index.html
+css  index.html
 
 site/css:
-style.css
-
-site/img:
-logo.png</pre>
+style.css</pre>
         <p class="q">
-          Yasmine retape <span class="mono">touch site/css/style.css</span>, alors que style.css
-          existe déjà. Que répond la fenêtre ?
+          Yasmine part de l’état ci-dessus, dans atelier. Elle a déjà classé la première ligne : dis
+          ce que fait chacune des quatre autres, appliquée à cet état.
         </p>
-        <ul class="options">
-          <li data-option="rien">Rien : touch réussit, il n’a changé que la date du fichier.</li>
-          <li
-            data-option="existe"
-            data-retour="mkdir a refusé un dossier qui existait : touch se comporte-t-il de la même façon, d’après ce que tu as lu ?"
-          >
-            Un message dit que style.css existe déjà, et rien n’est fait.
+        <ul class="a-classer">
+          <li data-element="a" data-donne>
+            <span class="mono">mkdir site/img</span>
+            <span class="raison"
+              >Classé par Yasmine : site existe, et img n’y est pas encore, donc mkdir le crée sans
+              rien dire.</span
+            >
           </li>
-          <li data-option="demande" data-retour="Une commande qui réussit dit-elle quelque chose ?">
-            Une question demande s’il faut remplacer style.css.
+          <li
+            data-element="b"
+            data-retour="Avant la ligne, le dossier du chemin existe-t-il ? Le nom à créer y est-il déjà ?"
+          >
+            <span class="mono">touch site/css/notes.txt</span>
+          </li>
+          <li
+            data-element="c"
+            data-retour="Avant la ligne, le dossier du chemin existe-t-il ? Le nom à créer y est-il déjà ?"
+          >
+            <span class="mono">touch site/index.html</span>
+          </li>
+          <li
+            data-element="d"
+            data-retour="Avant la ligne, le dossier du chemin existe-t-il ? Le nom à créer y est-il déjà ?"
+          >
+            <span class="mono">touch site/doc/notes.txt</span>
+          </li>
+          <li
+            data-element="e"
+            data-retour="Avant la ligne, le dossier du chemin existe-t-il ? Le nom à créer y est-il déjà ?"
+          >
+            <span class="mono">mkdir site/css</span>
           </li>
         </ul>
       </div>
@@ -4579,40 +4609,60 @@ logo.png</pre>
     <template data-variante="PR1-2">
       <div
         class="ex"
-        data-widget="choix"
+        data-widget="classer"
         data-verifie
-        data-reponse="rien"
-        data-aide1="Que répond une commande UNIX qui réussit ?"
-        data-aide2="Qu’as-tu lu sur touch, quand le fichier existe déjà ?"
-        data-aide3="Relis ce que touch fait d’un fichier qui existe : change-t-il son contenu ? sa date ?"
+        data-colonnes="cree=Réussit et crée un élément|date=Réussit sans rien créer|echec=Échoue, avec un message"
+        data-reponse="a=cree,b=cree,c=date,d=echec,e=echec"
+        data-aide1="Pour chaque ligne, cherche dans le listing le dossier où elle veut créer, puis le nom qu’elle veut créer."
+        data-aide2="Un nom déjà présent n’est pas créé ; un dossier absent ne peut rien contenir."
+        data-aide3="Pour chaque ligne, écris le dossier du chemin et le nom à créer, puis cherche les deux dans le listing : le dossier existe-t-il, le nom y est-il déjà ?"
       >
+        <div class="cadre pour-lire"><p class="discret">L’état de départ, dans atelier :</p></div>
         <pre
           class="listing"
-          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
+          data-lecture="Ligne tapée : ls -R cours. La fenêtre répond : cours contient js, plan.txt ; cours/js contient app.js."
         >
-$ ls -R site
-site:
-css  img  index.html
+$ ls -R cours
+cours:
+js  plan.txt
 
-site/css:
-style.css
-
-site/img:
-logo.png</pre>
+cours/js:
+app.js</pre>
         <p class="q">
-          Farid retape <span class="mono">touch site/img/logo.png</span>, alors que logo.png existe
-          déjà. Que répond la fenêtre ?
+          Farid part de l’état ci-dessus, dans atelier. Il a déjà classé la première ligne : dis ce
+          que fait chacune des quatre autres, appliquée à cet état.
         </p>
-        <ul class="options">
-          <li data-option="rien">Rien : touch réussit, il n’a changé que la date du fichier.</li>
-          <li
-            data-option="existe"
-            data-retour="mkdir a refusé un dossier qui existait : touch se comporte-t-il de la même façon, d’après ce que tu as lu ?"
-          >
-            Un message dit que logo.png existe déjà, et rien n’est fait.
+        <ul class="a-classer">
+          <li data-element="a" data-donne>
+            <span class="mono">mkdir cours/css</span>
+            <span class="raison"
+              >Classé par Farid : cours existe, et css n’y est pas encore, donc mkdir le crée sans
+              rien dire.</span
+            >
           </li>
-          <li data-option="demande" data-retour="Une commande qui réussit dit-elle quelque chose ?">
-            Une question demande s’il faut remplacer logo.png.
+          <li
+            data-element="b"
+            data-retour="Avant la ligne, le dossier du chemin existe-t-il ? Le nom à créer y est-il déjà ?"
+          >
+            <span class="mono">touch cours/js/main.js</span>
+          </li>
+          <li
+            data-element="c"
+            data-retour="Avant la ligne, le dossier du chemin existe-t-il ? Le nom à créer y est-il déjà ?"
+          >
+            <span class="mono">touch cours/plan.txt</span>
+          </li>
+          <li
+            data-element="d"
+            data-retour="Avant la ligne, le dossier du chemin existe-t-il ? Le nom à créer y est-il déjà ?"
+          >
+            <span class="mono">touch cours/img/logo.png</span>
+          </li>
+          <li
+            data-element="e"
+            data-retour="Avant la ligne, le dossier du chemin existe-t-il ? Le nom à créer y est-il déjà ?"
+          >
+            <span class="mono">mkdir cours/js</span>
           </li>
         </ul>
       </div>
@@ -4638,7 +4688,7 @@ logo.png</pre>
         </div>
         <pre
           class="listing"
-          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient rien."
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, index.html ; site/css contient style.css."
         >
 $ ls -R site
 site:
@@ -4993,21 +5043,30 @@ logo.png</pre>
         class="ex"
         data-widget="saisie"
         data-verifie
-        data-accepte="mv style.css ..|mv style.css ../|mv ./style.css ..|mv style.css ../style.css|mv ./style.css ../"
+        data-accepte="cp style.css ../img|cp style.css ../img/|cp ./style.css ../img|cp style.css ../img/style.css|cp ./style.css ../img/"
         data-clavier="La ligne"
-        data-si-nom="mv style.css site|mv style.css site/"
-        data-retour-nom="Depuis css, trouve-t-on directement un dossier nommé site ?"
-        data-aide1="Quel nom désigne le dossier parent du répertoire courant ?"
-        data-aide2="Le dossier parent est la destination de la ligne."
-        data-aide3="Écris mv, puis la source, qui se trouve dans le répertoire courant, puis la destination, deux points."
-        data-sinon="Pas encore. Ta ligne a-t-elle mv, la source, puis le nom qui désigne le dossier parent ?"
+        data-si-nom="cp style.css img|cp style.css img/"
+        data-retour-nom="Depuis css, trouve-t-on directement un dossier nommé img ?"
+        data-si-parent="cp style.css ..|cp style.css ../"
+        data-retour-parent="Le dossier parent de css est site : img est-il le dossier parent, ou un dossier qu’il contient ?"
+        data-aide1="Quel nom désigne le dossier parent du répertoire courant, et comment atteindre img à partir de lui ?"
+        data-aide2="La destination commence par le dossier parent, puis descend dans img."
+        data-aide3="Écris cp, puis la source, qui se trouve dans le répertoire courant, puis la destination : deux points, une barre, puis le nom du dossier."
+        data-sinon="Pas encore. Ta ligne a-t-elle cp, la source, puis un chemin qui part du dossier parent et descend jusqu’à img ?"
       >
-        <pre
-          class="listing"
-          data-lecture="Ligne tapée : pwd. La fenêtre répond : /home/yasmine/atelier/site/css."
-        >
-$ pwd
-/home/yasmine/atelier/site/css</pre>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              Le nom <span class="mono">..</span> désigne le dossier parent du dossier où l’on est,
+              et un chemin peut en partir : <span class="mono">../img</span> est le dossier img du
+              dossier parent.
+            </li>
+            <li>
+              <span class="mono">cp</span> source destination copie la source dans la destination.
+            </li>
+          </ul>
+        </div>
         <pre
           class="listing"
           data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
@@ -5021,9 +5080,16 @@ style.css
 
 site/img:
 logo.png</pre>
+        <pre
+          class="listing"
+          data-lecture="Après cd site/css, ligne tapée : pwd. La fenêtre répond : /home/yasmine/atelier/site/css."
+        >
+$ cd site/css
+$ pwd
+/home/yasmine/atelier/site/css</pre>
         <p class="q">
           Yasmine est dans site/css, comme <span class="mono">pwd</span> le dit. Écris la ligne qui
-          range style.css dans site, le dossier parent, sans changer de dossier.
+          copie style.css dans le dossier img, qui est à côté, sans changer de dossier.
         </p>
       </div>
     </template>
@@ -5032,21 +5098,30 @@ logo.png</pre>
         class="ex"
         data-widget="saisie"
         data-verifie
-        data-accepte="mv logo.png ..|mv logo.png ../|mv ./logo.png ..|mv logo.png ../logo.png|mv ./logo.png ../"
+        data-accepte="cp logo.png ../css|cp logo.png ../css/|cp ./logo.png ../css|cp logo.png ../css/logo.png|cp ./logo.png ../css/"
         data-clavier="La ligne"
-        data-si-nom="mv logo.png site|mv logo.png site/"
-        data-retour-nom="Depuis img, trouve-t-on directement un dossier nommé site ?"
-        data-aide1="Quel nom désigne le dossier parent du répertoire courant ?"
-        data-aide2="Le dossier parent est la destination de la ligne."
-        data-aide3="Écris mv, puis la source, qui se trouve dans le répertoire courant, puis la destination, deux points."
-        data-sinon="Pas encore. Ta ligne a-t-elle mv, la source, puis le nom qui désigne le dossier parent ?"
+        data-si-nom="cp logo.png css|cp logo.png css/"
+        data-retour-nom="Depuis img, trouve-t-on directement un dossier nommé css ?"
+        data-si-parent="cp logo.png ..|cp logo.png ../"
+        data-retour-parent="Le dossier parent de img est site : css est-il le dossier parent, ou un dossier qu’il contient ?"
+        data-aide1="Quel nom désigne le dossier parent du répertoire courant, et comment atteindre css à partir de lui ?"
+        data-aide2="La destination commence par le dossier parent, puis descend dans css."
+        data-aide3="Écris cp, puis la source, qui se trouve dans le répertoire courant, puis la destination : deux points, une barre, puis le nom du dossier."
+        data-sinon="Pas encore. Ta ligne a-t-elle cp, la source, puis un chemin qui part du dossier parent et descend jusqu’à css ?"
       >
-        <pre
-          class="listing"
-          data-lecture="Ligne tapée : pwd. La fenêtre répond : /Users/farid/atelier/site/img."
-        >
-$ pwd
-/Users/farid/atelier/site/img</pre>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              Le nom <span class="mono">..</span> désigne le dossier parent du dossier où l’on est,
+              et un chemin peut en partir : <span class="mono">../css</span> est le dossier css du
+              dossier parent.
+            </li>
+            <li>
+              <span class="mono">cp</span> source destination copie la source dans la destination.
+            </li>
+          </ul>
+        </div>
         <pre
           class="listing"
           data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
@@ -5060,22 +5135,31 @@ style.css
 
 site/img:
 logo.png</pre>
+        <pre
+          class="listing"
+          data-lecture="Après cd site/img, ligne tapée : pwd. La fenêtre répond : /Users/farid/atelier/site/img."
+        >
+$ cd site/img
+$ pwd
+/Users/farid/atelier/site/img</pre>
         <p class="q">
           Farid est dans site/img, comme <span class="mono">pwd</span> le dit. Écris la ligne qui
-          range logo.png dans site, le dossier parent, sans changer de dossier.
+          copie logo.png dans le dossier css, qui est à côté, sans changer de dossier.
         </p>
       </div>
     </template>
     <template data-item="PR1-8">
       <div
         class="ex"
-        data-widget="choix"
+        data-widget="classer"
         data-verifie
-        data-reponse="refus"
-        data-aide1="Où se trouve img, par rapport à site ?"
-        data-aide2="Le dossier site contient img, et la destination est dans img."
-        data-aide3="Imagine le résultat : site rangé dans img, qui est rangé dans site. Est-ce possible ?"
+        data-colonnes="renomme=Renomme la source|range=Range la source dans un dossier|echoue=Échoue avec un message"
+        data-reponse="a=renomme,b=range,c=echoue,d=renomme"
+        data-aide1="Pour chaque ligne, cherche la destination dans le listing : absente, dossier qui existe, ou dossier de la source."
+        data-aide2="Une destination absente donne son nom à la source ; un dossier qui existe reçoit la source ; une destination dans la source est impossible."
+        data-aide3="Pour chaque ligne, écris la destination, puis cherche-la dans le listing, puis demande-toi si elle se trouve à l’intérieur de la source."
       >
+        <div class="cadre pour-lire"><p class="discret">L’état de départ, dans atelier :</p></div>
         <pre
           class="listing"
           data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
@@ -5090,22 +5174,33 @@ style.css
 site/img:
 logo.png</pre>
         <p class="q">
-          Yasmine, dans atelier, tape <span class="mono">mv site site/img</span>. Que contient
-          site/img ensuite ?
+          Yasmine part de l’état ci-dessus, dans atelier. Elle a déjà classé la première ligne : dis
+          ce que fait chacune des trois autres, appliquée à cet état.
         </p>
-        <ul class="options">
-          <li data-option="refus">Seulement logo.png : mv a refusé, et un message le dit.</li>
-          <li
-            data-option="dedans"
-            data-retour="Peut-on ranger un dossier dans un dossier qu’il contient lui-même ?"
-          >
-            logo.png et un dossier site, qui contient tout le projet.
+        <ul class="a-classer">
+          <li data-element="a" data-donne>
+            <span class="mono">mv site/index.html site/accueil.html</span>
+            <span class="raison"
+              >Classé par Yasmine : accueil.html n’est pas dans site, la source prend ce nom.</span
+            >
           </li>
           <li
-            data-option="renomme"
-            data-retour="Que devient un nom de dossier qui existe quand on le donne comme destination ?"
+            data-element="b"
+            data-retour="Avant la ligne, la destination existe-t-elle ? Est-elle un dossier ? Se trouve-t-elle à l’intérieur de la source ?"
           >
-            Seulement logo.png : site a pris le nom img.
+            <span class="mono">mv site/index.html site/css</span>
+          </li>
+          <li
+            data-element="c"
+            data-retour="Avant la ligne, la destination existe-t-elle ? Est-elle un dossier ? Se trouve-t-elle à l’intérieur de la source ?"
+          >
+            <span class="mono">mv site/css site/css/vieux</span>
+          </li>
+          <li
+            data-element="d"
+            data-retour="Avant la ligne, la destination existe-t-elle ? Est-elle un dossier ? Se trouve-t-elle à l’intérieur de la source ?"
+          >
+            <span class="mono">mv site/img site/images</span>
           </li>
         </ul>
       </div>
@@ -5113,43 +5208,53 @@ logo.png</pre>
     <template data-variante="PR1-8">
       <div
         class="ex"
-        data-widget="choix"
+        data-widget="classer"
         data-verifie
-        data-reponse="refus"
-        data-aide1="Où se trouve images, par rapport à img ?"
-        data-aide2="La destination est écrite à l’intérieur de la source."
-        data-aide3="Imagine le résultat : img rangé dans un dossier qu’il contient. Est-ce possible ?"
+        data-colonnes="renomme=Renomme la source|range=Range la source dans un dossier|echoue=Échoue avec un message"
+        data-reponse="a=renomme,b=range,c=echoue,d=renomme"
+        data-aide1="Pour chaque ligne, cherche la destination dans le listing : absente, dossier qui existe, ou dossier de la source."
+        data-aide2="Une destination absente donne son nom à la source ; un dossier qui existe reçoit la source ; une destination dans la source est impossible."
+        data-aide3="Pour chaque ligne, écris la destination, puis cherche-la dans le listing, puis demande-toi si elle se trouve à l’intérieur de la source."
       >
+        <div class="cadre pour-lire"><p class="discret">L’état de départ, dans atelier :</p></div>
         <pre
           class="listing"
-          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
+          data-lecture="Ligne tapée : ls -R cours. La fenêtre répond : cours contient js, plan.txt ; cours/js contient app.js."
         >
-$ ls -R site
-site:
-css  img  index.html
+$ ls -R cours
+cours:
+js  plan.txt
 
-site/css:
-style.css
-
-site/img:
-logo.png</pre>
+cours/js:
+app.js</pre>
         <p class="q">
-          Farid, dans atelier, tape <span class="mono">mv site/img site/img/images</span>. Que
-          contient site/img ensuite ?
+          Farid part de l’état ci-dessus, dans atelier. Il a déjà classé la première ligne : dis ce
+          que fait chacune des trois autres, appliquée à cet état.
         </p>
-        <ul class="options">
-          <li data-option="refus">Seulement logo.png : mv a refusé, et un message le dit.</li>
-          <li
-            data-option="dedans"
-            data-retour="Peut-on ranger un dossier dans un de ses propres sous-dossiers ?"
-          >
-            logo.png et un dossier images, qui contient logo.png.
+        <ul class="a-classer">
+          <li data-element="a" data-donne>
+            <span class="mono">mv cours/plan.txt cours/projet.txt</span>
+            <span class="raison"
+              >Classé par Farid : projet.txt n’est pas dans cours, la source prend ce nom.</span
+            >
           </li>
           <li
-            data-option="renomme"
-            data-retour="images est-il un nom que la ligne cherche dans site, ou dans img ?"
+            data-element="b"
+            data-retour="Avant la ligne, la destination existe-t-elle ? Est-elle un dossier ? Se trouve-t-elle à l’intérieur de la source ?"
           >
-            Seulement images : img a été renommé en images.
+            <span class="mono">mv cours/plan.txt cours/js</span>
+          </li>
+          <li
+            data-element="c"
+            data-retour="Avant la ligne, la destination existe-t-elle ? Est-elle un dossier ? Se trouve-t-elle à l’intérieur de la source ?"
+          >
+            <span class="mono">mv cours/js cours/js/vieux</span>
+          </li>
+          <li
+            data-element="d"
+            data-retour="Avant la ligne, la destination existe-t-elle ? Est-elle un dossier ? Se trouve-t-elle à l’intérieur de la source ?"
+          >
+            <span class="mono">mv cours/js cours/scripts</span>
           </li>
         </ul>
       </div>
@@ -5567,6 +5672,228 @@ css  img  index.html</pre>
         </ul>
       </div>
     </template>
+    <template data-item="PR1-13">
+      <div
+        class="ex"
+        data-widget="saisie"
+        data-verifie
+        data-accepte="copy site\index.html site\accueil.html|copy .\site\index.html .\site\accueil.html"
+        data-clavier="La ligne de Cmd"
+        data-si-slash="copy site/index.html site/accueil.html"
+        data-retour-slash="Quel signe sépare les dossiers d’un chemin dans Cmd ?"
+        data-si-nom="cp site\index.html site\accueil.html"
+        data-retour-nom="La ligne commence par le nom de bash : Cmd connaît-il cp ?"
+        data-aide1="Quel est le nom de Cmd pour cp ?"
+        data-aide2="Les deux chemins se gardent, mais s’écrivent avec l’antislash."
+        data-aide3="Écris le nom de Cmd, puis la source, puis la destination, avec l’antislash entre les dossiers de chaque chemin."
+        data-sinon="Pas encore. Ta ligne a-t-elle le nom de Cmd, la source, puis la destination, avec l’antislash ?"
+      >
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              Cmd écrit <span class="mono">copy</span> pour <span class="mono">cp</span>,
+              <span class="mono">move</span> pour <span class="mono">mv</span>,
+              <span class="mono">del</span> pour <span class="mono">rm</span> sur un fichier, et
+              <span class="mono">rmdir /s</span> pour <span class="mono">rm -r</span> sur un
+              dossier.
+            </li>
+            <li>
+              Cmd sépare les dossiers d’un chemin par l’antislash <span class="mono">\</span>.
+            </li>
+          </ul>
+        </div>
+        <p class="q">
+          Yasmine veut le même geste dans Cmd que la ligne de bash
+          <span class="mono">cp site/index.html site/accueil.html</span>. Écris la ligne de Cmd.
+        </p>
+      </div>
+    </template>
+    <template data-variante="PR1-13">
+      <div
+        class="ex"
+        data-widget="saisie"
+        data-verifie
+        data-accepte="copy site\css\style.css site\css\main.css|copy .\site\css\style.css .\site\css\main.css"
+        data-clavier="La ligne de Cmd"
+        data-si-slash="copy site/css/style.css site/css/main.css"
+        data-retour-slash="Quel signe sépare les dossiers d’un chemin dans Cmd ?"
+        data-si-nom="cp site\css\style.css site\css\main.css"
+        data-retour-nom="La ligne commence par le nom de bash : Cmd connaît-il cp ?"
+        data-aide1="Quel est le nom de Cmd pour cp ?"
+        data-aide2="Les deux chemins se gardent, mais s’écrivent avec l’antislash."
+        data-aide3="Écris le nom de Cmd, puis la source, puis la destination, avec l’antislash entre les dossiers de chaque chemin."
+        data-sinon="Pas encore. Ta ligne a-t-elle le nom de Cmd, la source, puis la destination, avec l’antislash ?"
+      >
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              Cmd écrit <span class="mono">copy</span> pour <span class="mono">cp</span>,
+              <span class="mono">move</span> pour <span class="mono">mv</span>,
+              <span class="mono">del</span> pour <span class="mono">rm</span> sur un fichier, et
+              <span class="mono">rmdir /s</span> pour <span class="mono">rm -r</span> sur un
+              dossier.
+            </li>
+            <li>
+              Cmd sépare les dossiers d’un chemin par l’antislash <span class="mono">\</span>.
+            </li>
+          </ul>
+        </div>
+        <p class="q">
+          Farid veut le même geste dans Cmd que la ligne de bash
+          <span class="mono">cp site/css/style.css site/css/main.css</span>. Écris la ligne de Cmd.
+        </p>
+      </div>
+    </template>
+    <template data-item="PR1-14">
+      <div
+        class="ex"
+        data-widget="saisie"
+        data-verifie
+        data-accepte="del site\css\style.css|del .\site\css\style.css"
+        data-clavier="La ligne de Cmd"
+        data-si-slash="del site/css/style.css"
+        data-retour-slash="Quel signe sépare les dossiers d’un chemin dans Cmd ?"
+        data-si-nom="rm site\css\style.css"
+        data-retour-nom="La ligne commence par le nom de bash : Cmd connaît-il rm ?"
+        data-aide1="Quel est le nom de Cmd pour rm sur un fichier ?"
+        data-aide2="Le chemin se garde, mais s’écrit avec l’antislash."
+        data-aide3="Écris le nom de Cmd, puis le chemin du fichier, avec l’antislash entre les dossiers."
+        data-sinon="Pas encore. Ta ligne a-t-elle le nom de Cmd pour un fichier, puis le chemin avec l’antislash ?"
+      >
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              Cmd écrit <span class="mono">copy</span> pour <span class="mono">cp</span>,
+              <span class="mono">move</span> pour <span class="mono">mv</span>,
+              <span class="mono">del</span> pour <span class="mono">rm</span> sur un fichier, et
+              <span class="mono">rmdir /s</span> pour <span class="mono">rm -r</span> sur un
+              dossier.
+            </li>
+            <li>
+              Cmd sépare les dossiers d’un chemin par l’antislash <span class="mono">\</span>.
+            </li>
+          </ul>
+        </div>
+        <p class="q">
+          Yasmine veut le même geste dans Cmd que la ligne de bash
+          <span class="mono">rm site/css/style.css</span>. Écris la ligne de Cmd.
+        </p>
+      </div>
+    </template>
+    <template data-variante="PR1-14">
+      <div
+        class="ex"
+        data-widget="saisie"
+        data-verifie
+        data-accepte="del site\img\logo.png|del .\site\img\logo.png"
+        data-clavier="La ligne de Cmd"
+        data-si-slash="del site/img/logo.png"
+        data-retour-slash="Quel signe sépare les dossiers d’un chemin dans Cmd ?"
+        data-si-nom="rm site\img\logo.png"
+        data-retour-nom="La ligne commence par le nom de bash : Cmd connaît-il rm ?"
+        data-aide1="Quel est le nom de Cmd pour rm sur un fichier ?"
+        data-aide2="Le chemin se garde, mais s’écrit avec l’antislash."
+        data-aide3="Écris le nom de Cmd, puis le chemin du fichier, avec l’antislash entre les dossiers."
+        data-sinon="Pas encore. Ta ligne a-t-elle le nom de Cmd pour un fichier, puis le chemin avec l’antislash ?"
+      >
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              Cmd écrit <span class="mono">copy</span> pour <span class="mono">cp</span>,
+              <span class="mono">move</span> pour <span class="mono">mv</span>,
+              <span class="mono">del</span> pour <span class="mono">rm</span> sur un fichier, et
+              <span class="mono">rmdir /s</span> pour <span class="mono">rm -r</span> sur un
+              dossier.
+            </li>
+            <li>
+              Cmd sépare les dossiers d’un chemin par l’antislash <span class="mono">\</span>.
+            </li>
+          </ul>
+        </div>
+        <p class="q">
+          Farid veut le même geste dans Cmd que la ligne de bash
+          <span class="mono">rm site/img/logo.png</span>. Écris la ligne de Cmd.
+        </p>
+      </div>
+    </template>
+    <template data-item="PR1-15">
+      <div
+        class="ex"
+        data-widget="saisie"
+        data-verifie
+        data-accepte="rmdir /s site\img|rmdir site\img /s|rmdir /s .\site\img"
+        data-clavier="La ligne de Cmd"
+        data-si-slash="rmdir /s site/img"
+        data-retour-slash="Quel signe sépare les dossiers d’un chemin dans Cmd ?"
+        data-si-nom="rm -r site\img"
+        data-retour-nom="La ligne commence par le nom de bash : Cmd connaît-il rm, et écrit-il ainsi l’option ?"
+        data-aide1="Quel est le nom de Cmd pour rm -r sur un dossier ?"
+        data-aide2="L’option -r de bash devient une écriture de Cmd, dans le nom de la commande."
+        data-aide3="Écris le nom de Cmd pour un dossier, avec son option, puis le chemin avec l’antislash."
+        data-sinon="Pas encore. Ta ligne a-t-elle le nom de Cmd pour un dossier avec son option, puis le chemin avec l’antislash ?"
+      >
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              Cmd écrit <span class="mono">copy</span> pour <span class="mono">cp</span>,
+              <span class="mono">move</span> pour <span class="mono">mv</span>,
+              <span class="mono">del</span> pour <span class="mono">rm</span> sur un fichier, et
+              <span class="mono">rmdir /s</span> pour <span class="mono">rm -r</span> sur un
+              dossier.
+            </li>
+            <li>
+              Cmd sépare les dossiers d’un chemin par l’antislash <span class="mono">\</span>.
+            </li>
+          </ul>
+        </div>
+        <p class="q">
+          Yasmine veut le même geste dans Cmd que la ligne de bash
+          <span class="mono">rm -r site/img</span>. Écris la ligne de Cmd.
+        </p>
+      </div>
+    </template>
+    <template data-variante="PR1-15">
+      <div
+        class="ex"
+        data-widget="saisie"
+        data-verifie
+        data-accepte="rmdir /s cours\js|rmdir cours\js /s|rmdir /s .\cours\js"
+        data-clavier="La ligne de Cmd"
+        data-si-slash="rmdir /s cours/js"
+        data-retour-slash="Quel signe sépare les dossiers d’un chemin dans Cmd ?"
+        data-si-nom="rm -r cours\js"
+        data-retour-nom="La ligne commence par le nom de bash : Cmd connaît-il rm, et écrit-il ainsi l’option ?"
+        data-aide1="Quel est le nom de Cmd pour rm -r sur un dossier ?"
+        data-aide2="L’option -r de bash devient une écriture de Cmd, dans le nom de la commande."
+        data-aide3="Écris le nom de Cmd pour un dossier, avec son option, puis le chemin avec l’antislash."
+        data-sinon="Pas encore. Ta ligne a-t-elle le nom de Cmd pour un dossier avec son option, puis le chemin avec l’antislash ?"
+      >
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              Cmd écrit <span class="mono">copy</span> pour <span class="mono">cp</span>,
+              <span class="mono">move</span> pour <span class="mono">mv</span>,
+              <span class="mono">del</span> pour <span class="mono">rm</span> sur un fichier, et
+              <span class="mono">rmdir /s</span> pour <span class="mono">rm -r</span> sur un
+              dossier.
+            </li>
+            <li>
+              Cmd sépare les dossiers d’un chemin par l’antislash <span class="mono">\</span>.
+            </li>
+          </ul>
+        </div>
+        <p class="q">
+          Farid veut le même geste dans Cmd que la ligne de bash
+          <span class="mono">rm -r cours/js</span>. Écris la ligne de Cmd.
+        </p>
+      </div>
+    </template>
     <template data-etape="ET11">
       <div data-ecran="Ton dossier d’atelier">
         <p class="discret">Tu es ici : sur ta machine, dans ton terminal.</p>
@@ -5792,16 +6119,27 @@ logo.png</pre>
             permis : une fois dedans, plus aucun).
           </li>
           <li>
-            S’il reste un dossier site dans atelier, tape <span class="mono">rm -r site</span>, puis
-            <span class="mono">ls</span> : il ne doit plus y être.
+            S’il reste un dossier site ou un dossier sauvegarde dans atelier, tape
+            <span class="mono">rm -r site sauvegarde</span> : si l’un des deux n’existe pas, la
+            fenêtre l’écrit, sans importance. Tape ensuite <span class="mono">ls</span> : aucun des
+            deux ne doit plus y être.
           </li>
           <li>
             Lance un chronomètre, recrée l’arborescence imposée de mémoire, sans taper
-            <span class="mono">cd</span>, vérifie avec <span class="mono">ls -R site</span>, arrête
-            le chronomètre.
+            <span class="mono">cd</span>, vérifie avec <span class="mono">ls -R site</span>, puis
+            arrête le chronomètre : note ce premier temps.
+          </li>
+          <li>
+            Sans le remettre à zéro, relance-le, tape
+            <span class="mono">cp -Rv site sauvegarde</span>, vérifie avec
+            <span class="mono">ls -R sauvegarde</span>, arrête le chronomètre et note le temps de la
+            sauvegarde.
           </li>
         </ol>
-        <p class="discret">Tu coches ce critère le second jour : une minute au plus.</p>
+        <p class="discret">
+          Tu coches le premier critère le second jour : une minute au plus pour recréer le projet.
+          Tu notes le temps de la sauvegarde pour le second critère, sans limite.
+        </p>
         <details data-cran="1">
           <summary>Une question</summary>
           <p>
@@ -6575,10 +6913,10 @@ contact.html  index.html</pre>
             "titre": "Entraînement",
             "items": [
               {
-                "id": "PR1-1"
+                "id": "PR1-2"
               },
               {
-                "id": "PR1-2"
+                "id": "PR1-1"
               },
               {
                 "id": "PR1-3"
@@ -6593,10 +6931,13 @@ contact.html  index.html</pre>
                 "id": "PR1-6"
               },
               {
+                "id": "PR1-8"
+              },
+              {
                 "id": "PR1-7"
               },
               {
-                "id": "PR1-8"
+                "id": "PR1-11"
               },
               {
                 "id": "PR1-9"
@@ -6605,13 +6946,19 @@ contact.html  index.html</pre>
                 "id": "PR1-10"
               },
               {
-                "id": "PR1-11"
+                "id": "PR1-12"
               },
               {
-                "id": "PR1-12"
+                "id": "PR1-13"
+              },
+              {
+                "id": "PR1-14"
+              },
+              {
+                "id": "PR1-15"
               }
             ],
-            "reussite": 12
+            "reussite": 15
           }
         ],
         "atelier": {
@@ -6626,7 +6973,8 @@ contact.html  index.html</pre>
             "J’ai écrit sur mon papier ma prévision de ls -R site avant chacune des dix commandes.",
             "Mes dix prévisions de ls -R site sont justes.",
             "J’ai tapé pwd avant chaque rm, et son chemin se terminait par /atelier.",
-            "Un autre jour, j’ai recréé de mémoire l’arborescence imposée et l’ai vérifiée avec ls -R site, en moins d’une minute."
+            "Un autre jour, j’ai recréé de mémoire l’arborescence imposée et l’ai vérifiée avec ls -R site, en moins d’une minute.",
+            "Le même jour, j’ai ensuite tapé cp -Rv site sauvegarde, je l’ai vérifiée avec ls -R sauvegarde, et j’ai noté le temps du chronomètre."
           ]
         },
         "aisance": {
@@ -6666,8 +7014,8 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-K7",
-            "recto": "Pour lire : Cmd écrit copy pour cp, move pour mv, del pour rm sur un fichier, rmdir /s pour rm -r sur un dossier, et sépare les chemins par l’antislash. Traduis en bash la ligne de Cmd rmdir /s site\\css2.",
-            "verso": "rm -r site/css2 : rmdir /s devient rm -r, et l’antislash devient la barre."
+            "recto": "Pour lire : Cmd écrit copy pour cp, move pour mv, del pour rm sur un fichier, rmdir /s pour rm -r sur un dossier, et sépare les chemins par l’antislash. Traduis en bash la ligne de Cmd rmdir /s photos\\vieux.",
+            "verso": "rm -r photos/vieux : rmdir /s devient rm -r, et l’antislash devient la barre."
           },
           {
             "id": "B10-K8",
