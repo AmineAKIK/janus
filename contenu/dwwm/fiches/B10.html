@@ -2454,7 +2454,7 @@ a.txt  b.txt</pre>
             <li data-option="nulle">Nulle part : le fichier a disparu.</li>
             <li
               data-option="autre"
-              data-retour="rm range-t-il le fichier quelque part, ou le retire-t-il ?"
+              data-retour="Que dit l’encadré de ce que rm fait du fichier qu’on lui donne ?"
               data-erreur="E1"
             >
               Dans le dossier où il travaille, sous un autre nom.
@@ -2523,9 +2523,9 @@ a.txt  b.txt</pre>
           Windows : une autre fenêtre de commandes que celle d’Ubuntu, avec ses propres commandes.
         </p>
         <p>
-          Voici la ligne du tableau qui copie le dossier site dans le dossier sauvegarde :
-          <span class="mono">copy site sauvegarde</span>. Sur un PC de la salle, dans Cmd, elle fait
-          cette copie.
+          Voici la ligne du tableau qui copie le fichier index.html du dossier site dans le dossier
+          sauvegarde, qui existe déjà : <span class="mono">copy site\index.html sauvegarde</span>.
+          Sur un PC de la salle, dans Cmd, elle fait cette copie.
         </p>
         <p>
           Yasmine, elle, tape dans la fenêtre d’Ubuntu de son PC : c’est la fenêtre que tu as
@@ -2546,8 +2546,10 @@ a.txt  b.txt</pre>
               ces deux fenêtres.
             </li>
             <li>
-              La ligne du tableau, écrite pour Cmd : <span class="mono">copy site sauvegarde</span>.
-              <span class="mono">cp -R</span> copie un dossier avec tout son contenu.
+              La ligne du tableau, écrite pour Cmd :
+              <span class="mono">copy site\index.html sauvegarde</span>. Cmd écrit les chemins avec
+              une barre inversée, l’antislash <span class="mono">\</span> : site\index.html est le
+              fichier index.html, dans le dossier site.
             </li>
           </ul>
         </div>
@@ -2562,7 +2564,7 @@ a.txt  b.txt</pre>
         >
           <p class="q">
             Yasmine, dans la fenêtre d’Ubuntu, tape la ligne du tableau
-            <span class="mono">copy site sauvegarde</span>. Que se passe-t-il ?
+            <span class="mono">copy site\index.html sauvegarde</span>. Que se passe-t-il ?
           </p>
           <ul class="options">
             <li data-option="inconnue">
@@ -2573,14 +2575,14 @@ a.txt  b.txt</pre>
               data-retour="Ubuntu a-t-il déjà rencontré un mot copy parmi ses commandes ?"
               data-erreur="E4"
             >
-              Elle copie site dans sauvegarde, comme <span class="mono">cp -R</span>.
+              Elle copie index.html dans sauvegarde, comme elle le ferait dans Cmd.
             </li>
             <li
               data-option="fichiers"
-              data-retour="La fenêtre d’Ubuntu lit-elle les lignes comme Cmd, ou comme bash ?"
+              data-retour="Dans quelle fenêtre le formateur a-t-il écrit cette ligne, et dans quelle fenêtre Yasmine la tape-t-elle ?"
               data-erreur="E4"
             >
-              Elle copie seulement les fichiers de site, sans ses dossiers.
+              Elle copie index.html sous le nom sauvegarde, dans le dossier où elle est.
             </li>
           </ul>
         </div>
@@ -2598,14 +2600,15 @@ a.txt  b.txt</pre>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
           <ul>
-            <li>mkdir crée un dossier du nom qu’on lui donne.</li>
-            <li>cd est la commande qui change le dossier où l’on est.</li>
             <li>
-              Un chemin dit où se trouve un dossier ou un fichier, en écrivant les dossiers qui y
-              mènent, séparés par une barre /, à suivre de gauche à droite : site/css est le dossier
-              css, dans le dossier site. Un chemin qui ne commence pas par une barre, dit
-              <strong>relatif</strong>, part du <strong>répertoire courant</strong>, le dossier où
-              l’on est, que pwd écrit.
+              mkdir crée un dossier du nom qu’on lui donne ; cd est la commande qui change le
+              dossier où l’on est.
+            </li>
+            <li>
+              Le <strong>répertoire courant</strong> est le dossier où l’on est, celui que pwd
+              écrit. Un chemin dit où se trouve un dossier : site/css est le dossier css, dans le
+              dossier site, à suivre de gauche à droite. Un chemin qui ne commence pas par une
+              barre, dit <strong>relatif</strong>, part du répertoire courant.
             </li>
             <li>
               Un chemin qui commence par une barre se lit depuis le premier dossier :
@@ -2619,7 +2622,7 @@ a.txt  b.txt</pre>
           data-id="bouge"
           data-prediction
           data-reponse="atelier"
-          data-aide1="Que fait mkdir : il crée un dossier, ou il t’emmène dedans ?"
+          data-aide1="D’après l’encadré, quelle commande est chargée de changer le dossier où l’on est ?"
           data-aide2="Le répertoire courant ne change que lorsque tu tapes cd."
           data-aide3="Écris le chemin du répertoire courant avant la ligne, puis demande-toi si mkdir site a touché à ce chemin."
           data-explication="mkdir crée site dans atelier et ne te déplace pas : pwd répond encore /home/yasmine/atelier."
@@ -2627,7 +2630,7 @@ a.txt  b.txt</pre>
           data-variante-reponse="atelier"
           data-variante-options="atelier=/Users/farid/atelier|notes=/Users/farid/atelier/notes.txt|farid=/Users/farid"
           data-variante-retours="notes=notes.txt est-il un dossier dans lequel on peut entrer ?|farid=touch est-il une commande qui remonte dans l’arbre ?"
-          data-variante-aide1="Que fait touch : il crée un fichier, ou il te déplace ?"
+          data-variante-aide1="D’après la phrase « pour lire », quelle commande est chargée de changer le dossier où l’on est ?"
           data-variante-aide2="Le répertoire courant ne change que lorsque tu tapes cd."
           data-variante-aide3="Écris le chemin du répertoire courant avant la ligne, puis demande-toi si touch notes.txt y a touché."
           data-variante-explication="touch crée notes.txt dans atelier et ne te déplace pas : pwd répond encore /Users/farid/atelier."
@@ -2739,9 +2742,8 @@ mkdir: cannot create directory ‘doc/notes’: No such file or directory</pre>
       </div>
       <div data-ecran="Le silence">
         <p class="accroche">
-          Yasmine continue dans le même atelier. Elle tape trois lignes
-          <span class="mono">mkdir</span> de suite, puis <span class="mono">ls</span> : voici tout
-          ce que la fenêtre écrit.
+          Dans un atelier vide, Yasmine tape trois lignes <span class="mono">mkdir</span> de suite,
+          puis <span class="mono">ls</span> : voici tout ce que la fenêtre écrit.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -2785,7 +2787,7 @@ js</pre>
           data-retour-un="Cherche, dans la réponse de la fenêtre, ce qui prouve qu’un dossier a été créé : quelles lignes l’ont créé ?"
           data-si-trois="3|trois"
           data-retour-trois="Une des trois lignes mkdir a écrit un message : que dit-il ?"
-          data-aide1="Une des trois lignes mkdir a écrit un message : que dit-il ?"
+          data-aide1="Combien de lignes mkdir ont écrit un message sous elles ?"
           data-aide2="Le dernier ls montre ce que contient docs : qu’a-t-il fallu pour que js y soit ?"
           data-aide3="Pour chacune des trois lignes mkdir, cherche un message sous elle, puis un signe, plus bas, que son dossier existe."
           data-sinon="Pas encore. Pour chaque ligne mkdir, un message est-il écrit dessous, et le dossier existe-t-il plus bas ?"
@@ -2798,7 +2800,7 @@ js</pre>
           data-variante-retour-deux="Une seule des quatre lignes a écrit un message : combien en reste-t-il sans message ?"
           data-variante-si-quatre="4|quatre"
           data-variante-retour-quatre="Une des quatre lignes a écrit un message : que dit-il ?"
-          data-variante-aide1="Une des quatre lignes mkdir a écrit un message : que dit-il ?"
+          data-variante-aide1="Combien de lignes mkdir ont écrit un message sous elles ?"
           data-variante-aide2="Une ligne qui écrit un message n’a pas créé son dossier : lesquelles n’en ont pas écrit ?"
           data-variante-aide3="Pour chacune des quatre lignes, cherche si la fenêtre a écrit un message."
           data-variante-sinon="Pas encore. Pour chaque ligne mkdir, la fenêtre a-t-elle écrit un message ?"
@@ -2954,6 +2956,26 @@ site/css:</pre>
           Ubuntu, <span class="mono">touch site/doc/notes.txt</span> répond une phrase qui dit qu’il
           ne peut pas toucher ce fichier, parce qu’il n’existe pas de tel fichier ou dossier.
         </p>
+        <p>
+          Pour vérifier, Yasmine tape <span class="mono">ls -R site</span> : chaque dossier a son
+          titre, qui se termine par deux-points, suivi des noms qu’il contient. style.css est sous
+          le titre site/css:, donc rangé dans le dossier css. Quand les noms tiennent,
+          <span class="mono">ls</span> les range côte à côte, et un nom par ligne si la fenêtre est
+          étroite : c’est la même liste.
+        </p>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
+        >
+$ ls -R site
+site:
+css  img  index.html
+
+site/css:
+style.css
+
+site/img:
+logo.png</pre>
       </div>
       <div data-ecran="Deux noms derrière -p">
         <p class="accroche">
@@ -3037,86 +3059,21 @@ style.css
 
 docs/js:</pre>
       </div>
-      <div data-ecran="Lire une arborescence">
+      <div data-ecran="Vérifier nom par nom">
         <p class="accroche">
           Les dossiers et les fichiers rangés les uns dans les autres forment une
-          <strong>arborescence</strong> : celle du projet de Yasmine (site, avec css, img,
-          index.html, style.css et logo.png) compte six éléments, trois dossiers et trois fichiers
-          vides. Yasmine en a créé une partie et vérifie où elle en est avec
-          <span class="mono">ls -R site</span>. Voici la réponse de sa fenêtre.
+          <strong>arborescence</strong> : celle du projet de Yasmine compte six éléments, trois
+          dossiers et trois fichiers vides. Farid les a créés et compare avec ce que le formateur
+          impose : site contient css, img et index.html ; css contient style.css ; img contient
+          logo.png. Voici sa réponse, où il y a une faute.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
           <ul>
             <li>
               <span class="mono">ls -R</span>, avec R comme récursif : ls affiche le dossier donné,
-              puis chaque dossier qu’il contient, un titre par dossier.
-            </li>
-            <li>
-              Un titre se termine par deux-points et porte le chemin complet du dossier :
-              <span class="mono">docs/js:</span> est le dossier js, dans le dossier docs.
-            </li>
-          </ul>
-        </div>
-        <pre
-          class="listing"
-          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, index.html ; site/css contient style.css."
-        >
-$ ls -R site
-site:
-css  img  index.html
-
-site/css:
-style.css
-
-site/img:</pre>
-        <div
-          class="ex"
-          data-widget="saisie"
-          data-id="arbo"
-          data-accepte="css|site/css|le dossier css"
-          data-clavier="Le nom du dossier"
-          data-si-site="site|le dossier site"
-          data-retour-site="Le fichier est-il sous le titre site:, ou sous un titre plus long ?"
-          data-si-img="img|site/img"
-          data-retour-img="Sous quel titre se trouve le nom style.css : le titre img, ou un autre ?"
-          data-aide1="Cherche le nom style.css dans la réponse de la fenêtre, puis lis le titre juste au-dessus de lui."
-          data-aide2="Un titre se termine par deux-points : le titre au-dessus de style.css est celui de son dossier."
-          data-aide3="Repère la ligne qui contient style.css, puis remonte jusqu’au premier titre qui se termine par deux-points."
-          data-sinon="Pas encore. Sous quel titre la réponse de la fenêtre range-t-elle style.css ?"
-          data-explication="style.css est sous le titre site/css : il est rangé dans le dossier css de site. Le titre site/img n’a pas de nom dessous : img est vide."
-          data-variante-enonce="Pour lire : un titre se termine par deux-points et porte le chemin du dossier : cours/img: est le dossier img, dans cours. Farid lit : cours: img js ; cours/img: sans aucun nom dessous ; cours/js: app.js. Dans quel dossier est rangé app.js ?"
-          data-variante-accepte="js|cours/js|le dossier js"
-          data-variante-reponse="js"
-          data-variante-clavier="Le nom du dossier"
-          data-variante-si-site="cours|le dossier cours"
-          data-variante-retour-site="Le fichier est-il sous le titre cours:, ou sous un titre plus long ?"
-          data-variante-aide1="Cherche le nom app.js dans ce que Farid lit, puis lis le titre juste au-dessus."
-          data-variante-aide2="Un titre se termine par deux-points : le titre au-dessus de app.js est celui de son dossier."
-          data-variante-aide3="Repère le titre qui est suivi de app.js, puis lis le dernier mot de ce titre."
-          data-variante-sinon="Pas encore. Sous quel titre Farid lit-il app.js ?"
-          data-variante-explication="app.js est sous le titre cours/js : il est rangé dans le dossier js de cours. Le titre cours/img n’a pas de nom dessous : img est vide."
-        >
-          <p class="q">Dans quel dossier est rangé style.css ?</p>
-        </div>
-        <p>
-          Chaque dossier a son titre, suivi des noms qu’il contient ; un dossier vide n’a que son
-          titre. Quand les noms tiennent, <span class="mono">ls</span> les range côte à côte, et un
-          nom par ligne si la fenêtre est étroite : c’est la même liste.
-        </p>
-      </div>
-      <div data-ecran="Vérifier nom par nom">
-        <p class="accroche">
-          Farid a créé les six éléments et compare avec la consigne du formateur : site contient
-          css, img et index.html ; css contient style.css ; img contient logo.png. Voici sa réponse,
-          où il y a une faute.
-        </p>
-        <div class="cadre pour-lire">
-          <p class="discret">Pour lire :</p>
-          <ul>
-            <li>
-              <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
-              vide n’a que son titre.
+              puis chaque dossier qu’il contient, un titre par dossier ; un dossier vide n’a que son
+              titre.
             </li>
             <li>
               Un titre se termine par deux-points et porte le chemin complet du dossier :
@@ -3143,9 +3100,9 @@ logo.png  style.css</pre>
           data-accepte="style.css|site/img/style.css|img/style.css"
           data-clavier="Le nom du fichier"
           data-aide1="Lis les titres : sous quel titre chaque nom est-il rangé ?"
-          data-aide2="Reprends la consigne du formateur, dossier par dossier, et cherche pour chaque fichier son titre."
-          data-aide3="Pour chacun des trois fichiers, cherche son nom dans la réponse de la fenêtre, puis lis le titre juste au-dessus de lui, et compare avec la consigne."
-          data-sinon="Pas encore. Pour chaque fichier, sous quel titre la réponse de la fenêtre le range-t-elle, et est-ce celui de la consigne ?"
+          data-aide2="Reprends ce que le formateur impose, dossier par dossier, et cherche pour chaque fichier son titre."
+          data-aide3="Pour chacun des trois fichiers, cherche son nom dans la réponse de la fenêtre, puis lis le titre juste au-dessus de lui, et compare avec ce que le formateur impose."
+          data-sinon="Pas encore. Pour chaque fichier, sous quel titre la réponse de la fenêtre le range-t-elle, et est-ce celui que le formateur impose ?"
           data-explication="style.css est rangé sous le titre site/img, alors que le formateur le veut dans css : site/css n’a que son titre, il est vide."
           data-variante-enonce="Pour lire : site/css désigne le dossier css, dans site. Le formateur impose index.html, style.css et logo.png. Farid tape ls -R site et lit : site contient css, img et index.htm ; site/css contient style.css ; site/img contient logo.png. Quel nom est mal écrit ?"
           data-variante-accepte="index.htm"
@@ -3163,8 +3120,8 @@ logo.png  style.css</pre>
         </div>
         <p>
           Pour une arborescence imposée, <strong>vérifier</strong> veut dire comparer la sortie de
-          <span class="mono">ls -R</span> à la consigne, nom par nom : un nom presque juste est un
-          autre nom. Voici ce que répond la fenêtre de Yasmine, qui a bien tout créé :
+          <span class="mono">ls -R</span> à ce que le formateur impose, nom par nom : un nom presque
+          juste est un autre nom. Voici ce que répond la fenêtre de Yasmine, qui a bien tout créé :
         </p>
         <pre
           class="listing"
@@ -3271,7 +3228,7 @@ logo.png</pre>
           <ul>
             <li>
               L’option -R de <span class="mono">cp</span> se lit R comme récursif : descendre dans
-              les sous-dossiers.
+              les sous-dossiers, les dossiers rangés dans un dossier.
             </li>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
@@ -3486,18 +3443,12 @@ logo.png</pre>
             <li>
               Sous Ubuntu, l’option -v de cp, comme verbose, fait écrire une ligne par élément copié
               : la source, une flèche, la destination. Un élément est un dossier ou un fichier.
-            </li>
-            <li>
-              -R et -v se collent derrière un seul tiret : <span class="mono">-Rv</span> se lit
-              <span class="mono">-R -v</span>.
+              <span class="mono">-Rv</span> se lit <span class="mono">-R -v</span>.
             </li>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
-              vide n’a que son titre.
-            </li>
-            <li>
-              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
-              dossier site : on le suit de gauche à droite.
+              vide n’a que son titre. Un chemin comme <span class="mono">site/css</span> désigne le
+              dossier css, dans le dossier site.
             </li>
             <li>
               L’option <span class="mono">-R</span> de <span class="mono">cp</span> lui fait copier
@@ -3922,19 +3873,18 @@ $ mv style.css ..</pre>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
           <ul>
-            <li><span class="mono">rm</span> retire le fichier qu’on lui donne.</li>
+            <li>
+              <span class="mono">rm</span> retire le fichier qu’on lui donne. Une commande qui
+              réussit n’écrit rien dans la fenêtre : c’est une convention.
+            </li>
             <li>
               La Corbeille est le dossier de Windows, ou du Mac, où les fichiers supprimés avec la
               souris attendent d’être rendus.
             </li>
-            <li>Une commande qui réussit n’écrit rien dans la fenêtre : c’est une convention.</li>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
-              vide n’a que son titre.
-            </li>
-            <li>
-              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
-              dossier site : on le suit de gauche à droite.
+              vide n’a que son titre. Un chemin comme <span class="mono">site/css</span> désigne le
+              dossier css, dans le dossier site.
             </li>
           </ul>
         </div>
@@ -4245,8 +4195,12 @@ rm: cannot remove 'photos': No such file or directory</pre>
               qui a tous les droits.
             </li>
             <li>
+              Une commande travaille sous un <strong>compte</strong> : celui de Yasmine a le droit
+              de modifier ce qu’elle crée, comme l’atelier.
+            </li>
+            <li>
               Un fichier est <strong>protégé</strong> quand un compte ordinaire n’a pas le droit de
-              le modifier.
+              le modifier. /etc/hostname est un fichier du système : il est protégé.
             </li>
             <li>
               Un chemin qui commence par une barre désigne le même élément d’où qu’on le tape :
@@ -4307,20 +4261,18 @@ $ sudo rm /etc/hostname</pre>
           </ul>
         </div>
         <p>
-          Les fichiers du système appartiennent à l’administrateur : un fichier du système est donc
-          protégé, ton compte ne peut pas le modifier, seul l’administrateur le peut.
-          <span class="mono">sudo</span> retire cette protection : ce que ton compte n’a pas le
-          droit de toucher, <span class="mono">sudo rm</span> le détruit.
+          Les fichiers du système appartiennent à l’administrateur : seul son compte a le droit de
+          les modifier. Sans <span class="mono">sudo</span>, <span class="mono">rm</span> travaille
+          sous ton compte et se heurte à cette protection ; avec <span class="mono">sudo</span>, il
+          travaille en administrateur, et rien ne le retient.
           <span class="mono">sudo</span> n’ajoute aucune demande de confirmation, puisque
           <span class="mono">rm</span> n’en pose pas. Avec <span class="mono">-rf</span> derrière,
-          rien ne s’arrête : ni un dossier entier, ni un nom qui n’existe pas. C’est pourquoi
-          l’atelier est un dossier à toi : sans <span class="mono">sudo</span>, une ligne ne touche
-          qu’à ce que ton compte a le droit de modifier, comme l’atelier ; avec
-          <span class="mono">sudo</span>, elle touche à tout le système, et se lit donc avant d’être
-          lancée. <span class="mono">sudo</span> ne change pas ce que <span class="mono">rm</span>
-          fait à l’arborescence : il change seulement ce que ton compte a le droit d’atteindre.
-          C’est un mot de plus à lire avant d’appuyer sur Entrée, avec la commande, les options et
-          les chemins.
+          rien ne s’arrête : ni un dossier entier, ni un nom qui n’existe pas. Dans l’atelier,
+          <span class="mono">sudo</span> ne change rien : tes dossiers sont à toi, et ton compte a
+          déjà le droit de les retirer. <span class="mono">sudo</span> ne change pas ce que
+          <span class="mono">rm</span> fait à l’arborescence : il change seulement ce que le compte
+          a le droit d’atteindre. C’est un mot de plus à lire avant d’appuyer sur Entrée, avec la
+          commande, les options et les chemins.
         </p>
       </div>
       <div data-ecran="Lire avant de lancer">
@@ -4334,26 +4286,23 @@ $ sudo rm /etc/hostname</pre>
           <ul>
             <li>
               <span class="mono">-r</span> fait descendre rm dans les dossiers,
-              <span class="mono">-f</span> l’empêche de se plaindre d’un nom qui n’existe pas.
+              <span class="mono">-f</span> l’empêche de se plaindre d’un nom qui n’existe pas ;
+              <span class="mono">-rf</span> se lit <span class="mono">-r -f</span>.
             </li>
             <li>
-              Un chemin relatif, qui ne commence pas par une barre, part du répertoire courant ;
-              deux points <span class="mono">..</span> désignent le dossier parent du répertoire
-              courant, celui qui le contient.
+              Un chemin relatif, qui ne commence pas par une barre, part du répertoire courant. Deux
+              points <span class="mono">..</span> désignent le dossier parent du répertoire courant,
+              celui qui le contient : <span class="mono">../img</span> est le dossier img, dans le
+              dossier parent.
+            </li>
+            <li>
+              Un chemin qui commence par une barre se lit depuis le premier dossier :
+              <span class="mono">/home/yasmine</span> est le dossier yasmine, dans le dossier home.
             </li>
             <li>Une ligne lue n’est pas une ligne tapée : on ne la tape qu’après l’avoir lue.</li>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
-            </li>
-            <li>
-              Un chemin comme <span class="mono">../img</span> désigne le dossier img, dans le
-              dossier parent du répertoire courant.
-            </li>
-            <li>
-              <span class="mono">-rf</span> se lit <span class="mono">-r -f</span>. Un chemin qui
-              commence par une barre se lit depuis le premier dossier :
-              <span class="mono">/home/yasmine</span> est le dossier yasmine, dans le dossier home.
             </li>
           </ul>
         </div>
@@ -4390,7 +4339,7 @@ logo.png</pre>
           data-aide3="Écris le chemin du répertoire courant, remonte d’un dossier avec les deux points, puis descends dans img."
           data-sinon="Pas encore. D’où part le chemin ../img, et dans quel dossier te trouves-tu ?"
           data-explication="Yasmine est dans /home/yasmine/atelier/site/css : .. désigne site, et ../img est /home/yasmine/atelier/site/img. La ligne détruit img et logo.png."
-          data-variante-enonce="Pour lire : rm -rf retire un dossier avec son contenu. Un chemin sans barre au début part d’où l’on est, .. est le dossier parent. Farid est dans /Users/farid/atelier/site/img et lit rm -rf ../css. Écris le chemin complet du dossier détruit, comme pwd l’écrirait."
+          data-variante-enonce="Pour lire : rm -rf retire un dossier entier ; un chemin sans barre au début part d’où l’on est, avec une barre du premier dossier ; .. est le parent. Farid, dans /Users/farid/atelier/site/img, lit rm -rf ../css. Écris le chemin complet du dossier détruit."
           data-variante-accepte="/Users/farid/atelier/site/css|/Users/farid/atelier/site/css/"
           data-variante-reponse="/Users/farid/atelier/site/css"
           data-variante-clavier="Le chemin"
@@ -4492,7 +4441,7 @@ logo.png</pre>
           data-aide2="La seconde ligne parle d’un nom : existe-t-il encore à ce moment-là ?"
           data-aide3="Écris l’état de site après la première ligne, puis applique la seconde à cet état-là, pas à l’état de départ."
           data-explication="Après mv, img s’appelle images : la ligne rm site/img échoue, parce que img n’existe plus, et une commande qui échoue ne change rien."
-          data-variante-enonce="Pour lire : mv déplace sa source vers sa destination ; rm retire ce qu’on lui donne ; site/css est le dossier css, dans site. Farid a dans site css, img et index.html. Il prédit mv site/css site/styles, puis rm site/css. Que contient site ?"
+          data-variante-enonce="Pour lire : mv déplace sa source vers sa destination ; rm retire ce qu’on lui donne ; site/css est css, dans site. Farid a dans site css, img et index.html. Depuis atelier, il prédit mv site/css site/styles, puis rm site/css. Que contient site ?"
           data-variante-reponse="un"
           data-variante-options="un=img, index.html et styles.|deux=img et index.html : rm a retiré css.|trois=css, img, index.html et styles : mv a copié css."
           data-variante-retours="deux=Après la première ligne, css existe-t-il encore ? De quoi parle la seconde ligne ?|trois=Que devient la source après un déplacement ?"
@@ -4614,10 +4563,10 @@ C:\atelier&gt; rmdir /s site\css2</pre>
           class="ex"
           data-widget="saisie"
           data-id="cmd"
-          data-accepte="move site\css site\styles|move site\css .\site\styles|move site\css site\styles\|move site\css .\site\styles\|move .\site\css site\styles|move .\site\css .\site\styles|move .\site\css site\styles\|move .\site\css .\site\styles\|move site\css\ site\styles|move site\css\ .\site\styles|move site\css\ site\styles\|move site\css\ .\site\styles\|move .\site\css\ site\styles|move .\site\css\ .\site\styles|move .\site\css\ site\styles\|move .\site\css\ .\site\styles\"
+          data-accepte="move site\css site\styles|move site\css .\site\styles|move site\css site\styles\|move site\css .\site\styles\|move .\site\css site\styles|move .\site\css .\site\styles|move .\site\css site\styles\|move .\site\css .\site\styles\|move site\css\ site\styles|move site\css\ .\site\styles|move site\css\ site\styles\|move site\css\ .\site\styles\|move .\site\css\ site\styles|move .\site\css\ .\site\styles|move .\site\css\ site\styles\|move .\site\css\ .\site\styles\|Move site\css site\styles|MOVE site\css site\styles|Move site\css .\site\styles|MOVE site\css .\site\styles|Move site\css site\styles\|MOVE site\css site\styles\|Move site\css .\site\styles\|MOVE site\css .\site\styles\|Move .\site\css site\styles|MOVE .\site\css site\styles|Move .\site\css .\site\styles|MOVE .\site\css .\site\styles|Move .\site\css site\styles\|MOVE .\site\css site\styles\|Move .\site\css .\site\styles\|MOVE .\site\css .\site\styles\|Move site\css\ site\styles|MOVE site\css\ site\styles|Move site\css\ .\site\styles|MOVE site\css\ .\site\styles|Move site\css\ site\styles\|MOVE site\css\ site\styles\|Move site\css\ .\site\styles\|MOVE site\css\ .\site\styles\|Move .\site\css\ site\styles|MOVE .\site\css\ site\styles|Move .\site\css\ .\site\styles|MOVE .\site\css\ .\site\styles|Move .\site\css\ site\styles\|MOVE .\site\css\ site\styles\|Move .\site\css\ .\site\styles\|MOVE .\site\css\ .\site\styles\"
           data-clavier="La ligne de Cmd"
           data-si-barres="move site/css site/styles"
-          data-retour-barres="Dans ta ligne, les chemins sont-ils écrits avec l’antislash \ de Cmd ?"
+          data-retour-barres="Quel signe sépare les dossiers des chemins de ta ligne ?"
           data-si-nom="mv site\css site\styles"
           data-retour-nom="Cmd connaît-il le nom mv, d’après le tableau ?"
           data-aide1="Quel est le nom de Cmd pour mv, d’après le tableau ?"
@@ -4626,11 +4575,11 @@ C:\atelier&gt; rmdir /s site\css2</pre>
           data-sinon="Pas encore. Le nom de la commande et les barres des chemins sont-ils ceux de Cmd ?"
           data-explication="mv se dit move dans Cmd, et les chemins s’écrivent avec l’antislash : move site\css site\styles."
           data-variante-enonce="Pour lire : Cmd, l’Invite de commandes de Windows, écrit les chemins avec l’antislash, site\home.html pour home.html dans site ; copy est son nom pour cp. Farid lit, écrite pour Ubuntu, la ligne cp site/index.html site/home.html. Écris la ligne équivalente, pour Cmd."
-          data-variante-accepte="copy site\index.html site\home.html|copy site\index.html .\site\home.html|copy .\site\index.html site\home.html|copy .\site\index.html .\site\home.html"
+          data-variante-accepte="copy site\index.html site\home.html|copy site\index.html .\site\home.html|copy .\site\index.html site\home.html|copy .\site\index.html .\site\home.html|Copy site\index.html site\home.html|COPY site\index.html site\home.html|Copy site\index.html .\site\home.html|COPY site\index.html .\site\home.html|Copy .\site\index.html site\home.html|COPY .\site\index.html site\home.html|Copy .\site\index.html .\site\home.html|COPY .\site\index.html .\site\home.html"
           data-variante-reponse="copy site\index.html site\home.html"
           data-variante-clavier="La ligne de Cmd"
           data-variante-si-barres="copy site/index.html site/home.html"
-          data-variante-retour-barres="Dans ta ligne, les chemins sont-ils écrits avec l’antislash \ de Cmd ?"
+          data-variante-retour-barres="Quel signe sépare les dossiers des chemins de ta ligne ?"
           data-variante-si-nom="cp site\index.html site\home.html"
           data-variante-retour-nom="Cmd connaît-il le nom cp ?"
           data-variante-aide1="Quel est le nom de Cmd pour cp ?"
@@ -4737,11 +4686,10 @@ C:\atelier&gt; rmdir /s site\css2</pre>
         </p>
         <p>
           Une ligne écrite pour l’un ne marche pas dans l’autre. Sous Ubuntu, la ligne
-          <span class="mono">copy site sauvegarde</span> fait répondre à la fenêtre que la commande
-          est introuvable (« not found ») : la phrase exacte varie, et elle peut proposer un
-          programme à installer. Bash, le shell d’Ubuntu, ne connaît pas
-          <span class="mono">copy</span>, et rien n’est copié ; il ne connaît pas non plus
-          <span class="mono">del</span> ni <span class="mono">move</span>.
+          <span class="mono">copy site\index.html sauvegarde</span> fait répondre à la fenêtre que
+          la commande est introuvable (« not found ») : la phrase exacte varie. Bash, le shell
+          d’Ubuntu, ne connaît pas <span class="mono">copy</span>, et rien n’est copié ; il ne
+          connaît pas non plus <span class="mono">del</span> ni <span class="mono">move</span>.
         </p>
         <p>
           Il connaît bien un
@@ -4762,7 +4710,7 @@ C:\atelier&gt; rmdir /s site\css2</pre>
           dossier où l’on est.
         </p>
         <p data-si-essai="p4:faux">
-          Pour <span class="mono">copy site sauvegarde</span>, tu avais répondu
+          Pour <span class="mono">copy site\index.html sauvegarde</span>, tu avais répondu
           <span data-essai-rappel="p4">autre chose</span>. Ubuntu ne connaît pas le nom copy : il ne
           lit pas les lignes comme Cmd.
         </p>
@@ -4773,12 +4721,12 @@ C:\atelier&gt; rmdir /s site\css2</pre>
         class="ex"
         data-widget="saisie"
         data-verifie
-        data-accepte="mkdir -p app/js/lib app/img|mkdir -p ./app/js/lib ./app/img|mkdir -p app/js/lib/ app/img/|mkdir -p ./app/js/lib/ ./app/img/|mkdir -p ~/atelier/app/js/lib ~/atelier/app/img|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/img/|mkdir -p app/img app/js/lib|mkdir -p ./app/img ./app/js/lib|mkdir -p app/img/ app/js/lib/|mkdir -p ./app/img/ ./app/js/lib/|mkdir -p ~/atelier/app/img ~/atelier/app/js/lib|mkdir -p ~/atelier/app/img/ ~/atelier/app/js/lib/|mkdir -p app/img app/js/lib app|mkdir -p ./app/img ./app/js/lib ./app|mkdir -p app/img/ app/js/lib/ app/|mkdir -p ./app/img/ ./app/js/lib/ ./app/|mkdir -p ~/atelier/app/img ~/atelier/app/js/lib ~/atelier/app|mkdir -p ~/atelier/app/img/ ~/atelier/app/js/lib/ ~/atelier/app/|mkdir -p app/img app app/js/lib|mkdir -p ./app/img ./app ./app/js/lib|mkdir -p app/img/ app/ app/js/lib/|mkdir -p ./app/img/ ./app/ ./app/js/lib/|mkdir -p ~/atelier/app/img ~/atelier/app ~/atelier/app/js/lib|mkdir -p ~/atelier/app/img/ ~/atelier/app/ ~/atelier/app/js/lib/|mkdir -p app/js/lib app/img app|mkdir -p ./app/js/lib ./app/img ./app|mkdir -p app/js/lib/ app/img/ app/|mkdir -p ./app/js/lib/ ./app/img/ ./app/|mkdir -p ~/atelier/app/js/lib ~/atelier/app/img ~/atelier/app|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/img/ ~/atelier/app/|mkdir -p app/js/lib app app/img|mkdir -p ./app/js/lib ./app ./app/img|mkdir -p app/js/lib/ app/ app/img/|mkdir -p ./app/js/lib/ ./app/ ./app/img/|mkdir -p ~/atelier/app/js/lib ~/atelier/app ~/atelier/app/img|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/ ~/atelier/app/img/|mkdir -p app app/img app/js/lib|mkdir -p ./app ./app/img ./app/js/lib|mkdir -p app/ app/img/ app/js/lib/|mkdir -p ./app/ ./app/img/ ./app/js/lib/|mkdir -p ~/atelier/app ~/atelier/app/img ~/atelier/app/js/lib|mkdir -p ~/atelier/app/ ~/atelier/app/img/ ~/atelier/app/js/lib/|mkdir -p app app/js/lib app/img|mkdir -p ./app ./app/js/lib ./app/img|mkdir -p app/ app/js/lib/ app/img/|mkdir -p ./app/ ./app/js/lib/ ./app/img/|mkdir -p ~/atelier/app ~/atelier/app/js/lib ~/atelier/app/img|mkdir -p ~/atelier/app/ ~/atelier/app/js/lib/ ~/atelier/app/img/|mkdir -p app/img app/js/lib app/js|mkdir -p ./app/img ./app/js/lib ./app/js|mkdir -p app/img/ app/js/lib/ app/js/|mkdir -p ./app/img/ ./app/js/lib/ ./app/js/|mkdir -p ~/atelier/app/img ~/atelier/app/js/lib ~/atelier/app/js|mkdir -p ~/atelier/app/img/ ~/atelier/app/js/lib/ ~/atelier/app/js/|mkdir -p app/img app/js app/js/lib|mkdir -p ./app/img ./app/js ./app/js/lib|mkdir -p app/img/ app/js/ app/js/lib/|mkdir -p ./app/img/ ./app/js/ ./app/js/lib/|mkdir -p ~/atelier/app/img ~/atelier/app/js ~/atelier/app/js/lib|mkdir -p ~/atelier/app/img/ ~/atelier/app/js/ ~/atelier/app/js/lib/|mkdir -p app/js/lib app/img app/js|mkdir -p ./app/js/lib ./app/img ./app/js|mkdir -p app/js/lib/ app/img/ app/js/|mkdir -p ./app/js/lib/ ./app/img/ ./app/js/|mkdir -p ~/atelier/app/js/lib ~/atelier/app/img ~/atelier/app/js|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/img/ ~/atelier/app/js/|mkdir -p app/js/lib app/js app/img|mkdir -p ./app/js/lib ./app/js ./app/img|mkdir -p app/js/lib/ app/js/ app/img/|mkdir -p ./app/js/lib/ ./app/js/ ./app/img/|mkdir -p ~/atelier/app/js/lib ~/atelier/app/js ~/atelier/app/img|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/js/ ~/atelier/app/img/|mkdir -p app/js app/img app/js/lib|mkdir -p ./app/js ./app/img ./app/js/lib|mkdir -p app/js/ app/img/ app/js/lib/|mkdir -p ./app/js/ ./app/img/ ./app/js/lib/|mkdir -p ~/atelier/app/js ~/atelier/app/img ~/atelier/app/js/lib|mkdir -p ~/atelier/app/js/ ~/atelier/app/img/ ~/atelier/app/js/lib/|mkdir -p app/js app/js/lib app/img|mkdir -p ./app/js ./app/js/lib ./app/img|mkdir -p app/js/ app/js/lib/ app/img/|mkdir -p ./app/js/ ./app/js/lib/ ./app/img/|mkdir -p ~/atelier/app/js ~/atelier/app/js/lib ~/atelier/app/img|mkdir -p ~/atelier/app/js/ ~/atelier/app/js/lib/ ~/atelier/app/img/|mkdir -p app/img app/js/lib app app/js|mkdir -p ./app/img ./app/js/lib ./app ./app/js|mkdir -p app/img/ app/js/lib/ app/ app/js/|mkdir -p ./app/img/ ./app/js/lib/ ./app/ ./app/js/|mkdir -p ~/atelier/app/img ~/atelier/app/js/lib ~/atelier/app ~/atelier/app/js|mkdir -p ~/atelier/app/img/ ~/atelier/app/js/lib/ ~/atelier/app/ ~/atelier/app/js/|mkdir -p app/img app/js/lib app/js app|mkdir -p ./app/img ./app/js/lib ./app/js ./app|mkdir -p app/img/ app/js/lib/ app/js/ app/|mkdir -p ./app/img/ ./app/js/lib/ ./app/js/ ./app/|mkdir -p ~/atelier/app/img ~/atelier/app/js/lib ~/atelier/app/js ~/atelier/app|mkdir -p ~/atelier/app/img/ ~/atelier/app/js/lib/ ~/atelier/app/js/ ~/atelier/app/|mkdir -p app/img app app/js/lib app/js|mkdir -p ./app/img ./app ./app/js/lib ./app/js|mkdir -p app/img/ app/ app/js/lib/ app/js/|mkdir -p ./app/img/ ./app/ ./app/js/lib/ ./app/js/|mkdir -p ~/atelier/app/img ~/atelier/app ~/atelier/app/js/lib ~/atelier/app/js|mkdir -p ~/atelier/app/img/ ~/atelier/app/ ~/atelier/app/js/lib/ ~/atelier/app/js/|mkdir -p app/img app app/js app/js/lib|mkdir -p ./app/img ./app ./app/js ./app/js/lib|mkdir -p app/img/ app/ app/js/ app/js/lib/|mkdir -p ./app/img/ ./app/ ./app/js/ ./app/js/lib/|mkdir -p ~/atelier/app/img ~/atelier/app ~/atelier/app/js ~/atelier/app/js/lib|mkdir -p ~/atelier/app/img/ ~/atelier/app/ ~/atelier/app/js/ ~/atelier/app/js/lib/|mkdir -p app/img app/js app/js/lib app|mkdir -p ./app/img ./app/js ./app/js/lib ./app|mkdir -p app/img/ app/js/ app/js/lib/ app/|mkdir -p ./app/img/ ./app/js/ ./app/js/lib/ ./app/|mkdir -p ~/atelier/app/img ~/atelier/app/js ~/atelier/app/js/lib ~/atelier/app|mkdir -p ~/atelier/app/img/ ~/atelier/app/js/ ~/atelier/app/js/lib/ ~/atelier/app/|mkdir -p app/img app/js app app/js/lib|mkdir -p ./app/img ./app/js ./app ./app/js/lib|mkdir -p app/img/ app/js/ app/ app/js/lib/|mkdir -p ./app/img/ ./app/js/ ./app/ ./app/js/lib/|mkdir -p ~/atelier/app/img ~/atelier/app/js ~/atelier/app ~/atelier/app/js/lib|mkdir -p ~/atelier/app/img/ ~/atelier/app/js/ ~/atelier/app/ ~/atelier/app/js/lib/|mkdir -p app/js/lib app/img app app/js|mkdir -p ./app/js/lib ./app/img ./app ./app/js|mkdir -p app/js/lib/ app/img/ app/ app/js/|mkdir -p ./app/js/lib/ ./app/img/ ./app/ ./app/js/|mkdir -p ~/atelier/app/js/lib ~/atelier/app/img ~/atelier/app ~/atelier/app/js|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/img/ ~/atelier/app/ ~/atelier/app/js/|mkdir -p app/js/lib app/img app/js app|mkdir -p ./app/js/lib ./app/img ./app/js ./app|mkdir -p app/js/lib/ app/img/ app/js/ app/|mkdir -p ./app/js/lib/ ./app/img/ ./app/js/ ./app/|mkdir -p ~/atelier/app/js/lib ~/atelier/app/img ~/atelier/app/js ~/atelier/app|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/img/ ~/atelier/app/js/ ~/atelier/app/|mkdir -p app/js/lib app app/img app/js|mkdir -p ./app/js/lib ./app ./app/img ./app/js|mkdir -p app/js/lib/ app/ app/img/ app/js/|mkdir -p ./app/js/lib/ ./app/ ./app/img/ ./app/js/|mkdir -p ~/atelier/app/js/lib ~/atelier/app ~/atelier/app/img ~/atelier/app/js|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/ ~/atelier/app/img/ ~/atelier/app/js/|mkdir -p app/js/lib app app/js app/img|mkdir -p ./app/js/lib ./app ./app/js ./app/img|mkdir -p app/js/lib/ app/ app/js/ app/img/|mkdir -p ./app/js/lib/ ./app/ ./app/js/ ./app/img/|mkdir -p ~/atelier/app/js/lib ~/atelier/app ~/atelier/app/js ~/atelier/app/img|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/ ~/atelier/app/js/ ~/atelier/app/img/|mkdir -p app/js/lib app/js app/img app|mkdir -p ./app/js/lib ./app/js ./app/img ./app|mkdir -p app/js/lib/ app/js/ app/img/ app/|mkdir -p ./app/js/lib/ ./app/js/ ./app/img/ ./app/|mkdir -p ~/atelier/app/js/lib ~/atelier/app/js ~/atelier/app/img ~/atelier/app|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/js/ ~/atelier/app/img/ ~/atelier/app/|mkdir -p app/js/lib app/js app app/img|mkdir -p ./app/js/lib ./app/js ./app ./app/img|mkdir -p app/js/lib/ app/js/ app/ app/img/|mkdir -p ./app/js/lib/ ./app/js/ ./app/ ./app/img/|mkdir -p ~/atelier/app/js/lib ~/atelier/app/js ~/atelier/app ~/atelier/app/img|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/js/ ~/atelier/app/ ~/atelier/app/img/|mkdir -p app app/img app/js/lib app/js|mkdir -p ./app ./app/img ./app/js/lib ./app/js|mkdir -p app/ app/img/ app/js/lib/ app/js/|mkdir -p ./app/ ./app/img/ ./app/js/lib/ ./app/js/|mkdir -p ~/atelier/app ~/atelier/app/img ~/atelier/app/js/lib ~/atelier/app/js|mkdir -p ~/atelier/app/ ~/atelier/app/img/ ~/atelier/app/js/lib/ ~/atelier/app/js/|mkdir -p app app/img app/js app/js/lib|mkdir -p ./app ./app/img ./app/js ./app/js/lib|mkdir -p app/ app/img/ app/js/ app/js/lib/|mkdir -p ./app/ ./app/img/ ./app/js/ ./app/js/lib/|mkdir -p ~/atelier/app ~/atelier/app/img ~/atelier/app/js ~/atelier/app/js/lib|mkdir -p ~/atelier/app/ ~/atelier/app/img/ ~/atelier/app/js/ ~/atelier/app/js/lib/|mkdir -p app app/js/lib app/img app/js|mkdir -p ./app ./app/js/lib ./app/img ./app/js|mkdir -p app/ app/js/lib/ app/img/ app/js/|mkdir -p ./app/ ./app/js/lib/ ./app/img/ ./app/js/|mkdir -p ~/atelier/app ~/atelier/app/js/lib ~/atelier/app/img ~/atelier/app/js|mkdir -p ~/atelier/app/ ~/atelier/app/js/lib/ ~/atelier/app/img/ ~/atelier/app/js/|mkdir -p app app/js/lib app/js app/img|mkdir -p ./app ./app/js/lib ./app/js ./app/img|mkdir -p app/ app/js/lib/ app/js/ app/img/|mkdir -p ./app/ ./app/js/lib/ ./app/js/ ./app/img/|mkdir -p ~/atelier/app ~/atelier/app/js/lib ~/atelier/app/js ~/atelier/app/img|mkdir -p ~/atelier/app/ ~/atelier/app/js/lib/ ~/atelier/app/js/ ~/atelier/app/img/|mkdir -p app app/js app/img app/js/lib|mkdir -p ./app ./app/js ./app/img ./app/js/lib|mkdir -p app/ app/js/ app/img/ app/js/lib/|mkdir -p ./app/ ./app/js/ ./app/img/ ./app/js/lib/|mkdir -p ~/atelier/app ~/atelier/app/js ~/atelier/app/img ~/atelier/app/js/lib|mkdir -p ~/atelier/app/ ~/atelier/app/js/ ~/atelier/app/img/ ~/atelier/app/js/lib/|mkdir -p app app/js app/js/lib app/img|mkdir -p ./app ./app/js ./app/js/lib ./app/img|mkdir -p app/ app/js/ app/js/lib/ app/img/|mkdir -p ./app/ ./app/js/ ./app/js/lib/ ./app/img/|mkdir -p ~/atelier/app ~/atelier/app/js ~/atelier/app/js/lib ~/atelier/app/img|mkdir -p ~/atelier/app/ ~/atelier/app/js/ ~/atelier/app/js/lib/ ~/atelier/app/img/|mkdir -p app/js app/img app/js/lib app|mkdir -p ./app/js ./app/img ./app/js/lib ./app|mkdir -p app/js/ app/img/ app/js/lib/ app/|mkdir -p ./app/js/ ./app/img/ ./app/js/lib/ ./app/|mkdir -p ~/atelier/app/js ~/atelier/app/img ~/atelier/app/js/lib ~/atelier/app|mkdir -p ~/atelier/app/js/ ~/atelier/app/img/ ~/atelier/app/js/lib/ ~/atelier/app/|mkdir -p app/js app/img app app/js/lib|mkdir -p ./app/js ./app/img ./app ./app/js/lib|mkdir -p app/js/ app/img/ app/ app/js/lib/|mkdir -p ./app/js/ ./app/img/ ./app/ ./app/js/lib/|mkdir -p ~/atelier/app/js ~/atelier/app/img ~/atelier/app ~/atelier/app/js/lib|mkdir -p ~/atelier/app/js/ ~/atelier/app/img/ ~/atelier/app/ ~/atelier/app/js/lib/|mkdir -p app/js app/js/lib app/img app|mkdir -p ./app/js ./app/js/lib ./app/img ./app|mkdir -p app/js/ app/js/lib/ app/img/ app/|mkdir -p ./app/js/ ./app/js/lib/ ./app/img/ ./app/|mkdir -p ~/atelier/app/js ~/atelier/app/js/lib ~/atelier/app/img ~/atelier/app|mkdir -p ~/atelier/app/js/ ~/atelier/app/js/lib/ ~/atelier/app/img/ ~/atelier/app/|mkdir -p app/js app/js/lib app app/img|mkdir -p ./app/js ./app/js/lib ./app ./app/img|mkdir -p app/js/ app/js/lib/ app/ app/img/|mkdir -p ./app/js/ ./app/js/lib/ ./app/ ./app/img/|mkdir -p ~/atelier/app/js ~/atelier/app/js/lib ~/atelier/app ~/atelier/app/img|mkdir -p ~/atelier/app/js/ ~/atelier/app/js/lib/ ~/atelier/app/ ~/atelier/app/img/|mkdir -p app/js app app/img app/js/lib|mkdir -p ./app/js ./app ./app/img ./app/js/lib|mkdir -p app/js/ app/ app/img/ app/js/lib/|mkdir -p ./app/js/ ./app/ ./app/img/ ./app/js/lib/|mkdir -p ~/atelier/app/js ~/atelier/app ~/atelier/app/img ~/atelier/app/js/lib|mkdir -p ~/atelier/app/js/ ~/atelier/app/ ~/atelier/app/img/ ~/atelier/app/js/lib/|mkdir -p app/js app app/js/lib app/img|mkdir -p ./app/js ./app ./app/js/lib ./app/img|mkdir -p app/js/ app/ app/js/lib/ app/img/|mkdir -p ./app/js/ ./app/ ./app/js/lib/ ./app/img/|mkdir -p ~/atelier/app/js ~/atelier/app ~/atelier/app/js/lib ~/atelier/app/img|mkdir -p ~/atelier/app/js/ ~/atelier/app/ ~/atelier/app/js/lib/ ~/atelier/app/img/|mkdir app app/img app/js app/js/lib|mkdir ./app ./app/img ./app/js ./app/js/lib|mkdir app/ app/img/ app/js/ app/js/lib/|mkdir ./app/ ./app/img/ ./app/js/ ./app/js/lib/|mkdir ~/atelier/app ~/atelier/app/img ~/atelier/app/js ~/atelier/app/js/lib|mkdir ~/atelier/app/ ~/atelier/app/img/ ~/atelier/app/js/ ~/atelier/app/js/lib/|mkdir app app/js app/img app/js/lib|mkdir ./app ./app/js ./app/img ./app/js/lib|mkdir app/ app/js/ app/img/ app/js/lib/|mkdir ./app/ ./app/js/ ./app/img/ ./app/js/lib/|mkdir ~/atelier/app ~/atelier/app/js ~/atelier/app/img ~/atelier/app/js/lib|mkdir ~/atelier/app/ ~/atelier/app/js/ ~/atelier/app/img/ ~/atelier/app/js/lib/|mkdir app app/js app/js/lib app/img|mkdir ./app ./app/js ./app/js/lib ./app/img|mkdir app/ app/js/ app/js/lib/ app/img/|mkdir ./app/ ./app/js/ ./app/js/lib/ ./app/img/|mkdir ~/atelier/app ~/atelier/app/js ~/atelier/app/js/lib ~/atelier/app/img|mkdir ~/atelier/app/ ~/atelier/app/js/ ~/atelier/app/js/lib/ ~/atelier/app/img/"
+        data-accepte="mkdir -p app/js/lib app/img|mkdir -p ./app/js/lib ./app/img|mkdir -p app/js/lib/ app/img/|mkdir -p ./app/js/lib/ ./app/img/|mkdir -p ~/atelier/app/js/lib ~/atelier/app/img|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/img/|mkdir -p app/img app/js/lib|mkdir -p ./app/img ./app/js/lib|mkdir -p app/img/ app/js/lib/|mkdir -p ./app/img/ ./app/js/lib/|mkdir -p ~/atelier/app/img ~/atelier/app/js/lib|mkdir -p ~/atelier/app/img/ ~/atelier/app/js/lib/|mkdir -p app/img app/js/lib app|mkdir -p ./app/img ./app/js/lib ./app|mkdir -p app/img/ app/js/lib/ app/|mkdir -p ./app/img/ ./app/js/lib/ ./app/|mkdir -p ~/atelier/app/img ~/atelier/app/js/lib ~/atelier/app|mkdir -p ~/atelier/app/img/ ~/atelier/app/js/lib/ ~/atelier/app/|mkdir -p app/img app app/js/lib|mkdir -p ./app/img ./app ./app/js/lib|mkdir -p app/img/ app/ app/js/lib/|mkdir -p ./app/img/ ./app/ ./app/js/lib/|mkdir -p ~/atelier/app/img ~/atelier/app ~/atelier/app/js/lib|mkdir -p ~/atelier/app/img/ ~/atelier/app/ ~/atelier/app/js/lib/|mkdir -p app/js/lib app/img app|mkdir -p ./app/js/lib ./app/img ./app|mkdir -p app/js/lib/ app/img/ app/|mkdir -p ./app/js/lib/ ./app/img/ ./app/|mkdir -p ~/atelier/app/js/lib ~/atelier/app/img ~/atelier/app|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/img/ ~/atelier/app/|mkdir -p app/js/lib app app/img|mkdir -p ./app/js/lib ./app ./app/img|mkdir -p app/js/lib/ app/ app/img/|mkdir -p ./app/js/lib/ ./app/ ./app/img/|mkdir -p ~/atelier/app/js/lib ~/atelier/app ~/atelier/app/img|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/ ~/atelier/app/img/|mkdir -p app app/img app/js/lib|mkdir -p ./app ./app/img ./app/js/lib|mkdir -p app/ app/img/ app/js/lib/|mkdir -p ./app/ ./app/img/ ./app/js/lib/|mkdir -p ~/atelier/app ~/atelier/app/img ~/atelier/app/js/lib|mkdir -p ~/atelier/app/ ~/atelier/app/img/ ~/atelier/app/js/lib/|mkdir -p app app/js/lib app/img|mkdir -p ./app ./app/js/lib ./app/img|mkdir -p app/ app/js/lib/ app/img/|mkdir -p ./app/ ./app/js/lib/ ./app/img/|mkdir -p ~/atelier/app ~/atelier/app/js/lib ~/atelier/app/img|mkdir -p ~/atelier/app/ ~/atelier/app/js/lib/ ~/atelier/app/img/|mkdir -p app/img app/js/lib app/js|mkdir -p ./app/img ./app/js/lib ./app/js|mkdir -p app/img/ app/js/lib/ app/js/|mkdir -p ./app/img/ ./app/js/lib/ ./app/js/|mkdir -p ~/atelier/app/img ~/atelier/app/js/lib ~/atelier/app/js|mkdir -p ~/atelier/app/img/ ~/atelier/app/js/lib/ ~/atelier/app/js/|mkdir -p app/img app/js app/js/lib|mkdir -p ./app/img ./app/js ./app/js/lib|mkdir -p app/img/ app/js/ app/js/lib/|mkdir -p ./app/img/ ./app/js/ ./app/js/lib/|mkdir -p ~/atelier/app/img ~/atelier/app/js ~/atelier/app/js/lib|mkdir -p ~/atelier/app/img/ ~/atelier/app/js/ ~/atelier/app/js/lib/|mkdir -p app/js/lib app/img app/js|mkdir -p ./app/js/lib ./app/img ./app/js|mkdir -p app/js/lib/ app/img/ app/js/|mkdir -p ./app/js/lib/ ./app/img/ ./app/js/|mkdir -p ~/atelier/app/js/lib ~/atelier/app/img ~/atelier/app/js|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/img/ ~/atelier/app/js/|mkdir -p app/js/lib app/js app/img|mkdir -p ./app/js/lib ./app/js ./app/img|mkdir -p app/js/lib/ app/js/ app/img/|mkdir -p ./app/js/lib/ ./app/js/ ./app/img/|mkdir -p ~/atelier/app/js/lib ~/atelier/app/js ~/atelier/app/img|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/js/ ~/atelier/app/img/|mkdir -p app/js app/img app/js/lib|mkdir -p ./app/js ./app/img ./app/js/lib|mkdir -p app/js/ app/img/ app/js/lib/|mkdir -p ./app/js/ ./app/img/ ./app/js/lib/|mkdir -p ~/atelier/app/js ~/atelier/app/img ~/atelier/app/js/lib|mkdir -p ~/atelier/app/js/ ~/atelier/app/img/ ~/atelier/app/js/lib/|mkdir -p app/js app/js/lib app/img|mkdir -p ./app/js ./app/js/lib ./app/img|mkdir -p app/js/ app/js/lib/ app/img/|mkdir -p ./app/js/ ./app/js/lib/ ./app/img/|mkdir -p ~/atelier/app/js ~/atelier/app/js/lib ~/atelier/app/img|mkdir -p ~/atelier/app/js/ ~/atelier/app/js/lib/ ~/atelier/app/img/|mkdir -p app/img app/js/lib app app/js|mkdir -p ./app/img ./app/js/lib ./app ./app/js|mkdir -p app/img/ app/js/lib/ app/ app/js/|mkdir -p ./app/img/ ./app/js/lib/ ./app/ ./app/js/|mkdir -p ~/atelier/app/img ~/atelier/app/js/lib ~/atelier/app ~/atelier/app/js|mkdir -p ~/atelier/app/img/ ~/atelier/app/js/lib/ ~/atelier/app/ ~/atelier/app/js/|mkdir -p app/img app/js/lib app/js app|mkdir -p ./app/img ./app/js/lib ./app/js ./app|mkdir -p app/img/ app/js/lib/ app/js/ app/|mkdir -p ./app/img/ ./app/js/lib/ ./app/js/ ./app/|mkdir -p ~/atelier/app/img ~/atelier/app/js/lib ~/atelier/app/js ~/atelier/app|mkdir -p ~/atelier/app/img/ ~/atelier/app/js/lib/ ~/atelier/app/js/ ~/atelier/app/|mkdir -p app/img app app/js/lib app/js|mkdir -p ./app/img ./app ./app/js/lib ./app/js|mkdir -p app/img/ app/ app/js/lib/ app/js/|mkdir -p ./app/img/ ./app/ ./app/js/lib/ ./app/js/|mkdir -p ~/atelier/app/img ~/atelier/app ~/atelier/app/js/lib ~/atelier/app/js|mkdir -p ~/atelier/app/img/ ~/atelier/app/ ~/atelier/app/js/lib/ ~/atelier/app/js/|mkdir -p app/img app app/js app/js/lib|mkdir -p ./app/img ./app ./app/js ./app/js/lib|mkdir -p app/img/ app/ app/js/ app/js/lib/|mkdir -p ./app/img/ ./app/ ./app/js/ ./app/js/lib/|mkdir -p ~/atelier/app/img ~/atelier/app ~/atelier/app/js ~/atelier/app/js/lib|mkdir -p ~/atelier/app/img/ ~/atelier/app/ ~/atelier/app/js/ ~/atelier/app/js/lib/|mkdir -p app/img app/js app/js/lib app|mkdir -p ./app/img ./app/js ./app/js/lib ./app|mkdir -p app/img/ app/js/ app/js/lib/ app/|mkdir -p ./app/img/ ./app/js/ ./app/js/lib/ ./app/|mkdir -p ~/atelier/app/img ~/atelier/app/js ~/atelier/app/js/lib ~/atelier/app|mkdir -p ~/atelier/app/img/ ~/atelier/app/js/ ~/atelier/app/js/lib/ ~/atelier/app/|mkdir -p app/img app/js app app/js/lib|mkdir -p ./app/img ./app/js ./app ./app/js/lib|mkdir -p app/img/ app/js/ app/ app/js/lib/|mkdir -p ./app/img/ ./app/js/ ./app/ ./app/js/lib/|mkdir -p ~/atelier/app/img ~/atelier/app/js ~/atelier/app ~/atelier/app/js/lib|mkdir -p ~/atelier/app/img/ ~/atelier/app/js/ ~/atelier/app/ ~/atelier/app/js/lib/|mkdir -p app/js/lib app/img app app/js|mkdir -p ./app/js/lib ./app/img ./app ./app/js|mkdir -p app/js/lib/ app/img/ app/ app/js/|mkdir -p ./app/js/lib/ ./app/img/ ./app/ ./app/js/|mkdir -p ~/atelier/app/js/lib ~/atelier/app/img ~/atelier/app ~/atelier/app/js|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/img/ ~/atelier/app/ ~/atelier/app/js/|mkdir -p app/js/lib app/img app/js app|mkdir -p ./app/js/lib ./app/img ./app/js ./app|mkdir -p app/js/lib/ app/img/ app/js/ app/|mkdir -p ./app/js/lib/ ./app/img/ ./app/js/ ./app/|mkdir -p ~/atelier/app/js/lib ~/atelier/app/img ~/atelier/app/js ~/atelier/app|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/img/ ~/atelier/app/js/ ~/atelier/app/|mkdir -p app/js/lib app app/img app/js|mkdir -p ./app/js/lib ./app ./app/img ./app/js|mkdir -p app/js/lib/ app/ app/img/ app/js/|mkdir -p ./app/js/lib/ ./app/ ./app/img/ ./app/js/|mkdir -p ~/atelier/app/js/lib ~/atelier/app ~/atelier/app/img ~/atelier/app/js|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/ ~/atelier/app/img/ ~/atelier/app/js/|mkdir -p app/js/lib app app/js app/img|mkdir -p ./app/js/lib ./app ./app/js ./app/img|mkdir -p app/js/lib/ app/ app/js/ app/img/|mkdir -p ./app/js/lib/ ./app/ ./app/js/ ./app/img/|mkdir -p ~/atelier/app/js/lib ~/atelier/app ~/atelier/app/js ~/atelier/app/img|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/ ~/atelier/app/js/ ~/atelier/app/img/|mkdir -p app/js/lib app/js app/img app|mkdir -p ./app/js/lib ./app/js ./app/img ./app|mkdir -p app/js/lib/ app/js/ app/img/ app/|mkdir -p ./app/js/lib/ ./app/js/ ./app/img/ ./app/|mkdir -p ~/atelier/app/js/lib ~/atelier/app/js ~/atelier/app/img ~/atelier/app|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/js/ ~/atelier/app/img/ ~/atelier/app/|mkdir -p app/js/lib app/js app app/img|mkdir -p ./app/js/lib ./app/js ./app ./app/img|mkdir -p app/js/lib/ app/js/ app/ app/img/|mkdir -p ./app/js/lib/ ./app/js/ ./app/ ./app/img/|mkdir -p ~/atelier/app/js/lib ~/atelier/app/js ~/atelier/app ~/atelier/app/img|mkdir -p ~/atelier/app/js/lib/ ~/atelier/app/js/ ~/atelier/app/ ~/atelier/app/img/|mkdir -p app app/img app/js/lib app/js|mkdir -p ./app ./app/img ./app/js/lib ./app/js|mkdir -p app/ app/img/ app/js/lib/ app/js/|mkdir -p ./app/ ./app/img/ ./app/js/lib/ ./app/js/|mkdir -p ~/atelier/app ~/atelier/app/img ~/atelier/app/js/lib ~/atelier/app/js|mkdir -p ~/atelier/app/ ~/atelier/app/img/ ~/atelier/app/js/lib/ ~/atelier/app/js/|mkdir -p app app/img app/js app/js/lib|mkdir -p ./app ./app/img ./app/js ./app/js/lib|mkdir -p app/ app/img/ app/js/ app/js/lib/|mkdir -p ./app/ ./app/img/ ./app/js/ ./app/js/lib/|mkdir -p ~/atelier/app ~/atelier/app/img ~/atelier/app/js ~/atelier/app/js/lib|mkdir -p ~/atelier/app/ ~/atelier/app/img/ ~/atelier/app/js/ ~/atelier/app/js/lib/|mkdir -p app app/js/lib app/img app/js|mkdir -p ./app ./app/js/lib ./app/img ./app/js|mkdir -p app/ app/js/lib/ app/img/ app/js/|mkdir -p ./app/ ./app/js/lib/ ./app/img/ ./app/js/|mkdir -p ~/atelier/app ~/atelier/app/js/lib ~/atelier/app/img ~/atelier/app/js|mkdir -p ~/atelier/app/ ~/atelier/app/js/lib/ ~/atelier/app/img/ ~/atelier/app/js/|mkdir -p app app/js/lib app/js app/img|mkdir -p ./app ./app/js/lib ./app/js ./app/img|mkdir -p app/ app/js/lib/ app/js/ app/img/|mkdir -p ./app/ ./app/js/lib/ ./app/js/ ./app/img/|mkdir -p ~/atelier/app ~/atelier/app/js/lib ~/atelier/app/js ~/atelier/app/img|mkdir -p ~/atelier/app/ ~/atelier/app/js/lib/ ~/atelier/app/js/ ~/atelier/app/img/|mkdir -p app app/js app/img app/js/lib|mkdir -p ./app ./app/js ./app/img ./app/js/lib|mkdir -p app/ app/js/ app/img/ app/js/lib/|mkdir -p ./app/ ./app/js/ ./app/img/ ./app/js/lib/|mkdir -p ~/atelier/app ~/atelier/app/js ~/atelier/app/img ~/atelier/app/js/lib|mkdir -p ~/atelier/app/ ~/atelier/app/js/ ~/atelier/app/img/ ~/atelier/app/js/lib/|mkdir -p app app/js app/js/lib app/img|mkdir -p ./app ./app/js ./app/js/lib ./app/img|mkdir -p app/ app/js/ app/js/lib/ app/img/|mkdir -p ./app/ ./app/js/ ./app/js/lib/ ./app/img/|mkdir -p ~/atelier/app ~/atelier/app/js ~/atelier/app/js/lib ~/atelier/app/img|mkdir -p ~/atelier/app/ ~/atelier/app/js/ ~/atelier/app/js/lib/ ~/atelier/app/img/|mkdir -p app/js app/img app/js/lib app|mkdir -p ./app/js ./app/img ./app/js/lib ./app|mkdir -p app/js/ app/img/ app/js/lib/ app/|mkdir -p ./app/js/ ./app/img/ ./app/js/lib/ ./app/|mkdir -p ~/atelier/app/js ~/atelier/app/img ~/atelier/app/js/lib ~/atelier/app|mkdir -p ~/atelier/app/js/ ~/atelier/app/img/ ~/atelier/app/js/lib/ ~/atelier/app/|mkdir -p app/js app/img app app/js/lib|mkdir -p ./app/js ./app/img ./app ./app/js/lib|mkdir -p app/js/ app/img/ app/ app/js/lib/|mkdir -p ./app/js/ ./app/img/ ./app/ ./app/js/lib/|mkdir -p ~/atelier/app/js ~/atelier/app/img ~/atelier/app ~/atelier/app/js/lib|mkdir -p ~/atelier/app/js/ ~/atelier/app/img/ ~/atelier/app/ ~/atelier/app/js/lib/|mkdir -p app/js app/js/lib app/img app|mkdir -p ./app/js ./app/js/lib ./app/img ./app|mkdir -p app/js/ app/js/lib/ app/img/ app/|mkdir -p ./app/js/ ./app/js/lib/ ./app/img/ ./app/|mkdir -p ~/atelier/app/js ~/atelier/app/js/lib ~/atelier/app/img ~/atelier/app|mkdir -p ~/atelier/app/js/ ~/atelier/app/js/lib/ ~/atelier/app/img/ ~/atelier/app/|mkdir -p app/js app/js/lib app app/img|mkdir -p ./app/js ./app/js/lib ./app ./app/img|mkdir -p app/js/ app/js/lib/ app/ app/img/|mkdir -p ./app/js/ ./app/js/lib/ ./app/ ./app/img/|mkdir -p ~/atelier/app/js ~/atelier/app/js/lib ~/atelier/app ~/atelier/app/img|mkdir -p ~/atelier/app/js/ ~/atelier/app/js/lib/ ~/atelier/app/ ~/atelier/app/img/|mkdir -p app/js app app/img app/js/lib|mkdir -p ./app/js ./app ./app/img ./app/js/lib|mkdir -p app/js/ app/ app/img/ app/js/lib/|mkdir -p ./app/js/ ./app/ ./app/img/ ./app/js/lib/|mkdir -p ~/atelier/app/js ~/atelier/app ~/atelier/app/img ~/atelier/app/js/lib|mkdir -p ~/atelier/app/js/ ~/atelier/app/ ~/atelier/app/img/ ~/atelier/app/js/lib/|mkdir -p app/js app app/js/lib app/img|mkdir -p ./app/js ./app ./app/js/lib ./app/img|mkdir -p app/js/ app/ app/js/lib/ app/img/|mkdir -p ./app/js/ ./app/ ./app/js/lib/ ./app/img/|mkdir -p ~/atelier/app/js ~/atelier/app ~/atelier/app/js/lib ~/atelier/app/img|mkdir -p ~/atelier/app/js/ ~/atelier/app/ ~/atelier/app/js/lib/ ~/atelier/app/img/|mkdir app app/img app/js app/js/lib|mkdir ./app ./app/img ./app/js ./app/js/lib|mkdir app/ app/img/ app/js/ app/js/lib/|mkdir ./app/ ./app/img/ ./app/js/ ./app/js/lib/|mkdir ~/atelier/app ~/atelier/app/img ~/atelier/app/js ~/atelier/app/js/lib|mkdir ~/atelier/app/ ~/atelier/app/img/ ~/atelier/app/js/ ~/atelier/app/js/lib/|mkdir app app/js app/img app/js/lib|mkdir ./app ./app/js ./app/img ./app/js/lib|mkdir app/ app/js/ app/img/ app/js/lib/|mkdir ./app/ ./app/js/ ./app/img/ ./app/js/lib/|mkdir ~/atelier/app ~/atelier/app/js ~/atelier/app/img ~/atelier/app/js/lib|mkdir ~/atelier/app/ ~/atelier/app/js/ ~/atelier/app/img/ ~/atelier/app/js/lib/|mkdir app app/js app/js/lib app/img|mkdir ./app ./app/js ./app/js/lib ./app/img|mkdir app/ app/js/ app/js/lib/ app/img/|mkdir ./app/ ./app/js/ ./app/js/lib/ ./app/img/|mkdir ~/atelier/app ~/atelier/app/js ~/atelier/app/js/lib ~/atelier/app/img|mkdir ~/atelier/app/ ~/atelier/app/js/ ~/atelier/app/js/lib/ ~/atelier/app/img/|mkdir -p /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/img|mkdir -p /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/img/|mkdir -p /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js/lib|mkdir -p /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/lib/|mkdir -p /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app|mkdir -p /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/|mkdir -p /home/yasmine/atelier/app/img /home/yasmine/atelier/app /home/yasmine/atelier/app/js/lib|mkdir -p /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/ /home/yasmine/atelier/app/js/lib/|mkdir -p /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/img /home/yasmine/atelier/app|mkdir -p /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/|mkdir -p /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app /home/yasmine/atelier/app/img|mkdir -p /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/ /home/yasmine/atelier/app/img/|mkdir -p /home/yasmine/atelier/app /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js/lib|mkdir -p /home/yasmine/atelier/app/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/lib/|mkdir -p /home/yasmine/atelier/app /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/img|mkdir -p /home/yasmine/atelier/app/ /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/img/|mkdir -p /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/js|mkdir -p /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/js/|mkdir -p /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js /home/yasmine/atelier/app/js/lib|mkdir -p /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/js/lib/|mkdir -p /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js|mkdir -p /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/|mkdir -p /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/js /home/yasmine/atelier/app/img|mkdir -p /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/img/|mkdir -p /home/yasmine/atelier/app/js /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js/lib|mkdir -p /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/lib/|mkdir -p /home/yasmine/atelier/app/js /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/img|mkdir -p /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/img/|mkdir -p /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app /home/yasmine/atelier/app/js|mkdir -p /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/ /home/yasmine/atelier/app/js/|mkdir -p /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/js /home/yasmine/atelier/app|mkdir -p /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/|mkdir -p /home/yasmine/atelier/app/img /home/yasmine/atelier/app /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/js|mkdir -p /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/ /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/js/|mkdir -p /home/yasmine/atelier/app/img /home/yasmine/atelier/app /home/yasmine/atelier/app/js /home/yasmine/atelier/app/js/lib|mkdir -p /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/ /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/js/lib/|mkdir -p /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app|mkdir -p /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/|mkdir -p /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js /home/yasmine/atelier/app /home/yasmine/atelier/app/js/lib|mkdir -p /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/ /home/yasmine/atelier/app/js/lib/|mkdir -p /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/img /home/yasmine/atelier/app /home/yasmine/atelier/app/js|mkdir -p /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/ /home/yasmine/atelier/app/js/|mkdir -p /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js /home/yasmine/atelier/app|mkdir -p /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/|mkdir -p /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js|mkdir -p /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/|mkdir -p /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app /home/yasmine/atelier/app/js /home/yasmine/atelier/app/img|mkdir -p /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/ /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/img/|mkdir -p /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/js /home/yasmine/atelier/app/img /home/yasmine/atelier/app|mkdir -p /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/|mkdir -p /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/js /home/yasmine/atelier/app /home/yasmine/atelier/app/img|mkdir -p /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/ /home/yasmine/atelier/app/img/|mkdir -p /home/yasmine/atelier/app /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/js|mkdir -p /home/yasmine/atelier/app/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/js/|mkdir -p /home/yasmine/atelier/app /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js /home/yasmine/atelier/app/js/lib|mkdir -p /home/yasmine/atelier/app/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/js/lib/|mkdir -p /home/yasmine/atelier/app /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js|mkdir -p /home/yasmine/atelier/app/ /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/|mkdir -p /home/yasmine/atelier/app /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/js /home/yasmine/atelier/app/img|mkdir -p /home/yasmine/atelier/app/ /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/img/|mkdir -p /home/yasmine/atelier/app /home/yasmine/atelier/app/js /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js/lib|mkdir -p /home/yasmine/atelier/app/ /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/lib/|mkdir -p /home/yasmine/atelier/app /home/yasmine/atelier/app/js /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/img|mkdir -p /home/yasmine/atelier/app/ /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/img/|mkdir -p /home/yasmine/atelier/app/js /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app|mkdir -p /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/|mkdir -p /home/yasmine/atelier/app/js /home/yasmine/atelier/app/img /home/yasmine/atelier/app /home/yasmine/atelier/app/js/lib|mkdir -p /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/ /home/yasmine/atelier/app/js/lib/|mkdir -p /home/yasmine/atelier/app/js /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/img /home/yasmine/atelier/app|mkdir -p /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/|mkdir -p /home/yasmine/atelier/app/js /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app /home/yasmine/atelier/app/img|mkdir -p /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/ /home/yasmine/atelier/app/img/|mkdir -p /home/yasmine/atelier/app/js /home/yasmine/atelier/app /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js/lib|mkdir -p /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/lib/|mkdir -p /home/yasmine/atelier/app/js /home/yasmine/atelier/app /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/img|mkdir -p /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/ /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/img/|mkdir /home/yasmine/atelier/app /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js /home/yasmine/atelier/app/js/lib|mkdir /home/yasmine/atelier/app/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/js/lib/|mkdir /home/yasmine/atelier/app /home/yasmine/atelier/app/js /home/yasmine/atelier/app/img /home/yasmine/atelier/app/js/lib|mkdir /home/yasmine/atelier/app/ /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/img/ /home/yasmine/atelier/app/js/lib/|mkdir /home/yasmine/atelier/app /home/yasmine/atelier/app/js /home/yasmine/atelier/app/js/lib /home/yasmine/atelier/app/img|mkdir /home/yasmine/atelier/app/ /home/yasmine/atelier/app/js/ /home/yasmine/atelier/app/js/lib/ /home/yasmine/atelier/app/img/"
         data-clavier="La ligne"
         data-si-sansp="mkdir app/js/lib app/img|mkdir app/img app/js/lib"
         data-retour-sansp="Dans un atelier vide, app et js existent-ils quand mkdir crée lib ?"
         data-si-seul="mkdir -p app/js/lib|mkdir -p app/img"
-        data-retour-seul="Combien de dossiers la consigne demande-t-elle de créer, sans compter ceux qui les contiennent ?"
+        data-retour-seul="Combien de dossiers l’énoncé demande-t-il de créer, sans compter ceux qui les contiennent ?"
         data-aide1="Écris, pour chaque dossier demandé, le chemin qui part d’atelier : lesquels existent déjà, dans un atelier vide ?"
         data-aide2="Une option de mkdir crée les dossiers du chemin qui manquent."
         data-aide3="Écris la commande, l’option qui crée les dossiers manquants, puis les deux chemins complets, séparés par des espaces."
@@ -4815,12 +4763,12 @@ C:\atelier&gt; rmdir /s site\css2</pre>
         class="ex"
         data-widget="saisie"
         data-verifie
-        data-accepte="mkdir -p cours/css/fonts cours/js|mkdir -p ./cours/css/fonts ./cours/js|mkdir -p cours/css/fonts/ cours/js/|mkdir -p ./cours/css/fonts/ ./cours/js/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours/js|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/js/|mkdir -p cours/js cours/css/fonts|mkdir -p ./cours/js ./cours/css/fonts|mkdir -p cours/js/ cours/css/fonts/|mkdir -p ./cours/js/ ./cours/css/fonts/|mkdir -p ~/atelier/cours/js ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/css/fonts/|mkdir -p cours/css/fonts cours/js cours|mkdir -p ./cours/css/fonts ./cours/js ./cours|mkdir -p cours/css/fonts/ cours/js/ cours/|mkdir -p ./cours/css/fonts/ ./cours/js/ ./cours/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours/js ~/atelier/cours|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/js/ ~/atelier/cours/|mkdir -p cours/css/fonts cours cours/js|mkdir -p ./cours/css/fonts ./cours ./cours/js|mkdir -p cours/css/fonts/ cours/ cours/js/|mkdir -p ./cours/css/fonts/ ./cours/ ./cours/js/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours ~/atelier/cours/js|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/ ~/atelier/cours/js/|mkdir -p cours/js cours/css/fonts cours|mkdir -p ./cours/js ./cours/css/fonts ./cours|mkdir -p cours/js/ cours/css/fonts/ cours/|mkdir -p ./cours/js/ ./cours/css/fonts/ ./cours/|mkdir -p ~/atelier/cours/js ~/atelier/cours/css/fonts ~/atelier/cours|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/css/fonts/ ~/atelier/cours/|mkdir -p cours/js cours cours/css/fonts|mkdir -p ./cours/js ./cours ./cours/css/fonts|mkdir -p cours/js/ cours/ cours/css/fonts/|mkdir -p ./cours/js/ ./cours/ ./cours/css/fonts/|mkdir -p ~/atelier/cours/js ~/atelier/cours ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/ ~/atelier/cours/css/fonts/|mkdir -p cours cours/css/fonts cours/js|mkdir -p ./cours ./cours/css/fonts ./cours/js|mkdir -p cours/ cours/css/fonts/ cours/js/|mkdir -p ./cours/ ./cours/css/fonts/ ./cours/js/|mkdir -p ~/atelier/cours ~/atelier/cours/css/fonts ~/atelier/cours/js|mkdir -p ~/atelier/cours/ ~/atelier/cours/css/fonts/ ~/atelier/cours/js/|mkdir -p cours cours/js cours/css/fonts|mkdir -p ./cours ./cours/js ./cours/css/fonts|mkdir -p cours/ cours/js/ cours/css/fonts/|mkdir -p ./cours/ ./cours/js/ ./cours/css/fonts/|mkdir -p ~/atelier/cours ~/atelier/cours/js ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/ ~/atelier/cours/js/ ~/atelier/cours/css/fonts/|mkdir -p cours/css/fonts cours/js cours/css|mkdir -p ./cours/css/fonts ./cours/js ./cours/css|mkdir -p cours/css/fonts/ cours/js/ cours/css/|mkdir -p ./cours/css/fonts/ ./cours/js/ ./cours/css/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours/js ~/atelier/cours/css|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/js/ ~/atelier/cours/css/|mkdir -p cours/css/fonts cours/css cours/js|mkdir -p ./cours/css/fonts ./cours/css ./cours/js|mkdir -p cours/css/fonts/ cours/css/ cours/js/|mkdir -p ./cours/css/fonts/ ./cours/css/ ./cours/js/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours/css ~/atelier/cours/js|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/css/ ~/atelier/cours/js/|mkdir -p cours/js cours/css/fonts cours/css|mkdir -p ./cours/js ./cours/css/fonts ./cours/css|mkdir -p cours/js/ cours/css/fonts/ cours/css/|mkdir -p ./cours/js/ ./cours/css/fonts/ ./cours/css/|mkdir -p ~/atelier/cours/js ~/atelier/cours/css/fonts ~/atelier/cours/css|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/css/fonts/ ~/atelier/cours/css/|mkdir -p cours/js cours/css cours/css/fonts|mkdir -p ./cours/js ./cours/css ./cours/css/fonts|mkdir -p cours/js/ cours/css/ cours/css/fonts/|mkdir -p ./cours/js/ ./cours/css/ ./cours/css/fonts/|mkdir -p ~/atelier/cours/js ~/atelier/cours/css ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/css/ ~/atelier/cours/css/fonts/|mkdir -p cours/css cours/css/fonts cours/js|mkdir -p ./cours/css ./cours/css/fonts ./cours/js|mkdir -p cours/css/ cours/css/fonts/ cours/js/|mkdir -p ./cours/css/ ./cours/css/fonts/ ./cours/js/|mkdir -p ~/atelier/cours/css ~/atelier/cours/css/fonts ~/atelier/cours/js|mkdir -p ~/atelier/cours/css/ ~/atelier/cours/css/fonts/ ~/atelier/cours/js/|mkdir -p cours/css cours/js cours/css/fonts|mkdir -p ./cours/css ./cours/js ./cours/css/fonts|mkdir -p cours/css/ cours/js/ cours/css/fonts/|mkdir -p ./cours/css/ ./cours/js/ ./cours/css/fonts/|mkdir -p ~/atelier/cours/css ~/atelier/cours/js ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/css/ ~/atelier/cours/js/ ~/atelier/cours/css/fonts/|mkdir -p cours/css/fonts cours/js cours cours/css|mkdir -p ./cours/css/fonts ./cours/js ./cours ./cours/css|mkdir -p cours/css/fonts/ cours/js/ cours/ cours/css/|mkdir -p ./cours/css/fonts/ ./cours/js/ ./cours/ ./cours/css/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours/js ~/atelier/cours ~/atelier/cours/css|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/js/ ~/atelier/cours/ ~/atelier/cours/css/|mkdir -p cours/css/fonts cours/js cours/css cours|mkdir -p ./cours/css/fonts ./cours/js ./cours/css ./cours|mkdir -p cours/css/fonts/ cours/js/ cours/css/ cours/|mkdir -p ./cours/css/fonts/ ./cours/js/ ./cours/css/ ./cours/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours/js ~/atelier/cours/css ~/atelier/cours|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/js/ ~/atelier/cours/css/ ~/atelier/cours/|mkdir -p cours/css/fonts cours cours/js cours/css|mkdir -p ./cours/css/fonts ./cours ./cours/js ./cours/css|mkdir -p cours/css/fonts/ cours/ cours/js/ cours/css/|mkdir -p ./cours/css/fonts/ ./cours/ ./cours/js/ ./cours/css/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours ~/atelier/cours/js ~/atelier/cours/css|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/ ~/atelier/cours/js/ ~/atelier/cours/css/|mkdir -p cours/css/fonts cours cours/css cours/js|mkdir -p ./cours/css/fonts ./cours ./cours/css ./cours/js|mkdir -p cours/css/fonts/ cours/ cours/css/ cours/js/|mkdir -p ./cours/css/fonts/ ./cours/ ./cours/css/ ./cours/js/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours ~/atelier/cours/css ~/atelier/cours/js|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/ ~/atelier/cours/css/ ~/atelier/cours/js/|mkdir -p cours/css/fonts cours/css cours/js cours|mkdir -p ./cours/css/fonts ./cours/css ./cours/js ./cours|mkdir -p cours/css/fonts/ cours/css/ cours/js/ cours/|mkdir -p ./cours/css/fonts/ ./cours/css/ ./cours/js/ ./cours/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours/css ~/atelier/cours/js ~/atelier/cours|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/css/ ~/atelier/cours/js/ ~/atelier/cours/|mkdir -p cours/css/fonts cours/css cours cours/js|mkdir -p ./cours/css/fonts ./cours/css ./cours ./cours/js|mkdir -p cours/css/fonts/ cours/css/ cours/ cours/js/|mkdir -p ./cours/css/fonts/ ./cours/css/ ./cours/ ./cours/js/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours/css ~/atelier/cours ~/atelier/cours/js|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/css/ ~/atelier/cours/ ~/atelier/cours/js/|mkdir -p cours/js cours/css/fonts cours cours/css|mkdir -p ./cours/js ./cours/css/fonts ./cours ./cours/css|mkdir -p cours/js/ cours/css/fonts/ cours/ cours/css/|mkdir -p ./cours/js/ ./cours/css/fonts/ ./cours/ ./cours/css/|mkdir -p ~/atelier/cours/js ~/atelier/cours/css/fonts ~/atelier/cours ~/atelier/cours/css|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/css/fonts/ ~/atelier/cours/ ~/atelier/cours/css/|mkdir -p cours/js cours/css/fonts cours/css cours|mkdir -p ./cours/js ./cours/css/fonts ./cours/css ./cours|mkdir -p cours/js/ cours/css/fonts/ cours/css/ cours/|mkdir -p ./cours/js/ ./cours/css/fonts/ ./cours/css/ ./cours/|mkdir -p ~/atelier/cours/js ~/atelier/cours/css/fonts ~/atelier/cours/css ~/atelier/cours|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/css/fonts/ ~/atelier/cours/css/ ~/atelier/cours/|mkdir -p cours/js cours cours/css/fonts cours/css|mkdir -p ./cours/js ./cours ./cours/css/fonts ./cours/css|mkdir -p cours/js/ cours/ cours/css/fonts/ cours/css/|mkdir -p ./cours/js/ ./cours/ ./cours/css/fonts/ ./cours/css/|mkdir -p ~/atelier/cours/js ~/atelier/cours ~/atelier/cours/css/fonts ~/atelier/cours/css|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/ ~/atelier/cours/css/fonts/ ~/atelier/cours/css/|mkdir -p cours/js cours cours/css cours/css/fonts|mkdir -p ./cours/js ./cours ./cours/css ./cours/css/fonts|mkdir -p cours/js/ cours/ cours/css/ cours/css/fonts/|mkdir -p ./cours/js/ ./cours/ ./cours/css/ ./cours/css/fonts/|mkdir -p ~/atelier/cours/js ~/atelier/cours ~/atelier/cours/css ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/ ~/atelier/cours/css/ ~/atelier/cours/css/fonts/|mkdir -p cours/js cours/css cours/css/fonts cours|mkdir -p ./cours/js ./cours/css ./cours/css/fonts ./cours|mkdir -p cours/js/ cours/css/ cours/css/fonts/ cours/|mkdir -p ./cours/js/ ./cours/css/ ./cours/css/fonts/ ./cours/|mkdir -p ~/atelier/cours/js ~/atelier/cours/css ~/atelier/cours/css/fonts ~/atelier/cours|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/css/ ~/atelier/cours/css/fonts/ ~/atelier/cours/|mkdir -p cours/js cours/css cours cours/css/fonts|mkdir -p ./cours/js ./cours/css ./cours ./cours/css/fonts|mkdir -p cours/js/ cours/css/ cours/ cours/css/fonts/|mkdir -p ./cours/js/ ./cours/css/ ./cours/ ./cours/css/fonts/|mkdir -p ~/atelier/cours/js ~/atelier/cours/css ~/atelier/cours ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/css/ ~/atelier/cours/ ~/atelier/cours/css/fonts/|mkdir -p cours cours/css/fonts cours/js cours/css|mkdir -p ./cours ./cours/css/fonts ./cours/js ./cours/css|mkdir -p cours/ cours/css/fonts/ cours/js/ cours/css/|mkdir -p ./cours/ ./cours/css/fonts/ ./cours/js/ ./cours/css/|mkdir -p ~/atelier/cours ~/atelier/cours/css/fonts ~/atelier/cours/js ~/atelier/cours/css|mkdir -p ~/atelier/cours/ ~/atelier/cours/css/fonts/ ~/atelier/cours/js/ ~/atelier/cours/css/|mkdir -p cours cours/css/fonts cours/css cours/js|mkdir -p ./cours ./cours/css/fonts ./cours/css ./cours/js|mkdir -p cours/ cours/css/fonts/ cours/css/ cours/js/|mkdir -p ./cours/ ./cours/css/fonts/ ./cours/css/ ./cours/js/|mkdir -p ~/atelier/cours ~/atelier/cours/css/fonts ~/atelier/cours/css ~/atelier/cours/js|mkdir -p ~/atelier/cours/ ~/atelier/cours/css/fonts/ ~/atelier/cours/css/ ~/atelier/cours/js/|mkdir -p cours cours/js cours/css/fonts cours/css|mkdir -p ./cours ./cours/js ./cours/css/fonts ./cours/css|mkdir -p cours/ cours/js/ cours/css/fonts/ cours/css/|mkdir -p ./cours/ ./cours/js/ ./cours/css/fonts/ ./cours/css/|mkdir -p ~/atelier/cours ~/atelier/cours/js ~/atelier/cours/css/fonts ~/atelier/cours/css|mkdir -p ~/atelier/cours/ ~/atelier/cours/js/ ~/atelier/cours/css/fonts/ ~/atelier/cours/css/|mkdir -p cours cours/js cours/css cours/css/fonts|mkdir -p ./cours ./cours/js ./cours/css ./cours/css/fonts|mkdir -p cours/ cours/js/ cours/css/ cours/css/fonts/|mkdir -p ./cours/ ./cours/js/ ./cours/css/ ./cours/css/fonts/|mkdir -p ~/atelier/cours ~/atelier/cours/js ~/atelier/cours/css ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/ ~/atelier/cours/js/ ~/atelier/cours/css/ ~/atelier/cours/css/fonts/|mkdir -p cours cours/css cours/css/fonts cours/js|mkdir -p ./cours ./cours/css ./cours/css/fonts ./cours/js|mkdir -p cours/ cours/css/ cours/css/fonts/ cours/js/|mkdir -p ./cours/ ./cours/css/ ./cours/css/fonts/ ./cours/js/|mkdir -p ~/atelier/cours ~/atelier/cours/css ~/atelier/cours/css/fonts ~/atelier/cours/js|mkdir -p ~/atelier/cours/ ~/atelier/cours/css/ ~/atelier/cours/css/fonts/ ~/atelier/cours/js/|mkdir -p cours cours/css cours/js cours/css/fonts|mkdir -p ./cours ./cours/css ./cours/js ./cours/css/fonts|mkdir -p cours/ cours/css/ cours/js/ cours/css/fonts/|mkdir -p ./cours/ ./cours/css/ ./cours/js/ ./cours/css/fonts/|mkdir -p ~/atelier/cours ~/atelier/cours/css ~/atelier/cours/js ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/ ~/atelier/cours/css/ ~/atelier/cours/js/ ~/atelier/cours/css/fonts/|mkdir -p cours/css cours/css/fonts cours/js cours|mkdir -p ./cours/css ./cours/css/fonts ./cours/js ./cours|mkdir -p cours/css/ cours/css/fonts/ cours/js/ cours/|mkdir -p ./cours/css/ ./cours/css/fonts/ ./cours/js/ ./cours/|mkdir -p ~/atelier/cours/css ~/atelier/cours/css/fonts ~/atelier/cours/js ~/atelier/cours|mkdir -p ~/atelier/cours/css/ ~/atelier/cours/css/fonts/ ~/atelier/cours/js/ ~/atelier/cours/|mkdir -p cours/css cours/css/fonts cours cours/js|mkdir -p ./cours/css ./cours/css/fonts ./cours ./cours/js|mkdir -p cours/css/ cours/css/fonts/ cours/ cours/js/|mkdir -p ./cours/css/ ./cours/css/fonts/ ./cours/ ./cours/js/|mkdir -p ~/atelier/cours/css ~/atelier/cours/css/fonts ~/atelier/cours ~/atelier/cours/js|mkdir -p ~/atelier/cours/css/ ~/atelier/cours/css/fonts/ ~/atelier/cours/ ~/atelier/cours/js/|mkdir -p cours/css cours/js cours/css/fonts cours|mkdir -p ./cours/css ./cours/js ./cours/css/fonts ./cours|mkdir -p cours/css/ cours/js/ cours/css/fonts/ cours/|mkdir -p ./cours/css/ ./cours/js/ ./cours/css/fonts/ ./cours/|mkdir -p ~/atelier/cours/css ~/atelier/cours/js ~/atelier/cours/css/fonts ~/atelier/cours|mkdir -p ~/atelier/cours/css/ ~/atelier/cours/js/ ~/atelier/cours/css/fonts/ ~/atelier/cours/|mkdir -p cours/css cours/js cours cours/css/fonts|mkdir -p ./cours/css ./cours/js ./cours ./cours/css/fonts|mkdir -p cours/css/ cours/js/ cours/ cours/css/fonts/|mkdir -p ./cours/css/ ./cours/js/ ./cours/ ./cours/css/fonts/|mkdir -p ~/atelier/cours/css ~/atelier/cours/js ~/atelier/cours ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/css/ ~/atelier/cours/js/ ~/atelier/cours/ ~/atelier/cours/css/fonts/|mkdir -p cours/css cours cours/css/fonts cours/js|mkdir -p ./cours/css ./cours ./cours/css/fonts ./cours/js|mkdir -p cours/css/ cours/ cours/css/fonts/ cours/js/|mkdir -p ./cours/css/ ./cours/ ./cours/css/fonts/ ./cours/js/|mkdir -p ~/atelier/cours/css ~/atelier/cours ~/atelier/cours/css/fonts ~/atelier/cours/js|mkdir -p ~/atelier/cours/css/ ~/atelier/cours/ ~/atelier/cours/css/fonts/ ~/atelier/cours/js/|mkdir -p cours/css cours cours/js cours/css/fonts|mkdir -p ./cours/css ./cours ./cours/js ./cours/css/fonts|mkdir -p cours/css/ cours/ cours/js/ cours/css/fonts/|mkdir -p ./cours/css/ ./cours/ ./cours/js/ ./cours/css/fonts/|mkdir -p ~/atelier/cours/css ~/atelier/cours ~/atelier/cours/js ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/css/ ~/atelier/cours/ ~/atelier/cours/js/ ~/atelier/cours/css/fonts/|mkdir cours cours/css cours/css/fonts cours/js|mkdir ./cours ./cours/css ./cours/css/fonts ./cours/js|mkdir cours/ cours/css/ cours/css/fonts/ cours/js/|mkdir ./cours/ ./cours/css/ ./cours/css/fonts/ ./cours/js/|mkdir ~/atelier/cours ~/atelier/cours/css ~/atelier/cours/css/fonts ~/atelier/cours/js|mkdir ~/atelier/cours/ ~/atelier/cours/css/ ~/atelier/cours/css/fonts/ ~/atelier/cours/js/|mkdir cours cours/css cours/js cours/css/fonts|mkdir ./cours ./cours/css ./cours/js ./cours/css/fonts|mkdir cours/ cours/css/ cours/js/ cours/css/fonts/|mkdir ./cours/ ./cours/css/ ./cours/js/ ./cours/css/fonts/|mkdir ~/atelier/cours ~/atelier/cours/css ~/atelier/cours/js ~/atelier/cours/css/fonts|mkdir ~/atelier/cours/ ~/atelier/cours/css/ ~/atelier/cours/js/ ~/atelier/cours/css/fonts/|mkdir cours cours/js cours/css cours/css/fonts|mkdir ./cours ./cours/js ./cours/css ./cours/css/fonts|mkdir cours/ cours/js/ cours/css/ cours/css/fonts/|mkdir ./cours/ ./cours/js/ ./cours/css/ ./cours/css/fonts/|mkdir ~/atelier/cours ~/atelier/cours/js ~/atelier/cours/css ~/atelier/cours/css/fonts|mkdir ~/atelier/cours/ ~/atelier/cours/js/ ~/atelier/cours/css/ ~/atelier/cours/css/fonts/"
+        data-accepte="mkdir -p cours/css/fonts cours/js|mkdir -p ./cours/css/fonts ./cours/js|mkdir -p cours/css/fonts/ cours/js/|mkdir -p ./cours/css/fonts/ ./cours/js/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours/js|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/js/|mkdir -p cours/js cours/css/fonts|mkdir -p ./cours/js ./cours/css/fonts|mkdir -p cours/js/ cours/css/fonts/|mkdir -p ./cours/js/ ./cours/css/fonts/|mkdir -p ~/atelier/cours/js ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/css/fonts/|mkdir -p cours/css/fonts cours/js cours|mkdir -p ./cours/css/fonts ./cours/js ./cours|mkdir -p cours/css/fonts/ cours/js/ cours/|mkdir -p ./cours/css/fonts/ ./cours/js/ ./cours/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours/js ~/atelier/cours|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/js/ ~/atelier/cours/|mkdir -p cours/css/fonts cours cours/js|mkdir -p ./cours/css/fonts ./cours ./cours/js|mkdir -p cours/css/fonts/ cours/ cours/js/|mkdir -p ./cours/css/fonts/ ./cours/ ./cours/js/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours ~/atelier/cours/js|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/ ~/atelier/cours/js/|mkdir -p cours/js cours/css/fonts cours|mkdir -p ./cours/js ./cours/css/fonts ./cours|mkdir -p cours/js/ cours/css/fonts/ cours/|mkdir -p ./cours/js/ ./cours/css/fonts/ ./cours/|mkdir -p ~/atelier/cours/js ~/atelier/cours/css/fonts ~/atelier/cours|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/css/fonts/ ~/atelier/cours/|mkdir -p cours/js cours cours/css/fonts|mkdir -p ./cours/js ./cours ./cours/css/fonts|mkdir -p cours/js/ cours/ cours/css/fonts/|mkdir -p ./cours/js/ ./cours/ ./cours/css/fonts/|mkdir -p ~/atelier/cours/js ~/atelier/cours ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/ ~/atelier/cours/css/fonts/|mkdir -p cours cours/css/fonts cours/js|mkdir -p ./cours ./cours/css/fonts ./cours/js|mkdir -p cours/ cours/css/fonts/ cours/js/|mkdir -p ./cours/ ./cours/css/fonts/ ./cours/js/|mkdir -p ~/atelier/cours ~/atelier/cours/css/fonts ~/atelier/cours/js|mkdir -p ~/atelier/cours/ ~/atelier/cours/css/fonts/ ~/atelier/cours/js/|mkdir -p cours cours/js cours/css/fonts|mkdir -p ./cours ./cours/js ./cours/css/fonts|mkdir -p cours/ cours/js/ cours/css/fonts/|mkdir -p ./cours/ ./cours/js/ ./cours/css/fonts/|mkdir -p ~/atelier/cours ~/atelier/cours/js ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/ ~/atelier/cours/js/ ~/atelier/cours/css/fonts/|mkdir -p cours/css/fonts cours/js cours/css|mkdir -p ./cours/css/fonts ./cours/js ./cours/css|mkdir -p cours/css/fonts/ cours/js/ cours/css/|mkdir -p ./cours/css/fonts/ ./cours/js/ ./cours/css/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours/js ~/atelier/cours/css|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/js/ ~/atelier/cours/css/|mkdir -p cours/css/fonts cours/css cours/js|mkdir -p ./cours/css/fonts ./cours/css ./cours/js|mkdir -p cours/css/fonts/ cours/css/ cours/js/|mkdir -p ./cours/css/fonts/ ./cours/css/ ./cours/js/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours/css ~/atelier/cours/js|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/css/ ~/atelier/cours/js/|mkdir -p cours/js cours/css/fonts cours/css|mkdir -p ./cours/js ./cours/css/fonts ./cours/css|mkdir -p cours/js/ cours/css/fonts/ cours/css/|mkdir -p ./cours/js/ ./cours/css/fonts/ ./cours/css/|mkdir -p ~/atelier/cours/js ~/atelier/cours/css/fonts ~/atelier/cours/css|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/css/fonts/ ~/atelier/cours/css/|mkdir -p cours/js cours/css cours/css/fonts|mkdir -p ./cours/js ./cours/css ./cours/css/fonts|mkdir -p cours/js/ cours/css/ cours/css/fonts/|mkdir -p ./cours/js/ ./cours/css/ ./cours/css/fonts/|mkdir -p ~/atelier/cours/js ~/atelier/cours/css ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/css/ ~/atelier/cours/css/fonts/|mkdir -p cours/css cours/css/fonts cours/js|mkdir -p ./cours/css ./cours/css/fonts ./cours/js|mkdir -p cours/css/ cours/css/fonts/ cours/js/|mkdir -p ./cours/css/ ./cours/css/fonts/ ./cours/js/|mkdir -p ~/atelier/cours/css ~/atelier/cours/css/fonts ~/atelier/cours/js|mkdir -p ~/atelier/cours/css/ ~/atelier/cours/css/fonts/ ~/atelier/cours/js/|mkdir -p cours/css cours/js cours/css/fonts|mkdir -p ./cours/css ./cours/js ./cours/css/fonts|mkdir -p cours/css/ cours/js/ cours/css/fonts/|mkdir -p ./cours/css/ ./cours/js/ ./cours/css/fonts/|mkdir -p ~/atelier/cours/css ~/atelier/cours/js ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/css/ ~/atelier/cours/js/ ~/atelier/cours/css/fonts/|mkdir -p cours/css/fonts cours/js cours cours/css|mkdir -p ./cours/css/fonts ./cours/js ./cours ./cours/css|mkdir -p cours/css/fonts/ cours/js/ cours/ cours/css/|mkdir -p ./cours/css/fonts/ ./cours/js/ ./cours/ ./cours/css/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours/js ~/atelier/cours ~/atelier/cours/css|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/js/ ~/atelier/cours/ ~/atelier/cours/css/|mkdir -p cours/css/fonts cours/js cours/css cours|mkdir -p ./cours/css/fonts ./cours/js ./cours/css ./cours|mkdir -p cours/css/fonts/ cours/js/ cours/css/ cours/|mkdir -p ./cours/css/fonts/ ./cours/js/ ./cours/css/ ./cours/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours/js ~/atelier/cours/css ~/atelier/cours|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/js/ ~/atelier/cours/css/ ~/atelier/cours/|mkdir -p cours/css/fonts cours cours/js cours/css|mkdir -p ./cours/css/fonts ./cours ./cours/js ./cours/css|mkdir -p cours/css/fonts/ cours/ cours/js/ cours/css/|mkdir -p ./cours/css/fonts/ ./cours/ ./cours/js/ ./cours/css/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours ~/atelier/cours/js ~/atelier/cours/css|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/ ~/atelier/cours/js/ ~/atelier/cours/css/|mkdir -p cours/css/fonts cours cours/css cours/js|mkdir -p ./cours/css/fonts ./cours ./cours/css ./cours/js|mkdir -p cours/css/fonts/ cours/ cours/css/ cours/js/|mkdir -p ./cours/css/fonts/ ./cours/ ./cours/css/ ./cours/js/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours ~/atelier/cours/css ~/atelier/cours/js|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/ ~/atelier/cours/css/ ~/atelier/cours/js/|mkdir -p cours/css/fonts cours/css cours/js cours|mkdir -p ./cours/css/fonts ./cours/css ./cours/js ./cours|mkdir -p cours/css/fonts/ cours/css/ cours/js/ cours/|mkdir -p ./cours/css/fonts/ ./cours/css/ ./cours/js/ ./cours/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours/css ~/atelier/cours/js ~/atelier/cours|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/css/ ~/atelier/cours/js/ ~/atelier/cours/|mkdir -p cours/css/fonts cours/css cours cours/js|mkdir -p ./cours/css/fonts ./cours/css ./cours ./cours/js|mkdir -p cours/css/fonts/ cours/css/ cours/ cours/js/|mkdir -p ./cours/css/fonts/ ./cours/css/ ./cours/ ./cours/js/|mkdir -p ~/atelier/cours/css/fonts ~/atelier/cours/css ~/atelier/cours ~/atelier/cours/js|mkdir -p ~/atelier/cours/css/fonts/ ~/atelier/cours/css/ ~/atelier/cours/ ~/atelier/cours/js/|mkdir -p cours/js cours/css/fonts cours cours/css|mkdir -p ./cours/js ./cours/css/fonts ./cours ./cours/css|mkdir -p cours/js/ cours/css/fonts/ cours/ cours/css/|mkdir -p ./cours/js/ ./cours/css/fonts/ ./cours/ ./cours/css/|mkdir -p ~/atelier/cours/js ~/atelier/cours/css/fonts ~/atelier/cours ~/atelier/cours/css|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/css/fonts/ ~/atelier/cours/ ~/atelier/cours/css/|mkdir -p cours/js cours/css/fonts cours/css cours|mkdir -p ./cours/js ./cours/css/fonts ./cours/css ./cours|mkdir -p cours/js/ cours/css/fonts/ cours/css/ cours/|mkdir -p ./cours/js/ ./cours/css/fonts/ ./cours/css/ ./cours/|mkdir -p ~/atelier/cours/js ~/atelier/cours/css/fonts ~/atelier/cours/css ~/atelier/cours|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/css/fonts/ ~/atelier/cours/css/ ~/atelier/cours/|mkdir -p cours/js cours cours/css/fonts cours/css|mkdir -p ./cours/js ./cours ./cours/css/fonts ./cours/css|mkdir -p cours/js/ cours/ cours/css/fonts/ cours/css/|mkdir -p ./cours/js/ ./cours/ ./cours/css/fonts/ ./cours/css/|mkdir -p ~/atelier/cours/js ~/atelier/cours ~/atelier/cours/css/fonts ~/atelier/cours/css|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/ ~/atelier/cours/css/fonts/ ~/atelier/cours/css/|mkdir -p cours/js cours cours/css cours/css/fonts|mkdir -p ./cours/js ./cours ./cours/css ./cours/css/fonts|mkdir -p cours/js/ cours/ cours/css/ cours/css/fonts/|mkdir -p ./cours/js/ ./cours/ ./cours/css/ ./cours/css/fonts/|mkdir -p ~/atelier/cours/js ~/atelier/cours ~/atelier/cours/css ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/ ~/atelier/cours/css/ ~/atelier/cours/css/fonts/|mkdir -p cours/js cours/css cours/css/fonts cours|mkdir -p ./cours/js ./cours/css ./cours/css/fonts ./cours|mkdir -p cours/js/ cours/css/ cours/css/fonts/ cours/|mkdir -p ./cours/js/ ./cours/css/ ./cours/css/fonts/ ./cours/|mkdir -p ~/atelier/cours/js ~/atelier/cours/css ~/atelier/cours/css/fonts ~/atelier/cours|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/css/ ~/atelier/cours/css/fonts/ ~/atelier/cours/|mkdir -p cours/js cours/css cours cours/css/fonts|mkdir -p ./cours/js ./cours/css ./cours ./cours/css/fonts|mkdir -p cours/js/ cours/css/ cours/ cours/css/fonts/|mkdir -p ./cours/js/ ./cours/css/ ./cours/ ./cours/css/fonts/|mkdir -p ~/atelier/cours/js ~/atelier/cours/css ~/atelier/cours ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/js/ ~/atelier/cours/css/ ~/atelier/cours/ ~/atelier/cours/css/fonts/|mkdir -p cours cours/css/fonts cours/js cours/css|mkdir -p ./cours ./cours/css/fonts ./cours/js ./cours/css|mkdir -p cours/ cours/css/fonts/ cours/js/ cours/css/|mkdir -p ./cours/ ./cours/css/fonts/ ./cours/js/ ./cours/css/|mkdir -p ~/atelier/cours ~/atelier/cours/css/fonts ~/atelier/cours/js ~/atelier/cours/css|mkdir -p ~/atelier/cours/ ~/atelier/cours/css/fonts/ ~/atelier/cours/js/ ~/atelier/cours/css/|mkdir -p cours cours/css/fonts cours/css cours/js|mkdir -p ./cours ./cours/css/fonts ./cours/css ./cours/js|mkdir -p cours/ cours/css/fonts/ cours/css/ cours/js/|mkdir -p ./cours/ ./cours/css/fonts/ ./cours/css/ ./cours/js/|mkdir -p ~/atelier/cours ~/atelier/cours/css/fonts ~/atelier/cours/css ~/atelier/cours/js|mkdir -p ~/atelier/cours/ ~/atelier/cours/css/fonts/ ~/atelier/cours/css/ ~/atelier/cours/js/|mkdir -p cours cours/js cours/css/fonts cours/css|mkdir -p ./cours ./cours/js ./cours/css/fonts ./cours/css|mkdir -p cours/ cours/js/ cours/css/fonts/ cours/css/|mkdir -p ./cours/ ./cours/js/ ./cours/css/fonts/ ./cours/css/|mkdir -p ~/atelier/cours ~/atelier/cours/js ~/atelier/cours/css/fonts ~/atelier/cours/css|mkdir -p ~/atelier/cours/ ~/atelier/cours/js/ ~/atelier/cours/css/fonts/ ~/atelier/cours/css/|mkdir -p cours cours/js cours/css cours/css/fonts|mkdir -p ./cours ./cours/js ./cours/css ./cours/css/fonts|mkdir -p cours/ cours/js/ cours/css/ cours/css/fonts/|mkdir -p ./cours/ ./cours/js/ ./cours/css/ ./cours/css/fonts/|mkdir -p ~/atelier/cours ~/atelier/cours/js ~/atelier/cours/css ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/ ~/atelier/cours/js/ ~/atelier/cours/css/ ~/atelier/cours/css/fonts/|mkdir -p cours cours/css cours/css/fonts cours/js|mkdir -p ./cours ./cours/css ./cours/css/fonts ./cours/js|mkdir -p cours/ cours/css/ cours/css/fonts/ cours/js/|mkdir -p ./cours/ ./cours/css/ ./cours/css/fonts/ ./cours/js/|mkdir -p ~/atelier/cours ~/atelier/cours/css ~/atelier/cours/css/fonts ~/atelier/cours/js|mkdir -p ~/atelier/cours/ ~/atelier/cours/css/ ~/atelier/cours/css/fonts/ ~/atelier/cours/js/|mkdir -p cours cours/css cours/js cours/css/fonts|mkdir -p ./cours ./cours/css ./cours/js ./cours/css/fonts|mkdir -p cours/ cours/css/ cours/js/ cours/css/fonts/|mkdir -p ./cours/ ./cours/css/ ./cours/js/ ./cours/css/fonts/|mkdir -p ~/atelier/cours ~/atelier/cours/css ~/atelier/cours/js ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/ ~/atelier/cours/css/ ~/atelier/cours/js/ ~/atelier/cours/css/fonts/|mkdir -p cours/css cours/css/fonts cours/js cours|mkdir -p ./cours/css ./cours/css/fonts ./cours/js ./cours|mkdir -p cours/css/ cours/css/fonts/ cours/js/ cours/|mkdir -p ./cours/css/ ./cours/css/fonts/ ./cours/js/ ./cours/|mkdir -p ~/atelier/cours/css ~/atelier/cours/css/fonts ~/atelier/cours/js ~/atelier/cours|mkdir -p ~/atelier/cours/css/ ~/atelier/cours/css/fonts/ ~/atelier/cours/js/ ~/atelier/cours/|mkdir -p cours/css cours/css/fonts cours cours/js|mkdir -p ./cours/css ./cours/css/fonts ./cours ./cours/js|mkdir -p cours/css/ cours/css/fonts/ cours/ cours/js/|mkdir -p ./cours/css/ ./cours/css/fonts/ ./cours/ ./cours/js/|mkdir -p ~/atelier/cours/css ~/atelier/cours/css/fonts ~/atelier/cours ~/atelier/cours/js|mkdir -p ~/atelier/cours/css/ ~/atelier/cours/css/fonts/ ~/atelier/cours/ ~/atelier/cours/js/|mkdir -p cours/css cours/js cours/css/fonts cours|mkdir -p ./cours/css ./cours/js ./cours/css/fonts ./cours|mkdir -p cours/css/ cours/js/ cours/css/fonts/ cours/|mkdir -p ./cours/css/ ./cours/js/ ./cours/css/fonts/ ./cours/|mkdir -p ~/atelier/cours/css ~/atelier/cours/js ~/atelier/cours/css/fonts ~/atelier/cours|mkdir -p ~/atelier/cours/css/ ~/atelier/cours/js/ ~/atelier/cours/css/fonts/ ~/atelier/cours/|mkdir -p cours/css cours/js cours cours/css/fonts|mkdir -p ./cours/css ./cours/js ./cours ./cours/css/fonts|mkdir -p cours/css/ cours/js/ cours/ cours/css/fonts/|mkdir -p ./cours/css/ ./cours/js/ ./cours/ ./cours/css/fonts/|mkdir -p ~/atelier/cours/css ~/atelier/cours/js ~/atelier/cours ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/css/ ~/atelier/cours/js/ ~/atelier/cours/ ~/atelier/cours/css/fonts/|mkdir -p cours/css cours cours/css/fonts cours/js|mkdir -p ./cours/css ./cours ./cours/css/fonts ./cours/js|mkdir -p cours/css/ cours/ cours/css/fonts/ cours/js/|mkdir -p ./cours/css/ ./cours/ ./cours/css/fonts/ ./cours/js/|mkdir -p ~/atelier/cours/css ~/atelier/cours ~/atelier/cours/css/fonts ~/atelier/cours/js|mkdir -p ~/atelier/cours/css/ ~/atelier/cours/ ~/atelier/cours/css/fonts/ ~/atelier/cours/js/|mkdir -p cours/css cours cours/js cours/css/fonts|mkdir -p ./cours/css ./cours ./cours/js ./cours/css/fonts|mkdir -p cours/css/ cours/ cours/js/ cours/css/fonts/|mkdir -p ./cours/css/ ./cours/ ./cours/js/ ./cours/css/fonts/|mkdir -p ~/atelier/cours/css ~/atelier/cours ~/atelier/cours/js ~/atelier/cours/css/fonts|mkdir -p ~/atelier/cours/css/ ~/atelier/cours/ ~/atelier/cours/js/ ~/atelier/cours/css/fonts/|mkdir cours cours/css cours/css/fonts cours/js|mkdir ./cours ./cours/css ./cours/css/fonts ./cours/js|mkdir cours/ cours/css/ cours/css/fonts/ cours/js/|mkdir ./cours/ ./cours/css/ ./cours/css/fonts/ ./cours/js/|mkdir ~/atelier/cours ~/atelier/cours/css ~/atelier/cours/css/fonts ~/atelier/cours/js|mkdir ~/atelier/cours/ ~/atelier/cours/css/ ~/atelier/cours/css/fonts/ ~/atelier/cours/js/|mkdir cours cours/css cours/js cours/css/fonts|mkdir ./cours ./cours/css ./cours/js ./cours/css/fonts|mkdir cours/ cours/css/ cours/js/ cours/css/fonts/|mkdir ./cours/ ./cours/css/ ./cours/js/ ./cours/css/fonts/|mkdir ~/atelier/cours ~/atelier/cours/css ~/atelier/cours/js ~/atelier/cours/css/fonts|mkdir ~/atelier/cours/ ~/atelier/cours/css/ ~/atelier/cours/js/ ~/atelier/cours/css/fonts/|mkdir cours cours/js cours/css cours/css/fonts|mkdir ./cours ./cours/js ./cours/css ./cours/css/fonts|mkdir cours/ cours/js/ cours/css/ cours/css/fonts/|mkdir ./cours/ ./cours/js/ ./cours/css/ ./cours/css/fonts/|mkdir ~/atelier/cours ~/atelier/cours/js ~/atelier/cours/css ~/atelier/cours/css/fonts|mkdir ~/atelier/cours/ ~/atelier/cours/js/ ~/atelier/cours/css/ ~/atelier/cours/css/fonts/|mkdir -p /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/js|mkdir -p /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/js/|mkdir -p /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css/fonts|mkdir -p /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/fonts/|mkdir -p /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/js /Users/farid/atelier/cours|mkdir -p /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/|mkdir -p /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours /Users/farid/atelier/cours/js|mkdir -p /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/ /Users/farid/atelier/cours/js/|mkdir -p /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours|mkdir -p /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/|mkdir -p /Users/farid/atelier/cours/js /Users/farid/atelier/cours /Users/farid/atelier/cours/css/fonts|mkdir -p /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/ /Users/farid/atelier/cours/css/fonts/|mkdir -p /Users/farid/atelier/cours /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/js|mkdir -p /Users/farid/atelier/cours/ /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/js/|mkdir -p /Users/farid/atelier/cours /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css/fonts|mkdir -p /Users/farid/atelier/cours/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/fonts/|mkdir -p /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css|mkdir -p /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/|mkdir -p /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/css /Users/farid/atelier/cours/js|mkdir -p /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/js/|mkdir -p /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/css|mkdir -p /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/css/|mkdir -p /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css /Users/farid/atelier/cours/css/fonts|mkdir -p /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/css/fonts/|mkdir -p /Users/farid/atelier/cours/css /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/js|mkdir -p /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/js/|mkdir -p /Users/farid/atelier/cours/css /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css/fonts|mkdir -p /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/fonts/|mkdir -p /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/js /Users/farid/atelier/cours /Users/farid/atelier/cours/css|mkdir -p /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/ /Users/farid/atelier/cours/css/|mkdir -p /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css /Users/farid/atelier/cours|mkdir -p /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/|mkdir -p /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css|mkdir -p /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/|mkdir -p /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours /Users/farid/atelier/cours/css /Users/farid/atelier/cours/js|mkdir -p /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/ /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/js/|mkdir -p /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/css /Users/farid/atelier/cours/js /Users/farid/atelier/cours|mkdir -p /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/|mkdir -p /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/css /Users/farid/atelier/cours /Users/farid/atelier/cours/js|mkdir -p /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/ /Users/farid/atelier/cours/js/|mkdir -p /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours /Users/farid/atelier/cours/css|mkdir -p /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/ /Users/farid/atelier/cours/css/|mkdir -p /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/css /Users/farid/atelier/cours|mkdir -p /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/|mkdir -p /Users/farid/atelier/cours/js /Users/farid/atelier/cours /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/css|mkdir -p /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/ /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/css/|mkdir -p /Users/farid/atelier/cours/js /Users/farid/atelier/cours /Users/farid/atelier/cours/css /Users/farid/atelier/cours/css/fonts|mkdir -p /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/ /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/css/fonts/|mkdir -p /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours|mkdir -p /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/|mkdir -p /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css /Users/farid/atelier/cours /Users/farid/atelier/cours/css/fonts|mkdir -p /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/ /Users/farid/atelier/cours/css/fonts/|mkdir -p /Users/farid/atelier/cours /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css|mkdir -p /Users/farid/atelier/cours/ /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/|mkdir -p /Users/farid/atelier/cours /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/css /Users/farid/atelier/cours/js|mkdir -p /Users/farid/atelier/cours/ /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/js/|mkdir -p /Users/farid/atelier/cours /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/css|mkdir -p /Users/farid/atelier/cours/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/css/|mkdir -p /Users/farid/atelier/cours /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css /Users/farid/atelier/cours/css/fonts|mkdir -p /Users/farid/atelier/cours/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/css/fonts/|mkdir -p /Users/farid/atelier/cours /Users/farid/atelier/cours/css /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/js|mkdir -p /Users/farid/atelier/cours/ /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/js/|mkdir -p /Users/farid/atelier/cours /Users/farid/atelier/cours/css /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css/fonts|mkdir -p /Users/farid/atelier/cours/ /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/fonts/|mkdir -p /Users/farid/atelier/cours/css /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/js /Users/farid/atelier/cours|mkdir -p /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/|mkdir -p /Users/farid/atelier/cours/css /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours /Users/farid/atelier/cours/js|mkdir -p /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/ /Users/farid/atelier/cours/js/|mkdir -p /Users/farid/atelier/cours/css /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours|mkdir -p /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/|mkdir -p /Users/farid/atelier/cours/css /Users/farid/atelier/cours/js /Users/farid/atelier/cours /Users/farid/atelier/cours/css/fonts|mkdir -p /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/ /Users/farid/atelier/cours/css/fonts/|mkdir -p /Users/farid/atelier/cours/css /Users/farid/atelier/cours /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/js|mkdir -p /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/ /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/js/|mkdir -p /Users/farid/atelier/cours/css /Users/farid/atelier/cours /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css/fonts|mkdir -p /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/fonts/|mkdir /Users/farid/atelier/cours /Users/farid/atelier/cours/css /Users/farid/atelier/cours/css/fonts /Users/farid/atelier/cours/js|mkdir /Users/farid/atelier/cours/ /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/css/fonts/ /Users/farid/atelier/cours/js/|mkdir /Users/farid/atelier/cours /Users/farid/atelier/cours/css /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css/fonts|mkdir /Users/farid/atelier/cours/ /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/fonts/|mkdir /Users/farid/atelier/cours /Users/farid/atelier/cours/js /Users/farid/atelier/cours/css /Users/farid/atelier/cours/css/fonts|mkdir /Users/farid/atelier/cours/ /Users/farid/atelier/cours/js/ /Users/farid/atelier/cours/css/ /Users/farid/atelier/cours/css/fonts/"
         data-clavier="La ligne"
         data-si-sansp="mkdir cours/css/fonts cours/js|mkdir cours/js cours/css/fonts"
         data-retour-sansp="Dans un atelier vide, cours et css existent-ils quand mkdir crée fonts ?"
         data-si-seul="mkdir -p cours/css/fonts|mkdir -p cours/js"
-        data-retour-seul="Combien de dossiers la consigne demande-t-elle de créer, sans compter ceux qui les contiennent ?"
+        data-retour-seul="Combien de dossiers l’énoncé demande-t-il de créer, sans compter ceux qui les contiennent ?"
         data-aide1="Écris, pour chaque dossier demandé, le chemin qui part d’atelier : lesquels existent déjà, dans un atelier vide ?"
         data-aide2="Une option de mkdir crée les dossiers du chemin qui manquent."
         data-aide3="Écris la commande, l’option qui crée les dossiers manquants, puis les deux chemins complets, séparés par des espaces."
@@ -5688,7 +5636,7 @@ css  img  index.html</pre>
           <li data-option="sauvegarde">Seulement dans sauvegarde, qui en garde une copie.</li>
           <li
             data-option="corbeille"
-            data-retour="rm range-t-il ce qu’il retire quelque part, ou le retire-t-il pour de bon ?"
+            data-retour="Que dit l’encadré de ce que rm fait de ce qu’on lui donne, et à quoi sert la Corbeille ?"
             data-erreur="E1"
           >
             Dans sauvegarde et dans la Corbeille de son Mac.
@@ -5747,7 +5695,7 @@ style.css</pre>
           <li data-option="sauvegarde">Seulement dans sauvegarde/css, qui en garde une copie.</li>
           <li
             data-option="corbeille"
-            data-retour="rm range-t-il ce qu’il retire quelque part, ou le retire-t-il pour de bon ?"
+            data-retour="Que dit l’encadré de ce que rm fait de ce qu’on lui donne, et à quoi sert la Corbeille ?"
             data-erreur="E1"
           >
             Dans sauvegarde/css et dans la Corbeille de Windows.
@@ -5791,8 +5739,7 @@ style.css</pre>
             </li>
             <li>
               <span class="mono">sudo</span> lance la commande en administrateur, le compte qui a
-              tous les droits : il peut retirer même un fichier du système, dit protégé, que ton
-              compte n’a pas le droit de modifier.
+              tous les droits.
             </li>
           </ul>
         </div>
@@ -5811,7 +5758,8 @@ notes.txt  sauvegarde  site</pre>
         <p class="q">
           Un forum conseille à Yasmine la ligne
           <span class="mono">sudo rm -rf site sauvegarde</span>. Elle ne la tape pas : elle la lit.
-          Écris ce que <span class="mono">ls</span> répondrait dans atelier si elle la tapait.
+          site et sauvegarde sont des dossiers. Écris ce que <span class="mono">ls</span> répondrait
+          dans atelier si elle la tapait.
         </p>
       </div>
     </template>
@@ -5844,8 +5792,7 @@ notes.txt  sauvegarde  site</pre>
             </li>
             <li>
               <span class="mono">sudo</span> lance la commande en administrateur, le compte qui a
-              tous les droits : il peut retirer même un fichier du système, dit protégé, que ton
-              compte n’a pas le droit de modifier.
+              tous les droits.
             </li>
           </ul>
         </div>
@@ -5863,8 +5810,8 @@ $ ls
 docs  projet  readme.txt</pre>
         <p class="q">
           Un forum conseille à Farid la ligne <span class="mono">rm -rf docs projet</span>. Il ne la
-          tape pas : il la lit. Écris ce que <span class="mono">ls</span> répondrait dans atelier
-          s’il la tapait.
+          tape pas : il la lit. docs et projet sont des dossiers. Écris ce que
+          <span class="mono">ls</span> répondrait dans atelier s’il la tapait.
         </p>
       </div>
     </template>
@@ -6107,7 +6054,7 @@ docs  projet  readme.txt</pre>
         class="ex"
         data-widget="saisie"
         data-verifie
-        data-accepte="copy site\css\style.css site\img|copy site\css\style.css .\site\img|copy site\css\style.css site\img\|copy site\css\style.css .\site\img\|copy .\site\css\style.css site\img|copy .\site\css\style.css .\site\img|copy .\site\css\style.css site\img\|copy .\site\css\style.css .\site\img\|copy site\css\style.css\ site\img|copy site\css\style.css\ .\site\img|copy site\css\style.css\ site\img\|copy site\css\style.css\ .\site\img\|copy .\site\css\style.css\ site\img|copy .\site\css\style.css\ .\site\img|copy .\site\css\style.css\ site\img\|copy .\site\css\style.css\ .\site\img\|copy site\css\style.css site\img\style.css|copy site\css\style.css .\site\img\style.css|copy site\css\style.css site\img\style.css\|copy site\css\style.css .\site\img\style.css\|copy .\site\css\style.css site\img\style.css|copy .\site\css\style.css .\site\img\style.css|copy .\site\css\style.css site\img\style.css\|copy .\site\css\style.css .\site\img\style.css\|copy site\css\style.css\ site\img\style.css|copy site\css\style.css\ .\site\img\style.css|copy site\css\style.css\ site\img\style.css\|copy site\css\style.css\ .\site\img\style.css\|copy .\site\css\style.css\ site\img\style.css|copy .\site\css\style.css\ .\site\img\style.css|copy .\site\css\style.css\ site\img\style.css\|copy .\site\css\style.css\ .\site\img\style.css\"
+        data-accepte="copy site\css\style.css site\img|copy site\css\style.css .\site\img|copy site\css\style.css site\img\|copy site\css\style.css .\site\img\|copy .\site\css\style.css site\img|copy .\site\css\style.css .\site\img|copy .\site\css\style.css site\img\|copy .\site\css\style.css .\site\img\|copy site\css\style.css\ site\img|copy site\css\style.css\ .\site\img|copy site\css\style.css\ site\img\|copy site\css\style.css\ .\site\img\|copy .\site\css\style.css\ site\img|copy .\site\css\style.css\ .\site\img|copy .\site\css\style.css\ site\img\|copy .\site\css\style.css\ .\site\img\|copy site\css\style.css site\img\style.css|copy site\css\style.css .\site\img\style.css|copy site\css\style.css site\img\style.css\|copy site\css\style.css .\site\img\style.css\|copy .\site\css\style.css site\img\style.css|copy .\site\css\style.css .\site\img\style.css|copy .\site\css\style.css site\img\style.css\|copy .\site\css\style.css .\site\img\style.css\|copy site\css\style.css\ site\img\style.css|copy site\css\style.css\ .\site\img\style.css|copy site\css\style.css\ site\img\style.css\|copy site\css\style.css\ .\site\img\style.css\|copy .\site\css\style.css\ site\img\style.css|copy .\site\css\style.css\ .\site\img\style.css|copy .\site\css\style.css\ site\img\style.css\|copy .\site\css\style.css\ .\site\img\style.css\|Copy site\css\style.css site\img|COPY site\css\style.css site\img|Copy site\css\style.css .\site\img|COPY site\css\style.css .\site\img|Copy site\css\style.css site\img\|COPY site\css\style.css site\img\|Copy site\css\style.css .\site\img\|COPY site\css\style.css .\site\img\|Copy .\site\css\style.css site\img|COPY .\site\css\style.css site\img|Copy .\site\css\style.css .\site\img|COPY .\site\css\style.css .\site\img|Copy .\site\css\style.css site\img\|COPY .\site\css\style.css site\img\|Copy .\site\css\style.css .\site\img\|COPY .\site\css\style.css .\site\img\|Copy site\css\style.css\ site\img|COPY site\css\style.css\ site\img|Copy site\css\style.css\ .\site\img|COPY site\css\style.css\ .\site\img|Copy site\css\style.css\ site\img\|COPY site\css\style.css\ site\img\|Copy site\css\style.css\ .\site\img\|COPY site\css\style.css\ .\site\img\|Copy .\site\css\style.css\ site\img|COPY .\site\css\style.css\ site\img|Copy .\site\css\style.css\ .\site\img|COPY .\site\css\style.css\ .\site\img|Copy .\site\css\style.css\ site\img\|COPY .\site\css\style.css\ site\img\|Copy .\site\css\style.css\ .\site\img\|COPY .\site\css\style.css\ .\site\img\|Copy site\css\style.css site\img\style.css|COPY site\css\style.css site\img\style.css|Copy site\css\style.css .\site\img\style.css|COPY site\css\style.css .\site\img\style.css|Copy site\css\style.css site\img\style.css\|COPY site\css\style.css site\img\style.css\|Copy site\css\style.css .\site\img\style.css\|COPY site\css\style.css .\site\img\style.css\|Copy .\site\css\style.css site\img\style.css|COPY .\site\css\style.css site\img\style.css|Copy .\site\css\style.css .\site\img\style.css|COPY .\site\css\style.css .\site\img\style.css|Copy .\site\css\style.css site\img\style.css\|COPY .\site\css\style.css site\img\style.css\|Copy .\site\css\style.css .\site\img\style.css\|COPY .\site\css\style.css .\site\img\style.css\|Copy site\css\style.css\ site\img\style.css|COPY site\css\style.css\ site\img\style.css|Copy site\css\style.css\ .\site\img\style.css|COPY site\css\style.css\ .\site\img\style.css|Copy site\css\style.css\ site\img\style.css\|COPY site\css\style.css\ site\img\style.css\|Copy site\css\style.css\ .\site\img\style.css\|COPY site\css\style.css\ .\site\img\style.css\|Copy .\site\css\style.css\ site\img\style.css|COPY .\site\css\style.css\ site\img\style.css|Copy .\site\css\style.css\ .\site\img\style.css|COPY .\site\css\style.css\ .\site\img\style.css|Copy .\site\css\style.css\ site\img\style.css\|COPY .\site\css\style.css\ site\img\style.css\|Copy .\site\css\style.css\ .\site\img\style.css\|COPY .\site\css\style.css\ .\site\img\style.css\"
         data-clavier="La ligne de Cmd"
         data-si-slash="copy site/css/style.css site/img"
         data-retour-slash="Quel signe sépare les dossiers d’un chemin dans Cmd ?"
@@ -6156,7 +6103,7 @@ docs  projet  readme.txt</pre>
         class="ex"
         data-widget="saisie"
         data-verifie
-        data-accepte="copy site\css\style.css site\css\main.css|copy site\css\style.css .\site\css\main.css|copy site\css\style.css site\css\main.css\|copy site\css\style.css .\site\css\main.css\|copy .\site\css\style.css site\css\main.css|copy .\site\css\style.css .\site\css\main.css|copy .\site\css\style.css site\css\main.css\|copy .\site\css\style.css .\site\css\main.css\|copy site\css\style.css\ site\css\main.css|copy site\css\style.css\ .\site\css\main.css|copy site\css\style.css\ site\css\main.css\|copy site\css\style.css\ .\site\css\main.css\|copy .\site\css\style.css\ site\css\main.css|copy .\site\css\style.css\ .\site\css\main.css|copy .\site\css\style.css\ site\css\main.css\|copy .\site\css\style.css\ .\site\css\main.css\"
+        data-accepte="copy site\css\style.css site\css\main.css|copy site\css\style.css .\site\css\main.css|copy site\css\style.css site\css\main.css\|copy site\css\style.css .\site\css\main.css\|copy .\site\css\style.css site\css\main.css|copy .\site\css\style.css .\site\css\main.css|copy .\site\css\style.css site\css\main.css\|copy .\site\css\style.css .\site\css\main.css\|copy site\css\style.css\ site\css\main.css|copy site\css\style.css\ .\site\css\main.css|copy site\css\style.css\ site\css\main.css\|copy site\css\style.css\ .\site\css\main.css\|copy .\site\css\style.css\ site\css\main.css|copy .\site\css\style.css\ .\site\css\main.css|copy .\site\css\style.css\ site\css\main.css\|copy .\site\css\style.css\ .\site\css\main.css\|Copy site\css\style.css site\css\main.css|COPY site\css\style.css site\css\main.css|Copy site\css\style.css .\site\css\main.css|COPY site\css\style.css .\site\css\main.css|Copy site\css\style.css site\css\main.css\|COPY site\css\style.css site\css\main.css\|Copy site\css\style.css .\site\css\main.css\|COPY site\css\style.css .\site\css\main.css\|Copy .\site\css\style.css site\css\main.css|COPY .\site\css\style.css site\css\main.css|Copy .\site\css\style.css .\site\css\main.css|COPY .\site\css\style.css .\site\css\main.css|Copy .\site\css\style.css site\css\main.css\|COPY .\site\css\style.css site\css\main.css\|Copy .\site\css\style.css .\site\css\main.css\|COPY .\site\css\style.css .\site\css\main.css\|Copy site\css\style.css\ site\css\main.css|COPY site\css\style.css\ site\css\main.css|Copy site\css\style.css\ .\site\css\main.css|COPY site\css\style.css\ .\site\css\main.css|Copy site\css\style.css\ site\css\main.css\|COPY site\css\style.css\ site\css\main.css\|Copy site\css\style.css\ .\site\css\main.css\|COPY site\css\style.css\ .\site\css\main.css\|Copy .\site\css\style.css\ site\css\main.css|COPY .\site\css\style.css\ site\css\main.css|Copy .\site\css\style.css\ .\site\css\main.css|COPY .\site\css\style.css\ .\site\css\main.css|Copy .\site\css\style.css\ site\css\main.css\|COPY .\site\css\style.css\ site\css\main.css\|Copy .\site\css\style.css\ .\site\css\main.css\|COPY .\site\css\style.css\ .\site\css\main.css\"
         data-clavier="La ligne de Cmd"
         data-si-slash="copy site/css/style.css site/css/main.css"
         data-retour-slash="Quel signe sépare les dossiers d’un chemin dans Cmd ?"
@@ -6207,7 +6154,7 @@ docs  projet  readme.txt</pre>
         class="ex"
         data-widget="saisie"
         data-verifie
-        data-accepte="del sauvegarde\index.html|del .\sauvegarde\index.html"
+        data-accepte="del sauvegarde\index.html|del .\sauvegarde\index.html|Del sauvegarde\index.html|DEL sauvegarde\index.html|Del .\sauvegarde\index.html|DEL .\sauvegarde\index.html"
         data-clavier="La ligne de Cmd"
         data-si-slash="del sauvegarde/index.html"
         data-retour-slash="Quel signe sépare les dossiers d’un chemin dans Cmd ?"
@@ -6252,7 +6199,7 @@ docs  projet  readme.txt</pre>
         class="ex"
         data-widget="saisie"
         data-verifie
-        data-accepte="del site\img\logo.png|del .\site\img\logo.png"
+        data-accepte="del site\img\logo.png|del .\site\img\logo.png|Del site\img\logo.png|DEL site\img\logo.png|Del .\site\img\logo.png|DEL .\site\img\logo.png"
         data-clavier="La ligne de Cmd"
         data-si-slash="del site/img/logo.png"
         data-retour-slash="Quel signe sépare les dossiers d’un chemin dans Cmd ?"
@@ -6298,7 +6245,7 @@ docs  projet  readme.txt</pre>
         class="ex"
         data-widget="saisie"
         data-verifie
-        data-accepte="rmdir /s sauvegarde\css|rmdir sauvegarde\css /s|rmdir /S sauvegarde\css|rmdir /s .\sauvegarde\css|rmdir .\sauvegarde\css /s|rmdir /S .\sauvegarde\css|rmdir /s sauvegarde\css\|rmdir sauvegarde\css\ /s|rmdir /S sauvegarde\css\|rmdir /s .\sauvegarde\css\|rmdir .\sauvegarde\css\ /s|rmdir /S .\sauvegarde\css\"
+        data-accepte="rmdir /s sauvegarde\css|rmdir sauvegarde\css /s|rmdir /S sauvegarde\css|rmdir /s .\sauvegarde\css|rmdir .\sauvegarde\css /s|rmdir /S .\sauvegarde\css|rmdir /s sauvegarde\css\|rmdir sauvegarde\css\ /s|rmdir /S sauvegarde\css\|rmdir /s .\sauvegarde\css\|rmdir .\sauvegarde\css\ /s|rmdir /S .\sauvegarde\css\|Rmdir /s sauvegarde\css|Rmdir /S sauvegarde\css|RMDIR /s sauvegarde\css|RMDIR /S sauvegarde\css|rmdir sauvegarde\css /S|Rmdir sauvegarde\css /s|Rmdir sauvegarde\css /S|RMDIR sauvegarde\css /s|RMDIR sauvegarde\css /S|Rmdir /s .\sauvegarde\css|Rmdir /S .\sauvegarde\css|RMDIR /s .\sauvegarde\css|RMDIR /S .\sauvegarde\css|rmdir .\sauvegarde\css /S|Rmdir .\sauvegarde\css /s|Rmdir .\sauvegarde\css /S|RMDIR .\sauvegarde\css /s|RMDIR .\sauvegarde\css /S|Rmdir /s sauvegarde\css\|Rmdir /S sauvegarde\css\|RMDIR /s sauvegarde\css\|RMDIR /S sauvegarde\css\|rmdir sauvegarde\css\ /S|Rmdir sauvegarde\css\ /s|Rmdir sauvegarde\css\ /S|RMDIR sauvegarde\css\ /s|RMDIR sauvegarde\css\ /S|Rmdir /s .\sauvegarde\css\|Rmdir /S .\sauvegarde\css\|RMDIR /s .\sauvegarde\css\|RMDIR /S .\sauvegarde\css\|rmdir .\sauvegarde\css\ /S|Rmdir .\sauvegarde\css\ /s|Rmdir .\sauvegarde\css\ /S|RMDIR .\sauvegarde\css\ /s|RMDIR .\sauvegarde\css\ /S"
         data-clavier="La ligne de Cmd"
         data-si-slash="rmdir /s sauvegarde/css"
         data-retour-slash="Quel signe sépare les dossiers d’un chemin dans Cmd ?"
@@ -6343,7 +6290,7 @@ docs  projet  readme.txt</pre>
         class="ex"
         data-widget="saisie"
         data-verifie
-        data-accepte="rmdir /s cours\js|rmdir cours\js /s|rmdir /S cours\js|rmdir /s .\cours\js|rmdir .\cours\js /s|rmdir /S .\cours\js|rmdir /s cours\js\|rmdir cours\js\ /s|rmdir /S cours\js\|rmdir /s .\cours\js\|rmdir .\cours\js\ /s|rmdir /S .\cours\js\"
+        data-accepte="rmdir /s cours\js|rmdir cours\js /s|rmdir /S cours\js|rmdir /s .\cours\js|rmdir .\cours\js /s|rmdir /S .\cours\js|rmdir /s cours\js\|rmdir cours\js\ /s|rmdir /S cours\js\|rmdir /s .\cours\js\|rmdir .\cours\js\ /s|rmdir /S .\cours\js\|Rmdir /s cours\js|Rmdir /S cours\js|RMDIR /s cours\js|RMDIR /S cours\js|rmdir cours\js /S|Rmdir cours\js /s|Rmdir cours\js /S|RMDIR cours\js /s|RMDIR cours\js /S|Rmdir /s .\cours\js|Rmdir /S .\cours\js|RMDIR /s .\cours\js|RMDIR /S .\cours\js|rmdir .\cours\js /S|Rmdir .\cours\js /s|Rmdir .\cours\js /S|RMDIR .\cours\js /s|RMDIR .\cours\js /S|Rmdir /s cours\js\|Rmdir /S cours\js\|RMDIR /s cours\js\|RMDIR /S cours\js\|rmdir cours\js\ /S|Rmdir cours\js\ /s|Rmdir cours\js\ /S|RMDIR cours\js\ /s|RMDIR cours\js\ /S|Rmdir /s .\cours\js\|Rmdir /S .\cours\js\|RMDIR /s .\cours\js\|RMDIR /S .\cours\js\|rmdir .\cours\js\ /S|Rmdir .\cours\js\ /s|Rmdir .\cours\js\ /S|RMDIR .\cours\js\ /s|RMDIR .\cours\js\ /S"
         data-clavier="La ligne de Cmd"
         data-si-slash="rmdir /s cours/js"
         data-retour-slash="Quel signe sépare les dossiers d’un chemin dans Cmd ?"
@@ -6448,8 +6395,8 @@ docs  projet  readme.txt</pre>
               <summary>Une partie de la solution</summary>
               <p>
                 Si un message répond à mkdir au lieu de rester silencieux, lis-le : il cite le nom
-                qu’il refuse. Compare-le lettre à lettre avec la consigne, puis demande-toi si tu
-                avais déjà créé ce dossier un autre jour.
+                qu’il refuse. Compare-le lettre à lettre avec l’arborescence imposée, puis
+                demande-toi si tu avais déjà créé ce dossier un autre jour.
               </p>
             </details>
           </details>
@@ -6602,16 +6549,21 @@ logo.png</pre>
           <ul>
             <li>
               <span class="mono">cp</span> et <span class="mono">mv</span> prennent la source, puis
-              la destination. <span class="mono">cp -R</span> copie un dossier avec tout son
-              contenu, <span class="mono">rm -r</span> le retire avec tout son contenu.
+              la destination. Pour les lire, regarde le second nom dans l’état que tu viens de lire.
+            </li>
+            <li>Un nom qui n’existe pas devient le nouveau nom de la source.</li>
+            <li>Un dossier qui existe reçoit la source, qui s’y range sous son nom.</li>
+            <li>Un fichier qui existe est remplacé, sans rien demander.</li>
+            <li>
+              <span class="mono">cp</span> et <span class="mono">rm</span> refusent un dossier sans
+              <span class="mono">-R</span> ou <span class="mono">-r</span> : ils écrivent un
+              message, et rien ne change. Avec l’option, ils prennent le dossier et tout son
+              contenu.
             </li>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
-              vide n’a que son titre.
-            </li>
-            <li>
-              Un chemin comme <span class="mono">docs/js</span> désigne le dossier js, dans le
-              dossier docs : on le suit de gauche à droite.
+              vide n’a que son titre. Un chemin comme <span class="mono">docs/js</span> désigne le
+              dossier js, dans le dossier docs.
             </li>
           </ul>
         </div>
@@ -6628,23 +6580,16 @@ logo.png</pre>
           <li><span class="mono">rm site/css2</span></li>
           <li><span class="mono">rm -r site/css2</span></li>
         </ol>
-        <p class="discret">Ce que tu fais :</p>
+        <p class="discret">Ce que tu fais, une ligne à la fois :</p>
         <ol>
           <li>
-            Avant de taper la ligne 1, écris sur ton papier ce que
-            <span class="mono">ls -R site</span> répondra après elle, puis tape-la et tape
-            <span class="mono">ls -R site</span>.
+            Écris sur ton papier ce que <span class="mono">ls -R site</span> répondra après la
+            ligne.
           </li>
+          <li>Tape la ligne, puis <span class="mono">ls -R site</span>.</li>
           <li>
-            Compare ta prévision et la réponse. Note si elle était juste, puis passe à la ligne
-            suivante, qui part de l’état que tu viens de lire.
-          </li>
-          <li>
-            Si une prévision est fausse, note-la, finis les dix lignes, puis recommence : dans
-            atelier (vérifie avec <span class="mono">pwd</span>), tape
-            <span class="mono">rm -r site</span>, puis <span class="mono">rm -r sauvegarde</span>,
-            recrée site comme l’état de départ ci-dessus le montre, puis tape de nouveau ces dix
-            lignes en prédisant chacune d’abord. Il te faut dix prévisions justes.
+            Compare, et note si ta prévision était juste. La ligne suivante part de l’état que tu
+            viens de lire.
           </li>
           <li>
             Avant les lignes 9 et 10, tape <span class="mono">pwd</span> :
@@ -6653,6 +6598,9 @@ logo.png</pre>
             /atelier.
           </li>
         </ol>
+        <p class="discret">
+          Une prévision fausse ? Finis les dix lignes : l’écran suivant dit quoi faire.
+        </p>
         <details data-cran="1">
           <summary>Un indice</summary>
           <p>
@@ -6671,6 +6619,81 @@ logo.png</pre>
                 Si une prévision est fausse, compare ligne à ligne ce que tu avais écrit et ce que
                 ls -R a répondu : cherche le premier nom qui n’est pas là où tu l’attendais, puis
                 regarde la destination de la ligne qui l’a déplacé.
+              </p>
+            </details>
+          </details>
+        </details>
+      </div>
+      <div data-ecran="Si une prévision est fausse">
+        <p class="accroche">
+          Si tes dix prévisions étaient justes du premier coup, passe à l’écran suivant. Sinon, tu
+          as lu une destination de travers : tu recommences la série, pour réussir les dix
+          prévisions.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              <span class="mono">rm -r</span> retire un dossier avec tout son contenu ;
+              <span class="mono">rm</span> reçoit autant de noms qu’on veut, séparés par des
+              espaces.
+            </li>
+            <li>
+              <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
+              vide n’a que son titre. Un chemin comme <span class="mono">docs/js</span> désigne le
+              dossier js, dans le dossier docs.
+            </li>
+          </ul>
+        </div>
+        <p class="discret">L’état de départ, à retrouver, puis les dix lignes :</p>
+        <pre
+          class="listing"
+          data-lecture="L’état de départ des dix lignes. site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
+        >
+site:
+css  img  index.html
+
+site/css:
+style.css
+
+site/img:
+logo.png</pre>
+        <ol>
+          <li><span class="mono">cp site/index.html site/accueil.html</span></li>
+          <li><span class="mono">cp site/index.html site/img</span></li>
+          <li><span class="mono">cp site/css site/css2</span></li>
+          <li><span class="mono">cp -R site/css site/css2</span></li>
+          <li><span class="mono">cp -R site/css site/css2</span></li>
+          <li><span class="mono">mv site/accueil.html site/home.html</span></li>
+          <li><span class="mono">mv site/home.html site/css</span></li>
+          <li><span class="mono">mv site/index.html site/css/home.html</span></li>
+          <li><span class="mono">rm site/css2</span></li>
+          <li><span class="mono">rm -r site/css2</span></li>
+        </ol>
+        <p class="discret">Ce que tu fais :</p>
+        <ol>
+          <li>Note ta prévision fausse, puis finis les dix lignes si tu ne les as pas finies.</li>
+          <li>
+            Dans atelier, vérifie avec <span class="mono">pwd</span>, puis tape
+            <span class="mono">rm -r site</span> et <span class="mono">rm -r sauvegarde</span>.
+          </li>
+          <li>Recrée site tel que l’état de départ ci-dessus le montre.</li>
+          <li>Tape de nouveau les dix lignes, en prédisant chacune d’abord.</li>
+        </ol>
+        <details data-cran="1">
+          <summary>Un indice</summary>
+          <p>Après les deux rm -r, que doit répondre ls dans atelier avant de recréer site ?</p>
+          <details data-cran="2">
+            <summary>Une piste détaillée</summary>
+            <p>
+              Refaire la série demande un état de départ identique : un nom resté ou mal écrit
+              change toutes les prévisions qui suivent.
+            </p>
+            <details data-cran="3">
+              <summary>Une partie de la solution</summary>
+              <p>
+                Si ls -R site ne ressemble pas à l’état de départ, compare nom par nom avant de
+                retaper les dix lignes : un nom mal placé se déplace, un nom mal écrit se recrée.
               </p>
             </details>
           </details>
@@ -6729,8 +6752,10 @@ logo.png</pre>
         <p class="accroche">
           Voici de nouveau l’arborescence que le formateur impose. Tu l’as déjà faite : cette fois,
           sans tes notes, avec le chronomètre de ton téléphone (ou de ta montre) en main. Un projet
-          qu’on refait, et une sauvegarde qu’on refait avant chaque changement, doivent venir vite,
-          sans chercher ses lignes : le chronomètre te dit si tu y es.
+          qu’on refait, et une sauvegarde qu’on refait avant chaque changement, reviennent souvent :
+          si tu dois chercher tes lignes à chaque fois, il ne te reste plus d’attention pour lire
+          les chemins et prédire l’état avant d’appuyer sur Entrée. Le chronomètre te dit si tes
+          lignes viennent seules.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -6826,10 +6851,11 @@ logo.png</pre>
         <ul>
           <li>
             <span class="mono">cp</span> et <span class="mono">mv</span> prennent la source, puis la
-            destination. <span class="mono">cp -R</span> (ou <span class="mono">cp -r</span>) copie
-            un dossier avec tout son contenu, <span class="mono">rm -r</span> retire un dossier avec
-            tout son contenu, <span class="mono">rm -f</span> ne se plaint pas d’un nom qui n’existe
-            pas.
+            destination : un nom qui n’existe pas devient le nouveau nom, un dossier qui existe
+            reçoit la source, un fichier qui existe est remplacé.
+            <span class="mono">cp -R</span> (ou <span class="mono">cp -r</span>) copie un dossier
+            avec tout son contenu, <span class="mono">rm -r</span> retire un dossier avec tout son
+            contenu, <span class="mono">rm -f</span> ne se plaint pas d’un nom qui n’existe pas.
           </li>
           <li>Le point <span class="mono">.</span> désigne atelier, le dossier où tu es.</li>
           <li>
@@ -7105,27 +7131,28 @@ contact.html  index.html</pre>
           le soit. Le texte placé après un exercice paraît donc une fois l’exercice fini ; c’est là
           que vont les reprises d’un essai du prétest (data-si-essai) : p1 après cpexiste
           (cp-existe), p2 après rm-silence, p3 après lire, p4 après diff. Chaque écran d’explication
-          porte un exercice : vingt-quatre exercices en tout. Dix-huit sont des prédictions
+          porte un exercice : vingt-trois exercices en tout. Dix-huit sont des prédictions
           (data-prediction : bouge, parent, moins-p, plusieurs, copie-fichier, cp-dossier,
           cp-existe, verbose, range, ecrase, refus, deux-points, rm-silence, rm-dossier, moins-f,
           sudo, lire, deux-lignes), chacune posée avant le texte qui y répond, sur une ligne que
           l’écran n’a encore ni résolue ni écrite (la première ligne de « Renommer, puis ranger »
           est montrée, la seconde est prédite ; la première `cp -R` de « La même ligne, deux jours »
-          est montrée, la seconde est prédite). Les six autres (silence, touch, arbo, verifie, cmd,
-          diff) font appliquer une règle ou un fait écrits plus haut sur l’écran ou juste avant
-          (silence : lire dans un listing combien de lignes mkdir n’ont écrit aucun message ; touch
-          : le nom d’une commande et la forme d’un chemin ; arbo : lire le titre d’un dossier dans
-          un listing ; verifie : comparer un listing à la consigne ; cmd et diff : la table des
+          est montrée, la seconde est prédite). Les cinq autres (silence, touch, verifie, cmd, diff)
+          font appliquer une règle ou un fait écrits plus haut sur l’écran ou juste avant (silence :
+          lire dans un listing combien de lignes mkdir n’ont écrit aucun message ; touch : le nom
+          d’une commande et la forme d’un chemin ; verifie : lire le titre de chaque dossier dans un
+          listing et le comparer à ce que le formateur impose ; cmd et diff : la table des
           équivalents de Cmd et la convention de ses chemins et de ses options). Dans « L’option -f
           », l’encadré dit que -f, comme force, empêche rm de se plaindre d’un nom absent ; la
           réponse d’une ligne sans -f, qui nomme un seul fichier absent, est imprimée, et la
           prédiction se fait sur une ligne de trois noms, dont deux n’existent pas ; que rm retire
           quand même les noms qui existent est dit après la réponse. Dans « sudo », l’encadré
-          définit le mot et « protégé » ; que les fichiers du système appartiennent à
-          l’administrateur, donc sont protégés, et ce que sudo change à ce droit viennent dans le
-          texte qui suit la réponse. Tout exercice du cours dont l’apprenant a vu la solution,
-          prédiction comprise, lui fait refaire sans regarder un autre cas écrit dans la fiche
-          (data-variante-…), puis expliquer ; seuls les essais du prétest en sont dispensés.
+          définit le mot, le compte et « protégé », et dit que /etc/hostname est un fichier du
+          système, donc protégé ; que les fichiers du système appartiennent à l’administrateur et
+          que sudo retire cette protection viennent dans le texte qui suit la réponse. Tout exercice
+          du cours dont l’apprenant a vu la solution, prédiction comprise, lui fait refaire sans
+          regarder un autre cas écrit dans la fiche (data-variante-…), puis expliquer ; seuls les
+          essais du prétest en sont dispensés.
         </li>
         <li>
           Le gabarit mélange les options de chaque choix à l’affichage. Seuls les essais du prétest
@@ -7182,12 +7209,12 @@ contact.html  index.html</pre>
         <li>
           Le bloc est de type procedures : trois tâches à réponse exacte, trois explications, quatre
           transferts (deux « adapter la condition », deux « trouver l’erreur »), une aisance.
-          Quarante-cinq écrans : perception 3, carte 1, prétest 5 (quatre essais), explications 24
-          (8, 4, 4, 5, 1, 2), atelier 6, aisance 1, ensemble 5.
+          Quarante-cinq écrans : perception 3, carte 1, prétest 5 (quatre essais), explications 23
+          (7, 4, 4, 5, 1, 2), atelier 7, aisance 1, ensemble 5.
         </li>
         <li>
-          Saisies hors aisance : 4 essais + 24 exercices du cours + 2 paris + 1 schéma + 14 items de
-          pratique + 5 questions de restitution = 50, sans compter les autres cas refaits après une
+          Saisies hors aisance : 4 essais + 23 exercices du cours + 2 paris + 1 schéma + 14 items de
+          pratique + 5 questions de restitution = 49, sans compter les autres cas refaits après une
           solution vue ; six de ces saisies sont des classements ou des appariements de 2 à 4 lignes
           (PR1-2, PR1-4, PR1-8, PR1-11, PR1-12 et « Trois différences »), soit 18 réponses pour 6
           saisies. Aisance : deux séries de dix lignes. Atelier : dix critères de constat.
@@ -7206,13 +7233,16 @@ contact.html  index.html</pre>
           (data-accepte), après avoir retiré les espaces en trop. Chaque liste couvre les écritures
           que la machine accepte : le point et la barre finale d’un chemin (./site, site/), l’ordre
           et la forme des options de cp (-Rv, -vR, -R -v, -r), l’ordre des chemins quand il ne
-          change rien. Pour PR1-1 et sa variante, la liste compte les lignes mkdir qui créent
-          exactement les quatre dossiers demandés : les deux chemins profonds seuls, avec les
-          parents redondants (app, app/js), dans tous les ordres, et sans -p quand chaque parent est
-          nommé avant son enfant ; la même ligne avec une des quatre formes d’écriture des chemins
-          (nu, ./, barre finale, les deux), à condition que toute la ligne garde la même forme ; les
-          formes mêlées sont refusées, avec un retour qui dit d’écrire tous les chemins de la même
-          façon.
+          change rien. Les lignes de Cmd (move, copy, del, rmdir /s) s’acceptent avec le nom de la
+          commande en minuscules, avec une majuscule initiale ou en majuscules, et /s ou /S, puisque
+          Cmd ne distingue pas la casse ; les chemins s’écrivent comme dans l’énoncé. Pour PR1-1 et
+          sa variante, la liste compte les lignes mkdir qui créent exactement les quatre dossiers
+          demandés : les deux chemins profonds seuls, avec les parents redondants (app, app/js),
+          dans tous les ordres, et sans -p quand chaque parent est nommé avant son enfant ; la même
+          ligne avec une des quatre formes d’écriture des chemins (nu, ./, barre finale, les deux),
+          ou depuis ~/atelier ou depuis la racine (/home/yasmine/atelier, /Users/farid/atelier), à
+          condition que toute la ligne garde la même forme ; les formes mêlées sont refusées, avec
+          un retour qui dit d’écrire tous les chemins de la même façon.
         </li>
         <li>
           Temps estimé (règle C06 ; 120 mots par minute, arrondis à la minute, sur les mots de `pnpm
@@ -7220,13 +7250,13 @@ contact.html  index.html</pre>
           trois par question de restitution et par série d’aisance ; l’atelier compte sa lecture et
           ses minutes de frappe réelles, 5 pour le dossier, 10 pour l’arborescence, 5 pour la
           sauvegarde deux fois, 20 pour les dix commandes, 5 le second jour avec la sauvegarde
-          chronométrée, soit 45). Modéliser : 9 346 mots, 78 minutes de lecture, et 31 d’exercices
-          (4 essais, 24 exercices, 2 paris, 1 schéma), soit 109 minutes. Faire : pratique 1 867
-          mots, 16 minutes, plus 14 items à 2 minutes et 3 explications à 2 minutes de plus, soit 50
-          ; atelier 1 960 mots, 16 minutes, plus 45 de frappe, soit 61 ; aisance 284 mots, 2
-          minutes, plus 2 séries à 3 minutes, soit 8 ; restitution 415 mots, 3 minutes, plus 5
-          questions à 3 minutes, soit 18 ; au total 137 minutes. Faire dépasse modéliser (137 contre
-          109 minutes) : la pratique, au sens de la méthode (pratique, atelier, aisance,
+          chronométrée, soit 45). Modéliser : 9 263 mots, 77 minutes de lecture, et 30 d’exercices
+          (4 essais, 23 exercices, 2 paris, 1 schéma), soit 107 minutes. Faire : pratique 1 853
+          mots, 15 minutes, plus 14 items à 2 minutes et 3 explications à 2 minutes de plus, soit 49
+          ; atelier 2 285 mots, 19 minutes, plus 45 de frappe, soit 64 ; aisance 307 mots, 3
+          minutes, plus 2 séries à 3 minutes, soit 9 ; restitution 416 mots, 3 minutes, plus 5
+          questions à 3 minutes, soit 18 ; au total 140 minutes. Faire dépasse modéliser (140 contre
+          107 minutes) : la pratique, au sens de la méthode (pratique, atelier, aisance,
           restitution), prend la plus grande part du temps.
         </li>
       </ul>
@@ -7262,7 +7292,7 @@ contact.html  index.html</pre>
         "schema": 2,
         "bloc": "B10",
         "type": "procedures",
-        "version": 15,
+        "version": 16,
         "titre": "Manipuler fichiers et dossiers : créer, copier, déplacer, supprimer",
         "titre_court": "Manipuler fichiers et dossiers",
         "objectif": "Dans un dossier d'atelier, réaliser sans `cd` une arborescence imposée de 3 dossiers et 3 fichiers vides avec `mkdir` (`-p`) et `touch`, la vérifier avec `ls -R`, la sauvegarder avec `cp -Rv`, puis prédire par écrit l'état de l'arborescence après 10 commandes `cp`, `mv`, `rm` (destination existante ou non, écrasement sans confirmation, échec qui ne change rien) et les exécuter avec 10 justes ; dire que `rm` supprime sans corbeille ni confirmation, et lire ce que détruit une ligne `rm -r` ou `rm -rf`, avec ou sans `sudo`, avant de l'exécuter ; donner l'équivalent Cmd de `copy`, `move`, `del` et `rmdir /s` et reconnaître trois différences entre Cmd et bash (séparateur de chemin, option, nom de commande)",
@@ -7473,7 +7503,7 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-R3",
-            "question": "Pour lire : rm retire, -r descend dans les dossiers, -f ne se plaint pas d’un nom absent, -rf se lit -r -f, sudo lance en administrateur, qui a tous les droits, `..` désigne le dossier parent, /home/yasmine est le dossier yasmine, dans home. Un tutoriel conseille « sudo rm -rf ../projets ». Yasmine est dans /home/yasmine/atelier. Que détruit cette ligne, et que vérifie-t-elle avant de la lancer ?",
+            "question": "Pour lire : rm retire, -r descend dans les dossiers, -f ne se plaint pas d’un nom absent, -rf se lit -r -f, sudo lance en administrateur, qui a tous les droits, .. désigne le dossier parent, /home/yasmine est le dossier yasmine, dans home. Un tutoriel conseille « sudo rm -rf ../projets ». Yasmine est dans /home/yasmine/atelier. Que détruit cette ligne, et que vérifie-t-elle avant de la lancer ?",
             "attendu": "Depuis /home/yasmine/atelier, .. désigne /home/yasmine : la ligne détruit /home/yasmine/projets, avec tout ce qu’il contient, sans rien demander ni corbeille. Elle lit dans l’ordre la commande, les options, les chemins et le dossier où elle est (pwd), puis ne la tape que si elle est sûre de ce qu’elle détruit. Déduit de l’étape « Supprimer ».",
             "erreurs": ["E2"]
           },
@@ -7485,7 +7515,7 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-R5",
-            "question": "Pour lire : mv déplace sa source vers sa destination ; un chemin comme b/a veut dire le dossier a dans le dossier b. Dans son dossier atelier, Yasmine a un dossier a, qui contient x.txt, et un dossier b, qui contient y.txt. Elle tape mv a b, puis mv b b/a. Écris l’état d’atelier après les deux lignes : ce qui existe, sous quel nom, dans quel dossier.",
+            "question": "Pour lire : mv déplace sa source vers sa destination ; b/a est le dossier a, dans b ; un sous-dossier est un dossier rangé dans un autre. Dans son dossier atelier, Yasmine a un dossier a, qui contient x.txt, et un dossier b, qui contient y.txt. Elle tape mv a b, puis mv b b/a. Écris l’état d’atelier après les deux lignes : ce qui existe, sous quel nom.",
             "attendu": "La première ligne range a dans b, qui existe : b contient y.txt et un dossier a, avec x.txt. La seconde ligne échoue : b ne peut pas être rangé dans un de ses propres sous-dossiers, et une commande qui échoue ne change rien. L’état final : atelier contient seulement b, qui contient y.txt et un dossier a, qui contient x.txt. Déduit des étapes « Déplacer » et « Dire l’état d’abord ».",
             "erreurs": []
           }
@@ -7505,13 +7535,13 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-Q3",
-            "question": "Pour lire : dans une ligne, le premier mot est la commande ; un morceau précédé d’un tiret est une option ; -r fait descendre rm dans les dossiers, -f l’empêche de se plaindre d’un nom absent. Dans la ligne rm -rf site, quel morceau est la commande, et quel morceau est l’option ?",
-            "attendu": "rm est la commande ; -rf est l’option. Déduit de l’étape « À l’intuition ».",
+            "question": "Pour lire : -r fait descendre rm dans les dossiers, -f l’empêche de se plaindre d’un nom absent ; -rf se lit -r -f. Yasmine tape rm -rf site, où site est un dossier qui contient des fichiers. Pourquoi une ligne aussi destructrice peut-elle ne rien dire ?",
+            "attendu": "rm -r retire le dossier avec tout son contenu, -f fait taire même la plainte d’un nom absent, et rm ne demande jamais de confirmation : rien ne l’arrête et rien n’est écrit. Déduit de l’étape « Supprimer ».",
             "erreurs": []
           },
           {
             "id": "B10-Q4",
-            "question": "Pour lire : ls -R écrit un titre par dossier, puis ses noms. Le formateur impose un dossier projet qui contient src et readme.txt. Yasmine tape ls -R projet : sous le titre projet, la fenêtre écrit readme.txt et scr. Son travail suit-il exactement la consigne du formateur, et comment le sait-elle ?",
+            "question": "Pour lire : ls -R écrit un titre par dossier, puis ses noms. Le formateur impose un dossier projet qui contient src et readme.txt. Yasmine tape ls -R projet : sous le titre projet, la fenêtre écrit readme.txt et scr. Son travail suit-il exactement ce que le formateur impose, et comment le sait-elle ?",
             "attendu": "Non : scr n’est pas src, car un nom presque juste est un autre nom. Elle le sait en comparant, nom par nom, la sortie de ls -R avec ce que le formateur impose. Déduit de l’étape « Créer sans bouger ».",
             "erreurs": []
           },
@@ -7615,7 +7645,7 @@ contact.html  index.html</pre>
             "id": "B10-T3",
             "type": "transfert",
             "forme": "trouver_erreur",
-            "consigne": "Pour lire : -r descend dans les dossiers ; -rf se lit -r -f. Un chemin sans barre au début part d’où l’on est. Yasmine a, dans atelier, un dossier photos et un dossier projet, qui contient lui aussi un dossier photos. Dans projet, elle croit retirer le photos d’atelier avec rm -rf photos. Trouve ce qu’elle a mal lu, et ce que fait la ligne.",
+            "consigne": "Pour lire : -r descend dans les dossiers ; -rf se lit -r -f. Un chemin sans barre part d’où l’on est ; a/b est b, dans a. Yasmine a, dans atelier, un dossier photos et un dossier projet, qui contient aussi un dossier photos. Dans projet, elle croit retirer le photos d’atelier avec rm -rf photos. Trouve ce qu’elle a mal lu, et ce que fait la ligne.",
             "attendu": "photos, sans barre au début, est un chemin relatif : il part du répertoire courant, projet, et pas d’atelier. La ligne détruit projet/photos avec tout son contenu, et le photos d’atelier reste intact. Elle n’a pas lu le dossier où elle est avant de lancer la ligne. Déduit de l’étape « Supprimer ».",
             "erreurs": ["E2"]
           },
@@ -7722,8 +7752,8 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-K5",
-            "recto": "Pour lire : sudo lance la commande qui suit en administrateur, le compte qui a tous les droits ; rm -rf se lit rm -r -f. Pourquoi sudo rm -rf est-il plus dangereux que rm -rf ?",
-            "verso": "Sans sudo, ton compte n’a pas le droit de toucher aux fichiers du système : rm s’arrête devant eux. Avec sudo, la ligne s’exécute avec tous les droits : la protection ne retient plus rien, et -rf détruit sans question. Déduit de l’étape « Supprimer »."
+            "recto": "Pour lire : sudo lance la commande qui suit en administrateur, le compte qui a tous les droits ; un fichier du système est protégé : un compte ordinaire n’a pas le droit de le modifier ; rm -rf se lit rm -r -f. Noah lit sudo rm -rf /etc/cron.d, un dossier du système. Que change sudo à cette ligne ?",
+            "verso": "Sans sudo, le compte de Noah n’a pas le droit de toucher à ce dossier : rm refuse et rien n’est détruit. Avec sudo, la ligne s’exécute en administrateur : le dossier part avec tout son contenu, sans une question. Déduit de l’étape « Supprimer »."
           },
           {
             "id": "B10-K6",
@@ -8124,7 +8154,7 @@ contact.html  index.html</pre>
           "Taper une ligne de Cmd : le Mac n’en a pas ; les lignes de Cmd se lisent, jamais tapées",
           "Ce que `del`, `rmdir /s`, `copy` et `move` font de la Corbeille ou d’une confirmation, ce que `del` fait d’un dossier et `copy` des sous-dossiers : jamais dit ni demandé, l’objectif ne demande que leurs noms et trois différences avec bash ; seul le nom de la destination est dit, en ET9 « Les noms de Cmd » (`move` range la source dans un dossier qui existe : « Sous Cmd aussi, le nom de la destination décide du résultat ») et « Trois différences » (« comme avant »), comme phrase de lien avec le modèle, jamais demandé",
           "PowerShell et ses alias ; `xcopy`, `robocopy`, `dir /s` : jamais nommés",
-          "Les droits d’un fichier, et pourquoi `sudo` est nécessaire",
+          "Les droits d’un fichier (propriétaire, permissions) et pourquoi `sudo` est nécessaire : jamais enseignés ; la page dit seulement qu’un fichier du système est protégé, qu’un compte ordinaire n’a pas le droit de le modifier et que `sudo` lance la commande en administrateur",
           "`rm -rf /` et la protection de GNU : nommés nulle part",
           "`rm -i` : jamais nommé",
           "`rmdir` sous bash (un dossier vide seulement) : dit en une phrase en ET9 pour que la page ne prétende pas qu’il n’existe pas, jamais demandé"
