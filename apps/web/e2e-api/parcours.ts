@@ -1,6 +1,8 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { reservesDuType } from '@janus/contrats'
+import type { TypeDuBloc } from '@janus/contrats'
 import { expect } from '@playwright/test'
 import type { APIRequestContext, FrameLocator, Page } from '@playwright/test'
 import { allerEtape, ficheALaHauteur, ficheDuBloc, ouvrirSession } from '../e2e/session.ts'
@@ -34,6 +36,7 @@ export interface Manifeste {
   readonly bloc: string
   readonly version: number
   readonly titre: string
+  readonly type?: TypeDuBloc
   readonly prerequis: readonly string[]
   readonly etapes: readonly { readonly id: string; readonly titre: string; readonly type: string }[]
   readonly erreurs_critiques: readonly { readonly id: string; readonly libelle: string }[]
@@ -419,9 +422,12 @@ async function repondreALaPartie(
   return consigne ?? ''
 }
 
-/** Les types de parties qu'une vérification de ce bloc tire : un de chaque type que ses différées couvrent. */
+/**
+ * Les types de parties qu'une vérification de ce bloc tire : ceux que son type de contenu réserve
+ * (une `procedures` tire une tâche et un transfert, pas d'explication), et que ses différées couvrent.
+ */
 export const partiesDe = (manifeste: Manifeste) =>
-  (['explication', 'tache', 'transfert'] as const).filter((type) =>
+  reservesDuType(manifeste.type).parties.filter((type) =>
     manifeste.differees.some((differee) => differee.type === type),
   )
 
