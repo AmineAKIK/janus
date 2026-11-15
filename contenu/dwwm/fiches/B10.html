@@ -2262,10 +2262,6 @@ $ ls sauvegarde/site/img</pre>
               mv déplace ce qu’on lui donne, le premier nom, à l’endroit qu’on lui indique, le
               second.
             </li>
-            <li>
-              Un exemple : après <span class="mono">mv notes.txt idees.txt</span>, le fichier qui
-              s’appelait notes.txt s’appelle idees.txt.
-            </li>
           </ul>
         </div>
         <pre
@@ -2622,16 +2618,16 @@ a.txt  b.txt</pre>
           data-id="bouge"
           data-prediction
           data-reponse="atelier"
-          data-aide1="D’après l’encadré, quelle commande est chargée de changer le dossier où l’on est ?"
-          data-aide2="Le répertoire courant ne change que lorsque tu tapes cd."
+          data-aide1="Où Yasmine est-elle avant la ligne, d’après l’énoncé ?"
+          data-aide2="Parmi mkdir et cd, laquelle change le dossier où l’on est, d’après l’encadré ?"
           data-aide3="Écris le chemin du répertoire courant avant la ligne, puis demande-toi si mkdir site a touché à ce chemin."
           data-explication="mkdir crée site dans atelier et ne te déplace pas : pwd répond encore /home/yasmine/atelier."
           data-variante-enonce="Pour lire : touch crée un fichier vide. cd change le dossier où l’on est, que pwd écrit. /Users/farid est le dossier farid, dans Users. Farid, sur son Mac, est dans /Users/farid/atelier. Il tape touch notes.txt, puis pwd. À ton avis, que répond pwd ?"
           data-variante-reponse="atelier"
           data-variante-options="atelier=/Users/farid/atelier|notes=/Users/farid/atelier/notes.txt|farid=/Users/farid"
           data-variante-retours="notes=notes.txt est-il un dossier dans lequel on peut entrer ?|farid=touch est-il une commande qui remonte dans l’arbre ?"
-          data-variante-aide1="D’après la phrase « pour lire », quelle commande est chargée de changer le dossier où l’on est ?"
-          data-variante-aide2="Le répertoire courant ne change que lorsque tu tapes cd."
+          data-variante-aide1="Où Farid est-il avant la ligne, d’après l’énoncé ?"
+          data-variante-aide2="Parmi touch et cd, laquelle change le dossier où l’on est, d’après la phrase « pour lire » ?"
           data-variante-aide3="Écris le chemin du répertoire courant avant la ligne, puis demande-toi si touch notes.txt y a touché."
           data-variante-explication="touch crée notes.txt dans atelier et ne te déplace pas : pwd répond encore /Users/farid/atelier."
         >
@@ -2695,16 +2691,16 @@ site</pre>
           data-id="parent"
           data-prediction
           data-reponse="echoue"
-          data-aide1="Dans quel dossier le chemin doc/notes veut-il créer notes ?"
-          data-aide2="Un dossier se crée dans un dossier qui existe déjà : doc existe-t-il ?"
+          data-aide1="Que dit le chemin doc/notes : quels noms contient-il, de gauche à droite ?"
+          data-aide2="Dans quel dossier le chemin doc/notes veut-il créer notes, et ce dossier existe-t-il dans l’état de départ ?"
           data-aide3="Regarde l’état de départ, juste avant la ligne, et cherche un dossier doc."
           data-explication="doc n’existe pas : mkdir ne peut pas y créer notes. Il échoue, et atelier n’a pas changé."
           data-variante-enonce="Pour lire : mkdir crée un dossier du nom qu’on lui donne ; site/img/icones veut dire le dossier icones, dans img, dans site. Farid a un dossier site vide et tape mkdir site/img/icones. À ton avis, que se passe-t-il ?"
           data-variante-reponse="echoue"
           data-variante-options="cree=La commande réussit : site contient img, et img contient icones.|echoue=La commande échoue : un message le dit, et site reste vide.|icones=La commande crée icones dans site, à côté de l’endroit où img devrait être."
           data-variante-retours="cree=Farid a-t-il demandé à créer img, ou seulement icones ?|icones=Où le chemin site/img/icones place-t-il icones ?"
-          data-variante-aide1="Dans quel dossier le chemin site/img/icones veut-il créer icones ?"
-          data-variante-aide2="Un dossier se crée dans un dossier qui existe déjà : img existe-t-il ?"
+          data-variante-aide1="Que dit le chemin site/img/icones : quels noms contient-il, de gauche à droite ?"
+          data-variante-aide2="Dans quel dossier le chemin site/img/icones veut-il créer icones, et ce dossier existe-t-il dans le contenu de site ?"
           data-variante-aide3="Regarde le contenu de site avant la ligne et cherche un dossier img."
           data-variante-explication="img n’existe pas dans site : mkdir ne peut pas y créer icones. Il échoue, et site reste vide."
         >
@@ -2814,10 +2810,13 @@ js</pre>
           Cette convention vaut pour les commandes qui créent, copient, déplacent ou retirent, sauf
           quand une option change ce qu’elles écrivent : quelques-unes viennent plus loin. Un
           message veut dire qu’une ligne a échoué, et qu’elle n’a rien créé pour ce nom : ici, lib
-          n’existe pas. <span class="mono">pwd</span> répond toujours, et
-          <span class="mono">ls</span> écrit les noms qu’il trouve (rien si le dossier est vide),
-          parce que répondre est leur travail. Le silence ne veut pas dire que rien n’a changé : il
-          veut dire qu’aucune erreur n’a été écrite.
+          n’existe pas.
+        </p>
+        <p>
+          <span class="mono">pwd</span> répond toujours, et <span class="mono">ls</span> écrit les
+          noms qu’il trouve (rien si le dossier est vide), parce que répondre est leur travail. Le
+          silence ne veut pas dire que rien n’a changé : il veut dire qu’aucune erreur n’a été
+          écrite.
         </p>
       </div>
       <div data-ecran="Un chemin qui n’existe pas encore">
@@ -2894,9 +2893,9 @@ site/css:</pre>
         <p>
           <span class="mono">mkdir -p</span> crée chaque dossier du chemin qui manque, du premier au
           dernier, et ne dit rien. Si le dossier existe déjà, il ne dit rien non plus et ne change
-          rien, alors que <span class="mono">mkdir site/css</span> seul répondrait que le dossier
-          existe. C’est ainsi que Yasmine crée en une ligne un dossier et tout ce qu’il faut pour
-          l’atteindre.
+          rien, alors que <span class="mono">mkdir site/css</span> seul échouerait, avec un message
+          qui dit que le nom existe déjà (« File exists »). C’est ainsi que Yasmine crée en une
+          ligne un dossier et tout ce qu’il faut pour l’atteindre.
         </p>
       </div>
       <div data-ecran="Créer un fichier vide">
@@ -2959,9 +2958,7 @@ site/css:</pre>
         <p>
           Pour vérifier, Yasmine tape <span class="mono">ls -R site</span> : chaque dossier a son
           titre, qui se termine par deux-points, suivi des noms qu’il contient. style.css est sous
-          le titre site/css:, donc rangé dans le dossier css. Quand les noms tiennent,
-          <span class="mono">ls</span> les range côte à côte, et un nom par ligne si la fenêtre est
-          étroite : c’est la même liste.
+          le titre site/css:, donc rangé dans le dossier css.
         </p>
         <pre
           class="listing"
@@ -3305,10 +3302,10 @@ $ cp site sauvegarde
 cp: -r not specified; omitting directory 'site'</pre>
         <p>
           Le message dit que <span class="mono">-r</span> n’est pas donné et que le dossier site est
-          omis : rien n’a été copié. Un Mac écrit une autre phrase, qui dit aussi que le dossier
-          n’est pas copié. <span class="mono">cp -R</span> copie le dossier avec tout ce qu’il
-          contient, sous-dossiers compris ; <span class="mono">-r</span> s’écrit aussi, et fait la
-          même chose.
+          omis : rien n’a été copié. Sur un Mac, la phrase a d’autres mots : lis-la comme celle
+          d’Ubuntu, elle dit aussi que le dossier n’est pas copié.
+          <span class="mono">cp -R</span> copie le dossier avec tout ce qu’il contient,
+          sous-dossiers compris ; <span class="mono">-r</span> s’écrit aussi, et fait la même chose.
         </p>
       </div>
       <div data-ecran="La même ligne, deux jours">
@@ -3513,8 +3510,8 @@ $ cp -Rv site/img images
           Avec <span class="mono">-v</span>, tu lis ce que <span class="mono">cp</span> a fait,
           ligne à ligne : c’est utile pour une sauvegarde de toute l’arborescence, comme
           <span class="mono">cp -Rv site sauvegarde</span> dans un atelier où
-          <span class="mono">sauvegarde</span> n’existe pas encore. Un Mac écrit ces lignes un peu
-          autrement : le texte exact change d’un système à l’autre, et ici tu comptes celles
+          <span class="mono">sauvegarde</span> n’existe pas encore. Sur un Mac, les lignes ont
+          d’autres mots, mais il y en a encore une par élément copié : ici tu comptes celles
           d’Ubuntu.
         </p>
         <p>
@@ -3595,9 +3592,14 @@ css  home.html  img</pre>
           la source est <strong>renommée</strong> :
           <span class="mono">mv site/index.html site/home.html</span> donne un nouveau nom au même
           fichier. Si c’est un dossier qui existe, la source s’y <strong>range</strong>, sous son
-          nom d’origine. Un dossier se déplace de la même façon, avec tout ce qu’il contient, sans
-          option : <span class="mono">mv</span> n’a pas de <span class="mono">-R</span>. La
-          destination peut aussi être dans un autre dossier :
+          nom d’origine.
+        </p>
+        <p>
+          Un dossier se déplace de la même façon, avec tout ce qu’il contient, sans option :
+          <span class="mono">mv</span> n’a pas de <span class="mono">-R</span>.
+        </p>
+        <p>
+          La destination peut aussi être dans un autre dossier :
           <span class="mono">mv site/css/style.css site/theme.css</span> sort style.css de css, le
           range dans site et le renomme theme.css, en une seule ligne.
         </p>
@@ -3728,7 +3730,7 @@ css  home.html  img  index.html</pre>
           data-explication="site contient css : le ranger dans css, ce serait le mettre dans lui-même. mv refuse, avec un message, et ne change rien."
           data-variante-enonce="Pour lire : mv source destination : si la destination est un dossier, la source est rangée dedans ; un chemin comme notes/brouillons désigne le dossier brouillons, dans notes. Farid tape mv notes notes/brouillons. À ton avis, que fait la fenêtre ?"
           data-variante-reponse="refuse"
-          data-variante-options="refuse=Elle refuse avec un message : notes ne peut pas aller dans son propre sous-dossier, et rien ne change.|range=Elle range notes dans brouillons, qui reste dans notes.|renomme=Elle renomme notes en brouillons."
+          data-variante-options="refuse=Elle refuse avec un message : notes ne peut pas aller dans un dossier qu’il contient, et rien ne change.|range=Elle range notes dans brouillons, qui reste dans notes.|renomme=Elle renomme notes en brouillons."
           data-variante-retours="range=Où se trouve le dossier brouillons : dans notes, ou à côté de lui ?|renomme=La destination notes/brouillons est-elle un dossier qui existe ?"
           data-variante-aide1="Où se trouve le dossier brouillons : dans notes, ou à côté de lui ?"
           data-variante-aide2="Si notes allait dans brouillons, le dossier brouillons, qui est dans notes, serait dans quoi ?"
@@ -3760,10 +3762,11 @@ css  home.html  img  index.html</pre>
 $ mv site site/css
 mv: cannot move 'site' to a subdirectory of itself, 'site/css/site'</pre>
         <p>
-          Le message dit que site ne peut pas aller dans un de ses propres sous-dossiers. Un dossier
-          se déplace avec tout ce qu’il contient, y compris css : le ranger dans css, ce serait le
-          mettre dans une partie de lui-même, et <span class="mono">mv</span> refuse. Le refus vaut
-          même pour un nom qui n’existe pas encore, s’il est à l’intérieur de la source :
+          Le message dit que site ne peut pas aller dans un de ses propres sous-dossiers, les
+          dossiers rangés en lui. Un dossier se déplace avec tout ce qu’il contient, y compris css :
+          le ranger dans css, ce serait le mettre dans une partie de lui-même, et
+          <span class="mono">mv</span> refuse. Le refus vaut même pour un nom qui n’existe pas
+          encore, s’il est à l’intérieur de la source :
           <span class="mono">mv site site/vieux</span> échoue aussi, alors qu’un nom absent est
           d’ordinaire le nouveau nom de la source. Une ligne à un seul nom qui échoue ne change rien
           : site est resté tel quel.
@@ -3828,7 +3831,7 @@ $ mv style.css ..</pre>
           data-prediction
           data-reponse="site"
           data-aide1="Quel est le répertoire courant, d’après pwd ?"
-          data-aide2="Les deux points désignent le parent du dossier où tu es, celui que pwd a donné."
+          data-aide2="Les deux points désignent un dossier : lequel, par rapport à celui que pwd a donné ?"
           data-aide3="Écris le chemin du répertoire courant, puis retire son dernier dossier : le chemin qui reste est celui de .."
           data-explication="Le répertoire courant est css : .. désigne son parent, site. style.css est rangé dans site."
           data-variante-enonce="Pour lire : cp copie sa source vers sa destination. Le point . est le dossier où l’on est, .. son dossier parent. Farid est dans site/img, qui contient logo.png. site contient index.html. Il tape cp ../index.html . Que contient img ensuite ?"
@@ -3836,7 +3839,7 @@ $ mv style.css ..</pre>
           data-variante-options="deux=index.html et logo.png.|un=logo.png seul : le point n’est pas une destination.|index=index.html seul : la copie a remplacé logo.png."
           data-variante-retours="un=Que désigne le point, d’après la phrase « pour lire » ?|index=Le point désigne-t-il un fichier, ou un dossier ?"
           data-variante-aide1="Quel est le répertoire courant ?"
-          data-variante-aide2="Le point désigne le répertoire courant, qui peut recevoir une copie."
+          data-variante-aide2="Le point désigne un dossier : lequel, par rapport à l’endroit où Farid est ?"
           data-variante-aide3="Écris le chemin du répertoire courant, puis cherche où la source ../index.html se trouve par rapport à lui."
           data-variante-explication="Le point désigne img, le répertoire courant : la copie y range index.html, à côté de logo.png."
         >
@@ -4071,7 +4074,9 @@ $ rm -r sauvegarde</pre>
           <span class="mono">rm -r docs site</span> retire les deux dossiers. L’option -r joue pour
           <span class="mono">rm</span> le rôle que -R joue pour <span class="mono">cp</span> : sans
           l’option qui descend dans les dossiers, <span class="mono">cp</span> comme
-          <span class="mono">rm</span> refusent un dossier.
+          <span class="mono">rm</span> refusent un dossier :
+          <span class="mono">cp site sauvegarde</span>, sans -R, répondait lui aussi que le dossier
+          est omis.
         </p>
       </div>
       <div data-ecran="L’option -f">
@@ -4122,8 +4127,8 @@ rm: cannot remove 'site/css/old.css': No such file or directory</pre>
           data-variante-enonce="Pour lire : -f empêche rm de se plaindre d’un nom absent. Une commande qui réussit n’écrit rien. site/img/old.png est le fichier old.png, dans img, dans site. Farid tape rm -f site/img/old.png site/img/logo.png site/img/tmp.png, alors qu’old.png et tmp.png n’existent pas. Que se passe-t-il ?"
           data-variante-reponse="rien"
           data-variante-options="rien=La fenêtre n’écrit rien, et logo.png est retiré.|messages=La fenêtre écrit un message pour old.png et un pour tmp.png, et logo.png est retiré.|arret=La fenêtre écrit un message pour old.png, puis rm s’arrête : logo.png n’est pas retiré."
-          data-variante-retours="messages=Qu’est-ce que forcer change à une plainte sur un nom absent ?|arret=Dans la ligne sans option, rm s’est-il arrêté au premier nom absent ?"
-          data-variante-aide1="Relis la réponse de la ligne sans -f : sur quel nom rm se plaint-il ?"
+          data-variante-retours="messages=Qu’est-ce que forcer change à une plainte sur un nom absent ?|arret=Un nom absent suffit-il à arrêter rm, une fois -f ajouté ?"
+          data-variante-aide1="Combien des trois noms de la ligne n’existent pas, d’après l’énoncé ?"
           data-variante-aide2="Qu’est-ce que forcer change à ce que rm écrit sur un nom absent ?"
           data-variante-aide3="Pour chacun des trois noms, demande-toi si rm a encore quelque chose à signaler une fois -f ajouté."
           data-variante-explication="Avec -f, rm ne dit rien, même quand des noms n’existent pas : la fenêtre n’écrit rien, et logo.png est retiré."
@@ -4266,13 +4271,19 @@ $ sudo rm /etc/hostname</pre>
           sous ton compte et se heurte à cette protection ; avec <span class="mono">sudo</span>, il
           travaille en administrateur, et rien ne le retient.
           <span class="mono">sudo</span> n’ajoute aucune demande de confirmation, puisque
-          <span class="mono">rm</span> n’en pose pas. Avec <span class="mono">-rf</span> derrière,
-          rien ne s’arrête : ni un dossier entier, ni un nom qui n’existe pas. Dans l’atelier,
-          <span class="mono">sudo</span> ne change rien : tes dossiers sont à toi, et ton compte a
-          déjà le droit de les retirer. <span class="mono">sudo</span> ne change pas ce que
-          <span class="mono">rm</span> fait à l’arborescence : il change seulement ce que le compte
-          a le droit d’atteindre. C’est un mot de plus à lire avant d’appuyer sur Entrée, avec la
-          commande, les options et les chemins.
+          <span class="mono">rm</span> n’en pose pas.
+        </p>
+        <p>
+          Avec <span class="mono">-rf</span> derrière, c’est-à-dire <span class="mono">-r</span>,
+          qui descend dans les dossiers, et <span class="mono">-f</span>, qui se tait sur un nom
+          absent, rien ne s’arrête : ni un dossier entier, ni un nom qui n’existe pas.
+        </p>
+        <p>
+          Dans l’atelier, <span class="mono">sudo</span> ne change rien : tes dossiers sont à toi,
+          et ton compte a déjà le droit de les retirer. <span class="mono">sudo</span> ne change pas
+          ce que <span class="mono">rm</span> fait à l’arborescence : il change seulement ce que le
+          compte a le droit d’atteindre. C’est un mot de plus à lire avant d’appuyer sur Entrée,
+          avec la commande, les options et les chemins.
         </p>
       </div>
       <div data-ecran="Lire avant de lancer">
@@ -4408,6 +4419,10 @@ logo.png</pre>
               le second.
             </li>
             <li><span class="mono">rm</span> retire ce qu’on lui donne.</li>
+            <li>
+              Quand la destination de <span class="mono">mv</span> n’existe pas, la source prend ce
+              nom.
+            </li>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
@@ -4695,8 +4710,9 @@ C:\atelier&gt; rmdir /s site\css2</pre>
           Il connaît bien un
           <span class="mono">rmdir</span>, mais celui-là ne retire qu’un dossier vide et ne comprend
           pas <span class="mono">/s</span> : la ligne <span class="mono">rmdir /s site\css2</span> y
-          échoue aussi, sans rien retirer. Le Terminal d’un Mac répond lui aussi que
-          <span class="mono">copy</span> est introuvable, avec une autre phrase. L’inverse est vrai
+          échoue aussi, sans rien retirer ; pour retirer un dossier dans bash, tu gardes
+          <span class="mono">rm -r</span>. Le Terminal d’un Mac répond lui aussi que
+          <span class="mono">copy</span> est introuvable, avec d’autres mots. L’inverse est vrai
           aussi : Cmd ne connaît ni <span class="mono">cp</span>, ni <span class="mono">mv</span>,
           ni <span class="mono">rm</span>. Avant de taper une ligne d’un tutoriel, regarde donc pour
           quelle fenêtre elle est écrite.
@@ -4726,7 +4742,7 @@ C:\atelier&gt; rmdir /s site\css2</pre>
         data-si-sansp="mkdir app/js/lib app/img|mkdir app/img app/js/lib"
         data-retour-sansp="Dans un atelier vide, app et js existent-ils quand mkdir crée lib ?"
         data-si-seul="mkdir -p app/js/lib|mkdir -p app/img"
-        data-retour-seul="Combien de dossiers l’énoncé demande-t-il de créer, sans compter ceux qui les contiennent ?"
+        data-retour-seul="Combien de chemins la ligne doit-elle contenir pour que chaque dossier demandé soit créé ?"
         data-aide1="Écris, pour chaque dossier demandé, le chemin qui part d’atelier : lesquels existent déjà, dans un atelier vide ?"
         data-aide2="Une option de mkdir crée les dossiers du chemin qui manquent."
         data-aide3="Écris la commande, l’option qui crée les dossiers manquants, puis les deux chemins complets, séparés par des espaces."
@@ -4768,7 +4784,7 @@ C:\atelier&gt; rmdir /s site\css2</pre>
         data-si-sansp="mkdir cours/css/fonts cours/js|mkdir cours/js cours/css/fonts"
         data-retour-sansp="Dans un atelier vide, cours et css existent-ils quand mkdir crée fonts ?"
         data-si-seul="mkdir -p cours/css/fonts|mkdir -p cours/js"
-        data-retour-seul="Combien de dossiers l’énoncé demande-t-il de créer, sans compter ceux qui les contiennent ?"
+        data-retour-seul="Combien de chemins la ligne doit-elle contenir pour que chaque dossier demandé soit créé ?"
         data-aide1="Écris, pour chaque dossier demandé, le chemin qui part d’atelier : lesquels existent déjà, dans un atelier vide ?"
         data-aide2="Une option de mkdir crée les dossiers du chemin qui manquent."
         data-aide3="Écris la commande, l’option qui crée les dossiers manquants, puis les deux chemins complets, séparés par des espaces."
@@ -5193,10 +5209,10 @@ logo.png</pre>
         data-widget="choix"
         data-verifie
         data-reponse="dedans"
-        data-aide1="img existe-t-il déjà quand la ligne est tapée ?"
+        data-aide1="originaux existe-t-il déjà quand la ligne est tapée ?"
         data-aide2="Le nom de la destination décide : existant ou non, et de quelle sorte ?"
-        data-aide3="Écris le contenu de img avant la ligne, puis ajoute la copie de css en te demandant sous quel nom elle se range."
-        data-justifier="Yasmine tape cp -R site/css site/img. Pourquoi img contient-il un dossier css, et non directement style.css ?"
+        data-aide3="Écris le contenu d’originaux avant la ligne, puis ajoute la copie de css en te demandant sous quel nom elle se range."
+        data-justifier="Yasmine tape cp -R site/css site/img/originaux. Pourquoi originaux contient-il un dossier css, et non directement style.css ?"
       >
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -5218,7 +5234,7 @@ logo.png</pre>
         </div>
         <pre
           class="listing"
-          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png, originaux ; site/img/originaux contient rien."
         >
 $ ls -R site
 site:
@@ -5228,26 +5244,27 @@ site/css:
 style.css
 
 site/img:
-logo.png</pre>
+logo.png  originaux
+
+site/img/originaux:</pre>
         <p class="q">
-          Yasmine tape <span class="mono">cp -R site/css site/img</span>. Que contient site/img
-          ensuite ?
+          Yasmine tape <span class="mono">cp -R site/css site/img/originaux</span>. Que contient
+          site/img/originaux ensuite ?
         </p>
         <ul class="options">
-          <li data-option="dedans">logo.png et un dossier css, qui contient style.css.</li>
+          <li data-option="dedans">Un dossier css, qui contient style.css.</li>
           <li
             data-option="melange"
-            data-retour="img existait-il avant la ligne ? Sous quel nom la copie de css est-elle rangée ?"
+            data-retour="originaux existait-il avant la ligne ? Sous quel nom la copie de css est-elle rangée ?"
             data-erreur="E3"
           >
-            logo.png et style.css, côte à côte.
+            style.css, directement.
           </li>
           <li
-            data-option="remplace"
-            data-retour="Que devient logo.png, qui était déjà dans img ? cp efface-t-il ce que contient déjà un dossier qui reçoit la copie ?"
-            data-erreur="E3"
+            data-option="ailleurs"
+            data-retour="Quel dossier le chemin site/img/originaux désigne-t-il : img, ou le dossier originaux qu’il contient ?"
           >
-            Seulement style.css : le contenu de css a remplacé celui d’img.
+            Rien : la copie est rangée dans img, à côté d’originaux.
           </li>
         </ul>
       </div>
@@ -5832,9 +5849,8 @@ docs  projet  readme.txt</pre>
             <li>
               <span class="mono">-f</span>, comme force, empêche rm de se plaindre d’un nom absent ;
               <span class="mono">-r</span> fait descendre rm dans les dossiers ;
-              <span class="mono">sudo</span> lance la commande en administrateur, qui peut retirer
-              même un fichier du système, dit protégé : un fichier que ton compte n’a pas le droit
-              de modifier.
+              <span class="mono">sudo</span> lance la commande en administrateur ; un fichier du
+              système est dit protégé : un fichier que ton compte n’a pas le droit de modifier.
             </li>
           </ul>
         </div>
@@ -5885,9 +5901,8 @@ docs  projet  readme.txt</pre>
             <li>
               <span class="mono">-f</span>, comme force, empêche rm de se plaindre d’un nom absent ;
               <span class="mono">-r</span> fait descendre rm dans les dossiers ;
-              <span class="mono">sudo</span> lance la commande en administrateur, qui peut retirer
-              même un fichier du système, dit protégé : un fichier que ton compte n’a pas le droit
-              de modifier.
+              <span class="mono">sudo</span> lance la commande en administrateur ; un fichier du
+              système est dit protégé : un fichier que ton compte n’a pas le droit de modifier.
             </li>
           </ul>
         </div>
@@ -6438,6 +6453,7 @@ style.css
 
 site/img:
 logo.png</pre>
+        <p class="discret">Ce que tu fais :</p>
         <ol>
           <li>Crée les six éléments imposés, en écrivant tes lignes toi-même.</li>
           <li>
@@ -6490,8 +6506,13 @@ logo.png</pre>
               dossier docs : on le suit de gauche à droite.
             </li>
             <li><span class="mono">-Rv</span> se lit <span class="mono">-R -v</span>.</li>
+            <li>
+              Quand la destination de <span class="mono">cp</span> est un dossier qui existe, la
+              copie s’y range sous son nom d’origine.
+            </li>
           </ul>
         </div>
+        <p class="discret">Ce que tu fais :</p>
         <ol>
           <li>
             Tape <span class="mono">cp -Rv site sauvegarde</span>, lis ce que la fenêtre répond et
@@ -6639,6 +6660,11 @@ logo.png</pre>
               espaces.
             </li>
             <li>
+              <span class="mono">mkdir -p</span> crée les dossiers qui manquent d’un chemin ;
+              <span class="mono">touch</span> crée un fichier vide ; l’un et l’autre reçoivent
+              autant de noms qu’on veut, séparés par des espaces.
+            </li>
+            <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre. Un chemin comme <span class="mono">docs/js</span> désigne le
               dossier js, dans le dossier docs.
@@ -6716,6 +6742,7 @@ logo.png</pre>
             </li>
           </ul>
         </div>
+        <p class="discret">Ce que tu fais :</p>
         <ol>
           <li>
             Ouvre ta fenêtre et tape <span class="mono">pwd</span> : son chemin doit finir par
@@ -6787,6 +6814,7 @@ style.css
 
 site/img:
 logo.png</pre>
+        <p class="discret">Ce que tu fais :</p>
         <ol>
           <li>
             Remets le chronomètre à zéro et lance-le. Recrée l’arborescence imposée, sans taper
@@ -6981,6 +7009,7 @@ css  img  index.html</pre>
               <span class="mono">cp</span> source destination : la source est le premier nom, la
               destination le second.
             </li>
+            <li>Le shell est le programme de la fenêtre qui lit la ligne et la lance.</li>
             <li>
               Un chemin comme <span class="mono">/home/noah/promo</span>, qui commence par une
               barre, nomme un à un les dossiers qui mènent à un dossier, depuis le premier : le
@@ -7182,10 +7211,11 @@ contact.html  index.html</pre>
           avant chaque `rm`, qui finit par /atelier. `rm -i` n’est nommé nulle part.
         </li>
         <li>
-          Le Mac : la page ne dépend jamais du texte exact d’un Mac ; elle dit qu’il écrit « une
-          autre phrase » sans la citer. Le comportement de cp -R, mv et rm sur un Mac est celui
-          qu’on connaît de BSD pour les cas du bloc (destination absente ou dossier existant) : fait
-          à vérifier sur machine, que l’atelier fait constater à l’apprenant.
+          Le Mac : la page ne dépend jamais du texte exact d’un Mac ; elle dit que ses mots changent
+          (« d’autres mots ») sans les citer, et l’apprenant lit la phrase comme celle d’Ubuntu. Le
+          comportement de cp -R, mv et rm sur un Mac est celui qu’on connaît de BSD pour les cas du
+          bloc (destination absente ou dossier existant) : fait à vérifier sur machine, que
+          l’atelier fait constater à l’apprenant.
         </li>
       </ul>
       <h3>Le déroulé et le pari (première étape)</h3>
@@ -7250,13 +7280,13 @@ contact.html  index.html</pre>
           trois par question de restitution et par série d’aisance ; l’atelier compte sa lecture et
           ses minutes de frappe réelles, 5 pour le dossier, 10 pour l’arborescence, 5 pour la
           sauvegarde deux fois, 20 pour les dix commandes, 5 le second jour avec la sauvegarde
-          chronométrée, soit 45). Modéliser : 9 263 mots, 77 minutes de lecture, et 30 d’exercices
-          (4 essais, 23 exercices, 2 paris, 1 schéma), soit 107 minutes. Faire : pratique 1 853
+          chronométrée, soit 45). Modéliser : 9 315 mots, 78 minutes de lecture, et 30 d’exercices
+          (4 essais, 23 exercices, 2 paris, 1 schéma), soit 108 minutes. Faire : pratique 1 847
           mots, 15 minutes, plus 14 items à 2 minutes et 3 explications à 2 minutes de plus, soit 49
-          ; atelier 2 285 mots, 19 minutes, plus 45 de frappe, soit 64 ; aisance 307 mots, 3
+          ; atelier 2 354 mots, 20 minutes, plus 45 de frappe, soit 65 ; aisance 307 mots, 3
           minutes, plus 2 séries à 3 minutes, soit 9 ; restitution 416 mots, 3 minutes, plus 5
-          questions à 3 minutes, soit 18 ; au total 140 minutes. Faire dépasse modéliser (140 contre
-          107 minutes) : la pratique, au sens de la méthode (pratique, atelier, aisance,
+          questions à 3 minutes, soit 18 ; au total 141 minutes. Faire dépasse modéliser (141 contre
+          108 minutes) : la pratique, au sens de la méthode (pratique, atelier, aisance,
           restitution), prend la plus grande part du temps.
         </li>
       </ul>
@@ -7280,9 +7310,13 @@ contact.html  index.html</pre>
           lignes qui couvrent une destination existante, un écrasement, un échec et le point étant
           de toutes les séries. Paliers 150 et 120 secondes, une série par jour. Quand une réponse
           est fausse, le retour redit ce que l’apprenant a écrit et ce que ls répondait, puis une
-          piste qui nomme l’élément du modèle en cause : la destination (existait-elle, était-ce un
-          dossier ?), ce que devient la source, l’échec qui ne change rien, le retrait pour de bon,
-          le point. La liste des fautes de fin de série reprend les mêmes pistes.
+          piste, écrite en question, qui nomme l’élément du modèle en cause sans donner la réponse :
+          la destination (existait-elle, était-ce un dossier ?), ce que devient la source, ce qu’il
+          faut à la ligne pour s’exécuter (l’échec qui ne change rien), l’effet de -f sur un nom
+          absent (une ligne qui réussit sans rien dire), ce que devient ce que rm retire, le point.
+          Les vingt lignes ont été rejouées sur Ubuntu (coreutils 9.4) dans un dossier jetable :
+          chaque réponse attendue est ce que ls répond, et seules les lignes qui sortent en erreur
+          portent la piste de l’échec. La liste des fautes de fin de série reprend les mêmes pistes.
         </li>
       </ul>
     </template>
@@ -7292,7 +7326,7 @@ contact.html  index.html</pre>
         "schema": 2,
         "bloc": "B10",
         "type": "procedures",
-        "version": 16,
+        "version": 17,
         "titre": "Manipuler fichiers et dossiers : créer, copier, déplacer, supprimer",
         "titre_court": "Manipuler fichiers et dossiers",
         "objectif": "Dans un dossier d'atelier, réaliser sans `cd` une arborescence imposée de 3 dossiers et 3 fichiers vides avec `mkdir` (`-p`) et `touch`, la vérifier avec `ls -R`, la sauvegarder avec `cp -Rv`, puis prédire par écrit l'état de l'arborescence après 10 commandes `cp`, `mv`, `rm` (destination existante ou non, écrasement sans confirmation, échec qui ne change rien) et les exécuter avec 10 justes ; dire que `rm` supprime sans corbeille ni confirmation, et lire ce que détruit une ligne `rm -r` ou `rm -rf`, avec ou sans `sudo`, avant de l'exécuter ; donner l'équivalent Cmd de `copy`, `move`, `del` et `rmdir /s` et reconnaître trois différences entre Cmd et bash (séparateur de chemin, option, nom de commande)",
@@ -7447,8 +7481,8 @@ contact.html  index.html</pre>
         "explication": [
           {
             "id": "PR1-6",
-            "question": "Yasmine tape cp -R site/css site/img. Pourquoi img contient-il un dossier css, et non directement style.css ?",
-            "attendu": "img existe déjà et c’est un dossier : cp -R y range la copie de css sous son nom d’origine, au lieu de la fondre avec le contenu d’img. Le nom de la destination décide du résultat. Déduit de l’étape « Copier ».",
+            "question": "Yasmine tape cp -R site/css site/img/originaux. Pourquoi originaux contient-il un dossier css, et non directement style.css ?",
+            "attendu": "originaux existe déjà et c’est un dossier : cp -R y range la copie de css sous son nom d’origine, au lieu de mettre style.css directement dedans. Le nom de la destination décide du résultat. Déduit de l’étape « Copier ».",
             "erreurs": ["E3"],
             "item": "PR1-6"
           },
@@ -7503,7 +7537,7 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-R3",
-            "question": "Pour lire : rm retire, -r descend dans les dossiers, -f ne se plaint pas d’un nom absent, -rf se lit -r -f, sudo lance en administrateur, qui a tous les droits, .. désigne le dossier parent, /home/yasmine est le dossier yasmine, dans home. Un tutoriel conseille « sudo rm -rf ../projets ». Yasmine est dans /home/yasmine/atelier. Que détruit cette ligne, et que vérifie-t-elle avant de la lancer ?",
+            "question": "Pour lire : rm retire, -r descend dans les dossiers, -f ne se plaint pas d’un nom absent, -rf se lit -r -f, sudo lance en administrateur, .. désigne le dossier parent, /home/yasmine est le dossier yasmine, dans home. Un tutoriel conseille « sudo rm -rf ../projets ». Yasmine est dans /home/yasmine/atelier ; projets est dans /home/yasmine. Que détruit cette ligne, et que vérifie-t-elle avant de la lancer ?",
             "attendu": "Depuis /home/yasmine/atelier, .. désigne /home/yasmine : la ligne détruit /home/yasmine/projets, avec tout ce qu’il contient, sans rien demander ni corbeille. Elle lit dans l’ordre la commande, les options, les chemins et le dossier où elle est (pwd), puis ne la tape que si elle est sûre de ce qu’elle détruit. Déduit de l’étape « Supprimer ».",
             "erreurs": ["E2"]
           },
@@ -7535,7 +7569,7 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-Q3",
-            "question": "Pour lire : -r fait descendre rm dans les dossiers, -f l’empêche de se plaindre d’un nom absent ; -rf se lit -r -f. Yasmine tape rm -rf site, où site est un dossier qui contient des fichiers. Pourquoi une ligne aussi destructrice peut-elle ne rien dire ?",
+            "question": "Pour lire : -r fait descendre rm dans les dossiers, -f l’empêche de se plaindre d’un nom absent ; -rf se lit -r -f. Une commande qui réussit n’écrit rien dans la fenêtre. Yasmine tape rm -rf site, où site est un dossier qui contient des fichiers. Pourquoi une ligne aussi destructrice peut-elle ne rien dire ?",
             "attendu": "rm -r retire le dossier avec tout son contenu, -f fait taire même la plainte d’un nom absent, et rm ne demande jamais de confirmation : rien ne l’arrête et rien n’est écrit. Déduit de l’étape « Supprimer ».",
             "erreurs": []
           },
@@ -7547,7 +7581,7 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-Q5",
-            "question": "Pour lire : mkdir crée un dossier du nom qu’on lui donne ; un chemin comme a/b/c veut dire le dossier c dans le dossier b, dans a ; l’option -p de mkdir, comme parents, crée les dossiers manquants d’un chemin. Dans un atelier vide, Yasmine tape mkdir a/b/c. Que se passe-t-il, et que changerait -p ?",
+            "question": "Pour lire : mkdir crée un dossier du nom qu’on lui donne ; un chemin comme a/b/c veut dire le dossier c dans le dossier b, dans a ; le p de l’option -p de mkdir est mis pour parents. Dans un atelier vide, Yasmine tape mkdir a/b/c. Que se passe-t-il, et que changerait -p ?",
             "attendu": "mkdir échoue : a et b n’existent pas, un message le dit, et rien n’est créé. Avec -p, mkdir crée tous les dossiers manquants du chemin, du premier au dernier : a, puis b, puis c. Déduit de l’étape « Créer sans bouger ».",
             "erreurs": []
           },
@@ -7565,8 +7599,8 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-Q8",
-            "question": "Pour lire : -f, comme force, empêche rm de se plaindre d’un nom qui n’existe pas. Une commande qui réussit n’écrit rien dans la fenêtre. Dans atelier, Farid veut retirer brouillon.txt et tape rm -f brouilon.txt, avec une faute de frappe. Que répond la fenêtre, et brouillon.txt est-il retiré ?",
-            "attendu": "La fenêtre ne répond rien : -f ne se plaint pas d’un nom qui n’existe pas, et la faute de frappe passe inaperçue. brouillon.txt n’est pas retiré, car le nom tapé n’est pas le sien : il est toujours là. Déduit de l’étape « Supprimer ».",
+            "question": "Pour lire : -f, comme force, empêche rm de se plaindre d’un nom qui n’existe pas. Une commande qui réussit n’écrit rien dans la fenêtre. Dans atelier, il y a brouillon.txt et notes.txt. Farid veut retirer brouillon.txt : il tape rm -f brouilon.txt, avec une faute de frappe, puis rm brouillon.txt. Que répond la fenêtre à chaque ligne, et que contient atelier à la fin ?",
+            "attendu": "La fenêtre ne répond rien à la première ligne : -f ne se plaint pas d’un nom qui n’existe pas, et brouilon.txt n’existe pas, donc rien n’est retiré. Elle ne répond rien non plus à la seconde, parce qu’elle réussit : brouillon.txt est retiré. atelier contient seulement notes.txt. Déduit de l’étape « Supprimer ».",
             "erreurs": []
           }
         ],
@@ -7595,12 +7629,12 @@ contact.html  index.html</pre>
           {
             "id": "B10-X1",
             "type": "tache",
-            "consigne": "Pour lire : cp -R copie un dossier avec tout son contenu, de sa source, le premier nom, vers sa destination, le second. Dans atelier, il y a un dossier notes, qui contient a.txt, et un dossier copies, qui est vide. Farid tape cp -R notes copies. Écris le nom que ls copies répondrait ensuite.",
-            "attendu": "notes : copies existe, la copie de notes s’y range sous son nom d’origine. Déduit de l’étape « Copier ».",
+            "consigne": "Pour lire : cp -R copie un dossier avec tout son contenu, de sa source, le premier nom, vers sa destination, le second ; ls écrit les noms dans l’ordre alphabétique. Dans atelier, notes est un dossier qui contient a.txt ; copies n’existe pas. Farid tape cp -R notes copies, puis retape la même ligne. Écris les noms que ls copies répondrait, séparés par un espace.",
+            "attendu": "a.txt notes : la première ligne crée copies, copie de notes, qui contient a.txt ; la seconde trouve copies qui existe, et la copie de notes s’y range sous son nom d’origine. Déduit de l’étape « Copier ».",
             "erreurs": ["E3"],
             "verification": {
               "mode": "exacte",
-              "reponses": ["notes"]
+              "reponses": ["a.txt notes", "a.txt, notes"]
             }
           },
           {
@@ -7645,7 +7679,7 @@ contact.html  index.html</pre>
             "id": "B10-T3",
             "type": "transfert",
             "forme": "trouver_erreur",
-            "consigne": "Pour lire : -r descend dans les dossiers ; -rf se lit -r -f. Un chemin sans barre part d’où l’on est ; a/b est b, dans a. Yasmine a, dans atelier, un dossier photos et un dossier projet, qui contient aussi un dossier photos. Dans projet, elle croit retirer le photos d’atelier avec rm -rf photos. Trouve ce qu’elle a mal lu, et ce que fait la ligne.",
+            "consigne": "Pour lire : -r descend dans les dossiers ; -rf se lit -r -f. Un chemin comme a/b est le dossier b, dans le dossier a. Yasmine a, dans atelier, un dossier photos et un dossier projet, qui contient aussi un dossier photos. Dans projet, elle croit retirer le photos d’atelier avec rm -rf photos. Trouve ce qu’elle a mal lu, et ce que fait la ligne.",
             "attendu": "photos, sans barre au début, est un chemin relatif : il part du répertoire courant, projet, et pas d’atelier. La ligne détruit projet/photos avec tout son contenu, et le photos d’atelier reste intact. Elle n’a pas lu le dossier où elle est avant de lancer la ligne. Déduit de l’étape « Supprimer ».",
             "erreurs": ["E2"]
           },
@@ -7742,8 +7776,8 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-K3",
-            "recto": "Pour lire : cp -R copie un dossier avec son contenu, de sa source, le premier nom, vers sa destination, le second. Noah a un dossier comptes, qui contient juin.txt, et un dossier bilan, vide, qui existe déjà. Que contient bilan après cp -R comptes bilan ?",
-            "verso": "Un dossier comptes, qui contient juin.txt : bilan existe, donc la copie s’y range sous son nom d’origine. Le chemin du fichier est bilan/comptes/juin.txt. Déduit de l’étape « Copier »."
+            "recto": "Pour lire : cp -R copie un dossier avec son contenu, de sa source, le premier nom, vers sa destination, le second ; docs/note.txt est le fichier note.txt, dans le dossier docs. Noah a un dossier comptes, qui contient juin.txt, et un dossier bilan, qui contient déjà total.txt. Après cp -R comptes bilan, quel chemin, écrit depuis atelier, désigne la copie de juin.txt ?",
+            "verso": "bilan/comptes/juin.txt : bilan existe, donc la copie de comptes s’y range sous son nom d’origine, à côté de total.txt. Déduit de l’étape « Copier »."
           },
           {
             "id": "B10-K4",
@@ -7752,7 +7786,7 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-K5",
-            "recto": "Pour lire : sudo lance la commande qui suit en administrateur, le compte qui a tous les droits ; un fichier du système est protégé : un compte ordinaire n’a pas le droit de le modifier ; rm -rf se lit rm -r -f. Noah lit sudo rm -rf /etc/cron.d, un dossier du système. Que change sudo à cette ligne ?",
+            "recto": "Pour lire : sudo lance la commande qui suit en administrateur, le compte qui a tous les droits ; rm -rf se lit rm -r -f ; /etc/cron.d est un dossier du système. Noah lit sudo rm -rf /etc/cron.d. Que change sudo à cette ligne ?",
             "verso": "Sans sudo, le compte de Noah n’a pas le droit de toucher à ce dossier : rm refuse et rien n’est détruit. Avec sudo, la ligne s’exécute en administrateur : le dossier part avec tout son contenu, sans une question. Déduit de l’étape « Supprimer »."
           },
           {
@@ -7767,7 +7801,7 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-K8",
-            "recto": "Pour lire : rm -r retire un dossier avec son contenu ; un chemin relatif part du dossier où l’on est ; un chemin comme site/css veut dire le dossier css dans le dossier site. Le dossier site contient css et img. Yasmine tape rm -r img depuis site, puis son amie tape la même ligne depuis site/css. Que fait chaque ligne ?",
+            "recto": "Pour lire : rm -r retire un dossier avec son contenu ; un chemin comme site/css veut dire le dossier css dans le dossier site. Le dossier site contient css et img ; css contient seulement style.css. Yasmine tape rm -r img depuis site, puis son amie tape la même ligne depuis site/css. Que fait chaque ligne ?",
             "verso": "Depuis site, la ligne détruit site/img avec son contenu. Depuis site/css, elle échoue : css ne contient pas de dossier img, un message le dit. D’où le pwd avant chaque rm. Déduit de l’étape « Supprimer »."
           },
           {
@@ -8154,10 +8188,10 @@ contact.html  index.html</pre>
           "Taper une ligne de Cmd : le Mac n’en a pas ; les lignes de Cmd se lisent, jamais tapées",
           "Ce que `del`, `rmdir /s`, `copy` et `move` font de la Corbeille ou d’une confirmation, ce que `del` fait d’un dossier et `copy` des sous-dossiers : jamais dit ni demandé, l’objectif ne demande que leurs noms et trois différences avec bash ; seul le nom de la destination est dit, en ET9 « Les noms de Cmd » (`move` range la source dans un dossier qui existe : « Sous Cmd aussi, le nom de la destination décide du résultat ») et « Trois différences » (« comme avant »), comme phrase de lien avec le modèle, jamais demandé",
           "PowerShell et ses alias ; `xcopy`, `robocopy`, `dir /s` : jamais nommés",
-          "Les droits d’un fichier (propriétaire, permissions) et pourquoi `sudo` est nécessaire : jamais enseignés ; la page dit seulement qu’un fichier du système est protégé, qu’un compte ordinaire n’a pas le droit de le modifier et que `sudo` lance la commande en administrateur",
+          "Les droits d’un fichier (propriétaire, permissions) et pourquoi `sudo` est nécessaire : jamais enseignés ; la page dit seulement qu’un fichier du système est protégé, qu’un compte ordinaire n’a pas le droit de le modifier, que ces fichiers « appartiennent à l’administrateur » (une façon de dire que seul son compte peut les modifier : ni propriétaire, ni groupe, ni permissions ne sont expliqués ni interrogés) et que `sudo` lance la commande en administrateur",
           "`rm -rf /` et la protection de GNU : nommés nulle part",
           "`rm -i` : jamais nommé",
-          "`rmdir` sous bash (un dossier vide seulement) : dit en une phrase en ET9 pour que la page ne prétende pas qu’il n’existe pas, jamais demandé"
+          "`rmdir` sous bash (un dossier vide seulement) : dit en une phrase en ET9 pour que la page ne prétende pas qu’il n’existe pas, avec le geste à garder (`rm -r`), jamais demandé"
         ]
       }
     </script>
@@ -11560,11 +11594,13 @@ contact.html  index.html</pre>
           dest: 'Regarde la destination, avant la commande : existait-elle, et était-ce un dossier ?',
           ecrase:
             'Regarde la destination : existait-elle déjà, et que devient un fichier qui porte le même nom ?',
-          echec: 'Cette ligne échoue : une ligne à un seul nom qui échoue ne change rien.',
+          echec:
+            'Avant la ligne, la commande a-t-elle ce qu’il lui faut pour s’exécuter : option, destination ? Et que devient l’état quand une ligne n’aboutit pas ?',
+          silence: 'Le nom que rm reçoit existe-t-il, et que change -f quand un nom est absent ?',
           source:
             'Regarde ce que devient la source : copiée ou déplacée, reste-t-elle où elle était ?',
-          retrait: 'rm retire pour de bon : rien n’est rangé ailleurs.',
-          point: 'Le point désigne le répertoire courant, atelier.',
+          retrait: 'Que devient ce que rm retire : où le retrouverait-on ?',
+          point: 'Quel dossier le point désigne-t-il, par rapport à l’endroit où tu es ?',
         }
         const LIGNES_AISANCE = [
           {
@@ -11626,7 +11662,7 @@ contact.html  index.html</pre>
           { cmd: 'rm copie/notes.txt', voir: 'ls copie', ok: 'rien', piste: 'retrait' },
           { cmd: 'rm site/css', voir: 'ls site', ok: 'css img index.html', piste: 'echec' },
           { cmd: 'rm -r site/css', voir: 'ls site', ok: 'img index.html', piste: 'retrait' },
-          { cmd: 'rm -f site/nope', voir: 'ls site', ok: 'css img index.html', piste: 'echec' },
+          { cmd: 'rm -f site/nope', voir: 'ls site', ok: 'css img index.html', piste: 'silence' },
           { cmd: 'rm -r copie', voir: 'ls', ok: 'site', piste: 'retrait' },
           {
             cmd: 'cp site/css/style.css .',
