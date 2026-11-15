@@ -30,7 +30,7 @@ export interface Differee {
   readonly consigne: string
   readonly attendu: string
   /** Une tâche par constat : des critères à cocher, au lieu d'un texte à écrire. */
-  readonly verification?: { readonly mode: string }
+  readonly verification?: { readonly mode: string; readonly reponses?: readonly string[] }
 }
 export interface Manifeste {
   readonly bloc: string
@@ -409,7 +409,7 @@ async function repondreALaPartie(
   if (differee.type === 'tache') {
     await page
       .getByRole('textbox', { name: /^(Ton code|Ta réponse)$/ })
-      .fill(mal ? 'faux' : differee.attendu)
+      .fill(mal ? 'faux' : (differee.verification?.reponses?.[0] ?? differee.attendu))
     await page.getByRole('button', { name: 'Envoyer la tâche' }).click()
     return consigne ?? ''
   }
