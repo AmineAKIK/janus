@@ -2520,6 +2520,683 @@ a.txt  b.txt</pre>
         </div>
       </div>
     </template>
+    <template data-etape="ET4">
+      <div data-ecran="Un dossier à soi">
+        <p class="accroche">
+          Avant de commencer, le formateur dit à chacun de travailler dans un dossier à lui, qu’il
+          appelle atelier : on peut s’y tromper sans rien risquer d’autre. Yasmine est dans
+          /home/yasmine/atelier. Elle crée un dossier avec <span class="mono">mkdir site</span>,
+          puis tape <span class="mono">pwd</span>.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>mkdir crée un dossier du nom qu’on lui donne.</li>
+            <li>Un chemin qui ne commence pas par une barre part du répertoire courant.</li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="bouge"
+          data-prediction
+          data-reponse="atelier"
+          data-aide1="Que fait mkdir : il crée un dossier, ou il t’emmène dedans ?"
+          data-aide2="Le répertoire courant ne change que lorsque tu le demandes à une commande de déplacement."
+          data-aide3="Écris le chemin du répertoire courant avant la ligne, puis demande-toi si mkdir site a touché à ce chemin."
+          data-explication="mkdir crée site dans atelier et ne te déplace pas : pwd répond encore /home/yasmine/atelier."
+          data-variante-enonce="Pour lire : touch crée un fichier vide du nom qu’on lui donne. Farid est dans /Users/farid/atelier, sur son Mac. Il tape touch notes.txt, puis pwd. À ton avis, que répond pwd ?"
+          data-variante-reponse="atelier"
+          data-variante-options="atelier=/Users/farid/atelier|notes=/Users/farid/atelier/notes.txt|farid=/Users/farid"
+          data-variante-retours="notes=notes.txt est-il un dossier dans lequel on peut entrer ?|farid=touch est-il une commande qui remonte dans l’arbre ?"
+          data-variante-aide1="Que fait touch : il crée un fichier, ou il te déplace ?"
+          data-variante-aide2="Le répertoire courant ne change que lorsque tu le demandes à une commande de déplacement."
+          data-variante-aide3="Écris le chemin du répertoire courant avant la ligne, puis demande-toi si touch notes.txt y a touché."
+          data-variante-explication="touch crée notes.txt dans atelier et ne te déplace pas : pwd répond encore /Users/farid/atelier."
+        >
+          <p class="q">À ton avis, que répond <span class="mono">pwd</span> ?</p>
+          <ul class="options">
+            <li data-option="atelier">/home/yasmine/atelier</li>
+            <li
+              data-option="site"
+              data-retour="Quelle commande, jusqu’ici, fait changer de dossier ?"
+            >
+              /home/yasmine/atelier/site
+            </li>
+            <li
+              data-option="maison"
+              data-retour="Le chemin site commence-t-il par une barre ? D’où part-il ?"
+            >
+              /home/yasmine/site
+            </li>
+          </ul>
+        </div>
+        <p>
+          Une commande qui crée, copie, déplace ou supprime lit ses chemins depuis le répertoire
+          courant, agit à l’endroit qu’ils désignent, et te laisse où tu es. Ce que tu veux
+          atteindre, tu l’écris dans le chemin : une fois dans atelier, tu peux tout faire sans
+          jamais taper <span class="mono">cd</span>.
+        </p>
+        <p>
+          Un <strong>dossier d’atelier</strong> est un dossier à toi, créé pour t’exercer : tu n’y
+          supprimes que ce que tu y as créé. Les dossiers et les fichiers rangés les uns dans les
+          autres, vus depuis un dossier, forment une <strong>arborescence</strong> : celle du projet
+          imposé compte six éléments, trois dossiers et trois fichiers vides.
+        </p>
+      </div>
+      <div data-ecran="Créer un dossier, et le silence">
+        <p class="accroche">
+          Dans un atelier vide, Yasmine tape <span class="mono">mkdir site</span>, puis
+          <span class="mono">ls</span> pour voir.
+        </p>
+        <pre
+          class="listing"
+          data-lecture="Lignes tapées : mkdir site, puis ls. La fenêtre ne répond rien à mkdir, puis ls répond : site."
+        >
+$ mkdir site
+$ ls
+site</pre>
+        <p>
+          Elle tape ensuite <span class="mono">mkdir doc/notes</span>, alors que doc n’existe pas.
+        </p>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="parent"
+          data-prediction
+          data-reponse="echoue"
+          data-aide1="Dans quel dossier le chemin doc/notes veut-il créer notes ?"
+          data-aide2="Un dossier se crée dans un dossier qui existe déjà : doc existe-t-il ?"
+          data-aide3="Regarde l’état de départ, juste avant la ligne, et cherche un dossier doc."
+          data-explication="doc n’existe pas : mkdir ne peut pas y créer notes. Il échoue, et atelier n’a pas changé."
+          data-variante-enonce="Farid, dans atelier, a un dossier site vide. Il tape mkdir site/img/icones, alors que site ne contient pas de dossier img. À ton avis, que se passe-t-il ?"
+          data-variante-reponse="echoue"
+          data-variante-options="cree=La commande réussit : site contient img, et img contient icones.|echoue=La commande échoue : un message le dit, et site reste vide.|icones=La commande crée icones dans site, à côté de l’endroit où img devrait être."
+          data-variante-retours="cree=Farid a-t-il demandé à créer img, ou seulement icones ?|icones=Où le chemin site/img/icones place-t-il icones ?"
+          data-variante-aide1="Dans quel dossier le chemin site/img/icones veut-il créer icones ?"
+          data-variante-aide2="Un dossier se crée dans un dossier qui existe déjà : img existe-t-il ?"
+          data-variante-aide3="Regarde le contenu de site avant la ligne et cherche un dossier img."
+          data-variante-explication="img n’existe pas dans site : mkdir ne peut pas y créer icones. Il échoue, et site reste vide."
+        >
+          <p class="q">À ton avis, que se passe-t-il ?</p>
+          <ul class="options">
+            <li
+              data-option="cree"
+              data-retour="Yasmine a-t-elle demandé à créer doc, ou seulement notes ?"
+            >
+              La commande réussit : atelier contient site et doc, et doc contient notes.
+            </li>
+            <li data-option="echoue">
+              La commande échoue : un message le dit, et atelier contient toujours seulement site.
+            </li>
+            <li data-option="notes" data-retour="Où le chemin doc/notes place-t-il notes ?">
+              La commande crée notes dans atelier, à côté de site.
+            </li>
+          </ul>
+        </div>
+        <p>Voici ce que la fenêtre répond sous Ubuntu :</p>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : mkdir doc/notes. La fenêtre répond : mkdir: cannot create directory ‘doc/notes’: No such file or directory."
+        >
+$ mkdir doc/notes
+mkdir: cannot create directory ‘doc/notes’: No such file or directory</pre>
+        <p>
+          <span class="mono">mkdir site</span> n’avait rien répondu, et il avait réussi : c’est une
+          convention des commandes UNIX, une commande qui réussit ne dit rien. Un message n’apparaît
+          que si quelque chose a échoué, et alors la commande n’a rien changé : ici, atelier
+          contient toujours seulement site. Un mkdir crée un dossier dans un dossier qui existe déjà
+          ; sinon, il échoue. Le silence ne veut pas dire que rien n’a changé : il veut dire que
+          tout s’est bien passé.
+        </p>
+      </div>
+      <div data-ecran="Créer tous les dossiers du chemin">
+        <p class="accroche">
+          Yasmine doit créer site et css dedans. Plutôt que deux lignes, elle ajoute une option :
+          <span class="mono">mkdir -p site/css</span>, dans un atelier vide.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              mkdir -p : l’option -p, comme parents, concerne les dossiers qui contiennent le
+              dossier à créer. C’est une convention : un nom d’option est une lettre derrière un
+              tiret.
+            </li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="moins-p"
+          data-prediction
+          data-reponse="chaine"
+          data-aide1="Que veut dire p, dans l’encadré ?"
+          data-aide2="Les dossiers qui contiennent css, ce sont ceux que le chemin traverse avant lui : lesquels ?"
+          data-aide3="Écris la liste des dossiers du chemin site/css, de gauche à droite, et demande-toi lesquels l’option -p crée."
+          data-explication="-p crée tous les dossiers du chemin qui manquent : site, puis css dedans."
+          data-variante-enonce="Pour lire : l’option -p de mkdir, comme parents, concerne les dossiers qui contiennent le dossier à créer. Farid tape mkdir -p cours/js/lib dans un atelier vide. À ton avis, que contient atelier ensuite ?"
+          data-variante-reponse="chaine"
+          data-variante-options="chaine=Un dossier cours, qui contient js, qui contient lib.|echec=Rien : cours n’existe pas, donc la commande échoue comme sans -p.|lib=Un dossier lib seul, dans atelier."
+          data-variante-retours="echec=Que dit la phrase « pour lire » sur ce que concerne l’option -p ?|lib=Dans quel dossier le chemin cours/js/lib place-t-il lib ?"
+          data-variante-aide1="Que veut dire p, dans la phrase « pour lire » ?"
+          data-variante-aide2="Les dossiers qui contiennent lib, ce sont ceux que le chemin traverse avant lui : lesquels ?"
+          data-variante-aide3="Écris la liste des dossiers du chemin cours/js/lib, de gauche à droite, et demande-toi lesquels l’option -p crée."
+          data-variante-explication="-p crée tous les dossiers du chemin qui manquent : cours, puis js dedans, puis lib dedans."
+        >
+          <p class="q">À ton avis, que contient atelier ensuite ?</p>
+          <ul class="options">
+            <li data-option="chaine">Un dossier site, qui contient un dossier css.</li>
+            <li
+              data-option="echec"
+              data-retour="Que dit l’encadré sur ce que concerne l’option -p ?"
+            >
+              Rien : site n’existe pas, donc la commande échoue comme sans -p.
+            </li>
+            <li
+              data-option="css"
+              data-retour="Dans quel dossier le chemin site/css place-t-il css ?"
+            >
+              Un dossier css seul, à côté d’où site devrait être.
+            </li>
+          </ul>
+        </div>
+        <p>Voici ce que la fenêtre répond :</p>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : mkdir -p site/css. La fenêtre ne répond rien."
+        >
+$ mkdir -p site/css</pre>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css ; site/css contient rien."
+        >
+$ ls -R site
+site:
+css
+
+site/css:</pre>
+        <p>
+          <span class="mono">mkdir -p</span> crée chaque dossier du chemin qui manque, du premier au
+          dernier, et ne dit rien. Si le dossier existe déjà, il ne dit rien non plus et ne change
+          rien, alors que <span class="mono">mkdir site/css</span> seul répondrait que le dossier
+          existe. C’est ainsi que Yasmine crée en une ligne un dossier et tout ce qu’il faut pour
+          l’atteindre.
+        </p>
+      </div>
+      <div data-ecran="Créer un fichier vide">
+        <p class="accroche">
+          Yasmine a maintenant les dossiers du projet. Il lui reste les trois fichiers, vides :
+          index.html, style.css et logo.png.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>touch crée un fichier vide du nom qu’on lui donne.</li>
+          </ul>
+        </div>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img ; site/css contient rien ; site/img contient rien."
+        >
+$ ls -R site
+site:
+css  img
+
+site/css:
+
+site/img:</pre>
+        <div
+          class="ex"
+          data-widget="saisie"
+          data-id="touch"
+          data-accepte="touch site/css/style.css|touch ./site/css/style.css"
+          data-clavier="La ligne"
+          data-si-ici="touch style.css"
+          data-retour-ici="Dans quel dossier ta ligne crée-t-elle style.css ?"
+          data-si-sansite="touch css/style.css"
+          data-retour-sansite="Depuis atelier, css est-il un dossier que l’on trouve directement ?"
+          data-aide1="Dans quel dossier doit se trouver le fichier, et depuis où le chemin part-il ?"
+          data-aide2="Le chemin d’un fichier est celui de son dossier, puis son nom."
+          data-aide3="Écris d’abord la commande, puis le chemin : le dossier site, le dossier css, puis le nom du fichier, séparés par des barres."
+          data-sinon="Pas encore. Ta ligne a-t-elle la commande, puis un chemin qui part d’atelier jusqu’au nom du fichier ?"
+          data-explication="Le chemin part d’atelier : site, puis css, puis le nom du fichier. touch site/css/style.css crée style.css dans css."
+          data-variante-enonce="Pour lire : le projet impose logo.png dans le dossier img de site. Farid est dans atelier, sur son Mac, avec les dossiers site, css et img déjà créés. Écris la ligne qui crée logo.png dans img."
+          data-variante-accepte="touch site/img/logo.png|touch ./site/img/logo.png"
+          data-variante-clavier="La ligne"
+          data-variante-si-ici="touch logo.png"
+          data-variante-retour-ici="Dans quel dossier ta ligne crée-t-elle logo.png ?"
+          data-variante-si-sansite="touch img/logo.png"
+          data-variante-retour-sansite="Depuis atelier, img est-il un dossier que l’on trouve directement ?"
+          data-variante-aide1="Dans quel dossier doit se trouver le fichier, et depuis où le chemin part-il ?"
+          data-variante-aide2="Le chemin d’un fichier est celui de son dossier, puis son nom."
+          data-variante-aide3="Écris d’abord la commande, puis le chemin : le dossier site, le dossier img, puis le nom du fichier, séparés par des barres."
+          data-variante-sinon="Pas encore. Ta ligne a-t-elle la commande, puis un chemin qui part d’atelier jusqu’au nom du fichier ?"
+          data-variante-explication="Le chemin part d’atelier : site, puis img, puis le nom du fichier. touch site/img/logo.png crée logo.png dans img."
+        >
+          <p class="q">
+            Dans atelier, écris la ligne qui crée le fichier style.css dans le dossier css.
+          </p>
+        </div>
+        <p>
+          <span class="mono">touch</span> ne dit rien quand il réussit. Si le fichier existe déjà,
+          il n’en change que la date : le contenu reste. Comme <span class="mono">mkdir</span>, il
+          échoue si le dossier du chemin n’existe pas : sous Ubuntu,
+          <span class="mono">touch site/doc/notes.txt</span> répond une phrase qui dit qu’il ne peut
+          pas toucher ce fichier, parce qu’il n’existe pas de tel fichier ou dossier.
+        </p>
+      </div>
+      <div data-ecran="Lire ce qu’on a créé">
+        <p class="accroche">
+          Les six éléments créés, Yasmine vérifie son travail avec
+          <span class="mono">ls -R site</span>. Le formateur a imposé : site contient css, img et
+          index.html ; css contient style.css ; img contient logo.png. Elle compare. Voici d’abord
+          la réponse de Farid, qui a fait une faute.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              ls -R, avec R comme récursif : ls affiche le dossier donné, puis chaque dossier qu’il
+              contient, un titre par dossier.
+            </li>
+            <li>Un nom à point reste caché sans -a, mais aucun nom du projet n’en porte.</li>
+          </ul>
+        </div>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient rien ; site/img contient logo.png, style.css."
+        >
+$ ls -R site
+site:
+css  img  index.html
+
+site/css:
+
+site/img:
+logo.png  style.css</pre>
+        <div
+          class="ex"
+          data-widget="saisie"
+          data-id="verifie"
+          data-accepte="style.css|site/img/style.css|img/style.css"
+          data-clavier="Le nom du fichier"
+          data-aide1="Lis les titres : sous quel titre chaque nom est-il rangé ?"
+          data-aide2="Reprends la consigne du formateur, dossier par dossier, et cherche pour chaque fichier son titre."
+          data-aide3="Pour chacun des trois fichiers, cherche son nom dans le listing, puis lis le titre juste au-dessus de lui, et compare avec la consigne."
+          data-sinon="Pas encore. Pour chaque fichier, sous quel titre le listing le range-t-il, et est-ce celui de la consigne ?"
+          data-explication="style.css est rangé sous le titre site/img, alors que le formateur le veut dans css : site/css n’a que son titre, il est vide."
+          data-variante-enonce="Pour lire : le formateur impose index.html, style.css et logo.png. Farid tape ls -R site et lit : site contient css, img et index.htm ; site/css contient style.css ; site/img contient logo.png. Quel nom est mal écrit ?"
+          data-variante-accepte="index.htm"
+          data-variante-clavier="Le nom du fichier"
+          data-variante-aide1="Compare chaque nom du listing avec celui que le formateur impose, lettre à lettre."
+          data-variante-aide2="Un nom du listing ressemble à un nom imposé, sans lui être identique."
+          data-variante-aide3="Recopie les trois noms imposés, puis barre chacun quand tu le retrouves exactement dans le listing : lequel reste ?"
+          data-variante-sinon="Pas encore. Pour chaque fichier, sous quel titre le listing le range-t-il, et est-ce celui de la consigne ?"
+          data-variante-explication="Le formateur impose index.html : le listing montre index.htm, un nom différent d’une lettre, donc un autre fichier."
+        >
+          <p class="q">Quel fichier n’est pas dans le dossier que le formateur a imposé ?</p>
+        </div>
+        <p>
+          Pour une arborescence imposée, <strong>vérifier</strong> veut dire comparer la sortie de
+          <span class="mono">ls -R</span> à la consigne, nom par nom, majuscules comprises : un nom
+          presque juste est un autre nom. Chaque dossier a son titre, qui se termine par
+          deux-points, suivi des noms qu’il contient ; un dossier vide n’a que son titre. Quand les
+          noms tiennent, <span class="mono">ls</span> les range côte à côte, et un nom par ligne si
+          la fenêtre est étroite : c’est la même liste.
+        </p>
+        <p>Voici ce que répond la fenêtre de Yasmine, qui a bien tout créé :</p>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
+        >
+$ ls -R site
+site:
+css  img  index.html
+
+site/css:
+style.css
+
+site/img:
+logo.png</pre>
+      </div>
+    </template>
+    <template data-etape="ET5">
+      <div data-ecran="Copier un fichier">
+        <p class="accroche">
+          Yasmine veut une seconde page d’accueil. Elle copie index.html sous un autre nom.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              <span class="mono">cp</span> prend deux noms : la <strong>source</strong>, ce qu’il
+              copie, puis la <strong>destination</strong>, où il met la copie.
+            </li>
+          </ul>
+        </div>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
+        >
+$ ls -R site
+site:
+css  img  index.html
+
+site/css:
+style.css
+
+site/img:
+logo.png</pre>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="copie-fichier"
+          data-prediction
+          data-reponse="deux"
+          data-aide1="Après une copie, que reste-t-il de la source ?"
+          data-aide2="accueil.html est la destination : se trouve-t-il dans le listing de départ ?"
+          data-aide3="Écris le contenu de site avant la ligne, puis ajoute ce que la copie y met."
+          data-explication="La source reste en place, et la copie porte le nom de la destination : site contient index.html et accueil.html."
+          data-variante-enonce="Pour lire : cp prend la source, ce qu’il copie, puis la destination, où il met la copie. Farid a dans site un fichier index.html. Il tape cp site/index.html site/home.html. À ton avis, que contient site ensuite, en plus de css et img ?"
+          data-variante-reponse="deux"
+          data-variante-options="deux=index.html et home.html.|renomme=home.html seul : index.html a changé de nom.|echec=index.html seul : home.html n’existe pas, donc la copie échoue."
+          data-variante-retours="renomme=Que devient la source quand on copie ?|echec=Qu’y a-t-il, dans l’état de départ, qui pourrait empêcher la copie ?"
+          data-variante-aide1="Après une copie, que reste-t-il de la source ?"
+          data-variante-aide2="home.html est la destination : est-il nécessaire qu’il existe déjà ?"
+          data-variante-aide3="Écris le contenu de site avant la ligne, puis ajoute ce que la copie y met."
+          data-variante-explication="La source reste en place, et la copie porte le nom de la destination : site contient index.html et home.html."
+        >
+          <p class="q">
+            Yasmine tape <span class="mono">cp site/index.html site/accueil.html</span>. Que
+            contient site ensuite ?
+          </p>
+          <ul class="options">
+            <li data-option="deux">css, img, index.html et accueil.html.</li>
+            <li data-option="renomme" data-retour="Que devient la source quand on copie ?">
+              css, img et accueil.html : index.html a changé de nom.
+            </li>
+            <li
+              data-option="echec"
+              data-retour="Qu’y a-t-il, dans l’état de départ, qui pourrait empêcher la copie ?"
+            >
+              Rien de plus : accueil.html n’existe pas, donc la copie échoue.
+            </li>
+          </ul>
+        </div>
+        <p>
+          Quand la destination est un nom qui n’existe pas, la copie le prend pour nom. Si la
+          destination est un dossier qui existe, la copie s’y range avec son nom d’origine :
+          <span class="mono">cp site/index.html site/img</span> met index.html dans img. Si la
+          destination est un fichier qui existe, la copie l’<strong>écrase</strong> : elle le
+          remplace par un fichier du même nom, sans rien demander. Chaque fois, le nom de la
+          destination décide du résultat.
+        </p>
+      </div>
+      <div data-ecran="Copier un dossier">
+        <p class="accroche">
+          Yasmine veut sauvegarder tout site avant de le modifier. Elle tape
+          <span class="mono">cp site sauvegarde</span>, dans un atelier où sauvegarde n’existe pas.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              L’option -R de <span class="mono">cp</span> se lit R comme récursif : descendre dans
+              les sous-dossiers.
+            </li>
+          </ul>
+        </div>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
+        >
+$ ls -R site
+site:
+css  img  index.html
+
+site/css:
+style.css
+
+site/img:
+logo.png</pre>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="cp-dossier"
+          data-prediction
+          data-reponse="refuse"
+          data-aide1="Un des morceaux de la ligne manque : lequel, d’après l’encadré ?"
+          data-aide2="Sans l’option qui descend dans les dossiers, cp sait-il copier un dossier ?"
+          data-aide3="Compare la ligne tapée avec celle qu’il faudrait pour copier un dossier, morceau par morceau."
+          data-explication="Sans -R, cp ne copie pas un dossier : il le dit, et sauvegarde n’est pas créée."
+          data-variante-enonce="Pour lire : l’option -R de cp se lit R comme récursif, descendre dans les sous-dossiers. Farid est dans atelier, qui contient site. Il tape cp site/img logo-copie. À ton avis, que se passe-t-il ?"
+          data-variante-reponse="refuse"
+          data-variante-options="copie=La copie est faite : logo-copie contient logo.png.|refuse=cp refuse : un message dit qu’il n’a pas copié img, et logo-copie n’existe pas.|fichier=cp copie logo.png sous le nom logo-copie."
+          data-variante-retours="copie=Dans la ligne tapée, un morceau dit-il à cp de descendre dans les dossiers ?|fichier=cp choisit-il lui-même ce qu’il copie dans un dossier ?"
+          data-variante-aide1="Un des morceaux de la ligne manque : lequel, d’après la phrase « pour lire » ?"
+          data-variante-aide2="Sans l’option qui descend dans les dossiers, cp sait-il copier un dossier ?"
+          data-variante-aide3="Compare la ligne tapée avec celle qu’il faudrait pour copier un dossier, morceau par morceau."
+          data-variante-explication="Sans -R, cp ne copie pas un dossier : il le dit, et logo-copie n’est pas créé."
+        >
+          <p class="q">À ton avis, que se passe-t-il ?</p>
+          <ul class="options">
+            <li
+              data-option="copie"
+              data-retour="Dans la ligne tapée, un morceau dit-il à cp de descendre dans les dossiers ?"
+            >
+              La copie est faite : sauvegarde contient css, img et index.html.
+            </li>
+            <li data-option="refuse">
+              cp refuse : un message dit qu’il n’a pas copié site, et sauvegarde n’existe toujours
+              pas.
+            </li>
+            <li
+              data-option="fichiers"
+              data-retour="cp choisit-il lui-même ce qu’il copie dans un dossier ?"
+            >
+              cp copie seulement index.html, le seul fichier de site.
+            </li>
+          </ul>
+        </div>
+        <p>Voici la réponse de la fenêtre sous Ubuntu :</p>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : cp site sauvegarde. La fenêtre répond : cp: -r not specified; omitting directory &#x27;site&#x27;."
+        >
+$ cp site sauvegarde
+cp: -r not specified; omitting directory 'site'</pre>
+        <p>
+          Le message dit que <span class="mono">-r</span> n’est pas donné et que le dossier site est
+          omis : rien n’a été copié. Un Mac écrit une autre phrase, qui dit aussi que le dossier
+          n’est pas copié. <span class="mono">cp -R</span> copie le dossier avec tout ce qu’il
+          contient, sous-dossiers compris ; <span class="mono">-r</span> s’écrit aussi, et fait la
+          même chose.
+        </p>
+      </div>
+      <div data-ecran="La destination décide">
+        <p class="accroche">
+          Yasmine copie le dossier css sous le nom css2 avec
+          <span class="mono">cp -R site/css site/css2</span> : css2 n’existait pas, et il est
+          maintenant une copie de css. Le lendemain, elle retape exactement la même ligne. Voici
+          l’état avant :
+        </p>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, css2, img, index.html ; site/css contient style.css ; site/css2 contient style.css ; site/img contient logo.png."
+        >
+$ ls -R site
+site:
+css  css2  img  index.html
+
+site/css:
+style.css
+
+site/css2:
+style.css
+
+site/img:
+logo.png</pre>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="cp-existe"
+          data-prediction
+          data-reponse="dedans"
+          data-aide1="La première fois, que valait css2 : un nom libre, ou un dossier qui existe ?"
+          data-aide2="Le nom de la destination n’a pas le même statut la seconde fois : en quoi ?"
+          data-aide3="Écris le contenu de css2 avant la ligne, puis ajoute ce que la copie y met, en te demandant sous quel nom."
+          data-explication="La seconde fois, css2 existe : la copie s’y range avec son nom d’origine. css2 contient style.css et un dossier css."
+          data-variante-enonce="Farid, dans atelier, copie le dossier img avec cp -R site/img site/img2 : img2 n’existait pas, il est maintenant une copie de img, avec logo.png. Il retape la même ligne. À ton avis, que contient site/img2 ensuite ?"
+          data-variante-reponse="dedans"
+          data-variante-options="rien=Seulement logo.png : la seconde copie n’a rien changé de plus.|dedans=logo.png et un dossier img, qui contient lui aussi logo.png.|remplace=Seulement un dossier img, qui contient logo.png : l’ancien contenu a été remplacé."
+          data-variante-retours="rien=Avant la seconde ligne, img2 existait-il déjà ? Et la première fois ?|remplace=Qu’est devenu logo.png, qui était déjà dans img2 ?"
+          data-variante-erreurs="rien=E3"
+          data-variante-aide1="La première fois, que valait img2 : un nom libre, ou un dossier qui existe ?"
+          data-variante-aide2="Le nom de la destination n’a pas le même statut la seconde fois : en quoi ?"
+          data-variante-aide3="Écris le contenu de img2 avant la ligne, puis ajoute ce que la copie y met, en te demandant sous quel nom."
+          data-variante-explication="La seconde fois, img2 existe : la copie s’y range avec son nom d’origine. img2 contient logo.png et un dossier img."
+        >
+          <p class="q">
+            À ton avis, que contient <span class="mono">site/css2</span> après la seconde ligne ?
+          </p>
+          <ul class="options">
+            <li
+              data-option="rien"
+              data-retour="Avant la seconde ligne, css2 existait-il déjà ? Et la première fois ?"
+              data-erreur="E3"
+            >
+              Seulement style.css : la seconde copie n’a rien changé de plus.
+            </li>
+            <li data-option="dedans">
+              style.css et un dossier css, qui contient lui aussi style.css.
+            </li>
+            <li
+              data-option="remplace"
+              data-retour="Qu’est devenu style.css, qui était déjà dans css2 ?"
+            >
+              Seulement un dossier css, qui contient style.css : l’ancien contenu a été remplacé.
+            </li>
+          </ul>
+        </div>
+        <p>
+          La même ligne donne deux résultats, parce que la destination n’a pas le même état. Si
+          <span class="mono">css2</span> n’existe pas, il devient la copie de
+          <span class="mono">css</span>. Si <span class="mono">css2</span> existe,
+          <span class="mono">cp -R</span> y range la copie, sous son nom d’origine :
+          <span class="mono">css2/css</span>. C’est pourquoi on regarde le nom de la destination
+          avant d’appuyer sur Entrée.
+        </p>
+        <div
+          class="schema-bloc"
+          data-lecture="Le schéma de la deuxième ligne de Yasmine. Départ : css2 existe et contient style.css. Ligne tapée : cp -R site/css site/css2. Le shell lit la commande cp, l’option -R, la source site/css et la destination site/css2. Comme css2 existe et que c’est un dossier, la copie se range dedans. Arrivée : css2 contient style.css et un dossier css, qui contient style.css."
+        >
+          <span class="boite-fixe">Le départ<small>css2 existe, avec style.css</small></span
+          ><span class="fleche">elle tape la ligne</span
+          ><span class="boite-fixe">La ligne tapée<small>cp -R site/css site/css2</small></span
+          ><span class="fleche"
+            >le shell lit : cp, l’option -R, la source site/css, la destination site/css2</span
+          ><span class="boite-fixe"
+            >Ce que décide le nom de la destination<small
+              >css2 existe et c’est un dossier : la copie se range dedans</small
+            ></span
+          ><span class="fleche">cp copie css, avec son contenu, dans css2</span
+          ><span class="boite-fixe"
+            >L’arrivée<small
+              >css2 contient style.css et un dossier css, qui contient style.css</small
+            ></span
+          >
+        </div>
+        <p data-si-essai="p1:faux">
+          Pour <span class="mono">cp -R devoirs copie</span>, tu avais répondu
+          <span data-essai-rappel="p1">autre chose</span>. C’est la même règle : copie existait
+          déjà, la copie de devoirs s’y range sous le nom devoirs.
+        </p>
+      </div>
+      <div data-ecran="Écrire ce que l’on copie">
+        <p class="accroche">
+          Avant de modifier le projet, le formateur veut une sauvegarde de l’image. Yasmine copie le
+          dossier img sous le nom images, avec l’option -v en plus :
+          <span class="mono">cp -Rv site/img images</span>.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              Sous Ubuntu, l’option -v de cp, comme verbose, fait écrire une ligne par élément copié
+              : la source, une flèche, la destination. Le dossier compte comme un élément.
+            </li>
+            <li>
+              -R et -v se collent derrière un seul tiret : <span class="mono">-Rv</span> se lit
+              <span class="mono">-R -v</span>.
+            </li>
+          </ul>
+        </div>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
+        >
+$ ls -R site
+site:
+css  img  index.html
+
+site/css:
+style.css
+
+site/img:
+logo.png</pre>
+        <div
+          class="ex"
+          data-widget="saisie"
+          data-id="verbose"
+          data-prediction
+          data-accepte="2|deux|Deux"
+          data-clavier="Le nombre de lignes"
+          data-si-une="1|un|une"
+          data-retour-une="Le dossier img, qu’on copie, compte-t-il pour un élément, d’après l’encadré ?"
+          data-aide1="Combien d’éléments contient img, le dossier lui-même compris ?"
+          data-aide2="La fenêtre écrit une ligne pour chaque élément copié."
+          data-aide3="Compte d’abord le dossier img, puis ce qu’il contient dans le listing."
+          data-sinon="Pas encore. Combien d’éléments cp copie-t-il, le dossier lui-même compris ?"
+          data-explication="cp copie le dossier img, puis son seul fichier, logo.png : deux éléments, donc deux lignes."
+          data-variante-enonce="Pour lire : sous Ubuntu, l’option -v de cp fait écrire une ligne par élément copié, le dossier compris. Farid copie un dossier css qui contient style.css et reset.css, avec cp -Rv css css-copie. Combien de lignes sont écrites sous Ubuntu ?"
+          data-variante-accepte="3|trois|Trois"
+          data-variante-clavier="Le nombre de lignes"
+          data-variante-si-deux="2|deux|Deux"
+          data-variante-retour-deux="Le dossier css, qu’on copie, compte-t-il pour un élément, d’après la phrase « pour lire » ?"
+          data-variante-aide1="Combien d’éléments contient css, le dossier lui-même compris ?"
+          data-variante-aide2="La fenêtre écrit une ligne pour chaque élément copié."
+          data-variante-aide3="Compte d’abord le dossier css, puis chacun des fichiers qu’il contient."
+          data-variante-sinon="Pas encore. Combien d’éléments cp copie-t-il, le dossier lui-même compris ?"
+          data-variante-explication="cp copie le dossier css, puis style.css et reset.css : trois éléments, donc trois lignes."
+        >
+          <p class="q">
+            Combien de lignes la fenêtre d’Ubuntu répond-elle à
+            <span class="mono">cp -Rv site/img images</span> ?
+          </p>
+        </div>
+        <p>Voici la réponse, sous Ubuntu :</p>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : cp -Rv site/img images. La fenêtre répond : &#x27;site/img&#x27; -&gt; &#x27;images&#x27; ; &#x27;site/img/logo.png&#x27; -&gt; &#x27;images/logo.png&#x27;."
+        >
+$ cp -Rv site/img images
+'site/img' -&gt; 'images'
+'site/img/logo.png' -&gt; 'images/logo.png'</pre>
+        <p>
+          Avec <span class="mono">-v</span>, tu lis ce que <span class="mono">cp</span> a fait,
+          ligne à ligne : c’est utile pour une sauvegarde de toute l’arborescence, comme
+          <span class="mono">cp -Rv site sauvegarde</span> dans un atelier où
+          <span class="mono">sauvegarde</span> n’existe pas encore. Un Mac écrit les mêmes lignes un
+          peu autrement, sans les apostrophes : la page ne s’appuie jamais sur le texte exact, et ne
+          compte les lignes que sous Ubuntu.
+        </p>
+        <p>
+          Une sauvegarde est une copie de toute l’arborescence sous un nom qui n’existe pas encore.
+          Si le nom existait, la copie irait dedans : la sauvegarde serait ratée.
+        </p>
+      </div>
+    </template>
 
     <script id="bloc-manifest" type="application/json">
       {
