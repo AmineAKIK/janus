@@ -5840,7 +5840,7 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
         "schema": 2,
         "bloc": "B12",
         "type": "procedures",
-        "version": 5,
+        "version": 6,
         "titre": "Un serveur web local",
         "titre_court": "Serveur web local",
         "objectif": "XAMPP, MAMP ou LAMP installé ; un index.php servi sur localhost/projet ; une base créée dans phpMyAdmin ; php -v dans le terminal ; expliquer sans support le flux navigateur, Apache, PHP, SGBD et pourquoi le PHP ouvert par double-clic affiche le code ; diagnostiquer 3 pannes (Apache arrêté, port 80 occupé, mauvais dossier) ; dire que le serveur ne publie que le contenu de sa racine, que localhost est la machine elle-même et que file:// n’appelle ni Apache ni PHP, et pourquoi XAMPP et MAMP, réglés pour un poste de développement, ne vont pas en production ; écrire un index.php minimal, démarrer Apache, lire quel programme occupe le port 80 et en sortir",
@@ -6056,7 +6056,7 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
           {
             "id": "B12-R6",
             "question": "Pour lire : lsof -i :80 écrit une ligne par programme qui utilise le port 80 : COMMAND est son nom ; apache2 est le nom d’Apache sous Linux. Le XAMPP pour Linux de Noah ne démarre pas Apache. Sa commande sudo lsof -i :80 écrit : apache2 1138 root 4u IPv6 25194 0t0 TCP *:http (LISTEN). Quel programme occupe le port, et que fait Noah pour démarrer Apache ?",
-            "attendu": "Le programme apache2, un autre Apache déjà installé sur la machine, tient le port 80. Les deux sorties : arrêter ce programme puis démarrer Apache de XAMPP, ou garder ce programme et mettre Apache de XAMPP sur un autre port, qui s’écrit alors dans l’adresse. Déduit de l’étape « Les trois pannes ».",
+            "attendu": "Le programme apache2, un autre Apache déjà installé sur la machine, tient le port 80. Noah libère le port en arrêtant ce programme, puis démarre Apache de XAMPP avec sudo /opt/lampp/lampp start. Déduit de l’étape « Les trois pannes ».",
             "erreurs": []
           }
         ],
