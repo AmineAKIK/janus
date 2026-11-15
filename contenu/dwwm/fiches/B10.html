@@ -3197,6 +3197,925 @@ $ cp -Rv site/img images
         </p>
       </div>
     </template>
+    <template data-etape="ET6">
+      <div data-ecran="Renommer, puis ranger">
+        <p class="accroche">
+          Yasmine veut une page d’accueil qui s’appelle home.html. Elle renomme index.html avec
+          <span class="mono">mv</span>, puis elle regarde.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              <span class="mono">mv</span> déplace sa source vers sa destination, deux noms comme
+              <span class="mono">cp</span>.
+            </li>
+          </ul>
+        </div>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : mv site/index.html site/home.html. La fenêtre ne répond rien."
+        >
+$ mv site/index.html site/home.html</pre>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : ls site. La fenêtre répond : css, home.html, img."
+        >
+$ ls site
+css  home.html  img</pre>
+        <p>
+          Elle veut maintenant ranger home.html dans le dossier css, et tape
+          <span class="mono">mv site/home.html site/css</span>.
+        </p>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="range"
+          data-prediction
+          data-reponse="css"
+          data-aide1="Un déplacement garde-t-il la source là où elle était ?"
+          data-aide2="La destination est un nom qui existe déjà : de quelle sorte d’élément s’agit-il ?"
+          data-aide3="Écris le contenu de site et de site/css avant la ligne, puis fais voyager home.html d’un dossier à l’autre."
+          data-explication="css existe et c’est un dossier : home.html s’y range, et il n’est plus dans site."
+          data-variante-enonce="Pour lire : mv déplace sa source vers sa destination. Farid a dans site un fichier index.html et un dossier img. Il tape mv site/index.html site/img. À ton avis, où se trouve index.html ensuite ?"
+          data-variante-reponse="img"
+          data-variante-options="img=Seulement dans site/img.|deux=Dans site et dans site/img, comme après une copie.|nom=Nulle part : index.html a pris le nom img."
+          data-variante-retours="deux=Que devient la source quand on déplace ce qu’elle désigne ?|nom=img existe-t-il déjà, et est-ce un dossier ?"
+          data-variante-aide1="Un déplacement garde-t-il la source là où elle était ?"
+          data-variante-aide2="La destination est un nom qui existe déjà : de quelle sorte d’élément s’agit-il ?"
+          data-variante-aide3="Écris le contenu de site et de site/img avant la ligne, puis fais voyager index.html d’un dossier à l’autre."
+          data-variante-explication="img existe et c’est un dossier : index.html s’y range, et il n’est plus dans site."
+        >
+          <p class="q">À ton avis, où se trouve home.html ensuite ?</p>
+          <ul class="options">
+            <li data-option="css">Seulement dans site/css.</li>
+            <li
+              data-option="deux"
+              data-retour="Que devient la source quand on déplace ce qu’elle désigne ?"
+            >
+              Dans site et dans site/css, comme après une copie.
+            </li>
+            <li data-option="nom" data-retour="css existe-t-il déjà, et est-ce un dossier ?">
+              Nulle part : home.html a pris le nom css.
+            </li>
+          </ul>
+        </div>
+        <p>
+          Selon la destination, <span class="mono">mv</span> fait deux choses. Si elle n’existe pas,
+          la source est <strong>renommée</strong> :
+          <span class="mono">mv site/index.html site/home.html</span> donne un nouveau nom au même
+          fichier. Si c’est un dossier qui existe, la source s’y <strong>range</strong>, sous son
+          nom d’origine. Un dossier se déplace de la même façon, avec tout ce qu’il contient, sans
+          option : <span class="mono">mv</span> n’a pas de <span class="mono">-R</span>.
+        </p>
+      </div>
+      <div data-ecran="Écraser, et refuser">
+        <p class="accroche">
+          Yasmine a, dans site, deux fichiers vides : index.html et home.html. Elle tape
+          <span class="mono">mv site/home.html site/index.html</span>. Voici l’état avant :
+        </p>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : ls site. La fenêtre répond : css, home.html, img, index.html."
+        >
+$ ls site
+css  home.html  img  index.html</pre>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="ecrase"
+          data-prediction
+          data-reponse="un"
+          data-aide1="Qui est la source, et qui est la destination ?"
+          data-aide2="La destination est un fichier qui existe déjà : qu’as-tu lu, pour cp, sur ce cas ?"
+          data-aide3="Après un déplacement, la source n’existe plus à son ancienne place : lequel des deux noms reste ?"
+          data-explication="La destination est un fichier qui existe : mv le remplace sans rien demander. home.html, la source, disparaît ; index.html reste."
+          data-variante-enonce="Farid a dans css deux fichiers vides, style.css et reset.css. Il tape mv site/css/reset.css site/css/style.css. À ton avis, que contient site/css ensuite ?"
+          data-variante-reponse="un"
+          data-variante-options="un=Seulement style.css : reset.css a pris la place de style.css, sans rien demander.|refus=style.css et reset.css : mv a refusé, un message l’explique.|reset=Seulement reset.css : style.css a disparu."
+          data-variante-retours="refus=Qu’as-tu lu, pour cp, sur un fichier déjà présent sous le nom de la destination ?|reset=Quel fichier est la source, quel fichier est la destination ?"
+          data-variante-aide1="Qui est la source, et qui est la destination ?"
+          data-variante-aide2="La destination est un fichier qui existe déjà : qu’as-tu lu, pour cp, sur ce cas ?"
+          data-variante-aide3="Après un déplacement, la source n’existe plus à son ancienne place : lequel des deux noms reste ?"
+          data-variante-explication="La destination est un fichier qui existe : mv le remplace sans rien demander. reset.css, la source, disparaît ; style.css reste."
+        >
+          <p class="q">À ton avis, que contient site ensuite ?</p>
+          <ul class="options">
+            <li data-option="un">
+              css, img et index.html : home.html a pris la place d’index.html, sans rien demander.
+            </li>
+            <li
+              data-option="refus"
+              data-retour="Qu’as-tu lu, pour cp, sur un fichier déjà présent sous le nom de la destination ?"
+            >
+              css, home.html, img et index.html : mv a refusé, un message l’explique.
+            </li>
+            <li
+              data-option="home"
+              data-retour="Quel fichier est la source, quel fichier est la destination ?"
+            >
+              css, home.html et img : index.html a disparu.
+            </li>
+          </ul>
+        </div>
+        <p>
+          <span class="mono">mv</span> <strong>écrase</strong> : un fichier qui existe sous le nom
+          de la destination est remplacé, sans rien demander. Comme les fichiers du projet sont
+          vides, on le voit au fait que la source a disparu ; avec du contenu, c’est celui de la
+          source qui resterait et celui de la destination qui serait perdu.
+        </p>
+        <p>
+          <span class="mono">mv</span> refuse aussi une chose : ranger un dossier dans lui-même.
+          Sous Ubuntu, <span class="mono">mv site site/css</span> répond :
+        </p>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : mv site site/css. La fenêtre répond : mv: cannot move &#x27;site&#x27; to a subdirectory of itself, &#x27;site/css/site&#x27;."
+        >
+$ mv site site/css
+mv: cannot move 'site' to a subdirectory of itself, 'site/css/site'</pre>
+        <p>
+          Le message dit que site ne peut pas aller dans un de ses propres sous-dossiers. Une
+          commande qui échoue ne change rien : site est resté tel quel.
+        </p>
+      </div>
+      <div data-ecran="Le point et les deux points">
+        <p class="accroche">
+          Yasmine s’est placée dans le dossier css avec <span class="mono">cd</span>. Elle y tape
+          <span class="mono">pwd</span>, puis <span class="mono">mv style.css ..</span>.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              Le point <span class="mono">.</span> désigne le répertoire courant, deux points
+              <span class="mono">..</span> son dossier parent.
+            </li>
+          </ul>
+        </div>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
+        >
+$ ls -R site
+site:
+css  img  index.html
+
+site/css:
+style.css
+
+site/img:
+logo.png</pre>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : pwd. La fenêtre répond : /home/yasmine/atelier/site/css."
+        >
+$ pwd
+/home/yasmine/atelier/site/css</pre>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="deux-points"
+          data-prediction
+          data-reponse="site"
+          data-aide1="Quel est le répertoire courant, d’après pwd ?"
+          data-aide2="Les deux points désignent le parent du répertoire courant, pas celui de site."
+          data-aide3="Écris le chemin du répertoire courant, puis retire son dernier dossier : le chemin qui reste est celui de .."
+          data-explication="Le répertoire courant est css : .. désigne son parent, site. style.css est rangé dans site."
+          data-variante-enonce="Pour lire : le point . désigne le répertoire courant. Farid est dans site/img, qui contient logo.png ; site contient index.html. Il tape cp ../index.html . À ton avis, que contient img ensuite ?"
+          data-variante-reponse="deux"
+          data-variante-options="deux=index.html et logo.png.|un=logo.png seul : le point n’est pas une destination.|index=index.html seul : la copie a remplacé logo.png."
+          data-variante-retours="un=Que désigne le point, d’après la phrase « pour lire » ?|index=Le point désigne-t-il un fichier, ou un dossier ?"
+          data-variante-aide1="Quel est le répertoire courant ?"
+          data-variante-aide2="Le point désigne le répertoire courant, qui peut recevoir une copie."
+          data-variante-aide3="Écris le chemin du répertoire courant, puis cherche où la source ../index.html se trouve par rapport à lui."
+          data-variante-explication="Le point désigne img, le répertoire courant : la copie y range index.html, à côté de logo.png."
+        >
+          <p class="q">À ton avis, où se trouve style.css ensuite ?</p>
+          <ul class="options">
+            <li data-option="site">Dans site : site/style.css.</li>
+            <li data-option="css" data-retour="Que désignent les deux points, d’après l’encadré ?">
+              Toujours dans css : .. n’est pas un nom que mv accepte.
+            </li>
+            <li
+              data-option="atelier"
+              data-retour="Quel est le répertoire courant, et quel dossier est son parent ?"
+            >
+              Dans atelier : atelier/style.css.
+            </li>
+          </ul>
+        </div>
+        <p>
+          Le point et les deux points s’emploient comme n’importe quel chemin.
+          <span class="mono">.</span> comme destination veut dire « ici » :
+          <span class="mono">cp ../index.html .</span> copie dans le répertoire courant.
+          <span class="mono">..</span> comme destination veut dire « dans le dossier parent » :
+          <span class="mono">mv style.css ..</span> remonte le fichier d’un dossier. Dans les deux
+          cas, le nom de la destination décide du résultat, comme avant.
+        </p>
+      </div>
+    </template>
+    <template data-etape="ET7">
+      <div data-ecran="Retirer un fichier">
+        <p class="accroche">
+          Yasmine n’a plus besoin d’index.html. Elle vérifie qu’elle est bien dans atelier, puis
+          tape <span class="mono">rm site/index.html</span>.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li><span class="mono">rm</span> retire le fichier qu’on lui donne.</li>
+          </ul>
+        </div>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : pwd. La fenêtre répond : /home/yasmine/atelier."
+        >
+$ pwd
+/home/yasmine/atelier</pre>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
+        >
+$ ls -R site
+site:
+css  img  index.html
+
+site/css:
+style.css
+
+site/img:
+logo.png</pre>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="rm-silence"
+          data-prediction
+          data-reponse="rien"
+          data-aide1="Que répond une commande UNIX qui réussit ?"
+          data-aide2="rm a-t-il, dans la ligne tapée, un morceau qui lui parle de confirmation ou de corbeille ?"
+          data-aide3="Reprends mkdir, touch, cp et mv : l’un d’eux a-t-il demandé quelque chose ?"
+          data-explication="rm retire index.html et ne dit rien, comme toute commande qui réussit : pas de question, pas de corbeille."
+          data-variante-enonce="Pour lire : rm retire le fichier qu’on lui donne. Farid, dans atelier, tape rm site/img/logo.png. À ton avis, que répond la fenêtre ?"
+          data-variante-reponse="rien"
+          data-variante-options="rien=Rien : l’invite revient, et logo.png n’est plus dans img.|demande=Elle demande si Farid veut vraiment supprimer logo.png.|corbeille=Elle dit que logo.png est dans la Corbeille."
+          data-variante-retours="demande=Que demandent mkdir, touch, cp, mv avant de faire ce qu’on leur a dit ?|corbeille=La fenêtre connaît-elle une Corbeille ? Qu’est-ce qui, dans cette ligne, en parle ?"
+          data-variante-erreurs="demande=E1|corbeille=E1"
+          data-variante-aide1="Que répond une commande UNIX qui réussit ?"
+          data-variante-aide2="rm a-t-il, dans la ligne tapée, un morceau qui lui parle de confirmation ou de corbeille ?"
+          data-variante-aide3="Reprends mkdir, touch, cp et mv : l’un d’eux a-t-il demandé quelque chose ?"
+          data-variante-explication="rm retire logo.png et ne dit rien, comme toute commande qui réussit : pas de question, pas de Corbeille."
+        >
+          <p class="q">
+            À ton avis, que répond la fenêtre à <span class="mono">rm site/index.html</span> ?
+          </p>
+          <ul class="options">
+            <li data-option="rien">Rien : l’invite revient, et index.html n’est plus dans site.</li>
+            <li
+              data-option="demande"
+              data-retour="Que demandent mkdir, touch, cp, mv avant de faire ce qu’on leur a dit ?"
+              data-erreur="E1"
+            >
+              Elle demande si Yasmine veut vraiment supprimer index.html.
+            </li>
+            <li
+              data-option="corbeille"
+              data-retour="La fenêtre connaît-elle une corbeille ? Qu’est-ce qui, dans cette ligne, en parle ?"
+              data-erreur="E1"
+            >
+              Elle dit qu’index.html est dans la corbeille.
+            </li>
+          </ul>
+        </div>
+        <p>
+          <span class="mono">rm</span> retire le nom pour de bon, sans corbeille et sans
+          confirmation. La Corbeille de l’Explorateur de Windows ou du Finder d’un Mac est un
+          dossier du bureau graphique : <span class="mono">rm</span> ne s’en sert pas. Rien ne
+          revient en arrière : un fichier retiré ne se retrouve pas.
+        </p>
+        <p data-si-essai="p2:faux">
+          Pour <span class="mono">rm brouillon.txt</span>, tu avais répondu
+          <span data-essai-rappel="p2">autre chose</span>. C’est la même chose : le fichier ne passe
+          nulle part, il disparaît.
+        </p>
+      </div>
+      <div data-ecran="Retirer un dossier">
+        <p class="accroche">
+          Yasmine a fini avec sa sauvegarde et veut la retirer. Elle vérifie sa place avec
+          <span class="mono">pwd</span>, relit la sauvegarde, puis tape
+          <span class="mono">rm sauvegarde</span>.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              L’option -r de <span class="mono">rm</span>, comme -R de <span class="mono">cp</span>,
+              se lit récursif : descendre dans les sous-dossiers. Les deux écritures, -r et -R,
+              désignent la même option de <span class="mono">cp</span>.
+            </li>
+          </ul>
+        </div>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : pwd. La fenêtre répond : /home/yasmine/atelier."
+        >
+$ pwd
+/home/yasmine/atelier</pre>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : ls -R sauvegarde. La fenêtre répond : sauvegarde contient css, img, index.html ; sauvegarde/css contient style.css ; sauvegarde/img contient logo.png."
+        >
+$ ls -R sauvegarde
+sauvegarde:
+css  img  index.html
+
+sauvegarde/css:
+style.css
+
+sauvegarde/img:
+logo.png</pre>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="rm-dossier"
+          data-prediction
+          data-reponse="refuse"
+          data-aide1="Qu’as-tu lu sur cp, quand on lui donne un dossier sans l’option qui descend ?"
+          data-aide2="Il manque à la ligne un morceau, que l’encadré nomme."
+          data-aide3="Compare la ligne tapée avec celle qu’il faudrait pour retirer un dossier : que manque-t-il ?"
+          data-explication="Sans -r, rm ne retire pas un dossier : il le dit, et sauvegarde reste en place."
+          data-variante-enonce="Pour lire : l’option -r de rm se lit récursif, descendre dans les sous-dossiers. Farid est dans atelier, qui contient site avec css, img et index.html. Il tape rm site/css. À ton avis, que se passe-t-il ?"
+          data-variante-reponse="refuse"
+          data-variante-options="retire=Le dossier css est retiré, avec style.css.|refuse=rm refuse : un message dit que css est un dossier, et rien n’est retiré.|fichiers=rm retire style.css, le seul fichier de css, et laisse le dossier."
+          data-variante-retours="retire=Dans la ligne tapée, un morceau dit-il à rm de descendre dans les dossiers ?|fichiers=rm choisit-il lui-même ce qu’il retire dans un dossier ?"
+          data-variante-aide1="Qu’as-tu lu sur cp, quand on lui donne un dossier sans l’option qui descend ?"
+          data-variante-aide2="Il manque à la ligne un morceau, que la phrase « pour lire » nomme."
+          data-variante-aide3="Compare la ligne tapée avec celle qu’il faudrait pour retirer un dossier : que manque-t-il ?"
+          data-variante-explication="Sans -r, rm ne retire pas un dossier : il le dit, et css reste en place."
+        >
+          <p class="q">À ton avis, que se passe-t-il ?</p>
+          <ul class="options">
+            <li
+              data-option="retire"
+              data-retour="Dans la ligne tapée, un morceau dit-il à rm de descendre dans les dossiers ?"
+            >
+              Le dossier sauvegarde est retiré, avec tout ce qu’il contient.
+            </li>
+            <li data-option="refuse">
+              rm refuse : un message dit que sauvegarde est un dossier, et rien n’est retiré.
+            </li>
+            <li
+              data-option="fichiers"
+              data-retour="rm choisit-il lui-même ce qu’il retire dans un dossier ?"
+            >
+              rm retire index.html, le seul fichier de sauvegarde, et laisse les dossiers.
+            </li>
+          </ul>
+        </div>
+        <p>Voici la réponse de la fenêtre sous Ubuntu :</p>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : rm sauvegarde. La fenêtre répond : rm: cannot remove &#x27;sauvegarde&#x27;: Is a directory."
+        >
+$ rm sauvegarde
+rm: cannot remove 'sauvegarde': Is a directory</pre>
+        <p>
+          Le message dit que sauvegarde est un dossier. Avec l’option, le dossier part avec tout ce
+          qu’il contient, sans un mot :
+        </p>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : rm -r sauvegarde. La fenêtre ne répond rien."
+        >
+$ rm -r sauvegarde</pre>
+        <p>
+          <span class="mono">rm -r</span> retire un dossier et tout ce qu’il contient, sous-dossiers
+          compris, sans rien demander et sans corbeille.
+        </p>
+      </div>
+      <div data-ecran="Ne rien demander, tout demander">
+        <p class="accroche">
+          Yasmine veut retirer un fichier nope, qui n’existe peut-être pas dans site. Elle tape
+          <span class="mono">rm -f site/nope</span>.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              L’option -f de <span class="mono">rm</span>, comme force, fait supprimer sans rien
+              demander.
+            </li>
+            <li>L’option -i, comme interactive, fait demander avant chaque suppression.</li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="moins-f"
+          data-prediction
+          data-reponse="rien"
+          data-aide1="Que dit l’encadré sur -f : demande-t-il, ou ne demande-t-il pas ?"
+          data-aide2="Un fichier qui n’existe pas est un cas où rm, sans -f, aurait quelque chose à dire."
+          data-aide3="Compare ce que dirait la ligne sans -f avec ce que -f lui demande de faire."
+          data-explication="Avec -f, rm ne dit rien, même quand le nom n’existe pas : l’invite revient."
+          data-variante-enonce="Pour lire : l’option -f de rm fait supprimer sans rien demander ; l’option -i fait demander avant chaque suppression. Farid, dans atelier, tape rm -i site/index.html. À ton avis, que fait la fenêtre ?"
+          data-variante-reponse="demande"
+          data-variante-options="demande=Elle demande confirmation avant de retirer index.html, et ne le retire que si Farid répond oui.|retire=Elle retire index.html sans rien demander.|refuse=Elle refuse : -i n’existe pas."
+          data-variante-retours="retire=Laquelle des deux options de la phrase « pour lire » est écrite dans cette ligne ?|refuse=La phrase « pour lire » nomme-t-elle l’option -i ?"
+          data-variante-erreurs="retire=E1"
+          data-variante-aide1="Quelle option est écrite dans la ligne, -f ou -i ?"
+          data-variante-aide2="Que dit la phrase « pour lire » sur -i ?"
+          data-variante-aide3="Cherche, dans la ligne, le morceau qui commence par un tiret, puis relis ce que la phrase « pour lire » dit de lui."
+          data-variante-explication="Avec -i, rm demande avant de retirer chaque fichier : index.html n’est retiré que si Farid répond oui."
+        >
+          <p class="q">À ton avis, que répond la fenêtre, sachant que nope n’existe pas ?</p>
+          <ul class="options">
+            <li data-option="rien">Rien : l’invite revient.</li>
+            <li data-option="message" data-retour="Que fait -f, d’après l’encadré : se plaint-il ?">
+              Un message qui dit que nope n’existe pas.
+            </li>
+            <li
+              data-option="question"
+              data-retour="Laquelle des deux options de l’encadré fait poser une question ?"
+            >
+              Une question : « Supprimer nope ? »
+            </li>
+          </ul>
+        </div>
+        <p>
+          Voici ce que répond la fenêtre sous Ubuntu, d’abord sans <span class="mono">-f</span>,
+          puis avec :
+        </p>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : rm site/nope. La fenêtre répond : rm: cannot remove &#x27;site/nope&#x27;: No such file or directory."
+        >
+$ rm site/nope
+rm: cannot remove 'site/nope': No such file or directory</pre>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : rm -f site/nope. La fenêtre ne répond rien."
+        >
+$ rm -f site/nope</pre>
+        <p>
+          <span class="mono">-f</span> fait taire <span class="mono">rm</span> : il ne demande rien
+          et ne se plaint pas d’un nom qui n’existe pas. <span class="mono">-i</span> est son
+          contraire : une question avant chaque suppression, dont la phrase varie avec le système.
+          <span class="mono">rm -rf</span> réunit les deux : il détruit un dossier et tout son
+          contenu sans rien dire, ce qui le rend dangereux à lancer sans l’avoir lu.
+        </p>
+      </div>
+      <div data-ecran="sudo">
+        <p class="accroche">
+          Sur un forum, Yasmine lit deux lignes qui parlent d’un fichier du système, /etc/hostname.
+          Elle ne les tape pas : elle les lit seulement, et se demande ce que change le premier mot.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              Un fichier du système appartient à l’administrateur de l’ordinateur : un utilisateur
+              ordinaire n’a pas le droit de le supprimer.
+            </li>
+            <li><span class="mono">sudo</span> lance la commande qui suit en administrateur.</li>
+          </ul>
+        </div>
+        <p class="discret">Lignes lues, à ne pas taper :</p>
+        <pre
+          class="listing"
+          data-lecture="Deux lignes lues, à ne pas taper. La première : rm /etc/hostname. La seconde : sudo rm /etc/hostname."
+        >
+$ rm /etc/hostname
+$ sudo rm /etc/hostname</pre>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="sudo"
+          data-prediction
+          data-reponse="tout"
+          data-aide1="À qui appartient /etc/hostname ?"
+          data-aide2="L’utilisateur ordinaire a-t-il le droit de le supprimer ? Et l’administrateur ?"
+          data-aide3="Pour chaque ligne, écris sous quel compte rm travaille, puis demande-toi si ce compte a le droit."
+          data-explication="Sans sudo, rm travaille sous le compte de Yasmine, qui n’a pas le droit : il refuse. Avec sudo, il travaille en administrateur et peut supprimer le fichier."
+          data-variante-enonce="Pour lire : sudo lance la commande qui suit en administrateur. Les fichiers du dossier /var/www appartiennent à l’administrateur du serveur. Farid lit sur un forum la ligne sudo rm -r /var/www/site, qu’il ne tape pas. À ton avis, qu’est-ce que sudo change par rapport à rm -r /var/www/site ?"
+          data-variante-reponse="tout"
+          data-variante-options="tout=Sans sudo, rm refuse de toucher ces fichiers ; avec sudo, il supprime le dossier et son contenu.|rien=Rien : rm supprime le dossier dans les deux cas.|demande=Avec sudo, rm demande une confirmation avant de supprimer."
+          data-variante-retours="rien=À qui appartiennent ces fichiers, et qui a le droit de les supprimer ?|demande=Sous quel compte sudo lance-t-il la commande ?"
+          data-variante-erreurs="rien=E2|demande=E2"
+          data-variante-aide1="À qui appartiennent les fichiers de /var/www ?"
+          data-variante-aide2="L’utilisateur ordinaire a-t-il le droit de les supprimer ? Et l’administrateur ?"
+          data-variante-aide3="Pour chaque ligne, écris sous quel compte rm travaille, puis demande-toi si ce compte a le droit."
+          data-variante-explication="Sans sudo, rm travaille sous le compte de Farid, qui n’a pas le droit : il refuse. Avec sudo, il travaille en administrateur et supprime le dossier."
+        >
+          <p class="q">
+            À ton avis, qu’est-ce que <span class="mono">sudo</span> change à la première ligne ?
+          </p>
+          <ul class="options">
+            <li data-option="tout">
+              Sans sudo, rm refuse de toucher ce fichier ; avec sudo, il le supprime.
+            </li>
+            <li
+              data-option="rien"
+              data-retour="À qui appartient le fichier, d’après l’encadré, et qui a le droit de le supprimer ?"
+              data-erreur="E2"
+            >
+              Rien : rm supprime le fichier dans les deux cas.
+            </li>
+            <li
+              data-option="demande"
+              data-retour="Sous quel compte sudo lance-t-il la commande, d’après l’encadré ?"
+              data-erreur="E2"
+            >
+              Avec sudo, rm demande une confirmation avant de supprimer.
+            </li>
+          </ul>
+        </div>
+        <p>
+          <span class="mono">sudo</span> retire la protection des fichiers du système : ce que ton
+          compte n’a pas le droit de toucher, <span class="mono">sudo rm</span> le détruit. Avec
+          <span class="mono">-rf</span> derrière, rien ne s’arrête : ni un dossier entier, ni une
+          demande de confirmation.
+        </p>
+      </div>
+      <div data-ecran="Lire avant de lancer">
+        <p class="accroche">
+          Sur un forum, on conseille à Yasmine, pour « faire de la place », la ligne
+          <span class="mono">rm -rf ../img</span>. Elle ne la tape pas. Elle regarde d’abord où elle
+          est, avec <span class="mono">pwd</span>, et l’état de son dossier.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              <span class="mono">-r</span> fait descendre rm dans les dossiers,
+              <span class="mono">-f</span> le fait travailler sans rien demander. Un chemin qui ne
+              commence pas par une barre part du répertoire courant.
+            </li>
+            <li>Une ligne lue n’est pas une ligne tapée : on ne la tape qu’après l’avoir lue.</li>
+          </ul>
+        </div>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : pwd. La fenêtre répond : /home/yasmine/atelier/site/css."
+        >
+$ pwd
+/home/yasmine/atelier/site/css</pre>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
+        >
+$ ls -R site
+site:
+css  img  index.html
+
+site/css:
+style.css
+
+site/img:
+logo.png</pre>
+        <div
+          class="ex"
+          data-widget="saisie"
+          data-id="lire"
+          data-prediction
+          data-accepte="site/img|./site/img|/home/yasmine/atelier/site/img"
+          data-clavier="Le chemin"
+          data-si-css="site/css/img|css/img"
+          data-retour-css="Les deux points désignent-ils le répertoire courant, ou son parent ?"
+          data-si-ici="img|./img"
+          data-retour-ici="Le chemin de la ligne part-il d’atelier, ou du répertoire courant, et lequel est-ce ?"
+          data-aide1="Où se trouve Yasmine, d’après pwd ? D’où le chemin de la ligne part-il ?"
+          data-aide2=".. désigne le parent du répertoire courant : lequel ?"
+          data-aide3="Écris le chemin du répertoire courant, remonte d’un dossier avec les deux points, puis descends dans img."
+          data-sinon="Pas encore. D’où part le chemin ../img, et dans quel dossier te trouves-tu ?"
+          data-explication="Yasmine est dans site/css : .. désigne site, et ../img est site/img. La ligne détruit img et logo.png."
+          data-variante-enonce="Farid est dans /Users/farid/atelier/site/img, sur son Mac (pwd le dit). Un forum lui conseille la ligne rm -rf ../css, qu’il ne tape pas. Écris le chemin du dossier que détruit cette ligne, depuis atelier."
+          data-variante-accepte="site/css|./site/css|/Users/farid/atelier/site/css"
+          data-variante-clavier="Le chemin"
+          data-variante-si-css="site/img/css|img/css"
+          data-variante-retour-css="Les deux points désignent-ils le répertoire courant, ou son parent ?"
+          data-variante-si-ici="css|./css"
+          data-variante-retour-ici="Le chemin de la ligne part-il d’atelier, ou du répertoire courant, et lequel est-ce ?"
+          data-variante-aide1="Où se trouve Farid, d’après pwd ? D’où le chemin de la ligne part-il ?"
+          data-variante-aide2=".. désigne le parent du répertoire courant : lequel ?"
+          data-variante-aide3="Écris le chemin du répertoire courant, remonte d’un dossier avec les deux points, puis descends dans css."
+          data-variante-sinon="Pas encore. D’où part le chemin ../img, et dans quel dossier te trouves-tu ?"
+          data-variante-explication="Farid est dans site/img : .. désigne site, et ../css est site/css. La ligne détruit css et style.css."
+        >
+          <p class="q">Écris le chemin du dossier que détruit cette ligne, depuis atelier.</p>
+        </div>
+        <p>
+          Avant de lancer une ligne <span class="mono">rm -r</span> copiée d’ailleurs,
+          <strong>lis-la dans l’ordre</strong>.
+        </p>
+        <ol>
+          <li>La commande : <span class="mono">rm</span> retire sans corbeille.</li>
+          <li>
+            Les options : <span class="mono">-r</span> descend dans les dossiers,
+            <span class="mono">-f</span> ne demande rien, <span class="mono">sudo</span> retire la
+            protection des fichiers du système.
+          </li>
+          <li>
+            Les chemins : un chemin relatif part du répertoire courant, un chemin absolu de la
+            racine.
+          </li>
+          <li>
+            Le dossier où tu es : <span class="mono">pwd</span> te le dit, et lui seul donne son
+            sens à un chemin relatif.
+          </li>
+        </ol>
+        <p>
+          La même ligne détruit un dossier ou un autre selon l’endroit où on la tape. Une ligne
+          copiée ne se colle pas avant d’avoir été lue, et ne se lance jamais depuis un dossier que
+          l’on n’a pas vérifié.
+        </p>
+        <p data-si-essai="p3:faux">
+          Pour <span class="mono">sudo rm -rf ~/cours</span>, tu avais répondu
+          <span data-essai-rappel="p3">autre chose</span>. Lue dans l’ordre : rm retire, -r descend
+          dans cours, -f ne demande rien, sudo retire la protection, et ~/cours est le dossier de
+          cours de Yasmine.
+        </p>
+      </div>
+    </template>
+    <template data-etape="ET8">
+      <div data-ecran="Dire l’état avant d’appuyer sur Entrée">
+        <p class="accroche">
+          Le formateur donne à Yasmine deux lignes, à prédire avant de les taper, dans l’ordre :
+          <span class="mono">mv site/img site/images</span>, puis
+          <span class="mono">rm site/img</span>. Voici l’état avant la première :
+        </p>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
+        >
+$ ls -R site
+site:
+css  img  index.html
+
+site/css:
+style.css
+
+site/img:
+logo.png</pre>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="deux-lignes"
+          data-prediction
+          data-reponse="un"
+          data-aide1="Que contient site après la première ligne seule ?"
+          data-aide2="La seconde ligne parle d’un nom : existe-t-il encore à ce moment-là ?"
+          data-aide3="Écris l’état de site après la première ligne, puis applique la seconde à cet état-là, pas à l’état de départ."
+          data-explication="Après mv, img s’appelle images : la ligne rm site/img échoue, parce que img n’existe plus, et une commande qui échoue ne change rien."
+          data-variante-enonce="Farid a dans site les dossiers css et img et le fichier index.html. Il prédit deux lignes dans l’ordre : mv site/css site/styles, puis rm site/css. À ton avis, que contient site après les deux lignes ?"
+          data-variante-reponse="un"
+          data-variante-options="un=img, index.html et styles.|deux=img et index.html : rm a retiré css.|trois=css, img, index.html et styles : mv a copié css."
+          data-variante-retours="deux=Après la première ligne, css existe-t-il encore ? De quoi parle la seconde ligne ?|trois=Que devient la source après un déplacement ?"
+          data-variante-aide1="Que contient site après la première ligne seule ?"
+          data-variante-aide2="La seconde ligne parle d’un nom : existe-t-il encore à ce moment-là ?"
+          data-variante-aide3="Écris l’état de site après la première ligne, puis applique la seconde à cet état-là, pas à l’état de départ."
+          data-variante-explication="Après mv, css s’appelle styles : la ligne rm site/css échoue, parce que css n’existe plus, et une commande qui échoue ne change rien."
+        >
+          <p class="q">À ton avis, que contient site après les deux lignes ?</p>
+          <ul class="options">
+            <li data-option="un">css, images et index.html.</li>
+            <li
+              data-option="deux"
+              data-retour="Après la première ligne, img existe-t-il encore ? De quoi parle la seconde ligne ?"
+            >
+              css et index.html : rm a retiré img.
+            </li>
+            <li data-option="trois" data-retour="Que devient la source après un déplacement ?">
+              css, img, images et index.html : mv a copié img.
+            </li>
+          </ul>
+        </div>
+        <p>
+          <strong>Dire l’état</strong>, c’est écrire ce qui existe après la commande, sous quel nom,
+          dans quel dossier. On le fait ligne après ligne, chacune appliquée à l’état que la
+          précédente a laissé. Une ligne qui échoue laisse l’état tel quel. Pour
+          <span class="mono">cp</span> et <span class="mono">mv</span>, le nom de la destination
+          décide :
+        </p>
+        <table
+          class="table-lue"
+          data-lecture="Ce que décide le nom de la destination pour cp et mv. Une destination qui n’existe pas devient le nouveau nom, par copie ou par renommage. Un dossier qui existe reçoit la source, qui s’y range sous son nom. Un fichier qui existe est remplacé, sans rien demander. Trois cas échouent sans rien changer : cp sur un dossier sans -R, rm sur un dossier sans -r, mv d’un dossier dans lui-même."
+        >
+          <thead>
+            <tr>
+              <th>La destination</th>
+              <th>Ce que font cp et mv</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Un nom qui n’existe pas</td>
+              <td>Il devient le nouveau nom : copie ou renommage.</td>
+            </tr>
+            <tr>
+              <td>Un dossier qui existe</td>
+              <td>La source s’y range, sous son nom.</td>
+            </tr>
+            <tr>
+              <td>Un fichier qui existe</td>
+              <td>Il est remplacé, sans rien demander.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          <span class="mono">rm</span>, lui, n’a pas de destination : il retire, et le nom retiré
+          n’existe plus.
+        </p>
+      </div>
+    </template>
+    <template data-etape="ET9">
+      <div data-ecran="Les noms de Cmd">
+        <p class="accroche">
+          Le formateur a écrit au tableau les gestes du projet pour les PC de la salle, dans Cmd,
+          l’Invite de commandes de Windows. Yasmine les lit sans les taper : sa fenêtre d’Ubuntu ne
+          les comprendrait pas. Et sur le Mac de Farid, Cmd n’existe pas : il les lit aussi, sans
+          les taper.
+        </p>
+        <p class="discret">Lignes de Cmd lues, à ne pas taper :</p>
+        <pre
+          class="listing"
+          data-lecture="Quatre lignes de Cmd, lues et jamais tapées. copy site\index.html site\accueil.html. move site\accueil.html site\css. del site\css\accueil.html. rmdir /s site\css2."
+        >
+C:\atelier&gt; copy site\index.html site\accueil.html
+C:\atelier&gt; move site\accueil.html site\css
+C:\atelier&gt; del site\css\accueil.html
+C:\atelier&gt; rmdir /s site\css2</pre>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              Cmd écrit les chemins avec une barre inversée, l’antislash
+              <span class="mono">\</span>, au lieu de la barre <span class="mono">/</span>.
+            </li>
+            <li>
+              Ses options s’écrivent avec une barre, comme <span class="mono">/s</span>, au lieu
+              d’un tiret.
+            </li>
+          </ul>
+        </div>
+        <table
+          class="table-lue"
+          data-lecture="Les équivalents. copy pour cp, move pour mv, del pour rm sur un fichier, rmdir /s pour rm -r sur un dossier."
+        >
+          <thead>
+            <tr>
+              <th>Dans bash</th>
+              <th>Dans Cmd</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="mono">cp</span> d’un fichier</td>
+              <td><span class="mono">copy</span></td>
+            </tr>
+            <tr>
+              <td><span class="mono">mv</span></td>
+              <td><span class="mono">move</span></td>
+            </tr>
+            <tr>
+              <td><span class="mono">rm</span> d’un fichier</td>
+              <td><span class="mono">del</span></td>
+            </tr>
+            <tr>
+              <td><span class="mono">rm -r</span> d’un dossier</td>
+              <td><span class="mono">rmdir /s</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div
+          class="ex"
+          data-widget="saisie"
+          data-id="cmd"
+          data-accepte="move site\css site\styles"
+          data-clavier="La ligne de Cmd"
+          data-si-barres="move site/css site/styles"
+          data-retour-barres="Dans ta ligne, les chemins sont-ils écrits avec la barre de Cmd ?"
+          data-si-nom="mv site\css site\styles"
+          data-retour-nom="Cmd connaît-il le nom mv, d’après le tableau ?"
+          data-aide1="Quel est le nom de Cmd pour mv, d’après le tableau ?"
+          data-aide2="Les chemins s’écrivent d’une autre façon dans Cmd : laquelle, d’après l’encadré ?"
+          data-aide3="Écris le nom de la commande de Cmd, puis chaque chemin de la ligne de bash avec les barres de Cmd."
+          data-sinon="Pas encore. Le nom de la commande et les barres des chemins sont-ils ceux de Cmd ?"
+          data-explication="mv se dit move dans Cmd, et les chemins s’écrivent avec l’antislash : move site\css site\styles."
+          data-variante-enonce="Pour lire : Cmd écrit les chemins avec l’antislash ; copy est son nom pour cp. Farid lit en bash la ligne cp site/index.html site/home.html. Écris la ligne équivalente, pour Cmd."
+          data-variante-accepte="copy site\index.html site\home.html"
+          data-variante-clavier="La ligne de Cmd"
+          data-variante-si-barres="copy site/index.html site/home.html"
+          data-variante-retour-barres="Dans ta ligne, les chemins sont-ils écrits avec la barre de Cmd ?"
+          data-variante-si-nom="cp site\index.html site\home.html"
+          data-variante-retour-nom="Cmd connaît-il le nom cp ?"
+          data-variante-aide1="Quel est le nom de Cmd pour cp ?"
+          data-variante-aide2="Les chemins s’écrivent d’une autre façon dans Cmd : laquelle ?"
+          data-variante-aide3="Écris le nom de la commande de Cmd, puis chaque chemin de la ligne de bash avec les barres de Cmd."
+          data-variante-sinon="Pas encore. Le nom de la commande et les barres des chemins sont-ils ceux de Cmd ?"
+          data-variante-explication="cp se dit copy dans Cmd, et les chemins s’écrivent avec l’antislash : copy site\index.html site\home.html."
+        >
+          <p class="q">
+            Yasmine lit en bash la ligne <span class="mono">mv site/css site/styles</span>. Écris la
+            ligne équivalente, pour Cmd.
+          </p>
+        </div>
+        <p>
+          <span class="mono">del</span> retire des fichiers, pas un dossier : pour un dossier et son
+          contenu, c’est <span class="mono">rmdir /s</span>. <span class="mono">copy</span> ne copie
+          pas les sous-dossiers d’un dossier ; l’équivalent de <span class="mono">cp -R</span> est
+          une autre commande, <span class="mono">xcopy</span>, que ce bloc ne demande pas. Ni
+          <span class="mono">del</span> ni <span class="mono">rmdir /s</span> ne passent par la
+          Corbeille.
+        </p>
+      </div>
+      <div data-ecran="Trois différences">
+        <p class="accroche">
+          Yasmine compare ce que le formateur a écrit pour Cmd avec ce qu’elle tape dans Ubuntu.
+          Elle compare la ligne <span class="mono">rmdir /s site\css2</span> de Cmd avec la ligne
+          <span class="mono">rm -r site/css2</span> de bash : trois morceaux ont changé.
+        </p>
+        <div
+          class="ex"
+          data-widget="classer"
+          data-id="diff"
+          data-colonnes="nom=Le nom de la commande|opt=L’écriture de l’option|sep=Le séparateur de chemin"
+          data-reponse="a=nom,b=opt,c=sep"
+          data-aide1="Dans bash, la ligne est rm -r site/css2 : compare-la avec celle de Cmd, morceau après morceau."
+          data-aide2="Un morceau a un autre nom, un autre est une option écrite autrement, un autre est un chemin écrit autrement."
+          data-aide3="Prends les morceaux dans l’ordre de la ligne de Cmd et, pour chacun, cherche son vis-à-vis dans la ligne de bash."
+          data-explication="rmdir remplace rm, /s remplace -r, et l’antislash remplace la barre : trois différences, une par morceau."
+          data-variante-enonce="Pour lire : la ligne de bash est mv site/css site/styles, celle de Cmd est move site\css site\styles. Dis ce qui a changé dans chaque morceau de la ligne de Cmd."
+          data-variante-colonnes="nom=Le nom de la commande|sep=Le séparateur de chemin"
+          data-variante-reponse="a=nom,b=sep,c=sep"
+          data-variante-elements="a~move|b~site\css|c~site\styles"
+          data-variante-retours="a=Ce morceau est en tête de la ligne : que lance-t-il ?|b=Ce morceau est un chemin : qu’est-ce qui sépare ses dossiers, par rapport à bash ?|c=Ce morceau est un chemin : qu’est-ce qui sépare ses dossiers, par rapport à bash ?"
+          data-variante-aide1="Compare la ligne de bash avec celle de Cmd, morceau après morceau."
+          data-variante-aide2="Un morceau a un autre nom, les deux autres sont des chemins écrits autrement."
+          data-variante-aide3="Prends les morceaux dans l’ordre de la ligne de Cmd et, pour chacun, cherche son vis-à-vis dans la ligne de bash."
+          data-variante-explication="move remplace mv, et les deux chemins s’écrivent avec l’antislash au lieu de la barre."
+        >
+          <p class="q">
+            Pour chacun des trois morceaux de la ligne de Cmd, dis ce qui a changé par rapport à la
+            ligne de bash.
+          </p>
+          <ul class="a-classer">
+            <li
+              data-element="a"
+              data-retour="Ce morceau est en tête de la ligne : que lance-t-il ?"
+            >
+              <span class="mono">rmdir</span>
+            </li>
+            <li
+              data-element="b"
+              data-retour="Ce morceau règle la façon de travailler de la commande : par quel signe commence-t-il, et dans bash ?"
+            >
+              <span class="mono">/s</span>
+            </li>
+            <li
+              data-element="c"
+              data-retour="Ce morceau est un chemin : qu’est-ce qui sépare ses dossiers, par rapport à bash ?"
+            >
+              <span class="mono">site\css2</span>
+            </li>
+          </ul>
+        </div>
+        <p>
+          Entre Cmd et bash, trois choses diffèrent, par convention de chaque système : le
+          <strong>séparateur de chemin</strong> (<span class="mono">\</span> dans Cmd,
+          <span class="mono">/</span> dans bash), l’<strong>écriture des options</strong> (<span
+            class="mono"
+            >/s</span
+          >
+          dans Cmd, un tiret et une lettre dans bash) et le
+          <strong>nom des commandes</strong> (<span class="mono">copy</span>,
+          <span class="mono">move</span>, <span class="mono">del</span>,
+          <span class="mono">rmdir</span> dans Cmd ; <span class="mono">cp</span>,
+          <span class="mono">mv</span>, <span class="mono">rm</span> dans bash).
+        </p>
+        <p>
+          Une ligne écrite pour l’un ne marche pas dans l’autre. Sous Ubuntu, la fenêtre répond à
+          <span class="mono">copy site sauvegarde</span> :
+        </p>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : copy site sauvegarde. La fenêtre répond : bash: line 1: copy: command not found."
+        >
+$ copy site sauvegarde
+bash: line 1: copy: command not found</pre>
+        <p>
+          Le message dit que la commande copy est introuvable : bash ne la connaît pas, et rien
+          n’est copié. L’inverse est vrai aussi : Cmd ne connaît ni <span class="mono">cp</span>, ni
+          <span class="mono">mv</span>, ni <span class="mono">rm</span>. Avant de taper une ligne
+          d’un tutoriel, regarde donc pour quelle fenêtre elle est écrite.
+        </p>
+        <p data-si-essai="p4:faux">
+          Pour <span class="mono">copy site sauvegarde</span>, tu avais répondu
+          <span data-essai-rappel="p4">autre chose</span>. Ubuntu ne connaît pas le nom copy : il ne
+          lit pas les lignes comme Cmd.
+        </p>
+      </div>
+    </template>
 
     <script id="bloc-manifest" type="application/json">
       {
