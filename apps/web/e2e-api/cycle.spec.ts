@@ -12,6 +12,7 @@ import {
   jouerLaRestitution,
   lendemain,
   ouvrirEtape,
+  partiesDe,
   recommencerLaFiche,
   REPONSE_FAUSSE,
   reponseSolide,
@@ -160,7 +161,9 @@ for (const manifeste of fichesDuDepot()) {
       await expect(page.getByText(`${bloc} passe à Acquis`)).toBeVisible()
       etat = await detail()
       expect(etat.statut).toBe('acquis')
-      expect(etat.preuves.comprendre).not.toBeNull()
+      // « Comprendre » vient de l'explication, que seuls les types qui la réservent tirent.
+      if (partiesDe(manifeste).includes('explication'))
+        expect(etat.preuves.comprendre).not.toBeNull()
       expect(etat.preuves.transferer).not.toBeNull()
       expect(etat.preuves.retenir.date).not.toBeNull()
       expect(etat.manque.map((m) => m.code)).toEqual(['retest_a_venir'])
