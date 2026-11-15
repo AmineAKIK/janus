@@ -2005,7 +2005,7 @@
           lui impose un petit projet à réaliser au clavier, dans la fenêtre d’Ubuntu qu’elle a
           installée sur son PC : préparer les dossiers et les fichiers d’un petit site, puis en
           garder une sauvegarde. Regarde seulement ce qu’elle tape et ce que la fenêtre répond : tu
-          n’as rien à retenir ici, le bloc reprend chacun de ses gestes.
+          n’as rien à retenir ici.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -2039,12 +2039,10 @@
           <ol class="pas-donnees" hidden>
             <li>
               <p>
-                Le formateur écrit au tableau le projet imposé : « Dans un dossier atelier, un
-                dossier site qui contient css et img, un fichier index.html dans site, un fichier
-                style.css dans css et un fichier logo.png dans img, tous vides. Une fois dans
-                atelier, ne plus en bouger. » Yasmine ouvre la fenêtre d’Ubuntu et tape trois lignes
-                : elle crée atelier, s’y place avec cd, puis pwd répond le chemin du dossier où elle
-                est.
+                Le formateur écrit au tableau : « Dans un dossier atelier, un dossier site avec css
+                et img, et trois fichiers vides. Une fois dans atelier, ne plus en bouger. » Yasmine
+                tape trois lignes : elle crée atelier, s’y place avec cd, puis pwd répond le chemin
+                du dossier où elle est.
               </p>
               <pre
                 class="listing"
@@ -2530,7 +2528,9 @@ a.txt  b.txt</pre>
       </div>
       <div data-ecran="La même ligne dans Ubuntu">
         <p class="accroche">
-          Yasmine recopie dans sa fenêtre d’Ubuntu la ligne que le formateur a écrite au tableau.
+          Il y a donc deux fenêtres de commandes : Cmd, sur les PC de la salle, et la fenêtre
+          d’Ubuntu, que l’on appelle bash. Yasmine recopie dans sa fenêtre d’Ubuntu la ligne que le
+          formateur a écrite au tableau pour Cmd, avec l’antislash de ses chemins.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -2958,9 +2958,9 @@ site/css:</pre>
           ne peut pas toucher ce fichier, parce qu’il n’existe pas de tel fichier ou dossier.
         </p>
         <p>
-          Pour vérifier, Yasmine tape <span class="mono">ls -R site</span> : chaque dossier a son
-          titre, qui se termine par deux-points, suivi des noms qu’il contient. style.css est sous
-          le titre site/css:, donc rangé dans le dossier css.
+          Une fois les trois fichiers créés, Yasmine tape <span class="mono">ls -R site</span> pour
+          vérifier : chaque dossier a son titre, qui se termine par deux-points, suivi des noms
+          qu’il contient. style.css est sous le titre site/css:, donc rangé dans le dossier css.
         </p>
         <pre
           class="listing"
@@ -3432,8 +3432,8 @@ logo.png</pre>
       </div>
       <div data-ecran="Lire chaque copie">
         <p class="accroche">
-          Avant de modifier le projet, le formateur veut une sauvegarde de l’image. Yasmine copie le
-          dossier img sous le nom images, avec l’option -v en plus :
+          Avant de modifier le projet, le formateur veut une sauvegarde du dossier img. Yasmine le
+          copie sous le nom images, avec l’option -v en plus :
           <span class="mono">cp -Rv site/img images</span>.
         </p>
         <div class="cadre pour-lire">
@@ -4151,7 +4151,7 @@ rm: cannot remove 'site/css/old.css': No such file or directory</pre>
             </li>
             <li
               data-option="arret"
-              data-retour="Dans la ligne sans option, rm s’est-il arrêté au premier nom absent ?"
+              data-retour="rm traite-t-il chaque nom pour lui-même, comme mkdir et touch avec plusieurs noms ?"
             >
               La fenêtre écrit un message pour old.css, puis rm s’arrête : style.css n’est pas
               retiré.
@@ -4170,11 +4170,9 @@ $ rm -f site/css/old.css site/css/style.css site/css/tmp.css</pre>
           Dans ton atelier, <span class="mono">-f</span> ne change que ce point :
           <span class="mono">rm</span> ne se plaint plus d’un nom qui n’existe pas, et il ne
           demandait déjà rien. Sans <span class="mono">-f</span>, rm écrit un message pour chaque
-          nom absent, et retire quand même les noms qui existent. Le silence ne prouve donc plus que
-          chaque nom a été retiré : un nom absent n’a rien retiré, et la fenêtre ne le dit pas.
+          nom absent, et retire quand même les noms qui existent.
           <span class="mono">rm -rf</span> réunit <span class="mono">-r</span> et
-          <span class="mono">-f</span> : il détruit un dossier et tout son contenu sans rien dire,
-          ce qui le rend dangereux à lancer sans l’avoir lu.
+          <span class="mono">-f</span>.
         </p>
         <p>
           Sans <span class="mono">-f</span>, avec <span class="mono">-r</span> devant, un nom absent
@@ -4198,8 +4196,8 @@ rm: cannot remove 'photos': No such file or directory</pre>
           <p class="discret">Pour lire :</p>
           <ul>
             <li>
-              <span class="mono">sudo</span> lance la commande qui suit en administrateur, le compte
-              qui a tous les droits.
+              <span class="mono">sudo</span> lance la commande qui suit en administrateur, un compte
+              à part.
             </li>
             <li>
               Une commande travaille sous un <strong>compte</strong> : celui de Yasmine a le droit
@@ -4229,7 +4227,7 @@ $ sudo rm /etc/hostname</pre>
           data-aide2="Qui lance rm dans chaque ligne, et a-t-il le droit de toucher ce fichier ?"
           data-aide3="Pour chaque ligne, écris sous quel compte rm travaille, puis demande-toi si ce compte a le droit."
           data-explication="Sans sudo, rm travaille sous le compte de Yasmine, qui n’a pas le droit : il refuse. Avec sudo, il travaille en administrateur et peut supprimer le fichier."
-          data-variante-enonce="Pour lire : sudo lance la commande en administrateur, le compte qui a tous les droits ; rm -r retire un dossier avec son contenu ; /var/www appartient à l’administrateur. Farid lit sudo rm -r /var/www/site. Que change sudo ?"
+          data-variante-enonce="Pour lire : sudo lance la commande en administrateur, un compte à part ; rm -r retire un dossier avec son contenu ; /var/www est un dossier du système, protégé comme /etc/hostname. Farid lit sudo rm -r /var/www/site. Que change sudo ?"
           data-variante-reponse="tout"
           data-variante-options="tout=Sans sudo, rm refuse de toucher ces fichiers ; avec sudo, il supprime le dossier et son contenu.|rien=Rien : rm supprime le dossier dans les deux cas.|demande=Avec sudo, rm demande une confirmation avant de supprimer."
           data-variante-retours="rien=À qui appartiennent ces fichiers, et qui a le droit de les supprimer ?|demande=Sous quel compte sudo lance-t-il la commande ?"
@@ -4264,12 +4262,12 @@ $ sudo rm /etc/hostname</pre>
           </ul>
         </div>
         <p>
-          Les fichiers du système appartiennent à l’administrateur : seul son compte a le droit de
-          les modifier. Sans <span class="mono">sudo</span>, <span class="mono">rm</span> travaille
-          sous ton compte et se heurte à cette protection ; avec <span class="mono">sudo</span>, il
-          travaille en administrateur, et rien ne le retient.
-          <span class="mono">sudo</span> n’ajoute aucune demande de confirmation, puisque
-          <span class="mono">rm</span> n’en pose pas.
+          Les fichiers et les dossiers du système appartiennent à l’administrateur, le compte qui a
+          tous les droits : seul lui a le droit de les modifier. Sans
+          <span class="mono">sudo</span>, <span class="mono">rm</span> travaille sous ton compte et
+          se heurte à cette protection ; avec <span class="mono">sudo</span>, il travaille en
+          administrateur, et rien ne le retient. <span class="mono">sudo</span> n’ajoute aucune
+          demande de confirmation, puisque <span class="mono">rm</span> n’en pose pas.
         </p>
         <p>
           Si Yasmine ajoutait <span class="mono">-rf</span> (<span class="mono">sudo rm -rf …</span
@@ -4283,8 +4281,11 @@ $ sudo rm /etc/hostname</pre>
           et ton compte a déjà le droit de les retirer. <span class="mono">sudo</span> ne change pas
           ce que <span class="mono">rm</span> fait à l’arborescence : il change seulement ce que le
           compte a le droit d’atteindre. Avec ou sans lui, ce que <span class="mono">rm</span>
-          retire ne revient pas : comme avant, rien ne revient en arrière. C’est un mot de plus à
-          lire avant d’appuyer sur Entrée, avec la commande, les options et les chemins.
+          retire ne revient pas : comme avant, rien ne revient en arrière. Une ligne se lit donc
+          selon ce qu’elle trouve et selon qui la lance : la destination et le dossier où tu es
+          décident de ce qu’elle atteint, le compte décide de ce qu’elle a le droit d’atteindre.
+          C’est un mot de plus à lire avant d’appuyer sur Entrée, avec la commande, les options et
+          les chemins.
         </p>
       </div>
       <div data-ecran="Lire avant de lancer">
@@ -4706,26 +4707,18 @@ C:\atelier&gt; rmdir /s site\css2</pre>
           <span class="mono">move</span>.
         </p>
         <p>
-          Il connaît bien un
-          <span class="mono">rmdir</span>, mais celui-là ne retire qu’un dossier vide et ne comprend
-          pas <span class="mono">/s</span> : la ligne <span class="mono">rmdir /s site\css2</span> y
-          échoue aussi, sans rien retirer ; pour retirer un dossier dans bash, tu gardes
-          <span class="mono">rm -r</span>. Le Terminal d’un Mac répond lui aussi que
-          <span class="mono">copy</span> est introuvable, avec d’autres mots. L’inverse est vrai
-          aussi : Cmd ne connaît ni <span class="mono">cp</span>, ni <span class="mono">mv</span>,
-          ni <span class="mono">rm</span>. Avant de taper une ligne d’un tutoriel, une page qui
-          explique pas à pas comment faire, regarde donc pour quelle fenêtre elle est écrite.
+          Il connaît bien un <span class="mono">rmdir</span>, mais celui-là ne retire qu’un dossier
+          vide et ne comprend pas <span class="mono">/s</span> : pour retirer un dossier dans bash,
+          tu gardes <span class="mono">rm -r</span>. Avant de taper une ligne d’un tutoriel, une
+          page qui explique pas à pas comment faire, regarde donc pour quelle fenêtre elle est
+          écrite.
         </p>
         <p>
-          Ce qui ne change pas : les morceaux de la ligne et leur ordre. Dans
-          <span class="mono">copy site\index.html site\accueil.html</span> comme dans
-          <span class="mono">cp site/index.html site/accueil.html</span>, on lit la commande, puis
-          la source, puis la destination, et le nom de la destination décide du résultat comme
-          avant. Tu lis donc une ligne de Cmd comme une ligne de bash, morceau par morceau, avec le
-          dossier où l’on est. Ainsi, la ligne du tableau
+          Ainsi, la ligne du tableau
           <span class="mono">move site\accueil.html site\css</span> s’écrit, dans la fenêtre
-          d’Ubuntu, <span class="mono">mv site/accueil.html site/css</span> : le nom de la commande
-          et le séparateur changent, et css, un dossier qui existe, reçoit toujours accueil.html.
+          d’Ubuntu, <span class="mono">mv site/accueil.html site/css</span>
+          : le nom de la commande et le séparateur changent, et css, un dossier qui existe, reçoit
+          toujours accueil.html.
         </p>
         <p data-si-essai="p4:faux">
           Pour <span class="mono">copy site\index.html sauvegarde</span>, tu avais répondu
@@ -5468,7 +5461,7 @@ $ pwd
         data-verifie
         data-colonnes="renomme=Renomme la source|range=Range la source dans un dossier|echoue=Échoue avec un message"
         data-reponse="a=renomme,b=range,c=echoue,d=renomme"
-        data-aide1="Pour chaque ligne, cherche la destination dans l’état de départ : absente, dossier qui existe, ou dossier de la source."
+        data-aide1="Pour chaque ligne, que vaut la destination dans l’état de départ ?"
         data-aide2="Pour chaque ligne, la destination est-elle absente, un dossier qui existe, ou à l’intérieur de la source ?"
         data-aide3="Pour chaque ligne, écris la destination, puis cherche-la dans l’état de départ, puis demande-toi si elle se trouve à l’intérieur de la source."
       >
@@ -5542,7 +5535,7 @@ logo.png</pre>
         data-verifie
         data-colonnes="renomme=Renomme la source|range=Range la source dans un dossier|echoue=Échoue avec un message"
         data-reponse="a=renomme,b=range,c=echoue,d=renomme"
-        data-aide1="Pour chaque ligne, cherche la destination dans l’état de départ : absente, dossier qui existe, ou dossier de la source."
+        data-aide1="Pour chaque ligne, que vaut la destination dans l’état de départ ?"
         data-aide2="Pour chaque ligne, la destination est-elle absente, un dossier qui existe, ou à l’intérieur de la source ?"
         data-aide3="Pour chaque ligne, écris la destination, puis cherche-la dans l’état de départ, puis demande-toi si elle se trouve à l’intérieur de la source."
       >
@@ -6571,10 +6564,9 @@ logo.png</pre>
               la destination.
             </li>
             <li>
-              <span class="mono">cp</span> et <span class="mono">rm</span> refusent un dossier sans
-              <span class="mono">-R</span> ou <span class="mono">-r</span> : ils écrivent un
-              message, et rien ne change. Avec l’option, ils prennent le dossier et tout son
-              contenu.
+              <span class="mono">-R</span> (ou <span class="mono">-r</span>) fait descendre
+              <span class="mono">cp</span> (ou <span class="mono">rm</span>) dans les dossiers, avec
+              tout leur contenu.
             </li>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
@@ -6593,11 +6585,8 @@ logo.png</pre>
           <li><span class="mono">mv site/accueil.html site/home.html</span></li>
           <li><span class="mono">mv site/home.html site/css</span></li>
           <li><span class="mono">mv site/index.html site/css/home.html</span></li>
-          <li>
-            <span class="mono">rm site/css2</span> (tape d’abord <span class="mono">pwd</span> : rm
-            retire pour de bon, donc tu vérifies où tu es, et le chemin doit finir par /atelier)
-          </li>
-          <li><span class="mono">rm -r site/css2</span> (<span class="mono">pwd</span> d’abord)</li>
+          <li><span class="mono">rm site/css2</span></li>
+          <li><span class="mono">rm -r site/css2</span></li>
         </ol>
         <p class="discret">Ce que tu fais, une ligne à la fois :</p>
         <ol>
@@ -6609,7 +6598,11 @@ logo.png</pre>
             Tape la ligne, puis <span class="mono">ls -R site</span>, et compare : note si ta
             prévision était juste.
           </li>
-          <li>La ligne suivante part de l’état que tu viens de lire.</li>
+          <li>
+            La ligne suivante part de l’état que tu viens de lire. Avant chaque
+            <span class="mono">rm</span>, tape <span class="mono">pwd</span> : son chemin doit finir
+            par /atelier, car rm retire pour de bon.
+          </li>
         </ol>
         <p class="discret">
           Une prévision fausse ? Finis les dix lignes : l’écran suivant dit quoi faire.
@@ -6625,8 +6618,10 @@ logo.png</pre>
             <p>
               Le nom de la destination décide : un nom qui n’existe pas devient le nouveau nom de la
               source, un dossier qui existe reçoit la source, qui s’y range sous son nom, un fichier
-              qui existe est remplacé, sans rien demander. L’état prévu après une ligne est le
-              départ de la suivante : reprends ton papier, pas l’état du début.
+              qui existe est remplacé, sans rien demander. Sans <span class="mono">-R</span> ou
+              <span class="mono">-r</span>, cp et rm refusent un dossier : ils écrivent un message,
+              et rien ne change. L’état prévu après une ligne est le départ de la suivante :
+              reprends ton papier, pas l’état du début.
             </p>
             <details data-cran="3">
               <summary>Une partie de la solution</summary>
@@ -6687,11 +6682,8 @@ logo.png</pre>
           <li><span class="mono">mv site/accueil.html site/home.html</span></li>
           <li><span class="mono">mv site/home.html site/css</span></li>
           <li><span class="mono">mv site/index.html site/css/home.html</span></li>
-          <li>
-            <span class="mono">rm site/css2</span> (tape d’abord <span class="mono">pwd</span> : rm
-            retire pour de bon, donc tu vérifies où tu es, et le chemin doit finir par /atelier)
-          </li>
-          <li><span class="mono">rm -r site/css2</span> (<span class="mono">pwd</span> d’abord)</li>
+          <li><span class="mono">rm site/css2</span></li>
+          <li><span class="mono">rm -r site/css2</span></li>
         </ol>
         <p class="discret">Ce que tu fais :</p>
         <ol>
@@ -6701,7 +6693,10 @@ logo.png</pre>
             <span class="mono">rm -r site</span> et <span class="mono">rm -r sauvegarde</span>, puis
             recrée site tel que l’état de départ ci-dessus le montre.
           </li>
-          <li>Tape de nouveau les dix lignes, en prédisant chacune d’abord.</li>
+          <li>
+            Tape de nouveau les dix lignes, en prédisant chacune d’abord, et
+            <span class="mono">pwd</span> avant chaque <span class="mono">rm</span>.
+          </li>
         </ol>
         <details data-cran="1">
           <summary>Un indice</summary>
@@ -6819,10 +6814,9 @@ logo.png</pre>
             arrête le chronomètre : note ce premier temps.
           </li>
           <li>
-            Remets le chronomètre à zéro et lance-le. Tape
-            <span class="mono">cp -Rv site sauvegarde</span>, vérifie avec
-            <span class="mono">ls -R sauvegarde</span>, puis arrête le chronomètre : note le temps
-            de la sauvegarde.
+            Sans limite de temps : tape <span class="mono">cp -Rv site sauvegarde</span>, vérifie
+            avec <span class="mono">ls -R sauvegarde</span>, et note le temps que tu as mis, au
+            chronomètre.
           </li>
         </ol>
         <p class="discret">
@@ -6865,22 +6859,20 @@ logo.png</pre>
         <span class="mono">rien</span>.
       </p>
       <p class="discret">
-        Une série compte <span data-n-aisance>10</span> lignes tirées au hasard, chacune partant de
-        l’état affiché. La ligne suivante te dit si la précédente était juste ; à la fin, la page
-        liste tes fautes. Une série est réussie quand ses <span data-n-aisance>10</span> réponses
-        sont justes, dans le temps affiché. Il en faut plusieurs, chacune un jour différent : tu
-        peux passer à la suite et revenir un autre jour.
+        Une série est une suite de lignes tirées au hasard, chacune partant de l’état affiché. La
+        ligne suivante te dit si la précédente était juste ; à la fin, la page liste tes fautes. Une
+        série est réussie quand toutes tes réponses sont justes, dans le temps affiché. Il en faut
+        plusieurs, chacune un jour différent : tu peux passer à la suite et revenir un autre jour.
       </p>
       <div class="cadre pour-lire">
         <p class="discret">Pour lire :</p>
         <ul>
           <li>
             <span class="mono">cp</span> et <span class="mono">mv</span> prennent la source, puis la
-            destination : un nom qui n’existe pas devient le nouveau nom, un dossier qui existe
-            reçoit la source, un fichier qui existe est remplacé.
-            <span class="mono">cp -R</span> (ou <span class="mono">cp -r</span>) copie un dossier
-            avec tout son contenu, <span class="mono">rm -r</span> retire un dossier avec tout son
-            contenu, <span class="mono">rm -f</span> ne se plaint pas d’un nom qui n’existe pas.
+            destination. <span class="mono">cp -R</span> (ou <span class="mono">cp -r</span>) copie
+            un dossier avec tout son contenu, <span class="mono">rm -r</span> retire un dossier avec
+            tout son contenu, <span class="mono">rm -f</span> ne se plaint pas d’un nom qui n’existe
+            pas.
           </li>
           <li>Le point <span class="mono">.</span> désigne atelier, le dossier où tu es.</li>
           <li>
@@ -6981,10 +6973,8 @@ css  img  index.html</pre>
           <span class="mono">site</span> dedans.
         </p>
         <p>
-          Retiens ceci : le nom de la destination décide du résultat. Un nom qui n’existe pas
-          devient le nouveau nom ; un dossier qui existe reçoit la source ; un fichier qui existe
-          est remplacé, sans rien demander ; et rien ne revient en arrière. Tu peux donc dire l’état
-          avant d’appuyer sur Entrée.
+          Le schéma qui suit refait ce raisonnement sur un autre cas : dire l’état avant d’appuyer
+          sur Entrée compte, parce que rien ne revient en arrière.
         </p>
       </div>
       <div data-ecran="Le schéma, pour Noah">
@@ -7170,12 +7160,13 @@ contact.html  index.html</pre>
           réponse d’une ligne sans -f, qui nomme un seul fichier absent, est imprimée, et la
           prédiction se fait sur une ligne de trois noms, dont deux n’existent pas ; que rm retire
           quand même les noms qui existent est dit après la réponse. Dans « sudo », l’encadré tient
-          en trois phrases (le mot, le compte, « protégé », avec /etc/hostname pour cas) ; que les
-          fichiers du système appartiennent à l’administrateur et que sudo retire cette protection
-          viennent dans le texte qui suit la réponse. Tout exercice du cours dont l’apprenant a vu
-          la solution, prédiction comprise, lui fait refaire sans regarder un autre cas écrit dans
-          la fiche (data-variante-…), puis expliquer ; seuls les essais du prétest en sont
-          dispensés.
+          en trois phrases (le mot, avec « un compte à part », le compte, « protégé », avec
+          /etc/hostname pour cas) ; que l’administrateur est le compte qui a tous les droits, que
+          les fichiers et les dossiers du système lui appartiennent et que sudo retire cette
+          protection viennent dans le texte qui suit la réponse. Tout exercice du cours dont
+          l’apprenant a vu la solution, prédiction comprise, lui fait refaire sans regarder un autre
+          cas écrit dans la fiche (data-variante-…), puis expliquer ; seuls les essais du prétest en
+          sont dispensés.
         </li>
         <li>
           Le gabarit mélange les options de chaque choix à l’affichage. Seuls les essais du prétest
@@ -7224,8 +7215,10 @@ contact.html  index.html</pre>
         <li>
           Le pari, sans note, porte sur mv site sauvegarde alors que sauvegarde existe ; la bonne
           réponse est la 2e. Il est repris à la fin, puis corrigé. Le schéma construit à la fin
-          porte sur un cas nouveau, celui de Noah (mv pages archive, archive n’existant pas : le nom
-          de la destination décide que pages est renommé), jugé sur la chaîne.
+          porte sur le cas de Noah (mv pages archive, archive n’existant pas : le nom de la
+          destination décide que pages est renommé), déjà vu pour un dossier en ET8 (mv site/img
+          site/images) et reclassé par PR1-8 : il se refait ici sans la ligne sous les yeux, et «
+          Ton pari, corrigé » ne redit pas la règle avant lui. Il est jugé sur la chaîne.
         </li>
       </ul>
       <h3>Charge, temps et type</h3>
@@ -7274,13 +7267,13 @@ contact.html  index.html</pre>
           trois par question de restitution et par série d’aisance ; l’atelier compte sa lecture et
           ses minutes de frappe réelles, 5 pour le dossier, 10 pour l’arborescence, 5 pour la
           sauvegarde deux fois, 20 pour les dix commandes, 5 le second jour avec la sauvegarde
-          chronométrée, soit 45). Modéliser : 9 441 mots, 79 minutes de lecture, et 30 d’exercices
-          (4 essais, 23 exercices, 2 paris, 1 schéma), soit 109 minutes. Faire : pratique 1 849
+          chronométrée, soit 45). Modéliser : 9 310 mots, 78 minutes de lecture, et 30 d’exercices
+          (4 essais, 23 exercices, 2 paris, 1 schéma), soit 108 minutes. Faire : pratique 1 849
           mots, 15 minutes, plus 14 items à 2 minutes et 3 explications à 2 minutes de plus, soit 49
-          ; atelier 2 341 mots, 20 minutes, plus 45 de frappe, soit 65 ; aisance 307 mots, 3
-          minutes, plus 2 séries à 3 minutes, soit 9 ; restitution 418 mots, 3 minutes, plus 5
-          questions à 3 minutes, soit 18 ; au total 141 minutes. Faire dépasse modéliser (141 contre
-          109 minutes) : la pratique, au sens de la méthode (pratique, atelier, aisance,
+          ; atelier 2 318 mots, 19 minutes, plus 45 de frappe, soit 64 ; aisance 286 mots, 2
+          minutes, plus 2 séries à 3 minutes, soit 8 ; restitution 418 mots, 3 minutes, plus 5
+          questions à 3 minutes, soit 18 ; au total 139 minutes. Faire dépasse modéliser (139 contre
+          108 minutes) : la pratique, au sens de la méthode (pratique, atelier, aisance,
           restitution), prend la plus grande part du temps.
         </li>
       </ul>
@@ -7320,7 +7313,7 @@ contact.html  index.html</pre>
         "schema": 2,
         "bloc": "B10",
         "type": "procedures",
-        "version": 18,
+        "version": 19,
         "titre": "Manipuler fichiers et dossiers : créer, copier, déplacer, supprimer",
         "titre_court": "Manipuler fichiers et dossiers",
         "objectif": "Dans un dossier d'atelier, réaliser sans `cd` une arborescence imposée de 3 dossiers et 3 fichiers vides avec `mkdir` (`-p`) et `touch`, la vérifier avec `ls -R`, la sauvegarder avec `cp -Rv`, puis prédire par écrit l'état de l'arborescence après 10 commandes `cp`, `mv`, `rm` (destination existante ou non, écrasement sans confirmation, échec qui ne change rien) et les exécuter avec 10 justes ; dire que `rm` supprime sans corbeille ni confirmation, et lire ce que détruit une ligne `rm -r` ou `rm -rf`, avec ou sans `sudo`, avant de l'exécuter ; donner l'équivalent Cmd de `copy`, `move`, `del` et `rmdir /s` et reconnaître trois différences entre Cmd et bash (séparateur de chemin, option, nom de commande)",
@@ -7504,14 +7497,14 @@ contact.html  index.html</pre>
           {
             "id": "PR1-10",
             "question": "Yasmine, dans son dossier atelier, tape sudo rm -rf site sauvegarde. Sans sudo, la ligne donnerait-elle le même résultat ? Pourquoi ?",
-            "attendu": "Oui : site et sauvegarde sont à Yasmine, son compte avait déjà le droit de les retirer, et -r suffit à les détruire avec leur contenu. sudo ne ferait la différence que pour un fichier du système, protégé. Déduit de l’étape « Supprimer ».",
+            "attendu": "Oui : site et sauvegarde sont à Yasmine, son compte a déjà le droit de les retirer ; sudo ne change que l’accès aux fichiers protégés. Déduit de l’étape « Supprimer ».",
             "erreurs": ["E2"],
             "item": "PR1-10"
           },
           {
             "id": "PR1-10:variante",
             "question": "Farid, dans son dossier atelier, tape rm -rf docs projet. Avec sudo devant, la ligne donnerait-elle un autre résultat ? Pourquoi ?",
-            "attendu": "Non : docs et projet sont à Farid, son compte a déjà le droit de les retirer, et -r suffit à les détruire avec leur contenu. sudo ne ferait la différence que pour un fichier du système, protégé. Déduit de l’étape « Supprimer ».",
+            "attendu": "Non : docs et projet sont à Farid, son compte a déjà le droit de les retirer ; sudo ne change que l’accès aux fichiers protégés. Déduit de l’étape « Supprimer ».",
             "erreurs": ["E2"],
             "item": "PR1-10"
           }
@@ -7563,8 +7556,8 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-Q3",
-            "question": "Pour lire : -r fait descendre rm dans les dossiers, -f l’empêche de se plaindre d’un nom absent ; -rf se lit -r -f. Une commande qui réussit n’écrit rien dans la fenêtre. Yasmine tape rm -rf site, où site est un dossier qui contient des fichiers. Pourquoi une ligne aussi destructrice peut-elle ne rien dire ?",
-            "attendu": "rm -r retire le dossier avec tout son contenu, -f fait taire même la plainte d’un nom absent, et rm ne demande jamais de confirmation : rien ne l’arrête et rien n’est écrit. Déduit de l’étape « Supprimer ».",
+            "question": "Pour lire : -r fait descendre rm dans les dossiers, -f l’empêche de se plaindre d’un nom absent ; -rf se lit -r -f. Une commande qui réussit n’écrit rien dans la fenêtre. Yasmine tape rm -rf site, et la fenêtre ne répond rien. Peut-elle en conclure que le dossier site est retiré ? Pourquoi ?",
+            "attendu": "Non, pas à coup sûr : le silence dit seulement qu’aucune erreur n’est écrite. Si site existe, rm -rf le retire sans rien dire ; s’il n’existe pas, -f fait taire rm aussi, et rien n’est retiré. Déduit de l’étape « Supprimer ».",
             "erreurs": []
           },
           {
@@ -7765,8 +7758,8 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-K2",
-            "recto": "Pour lire : la Corbeille est le dossier de Windows, ou du Mac, où les fichiers supprimés à la souris attendent d’être rendus. Yasmine supprime rapport.pdf avec la souris, puis brouillon.txt avec rm dans la fenêtre de commandes. Lequel peut-elle retrouver dans la Corbeille, et pourquoi ?",
-            "verso": "rapport.pdf : supprimé à la souris, il est rangé dans la Corbeille. brouillon.txt est perdu : rm est une commande tapée, qui retire le fichier pour de bon, sans corbeille ni confirmation. Déduit de l’étape « Supprimer »."
+            "recto": "Pour lire : la Corbeille est le dossier de Windows, ou du Mac, où les fichiers supprimés à la souris attendent d’être rendus ; rm -r retire un dossier. Farid, sur son Mac, met photos à la Corbeille avec la souris, puis retire brouillons en tapant rm -r brouillons dans le Terminal. Lequel des deux peut-il rendre, et pourquoi ?",
+            "verso": "photos : mis à la Corbeille avec la souris, il y attend avec tout son contenu. brouillons est perdu avec son contenu : rm -r est une commande tapée, qui retire pour de bon, sans corbeille ni confirmation. Déduit de l’étape « Supprimer »."
           },
           {
             "id": "B10-K3",
@@ -7780,7 +7773,7 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-K5",
-            "recto": "Pour lire : sudo lance la commande qui suit en administrateur, le compte qui a tous les droits ; rm -rf se lit rm -r -f ; /etc/cron.d est un dossier du système (un dossier du système aussi est protégé). Noah lit sudo rm -rf /etc/cron.d. Que change sudo à cette ligne ?",
+            "recto": "Pour lire : sudo lance la commande qui suit en administrateur, un compte à part ; rm -rf se lit rm -r -f ; /etc/cron.d est un dossier du système, protégé comme /etc/hostname. Noah lit sudo rm -rf /etc/cron.d. Que change sudo à cette ligne ?",
             "verso": "Sans sudo, le compte de Noah n’a pas le droit de toucher à ce dossier : rm refuse et rien n’est détruit. Avec sudo, la ligne s’exécute en administrateur : le dossier part avec tout son contenu, sans une question. Déduit de l’étape « Supprimer »."
           },
           {
