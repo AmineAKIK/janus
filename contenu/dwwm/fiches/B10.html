@@ -2016,6 +2016,10 @@
               Dans la page, une ligne qui commence par $ est une ligne que Yasmine tape, avec Entrée
               ; les lignes dessous sont ce que la fenêtre répond.
             </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
+              dossier site : on le suit de gauche à droite.
+            </li>
           </ul>
         </div>
         <div
@@ -2150,6 +2154,10 @@ sauvegarde  site</pre>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, suivi des noms qu’il
               contient ; un dossier vide n’a que son titre.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">sauvegarde/site</span> désigne le dossier site,
+              dans le dossier sauvegarde : on le suit de gauche à droite.
             </li>
           </ul>
         </div>
@@ -2300,13 +2308,11 @@ css  img  index.html</pre>
       </p>
       <h3>À quoi ça sert</h3>
       <p>
-        Un projet web est un arbre de dossiers et de fichiers que l’on crée, que l’on copie avant de
-        le casser, que l’on range et que l’on nettoie. Sur un serveur, un ordinateur distant où l’on
-        travaille à travers sa fenêtre de commandes, tout se fait au clavier, sans corbeille : une
-        ligne copiée d’un forum a déjà effacé des projets entiers. Et les tutoriels, ces pages qui
-        expliquent pas à pas comment faire, sont écrits tantôt pour la fenêtre d’Ubuntu ou le
-        Terminal d’un Mac, tantôt pour celle de Windows : il faut savoir pour laquelle une ligne est
-        écrite.
+        Un projet web est une arborescence de dossiers et de fichiers que l’on crée, que l’on copie
+        avant de le casser, que l’on range et que l’on nettoie. Sur un serveur, un ordinateur
+        distant où l’on travaille à travers sa fenêtre de commandes, tout se fait au clavier : ce
+        bloc te donne les gestes pour t’y retrouver. Et les tutoriels, ces pages qui expliquent pas
+        à pas comment faire, te servent à apprendre d’autres lignes.
       </p>
       <p>Tu t’exerces sur ton propre ordinateur, dans un dossier à toi, appelé atelier.</p>
       <h3>Ce que tu connais déjà</h3>
@@ -2327,11 +2333,7 @@ css  img  index.html</pre>
           <span class="mono">mv</span> ou <span class="mono">rm</span>, avant de la taper, puis la
           taper ;
         </li>
-        <li>
-          dire que <span class="mono">rm</span> supprime sans corbeille ni confirmation, et lire ce
-          que détruit une ligne de suppression copiée d’un forum, même quand elle commence par un
-          mot qui lui donne tous les droits, avant de l’exécuter ;
-        </li>
+        <li>lire une ligne de suppression avant de l’exécuter, et dire ce qu’elle détruit ;</li>
         <li>
           lire une ligne écrite pour la fenêtre de commandes de Windows, et dire ce qui la sépare
           d’une ligne écrite pour celle d’Ubuntu.
@@ -2463,14 +2465,17 @@ a.txt  b.txt</pre>
         </div>
       </div>
       <div data-ecran="Une ligne trouvée sur un forum">
-        <p>Yasmine manque de place sur son ordinateur et cherche une solution sur un forum.</p>
+        <p>
+          Yasmine manque de place sur son ordinateur et cherche une solution sur un forum, un site
+          où des internautes se posent des questions et se répondent.
+        </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
           <ul>
             <li>
               rm retire ce qu’on lui donne. Son option -r lui fait retirer aussi ce que contient un
-              dossier ; l’autre option de la ligne, -f, s’explique plus loin et ne change pas la
-              réponse ici. Les deux options se collent derrière un seul tiret : -rf se lit -r -f.
+              dossier ; l’autre option de la ligne, -f, ne change pas la réponse ici. Les deux
+              options se collent derrière un seul tiret : -rf se lit -r -f.
             </li>
           </ul>
         </div>
@@ -2574,9 +2579,10 @@ a.txt  b.txt</pre>
             <li>cd est la commande qui change le dossier où l’on est.</li>
             <li>
               Un chemin dit où se trouve un dossier ou un fichier, en écrivant les dossiers qui y
-              mènent, séparés par une barre /, comme site/css. Un chemin qui ne commence pas par une
-              barre, dit <strong>relatif</strong>, part du <strong>répertoire courant</strong>, le
-              dossier où l’on est, que pwd écrit.
+              mènent, séparés par une barre /, à suivre de gauche à droite : site/css est le dossier
+              css, dans le dossier site. Un chemin qui ne commence pas par une barre, dit
+              <strong>relatif</strong>, part du <strong>répertoire courant</strong>, le dossier où
+              l’on est, que pwd écrit.
             </li>
           </ul>
         </div>
@@ -2617,10 +2623,11 @@ a.txt  b.txt</pre>
           </ul>
         </div>
         <p>
-          Une commande qui crée, copie, déplace ou supprime lit ses chemins depuis le répertoire
-          courant, agit à l’endroit qu’ils désignent, et te laisse où tu es. Ce que tu veux
-          atteindre, tu l’écris dans le chemin : une fois dans atelier, tu peux faire tout le projet
-          sans taper <span class="mono">cd</span> ; il ne sert qu’à te placer quelque part.
+          Le shell, qui lit ta ligne, part du répertoire courant pour lire chaque chemin : une
+          commande qui crée, copie, déplace ou supprime agit à l’endroit que ses chemins désignent,
+          et te laisse où tu es. Ce que tu veux atteindre, tu l’écris dans le chemin : une fois dans
+          atelier, tu peux faire tout le projet sans taper <span class="mono">cd</span> ; il ne sert
+          qu’à te placer quelque part.
         </p>
       </div>
       <div data-ecran="Créer un dossier">
@@ -2757,7 +2764,7 @@ js</pre>
           data-aide3="Pour chacune des trois lignes mkdir, cherche un message sous elle, puis un signe, plus bas, que son dossier existe."
           data-sinon="Pas encore. Pour chaque ligne mkdir, un message est-il écrit dessous, et le dossier existe-t-il plus bas ?"
           data-explication="Deux lignes ont réussi, sans rien écrire : docs et docs/js existent. La troisième a écrit un message : lib n’a pas été créé."
-          data-variante-enonce="Pour lire : mkdir crée un dossier ; une commande qui réussit n’écrit rien, une qui échoue écrit un message. Farid, dans un atelier vide, tape mkdir src, mkdir lib/outils (message écrit), mkdir src/css, mkdir src/js. Combien ont réussi ?"
+          data-variante-enonce="Pour lire : une commande qui réussit n’écrit rien, une qui échoue écrit un message ; src/css est le dossier css, dans src. Farid tape mkdir src, mkdir lib/outils, mkdir src/css, mkdir src/js ; un message paraît sous la deuxième. Combien ont réussi ?"
           data-variante-accepte="3|trois|Trois"
           data-variante-reponse="3"
           data-variante-clavier="Le nombre de lignes"
@@ -2815,7 +2822,7 @@ js</pre>
           data-aide2="Les dossiers qui contiennent css, ce sont ceux que le chemin traverse avant lui : lesquels ?"
           data-aide3="Écris la liste des dossiers du chemin site/css, de gauche à droite, et demande-toi lesquels l’option -p crée."
           data-explication="-p crée tous les dossiers du chemin qui manquent : site, puis css dedans."
-          data-variante-enonce="Pour lire : l’option -p de mkdir, comme parents, concerne les dossiers qui contiennent le dossier à créer. Farid tape mkdir -p cours/js/lib dans un atelier vide. À ton avis, que contient atelier ensuite ?"
+          data-variante-enonce="Pour lire : -p, comme parents, concerne les dossiers qui contiennent le dossier à créer ; un chemin comme cours/js désigne le dossier js, dans cours. Farid tape mkdir -p cours/js/lib dans un atelier vide. À ton avis, que contient atelier ensuite ?"
           data-variante-reponse="chaine"
           data-variante-options="chaine=Un dossier cours, qui contient js, qui contient lib.|echec=Rien : cours n’existe pas, donc la commande échoue comme sans -p.|lib=Un dossier lib seul, dans atelier."
           data-variante-retours="echec=Que dit la phrase « pour lire » sur ce que concerne l’option -p ?|lib=Dans quel dossier le chemin cours/js/lib place-t-il lib ?"
@@ -2895,7 +2902,7 @@ site/css:</pre>
           data-aide3="Écris la commande, puis un chemin qui part d’atelier et descend jusqu’au nom du fichier."
           data-sinon="Pas encore. Ta ligne a-t-elle la commande, puis un chemin qui part d’atelier jusqu’au nom du fichier ?"
           data-explication="Le chemin part d’atelier : site, puis css, puis le nom du fichier. touch site/css/style.css crée style.css dans css."
-          data-variante-enonce="Pour lire : touch crée un fichier vide ; un chemin part du répertoire courant. Farid, dans atelier, sur son Mac, a le dossier site, avec les dossiers css et img dedans. Le projet impose logo.png dans img. Écris la ligne qui le crée."
+          data-variante-enonce="Pour lire : touch crée un fichier vide ; site/img est le dossier img, dans site, et un chemin part du répertoire courant. Farid, dans atelier, a site, avec css et img dedans. Le projet impose logo.png dans img. Écris la ligne qui le crée."
           data-variante-accepte="touch site/img/logo.png|touch ./site/img/logo.png|touch ~/atelier/site/img/logo.png|touch /Users/farid/atelier/site/img/logo.png"
           data-variante-reponse="touch site/img/logo.png"
           data-variante-clavier="La ligne"
@@ -2950,7 +2957,7 @@ site/css:</pre>
           data-aide2="Chaque nom est un chemin : que crée mkdir -p pour un chemin ?"
           data-aide3="Écris deux lignes séparées, une par nom, et demande-toi ce que chacune crée."
           data-explication="La ligne a deux noms, donc deux chemins : docs/css et docs/js. docs est créé une fois, avec css et js dedans."
-          data-variante-enonce="Pour lire : mkdir -p crée les dossiers manquants d’un chemin. Farid tape mkdir -p src/img src/js dans un atelier vide. À ton avis, que contient src ensuite ?"
+          data-variante-enonce="Pour lire : mkdir -p crée les dossiers manquants d’un chemin ; un chemin comme src/js désigne le dossier js, dans src. Farid tape mkdir -p src/img src/js dans un atelier vide. À ton avis, que contient src ensuite ?"
           data-variante-reponse="deux"
           data-variante-options="deux=Un dossier img et un dossier js.|un=Un seul dossier, img, parce que le second nom est ignoré.|aucun=Rien : une ligne ne crée qu’un seul chemin."
           data-variante-retours="un=Combien de noms la ligne contient-elle, et la commande en laisse-t-elle un de côté ?|aucun=Combien de chemins la ligne contient-elle, et que crée mkdir -p pour chacun ?"
@@ -3052,7 +3059,7 @@ site/img:</pre>
           data-aide3="Repère la ligne qui contient style.css, puis remonte jusqu’au premier titre qui se termine par deux-points."
           data-sinon="Pas encore. Sous quel titre la réponse de la fenêtre range-t-elle style.css ?"
           data-explication="style.css est sous le titre site/css : il est rangé dans le dossier css de site. Le titre site/img n’a pas de nom dessous : img est vide."
-          data-variante-enonce="Pour lire : ls -R écrit un titre par dossier, puis ses noms. Farid lit : cours: img js ; cours/img: sans aucun nom dessous ; cours/js: app.js. Dans quel dossier est rangé app.js ?"
+          data-variante-enonce="Pour lire : un titre se termine par deux-points et porte le chemin du dossier : cours/img: est le dossier img de cours. Farid lit : cours: img js ; cours/img: sans aucun nom dessous ; cours/js: app.js. Dans quel dossier est rangé app.js ?"
           data-variante-accepte="js|cours/js|le dossier js"
           data-variante-reponse="js"
           data-variante-clavier="Le nom du dossier"
@@ -3110,7 +3117,7 @@ logo.png  style.css</pre>
           data-aide3="Pour chacun des trois fichiers, cherche son nom dans la réponse de la fenêtre, puis lis le titre juste au-dessus de lui, et compare avec la consigne."
           data-sinon="Pas encore. Pour chaque fichier, sous quel titre la réponse de la fenêtre le range-t-elle, et est-ce celui de la consigne ?"
           data-explication="style.css est rangé sous le titre site/img, alors que le formateur le veut dans css : site/css n’a que son titre, il est vide."
-          data-variante-enonce="Pour lire : le formateur impose index.html, style.css et logo.png. Farid tape ls -R site et lit : site contient css, img et index.htm ; site/css contient style.css ; site/img contient logo.png. Quel nom est mal écrit ?"
+          data-variante-enonce="Pour lire : site/css désigne le dossier css, dans site. Le formateur impose index.html, style.css et logo.png. Farid tape ls -R site et lit : site contient css, img et index.htm ; site/css contient style.css ; site/img contient logo.png. Quel nom est mal écrit ?"
           data-variante-accepte="index.htm"
           data-variante-reponse="index.htm"
           data-variante-clavier="Le nom du fichier"
@@ -3160,6 +3167,10 @@ logo.png</pre>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
             </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
+              dossier site : on le suit de gauche à droite.
+            </li>
           </ul>
         </div>
         <pre
@@ -3185,7 +3196,7 @@ logo.png</pre>
           data-aide2="accueil.html est la destination : se trouve-t-il dans l’état de départ ?"
           data-aide3="Écris le contenu de site avant la ligne, puis ajoute ce que la copie y met."
           data-explication="La source reste en place, et la copie porte le nom de la destination : site contient index.html et accueil.html."
-          data-variante-enonce="Pour lire : cp prend la source, ce qu’il copie, puis la destination, où il met la copie. Farid a dans site un fichier index.html. Il tape cp site/index.html site/home.html. À ton avis, que contient site ensuite, en plus de css et img ?"
+          data-variante-enonce="Pour lire : cp prend la source, puis la destination ; un chemin comme site/home.html désigne le fichier home.html, dans site. Farid a dans site un fichier index.html. Il tape cp site/index.html site/home.html. Que contient site ensuite, en plus de css et img ?"
           data-variante-reponse="deux"
           data-variante-options="deux=index.html et home.html.|renomme=home.html seul : index.html a changé de nom.|echec=index.html seul : home.html n’existe pas, donc la copie échoue."
           data-variante-retours="renomme=Que devient la source quand on copie ?|echec=Qu’y a-t-il, dans l’état de départ, qui pourrait empêcher la copie ?"
@@ -3236,6 +3247,10 @@ logo.png</pre>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
             </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
+              dossier site : on le suit de gauche à droite.
+            </li>
           </ul>
         </div>
         <pre
@@ -3261,7 +3276,7 @@ logo.png</pre>
           data-aide2="Sans l’option qui descend dans les dossiers, cp sait-il copier un dossier ?"
           data-aide3="Compare la ligne tapée avec celle qu’il faudrait pour copier un dossier, morceau par morceau."
           data-explication="Sans -R, cp ne copie pas un dossier : il le dit, et sauvegarde n’est pas créée."
-          data-variante-enonce="Pour lire : l’option -R de cp se lit R comme récursif, descendre dans les sous-dossiers. Farid est dans atelier, qui contient site ; img est un dossier de site, avec logo.png dedans. Il tape cp site/img logo-copie. Que se passe-t-il ?"
+          data-variante-enonce="Pour lire : -R, comme récursif, fait descendre cp dans les sous-dossiers ; un chemin comme site/img désigne le dossier img, dans site. Farid est dans atelier, qui contient site, avec logo.png dans img. Il tape cp site/img logo-copie. Que se passe-t-il ?"
           data-variante-reponse="refuse"
           data-variante-options="copie=La copie est faite : logo-copie contient logo.png.|refuse=cp refuse : un message dit qu’il n’a pas copié img, et logo-copie n’existe pas.|fichier=cp copie logo.png sous le nom logo-copie."
           data-variante-retours="copie=Dans la ligne tapée, un morceau dit-il à cp de descendre dans les dossiers ?|fichier=cp choisit-il lui-même ce qu’il copie dans un dossier ?"
@@ -3323,6 +3338,10 @@ cp: -r not specified; omitting directory 'site'</pre>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
             </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
+              dossier site : on le suit de gauche à droite.
+            </li>
           </ul>
         </div>
         <pre
@@ -3351,7 +3370,7 @@ logo.png</pre>
           data-aide2="Le nom de la destination n’a pas le même statut la seconde fois : en quoi ?"
           data-aide3="Écris le contenu de css2 avant la ligne, puis ajoute ce que la copie y met, en te demandant sous quel nom."
           data-explication="La seconde fois, css2 existe : la copie s’y range avec son nom d’origine. css2 contient style.css et un dossier css."
-          data-variante-enonce="Pour lire : cp -R copie un dossier avec tout son contenu. Farid copie le dossier site/img, qui contient logo.png, avec cp -R site/img site/img2 : img2 n’existait pas. Il retape la même ligne. À ton avis, que contient site/img2 ensuite ?"
+          data-variante-enonce="Pour lire : cp -R copie un dossier avec son contenu ; site/img2 est le dossier img2, dans site. Farid tape cp -R site/img site/img2, img2 n’existant pas ; img contient logo.png. Il retape la même ligne. Que contient site/img2 ensuite ?"
           data-variante-reponse="dedans"
           data-variante-options="rien=Seulement logo.png : la seconde copie n’a rien changé de plus.|dedans=logo.png et un dossier img, qui contient lui aussi logo.png.|remplace=Seulement un dossier img, qui contient logo.png : l’ancien contenu a été remplacé."
           data-variante-retours="rien=Avant la seconde ligne, img2 existait-il déjà ? Et la première fois ?|remplace=Qu’est devenu logo.png, qui était déjà dans img2 ?"
@@ -3439,6 +3458,10 @@ logo.png</pre>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
             </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
+              dossier site : on le suit de gauche à droite.
+            </li>
           </ul>
         </div>
         <pre
@@ -3520,6 +3543,10 @@ $ cp -Rv site/img images
               <span class="mono">mv</span> déplace sa source, le premier nom, vers sa destination,
               le second.
             </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
+              dossier site : on le suit de gauche à droite.
+            </li>
           </ul>
         </div>
         <pre
@@ -3547,7 +3574,7 @@ css  home.html  img</pre>
           data-aide2="La destination est un nom qui existe déjà : de quelle sorte d’élément s’agit-il ?"
           data-aide3="Écris le contenu de site et de site/css avant la ligne, puis fais voyager home.html d’un dossier à l’autre."
           data-explication="css existe et c’est un dossier : home.html s’y range, et il n’est plus dans site."
-          data-variante-enonce="Pour lire : mv déplace sa source vers sa destination. Farid a dans site un fichier index.html et un dossier img. Il tape mv site/index.html site/img. À ton avis, où se trouve index.html ensuite ?"
+          data-variante-enonce="Pour lire : mv déplace sa source vers sa destination ; un chemin comme site/img désigne le dossier img, dans site. Farid a dans site un fichier index.html et un dossier img. Il tape mv site/index.html site/img. Où se trouve index.html ensuite ?"
           data-variante-reponse="img"
           data-variante-options="img=Seulement dans site/img.|deux=Dans site et dans site/img, comme après une copie.|nom=Nulle part : index.html a pris le nom img."
           data-variante-retours="deux=Que devient la source quand on déplace ce qu’elle désigne ?|nom=img existe-t-il déjà, et est-ce un dossier ?"
@@ -3594,6 +3621,10 @@ css  home.html  img</pre>
               <span class="mono">mv</span> source destination : la source est le premier nom, la
               destination le second.
             </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
+              dossier site : on le suit de gauche à droite.
+            </li>
           </ul>
         </div>
 
@@ -3613,7 +3644,7 @@ css  home.html  img  index.html</pre>
           data-aide2="La destination est un fichier qui existe déjà : qu’arrive-t-il au fichier qui porte déjà ce nom ?"
           data-aide3="Après un déplacement, la source n’existe plus à son ancienne place : lequel des deux noms reste ?"
           data-explication="La destination est un fichier qui existe : mv le remplace sans rien demander. home.html, la source, disparaît ; index.html reste."
-          data-variante-enonce="Pour lire : mv source destination : la source est le premier nom, la destination le second. Farid a dans css deux fichiers vides, style.css et reset.css. Il tape mv site/css/reset.css site/css/style.css. À ton avis, que contient site/css ensuite ?"
+          data-variante-enonce="Pour lire : mv prend la source, puis la destination ; un chemin comme site/css/style.css désigne le fichier style.css, dans css, dans site. Farid a dans css deux fichiers vides, style.css et reset.css. Il tape mv site/css/reset.css site/css/style.css. Que contient site/css ensuite ?"
           data-variante-reponse="un"
           data-variante-options="un=Seulement style.css : reset.css a pris la place de style.css, sans rien demander.|refus=style.css et reset.css : mv a refusé, un message l’explique.|reset=Seulement reset.css : style.css a disparu."
           data-variante-retours="refus=Que devient un fichier déjà présent sous le nom de la destination, quand un autre prend ce nom ?|reset=Quel fichier est la source, quel fichier est la destination ?"
@@ -3706,7 +3737,7 @@ css  home.html  img  index.html</pre>
           data-aide2="Si site allait dans css, le dossier css, qui est dans site, serait dans quoi ?"
           data-aide3="Dessine site, avec css dedans, puis essaie de ranger site dans css : où se trouverait alors site ?"
           data-explication="site contient css : le ranger dans css, ce serait le mettre dans lui-même. mv refuse, avec un message, et ne change rien."
-          data-variante-enonce="Pour lire : mv source destination : si la destination est un dossier, la source est rangée dedans. Farid a un dossier notes qui contient brouillons, et tape mv notes notes/brouillons. À ton avis, que fait la fenêtre ?"
+          data-variante-enonce="Pour lire : mv source destination : si la destination est un dossier, la source est rangée dedans ; un chemin comme notes/brouillons désigne le dossier brouillons, dans notes. Farid tape mv notes notes/brouillons. À ton avis, que fait la fenêtre ?"
           data-variante-reponse="refuse"
           data-variante-options="refuse=Elle refuse avec un message : notes ne peut pas aller dans son propre sous-dossier, et rien ne change.|range=Elle range notes dans brouillons, qui reste dans notes.|renomme=Elle renomme notes en brouillons."
           data-variante-retours="range=Où se trouve le dossier brouillons : dans notes, ou à côté de lui ?|renomme=La destination notes/brouillons est-elle un dossier qui existe ?"
@@ -3767,6 +3798,10 @@ mv: cannot move 'site' to a subdirectory of itself, 'site/css/site'</pre>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
             </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
+              dossier site : on le suit de gauche à droite.
+            </li>
           </ul>
         </div>
         <p class="discret">Lu depuis atelier, avant le cd :</p>
@@ -3801,7 +3836,7 @@ $ mv style.css ..</pre>
           data-aide2="Les deux points désignent le parent du répertoire courant, pas celui de site."
           data-aide3="Écris le chemin du répertoire courant, puis retire son dernier dossier : le chemin qui reste est celui de .."
           data-explication="Le répertoire courant est css : .. désigne son parent, site. style.css est rangé dans site."
-          data-variante-enonce="Pour lire : le point . désigne le répertoire courant, deux points .. son dossier parent. Farid est dans site/img, qui contient logo.png ; site contient index.html. Il tape cp ../index.html puis un point seul. À ton avis, que contient img ensuite ?"
+          data-variante-enonce="Pour lire : le point . désigne le répertoire courant, deux points .. son dossier parent. Farid est dans site/img, qui contient logo.png ; site contient index.html. Il tape la ligne cp ../index.html . À ton avis, que contient img ensuite ?"
           data-variante-reponse="deux"
           data-variante-options="deux=index.html et logo.png.|un=logo.png seul : le point n’est pas une destination.|index=index.html seul : la copie a remplacé logo.png."
           data-variante-retours="un=Que désigne le point, d’après la phrase « pour lire » ?|index=Le point désigne-t-il un fichier, ou un dossier ?"
@@ -3853,6 +3888,10 @@ $ mv style.css ..</pre>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
             </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
+              dossier site : on le suit de gauche à droite.
+            </li>
           </ul>
         </div>
         <pre
@@ -3884,7 +3923,7 @@ logo.png</pre>
           data-aide2="rm a-t-il, dans la ligne tapée, un morceau qui lui parle de confirmation ou de corbeille ?"
           data-aide3="mkdir, touch, cp et mv n’ont rien demandé avant d’agir : rm fait-il autrement dans la ligne tapée ?"
           data-explication="rm retire index.html et ne dit rien, comme toute commande qui réussit : pas de question, pas de corbeille, et le fichier n’est nulle part."
-          data-variante-enonce="Pour lire : rm retire le fichier qu’on lui donne ; la Corbeille garde les fichiers supprimés à la souris. Une commande qui réussit n’écrit rien dans la fenêtre. Farid, dans atelier, tape rm site/img/logo.png. À ton avis, où retrouve-t-il logo.png ensuite ?"
+          data-variante-enonce="Pour lire : rm retire un fichier ; la Corbeille garde les fichiers supprimés à la souris ; une commande qui réussit n’écrit rien ; site/img/logo.png est le fichier logo.png, dans img, dans site. Farid, dans atelier, tape rm site/img/logo.png. Où retrouve-t-il logo.png ?"
           data-variante-reponse="rien"
           data-variante-options="rien=Nulle part : logo.png n’est plus dans img, et rm ne l’a rangé nulle part.|demande=Nulle part pour l’instant : la fenêtre attend que Farid confirme avant de le retirer.|corbeille=Dans la Corbeille de son Mac."
           data-variante-retours="demande=mkdir, touch, cp et mv demandent-ils quelque chose avant de faire ce qu’on leur a dit ?|corbeille=rm est une commande tapée : la fenêtre connaît-elle une Corbeille ? Qu’est-ce qui, dans cette ligne, en parle ?"
@@ -3923,8 +3962,10 @@ logo.png</pre>
           <span class="mono">rm</span> retire le fichier pour de bon, sans corbeille et, dans ton
           atelier, sans demander de confirmation. La Corbeille de Windows, ou celle d’un Mac, sert
           quand on supprime un fichier avec la souris, sans taper de ligne :
-          <span class="mono">rm</span>, une commande tapée, ne s’en sert pas. Rien ne revient en
-          arrière : un fichier retiré ne se retrouve pas.
+          <span class="mono">rm</span>, une commande tapée que le shell lance, ne s’en sert pas.
+          Contrairement à <span class="mono">cp</span> et <span class="mono">mv</span>,
+          <span class="mono">rm</span> n’a pas de destination à regarder : il retire, et le nom
+          retiré n’existe plus. Rien ne revient en arrière : un fichier retiré ne se retrouve pas.
         </p>
         <p data-si-essai="p2:faux">
           Pour <span class="mono">rm brouillon.txt</span>, tu avais répondu
@@ -3948,6 +3989,10 @@ logo.png</pre>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
+              dossier site : on le suit de gauche à droite.
             </li>
           </ul>
         </div>
@@ -3980,7 +4025,7 @@ logo.png</pre>
           data-aide2="La ligne porte-t-elle l’option que l’encadré nomme, celle qui descend dans les dossiers ?"
           data-aide3="Compare la ligne tapée avec celle qu’il faudrait pour retirer un dossier : que manque-t-il ?"
           data-explication="Sans -r, rm ne retire pas un dossier : il le dit, et sauvegarde reste en place."
-          data-variante-enonce="Pour lire : l’option -r de rm se lit récursif, descendre dans les sous-dossiers. Farid est dans atelier, qui contient site avec css, img et index.html. Il tape rm site/css. À ton avis, que se passe-t-il ?"
+          data-variante-enonce="Pour lire : -r, comme récursif, fait descendre rm dans les sous-dossiers ; un chemin comme site/css désigne le dossier css, dans site. Farid est dans atelier, qui contient site avec css, img et index.html. Il tape rm site/css. Que se passe-t-il ?"
           data-variante-reponse="refuse"
           data-variante-options="retire=Le dossier css est retiré, avec style.css.|refuse=rm refuse : un message dit que css est un dossier, et rien n’est retiré.|fichiers=rm retire style.css, le seul fichier de css, et laisse le dossier."
           data-variante-retours="retire=Dans la ligne tapée, un morceau dit-il à rm de descendre dans les dossiers ?|fichiers=rm choisit-il lui-même ce qu’il retire dans un dossier ?"
@@ -4051,6 +4096,10 @@ $ rm -r sauvegarde</pre>
               et « No such file or directory » veut dire « il n’existe pas de tel fichier ou dossier
               ».
             </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
+              dossier site : on le suit de gauche à droite.
+            </li>
           </ul>
         </div>
         <p>
@@ -4074,7 +4123,7 @@ rm: cannot remove 'site/css/old.css': No such file or directory</pre>
           data-aide2="Qu’est-ce que forcer change à ce que rm écrit sur un nom absent ?"
           data-aide3="Pour chacun des trois noms, demande-toi si rm a encore quelque chose à signaler une fois -f ajouté."
           data-explication="Avec -f, rm ne dit rien, même quand des noms n’existent pas : la fenêtre n’écrit rien, et style.css est retiré."
-          data-variante-enonce="Pour lire : -f, comme force, empêche rm de se plaindre d’un nom absent. Farid tape rm -f site/img/old.png site/img/logo.png site/img/tmp.png, alors qu’old.png et tmp.png n’existent pas. Que se passe-t-il ?"
+          data-variante-enonce="Pour lire : -f, comme force, empêche rm de se plaindre d’un nom absent ; site/img/old.png est le fichier old.png, dans img, dans site. Farid tape rm -f site/img/old.png site/img/logo.png site/img/tmp.png, alors qu’old.png et tmp.png n’existent pas. Que se passe-t-il ?"
           data-variante-reponse="rien"
           data-variante-options="rien=La fenêtre n’écrit rien, et logo.png est retiré.|messages=La fenêtre écrit un message pour old.png et un pour tmp.png, et logo.png est retiré.|arret=La fenêtre écrit un message pour old.png, puis rm s’arrête : logo.png n’est pas retiré."
           data-variante-retours="messages=Qu’est-ce que forcer change à une plainte sur un nom absent ?|arret=Dans la ligne sans option, rm s’est-il arrêté au premier nom absent ?"
@@ -4122,6 +4171,17 @@ $ rm -f site/css/old.css site/css/style.css site/css/tmp.css</pre>
           <span class="mono">-f</span> : il détruit un dossier et tout son contenu sans rien dire,
           ce qui le rend dangereux à lancer sans l’avoir lu.
         </p>
+        <p>
+          Sans <span class="mono">-f</span>, avec <span class="mono">-r</span> devant, un nom absent
+          fait écrire le même message. Voici la réponse, depuis un dossier qui n’a pas de dossier
+          photos :
+        </p>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : rm -r photos. La fenêtre répond : rm: cannot remove &#x27;photos&#x27;: No such file or directory."
+        >
+$ rm -r photos
+rm: cannot remove 'photos': No such file or directory</pre>
       </div>
       <div data-ecran="sudo">
         <p class="accroche">
@@ -4137,8 +4197,8 @@ $ rm -f site/css/old.css site/css/style.css site/css/tmp.css</pre>
               qui a tous les droits.
             </li>
             <li>
-              Les fichiers du système appartiennent à l’administrateur : un compte ordinaire n’a pas
-              le droit de les modifier, ils sont <strong>protégés</strong>.
+              Les fichiers du système appartiennent à l’administrateur : on les dit
+              <strong>protégés</strong>.
             </li>
             <li>
               Un chemin qui commence par une barre désigne le même élément d’où qu’on le tape :
@@ -4160,16 +4220,16 @@ $ sudo rm /etc/hostname</pre>
           data-prediction
           data-reponse="tout"
           data-aide1="Sous quel compte rm travaille-t-il sans sudo, et sous quel compte avec sudo ?"
-          data-aide2="Un fichier du système appartient à l’administrateur : l’utilisateur ordinaire a-t-il le droit de le supprimer ? Et l’administrateur ?"
+          data-aide2="Qui lance rm dans chaque ligne, et a-t-il le droit de toucher ce fichier ?"
           data-aide3="Pour chaque ligne, écris sous quel compte rm travaille, puis demande-toi si ce compte a le droit."
           data-explication="Sans sudo, rm travaille sous le compte de Yasmine, qui n’a pas le droit : il refuse. Avec sudo, il travaille en administrateur et peut supprimer le fichier."
-          data-variante-enonce="Pour lire : sudo lance la commande en administrateur ; /var/www est protégé, un compte ordinaire ne le modifie pas ; un chemin qui commence par une barre ne dépend pas d’où l’on est. Farid lit sudo rm -r /var/www/site. Que change sudo ?"
+          data-variante-enonce="Pour lire : sudo lance la commande en administrateur ; /var/www appartient à l’administrateur ; un chemin qui commence par une barre ne dépend pas d’où l’on est. Farid lit sudo rm -r /var/www/site. Que change sudo ?"
           data-variante-reponse="tout"
           data-variante-options="tout=Sans sudo, rm refuse de toucher ces fichiers ; avec sudo, il supprime le dossier et son contenu.|rien=Rien : rm supprime le dossier dans les deux cas.|demande=Avec sudo, rm demande une confirmation avant de supprimer."
           data-variante-retours="rien=À qui appartiennent ces fichiers, et qui a le droit de les supprimer ?|demande=Sous quel compte sudo lance-t-il la commande ?"
           data-variante-erreurs="rien=E2|demande=E2"
           data-variante-aide1="À qui appartiennent les fichiers de /var/www ?"
-          data-variante-aide2="L’utilisateur ordinaire a-t-il le droit de les supprimer ? Et l’administrateur ?"
+          data-variante-aide2="Qui lance rm dans chaque ligne, et a-t-il le droit de toucher ces fichiers ?"
           data-variante-aide3="Pour chaque ligne, écris sous quel compte rm travaille, puis demande-toi si ce compte a le droit."
           data-variante-explication="Sans sudo, rm travaille sous le compte de Farid, qui n’a pas le droit : il refuse. Avec sudo, il travaille en administrateur et supprime le dossier."
         >
@@ -4235,6 +4295,10 @@ $ sudo rm /etc/hostname</pre>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
             </li>
+            <li>
+              Un chemin comme <span class="mono">../img</span> désigne le dossier img, dans le
+              dossier parent du répertoire courant.
+            </li>
           </ul>
         </div>
         <p class="discret">Yasmine s’est placée dans css, puis elle lit le dossier parent :</p>
@@ -4259,7 +4323,7 @@ logo.png</pre>
           data-widget="saisie"
           data-id="lire"
           data-prediction
-          data-accepte="/home/yasmine/atelier/site/img|/home/yasmine/atelier/site/img/|~/atelier/site/img|~/atelier/site/img/|site/img|./site/img|site/img/|./site/img/"
+          data-accepte="/home/yasmine/atelier/site/img|/home/yasmine/atelier/site/img/"
           data-clavier="Le chemin"
           data-si-css="site/css/img|css/img"
           data-retour-css="Les deux points désignent-ils le répertoire courant, ou son parent ?"
@@ -4271,7 +4335,7 @@ logo.png</pre>
           data-sinon="Pas encore. D’où part le chemin ../img, et dans quel dossier te trouves-tu ?"
           data-explication="Yasmine est dans /home/yasmine/atelier/site/css : .. désigne site, et ../img est /home/yasmine/atelier/site/img. La ligne détruit img et logo.png."
           data-variante-enonce="Pour lire : un chemin qui ne commence pas par une barre part du répertoire courant ; .. désigne son dossier parent. Farid est dans /Users/farid/atelier/site/img et lit rm -rf ../css. Écris le chemin complet du dossier détruit, comme pwd l’écrirait."
-          data-variante-accepte="/Users/farid/atelier/site/css|/Users/farid/atelier/site/css/|~/atelier/site/css|~/atelier/site/css/|site/css|./site/css|site/css/|./site/css/"
+          data-variante-accepte="/Users/farid/atelier/site/css|/Users/farid/atelier/site/css/"
           data-variante-reponse="/Users/farid/atelier/site/css"
           data-variante-clavier="Le chemin"
           data-variante-si-css="site/img/css|img/css"
@@ -4302,9 +4366,7 @@ logo.png</pre>
           </li>
           <li>
             Les chemins : un chemin relatif part du répertoire courant ; un chemin qui commence par
-            une barre ne dépend pas de l’endroit où l’on est ; <span class="mono">~</span> désigne
-            le dossier personnel de celui qui tape, celui qui contient tous ses dossiers à lui :
-            <span class="mono">/home/yasmine</span> pour Yasmine.
+            une barre ne dépend pas de l’endroit où l’on est.
           </li>
           <li>
             Le dossier où tu es : <span class="mono">pwd</span> te le dit, et lui seul donne son
@@ -4345,6 +4407,10 @@ logo.png</pre>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
             </li>
+            <li>
+              Un chemin comme <span class="mono">site/img</span> désigne le dossier img, dans le
+              dossier site : on le suit de gauche à droite.
+            </li>
           </ul>
         </div>
         <pre
@@ -4370,7 +4436,7 @@ logo.png</pre>
           data-aide2="La seconde ligne parle d’un nom : existe-t-il encore à ce moment-là ?"
           data-aide3="Écris l’état de site après la première ligne, puis applique la seconde à cet état-là, pas à l’état de départ."
           data-explication="Après mv, img s’appelle images : la ligne rm site/img échoue, parce que img n’existe plus, et une commande qui échoue ne change rien."
-          data-variante-enonce="Pour lire : mv déplace sa source vers sa destination ; rm retire ce qu’on lui donne. Farid a dans site css, img et index.html. Il prédit mv site/css site/styles, puis rm site/css. Que contient site après les deux lignes ?"
+          data-variante-enonce="Pour lire : mv déplace sa source vers sa destination ; rm retire ce qu’on lui donne ; site/css est le dossier css, dans site. Farid a dans site css, img et index.html. Il prédit mv site/css site/styles, puis rm site/css. Que contient site ?"
           data-variante-reponse="un"
           data-variante-options="un=img, index.html et styles.|deux=img et index.html : rm a retiré css.|trois=css, img, index.html et styles : mv a copié css."
           data-variante-retours="deux=Après la première ligne, css existe-t-il encore ? De quoi parle la seconde ligne ?|trois=Que devient la source après un déplacement ?"
@@ -4414,15 +4480,6 @@ rm: cannot remove 'site/img': No such file or directory</pre>
           n’existe pas de tel fichier ou dossier. Le premier mv l’a déjà rebaptisé images.
         </p>
         <p>On peut donc dire l’état avant d’appuyer sur Entrée, sans rien taper.</p>
-        <p>
-          L’état se dit depuis un dossier précis : un chemin part du répertoire courant, donc la
-          même ligne ne désigne pas les mêmes éléments depuis atelier ou depuis css. Yasmine vérifie
-          où elle est avec <span class="mono">pwd</span>.
-        </p>
-        <p>
-          Autre différence avec cp et mv : <span class="mono">rm</span>, lui, n’a pas de destination
-          à regarder. Il retire, et le nom retiré n’existe plus.
-        </p>
       </div>
     </template>
     <template data-etape="ET9">
@@ -4460,6 +4517,11 @@ C:\atelier&gt; rmdir /s site\css2</pre>
             <li>
               Les lignes de la fenêtre d’Ubuntu s’écrivent en <strong>bash</strong> ; le Terminal
               d’un Mac lit les mêmes lignes pour tout ce bloc.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">site\css</span> désigne le dossier css, dans le
+              dossier site, comme <span class="mono">site/css</span> dans bash : on le suit de
+              gauche à droite.
             </li>
           </ul>
         </div>
@@ -4507,7 +4569,7 @@ C:\atelier&gt; rmdir /s site\css2</pre>
           data-aide3="Écris le nom de la commande de Cmd, puis chaque chemin de la ligne de bash avec les barres de Cmd."
           data-sinon="Pas encore. Le nom de la commande et les barres des chemins sont-ils ceux de Cmd ?"
           data-explication="mv se dit move dans Cmd, et les chemins s’écrivent avec l’antislash : move site\css site\styles."
-          data-variante-enonce="Pour lire : Cmd écrit les chemins avec l’antislash ; copy est son nom pour cp. Farid lit en bash la ligne cp site/index.html site/home.html. Écris la ligne équivalente, pour Cmd."
+          data-variante-enonce="Pour lire : Cmd écrit les chemins avec l’antislash, site\home.html pour le fichier home.html dans site ; copy est son nom pour cp. Farid lit en bash la ligne cp site/index.html site/home.html. Écris la ligne équivalente, pour Cmd."
           data-variante-accepte="copy site\index.html site\home.html|copy site\index.html .\site\home.html|copy .\site\index.html site\home.html|copy .\site\index.html .\site\home.html"
           data-variante-reponse="copy site\index.html site\home.html"
           data-variante-clavier="La ligne de Cmd"
@@ -4545,6 +4607,12 @@ C:\atelier&gt; rmdir /s site\css2</pre>
               La ligne de Cmd est <span class="mono">rmdir /s site\css2</span> ; la ligne de bash
               qui fait la même chose est <span class="mono">rm -r site/css2</span>.
             </li>
+            <li>
+              Un chemin comme <span class="mono">site\css2</span> (<span class="mono"
+                >site/css2</span
+              >
+              dans bash) désigne le dossier css2, dans le dossier site.
+            </li>
           </ul>
         </div>
         <div
@@ -4557,7 +4625,7 @@ C:\atelier&gt; rmdir /s site\css2</pre>
           data-aide2="Un morceau a un autre nom, un autre est une option écrite autrement, un autre est un chemin écrit autrement."
           data-aide3="Prends les morceaux dans l’ordre de la ligne de Cmd et, pour chacun, cherche son vis-à-vis dans la ligne de bash."
           data-explication="rmdir remplace rm, /s remplace -r, et l’antislash remplace la barre : trois différences, une par morceau."
-          data-variante-enonce="Pour lire : la ligne de bash est mv site/css site/styles, celle de Cmd est move site\css site\styles. Dis ce qui a changé dans chaque morceau de la ligne de Cmd."
+          data-variante-enonce="Pour lire : un chemin comme site/css désigne css, dans site. La ligne de bash est mv site/css site/styles, celle de Cmd est move site\css site\styles. Dis ce qui a changé dans chaque morceau de la ligne de Cmd."
           data-variante-colonnes="nom=Le nom de la commande|sep=Le séparateur de chemin"
           data-variante-reponse="a=nom,b=sep,c=sep"
           data-variante-elements="a~move|b~site\css|c~site\styles"
@@ -4610,15 +4678,15 @@ C:\atelier&gt; rmdir /s site\css2</pre>
           Une ligne écrite pour l’un ne marche pas dans l’autre. Sous Ubuntu, la ligne
           <span class="mono">copy site sauvegarde</span> fait répondre à la fenêtre que la commande
           est introuvable (« not found ») : la phrase exacte varie, et elle peut proposer un
-          programme à installer. Bash ne connaît pas <span class="mono">copy</span>, et rien n’est
-          copié ; il ne connaît pas non plus <span class="mono">del</span> ni
-          <span class="mono">move</span>. Il connaît bien un <span class="mono">rmdir</span>, mais
-          celui-là ne retire qu’un dossier vide et ne comprend pas <span class="mono">/s</span> : la
-          ligne <span class="mono">rmdir /s site\css2</span> y échoue aussi, sans rien retirer. Le
-          Terminal d’un Mac répond lui aussi que <span class="mono">copy</span> est introuvable,
-          avec une autre phrase. L’inverse est vrai aussi : Cmd ne connaît ni
-          <span class="mono">cp</span>, ni <span class="mono">mv</span>, ni
-          <span class="mono">rm</span>. Avant de taper une ligne d’un tutoriel, regarde donc pour
+          programme à installer. Bash, le shell d’Ubuntu, ne connaît pas
+          <span class="mono">copy</span>, et rien n’est copié ; il ne connaît pas non plus
+          <span class="mono">del</span> ni <span class="mono">move</span>. Il connaît bien un
+          <span class="mono">rmdir</span>, mais celui-là ne retire qu’un dossier vide et ne comprend
+          pas <span class="mono">/s</span> : la ligne <span class="mono">rmdir /s site\css2</span> y
+          échoue aussi, sans rien retirer. Le Terminal d’un Mac répond lui aussi que
+          <span class="mono">copy</span> est introuvable, avec une autre phrase. L’inverse est vrai
+          aussi : Cmd ne connaît ni <span class="mono">cp</span>, ni <span class="mono">mv</span>,
+          ni <span class="mono">rm</span>. Avant de taper une ligne d’un tutoriel, regarde donc pour
           quelle fenêtre elle est écrite.
         </p>
         <p>
@@ -4649,7 +4717,7 @@ C:\atelier&gt; rmdir /s site\css2</pre>
         data-aide1="Écris, pour chaque dossier demandé, le chemin qui part d’atelier : lesquels existent déjà, dans un atelier vide ?"
         data-aide2="Une option de mkdir crée les dossiers du chemin qui manquent."
         data-aide3="Écris la commande, l’option qui crée les dossiers manquants, puis les deux chemins complets, séparés par des espaces."
-        data-sinon="Pas encore. Chaque nom de ta ligne peut-il être créé quand son tour vient, et ta ligne crée-t-elle exactement les dossiers demandés, ni plus ni moins ?"
+        data-sinon="Pas encore. Chaque nom de ta ligne peut-il être créé quand son tour vient, et ta ligne crée-t-elle exactement les dossiers demandés, ni plus ni moins ? Si oui, écris tous tes chemins de la même façon : tous avec ./ devant ou tous sans, tous avec une barre finale ou tous sans."
       >
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -4662,6 +4730,10 @@ C:\atelier&gt; rmdir /s site\css2</pre>
             <li>
               mkdir et touch reçoivent autant de noms qu’on veut, séparés par des espaces, et les
               traitent l’un après l’autre.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">docs/css</span> désigne le dossier css, dans le
+              dossier docs : on le suit de gauche à droite.
             </li>
           </ul>
         </div>
@@ -4686,7 +4758,7 @@ C:\atelier&gt; rmdir /s site\css2</pre>
         data-aide1="Écris, pour chaque dossier demandé, le chemin qui part d’atelier : lesquels existent déjà, dans un atelier vide ?"
         data-aide2="Une option de mkdir crée les dossiers du chemin qui manquent."
         data-aide3="Écris la commande, l’option qui crée les dossiers manquants, puis les deux chemins complets, séparés par des espaces."
-        data-sinon="Pas encore. Chaque nom de ta ligne peut-il être créé quand son tour vient, et ta ligne crée-t-elle exactement les dossiers demandés, ni plus ni moins ?"
+        data-sinon="Pas encore. Chaque nom de ta ligne peut-il être créé quand son tour vient, et ta ligne crée-t-elle exactement les dossiers demandés, ni plus ni moins ? Si oui, écris tous tes chemins de la même façon : tous avec ./ devant ou tous sans, tous avec une barre finale ou tous sans."
       >
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -4699,6 +4771,10 @@ C:\atelier&gt; rmdir /s site\css2</pre>
             <li>
               mkdir et touch reçoivent autant de noms qu’on veut, séparés par des espaces, et les
               traitent l’un après l’autre.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">docs/css</span> désigne le dossier css, dans le
+              dossier docs : on le suit de gauche à droite.
             </li>
           </ul>
         </div>
@@ -4730,6 +4806,10 @@ C:\atelier&gt; rmdir /s site\css2</pre>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
+              dossier site : on le suit de gauche à droite.
             </li>
           </ul>
         </div>
@@ -4804,6 +4884,10 @@ style.css</pre>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">cours/js</span> désigne le dossier js, dans le
+              dossier cours : on le suit de gauche à droite.
             </li>
           </ul>
         </div>
@@ -4979,11 +5063,11 @@ $ ls cours</pre>
         class="ex"
         data-widget="saisie"
         data-verifie
-        data-accepte="cp -Rv site/css css-copie|cp -Rv site/css ./css-copie|cp -Rv site/css css-copie/|cp -Rv site/css ./css-copie/|cp -Rv site/css ~/atelier/css-copie|cp -Rv site/css ~/atelier/css-copie/|cp -Rv site/css /home/yasmine/atelier/css-copie|cp -Rv site/css /home/yasmine/atelier/css-copie/|cp -Rv ./site/css css-copie|cp -Rv ./site/css ./css-copie|cp -Rv ./site/css css-copie/|cp -Rv ./site/css ./css-copie/|cp -Rv ./site/css ~/atelier/css-copie|cp -Rv ./site/css ~/atelier/css-copie/|cp -Rv ./site/css /home/yasmine/atelier/css-copie|cp -Rv ./site/css /home/yasmine/atelier/css-copie/|cp -Rv site/css/ css-copie|cp -Rv site/css/ ./css-copie|cp -Rv site/css/ css-copie/|cp -Rv site/css/ ./css-copie/|cp -Rv site/css/ ~/atelier/css-copie|cp -Rv site/css/ ~/atelier/css-copie/|cp -Rv site/css/ /home/yasmine/atelier/css-copie|cp -Rv site/css/ /home/yasmine/atelier/css-copie/|cp -Rv ./site/css/ css-copie|cp -Rv ./site/css/ ./css-copie|cp -Rv ./site/css/ css-copie/|cp -Rv ./site/css/ ./css-copie/|cp -Rv ./site/css/ ~/atelier/css-copie|cp -Rv ./site/css/ ~/atelier/css-copie/|cp -Rv ./site/css/ /home/yasmine/atelier/css-copie|cp -Rv ./site/css/ /home/yasmine/atelier/css-copie/|cp -Rv ~/atelier/site/css css-copie|cp -Rv ~/atelier/site/css ./css-copie|cp -Rv ~/atelier/site/css css-copie/|cp -Rv ~/atelier/site/css ./css-copie/|cp -Rv ~/atelier/site/css ~/atelier/css-copie|cp -Rv ~/atelier/site/css ~/atelier/css-copie/|cp -Rv ~/atelier/site/css /home/yasmine/atelier/css-copie|cp -Rv ~/atelier/site/css /home/yasmine/atelier/css-copie/|cp -Rv ~/atelier/site/css/ css-copie|cp -Rv ~/atelier/site/css/ ./css-copie|cp -Rv ~/atelier/site/css/ css-copie/|cp -Rv ~/atelier/site/css/ ./css-copie/|cp -Rv ~/atelier/site/css/ ~/atelier/css-copie|cp -Rv ~/atelier/site/css/ ~/atelier/css-copie/|cp -Rv ~/atelier/site/css/ /home/yasmine/atelier/css-copie|cp -Rv ~/atelier/site/css/ /home/yasmine/atelier/css-copie/|cp -Rv /home/yasmine/atelier/site/css css-copie|cp -Rv /home/yasmine/atelier/site/css ./css-copie|cp -Rv /home/yasmine/atelier/site/css css-copie/|cp -Rv /home/yasmine/atelier/site/css ./css-copie/|cp -Rv /home/yasmine/atelier/site/css ~/atelier/css-copie|cp -Rv /home/yasmine/atelier/site/css ~/atelier/css-copie/|cp -Rv /home/yasmine/atelier/site/css /home/yasmine/atelier/css-copie|cp -Rv /home/yasmine/atelier/site/css /home/yasmine/atelier/css-copie/|cp -Rv /home/yasmine/atelier/site/css/ css-copie|cp -Rv /home/yasmine/atelier/site/css/ ./css-copie|cp -Rv /home/yasmine/atelier/site/css/ css-copie/|cp -Rv /home/yasmine/atelier/site/css/ ./css-copie/|cp -Rv /home/yasmine/atelier/site/css/ ~/atelier/css-copie|cp -Rv /home/yasmine/atelier/site/css/ ~/atelier/css-copie/|cp -Rv /home/yasmine/atelier/site/css/ /home/yasmine/atelier/css-copie|cp -Rv /home/yasmine/atelier/site/css/ /home/yasmine/atelier/css-copie/|cp -vR site/css css-copie|cp -vR site/css ./css-copie|cp -vR site/css css-copie/|cp -vR site/css ./css-copie/|cp -vR site/css ~/atelier/css-copie|cp -vR site/css ~/atelier/css-copie/|cp -vR site/css /home/yasmine/atelier/css-copie|cp -vR site/css /home/yasmine/atelier/css-copie/|cp -vR ./site/css css-copie|cp -vR ./site/css ./css-copie|cp -vR ./site/css css-copie/|cp -vR ./site/css ./css-copie/|cp -vR ./site/css ~/atelier/css-copie|cp -vR ./site/css ~/atelier/css-copie/|cp -vR ./site/css /home/yasmine/atelier/css-copie|cp -vR ./site/css /home/yasmine/atelier/css-copie/|cp -vR site/css/ css-copie|cp -vR site/css/ ./css-copie|cp -vR site/css/ css-copie/|cp -vR site/css/ ./css-copie/|cp -vR site/css/ ~/atelier/css-copie|cp -vR site/css/ ~/atelier/css-copie/|cp -vR site/css/ /home/yasmine/atelier/css-copie|cp -vR site/css/ /home/yasmine/atelier/css-copie/|cp -vR ./site/css/ css-copie|cp -vR ./site/css/ ./css-copie|cp -vR ./site/css/ css-copie/|cp -vR ./site/css/ ./css-copie/|cp -vR ./site/css/ ~/atelier/css-copie|cp -vR ./site/css/ ~/atelier/css-copie/|cp -vR ./site/css/ /home/yasmine/atelier/css-copie|cp -vR ./site/css/ /home/yasmine/atelier/css-copie/|cp -vR ~/atelier/site/css css-copie|cp -vR ~/atelier/site/css ./css-copie|cp -vR ~/atelier/site/css css-copie/|cp -vR ~/atelier/site/css ./css-copie/|cp -vR ~/atelier/site/css ~/atelier/css-copie|cp -vR ~/atelier/site/css ~/atelier/css-copie/|cp -vR ~/atelier/site/css /home/yasmine/atelier/css-copie|cp -vR ~/atelier/site/css /home/yasmine/atelier/css-copie/|cp -vR ~/atelier/site/css/ css-copie|cp -vR ~/atelier/site/css/ ./css-copie|cp -vR ~/atelier/site/css/ css-copie/|cp -vR ~/atelier/site/css/ ./css-copie/|cp -vR ~/atelier/site/css/ ~/atelier/css-copie|cp -vR ~/atelier/site/css/ ~/atelier/css-copie/|cp -vR ~/atelier/site/css/ /home/yasmine/atelier/css-copie|cp -vR ~/atelier/site/css/ /home/yasmine/atelier/css-copie/|cp -vR /home/yasmine/atelier/site/css css-copie|cp -vR /home/yasmine/atelier/site/css ./css-copie|cp -vR /home/yasmine/atelier/site/css css-copie/|cp -vR /home/yasmine/atelier/site/css ./css-copie/|cp -vR /home/yasmine/atelier/site/css ~/atelier/css-copie|cp -vR /home/yasmine/atelier/site/css ~/atelier/css-copie/|cp -vR /home/yasmine/atelier/site/css /home/yasmine/atelier/css-copie|cp -vR /home/yasmine/atelier/site/css /home/yasmine/atelier/css-copie/|cp -vR /home/yasmine/atelier/site/css/ css-copie|cp -vR /home/yasmine/atelier/site/css/ ./css-copie|cp -vR /home/yasmine/atelier/site/css/ css-copie/|cp -vR /home/yasmine/atelier/site/css/ ./css-copie/|cp -vR /home/yasmine/atelier/site/css/ ~/atelier/css-copie|cp -vR /home/yasmine/atelier/site/css/ ~/atelier/css-copie/|cp -vR /home/yasmine/atelier/site/css/ /home/yasmine/atelier/css-copie|cp -vR /home/yasmine/atelier/site/css/ /home/yasmine/atelier/css-copie/|cp -R -v site/css css-copie|cp -R -v site/css ./css-copie|cp -R -v site/css css-copie/|cp -R -v site/css ./css-copie/|cp -R -v site/css ~/atelier/css-copie|cp -R -v site/css ~/atelier/css-copie/|cp -R -v site/css /home/yasmine/atelier/css-copie|cp -R -v site/css /home/yasmine/atelier/css-copie/|cp -R -v ./site/css css-copie|cp -R -v ./site/css ./css-copie|cp -R -v ./site/css css-copie/|cp -R -v ./site/css ./css-copie/|cp -R -v ./site/css ~/atelier/css-copie|cp -R -v ./site/css ~/atelier/css-copie/|cp -R -v ./site/css /home/yasmine/atelier/css-copie|cp -R -v ./site/css /home/yasmine/atelier/css-copie/|cp -R -v site/css/ css-copie|cp -R -v site/css/ ./css-copie|cp -R -v site/css/ css-copie/|cp -R -v site/css/ ./css-copie/|cp -R -v site/css/ ~/atelier/css-copie|cp -R -v site/css/ ~/atelier/css-copie/|cp -R -v site/css/ /home/yasmine/atelier/css-copie|cp -R -v site/css/ /home/yasmine/atelier/css-copie/|cp -R -v ./site/css/ css-copie|cp -R -v ./site/css/ ./css-copie|cp -R -v ./site/css/ css-copie/|cp -R -v ./site/css/ ./css-copie/|cp -R -v ./site/css/ ~/atelier/css-copie|cp -R -v ./site/css/ ~/atelier/css-copie/|cp -R -v ./site/css/ /home/yasmine/atelier/css-copie|cp -R -v ./site/css/ /home/yasmine/atelier/css-copie/|cp -R -v ~/atelier/site/css css-copie|cp -R -v ~/atelier/site/css ./css-copie|cp -R -v ~/atelier/site/css css-copie/|cp -R -v ~/atelier/site/css ./css-copie/|cp -R -v ~/atelier/site/css ~/atelier/css-copie|cp -R -v ~/atelier/site/css ~/atelier/css-copie/|cp -R -v ~/atelier/site/css /home/yasmine/atelier/css-copie|cp -R -v ~/atelier/site/css /home/yasmine/atelier/css-copie/|cp -R -v ~/atelier/site/css/ css-copie|cp -R -v ~/atelier/site/css/ ./css-copie|cp -R -v ~/atelier/site/css/ css-copie/|cp -R -v ~/atelier/site/css/ ./css-copie/|cp -R -v ~/atelier/site/css/ ~/atelier/css-copie|cp -R -v ~/atelier/site/css/ ~/atelier/css-copie/|cp -R -v ~/atelier/site/css/ /home/yasmine/atelier/css-copie|cp -R -v ~/atelier/site/css/ /home/yasmine/atelier/css-copie/|cp -R -v /home/yasmine/atelier/site/css css-copie|cp -R -v /home/yasmine/atelier/site/css ./css-copie|cp -R -v /home/yasmine/atelier/site/css css-copie/|cp -R -v /home/yasmine/atelier/site/css ./css-copie/|cp -R -v /home/yasmine/atelier/site/css ~/atelier/css-copie|cp -R -v /home/yasmine/atelier/site/css ~/atelier/css-copie/|cp -R -v /home/yasmine/atelier/site/css /home/yasmine/atelier/css-copie|cp -R -v /home/yasmine/atelier/site/css /home/yasmine/atelier/css-copie/|cp -R -v /home/yasmine/atelier/site/css/ css-copie|cp -R -v /home/yasmine/atelier/site/css/ ./css-copie|cp -R -v /home/yasmine/atelier/site/css/ css-copie/|cp -R -v /home/yasmine/atelier/site/css/ ./css-copie/|cp -R -v /home/yasmine/atelier/site/css/ ~/atelier/css-copie|cp -R -v /home/yasmine/atelier/site/css/ ~/atelier/css-copie/|cp -R -v /home/yasmine/atelier/site/css/ /home/yasmine/atelier/css-copie|cp -R -v /home/yasmine/atelier/site/css/ /home/yasmine/atelier/css-copie/|cp -v -R site/css css-copie|cp -v -R site/css ./css-copie|cp -v -R site/css css-copie/|cp -v -R site/css ./css-copie/|cp -v -R site/css ~/atelier/css-copie|cp -v -R site/css ~/atelier/css-copie/|cp -v -R site/css /home/yasmine/atelier/css-copie|cp -v -R site/css /home/yasmine/atelier/css-copie/|cp -v -R ./site/css css-copie|cp -v -R ./site/css ./css-copie|cp -v -R ./site/css css-copie/|cp -v -R ./site/css ./css-copie/|cp -v -R ./site/css ~/atelier/css-copie|cp -v -R ./site/css ~/atelier/css-copie/|cp -v -R ./site/css /home/yasmine/atelier/css-copie|cp -v -R ./site/css /home/yasmine/atelier/css-copie/|cp -v -R site/css/ css-copie|cp -v -R site/css/ ./css-copie|cp -v -R site/css/ css-copie/|cp -v -R site/css/ ./css-copie/|cp -v -R site/css/ ~/atelier/css-copie|cp -v -R site/css/ ~/atelier/css-copie/|cp -v -R site/css/ /home/yasmine/atelier/css-copie|cp -v -R site/css/ /home/yasmine/atelier/css-copie/|cp -v -R ./site/css/ css-copie|cp -v -R ./site/css/ ./css-copie|cp -v -R ./site/css/ css-copie/|cp -v -R ./site/css/ ./css-copie/|cp -v -R ./site/css/ ~/atelier/css-copie|cp -v -R ./site/css/ ~/atelier/css-copie/|cp -v -R ./site/css/ /home/yasmine/atelier/css-copie|cp -v -R ./site/css/ /home/yasmine/atelier/css-copie/|cp -v -R ~/atelier/site/css css-copie|cp -v -R ~/atelier/site/css ./css-copie|cp -v -R ~/atelier/site/css css-copie/|cp -v -R ~/atelier/site/css ./css-copie/|cp -v -R ~/atelier/site/css ~/atelier/css-copie|cp -v -R ~/atelier/site/css ~/atelier/css-copie/|cp -v -R ~/atelier/site/css /home/yasmine/atelier/css-copie|cp -v -R ~/atelier/site/css /home/yasmine/atelier/css-copie/|cp -v -R ~/atelier/site/css/ css-copie|cp -v -R ~/atelier/site/css/ ./css-copie|cp -v -R ~/atelier/site/css/ css-copie/|cp -v -R ~/atelier/site/css/ ./css-copie/|cp -v -R ~/atelier/site/css/ ~/atelier/css-copie|cp -v -R ~/atelier/site/css/ ~/atelier/css-copie/|cp -v -R ~/atelier/site/css/ /home/yasmine/atelier/css-copie|cp -v -R ~/atelier/site/css/ /home/yasmine/atelier/css-copie/|cp -v -R /home/yasmine/atelier/site/css css-copie|cp -v -R /home/yasmine/atelier/site/css ./css-copie|cp -v -R /home/yasmine/atelier/site/css css-copie/|cp -v -R /home/yasmine/atelier/site/css ./css-copie/|cp -v -R /home/yasmine/atelier/site/css ~/atelier/css-copie|cp -v -R /home/yasmine/atelier/site/css ~/atelier/css-copie/|cp -v -R /home/yasmine/atelier/site/css /home/yasmine/atelier/css-copie|cp -v -R /home/yasmine/atelier/site/css /home/yasmine/atelier/css-copie/|cp -v -R /home/yasmine/atelier/site/css/ css-copie|cp -v -R /home/yasmine/atelier/site/css/ ./css-copie|cp -v -R /home/yasmine/atelier/site/css/ css-copie/|cp -v -R /home/yasmine/atelier/site/css/ ./css-copie/|cp -v -R /home/yasmine/atelier/site/css/ ~/atelier/css-copie|cp -v -R /home/yasmine/atelier/site/css/ ~/atelier/css-copie/|cp -v -R /home/yasmine/atelier/site/css/ /home/yasmine/atelier/css-copie|cp -v -R /home/yasmine/atelier/site/css/ /home/yasmine/atelier/css-copie/|cp -rv site/css css-copie|cp -rv site/css ./css-copie|cp -rv site/css css-copie/|cp -rv site/css ./css-copie/|cp -rv site/css ~/atelier/css-copie|cp -rv site/css ~/atelier/css-copie/|cp -rv site/css /home/yasmine/atelier/css-copie|cp -rv site/css /home/yasmine/atelier/css-copie/|cp -rv ./site/css css-copie|cp -rv ./site/css ./css-copie|cp -rv ./site/css css-copie/|cp -rv ./site/css ./css-copie/|cp -rv ./site/css ~/atelier/css-copie|cp -rv ./site/css ~/atelier/css-copie/|cp -rv ./site/css /home/yasmine/atelier/css-copie|cp -rv ./site/css /home/yasmine/atelier/css-copie/|cp -rv site/css/ css-copie|cp -rv site/css/ ./css-copie|cp -rv site/css/ css-copie/|cp -rv site/css/ ./css-copie/|cp -rv site/css/ ~/atelier/css-copie|cp -rv site/css/ ~/atelier/css-copie/|cp -rv site/css/ /home/yasmine/atelier/css-copie|cp -rv site/css/ /home/yasmine/atelier/css-copie/|cp -rv ./site/css/ css-copie|cp -rv ./site/css/ ./css-copie|cp -rv ./site/css/ css-copie/|cp -rv ./site/css/ ./css-copie/|cp -rv ./site/css/ ~/atelier/css-copie|cp -rv ./site/css/ ~/atelier/css-copie/|cp -rv ./site/css/ /home/yasmine/atelier/css-copie|cp -rv ./site/css/ /home/yasmine/atelier/css-copie/|cp -rv ~/atelier/site/css css-copie|cp -rv ~/atelier/site/css ./css-copie|cp -rv ~/atelier/site/css css-copie/|cp -rv ~/atelier/site/css ./css-copie/|cp -rv ~/atelier/site/css ~/atelier/css-copie|cp -rv ~/atelier/site/css ~/atelier/css-copie/|cp -rv ~/atelier/site/css /home/yasmine/atelier/css-copie|cp -rv ~/atelier/site/css /home/yasmine/atelier/css-copie/|cp -rv ~/atelier/site/css/ css-copie|cp -rv ~/atelier/site/css/ ./css-copie|cp -rv ~/atelier/site/css/ css-copie/|cp -rv ~/atelier/site/css/ ./css-copie/|cp -rv ~/atelier/site/css/ ~/atelier/css-copie|cp -rv ~/atelier/site/css/ ~/atelier/css-copie/|cp -rv ~/atelier/site/css/ /home/yasmine/atelier/css-copie|cp -rv ~/atelier/site/css/ /home/yasmine/atelier/css-copie/|cp -rv /home/yasmine/atelier/site/css css-copie|cp -rv /home/yasmine/atelier/site/css ./css-copie|cp -rv /home/yasmine/atelier/site/css css-copie/|cp -rv /home/yasmine/atelier/site/css ./css-copie/|cp -rv /home/yasmine/atelier/site/css ~/atelier/css-copie|cp -rv /home/yasmine/atelier/site/css ~/atelier/css-copie/|cp -rv /home/yasmine/atelier/site/css /home/yasmine/atelier/css-copie|cp -rv /home/yasmine/atelier/site/css /home/yasmine/atelier/css-copie/|cp -rv /home/yasmine/atelier/site/css/ css-copie|cp -rv /home/yasmine/atelier/site/css/ ./css-copie|cp -rv /home/yasmine/atelier/site/css/ css-copie/|cp -rv /home/yasmine/atelier/site/css/ ./css-copie/|cp -rv /home/yasmine/atelier/site/css/ ~/atelier/css-copie|cp -rv /home/yasmine/atelier/site/css/ ~/atelier/css-copie/|cp -rv /home/yasmine/atelier/site/css/ /home/yasmine/atelier/css-copie|cp -rv /home/yasmine/atelier/site/css/ /home/yasmine/atelier/css-copie/|cp -vr site/css css-copie|cp -vr site/css ./css-copie|cp -vr site/css css-copie/|cp -vr site/css ./css-copie/|cp -vr site/css ~/atelier/css-copie|cp -vr site/css ~/atelier/css-copie/|cp -vr site/css /home/yasmine/atelier/css-copie|cp -vr site/css /home/yasmine/atelier/css-copie/|cp -vr ./site/css css-copie|cp -vr ./site/css ./css-copie|cp -vr ./site/css css-copie/|cp -vr ./site/css ./css-copie/|cp -vr ./site/css ~/atelier/css-copie|cp -vr ./site/css ~/atelier/css-copie/|cp -vr ./site/css /home/yasmine/atelier/css-copie|cp -vr ./site/css /home/yasmine/atelier/css-copie/|cp -vr site/css/ css-copie|cp -vr site/css/ ./css-copie|cp -vr site/css/ css-copie/|cp -vr site/css/ ./css-copie/|cp -vr site/css/ ~/atelier/css-copie|cp -vr site/css/ ~/atelier/css-copie/|cp -vr site/css/ /home/yasmine/atelier/css-copie|cp -vr site/css/ /home/yasmine/atelier/css-copie/|cp -vr ./site/css/ css-copie|cp -vr ./site/css/ ./css-copie|cp -vr ./site/css/ css-copie/|cp -vr ./site/css/ ./css-copie/|cp -vr ./site/css/ ~/atelier/css-copie|cp -vr ./site/css/ ~/atelier/css-copie/|cp -vr ./site/css/ /home/yasmine/atelier/css-copie|cp -vr ./site/css/ /home/yasmine/atelier/css-copie/|cp -vr ~/atelier/site/css css-copie|cp -vr ~/atelier/site/css ./css-copie|cp -vr ~/atelier/site/css css-copie/|cp -vr ~/atelier/site/css ./css-copie/|cp -vr ~/atelier/site/css ~/atelier/css-copie|cp -vr ~/atelier/site/css ~/atelier/css-copie/|cp -vr ~/atelier/site/css /home/yasmine/atelier/css-copie|cp -vr ~/atelier/site/css /home/yasmine/atelier/css-copie/|cp -vr ~/atelier/site/css/ css-copie|cp -vr ~/atelier/site/css/ ./css-copie|cp -vr ~/atelier/site/css/ css-copie/|cp -vr ~/atelier/site/css/ ./css-copie/|cp -vr ~/atelier/site/css/ ~/atelier/css-copie|cp -vr ~/atelier/site/css/ ~/atelier/css-copie/|cp -vr ~/atelier/site/css/ /home/yasmine/atelier/css-copie|cp -vr ~/atelier/site/css/ /home/yasmine/atelier/css-copie/|cp -vr /home/yasmine/atelier/site/css css-copie|cp -vr /home/yasmine/atelier/site/css ./css-copie|cp -vr /home/yasmine/atelier/site/css css-copie/|cp -vr /home/yasmine/atelier/site/css ./css-copie/|cp -vr /home/yasmine/atelier/site/css ~/atelier/css-copie|cp -vr /home/yasmine/atelier/site/css ~/atelier/css-copie/|cp -vr /home/yasmine/atelier/site/css /home/yasmine/atelier/css-copie|cp -vr /home/yasmine/atelier/site/css /home/yasmine/atelier/css-copie/|cp -vr /home/yasmine/atelier/site/css/ css-copie|cp -vr /home/yasmine/atelier/site/css/ ./css-copie|cp -vr /home/yasmine/atelier/site/css/ css-copie/|cp -vr /home/yasmine/atelier/site/css/ ./css-copie/|cp -vr /home/yasmine/atelier/site/css/ ~/atelier/css-copie|cp -vr /home/yasmine/atelier/site/css/ ~/atelier/css-copie/|cp -vr /home/yasmine/atelier/site/css/ /home/yasmine/atelier/css-copie|cp -vr /home/yasmine/atelier/site/css/ /home/yasmine/atelier/css-copie/|cp -r -v site/css css-copie|cp -r -v site/css ./css-copie|cp -r -v site/css css-copie/|cp -r -v site/css ./css-copie/|cp -r -v site/css ~/atelier/css-copie|cp -r -v site/css ~/atelier/css-copie/|cp -r -v site/css /home/yasmine/atelier/css-copie|cp -r -v site/css /home/yasmine/atelier/css-copie/|cp -r -v ./site/css css-copie|cp -r -v ./site/css ./css-copie|cp -r -v ./site/css css-copie/|cp -r -v ./site/css ./css-copie/|cp -r -v ./site/css ~/atelier/css-copie|cp -r -v ./site/css ~/atelier/css-copie/|cp -r -v ./site/css /home/yasmine/atelier/css-copie|cp -r -v ./site/css /home/yasmine/atelier/css-copie/|cp -r -v site/css/ css-copie|cp -r -v site/css/ ./css-copie|cp -r -v site/css/ css-copie/|cp -r -v site/css/ ./css-copie/|cp -r -v site/css/ ~/atelier/css-copie|cp -r -v site/css/ ~/atelier/css-copie/|cp -r -v site/css/ /home/yasmine/atelier/css-copie|cp -r -v site/css/ /home/yasmine/atelier/css-copie/|cp -r -v ./site/css/ css-copie|cp -r -v ./site/css/ ./css-copie|cp -r -v ./site/css/ css-copie/|cp -r -v ./site/css/ ./css-copie/|cp -r -v ./site/css/ ~/atelier/css-copie|cp -r -v ./site/css/ ~/atelier/css-copie/|cp -r -v ./site/css/ /home/yasmine/atelier/css-copie|cp -r -v ./site/css/ /home/yasmine/atelier/css-copie/|cp -r -v ~/atelier/site/css css-copie|cp -r -v ~/atelier/site/css ./css-copie|cp -r -v ~/atelier/site/css css-copie/|cp -r -v ~/atelier/site/css ./css-copie/|cp -r -v ~/atelier/site/css ~/atelier/css-copie|cp -r -v ~/atelier/site/css ~/atelier/css-copie/|cp -r -v ~/atelier/site/css /home/yasmine/atelier/css-copie|cp -r -v ~/atelier/site/css /home/yasmine/atelier/css-copie/|cp -r -v ~/atelier/site/css/ css-copie|cp -r -v ~/atelier/site/css/ ./css-copie|cp -r -v ~/atelier/site/css/ css-copie/|cp -r -v ~/atelier/site/css/ ./css-copie/|cp -r -v ~/atelier/site/css/ ~/atelier/css-copie|cp -r -v ~/atelier/site/css/ ~/atelier/css-copie/|cp -r -v ~/atelier/site/css/ /home/yasmine/atelier/css-copie|cp -r -v ~/atelier/site/css/ /home/yasmine/atelier/css-copie/|cp -r -v /home/yasmine/atelier/site/css css-copie|cp -r -v /home/yasmine/atelier/site/css ./css-copie|cp -r -v /home/yasmine/atelier/site/css css-copie/|cp -r -v /home/yasmine/atelier/site/css ./css-copie/|cp -r -v /home/yasmine/atelier/site/css ~/atelier/css-copie|cp -r -v /home/yasmine/atelier/site/css ~/atelier/css-copie/|cp -r -v /home/yasmine/atelier/site/css /home/yasmine/atelier/css-copie|cp -r -v /home/yasmine/atelier/site/css /home/yasmine/atelier/css-copie/|cp -r -v /home/yasmine/atelier/site/css/ css-copie|cp -r -v /home/yasmine/atelier/site/css/ ./css-copie|cp -r -v /home/yasmine/atelier/site/css/ css-copie/|cp -r -v /home/yasmine/atelier/site/css/ ./css-copie/|cp -r -v /home/yasmine/atelier/site/css/ ~/atelier/css-copie|cp -r -v /home/yasmine/atelier/site/css/ ~/atelier/css-copie/|cp -r -v /home/yasmine/atelier/site/css/ /home/yasmine/atelier/css-copie|cp -r -v /home/yasmine/atelier/site/css/ /home/yasmine/atelier/css-copie/|cp -v -r site/css css-copie|cp -v -r site/css ./css-copie|cp -v -r site/css css-copie/|cp -v -r site/css ./css-copie/|cp -v -r site/css ~/atelier/css-copie|cp -v -r site/css ~/atelier/css-copie/|cp -v -r site/css /home/yasmine/atelier/css-copie|cp -v -r site/css /home/yasmine/atelier/css-copie/|cp -v -r ./site/css css-copie|cp -v -r ./site/css ./css-copie|cp -v -r ./site/css css-copie/|cp -v -r ./site/css ./css-copie/|cp -v -r ./site/css ~/atelier/css-copie|cp -v -r ./site/css ~/atelier/css-copie/|cp -v -r ./site/css /home/yasmine/atelier/css-copie|cp -v -r ./site/css /home/yasmine/atelier/css-copie/|cp -v -r site/css/ css-copie|cp -v -r site/css/ ./css-copie|cp -v -r site/css/ css-copie/|cp -v -r site/css/ ./css-copie/|cp -v -r site/css/ ~/atelier/css-copie|cp -v -r site/css/ ~/atelier/css-copie/|cp -v -r site/css/ /home/yasmine/atelier/css-copie|cp -v -r site/css/ /home/yasmine/atelier/css-copie/|cp -v -r ./site/css/ css-copie|cp -v -r ./site/css/ ./css-copie|cp -v -r ./site/css/ css-copie/|cp -v -r ./site/css/ ./css-copie/|cp -v -r ./site/css/ ~/atelier/css-copie|cp -v -r ./site/css/ ~/atelier/css-copie/|cp -v -r ./site/css/ /home/yasmine/atelier/css-copie|cp -v -r ./site/css/ /home/yasmine/atelier/css-copie/|cp -v -r ~/atelier/site/css css-copie|cp -v -r ~/atelier/site/css ./css-copie|cp -v -r ~/atelier/site/css css-copie/|cp -v -r ~/atelier/site/css ./css-copie/|cp -v -r ~/atelier/site/css ~/atelier/css-copie|cp -v -r ~/atelier/site/css ~/atelier/css-copie/|cp -v -r ~/atelier/site/css /home/yasmine/atelier/css-copie|cp -v -r ~/atelier/site/css /home/yasmine/atelier/css-copie/|cp -v -r ~/atelier/site/css/ css-copie|cp -v -r ~/atelier/site/css/ ./css-copie|cp -v -r ~/atelier/site/css/ css-copie/|cp -v -r ~/atelier/site/css/ ./css-copie/|cp -v -r ~/atelier/site/css/ ~/atelier/css-copie|cp -v -r ~/atelier/site/css/ ~/atelier/css-copie/|cp -v -r ~/atelier/site/css/ /home/yasmine/atelier/css-copie|cp -v -r ~/atelier/site/css/ /home/yasmine/atelier/css-copie/|cp -v -r /home/yasmine/atelier/site/css css-copie|cp -v -r /home/yasmine/atelier/site/css ./css-copie|cp -v -r /home/yasmine/atelier/site/css css-copie/|cp -v -r /home/yasmine/atelier/site/css ./css-copie/|cp -v -r /home/yasmine/atelier/site/css ~/atelier/css-copie|cp -v -r /home/yasmine/atelier/site/css ~/atelier/css-copie/|cp -v -r /home/yasmine/atelier/site/css /home/yasmine/atelier/css-copie|cp -v -r /home/yasmine/atelier/site/css /home/yasmine/atelier/css-copie/|cp -v -r /home/yasmine/atelier/site/css/ css-copie|cp -v -r /home/yasmine/atelier/site/css/ ./css-copie|cp -v -r /home/yasmine/atelier/site/css/ css-copie/|cp -v -r /home/yasmine/atelier/site/css/ ./css-copie/|cp -v -r /home/yasmine/atelier/site/css/ ~/atelier/css-copie|cp -v -r /home/yasmine/atelier/site/css/ ~/atelier/css-copie/|cp -v -r /home/yasmine/atelier/site/css/ /home/yasmine/atelier/css-copie|cp -v -r /home/yasmine/atelier/site/css/ /home/yasmine/atelier/css-copie/"
+        data-accepte="cp -R -v site/css site/img/css-copie|cp -R -v site/css ./site/img/css-copie|cp -R -v site/css site/img/css-copie/|cp -R -v site/css ./site/img/css-copie/|cp -R -v site/css ~/atelier/site/img/css-copie|cp -R -v site/css ~/atelier/site/img/css-copie/|cp -R -v site/css /home/yasmine/atelier/site/img/css-copie|cp -R -v site/css /home/yasmine/atelier/site/img/css-copie/|cp -R -v ./site/css site/img/css-copie|cp -R -v ./site/css ./site/img/css-copie|cp -R -v ./site/css site/img/css-copie/|cp -R -v ./site/css ./site/img/css-copie/|cp -R -v ./site/css ~/atelier/site/img/css-copie|cp -R -v ./site/css ~/atelier/site/img/css-copie/|cp -R -v ./site/css /home/yasmine/atelier/site/img/css-copie|cp -R -v ./site/css /home/yasmine/atelier/site/img/css-copie/|cp -R -v site/css/ site/img/css-copie|cp -R -v site/css/ ./site/img/css-copie|cp -R -v site/css/ site/img/css-copie/|cp -R -v site/css/ ./site/img/css-copie/|cp -R -v site/css/ ~/atelier/site/img/css-copie|cp -R -v site/css/ ~/atelier/site/img/css-copie/|cp -R -v site/css/ /home/yasmine/atelier/site/img/css-copie|cp -R -v site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -R -v ./site/css/ site/img/css-copie|cp -R -v ./site/css/ ./site/img/css-copie|cp -R -v ./site/css/ site/img/css-copie/|cp -R -v ./site/css/ ./site/img/css-copie/|cp -R -v ./site/css/ ~/atelier/site/img/css-copie|cp -R -v ./site/css/ ~/atelier/site/img/css-copie/|cp -R -v ./site/css/ /home/yasmine/atelier/site/img/css-copie|cp -R -v ./site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -R -v ~/atelier/site/css site/img/css-copie|cp -R -v ~/atelier/site/css ./site/img/css-copie|cp -R -v ~/atelier/site/css site/img/css-copie/|cp -R -v ~/atelier/site/css ./site/img/css-copie/|cp -R -v ~/atelier/site/css ~/atelier/site/img/css-copie|cp -R -v ~/atelier/site/css ~/atelier/site/img/css-copie/|cp -R -v ~/atelier/site/css /home/yasmine/atelier/site/img/css-copie|cp -R -v ~/atelier/site/css /home/yasmine/atelier/site/img/css-copie/|cp -R -v ~/atelier/site/css/ site/img/css-copie|cp -R -v ~/atelier/site/css/ ./site/img/css-copie|cp -R -v ~/atelier/site/css/ site/img/css-copie/|cp -R -v ~/atelier/site/css/ ./site/img/css-copie/|cp -R -v ~/atelier/site/css/ ~/atelier/site/img/css-copie|cp -R -v ~/atelier/site/css/ ~/atelier/site/img/css-copie/|cp -R -v ~/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie|cp -R -v ~/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -R -v /home/yasmine/atelier/site/css site/img/css-copie|cp -R -v /home/yasmine/atelier/site/css ./site/img/css-copie|cp -R -v /home/yasmine/atelier/site/css site/img/css-copie/|cp -R -v /home/yasmine/atelier/site/css ./site/img/css-copie/|cp -R -v /home/yasmine/atelier/site/css ~/atelier/site/img/css-copie|cp -R -v /home/yasmine/atelier/site/css ~/atelier/site/img/css-copie/|cp -R -v /home/yasmine/atelier/site/css /home/yasmine/atelier/site/img/css-copie|cp -R -v /home/yasmine/atelier/site/css /home/yasmine/atelier/site/img/css-copie/|cp -R -v /home/yasmine/atelier/site/css/ site/img/css-copie|cp -R -v /home/yasmine/atelier/site/css/ ./site/img/css-copie|cp -R -v /home/yasmine/atelier/site/css/ site/img/css-copie/|cp -R -v /home/yasmine/atelier/site/css/ ./site/img/css-copie/|cp -R -v /home/yasmine/atelier/site/css/ ~/atelier/site/img/css-copie|cp -R -v /home/yasmine/atelier/site/css/ ~/atelier/site/img/css-copie/|cp -R -v /home/yasmine/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie|cp -R -v /home/yasmine/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -Rv site/css site/img/css-copie|cp -Rv site/css ./site/img/css-copie|cp -Rv site/css site/img/css-copie/|cp -Rv site/css ./site/img/css-copie/|cp -Rv site/css ~/atelier/site/img/css-copie|cp -Rv site/css ~/atelier/site/img/css-copie/|cp -Rv site/css /home/yasmine/atelier/site/img/css-copie|cp -Rv site/css /home/yasmine/atelier/site/img/css-copie/|cp -Rv ./site/css site/img/css-copie|cp -Rv ./site/css ./site/img/css-copie|cp -Rv ./site/css site/img/css-copie/|cp -Rv ./site/css ./site/img/css-copie/|cp -Rv ./site/css ~/atelier/site/img/css-copie|cp -Rv ./site/css ~/atelier/site/img/css-copie/|cp -Rv ./site/css /home/yasmine/atelier/site/img/css-copie|cp -Rv ./site/css /home/yasmine/atelier/site/img/css-copie/|cp -Rv site/css/ site/img/css-copie|cp -Rv site/css/ ./site/img/css-copie|cp -Rv site/css/ site/img/css-copie/|cp -Rv site/css/ ./site/img/css-copie/|cp -Rv site/css/ ~/atelier/site/img/css-copie|cp -Rv site/css/ ~/atelier/site/img/css-copie/|cp -Rv site/css/ /home/yasmine/atelier/site/img/css-copie|cp -Rv site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -Rv ./site/css/ site/img/css-copie|cp -Rv ./site/css/ ./site/img/css-copie|cp -Rv ./site/css/ site/img/css-copie/|cp -Rv ./site/css/ ./site/img/css-copie/|cp -Rv ./site/css/ ~/atelier/site/img/css-copie|cp -Rv ./site/css/ ~/atelier/site/img/css-copie/|cp -Rv ./site/css/ /home/yasmine/atelier/site/img/css-copie|cp -Rv ./site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -Rv ~/atelier/site/css site/img/css-copie|cp -Rv ~/atelier/site/css ./site/img/css-copie|cp -Rv ~/atelier/site/css site/img/css-copie/|cp -Rv ~/atelier/site/css ./site/img/css-copie/|cp -Rv ~/atelier/site/css ~/atelier/site/img/css-copie|cp -Rv ~/atelier/site/css ~/atelier/site/img/css-copie/|cp -Rv ~/atelier/site/css /home/yasmine/atelier/site/img/css-copie|cp -Rv ~/atelier/site/css /home/yasmine/atelier/site/img/css-copie/|cp -Rv ~/atelier/site/css/ site/img/css-copie|cp -Rv ~/atelier/site/css/ ./site/img/css-copie|cp -Rv ~/atelier/site/css/ site/img/css-copie/|cp -Rv ~/atelier/site/css/ ./site/img/css-copie/|cp -Rv ~/atelier/site/css/ ~/atelier/site/img/css-copie|cp -Rv ~/atelier/site/css/ ~/atelier/site/img/css-copie/|cp -Rv ~/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie|cp -Rv ~/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -Rv /home/yasmine/atelier/site/css site/img/css-copie|cp -Rv /home/yasmine/atelier/site/css ./site/img/css-copie|cp -Rv /home/yasmine/atelier/site/css site/img/css-copie/|cp -Rv /home/yasmine/atelier/site/css ./site/img/css-copie/|cp -Rv /home/yasmine/atelier/site/css ~/atelier/site/img/css-copie|cp -Rv /home/yasmine/atelier/site/css ~/atelier/site/img/css-copie/|cp -Rv /home/yasmine/atelier/site/css /home/yasmine/atelier/site/img/css-copie|cp -Rv /home/yasmine/atelier/site/css /home/yasmine/atelier/site/img/css-copie/|cp -Rv /home/yasmine/atelier/site/css/ site/img/css-copie|cp -Rv /home/yasmine/atelier/site/css/ ./site/img/css-copie|cp -Rv /home/yasmine/atelier/site/css/ site/img/css-copie/|cp -Rv /home/yasmine/atelier/site/css/ ./site/img/css-copie/|cp -Rv /home/yasmine/atelier/site/css/ ~/atelier/site/img/css-copie|cp -Rv /home/yasmine/atelier/site/css/ ~/atelier/site/img/css-copie/|cp -Rv /home/yasmine/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie|cp -Rv /home/yasmine/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -r -v site/css site/img/css-copie|cp -r -v site/css ./site/img/css-copie|cp -r -v site/css site/img/css-copie/|cp -r -v site/css ./site/img/css-copie/|cp -r -v site/css ~/atelier/site/img/css-copie|cp -r -v site/css ~/atelier/site/img/css-copie/|cp -r -v site/css /home/yasmine/atelier/site/img/css-copie|cp -r -v site/css /home/yasmine/atelier/site/img/css-copie/|cp -r -v ./site/css site/img/css-copie|cp -r -v ./site/css ./site/img/css-copie|cp -r -v ./site/css site/img/css-copie/|cp -r -v ./site/css ./site/img/css-copie/|cp -r -v ./site/css ~/atelier/site/img/css-copie|cp -r -v ./site/css ~/atelier/site/img/css-copie/|cp -r -v ./site/css /home/yasmine/atelier/site/img/css-copie|cp -r -v ./site/css /home/yasmine/atelier/site/img/css-copie/|cp -r -v site/css/ site/img/css-copie|cp -r -v site/css/ ./site/img/css-copie|cp -r -v site/css/ site/img/css-copie/|cp -r -v site/css/ ./site/img/css-copie/|cp -r -v site/css/ ~/atelier/site/img/css-copie|cp -r -v site/css/ ~/atelier/site/img/css-copie/|cp -r -v site/css/ /home/yasmine/atelier/site/img/css-copie|cp -r -v site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -r -v ./site/css/ site/img/css-copie|cp -r -v ./site/css/ ./site/img/css-copie|cp -r -v ./site/css/ site/img/css-copie/|cp -r -v ./site/css/ ./site/img/css-copie/|cp -r -v ./site/css/ ~/atelier/site/img/css-copie|cp -r -v ./site/css/ ~/atelier/site/img/css-copie/|cp -r -v ./site/css/ /home/yasmine/atelier/site/img/css-copie|cp -r -v ./site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -r -v ~/atelier/site/css site/img/css-copie|cp -r -v ~/atelier/site/css ./site/img/css-copie|cp -r -v ~/atelier/site/css site/img/css-copie/|cp -r -v ~/atelier/site/css ./site/img/css-copie/|cp -r -v ~/atelier/site/css ~/atelier/site/img/css-copie|cp -r -v ~/atelier/site/css ~/atelier/site/img/css-copie/|cp -r -v ~/atelier/site/css /home/yasmine/atelier/site/img/css-copie|cp -r -v ~/atelier/site/css /home/yasmine/atelier/site/img/css-copie/|cp -r -v ~/atelier/site/css/ site/img/css-copie|cp -r -v ~/atelier/site/css/ ./site/img/css-copie|cp -r -v ~/atelier/site/css/ site/img/css-copie/|cp -r -v ~/atelier/site/css/ ./site/img/css-copie/|cp -r -v ~/atelier/site/css/ ~/atelier/site/img/css-copie|cp -r -v ~/atelier/site/css/ ~/atelier/site/img/css-copie/|cp -r -v ~/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie|cp -r -v ~/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -r -v /home/yasmine/atelier/site/css site/img/css-copie|cp -r -v /home/yasmine/atelier/site/css ./site/img/css-copie|cp -r -v /home/yasmine/atelier/site/css site/img/css-copie/|cp -r -v /home/yasmine/atelier/site/css ./site/img/css-copie/|cp -r -v /home/yasmine/atelier/site/css ~/atelier/site/img/css-copie|cp -r -v /home/yasmine/atelier/site/css ~/atelier/site/img/css-copie/|cp -r -v /home/yasmine/atelier/site/css /home/yasmine/atelier/site/img/css-copie|cp -r -v /home/yasmine/atelier/site/css /home/yasmine/atelier/site/img/css-copie/|cp -r -v /home/yasmine/atelier/site/css/ site/img/css-copie|cp -r -v /home/yasmine/atelier/site/css/ ./site/img/css-copie|cp -r -v /home/yasmine/atelier/site/css/ site/img/css-copie/|cp -r -v /home/yasmine/atelier/site/css/ ./site/img/css-copie/|cp -r -v /home/yasmine/atelier/site/css/ ~/atelier/site/img/css-copie|cp -r -v /home/yasmine/atelier/site/css/ ~/atelier/site/img/css-copie/|cp -r -v /home/yasmine/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie|cp -r -v /home/yasmine/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -rv site/css site/img/css-copie|cp -rv site/css ./site/img/css-copie|cp -rv site/css site/img/css-copie/|cp -rv site/css ./site/img/css-copie/|cp -rv site/css ~/atelier/site/img/css-copie|cp -rv site/css ~/atelier/site/img/css-copie/|cp -rv site/css /home/yasmine/atelier/site/img/css-copie|cp -rv site/css /home/yasmine/atelier/site/img/css-copie/|cp -rv ./site/css site/img/css-copie|cp -rv ./site/css ./site/img/css-copie|cp -rv ./site/css site/img/css-copie/|cp -rv ./site/css ./site/img/css-copie/|cp -rv ./site/css ~/atelier/site/img/css-copie|cp -rv ./site/css ~/atelier/site/img/css-copie/|cp -rv ./site/css /home/yasmine/atelier/site/img/css-copie|cp -rv ./site/css /home/yasmine/atelier/site/img/css-copie/|cp -rv site/css/ site/img/css-copie|cp -rv site/css/ ./site/img/css-copie|cp -rv site/css/ site/img/css-copie/|cp -rv site/css/ ./site/img/css-copie/|cp -rv site/css/ ~/atelier/site/img/css-copie|cp -rv site/css/ ~/atelier/site/img/css-copie/|cp -rv site/css/ /home/yasmine/atelier/site/img/css-copie|cp -rv site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -rv ./site/css/ site/img/css-copie|cp -rv ./site/css/ ./site/img/css-copie|cp -rv ./site/css/ site/img/css-copie/|cp -rv ./site/css/ ./site/img/css-copie/|cp -rv ./site/css/ ~/atelier/site/img/css-copie|cp -rv ./site/css/ ~/atelier/site/img/css-copie/|cp -rv ./site/css/ /home/yasmine/atelier/site/img/css-copie|cp -rv ./site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -rv ~/atelier/site/css site/img/css-copie|cp -rv ~/atelier/site/css ./site/img/css-copie|cp -rv ~/atelier/site/css site/img/css-copie/|cp -rv ~/atelier/site/css ./site/img/css-copie/|cp -rv ~/atelier/site/css ~/atelier/site/img/css-copie|cp -rv ~/atelier/site/css ~/atelier/site/img/css-copie/|cp -rv ~/atelier/site/css /home/yasmine/atelier/site/img/css-copie|cp -rv ~/atelier/site/css /home/yasmine/atelier/site/img/css-copie/|cp -rv ~/atelier/site/css/ site/img/css-copie|cp -rv ~/atelier/site/css/ ./site/img/css-copie|cp -rv ~/atelier/site/css/ site/img/css-copie/|cp -rv ~/atelier/site/css/ ./site/img/css-copie/|cp -rv ~/atelier/site/css/ ~/atelier/site/img/css-copie|cp -rv ~/atelier/site/css/ ~/atelier/site/img/css-copie/|cp -rv ~/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie|cp -rv ~/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -rv /home/yasmine/atelier/site/css site/img/css-copie|cp -rv /home/yasmine/atelier/site/css ./site/img/css-copie|cp -rv /home/yasmine/atelier/site/css site/img/css-copie/|cp -rv /home/yasmine/atelier/site/css ./site/img/css-copie/|cp -rv /home/yasmine/atelier/site/css ~/atelier/site/img/css-copie|cp -rv /home/yasmine/atelier/site/css ~/atelier/site/img/css-copie/|cp -rv /home/yasmine/atelier/site/css /home/yasmine/atelier/site/img/css-copie|cp -rv /home/yasmine/atelier/site/css /home/yasmine/atelier/site/img/css-copie/|cp -rv /home/yasmine/atelier/site/css/ site/img/css-copie|cp -rv /home/yasmine/atelier/site/css/ ./site/img/css-copie|cp -rv /home/yasmine/atelier/site/css/ site/img/css-copie/|cp -rv /home/yasmine/atelier/site/css/ ./site/img/css-copie/|cp -rv /home/yasmine/atelier/site/css/ ~/atelier/site/img/css-copie|cp -rv /home/yasmine/atelier/site/css/ ~/atelier/site/img/css-copie/|cp -rv /home/yasmine/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie|cp -rv /home/yasmine/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -v -R site/css site/img/css-copie|cp -v -R site/css ./site/img/css-copie|cp -v -R site/css site/img/css-copie/|cp -v -R site/css ./site/img/css-copie/|cp -v -R site/css ~/atelier/site/img/css-copie|cp -v -R site/css ~/atelier/site/img/css-copie/|cp -v -R site/css /home/yasmine/atelier/site/img/css-copie|cp -v -R site/css /home/yasmine/atelier/site/img/css-copie/|cp -v -R ./site/css site/img/css-copie|cp -v -R ./site/css ./site/img/css-copie|cp -v -R ./site/css site/img/css-copie/|cp -v -R ./site/css ./site/img/css-copie/|cp -v -R ./site/css ~/atelier/site/img/css-copie|cp -v -R ./site/css ~/atelier/site/img/css-copie/|cp -v -R ./site/css /home/yasmine/atelier/site/img/css-copie|cp -v -R ./site/css /home/yasmine/atelier/site/img/css-copie/|cp -v -R site/css/ site/img/css-copie|cp -v -R site/css/ ./site/img/css-copie|cp -v -R site/css/ site/img/css-copie/|cp -v -R site/css/ ./site/img/css-copie/|cp -v -R site/css/ ~/atelier/site/img/css-copie|cp -v -R site/css/ ~/atelier/site/img/css-copie/|cp -v -R site/css/ /home/yasmine/atelier/site/img/css-copie|cp -v -R site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -v -R ./site/css/ site/img/css-copie|cp -v -R ./site/css/ ./site/img/css-copie|cp -v -R ./site/css/ site/img/css-copie/|cp -v -R ./site/css/ ./site/img/css-copie/|cp -v -R ./site/css/ ~/atelier/site/img/css-copie|cp -v -R ./site/css/ ~/atelier/site/img/css-copie/|cp -v -R ./site/css/ /home/yasmine/atelier/site/img/css-copie|cp -v -R ./site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -v -R ~/atelier/site/css site/img/css-copie|cp -v -R ~/atelier/site/css ./site/img/css-copie|cp -v -R ~/atelier/site/css site/img/css-copie/|cp -v -R ~/atelier/site/css ./site/img/css-copie/|cp -v -R ~/atelier/site/css ~/atelier/site/img/css-copie|cp -v -R ~/atelier/site/css ~/atelier/site/img/css-copie/|cp -v -R ~/atelier/site/css /home/yasmine/atelier/site/img/css-copie|cp -v -R ~/atelier/site/css /home/yasmine/atelier/site/img/css-copie/|cp -v -R ~/atelier/site/css/ site/img/css-copie|cp -v -R ~/atelier/site/css/ ./site/img/css-copie|cp -v -R ~/atelier/site/css/ site/img/css-copie/|cp -v -R ~/atelier/site/css/ ./site/img/css-copie/|cp -v -R ~/atelier/site/css/ ~/atelier/site/img/css-copie|cp -v -R ~/atelier/site/css/ ~/atelier/site/img/css-copie/|cp -v -R ~/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie|cp -v -R ~/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -v -R /home/yasmine/atelier/site/css site/img/css-copie|cp -v -R /home/yasmine/atelier/site/css ./site/img/css-copie|cp -v -R /home/yasmine/atelier/site/css site/img/css-copie/|cp -v -R /home/yasmine/atelier/site/css ./site/img/css-copie/|cp -v -R /home/yasmine/atelier/site/css ~/atelier/site/img/css-copie|cp -v -R /home/yasmine/atelier/site/css ~/atelier/site/img/css-copie/|cp -v -R /home/yasmine/atelier/site/css /home/yasmine/atelier/site/img/css-copie|cp -v -R /home/yasmine/atelier/site/css /home/yasmine/atelier/site/img/css-copie/|cp -v -R /home/yasmine/atelier/site/css/ site/img/css-copie|cp -v -R /home/yasmine/atelier/site/css/ ./site/img/css-copie|cp -v -R /home/yasmine/atelier/site/css/ site/img/css-copie/|cp -v -R /home/yasmine/atelier/site/css/ ./site/img/css-copie/|cp -v -R /home/yasmine/atelier/site/css/ ~/atelier/site/img/css-copie|cp -v -R /home/yasmine/atelier/site/css/ ~/atelier/site/img/css-copie/|cp -v -R /home/yasmine/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie|cp -v -R /home/yasmine/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -v -r site/css site/img/css-copie|cp -v -r site/css ./site/img/css-copie|cp -v -r site/css site/img/css-copie/|cp -v -r site/css ./site/img/css-copie/|cp -v -r site/css ~/atelier/site/img/css-copie|cp -v -r site/css ~/atelier/site/img/css-copie/|cp -v -r site/css /home/yasmine/atelier/site/img/css-copie|cp -v -r site/css /home/yasmine/atelier/site/img/css-copie/|cp -v -r ./site/css site/img/css-copie|cp -v -r ./site/css ./site/img/css-copie|cp -v -r ./site/css site/img/css-copie/|cp -v -r ./site/css ./site/img/css-copie/|cp -v -r ./site/css ~/atelier/site/img/css-copie|cp -v -r ./site/css ~/atelier/site/img/css-copie/|cp -v -r ./site/css /home/yasmine/atelier/site/img/css-copie|cp -v -r ./site/css /home/yasmine/atelier/site/img/css-copie/|cp -v -r site/css/ site/img/css-copie|cp -v -r site/css/ ./site/img/css-copie|cp -v -r site/css/ site/img/css-copie/|cp -v -r site/css/ ./site/img/css-copie/|cp -v -r site/css/ ~/atelier/site/img/css-copie|cp -v -r site/css/ ~/atelier/site/img/css-copie/|cp -v -r site/css/ /home/yasmine/atelier/site/img/css-copie|cp -v -r site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -v -r ./site/css/ site/img/css-copie|cp -v -r ./site/css/ ./site/img/css-copie|cp -v -r ./site/css/ site/img/css-copie/|cp -v -r ./site/css/ ./site/img/css-copie/|cp -v -r ./site/css/ ~/atelier/site/img/css-copie|cp -v -r ./site/css/ ~/atelier/site/img/css-copie/|cp -v -r ./site/css/ /home/yasmine/atelier/site/img/css-copie|cp -v -r ./site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -v -r ~/atelier/site/css site/img/css-copie|cp -v -r ~/atelier/site/css ./site/img/css-copie|cp -v -r ~/atelier/site/css site/img/css-copie/|cp -v -r ~/atelier/site/css ./site/img/css-copie/|cp -v -r ~/atelier/site/css ~/atelier/site/img/css-copie|cp -v -r ~/atelier/site/css ~/atelier/site/img/css-copie/|cp -v -r ~/atelier/site/css /home/yasmine/atelier/site/img/css-copie|cp -v -r ~/atelier/site/css /home/yasmine/atelier/site/img/css-copie/|cp -v -r ~/atelier/site/css/ site/img/css-copie|cp -v -r ~/atelier/site/css/ ./site/img/css-copie|cp -v -r ~/atelier/site/css/ site/img/css-copie/|cp -v -r ~/atelier/site/css/ ./site/img/css-copie/|cp -v -r ~/atelier/site/css/ ~/atelier/site/img/css-copie|cp -v -r ~/atelier/site/css/ ~/atelier/site/img/css-copie/|cp -v -r ~/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie|cp -v -r ~/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -v -r /home/yasmine/atelier/site/css site/img/css-copie|cp -v -r /home/yasmine/atelier/site/css ./site/img/css-copie|cp -v -r /home/yasmine/atelier/site/css site/img/css-copie/|cp -v -r /home/yasmine/atelier/site/css ./site/img/css-copie/|cp -v -r /home/yasmine/atelier/site/css ~/atelier/site/img/css-copie|cp -v -r /home/yasmine/atelier/site/css ~/atelier/site/img/css-copie/|cp -v -r /home/yasmine/atelier/site/css /home/yasmine/atelier/site/img/css-copie|cp -v -r /home/yasmine/atelier/site/css /home/yasmine/atelier/site/img/css-copie/|cp -v -r /home/yasmine/atelier/site/css/ site/img/css-copie|cp -v -r /home/yasmine/atelier/site/css/ ./site/img/css-copie|cp -v -r /home/yasmine/atelier/site/css/ site/img/css-copie/|cp -v -r /home/yasmine/atelier/site/css/ ./site/img/css-copie/|cp -v -r /home/yasmine/atelier/site/css/ ~/atelier/site/img/css-copie|cp -v -r /home/yasmine/atelier/site/css/ ~/atelier/site/img/css-copie/|cp -v -r /home/yasmine/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie|cp -v -r /home/yasmine/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -vR site/css site/img/css-copie|cp -vR site/css ./site/img/css-copie|cp -vR site/css site/img/css-copie/|cp -vR site/css ./site/img/css-copie/|cp -vR site/css ~/atelier/site/img/css-copie|cp -vR site/css ~/atelier/site/img/css-copie/|cp -vR site/css /home/yasmine/atelier/site/img/css-copie|cp -vR site/css /home/yasmine/atelier/site/img/css-copie/|cp -vR ./site/css site/img/css-copie|cp -vR ./site/css ./site/img/css-copie|cp -vR ./site/css site/img/css-copie/|cp -vR ./site/css ./site/img/css-copie/|cp -vR ./site/css ~/atelier/site/img/css-copie|cp -vR ./site/css ~/atelier/site/img/css-copie/|cp -vR ./site/css /home/yasmine/atelier/site/img/css-copie|cp -vR ./site/css /home/yasmine/atelier/site/img/css-copie/|cp -vR site/css/ site/img/css-copie|cp -vR site/css/ ./site/img/css-copie|cp -vR site/css/ site/img/css-copie/|cp -vR site/css/ ./site/img/css-copie/|cp -vR site/css/ ~/atelier/site/img/css-copie|cp -vR site/css/ ~/atelier/site/img/css-copie/|cp -vR site/css/ /home/yasmine/atelier/site/img/css-copie|cp -vR site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -vR ./site/css/ site/img/css-copie|cp -vR ./site/css/ ./site/img/css-copie|cp -vR ./site/css/ site/img/css-copie/|cp -vR ./site/css/ ./site/img/css-copie/|cp -vR ./site/css/ ~/atelier/site/img/css-copie|cp -vR ./site/css/ ~/atelier/site/img/css-copie/|cp -vR ./site/css/ /home/yasmine/atelier/site/img/css-copie|cp -vR ./site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -vR ~/atelier/site/css site/img/css-copie|cp -vR ~/atelier/site/css ./site/img/css-copie|cp -vR ~/atelier/site/css site/img/css-copie/|cp -vR ~/atelier/site/css ./site/img/css-copie/|cp -vR ~/atelier/site/css ~/atelier/site/img/css-copie|cp -vR ~/atelier/site/css ~/atelier/site/img/css-copie/|cp -vR ~/atelier/site/css /home/yasmine/atelier/site/img/css-copie|cp -vR ~/atelier/site/css /home/yasmine/atelier/site/img/css-copie/|cp -vR ~/atelier/site/css/ site/img/css-copie|cp -vR ~/atelier/site/css/ ./site/img/css-copie|cp -vR ~/atelier/site/css/ site/img/css-copie/|cp -vR ~/atelier/site/css/ ./site/img/css-copie/|cp -vR ~/atelier/site/css/ ~/atelier/site/img/css-copie|cp -vR ~/atelier/site/css/ ~/atelier/site/img/css-copie/|cp -vR ~/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie|cp -vR ~/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -vR /home/yasmine/atelier/site/css site/img/css-copie|cp -vR /home/yasmine/atelier/site/css ./site/img/css-copie|cp -vR /home/yasmine/atelier/site/css site/img/css-copie/|cp -vR /home/yasmine/atelier/site/css ./site/img/css-copie/|cp -vR /home/yasmine/atelier/site/css ~/atelier/site/img/css-copie|cp -vR /home/yasmine/atelier/site/css ~/atelier/site/img/css-copie/|cp -vR /home/yasmine/atelier/site/css /home/yasmine/atelier/site/img/css-copie|cp -vR /home/yasmine/atelier/site/css /home/yasmine/atelier/site/img/css-copie/|cp -vR /home/yasmine/atelier/site/css/ site/img/css-copie|cp -vR /home/yasmine/atelier/site/css/ ./site/img/css-copie|cp -vR /home/yasmine/atelier/site/css/ site/img/css-copie/|cp -vR /home/yasmine/atelier/site/css/ ./site/img/css-copie/|cp -vR /home/yasmine/atelier/site/css/ ~/atelier/site/img/css-copie|cp -vR /home/yasmine/atelier/site/css/ ~/atelier/site/img/css-copie/|cp -vR /home/yasmine/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie|cp -vR /home/yasmine/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -vr site/css site/img/css-copie|cp -vr site/css ./site/img/css-copie|cp -vr site/css site/img/css-copie/|cp -vr site/css ./site/img/css-copie/|cp -vr site/css ~/atelier/site/img/css-copie|cp -vr site/css ~/atelier/site/img/css-copie/|cp -vr site/css /home/yasmine/atelier/site/img/css-copie|cp -vr site/css /home/yasmine/atelier/site/img/css-copie/|cp -vr ./site/css site/img/css-copie|cp -vr ./site/css ./site/img/css-copie|cp -vr ./site/css site/img/css-copie/|cp -vr ./site/css ./site/img/css-copie/|cp -vr ./site/css ~/atelier/site/img/css-copie|cp -vr ./site/css ~/atelier/site/img/css-copie/|cp -vr ./site/css /home/yasmine/atelier/site/img/css-copie|cp -vr ./site/css /home/yasmine/atelier/site/img/css-copie/|cp -vr site/css/ site/img/css-copie|cp -vr site/css/ ./site/img/css-copie|cp -vr site/css/ site/img/css-copie/|cp -vr site/css/ ./site/img/css-copie/|cp -vr site/css/ ~/atelier/site/img/css-copie|cp -vr site/css/ ~/atelier/site/img/css-copie/|cp -vr site/css/ /home/yasmine/atelier/site/img/css-copie|cp -vr site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -vr ./site/css/ site/img/css-copie|cp -vr ./site/css/ ./site/img/css-copie|cp -vr ./site/css/ site/img/css-copie/|cp -vr ./site/css/ ./site/img/css-copie/|cp -vr ./site/css/ ~/atelier/site/img/css-copie|cp -vr ./site/css/ ~/atelier/site/img/css-copie/|cp -vr ./site/css/ /home/yasmine/atelier/site/img/css-copie|cp -vr ./site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -vr ~/atelier/site/css site/img/css-copie|cp -vr ~/atelier/site/css ./site/img/css-copie|cp -vr ~/atelier/site/css site/img/css-copie/|cp -vr ~/atelier/site/css ./site/img/css-copie/|cp -vr ~/atelier/site/css ~/atelier/site/img/css-copie|cp -vr ~/atelier/site/css ~/atelier/site/img/css-copie/|cp -vr ~/atelier/site/css /home/yasmine/atelier/site/img/css-copie|cp -vr ~/atelier/site/css /home/yasmine/atelier/site/img/css-copie/|cp -vr ~/atelier/site/css/ site/img/css-copie|cp -vr ~/atelier/site/css/ ./site/img/css-copie|cp -vr ~/atelier/site/css/ site/img/css-copie/|cp -vr ~/atelier/site/css/ ./site/img/css-copie/|cp -vr ~/atelier/site/css/ ~/atelier/site/img/css-copie|cp -vr ~/atelier/site/css/ ~/atelier/site/img/css-copie/|cp -vr ~/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie|cp -vr ~/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie/|cp -vr /home/yasmine/atelier/site/css site/img/css-copie|cp -vr /home/yasmine/atelier/site/css ./site/img/css-copie|cp -vr /home/yasmine/atelier/site/css site/img/css-copie/|cp -vr /home/yasmine/atelier/site/css ./site/img/css-copie/|cp -vr /home/yasmine/atelier/site/css ~/atelier/site/img/css-copie|cp -vr /home/yasmine/atelier/site/css ~/atelier/site/img/css-copie/|cp -vr /home/yasmine/atelier/site/css /home/yasmine/atelier/site/img/css-copie|cp -vr /home/yasmine/atelier/site/css /home/yasmine/atelier/site/img/css-copie/|cp -vr /home/yasmine/atelier/site/css/ site/img/css-copie|cp -vr /home/yasmine/atelier/site/css/ ./site/img/css-copie|cp -vr /home/yasmine/atelier/site/css/ site/img/css-copie/|cp -vr /home/yasmine/atelier/site/css/ ./site/img/css-copie/|cp -vr /home/yasmine/atelier/site/css/ ~/atelier/site/img/css-copie|cp -vr /home/yasmine/atelier/site/css/ ~/atelier/site/img/css-copie/|cp -vr /home/yasmine/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie|cp -vr /home/yasmine/atelier/site/css/ /home/yasmine/atelier/site/img/css-copie/"
         data-clavier="La ligne"
-        data-si-sansR="cp -v site/css css-copie"
+        data-si-sansR="cp -v site/css site/img/css-copie"
         data-retour-sansR="Qu’est-ce qui, dans ta ligne, dit à cp de copier un dossier ?"
-        data-si-sansv="cp -R site/css css-copie|cp -r site/css css-copie"
+        data-si-sansv="cp -R site/css site/img/css-copie|cp -r site/css site/img/css-copie"
         data-retour-sansv="Qu’est-ce qui, dans ta ligne, fait écrire chaque copie ?"
         data-aide1="Quelles options faut-il : une pour copier un dossier, une pour lire chaque copie ?"
         data-aide2="Les deux options peuvent se coller derrière un seul tiret, dans n’importe quel ordre."
@@ -5002,6 +5086,10 @@ $ ls cours</pre>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
             </li>
+            <li>
+              Un chemin comme <span class="mono">docs/js</span> désigne le dossier js, dans le
+              dossier docs : on le suit de gauche à droite.
+            </li>
           </ul>
         </div>
         <pre
@@ -5018,8 +5106,8 @@ style.css
 site/img:
 logo.png</pre>
         <p class="q">
-          Yasmine, dans atelier, veut copier le dossier css de site sous le nom css-copie,
-          directement dans atelier, et lire chaque copie que fait cp. Écris la ligne qu’elle tape.
+          Yasmine, dans atelier, veut copier le dossier css de site sous le nom css-copie, dans le
+          dossier img de site, et lire chaque copie que fait cp. Écris la ligne qu’elle tape.
         </p>
       </div>
     </template>
@@ -5028,11 +5116,11 @@ logo.png</pre>
         class="ex"
         data-widget="saisie"
         data-verifie
-        data-accepte="cp -Rv site/img img-copie|cp -Rv site/img ./img-copie|cp -Rv site/img img-copie/|cp -Rv site/img ./img-copie/|cp -Rv site/img ~/atelier/img-copie|cp -Rv site/img ~/atelier/img-copie/|cp -Rv site/img /Users/farid/atelier/img-copie|cp -Rv site/img /Users/farid/atelier/img-copie/|cp -Rv ./site/img img-copie|cp -Rv ./site/img ./img-copie|cp -Rv ./site/img img-copie/|cp -Rv ./site/img ./img-copie/|cp -Rv ./site/img ~/atelier/img-copie|cp -Rv ./site/img ~/atelier/img-copie/|cp -Rv ./site/img /Users/farid/atelier/img-copie|cp -Rv ./site/img /Users/farid/atelier/img-copie/|cp -Rv site/img/ img-copie|cp -Rv site/img/ ./img-copie|cp -Rv site/img/ img-copie/|cp -Rv site/img/ ./img-copie/|cp -Rv site/img/ ~/atelier/img-copie|cp -Rv site/img/ ~/atelier/img-copie/|cp -Rv site/img/ /Users/farid/atelier/img-copie|cp -Rv site/img/ /Users/farid/atelier/img-copie/|cp -Rv ./site/img/ img-copie|cp -Rv ./site/img/ ./img-copie|cp -Rv ./site/img/ img-copie/|cp -Rv ./site/img/ ./img-copie/|cp -Rv ./site/img/ ~/atelier/img-copie|cp -Rv ./site/img/ ~/atelier/img-copie/|cp -Rv ./site/img/ /Users/farid/atelier/img-copie|cp -Rv ./site/img/ /Users/farid/atelier/img-copie/|cp -Rv ~/atelier/site/img img-copie|cp -Rv ~/atelier/site/img ./img-copie|cp -Rv ~/atelier/site/img img-copie/|cp -Rv ~/atelier/site/img ./img-copie/|cp -Rv ~/atelier/site/img ~/atelier/img-copie|cp -Rv ~/atelier/site/img ~/atelier/img-copie/|cp -Rv ~/atelier/site/img /Users/farid/atelier/img-copie|cp -Rv ~/atelier/site/img /Users/farid/atelier/img-copie/|cp -Rv ~/atelier/site/img/ img-copie|cp -Rv ~/atelier/site/img/ ./img-copie|cp -Rv ~/atelier/site/img/ img-copie/|cp -Rv ~/atelier/site/img/ ./img-copie/|cp -Rv ~/atelier/site/img/ ~/atelier/img-copie|cp -Rv ~/atelier/site/img/ ~/atelier/img-copie/|cp -Rv ~/atelier/site/img/ /Users/farid/atelier/img-copie|cp -Rv ~/atelier/site/img/ /Users/farid/atelier/img-copie/|cp -Rv /Users/farid/atelier/site/img img-copie|cp -Rv /Users/farid/atelier/site/img ./img-copie|cp -Rv /Users/farid/atelier/site/img img-copie/|cp -Rv /Users/farid/atelier/site/img ./img-copie/|cp -Rv /Users/farid/atelier/site/img ~/atelier/img-copie|cp -Rv /Users/farid/atelier/site/img ~/atelier/img-copie/|cp -Rv /Users/farid/atelier/site/img /Users/farid/atelier/img-copie|cp -Rv /Users/farid/atelier/site/img /Users/farid/atelier/img-copie/|cp -Rv /Users/farid/atelier/site/img/ img-copie|cp -Rv /Users/farid/atelier/site/img/ ./img-copie|cp -Rv /Users/farid/atelier/site/img/ img-copie/|cp -Rv /Users/farid/atelier/site/img/ ./img-copie/|cp -Rv /Users/farid/atelier/site/img/ ~/atelier/img-copie|cp -Rv /Users/farid/atelier/site/img/ ~/atelier/img-copie/|cp -Rv /Users/farid/atelier/site/img/ /Users/farid/atelier/img-copie|cp -Rv /Users/farid/atelier/site/img/ /Users/farid/atelier/img-copie/|cp -vR site/img img-copie|cp -vR site/img ./img-copie|cp -vR site/img img-copie/|cp -vR site/img ./img-copie/|cp -vR site/img ~/atelier/img-copie|cp -vR site/img ~/atelier/img-copie/|cp -vR site/img /Users/farid/atelier/img-copie|cp -vR site/img /Users/farid/atelier/img-copie/|cp -vR ./site/img img-copie|cp -vR ./site/img ./img-copie|cp -vR ./site/img img-copie/|cp -vR ./site/img ./img-copie/|cp -vR ./site/img ~/atelier/img-copie|cp -vR ./site/img ~/atelier/img-copie/|cp -vR ./site/img /Users/farid/atelier/img-copie|cp -vR ./site/img /Users/farid/atelier/img-copie/|cp -vR site/img/ img-copie|cp -vR site/img/ ./img-copie|cp -vR site/img/ img-copie/|cp -vR site/img/ ./img-copie/|cp -vR site/img/ ~/atelier/img-copie|cp -vR site/img/ ~/atelier/img-copie/|cp -vR site/img/ /Users/farid/atelier/img-copie|cp -vR site/img/ /Users/farid/atelier/img-copie/|cp -vR ./site/img/ img-copie|cp -vR ./site/img/ ./img-copie|cp -vR ./site/img/ img-copie/|cp -vR ./site/img/ ./img-copie/|cp -vR ./site/img/ ~/atelier/img-copie|cp -vR ./site/img/ ~/atelier/img-copie/|cp -vR ./site/img/ /Users/farid/atelier/img-copie|cp -vR ./site/img/ /Users/farid/atelier/img-copie/|cp -vR ~/atelier/site/img img-copie|cp -vR ~/atelier/site/img ./img-copie|cp -vR ~/atelier/site/img img-copie/|cp -vR ~/atelier/site/img ./img-copie/|cp -vR ~/atelier/site/img ~/atelier/img-copie|cp -vR ~/atelier/site/img ~/atelier/img-copie/|cp -vR ~/atelier/site/img /Users/farid/atelier/img-copie|cp -vR ~/atelier/site/img /Users/farid/atelier/img-copie/|cp -vR ~/atelier/site/img/ img-copie|cp -vR ~/atelier/site/img/ ./img-copie|cp -vR ~/atelier/site/img/ img-copie/|cp -vR ~/atelier/site/img/ ./img-copie/|cp -vR ~/atelier/site/img/ ~/atelier/img-copie|cp -vR ~/atelier/site/img/ ~/atelier/img-copie/|cp -vR ~/atelier/site/img/ /Users/farid/atelier/img-copie|cp -vR ~/atelier/site/img/ /Users/farid/atelier/img-copie/|cp -vR /Users/farid/atelier/site/img img-copie|cp -vR /Users/farid/atelier/site/img ./img-copie|cp -vR /Users/farid/atelier/site/img img-copie/|cp -vR /Users/farid/atelier/site/img ./img-copie/|cp -vR /Users/farid/atelier/site/img ~/atelier/img-copie|cp -vR /Users/farid/atelier/site/img ~/atelier/img-copie/|cp -vR /Users/farid/atelier/site/img /Users/farid/atelier/img-copie|cp -vR /Users/farid/atelier/site/img /Users/farid/atelier/img-copie/|cp -vR /Users/farid/atelier/site/img/ img-copie|cp -vR /Users/farid/atelier/site/img/ ./img-copie|cp -vR /Users/farid/atelier/site/img/ img-copie/|cp -vR /Users/farid/atelier/site/img/ ./img-copie/|cp -vR /Users/farid/atelier/site/img/ ~/atelier/img-copie|cp -vR /Users/farid/atelier/site/img/ ~/atelier/img-copie/|cp -vR /Users/farid/atelier/site/img/ /Users/farid/atelier/img-copie|cp -vR /Users/farid/atelier/site/img/ /Users/farid/atelier/img-copie/|cp -R -v site/img img-copie|cp -R -v site/img ./img-copie|cp -R -v site/img img-copie/|cp -R -v site/img ./img-copie/|cp -R -v site/img ~/atelier/img-copie|cp -R -v site/img ~/atelier/img-copie/|cp -R -v site/img /Users/farid/atelier/img-copie|cp -R -v site/img /Users/farid/atelier/img-copie/|cp -R -v ./site/img img-copie|cp -R -v ./site/img ./img-copie|cp -R -v ./site/img img-copie/|cp -R -v ./site/img ./img-copie/|cp -R -v ./site/img ~/atelier/img-copie|cp -R -v ./site/img ~/atelier/img-copie/|cp -R -v ./site/img /Users/farid/atelier/img-copie|cp -R -v ./site/img /Users/farid/atelier/img-copie/|cp -R -v site/img/ img-copie|cp -R -v site/img/ ./img-copie|cp -R -v site/img/ img-copie/|cp -R -v site/img/ ./img-copie/|cp -R -v site/img/ ~/atelier/img-copie|cp -R -v site/img/ ~/atelier/img-copie/|cp -R -v site/img/ /Users/farid/atelier/img-copie|cp -R -v site/img/ /Users/farid/atelier/img-copie/|cp -R -v ./site/img/ img-copie|cp -R -v ./site/img/ ./img-copie|cp -R -v ./site/img/ img-copie/|cp -R -v ./site/img/ ./img-copie/|cp -R -v ./site/img/ ~/atelier/img-copie|cp -R -v ./site/img/ ~/atelier/img-copie/|cp -R -v ./site/img/ /Users/farid/atelier/img-copie|cp -R -v ./site/img/ /Users/farid/atelier/img-copie/|cp -R -v ~/atelier/site/img img-copie|cp -R -v ~/atelier/site/img ./img-copie|cp -R -v ~/atelier/site/img img-copie/|cp -R -v ~/atelier/site/img ./img-copie/|cp -R -v ~/atelier/site/img ~/atelier/img-copie|cp -R -v ~/atelier/site/img ~/atelier/img-copie/|cp -R -v ~/atelier/site/img /Users/farid/atelier/img-copie|cp -R -v ~/atelier/site/img /Users/farid/atelier/img-copie/|cp -R -v ~/atelier/site/img/ img-copie|cp -R -v ~/atelier/site/img/ ./img-copie|cp -R -v ~/atelier/site/img/ img-copie/|cp -R -v ~/atelier/site/img/ ./img-copie/|cp -R -v ~/atelier/site/img/ ~/atelier/img-copie|cp -R -v ~/atelier/site/img/ ~/atelier/img-copie/|cp -R -v ~/atelier/site/img/ /Users/farid/atelier/img-copie|cp -R -v ~/atelier/site/img/ /Users/farid/atelier/img-copie/|cp -R -v /Users/farid/atelier/site/img img-copie|cp -R -v /Users/farid/atelier/site/img ./img-copie|cp -R -v /Users/farid/atelier/site/img img-copie/|cp -R -v /Users/farid/atelier/site/img ./img-copie/|cp -R -v /Users/farid/atelier/site/img ~/atelier/img-copie|cp -R -v /Users/farid/atelier/site/img ~/atelier/img-copie/|cp -R -v /Users/farid/atelier/site/img /Users/farid/atelier/img-copie|cp -R -v /Users/farid/atelier/site/img /Users/farid/atelier/img-copie/|cp -R -v /Users/farid/atelier/site/img/ img-copie|cp -R -v /Users/farid/atelier/site/img/ ./img-copie|cp -R -v /Users/farid/atelier/site/img/ img-copie/|cp -R -v /Users/farid/atelier/site/img/ ./img-copie/|cp -R -v /Users/farid/atelier/site/img/ ~/atelier/img-copie|cp -R -v /Users/farid/atelier/site/img/ ~/atelier/img-copie/|cp -R -v /Users/farid/atelier/site/img/ /Users/farid/atelier/img-copie|cp -R -v /Users/farid/atelier/site/img/ /Users/farid/atelier/img-copie/|cp -v -R site/img img-copie|cp -v -R site/img ./img-copie|cp -v -R site/img img-copie/|cp -v -R site/img ./img-copie/|cp -v -R site/img ~/atelier/img-copie|cp -v -R site/img ~/atelier/img-copie/|cp -v -R site/img /Users/farid/atelier/img-copie|cp -v -R site/img /Users/farid/atelier/img-copie/|cp -v -R ./site/img img-copie|cp -v -R ./site/img ./img-copie|cp -v -R ./site/img img-copie/|cp -v -R ./site/img ./img-copie/|cp -v -R ./site/img ~/atelier/img-copie|cp -v -R ./site/img ~/atelier/img-copie/|cp -v -R ./site/img /Users/farid/atelier/img-copie|cp -v -R ./site/img /Users/farid/atelier/img-copie/|cp -v -R site/img/ img-copie|cp -v -R site/img/ ./img-copie|cp -v -R site/img/ img-copie/|cp -v -R site/img/ ./img-copie/|cp -v -R site/img/ ~/atelier/img-copie|cp -v -R site/img/ ~/atelier/img-copie/|cp -v -R site/img/ /Users/farid/atelier/img-copie|cp -v -R site/img/ /Users/farid/atelier/img-copie/|cp -v -R ./site/img/ img-copie|cp -v -R ./site/img/ ./img-copie|cp -v -R ./site/img/ img-copie/|cp -v -R ./site/img/ ./img-copie/|cp -v -R ./site/img/ ~/atelier/img-copie|cp -v -R ./site/img/ ~/atelier/img-copie/|cp -v -R ./site/img/ /Users/farid/atelier/img-copie|cp -v -R ./site/img/ /Users/farid/atelier/img-copie/|cp -v -R ~/atelier/site/img img-copie|cp -v -R ~/atelier/site/img ./img-copie|cp -v -R ~/atelier/site/img img-copie/|cp -v -R ~/atelier/site/img ./img-copie/|cp -v -R ~/atelier/site/img ~/atelier/img-copie|cp -v -R ~/atelier/site/img ~/atelier/img-copie/|cp -v -R ~/atelier/site/img /Users/farid/atelier/img-copie|cp -v -R ~/atelier/site/img /Users/farid/atelier/img-copie/|cp -v -R ~/atelier/site/img/ img-copie|cp -v -R ~/atelier/site/img/ ./img-copie|cp -v -R ~/atelier/site/img/ img-copie/|cp -v -R ~/atelier/site/img/ ./img-copie/|cp -v -R ~/atelier/site/img/ ~/atelier/img-copie|cp -v -R ~/atelier/site/img/ ~/atelier/img-copie/|cp -v -R ~/atelier/site/img/ /Users/farid/atelier/img-copie|cp -v -R ~/atelier/site/img/ /Users/farid/atelier/img-copie/|cp -v -R /Users/farid/atelier/site/img img-copie|cp -v -R /Users/farid/atelier/site/img ./img-copie|cp -v -R /Users/farid/atelier/site/img img-copie/|cp -v -R /Users/farid/atelier/site/img ./img-copie/|cp -v -R /Users/farid/atelier/site/img ~/atelier/img-copie|cp -v -R /Users/farid/atelier/site/img ~/atelier/img-copie/|cp -v -R /Users/farid/atelier/site/img /Users/farid/atelier/img-copie|cp -v -R /Users/farid/atelier/site/img /Users/farid/atelier/img-copie/|cp -v -R /Users/farid/atelier/site/img/ img-copie|cp -v -R /Users/farid/atelier/site/img/ ./img-copie|cp -v -R /Users/farid/atelier/site/img/ img-copie/|cp -v -R /Users/farid/atelier/site/img/ ./img-copie/|cp -v -R /Users/farid/atelier/site/img/ ~/atelier/img-copie|cp -v -R /Users/farid/atelier/site/img/ ~/atelier/img-copie/|cp -v -R /Users/farid/atelier/site/img/ /Users/farid/atelier/img-copie|cp -v -R /Users/farid/atelier/site/img/ /Users/farid/atelier/img-copie/|cp -rv site/img img-copie|cp -rv site/img ./img-copie|cp -rv site/img img-copie/|cp -rv site/img ./img-copie/|cp -rv site/img ~/atelier/img-copie|cp -rv site/img ~/atelier/img-copie/|cp -rv site/img /Users/farid/atelier/img-copie|cp -rv site/img /Users/farid/atelier/img-copie/|cp -rv ./site/img img-copie|cp -rv ./site/img ./img-copie|cp -rv ./site/img img-copie/|cp -rv ./site/img ./img-copie/|cp -rv ./site/img ~/atelier/img-copie|cp -rv ./site/img ~/atelier/img-copie/|cp -rv ./site/img /Users/farid/atelier/img-copie|cp -rv ./site/img /Users/farid/atelier/img-copie/|cp -rv site/img/ img-copie|cp -rv site/img/ ./img-copie|cp -rv site/img/ img-copie/|cp -rv site/img/ ./img-copie/|cp -rv site/img/ ~/atelier/img-copie|cp -rv site/img/ ~/atelier/img-copie/|cp -rv site/img/ /Users/farid/atelier/img-copie|cp -rv site/img/ /Users/farid/atelier/img-copie/|cp -rv ./site/img/ img-copie|cp -rv ./site/img/ ./img-copie|cp -rv ./site/img/ img-copie/|cp -rv ./site/img/ ./img-copie/|cp -rv ./site/img/ ~/atelier/img-copie|cp -rv ./site/img/ ~/atelier/img-copie/|cp -rv ./site/img/ /Users/farid/atelier/img-copie|cp -rv ./site/img/ /Users/farid/atelier/img-copie/|cp -rv ~/atelier/site/img img-copie|cp -rv ~/atelier/site/img ./img-copie|cp -rv ~/atelier/site/img img-copie/|cp -rv ~/atelier/site/img ./img-copie/|cp -rv ~/atelier/site/img ~/atelier/img-copie|cp -rv ~/atelier/site/img ~/atelier/img-copie/|cp -rv ~/atelier/site/img /Users/farid/atelier/img-copie|cp -rv ~/atelier/site/img /Users/farid/atelier/img-copie/|cp -rv ~/atelier/site/img/ img-copie|cp -rv ~/atelier/site/img/ ./img-copie|cp -rv ~/atelier/site/img/ img-copie/|cp -rv ~/atelier/site/img/ ./img-copie/|cp -rv ~/atelier/site/img/ ~/atelier/img-copie|cp -rv ~/atelier/site/img/ ~/atelier/img-copie/|cp -rv ~/atelier/site/img/ /Users/farid/atelier/img-copie|cp -rv ~/atelier/site/img/ /Users/farid/atelier/img-copie/|cp -rv /Users/farid/atelier/site/img img-copie|cp -rv /Users/farid/atelier/site/img ./img-copie|cp -rv /Users/farid/atelier/site/img img-copie/|cp -rv /Users/farid/atelier/site/img ./img-copie/|cp -rv /Users/farid/atelier/site/img ~/atelier/img-copie|cp -rv /Users/farid/atelier/site/img ~/atelier/img-copie/|cp -rv /Users/farid/atelier/site/img /Users/farid/atelier/img-copie|cp -rv /Users/farid/atelier/site/img /Users/farid/atelier/img-copie/|cp -rv /Users/farid/atelier/site/img/ img-copie|cp -rv /Users/farid/atelier/site/img/ ./img-copie|cp -rv /Users/farid/atelier/site/img/ img-copie/|cp -rv /Users/farid/atelier/site/img/ ./img-copie/|cp -rv /Users/farid/atelier/site/img/ ~/atelier/img-copie|cp -rv /Users/farid/atelier/site/img/ ~/atelier/img-copie/|cp -rv /Users/farid/atelier/site/img/ /Users/farid/atelier/img-copie|cp -rv /Users/farid/atelier/site/img/ /Users/farid/atelier/img-copie/|cp -vr site/img img-copie|cp -vr site/img ./img-copie|cp -vr site/img img-copie/|cp -vr site/img ./img-copie/|cp -vr site/img ~/atelier/img-copie|cp -vr site/img ~/atelier/img-copie/|cp -vr site/img /Users/farid/atelier/img-copie|cp -vr site/img /Users/farid/atelier/img-copie/|cp -vr ./site/img img-copie|cp -vr ./site/img ./img-copie|cp -vr ./site/img img-copie/|cp -vr ./site/img ./img-copie/|cp -vr ./site/img ~/atelier/img-copie|cp -vr ./site/img ~/atelier/img-copie/|cp -vr ./site/img /Users/farid/atelier/img-copie|cp -vr ./site/img /Users/farid/atelier/img-copie/|cp -vr site/img/ img-copie|cp -vr site/img/ ./img-copie|cp -vr site/img/ img-copie/|cp -vr site/img/ ./img-copie/|cp -vr site/img/ ~/atelier/img-copie|cp -vr site/img/ ~/atelier/img-copie/|cp -vr site/img/ /Users/farid/atelier/img-copie|cp -vr site/img/ /Users/farid/atelier/img-copie/|cp -vr ./site/img/ img-copie|cp -vr ./site/img/ ./img-copie|cp -vr ./site/img/ img-copie/|cp -vr ./site/img/ ./img-copie/|cp -vr ./site/img/ ~/atelier/img-copie|cp -vr ./site/img/ ~/atelier/img-copie/|cp -vr ./site/img/ /Users/farid/atelier/img-copie|cp -vr ./site/img/ /Users/farid/atelier/img-copie/|cp -vr ~/atelier/site/img img-copie|cp -vr ~/atelier/site/img ./img-copie|cp -vr ~/atelier/site/img img-copie/|cp -vr ~/atelier/site/img ./img-copie/|cp -vr ~/atelier/site/img ~/atelier/img-copie|cp -vr ~/atelier/site/img ~/atelier/img-copie/|cp -vr ~/atelier/site/img /Users/farid/atelier/img-copie|cp -vr ~/atelier/site/img /Users/farid/atelier/img-copie/|cp -vr ~/atelier/site/img/ img-copie|cp -vr ~/atelier/site/img/ ./img-copie|cp -vr ~/atelier/site/img/ img-copie/|cp -vr ~/atelier/site/img/ ./img-copie/|cp -vr ~/atelier/site/img/ ~/atelier/img-copie|cp -vr ~/atelier/site/img/ ~/atelier/img-copie/|cp -vr ~/atelier/site/img/ /Users/farid/atelier/img-copie|cp -vr ~/atelier/site/img/ /Users/farid/atelier/img-copie/|cp -vr /Users/farid/atelier/site/img img-copie|cp -vr /Users/farid/atelier/site/img ./img-copie|cp -vr /Users/farid/atelier/site/img img-copie/|cp -vr /Users/farid/atelier/site/img ./img-copie/|cp -vr /Users/farid/atelier/site/img ~/atelier/img-copie|cp -vr /Users/farid/atelier/site/img ~/atelier/img-copie/|cp -vr /Users/farid/atelier/site/img /Users/farid/atelier/img-copie|cp -vr /Users/farid/atelier/site/img /Users/farid/atelier/img-copie/|cp -vr /Users/farid/atelier/site/img/ img-copie|cp -vr /Users/farid/atelier/site/img/ ./img-copie|cp -vr /Users/farid/atelier/site/img/ img-copie/|cp -vr /Users/farid/atelier/site/img/ ./img-copie/|cp -vr /Users/farid/atelier/site/img/ ~/atelier/img-copie|cp -vr /Users/farid/atelier/site/img/ ~/atelier/img-copie/|cp -vr /Users/farid/atelier/site/img/ /Users/farid/atelier/img-copie|cp -vr /Users/farid/atelier/site/img/ /Users/farid/atelier/img-copie/|cp -r -v site/img img-copie|cp -r -v site/img ./img-copie|cp -r -v site/img img-copie/|cp -r -v site/img ./img-copie/|cp -r -v site/img ~/atelier/img-copie|cp -r -v site/img ~/atelier/img-copie/|cp -r -v site/img /Users/farid/atelier/img-copie|cp -r -v site/img /Users/farid/atelier/img-copie/|cp -r -v ./site/img img-copie|cp -r -v ./site/img ./img-copie|cp -r -v ./site/img img-copie/|cp -r -v ./site/img ./img-copie/|cp -r -v ./site/img ~/atelier/img-copie|cp -r -v ./site/img ~/atelier/img-copie/|cp -r -v ./site/img /Users/farid/atelier/img-copie|cp -r -v ./site/img /Users/farid/atelier/img-copie/|cp -r -v site/img/ img-copie|cp -r -v site/img/ ./img-copie|cp -r -v site/img/ img-copie/|cp -r -v site/img/ ./img-copie/|cp -r -v site/img/ ~/atelier/img-copie|cp -r -v site/img/ ~/atelier/img-copie/|cp -r -v site/img/ /Users/farid/atelier/img-copie|cp -r -v site/img/ /Users/farid/atelier/img-copie/|cp -r -v ./site/img/ img-copie|cp -r -v ./site/img/ ./img-copie|cp -r -v ./site/img/ img-copie/|cp -r -v ./site/img/ ./img-copie/|cp -r -v ./site/img/ ~/atelier/img-copie|cp -r -v ./site/img/ ~/atelier/img-copie/|cp -r -v ./site/img/ /Users/farid/atelier/img-copie|cp -r -v ./site/img/ /Users/farid/atelier/img-copie/|cp -r -v ~/atelier/site/img img-copie|cp -r -v ~/atelier/site/img ./img-copie|cp -r -v ~/atelier/site/img img-copie/|cp -r -v ~/atelier/site/img ./img-copie/|cp -r -v ~/atelier/site/img ~/atelier/img-copie|cp -r -v ~/atelier/site/img ~/atelier/img-copie/|cp -r -v ~/atelier/site/img /Users/farid/atelier/img-copie|cp -r -v ~/atelier/site/img /Users/farid/atelier/img-copie/|cp -r -v ~/atelier/site/img/ img-copie|cp -r -v ~/atelier/site/img/ ./img-copie|cp -r -v ~/atelier/site/img/ img-copie/|cp -r -v ~/atelier/site/img/ ./img-copie/|cp -r -v ~/atelier/site/img/ ~/atelier/img-copie|cp -r -v ~/atelier/site/img/ ~/atelier/img-copie/|cp -r -v ~/atelier/site/img/ /Users/farid/atelier/img-copie|cp -r -v ~/atelier/site/img/ /Users/farid/atelier/img-copie/|cp -r -v /Users/farid/atelier/site/img img-copie|cp -r -v /Users/farid/atelier/site/img ./img-copie|cp -r -v /Users/farid/atelier/site/img img-copie/|cp -r -v /Users/farid/atelier/site/img ./img-copie/|cp -r -v /Users/farid/atelier/site/img ~/atelier/img-copie|cp -r -v /Users/farid/atelier/site/img ~/atelier/img-copie/|cp -r -v /Users/farid/atelier/site/img /Users/farid/atelier/img-copie|cp -r -v /Users/farid/atelier/site/img /Users/farid/atelier/img-copie/|cp -r -v /Users/farid/atelier/site/img/ img-copie|cp -r -v /Users/farid/atelier/site/img/ ./img-copie|cp -r -v /Users/farid/atelier/site/img/ img-copie/|cp -r -v /Users/farid/atelier/site/img/ ./img-copie/|cp -r -v /Users/farid/atelier/site/img/ ~/atelier/img-copie|cp -r -v /Users/farid/atelier/site/img/ ~/atelier/img-copie/|cp -r -v /Users/farid/atelier/site/img/ /Users/farid/atelier/img-copie|cp -r -v /Users/farid/atelier/site/img/ /Users/farid/atelier/img-copie/|cp -v -r site/img img-copie|cp -v -r site/img ./img-copie|cp -v -r site/img img-copie/|cp -v -r site/img ./img-copie/|cp -v -r site/img ~/atelier/img-copie|cp -v -r site/img ~/atelier/img-copie/|cp -v -r site/img /Users/farid/atelier/img-copie|cp -v -r site/img /Users/farid/atelier/img-copie/|cp -v -r ./site/img img-copie|cp -v -r ./site/img ./img-copie|cp -v -r ./site/img img-copie/|cp -v -r ./site/img ./img-copie/|cp -v -r ./site/img ~/atelier/img-copie|cp -v -r ./site/img ~/atelier/img-copie/|cp -v -r ./site/img /Users/farid/atelier/img-copie|cp -v -r ./site/img /Users/farid/atelier/img-copie/|cp -v -r site/img/ img-copie|cp -v -r site/img/ ./img-copie|cp -v -r site/img/ img-copie/|cp -v -r site/img/ ./img-copie/|cp -v -r site/img/ ~/atelier/img-copie|cp -v -r site/img/ ~/atelier/img-copie/|cp -v -r site/img/ /Users/farid/atelier/img-copie|cp -v -r site/img/ /Users/farid/atelier/img-copie/|cp -v -r ./site/img/ img-copie|cp -v -r ./site/img/ ./img-copie|cp -v -r ./site/img/ img-copie/|cp -v -r ./site/img/ ./img-copie/|cp -v -r ./site/img/ ~/atelier/img-copie|cp -v -r ./site/img/ ~/atelier/img-copie/|cp -v -r ./site/img/ /Users/farid/atelier/img-copie|cp -v -r ./site/img/ /Users/farid/atelier/img-copie/|cp -v -r ~/atelier/site/img img-copie|cp -v -r ~/atelier/site/img ./img-copie|cp -v -r ~/atelier/site/img img-copie/|cp -v -r ~/atelier/site/img ./img-copie/|cp -v -r ~/atelier/site/img ~/atelier/img-copie|cp -v -r ~/atelier/site/img ~/atelier/img-copie/|cp -v -r ~/atelier/site/img /Users/farid/atelier/img-copie|cp -v -r ~/atelier/site/img /Users/farid/atelier/img-copie/|cp -v -r ~/atelier/site/img/ img-copie|cp -v -r ~/atelier/site/img/ ./img-copie|cp -v -r ~/atelier/site/img/ img-copie/|cp -v -r ~/atelier/site/img/ ./img-copie/|cp -v -r ~/atelier/site/img/ ~/atelier/img-copie|cp -v -r ~/atelier/site/img/ ~/atelier/img-copie/|cp -v -r ~/atelier/site/img/ /Users/farid/atelier/img-copie|cp -v -r ~/atelier/site/img/ /Users/farid/atelier/img-copie/|cp -v -r /Users/farid/atelier/site/img img-copie|cp -v -r /Users/farid/atelier/site/img ./img-copie|cp -v -r /Users/farid/atelier/site/img img-copie/|cp -v -r /Users/farid/atelier/site/img ./img-copie/|cp -v -r /Users/farid/atelier/site/img ~/atelier/img-copie|cp -v -r /Users/farid/atelier/site/img ~/atelier/img-copie/|cp -v -r /Users/farid/atelier/site/img /Users/farid/atelier/img-copie|cp -v -r /Users/farid/atelier/site/img /Users/farid/atelier/img-copie/|cp -v -r /Users/farid/atelier/site/img/ img-copie|cp -v -r /Users/farid/atelier/site/img/ ./img-copie|cp -v -r /Users/farid/atelier/site/img/ img-copie/|cp -v -r /Users/farid/atelier/site/img/ ./img-copie/|cp -v -r /Users/farid/atelier/site/img/ ~/atelier/img-copie|cp -v -r /Users/farid/atelier/site/img/ ~/atelier/img-copie/|cp -v -r /Users/farid/atelier/site/img/ /Users/farid/atelier/img-copie|cp -v -r /Users/farid/atelier/site/img/ /Users/farid/atelier/img-copie/"
+        data-accepte="cp -R -v site/img site/css/img-copie|cp -R -v site/img ./site/css/img-copie|cp -R -v site/img site/css/img-copie/|cp -R -v site/img ./site/css/img-copie/|cp -R -v site/img ~/atelier/site/css/img-copie|cp -R -v site/img ~/atelier/site/css/img-copie/|cp -R -v site/img /Users/farid/atelier/site/css/img-copie|cp -R -v site/img /Users/farid/atelier/site/css/img-copie/|cp -R -v ./site/img site/css/img-copie|cp -R -v ./site/img ./site/css/img-copie|cp -R -v ./site/img site/css/img-copie/|cp -R -v ./site/img ./site/css/img-copie/|cp -R -v ./site/img ~/atelier/site/css/img-copie|cp -R -v ./site/img ~/atelier/site/css/img-copie/|cp -R -v ./site/img /Users/farid/atelier/site/css/img-copie|cp -R -v ./site/img /Users/farid/atelier/site/css/img-copie/|cp -R -v site/img/ site/css/img-copie|cp -R -v site/img/ ./site/css/img-copie|cp -R -v site/img/ site/css/img-copie/|cp -R -v site/img/ ./site/css/img-copie/|cp -R -v site/img/ ~/atelier/site/css/img-copie|cp -R -v site/img/ ~/atelier/site/css/img-copie/|cp -R -v site/img/ /Users/farid/atelier/site/css/img-copie|cp -R -v site/img/ /Users/farid/atelier/site/css/img-copie/|cp -R -v ./site/img/ site/css/img-copie|cp -R -v ./site/img/ ./site/css/img-copie|cp -R -v ./site/img/ site/css/img-copie/|cp -R -v ./site/img/ ./site/css/img-copie/|cp -R -v ./site/img/ ~/atelier/site/css/img-copie|cp -R -v ./site/img/ ~/atelier/site/css/img-copie/|cp -R -v ./site/img/ /Users/farid/atelier/site/css/img-copie|cp -R -v ./site/img/ /Users/farid/atelier/site/css/img-copie/|cp -R -v ~/atelier/site/img site/css/img-copie|cp -R -v ~/atelier/site/img ./site/css/img-copie|cp -R -v ~/atelier/site/img site/css/img-copie/|cp -R -v ~/atelier/site/img ./site/css/img-copie/|cp -R -v ~/atelier/site/img ~/atelier/site/css/img-copie|cp -R -v ~/atelier/site/img ~/atelier/site/css/img-copie/|cp -R -v ~/atelier/site/img /Users/farid/atelier/site/css/img-copie|cp -R -v ~/atelier/site/img /Users/farid/atelier/site/css/img-copie/|cp -R -v ~/atelier/site/img/ site/css/img-copie|cp -R -v ~/atelier/site/img/ ./site/css/img-copie|cp -R -v ~/atelier/site/img/ site/css/img-copie/|cp -R -v ~/atelier/site/img/ ./site/css/img-copie/|cp -R -v ~/atelier/site/img/ ~/atelier/site/css/img-copie|cp -R -v ~/atelier/site/img/ ~/atelier/site/css/img-copie/|cp -R -v ~/atelier/site/img/ /Users/farid/atelier/site/css/img-copie|cp -R -v ~/atelier/site/img/ /Users/farid/atelier/site/css/img-copie/|cp -R -v /Users/farid/atelier/site/img site/css/img-copie|cp -R -v /Users/farid/atelier/site/img ./site/css/img-copie|cp -R -v /Users/farid/atelier/site/img site/css/img-copie/|cp -R -v /Users/farid/atelier/site/img ./site/css/img-copie/|cp -R -v /Users/farid/atelier/site/img ~/atelier/site/css/img-copie|cp -R -v /Users/farid/atelier/site/img ~/atelier/site/css/img-copie/|cp -R -v /Users/farid/atelier/site/img /Users/farid/atelier/site/css/img-copie|cp -R -v /Users/farid/atelier/site/img /Users/farid/atelier/site/css/img-copie/|cp -R -v /Users/farid/atelier/site/img/ site/css/img-copie|cp -R -v /Users/farid/atelier/site/img/ ./site/css/img-copie|cp -R -v /Users/farid/atelier/site/img/ site/css/img-copie/|cp -R -v /Users/farid/atelier/site/img/ ./site/css/img-copie/|cp -R -v /Users/farid/atelier/site/img/ ~/atelier/site/css/img-copie|cp -R -v /Users/farid/atelier/site/img/ ~/atelier/site/css/img-copie/|cp -R -v /Users/farid/atelier/site/img/ /Users/farid/atelier/site/css/img-copie|cp -R -v /Users/farid/atelier/site/img/ /Users/farid/atelier/site/css/img-copie/|cp -Rv site/img site/css/img-copie|cp -Rv site/img ./site/css/img-copie|cp -Rv site/img site/css/img-copie/|cp -Rv site/img ./site/css/img-copie/|cp -Rv site/img ~/atelier/site/css/img-copie|cp -Rv site/img ~/atelier/site/css/img-copie/|cp -Rv site/img /Users/farid/atelier/site/css/img-copie|cp -Rv site/img /Users/farid/atelier/site/css/img-copie/|cp -Rv ./site/img site/css/img-copie|cp -Rv ./site/img ./site/css/img-copie|cp -Rv ./site/img site/css/img-copie/|cp -Rv ./site/img ./site/css/img-copie/|cp -Rv ./site/img ~/atelier/site/css/img-copie|cp -Rv ./site/img ~/atelier/site/css/img-copie/|cp -Rv ./site/img /Users/farid/atelier/site/css/img-copie|cp -Rv ./site/img /Users/farid/atelier/site/css/img-copie/|cp -Rv site/img/ site/css/img-copie|cp -Rv site/img/ ./site/css/img-copie|cp -Rv site/img/ site/css/img-copie/|cp -Rv site/img/ ./site/css/img-copie/|cp -Rv site/img/ ~/atelier/site/css/img-copie|cp -Rv site/img/ ~/atelier/site/css/img-copie/|cp -Rv site/img/ /Users/farid/atelier/site/css/img-copie|cp -Rv site/img/ /Users/farid/atelier/site/css/img-copie/|cp -Rv ./site/img/ site/css/img-copie|cp -Rv ./site/img/ ./site/css/img-copie|cp -Rv ./site/img/ site/css/img-copie/|cp -Rv ./site/img/ ./site/css/img-copie/|cp -Rv ./site/img/ ~/atelier/site/css/img-copie|cp -Rv ./site/img/ ~/atelier/site/css/img-copie/|cp -Rv ./site/img/ /Users/farid/atelier/site/css/img-copie|cp -Rv ./site/img/ /Users/farid/atelier/site/css/img-copie/|cp -Rv ~/atelier/site/img site/css/img-copie|cp -Rv ~/atelier/site/img ./site/css/img-copie|cp -Rv ~/atelier/site/img site/css/img-copie/|cp -Rv ~/atelier/site/img ./site/css/img-copie/|cp -Rv ~/atelier/site/img ~/atelier/site/css/img-copie|cp -Rv ~/atelier/site/img ~/atelier/site/css/img-copie/|cp -Rv ~/atelier/site/img /Users/farid/atelier/site/css/img-copie|cp -Rv ~/atelier/site/img /Users/farid/atelier/site/css/img-copie/|cp -Rv ~/atelier/site/img/ site/css/img-copie|cp -Rv ~/atelier/site/img/ ./site/css/img-copie|cp -Rv ~/atelier/site/img/ site/css/img-copie/|cp -Rv ~/atelier/site/img/ ./site/css/img-copie/|cp -Rv ~/atelier/site/img/ ~/atelier/site/css/img-copie|cp -Rv ~/atelier/site/img/ ~/atelier/site/css/img-copie/|cp -Rv ~/atelier/site/img/ /Users/farid/atelier/site/css/img-copie|cp -Rv ~/atelier/site/img/ /Users/farid/atelier/site/css/img-copie/|cp -Rv /Users/farid/atelier/site/img site/css/img-copie|cp -Rv /Users/farid/atelier/site/img ./site/css/img-copie|cp -Rv /Users/farid/atelier/site/img site/css/img-copie/|cp -Rv /Users/farid/atelier/site/img ./site/css/img-copie/|cp -Rv /Users/farid/atelier/site/img ~/atelier/site/css/img-copie|cp -Rv /Users/farid/atelier/site/img ~/atelier/site/css/img-copie/|cp -Rv /Users/farid/atelier/site/img /Users/farid/atelier/site/css/img-copie|cp -Rv /Users/farid/atelier/site/img /Users/farid/atelier/site/css/img-copie/|cp -Rv /Users/farid/atelier/site/img/ site/css/img-copie|cp -Rv /Users/farid/atelier/site/img/ ./site/css/img-copie|cp -Rv /Users/farid/atelier/site/img/ site/css/img-copie/|cp -Rv /Users/farid/atelier/site/img/ ./site/css/img-copie/|cp -Rv /Users/farid/atelier/site/img/ ~/atelier/site/css/img-copie|cp -Rv /Users/farid/atelier/site/img/ ~/atelier/site/css/img-copie/|cp -Rv /Users/farid/atelier/site/img/ /Users/farid/atelier/site/css/img-copie|cp -Rv /Users/farid/atelier/site/img/ /Users/farid/atelier/site/css/img-copie/|cp -r -v site/img site/css/img-copie|cp -r -v site/img ./site/css/img-copie|cp -r -v site/img site/css/img-copie/|cp -r -v site/img ./site/css/img-copie/|cp -r -v site/img ~/atelier/site/css/img-copie|cp -r -v site/img ~/atelier/site/css/img-copie/|cp -r -v site/img /Users/farid/atelier/site/css/img-copie|cp -r -v site/img /Users/farid/atelier/site/css/img-copie/|cp -r -v ./site/img site/css/img-copie|cp -r -v ./site/img ./site/css/img-copie|cp -r -v ./site/img site/css/img-copie/|cp -r -v ./site/img ./site/css/img-copie/|cp -r -v ./site/img ~/atelier/site/css/img-copie|cp -r -v ./site/img ~/atelier/site/css/img-copie/|cp -r -v ./site/img /Users/farid/atelier/site/css/img-copie|cp -r -v ./site/img /Users/farid/atelier/site/css/img-copie/|cp -r -v site/img/ site/css/img-copie|cp -r -v site/img/ ./site/css/img-copie|cp -r -v site/img/ site/css/img-copie/|cp -r -v site/img/ ./site/css/img-copie/|cp -r -v site/img/ ~/atelier/site/css/img-copie|cp -r -v site/img/ ~/atelier/site/css/img-copie/|cp -r -v site/img/ /Users/farid/atelier/site/css/img-copie|cp -r -v site/img/ /Users/farid/atelier/site/css/img-copie/|cp -r -v ./site/img/ site/css/img-copie|cp -r -v ./site/img/ ./site/css/img-copie|cp -r -v ./site/img/ site/css/img-copie/|cp -r -v ./site/img/ ./site/css/img-copie/|cp -r -v ./site/img/ ~/atelier/site/css/img-copie|cp -r -v ./site/img/ ~/atelier/site/css/img-copie/|cp -r -v ./site/img/ /Users/farid/atelier/site/css/img-copie|cp -r -v ./site/img/ /Users/farid/atelier/site/css/img-copie/|cp -r -v ~/atelier/site/img site/css/img-copie|cp -r -v ~/atelier/site/img ./site/css/img-copie|cp -r -v ~/atelier/site/img site/css/img-copie/|cp -r -v ~/atelier/site/img ./site/css/img-copie/|cp -r -v ~/atelier/site/img ~/atelier/site/css/img-copie|cp -r -v ~/atelier/site/img ~/atelier/site/css/img-copie/|cp -r -v ~/atelier/site/img /Users/farid/atelier/site/css/img-copie|cp -r -v ~/atelier/site/img /Users/farid/atelier/site/css/img-copie/|cp -r -v ~/atelier/site/img/ site/css/img-copie|cp -r -v ~/atelier/site/img/ ./site/css/img-copie|cp -r -v ~/atelier/site/img/ site/css/img-copie/|cp -r -v ~/atelier/site/img/ ./site/css/img-copie/|cp -r -v ~/atelier/site/img/ ~/atelier/site/css/img-copie|cp -r -v ~/atelier/site/img/ ~/atelier/site/css/img-copie/|cp -r -v ~/atelier/site/img/ /Users/farid/atelier/site/css/img-copie|cp -r -v ~/atelier/site/img/ /Users/farid/atelier/site/css/img-copie/|cp -r -v /Users/farid/atelier/site/img site/css/img-copie|cp -r -v /Users/farid/atelier/site/img ./site/css/img-copie|cp -r -v /Users/farid/atelier/site/img site/css/img-copie/|cp -r -v /Users/farid/atelier/site/img ./site/css/img-copie/|cp -r -v /Users/farid/atelier/site/img ~/atelier/site/css/img-copie|cp -r -v /Users/farid/atelier/site/img ~/atelier/site/css/img-copie/|cp -r -v /Users/farid/atelier/site/img /Users/farid/atelier/site/css/img-copie|cp -r -v /Users/farid/atelier/site/img /Users/farid/atelier/site/css/img-copie/|cp -r -v /Users/farid/atelier/site/img/ site/css/img-copie|cp -r -v /Users/farid/atelier/site/img/ ./site/css/img-copie|cp -r -v /Users/farid/atelier/site/img/ site/css/img-copie/|cp -r -v /Users/farid/atelier/site/img/ ./site/css/img-copie/|cp -r -v /Users/farid/atelier/site/img/ ~/atelier/site/css/img-copie|cp -r -v /Users/farid/atelier/site/img/ ~/atelier/site/css/img-copie/|cp -r -v /Users/farid/atelier/site/img/ /Users/farid/atelier/site/css/img-copie|cp -r -v /Users/farid/atelier/site/img/ /Users/farid/atelier/site/css/img-copie/|cp -rv site/img site/css/img-copie|cp -rv site/img ./site/css/img-copie|cp -rv site/img site/css/img-copie/|cp -rv site/img ./site/css/img-copie/|cp -rv site/img ~/atelier/site/css/img-copie|cp -rv site/img ~/atelier/site/css/img-copie/|cp -rv site/img /Users/farid/atelier/site/css/img-copie|cp -rv site/img /Users/farid/atelier/site/css/img-copie/|cp -rv ./site/img site/css/img-copie|cp -rv ./site/img ./site/css/img-copie|cp -rv ./site/img site/css/img-copie/|cp -rv ./site/img ./site/css/img-copie/|cp -rv ./site/img ~/atelier/site/css/img-copie|cp -rv ./site/img ~/atelier/site/css/img-copie/|cp -rv ./site/img /Users/farid/atelier/site/css/img-copie|cp -rv ./site/img /Users/farid/atelier/site/css/img-copie/|cp -rv site/img/ site/css/img-copie|cp -rv site/img/ ./site/css/img-copie|cp -rv site/img/ site/css/img-copie/|cp -rv site/img/ ./site/css/img-copie/|cp -rv site/img/ ~/atelier/site/css/img-copie|cp -rv site/img/ ~/atelier/site/css/img-copie/|cp -rv site/img/ /Users/farid/atelier/site/css/img-copie|cp -rv site/img/ /Users/farid/atelier/site/css/img-copie/|cp -rv ./site/img/ site/css/img-copie|cp -rv ./site/img/ ./site/css/img-copie|cp -rv ./site/img/ site/css/img-copie/|cp -rv ./site/img/ ./site/css/img-copie/|cp -rv ./site/img/ ~/atelier/site/css/img-copie|cp -rv ./site/img/ ~/atelier/site/css/img-copie/|cp -rv ./site/img/ /Users/farid/atelier/site/css/img-copie|cp -rv ./site/img/ /Users/farid/atelier/site/css/img-copie/|cp -rv ~/atelier/site/img site/css/img-copie|cp -rv ~/atelier/site/img ./site/css/img-copie|cp -rv ~/atelier/site/img site/css/img-copie/|cp -rv ~/atelier/site/img ./site/css/img-copie/|cp -rv ~/atelier/site/img ~/atelier/site/css/img-copie|cp -rv ~/atelier/site/img ~/atelier/site/css/img-copie/|cp -rv ~/atelier/site/img /Users/farid/atelier/site/css/img-copie|cp -rv ~/atelier/site/img /Users/farid/atelier/site/css/img-copie/|cp -rv ~/atelier/site/img/ site/css/img-copie|cp -rv ~/atelier/site/img/ ./site/css/img-copie|cp -rv ~/atelier/site/img/ site/css/img-copie/|cp -rv ~/atelier/site/img/ ./site/css/img-copie/|cp -rv ~/atelier/site/img/ ~/atelier/site/css/img-copie|cp -rv ~/atelier/site/img/ ~/atelier/site/css/img-copie/|cp -rv ~/atelier/site/img/ /Users/farid/atelier/site/css/img-copie|cp -rv ~/atelier/site/img/ /Users/farid/atelier/site/css/img-copie/|cp -rv /Users/farid/atelier/site/img site/css/img-copie|cp -rv /Users/farid/atelier/site/img ./site/css/img-copie|cp -rv /Users/farid/atelier/site/img site/css/img-copie/|cp -rv /Users/farid/atelier/site/img ./site/css/img-copie/|cp -rv /Users/farid/atelier/site/img ~/atelier/site/css/img-copie|cp -rv /Users/farid/atelier/site/img ~/atelier/site/css/img-copie/|cp -rv /Users/farid/atelier/site/img /Users/farid/atelier/site/css/img-copie|cp -rv /Users/farid/atelier/site/img /Users/farid/atelier/site/css/img-copie/|cp -rv /Users/farid/atelier/site/img/ site/css/img-copie|cp -rv /Users/farid/atelier/site/img/ ./site/css/img-copie|cp -rv /Users/farid/atelier/site/img/ site/css/img-copie/|cp -rv /Users/farid/atelier/site/img/ ./site/css/img-copie/|cp -rv /Users/farid/atelier/site/img/ ~/atelier/site/css/img-copie|cp -rv /Users/farid/atelier/site/img/ ~/atelier/site/css/img-copie/|cp -rv /Users/farid/atelier/site/img/ /Users/farid/atelier/site/css/img-copie|cp -rv /Users/farid/atelier/site/img/ /Users/farid/atelier/site/css/img-copie/|cp -v -R site/img site/css/img-copie|cp -v -R site/img ./site/css/img-copie|cp -v -R site/img site/css/img-copie/|cp -v -R site/img ./site/css/img-copie/|cp -v -R site/img ~/atelier/site/css/img-copie|cp -v -R site/img ~/atelier/site/css/img-copie/|cp -v -R site/img /Users/farid/atelier/site/css/img-copie|cp -v -R site/img /Users/farid/atelier/site/css/img-copie/|cp -v -R ./site/img site/css/img-copie|cp -v -R ./site/img ./site/css/img-copie|cp -v -R ./site/img site/css/img-copie/|cp -v -R ./site/img ./site/css/img-copie/|cp -v -R ./site/img ~/atelier/site/css/img-copie|cp -v -R ./site/img ~/atelier/site/css/img-copie/|cp -v -R ./site/img /Users/farid/atelier/site/css/img-copie|cp -v -R ./site/img /Users/farid/atelier/site/css/img-copie/|cp -v -R site/img/ site/css/img-copie|cp -v -R site/img/ ./site/css/img-copie|cp -v -R site/img/ site/css/img-copie/|cp -v -R site/img/ ./site/css/img-copie/|cp -v -R site/img/ ~/atelier/site/css/img-copie|cp -v -R site/img/ ~/atelier/site/css/img-copie/|cp -v -R site/img/ /Users/farid/atelier/site/css/img-copie|cp -v -R site/img/ /Users/farid/atelier/site/css/img-copie/|cp -v -R ./site/img/ site/css/img-copie|cp -v -R ./site/img/ ./site/css/img-copie|cp -v -R ./site/img/ site/css/img-copie/|cp -v -R ./site/img/ ./site/css/img-copie/|cp -v -R ./site/img/ ~/atelier/site/css/img-copie|cp -v -R ./site/img/ ~/atelier/site/css/img-copie/|cp -v -R ./site/img/ /Users/farid/atelier/site/css/img-copie|cp -v -R ./site/img/ /Users/farid/atelier/site/css/img-copie/|cp -v -R ~/atelier/site/img site/css/img-copie|cp -v -R ~/atelier/site/img ./site/css/img-copie|cp -v -R ~/atelier/site/img site/css/img-copie/|cp -v -R ~/atelier/site/img ./site/css/img-copie/|cp -v -R ~/atelier/site/img ~/atelier/site/css/img-copie|cp -v -R ~/atelier/site/img ~/atelier/site/css/img-copie/|cp -v -R ~/atelier/site/img /Users/farid/atelier/site/css/img-copie|cp -v -R ~/atelier/site/img /Users/farid/atelier/site/css/img-copie/|cp -v -R ~/atelier/site/img/ site/css/img-copie|cp -v -R ~/atelier/site/img/ ./site/css/img-copie|cp -v -R ~/atelier/site/img/ site/css/img-copie/|cp -v -R ~/atelier/site/img/ ./site/css/img-copie/|cp -v -R ~/atelier/site/img/ ~/atelier/site/css/img-copie|cp -v -R ~/atelier/site/img/ ~/atelier/site/css/img-copie/|cp -v -R ~/atelier/site/img/ /Users/farid/atelier/site/css/img-copie|cp -v -R ~/atelier/site/img/ /Users/farid/atelier/site/css/img-copie/|cp -v -R /Users/farid/atelier/site/img site/css/img-copie|cp -v -R /Users/farid/atelier/site/img ./site/css/img-copie|cp -v -R /Users/farid/atelier/site/img site/css/img-copie/|cp -v -R /Users/farid/atelier/site/img ./site/css/img-copie/|cp -v -R /Users/farid/atelier/site/img ~/atelier/site/css/img-copie|cp -v -R /Users/farid/atelier/site/img ~/atelier/site/css/img-copie/|cp -v -R /Users/farid/atelier/site/img /Users/farid/atelier/site/css/img-copie|cp -v -R /Users/farid/atelier/site/img /Users/farid/atelier/site/css/img-copie/|cp -v -R /Users/farid/atelier/site/img/ site/css/img-copie|cp -v -R /Users/farid/atelier/site/img/ ./site/css/img-copie|cp -v -R /Users/farid/atelier/site/img/ site/css/img-copie/|cp -v -R /Users/farid/atelier/site/img/ ./site/css/img-copie/|cp -v -R /Users/farid/atelier/site/img/ ~/atelier/site/css/img-copie|cp -v -R /Users/farid/atelier/site/img/ ~/atelier/site/css/img-copie/|cp -v -R /Users/farid/atelier/site/img/ /Users/farid/atelier/site/css/img-copie|cp -v -R /Users/farid/atelier/site/img/ /Users/farid/atelier/site/css/img-copie/|cp -v -r site/img site/css/img-copie|cp -v -r site/img ./site/css/img-copie|cp -v -r site/img site/css/img-copie/|cp -v -r site/img ./site/css/img-copie/|cp -v -r site/img ~/atelier/site/css/img-copie|cp -v -r site/img ~/atelier/site/css/img-copie/|cp -v -r site/img /Users/farid/atelier/site/css/img-copie|cp -v -r site/img /Users/farid/atelier/site/css/img-copie/|cp -v -r ./site/img site/css/img-copie|cp -v -r ./site/img ./site/css/img-copie|cp -v -r ./site/img site/css/img-copie/|cp -v -r ./site/img ./site/css/img-copie/|cp -v -r ./site/img ~/atelier/site/css/img-copie|cp -v -r ./site/img ~/atelier/site/css/img-copie/|cp -v -r ./site/img /Users/farid/atelier/site/css/img-copie|cp -v -r ./site/img /Users/farid/atelier/site/css/img-copie/|cp -v -r site/img/ site/css/img-copie|cp -v -r site/img/ ./site/css/img-copie|cp -v -r site/img/ site/css/img-copie/|cp -v -r site/img/ ./site/css/img-copie/|cp -v -r site/img/ ~/atelier/site/css/img-copie|cp -v -r site/img/ ~/atelier/site/css/img-copie/|cp -v -r site/img/ /Users/farid/atelier/site/css/img-copie|cp -v -r site/img/ /Users/farid/atelier/site/css/img-copie/|cp -v -r ./site/img/ site/css/img-copie|cp -v -r ./site/img/ ./site/css/img-copie|cp -v -r ./site/img/ site/css/img-copie/|cp -v -r ./site/img/ ./site/css/img-copie/|cp -v -r ./site/img/ ~/atelier/site/css/img-copie|cp -v -r ./site/img/ ~/atelier/site/css/img-copie/|cp -v -r ./site/img/ /Users/farid/atelier/site/css/img-copie|cp -v -r ./site/img/ /Users/farid/atelier/site/css/img-copie/|cp -v -r ~/atelier/site/img site/css/img-copie|cp -v -r ~/atelier/site/img ./site/css/img-copie|cp -v -r ~/atelier/site/img site/css/img-copie/|cp -v -r ~/atelier/site/img ./site/css/img-copie/|cp -v -r ~/atelier/site/img ~/atelier/site/css/img-copie|cp -v -r ~/atelier/site/img ~/atelier/site/css/img-copie/|cp -v -r ~/atelier/site/img /Users/farid/atelier/site/css/img-copie|cp -v -r ~/atelier/site/img /Users/farid/atelier/site/css/img-copie/|cp -v -r ~/atelier/site/img/ site/css/img-copie|cp -v -r ~/atelier/site/img/ ./site/css/img-copie|cp -v -r ~/atelier/site/img/ site/css/img-copie/|cp -v -r ~/atelier/site/img/ ./site/css/img-copie/|cp -v -r ~/atelier/site/img/ ~/atelier/site/css/img-copie|cp -v -r ~/atelier/site/img/ ~/atelier/site/css/img-copie/|cp -v -r ~/atelier/site/img/ /Users/farid/atelier/site/css/img-copie|cp -v -r ~/atelier/site/img/ /Users/farid/atelier/site/css/img-copie/|cp -v -r /Users/farid/atelier/site/img site/css/img-copie|cp -v -r /Users/farid/atelier/site/img ./site/css/img-copie|cp -v -r /Users/farid/atelier/site/img site/css/img-copie/|cp -v -r /Users/farid/atelier/site/img ./site/css/img-copie/|cp -v -r /Users/farid/atelier/site/img ~/atelier/site/css/img-copie|cp -v -r /Users/farid/atelier/site/img ~/atelier/site/css/img-copie/|cp -v -r /Users/farid/atelier/site/img /Users/farid/atelier/site/css/img-copie|cp -v -r /Users/farid/atelier/site/img /Users/farid/atelier/site/css/img-copie/|cp -v -r /Users/farid/atelier/site/img/ site/css/img-copie|cp -v -r /Users/farid/atelier/site/img/ ./site/css/img-copie|cp -v -r /Users/farid/atelier/site/img/ site/css/img-copie/|cp -v -r /Users/farid/atelier/site/img/ ./site/css/img-copie/|cp -v -r /Users/farid/atelier/site/img/ ~/atelier/site/css/img-copie|cp -v -r /Users/farid/atelier/site/img/ ~/atelier/site/css/img-copie/|cp -v -r /Users/farid/atelier/site/img/ /Users/farid/atelier/site/css/img-copie|cp -v -r /Users/farid/atelier/site/img/ /Users/farid/atelier/site/css/img-copie/|cp -vR site/img site/css/img-copie|cp -vR site/img ./site/css/img-copie|cp -vR site/img site/css/img-copie/|cp -vR site/img ./site/css/img-copie/|cp -vR site/img ~/atelier/site/css/img-copie|cp -vR site/img ~/atelier/site/css/img-copie/|cp -vR site/img /Users/farid/atelier/site/css/img-copie|cp -vR site/img /Users/farid/atelier/site/css/img-copie/|cp -vR ./site/img site/css/img-copie|cp -vR ./site/img ./site/css/img-copie|cp -vR ./site/img site/css/img-copie/|cp -vR ./site/img ./site/css/img-copie/|cp -vR ./site/img ~/atelier/site/css/img-copie|cp -vR ./site/img ~/atelier/site/css/img-copie/|cp -vR ./site/img /Users/farid/atelier/site/css/img-copie|cp -vR ./site/img /Users/farid/atelier/site/css/img-copie/|cp -vR site/img/ site/css/img-copie|cp -vR site/img/ ./site/css/img-copie|cp -vR site/img/ site/css/img-copie/|cp -vR site/img/ ./site/css/img-copie/|cp -vR site/img/ ~/atelier/site/css/img-copie|cp -vR site/img/ ~/atelier/site/css/img-copie/|cp -vR site/img/ /Users/farid/atelier/site/css/img-copie|cp -vR site/img/ /Users/farid/atelier/site/css/img-copie/|cp -vR ./site/img/ site/css/img-copie|cp -vR ./site/img/ ./site/css/img-copie|cp -vR ./site/img/ site/css/img-copie/|cp -vR ./site/img/ ./site/css/img-copie/|cp -vR ./site/img/ ~/atelier/site/css/img-copie|cp -vR ./site/img/ ~/atelier/site/css/img-copie/|cp -vR ./site/img/ /Users/farid/atelier/site/css/img-copie|cp -vR ./site/img/ /Users/farid/atelier/site/css/img-copie/|cp -vR ~/atelier/site/img site/css/img-copie|cp -vR ~/atelier/site/img ./site/css/img-copie|cp -vR ~/atelier/site/img site/css/img-copie/|cp -vR ~/atelier/site/img ./site/css/img-copie/|cp -vR ~/atelier/site/img ~/atelier/site/css/img-copie|cp -vR ~/atelier/site/img ~/atelier/site/css/img-copie/|cp -vR ~/atelier/site/img /Users/farid/atelier/site/css/img-copie|cp -vR ~/atelier/site/img /Users/farid/atelier/site/css/img-copie/|cp -vR ~/atelier/site/img/ site/css/img-copie|cp -vR ~/atelier/site/img/ ./site/css/img-copie|cp -vR ~/atelier/site/img/ site/css/img-copie/|cp -vR ~/atelier/site/img/ ./site/css/img-copie/|cp -vR ~/atelier/site/img/ ~/atelier/site/css/img-copie|cp -vR ~/atelier/site/img/ ~/atelier/site/css/img-copie/|cp -vR ~/atelier/site/img/ /Users/farid/atelier/site/css/img-copie|cp -vR ~/atelier/site/img/ /Users/farid/atelier/site/css/img-copie/|cp -vR /Users/farid/atelier/site/img site/css/img-copie|cp -vR /Users/farid/atelier/site/img ./site/css/img-copie|cp -vR /Users/farid/atelier/site/img site/css/img-copie/|cp -vR /Users/farid/atelier/site/img ./site/css/img-copie/|cp -vR /Users/farid/atelier/site/img ~/atelier/site/css/img-copie|cp -vR /Users/farid/atelier/site/img ~/atelier/site/css/img-copie/|cp -vR /Users/farid/atelier/site/img /Users/farid/atelier/site/css/img-copie|cp -vR /Users/farid/atelier/site/img /Users/farid/atelier/site/css/img-copie/|cp -vR /Users/farid/atelier/site/img/ site/css/img-copie|cp -vR /Users/farid/atelier/site/img/ ./site/css/img-copie|cp -vR /Users/farid/atelier/site/img/ site/css/img-copie/|cp -vR /Users/farid/atelier/site/img/ ./site/css/img-copie/|cp -vR /Users/farid/atelier/site/img/ ~/atelier/site/css/img-copie|cp -vR /Users/farid/atelier/site/img/ ~/atelier/site/css/img-copie/|cp -vR /Users/farid/atelier/site/img/ /Users/farid/atelier/site/css/img-copie|cp -vR /Users/farid/atelier/site/img/ /Users/farid/atelier/site/css/img-copie/|cp -vr site/img site/css/img-copie|cp -vr site/img ./site/css/img-copie|cp -vr site/img site/css/img-copie/|cp -vr site/img ./site/css/img-copie/|cp -vr site/img ~/atelier/site/css/img-copie|cp -vr site/img ~/atelier/site/css/img-copie/|cp -vr site/img /Users/farid/atelier/site/css/img-copie|cp -vr site/img /Users/farid/atelier/site/css/img-copie/|cp -vr ./site/img site/css/img-copie|cp -vr ./site/img ./site/css/img-copie|cp -vr ./site/img site/css/img-copie/|cp -vr ./site/img ./site/css/img-copie/|cp -vr ./site/img ~/atelier/site/css/img-copie|cp -vr ./site/img ~/atelier/site/css/img-copie/|cp -vr ./site/img /Users/farid/atelier/site/css/img-copie|cp -vr ./site/img /Users/farid/atelier/site/css/img-copie/|cp -vr site/img/ site/css/img-copie|cp -vr site/img/ ./site/css/img-copie|cp -vr site/img/ site/css/img-copie/|cp -vr site/img/ ./site/css/img-copie/|cp -vr site/img/ ~/atelier/site/css/img-copie|cp -vr site/img/ ~/atelier/site/css/img-copie/|cp -vr site/img/ /Users/farid/atelier/site/css/img-copie|cp -vr site/img/ /Users/farid/atelier/site/css/img-copie/|cp -vr ./site/img/ site/css/img-copie|cp -vr ./site/img/ ./site/css/img-copie|cp -vr ./site/img/ site/css/img-copie/|cp -vr ./site/img/ ./site/css/img-copie/|cp -vr ./site/img/ ~/atelier/site/css/img-copie|cp -vr ./site/img/ ~/atelier/site/css/img-copie/|cp -vr ./site/img/ /Users/farid/atelier/site/css/img-copie|cp -vr ./site/img/ /Users/farid/atelier/site/css/img-copie/|cp -vr ~/atelier/site/img site/css/img-copie|cp -vr ~/atelier/site/img ./site/css/img-copie|cp -vr ~/atelier/site/img site/css/img-copie/|cp -vr ~/atelier/site/img ./site/css/img-copie/|cp -vr ~/atelier/site/img ~/atelier/site/css/img-copie|cp -vr ~/atelier/site/img ~/atelier/site/css/img-copie/|cp -vr ~/atelier/site/img /Users/farid/atelier/site/css/img-copie|cp -vr ~/atelier/site/img /Users/farid/atelier/site/css/img-copie/|cp -vr ~/atelier/site/img/ site/css/img-copie|cp -vr ~/atelier/site/img/ ./site/css/img-copie|cp -vr ~/atelier/site/img/ site/css/img-copie/|cp -vr ~/atelier/site/img/ ./site/css/img-copie/|cp -vr ~/atelier/site/img/ ~/atelier/site/css/img-copie|cp -vr ~/atelier/site/img/ ~/atelier/site/css/img-copie/|cp -vr ~/atelier/site/img/ /Users/farid/atelier/site/css/img-copie|cp -vr ~/atelier/site/img/ /Users/farid/atelier/site/css/img-copie/|cp -vr /Users/farid/atelier/site/img site/css/img-copie|cp -vr /Users/farid/atelier/site/img ./site/css/img-copie|cp -vr /Users/farid/atelier/site/img site/css/img-copie/|cp -vr /Users/farid/atelier/site/img ./site/css/img-copie/|cp -vr /Users/farid/atelier/site/img ~/atelier/site/css/img-copie|cp -vr /Users/farid/atelier/site/img ~/atelier/site/css/img-copie/|cp -vr /Users/farid/atelier/site/img /Users/farid/atelier/site/css/img-copie|cp -vr /Users/farid/atelier/site/img /Users/farid/atelier/site/css/img-copie/|cp -vr /Users/farid/atelier/site/img/ site/css/img-copie|cp -vr /Users/farid/atelier/site/img/ ./site/css/img-copie|cp -vr /Users/farid/atelier/site/img/ site/css/img-copie/|cp -vr /Users/farid/atelier/site/img/ ./site/css/img-copie/|cp -vr /Users/farid/atelier/site/img/ ~/atelier/site/css/img-copie|cp -vr /Users/farid/atelier/site/img/ ~/atelier/site/css/img-copie/|cp -vr /Users/farid/atelier/site/img/ /Users/farid/atelier/site/css/img-copie|cp -vr /Users/farid/atelier/site/img/ /Users/farid/atelier/site/css/img-copie/"
         data-clavier="La ligne"
-        data-si-sansR="cp -v site/img img-copie"
+        data-si-sansR="cp -v site/img site/css/img-copie"
         data-retour-sansR="Qu’est-ce qui, dans ta ligne, dit à cp de copier un dossier ?"
-        data-si-sansv="cp -R site/img img-copie|cp -r site/img img-copie"
+        data-si-sansv="cp -R site/img site/css/img-copie|cp -r site/img site/css/img-copie"
         data-retour-sansv="Qu’est-ce qui, dans ta ligne, fait écrire chaque copie ?"
         data-aide1="Quelles options faut-il : une pour copier un dossier, une pour lire chaque copie ?"
         data-aide2="Les deux options peuvent se coller derrière un seul tiret, dans n’importe quel ordre."
@@ -5051,6 +5139,10 @@ logo.png</pre>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
             </li>
+            <li>
+              Un chemin comme <span class="mono">docs/js</span> désigne le dossier js, dans le
+              dossier docs : on le suit de gauche à droite.
+            </li>
           </ul>
         </div>
         <pre
@@ -5067,8 +5159,8 @@ style.css
 site/img:
 logo.png</pre>
         <p class="q">
-          Farid, dans atelier, veut copier le dossier img de site sous le nom img-copie, directement
-          dans atelier, et lire chaque copie que fait cp. Écris la ligne qu’il tape.
+          Farid, dans atelier, veut copier le dossier img de site sous le nom img-copie, dans le
+          dossier css de site, et lire chaque copie que fait cp. Écris la ligne qu’il tape.
         </p>
       </div>
     </template>
@@ -5090,6 +5182,10 @@ logo.png</pre>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
+              dossier site : on le suit de gauche à droite.
             </li>
           </ul>
         </div>
@@ -5147,6 +5243,10 @@ logo.png</pre>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
+              dossier site : on le suit de gauche à droite.
             </li>
           </ul>
         </div>
@@ -5215,6 +5315,10 @@ logo.png</pre>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
             </li>
+            <li>
+              Un chemin comme <span class="mono">../docs</span> désigne le dossier docs, dans le
+              dossier parent du répertoire courant.
+            </li>
           </ul>
         </div>
         <pre
@@ -5273,6 +5377,10 @@ $ pwd
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
             </li>
+            <li>
+              Un chemin comme <span class="mono">../docs</span> désigne le dossier docs, dans le
+              dossier parent du répertoire courant.
+            </li>
           </ul>
         </div>
         <pre
@@ -5322,6 +5430,10 @@ $ pwd
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
+              dossier site : on le suit de gauche à droite.
             </li>
           </ul>
         </div>
@@ -5393,6 +5505,10 @@ logo.png</pre>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
             </li>
+            <li>
+              Un chemin comme <span class="mono">cours/js</span> désigne le dossier js, dans le
+              dossier cours : on le suit de gauche à droite.
+            </li>
           </ul>
         </div>
         <p class="discret">L’état de départ, dans atelier :</p>
@@ -5447,7 +5563,7 @@ app.js</pre>
         data-aide1="Lis les trois réponses de ls : lesquelles contiennent un dossier css ?"
         data-aide2="Dans la ligne tapée, un morceau parle-t-il d’une Corbeille ?"
         data-aide3="Cherche, dans l’état ci-dessus, un dossier qui contient encore un dossier css."
-        data-justifier="Farid a retiré le dossier css avec rm -r. Pourquoi ne le retrouve-t-il pas dans la Corbeille ?"
+        data-justifier="Farid a tapé rm -r site/css. Sans la copie de sauvegarde, que serait devenu css, et pourquoi ?"
       >
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -5457,6 +5573,10 @@ app.js</pre>
               <span class="mono">-r</span> lui fait retirer aussi ce que contient un dossier. La
               Corbeille est le dossier de Windows, ou du Mac, où les fichiers supprimés avec la
               souris attendent d’être rendus.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
+              dossier site : on le suit de gauche à droite.
             </li>
           </ul>
         </div>
@@ -5507,7 +5627,7 @@ css  img  index.html</pre>
         data-aide1="Lis les trois réponses de ls : lesquelles contiennent un fichier style.css ?"
         data-aide2="Dans la ligne tapée, un morceau parle-t-il d’une Corbeille ?"
         data-aide3="Cherche, dans l’état ci-dessus, un dossier qui contient encore un fichier style.css."
-        data-justifier="Yasmine a retiré style.css avec rm. Pourquoi ne le retrouve-t-elle pas dans la Corbeille ?"
+        data-justifier="Yasmine a tapé rm site/css/style.css. Sans la copie de sauvegarde, que serait devenu style.css, et pourquoi ?"
       >
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -5516,6 +5636,10 @@ css  img  index.html</pre>
               <span class="mono">rm</span> retire le fichier qu’on lui donne. La Corbeille est le
               dossier de Windows, ou du Mac, où les fichiers supprimés avec la souris attendent
               d’être rendus.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> désigne le dossier css, dans le
+              dossier site : on le suit de gauche à droite.
             </li>
           </ul>
         </div>
@@ -5670,8 +5794,8 @@ docs  projet  readme.txt</pre>
               <span class="mono">-f</span>, comme force, empêche rm de se plaindre d’un nom absent ;
               <span class="mono">-r</span> fait descendre rm dans les dossiers ;
               <span class="mono">sudo</span> lance la commande en administrateur, qui peut retirer
-              même un fichier protégé, c’est-à-dire un fichier que ton compte n’a pas le droit de
-              modifier.
+              même un fichier du système, dit protégé : un fichier que ton compte n’a pas le droit
+              de modifier.
             </li>
           </ul>
         </div>
@@ -5723,8 +5847,8 @@ docs  projet  readme.txt</pre>
               <span class="mono">-f</span>, comme force, empêche rm de se plaindre d’un nom absent ;
               <span class="mono">-r</span> fait descendre rm dans les dossiers ;
               <span class="mono">sudo</span> lance la commande en administrateur, qui peut retirer
-              même un fichier protégé, c’est-à-dire un fichier que ton compte n’a pas le droit de
-              modifier.
+              même un fichier du système, dit protégé : un fichier que ton compte n’a pas le droit
+              de modifier.
             </li>
           </ul>
         </div>
@@ -5782,6 +5906,10 @@ docs  projet  readme.txt</pre>
               <span class="mono">del</span> pour <span class="mono">rm</span> sur un fichier.
             </li>
             <li>Les lignes de la fenêtre d’Ubuntu s’écrivent en bash.</li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> (<span class="mono">site\css</span>
+              pour Cmd) désigne le dossier css, dans le dossier site.
+            </li>
           </ul>
         </div>
         <p class="q">
@@ -5842,6 +5970,10 @@ docs  projet  readme.txt</pre>
             </li>
             <li>
               Le Terminal d’un Mac lit les mêmes lignes que la fenêtre d’Ubuntu, écrites en bash.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">site/css</span> (<span class="mono">site\css</span>
+              pour Cmd) désigne le dossier css, dans le dossier site.
             </li>
           </ul>
         </div>
@@ -5907,6 +6039,10 @@ docs  projet  readme.txt</pre>
             <li>
               Cmd sépare les dossiers d’un chemin par l’antislash <span class="mono">\</span>.
             </li>
+            <li>
+              Un chemin comme <span class="mono">docs/js</span> (<span class="mono">docs\js</span>
+              pour Cmd) désigne le dossier js, dans le dossier docs.
+            </li>
           </ul>
         </div>
         <p class="discret">
@@ -5947,6 +6083,10 @@ docs  projet  readme.txt</pre>
             </li>
             <li>
               Cmd sépare les dossiers d’un chemin par l’antislash <span class="mono">\</span>.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">docs/js</span> (<span class="mono">docs\js</span>
+              pour Cmd) désigne le dossier js, dans le dossier docs.
             </li>
           </ul>
         </div>
@@ -5991,6 +6131,10 @@ docs  projet  readme.txt</pre>
             <li>
               Cmd sépare les dossiers d’un chemin par l’antislash <span class="mono">\</span>.
             </li>
+            <li>
+              Un chemin comme <span class="mono">docs/js</span> (<span class="mono">docs\js</span>
+              pour Cmd) désigne le dossier js, dans le dossier docs.
+            </li>
           </ul>
         </div>
         <p class="q">
@@ -6027,6 +6171,10 @@ docs  projet  readme.txt</pre>
             </li>
             <li>
               Cmd sépare les dossiers d’un chemin par l’antislash <span class="mono">\</span>.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">docs/js</span> (<span class="mono">docs\js</span>
+              pour Cmd) désigne le dossier js, dans le dossier docs.
             </li>
           </ul>
         </div>
@@ -6066,6 +6214,10 @@ docs  projet  readme.txt</pre>
             <li>
               Cmd sépare les dossiers d’un chemin par l’antislash <span class="mono">\</span>.
             </li>
+            <li>
+              Un chemin comme <span class="mono">docs/js</span> (<span class="mono">docs\js</span>
+              pour Cmd) désigne le dossier js, dans le dossier docs.
+            </li>
           </ul>
         </div>
         <p class="q">
@@ -6103,6 +6255,10 @@ docs  projet  readme.txt</pre>
             <li>
               Cmd sépare les dossiers d’un chemin par l’antislash <span class="mono">\</span>.
             </li>
+            <li>
+              Un chemin comme <span class="mono">docs/js</span> (<span class="mono">docs\js</span>
+              pour Cmd) désigne le dossier js, dans le dossier docs.
+            </li>
           </ul>
         </div>
         <p class="q">
@@ -6138,7 +6294,8 @@ docs  projet  readme.txt</pre>
         <ol>
           <li>
             Tape <span class="mono">cd</span> seul, puis Entrée : un
-            <span class="mono">cd</span> sans nom te ramène à ton dossier personnel, tu y es.
+            <span class="mono">cd</span> sans nom te ramène au dossier où ta fenêtre s’est ouverte,
+            celui qui contiendra ton atelier (pour Yasmine, /home/yasmine) : tu y es.
           </li>
           <li>
             Tape <span class="mono">mkdir atelier</span>, puis <span class="mono">cd atelier</span>.
@@ -6154,8 +6311,8 @@ docs  projet  readme.txt</pre>
           <details data-cran="2">
             <summary>Une piste détaillée</summary>
             <p>
-              Ton dossier personnel et ton dossier atelier sont deux dossiers : l’un contient
-              l’autre. Lis le dernier mot du chemin.
+              Le dossier où ta fenêtre s’ouvre et ton dossier atelier sont deux dossiers : l’un
+              contient l’autre. Lis le dernier mot du chemin.
             </p>
             <details data-cran="3">
               <summary>Une partie de la solution</summary>
@@ -6185,6 +6342,10 @@ docs  projet  readme.txt</pre>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">docs/js</span> désigne le dossier js, dans le
+              dossier docs : on le suit de gauche à droite.
             </li>
           </ul>
         </div>
@@ -6232,8 +6393,8 @@ logo.png</pre>
       </div>
       <div data-ecran="La sauvegarde, deux fois">
         <p class="accroche">
-          Le formateur veut que tu fasses la sauvegarde du projet imposé, puis que tu la refasses
-          pour voir.
+          Le formateur veut que tu fasses la sauvegarde du projet imposé, le dossier site que tu
+          viens de créer, avec css, img et index.html, puis que tu la refasses pour voir.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -6246,6 +6407,10 @@ logo.png</pre>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">docs/js</span> désigne le dossier js, dans le
+              dossier docs : on le suit de gauche à droite.
             </li>
           </ul>
         </div>
@@ -6306,18 +6471,16 @@ logo.png</pre>
           <ul>
             <li>
               <span class="mono">cp</span> et <span class="mono">mv</span> prennent la source, puis
-              la destination : un nom qui n’existe pas devient le nouveau nom, un dossier qui existe
-              reçoit la source, un fichier qui existe est remplacé sans rien demander.
-            </li>
-            <li>
-              <span class="mono">cp</span> refuse un dossier sans <span class="mono">-R</span>, et
-              <span class="mono">rm</span> sans <span class="mono">-r</span> : un message le dit, et
-              rien ne change. Avec l’option, <span class="mono">cp -R</span> copie un dossier avec
-              tout son contenu, <span class="mono">rm -r</span> le retire avec tout son contenu.
+              la destination. <span class="mono">cp -R</span> copie un dossier avec tout son
+              contenu, <span class="mono">rm -r</span> le retire avec tout son contenu.
             </li>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
               vide n’a que son titre.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">docs/js</span> désigne le dossier js, dans le
+              dossier docs : on le suit de gauche à droite.
             </li>
           </ul>
         </div>
@@ -6422,10 +6585,23 @@ logo.png</pre>
       <div data-ecran="Le même projet, un autre jour">
         <p class="accroche">
           Voici de nouveau l’arborescence que le formateur impose. Tu l’as déjà faite : cette fois,
-          sans tes notes, chronomètre en main. Un projet qu’on refait, et une sauvegarde qu’on
-          refait avant chaque changement, doivent venir vite, sans chercher ses lignes : le
-          chronomètre te dit si tu y es.
+          sans tes notes, avec le chronomètre de ton téléphone (ou de ta montre) en main. Un projet
+          qu’on refait, et une sauvegarde qu’on refait avant chaque changement, doivent venir vite,
+          sans chercher ses lignes : le chronomètre te dit si tu y es.
         </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
+              vide n’a que son titre.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">docs/js</span> désigne le dossier js, dans le
+              dossier docs : on le suit de gauche à droite.
+            </li>
+          </ul>
+        </div>
         <pre
           class="listing"
           data-lecture="L’arborescence imposée. site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
@@ -6481,7 +6657,7 @@ logo.png</pre>
     <template data-etape="ET12">
       <p class="accroche">
         Yasmine ne tape plus pour savoir : elle prédit l’état de son dossier avant d’appuyer sur
-        Entrée. À toi de faire comme elle, sur un état imprimé.
+        Entrée. À toi de faire comme elle, sur un état affiché.
       </p>
       <p>
         <strong>Ce que tu fais</strong> : pour chaque ligne, tu lis la ligne tapée, puis tu écris
@@ -6492,7 +6668,7 @@ logo.png</pre>
       </p>
       <p class="discret">
         Une série compte <span data-n-aisance>10</span> lignes tirées au hasard, chacune partant de
-        l’état imprimé. La ligne suivante te dit si la précédente était juste ; à la fin, la page
+        l’état affiché. La ligne suivante te dit si la précédente était juste ; à la fin, la page
         liste tes fautes. Une série est réussie quand ses <span data-n-aisance>10</span> réponses
         sont justes, dans le temps affiché. Il en faut plusieurs, chacune un jour différent : tu
         peux passer à la suite et revenir un autre jour.
@@ -6508,6 +6684,10 @@ logo.png</pre>
             pas.
           </li>
           <li>Le point <span class="mono">.</span> désigne atelier, le dossier où tu es.</li>
+          <li>
+            Un chemin comme <span class="mono">docs/js</span> désigne le dossier js, dans le dossier
+            docs : on le suit de gauche à droite.
+          </li>
           <li>
             <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
             vide n’a que son titre.
@@ -6612,9 +6792,8 @@ css  img  index.html</pre>
         <p class="accroche">
           Noah, 29 ans, suit la même formation. Il est connecté à un serveur Linux, un ordinateur
           distant où il travaille à travers sa fenêtre de commandes, et où sa promotion range son
-          site. Il est dans /srv/promo (pwd le dit). Sur ce serveur, comme dans « Où tu es », il n’y
-          a pas de corbeille : une ligne tapée ne se rattrape pas, donc Noah prédit avant d’appuyer
-          sur Entrée.
+          site. Il est dans /srv/promo (pwd le dit). Sur ce serveur, il n’y a pas de corbeille : une
+          ligne tapée ne se rattrape pas, donc Noah prédit avant d’appuyer sur Entrée.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -6626,6 +6805,11 @@ css  img  index.html</pre>
             <li>
               <span class="mono">cp</span> source destination : la source est le premier nom, la
               destination le second.
+            </li>
+            <li>
+              Un chemin comme <span class="mono">/srv/promo</span>, qui commence par une barre,
+              nomme un à un les dossiers qui mènent à un dossier, depuis le premier : le dossier
+              promo, dans le dossier srv.
             </li>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
@@ -6877,7 +7061,9 @@ contact.html  index.html</pre>
           exactement les quatre dossiers demandés : les deux chemins profonds seuls, avec les
           parents redondants (app, app/js), dans tous les ordres, et sans -p quand chaque parent est
           nommé avant son enfant ; la même ligne avec une des quatre formes d’écriture des chemins
-          (nu, ./, barre finale, les deux), la d’une même forme d’écriture pour toute la ligne.
+          (nu, ./, barre finale, les deux), à condition que toute la ligne garde la même forme ; les
+          formes mêlées sont refusées, avec un retour qui dit d’écrire tous les chemins de la même
+          façon.
         </li>
         <li>
           Temps estimé (règle C06 ; 120 mots par minute, arrondis à la minute, sur les mots de `pnpm
@@ -6885,31 +7071,31 @@ contact.html  index.html</pre>
           trois par question de restitution et par série d’aisance ; l’atelier compte sa lecture et
           ses minutes de frappe réelles, 5 pour le dossier, 10 pour l’arborescence, 5 pour la
           sauvegarde deux fois, 20 pour les dix commandes, 5 le second jour avec la sauvegarde
-          chronométrée, soit 45). Modéliser : 8 697 mots, 72 minutes de lecture, et 31 d’exercices
-          (4 essais, 24 exercices, 2 paris, 1 schéma), soit 103 minutes. Faire : pratique 1 515
-          mots, 13 minutes, plus 14 items à 2 minutes et 3 explications à 2 minutes de plus, soit 47
-          ; atelier 1 696 mots, 14 minutes, plus 45 de frappe, soit 59 ; aisance 263 mots, 2
-          minutes, plus 2 séries à 3 minutes, soit 8 ; restitution 398 mots, 3 minutes, plus 5
-          questions à 3 minutes, soit 18 ; au total 132 minutes. Faire dépasse modéliser (132 contre
-          103 minutes) : la pratique, au sens de la méthode (pratique, atelier, aisance,
+          chronométrée, soit 45). Modéliser : 9 013 mots, 75 minutes de lecture, et 31 d’exercices
+          (4 essais, 24 exercices, 2 paris, 1 schéma), soit 106 minutes. Faire : pratique 1 727
+          mots, 14 minutes, plus 14 items à 2 minutes et 3 explications à 2 minutes de plus, soit 48
+          ; atelier 1 791 mots, 15 minutes, plus 45 de frappe, soit 60 ; aisance 284 mots, 2
+          minutes, plus 2 séries à 3 minutes, soit 8 ; restitution 397 mots, 3 minutes, plus 5
+          questions à 3 minutes, soit 18 ; au total 134 minutes. Faire dépasse modéliser (134 contre
+          106 minutes) : la pratique, au sens de la méthode (pratique, atelier, aisance,
           restitution), prend la plus grande part du temps.
         </li>
       </ul>
       <h3>L’atelier et l’aisance</h3>
       <ul>
         <li>
-          L’atelier se fait dans un dossier atelier que l’apprenant crée dans son dossier personnel
-          : l’arborescence imposée de six éléments, sans cd, la sauvegarde faite deux fois, dix
-          commandes prédites par écrit puis tapées (la même ligne sur les deux systèmes), et un
-          autre jour la même arborescence recréée de mémoire en moins d’une minute, suivie de sa
-          sauvegarde, dont le temps est noté (preuve 2 du plan). Les crans (un indice, une piste
-          détaillée, une partie de la solution, comme les aides du constat) disent comment trouver ;
-          aucun ne donne la ligne à taper ni ce que la machine répond. Les dix lignes ont été jouées
-          dans cet ordre sur Ubuntu : après la dixième, site contient css (home.html, style.css) et
-          img (index.html, logo.png).
+          L’atelier se fait dans un dossier atelier que l’apprenant crée dans le dossier où sa
+          fenêtre s’ouvre : l’arborescence imposée de six éléments, sans cd, la sauvegarde faite
+          deux fois, dix commandes prédites par écrit puis tapées (la même ligne sur les deux
+          systèmes), et un autre jour la même arborescence recréée de mémoire en moins d’une minute,
+          suivie de sa sauvegarde, dont le temps est noté (preuve 2 du plan). Les crans (un indice,
+          une piste détaillée, une partie de la solution, comme les aides du constat) disent comment
+          trouver ; aucun ne donne la ligne à taper ni ce que la machine répond. Les dix lignes ont
+          été jouées dans cet ordre sur Ubuntu : après la dixième, site contient css (home.html,
+          style.css) et img (index.html, logo.png).
         </li>
         <li>
-          L’aisance : dix prédictions de l’état d’un dossier après une commande, sur un état imprimé
+          L’aisance : dix prédictions de l’état d’un dossier après une commande, sur un état affiché
           (atelier contient copie, avec notes.txt, et site) ; l’apprenant écrit les noms que ls
           afficherait, dans l’ordre qu’il veut, ou « rien ». Vingt lignes au choix du gabarit, les
           lignes qui couvrent une destination existante, un écrasement, un échec et le point étant
@@ -6927,7 +7113,7 @@ contact.html  index.html</pre>
         "schema": 2,
         "bloc": "B10",
         "type": "procedures",
-        "version": 11,
+        "version": 12,
         "titre": "Manipuler fichiers et dossiers : créer, copier, déplacer, supprimer",
         "titre_court": "Manipuler fichiers et dossiers",
         "objectif": "Dans un dossier d'atelier, réaliser sans `cd` une arborescence imposée de 3 dossiers et 3 fichiers vides avec `mkdir` (`-p`) et `touch`, la vérifier avec `ls -R`, la sauvegarder avec `cp -Rv`, puis prédire par écrit l'état de l'arborescence après 10 commandes `cp`, `mv`, `rm` (destination existante ou non, écrasement sans confirmation, échec qui ne change rien) et les exécuter avec 10 justes ; dire que `rm` supprime sans corbeille ni confirmation, et lire ce que détruit une ligne `rm -r` ou `rm -rf`, avec ou sans `sudo`, avant de l'exécuter ; donner l'équivalent Cmd de `copy`, `move`, `del` et `rmdir /s` et reconnaître trois différences entre Cmd et bash (séparateur de chemin, option, nom de commande)",
@@ -7096,15 +7282,15 @@ contact.html  index.html</pre>
           },
           {
             "id": "PR1-9",
-            "question": "Farid a retiré le dossier css avec rm -r. Pourquoi ne le retrouve-t-il pas dans la Corbeille ?",
-            "attendu": "rm -r retire le dossier avec tout son contenu pour de bon : il ne passe pas par la Corbeille. Déduit de l’étape « Supprimer ».",
+            "question": "Farid a tapé rm -r site/css. Sans la copie de sauvegarde, que serait devenu css, et pourquoi ?",
+            "attendu": "css aurait disparu avec tout son contenu : rm -r le retire pour de bon, sans passer par une Corbeille, donc la copie de sauvegarde était la seule trace. Déduit de l’étape « Supprimer ».",
             "erreurs": ["E1"],
             "item": "PR1-9"
           },
           {
             "id": "PR1-9:variante",
-            "question": "Yasmine a retiré style.css avec rm. Pourquoi ne le retrouve-t-elle pas dans la Corbeille ?",
-            "attendu": "rm retire le fichier pour de bon : il ne passe pas par la Corbeille de Windows. Déduit de l’étape « Supprimer ».",
+            "question": "Yasmine a tapé rm site/css/style.css. Sans la copie de sauvegarde, que serait devenu style.css, et pourquoi ?",
+            "attendu": "style.css aurait disparu : rm le retire pour de bon, sans passer par la Corbeille de Windows, donc la copie de sauvegarde était la seule trace. Déduit de l’étape « Supprimer ».",
             "erreurs": ["E1"],
             "item": "PR1-9"
           },
@@ -7138,13 +7324,13 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-R3",
-            "question": "Pour lire : `rm -r` descend dans les dossiers, `rm -f` ne se plaint pas d’un nom absent, `sudo` lance la commande en administrateur, `..` désigne le dossier qui contient celui où l’on est. Un tutoriel conseille « pour libérer de la place, tape sudo rm -rf ../projets ». Yasmine est dans son dossier atelier, /home/yasmine/atelier. Que détruit cette ligne, et que vérifie-t-elle avant de la lancer ?",
-            "attendu": "Depuis /home/yasmine/atelier, .. désigne /home/yasmine : la ligne détruit /home/yasmine/projets, avec tout ce qu’il contient, sans rien demander ni corbeille, et sudo lèverait même la protection des fichiers du système. Elle lit dans l’ordre la commande, les options, les chemins et le dossier où elle est (pwd), puis ne la tape que si elle est sûre de ce qu’elle détruit. Déduit de l’étape « Supprimer ».",
+            "question": "Pour lire : `-r` descend dans les dossiers, `-f` ne se plaint pas d’un nom absent, `sudo` lance en administrateur, `..` désigne le dossier parent ; /home/yasmine est le dossier yasmine, dans home. Un tutoriel conseille « pour libérer de la place, tape sudo rm -rf ../projets ». Yasmine est dans /home/yasmine/atelier. Que détruit cette ligne, et que vérifie-t-elle avant de la lancer ?",
+            "attendu": "Depuis /home/yasmine/atelier, .. désigne /home/yasmine : la ligne détruit /home/yasmine/projets, avec tout ce qu’il contient, sans rien demander ni corbeille. Elle lit dans l’ordre la commande, les options, les chemins et le dossier où elle est (pwd), puis ne la tape que si elle est sûre de ce qu’elle détruit. Déduit de l’étape « Supprimer ».",
             "erreurs": ["E2"]
           },
           {
             "id": "B10-R4",
-            "question": "Pour lire : Cmd, l’Invite de commandes de Windows, écrit les chemins avec l’antislash ; bash les écrit avec la barre /. Cmd nomme move ce que bash nomme mv. Un tutoriel pour Cmd donne la ligne move css\\vieux css\\neuf. Farid la tape dans le Terminal de son Mac, qui lit les mêmes lignes qu’Ubuntu. Que se passe-t-il, et quelle ligne tape-t-il à la place ?",
+            "question": "Pour lire : Cmd, l’Invite de commandes de Windows, écrit les chemins avec l’antislash, bash avec la barre / ; css\\vieux est vieux, dans css. Cmd nomme move ce que bash nomme mv. Un tutoriel pour Cmd donne la ligne move css\\vieux css\\neuf. Farid la tape dans le Terminal de son Mac, qui lit les mêmes lignes qu’Ubuntu. Que se passe-t-il, et quelle ligne tape-t-il à la place ?",
             "attendu": "Le Terminal ne connaît pas move, nom de Cmd : un message dit que la commande est introuvable, et rien n’est déplacé. Il tape l’équivalent de bash, avec le nom mv et la barre pour séparateur : mv css/vieux css/neuf. Déduit de l’étape « Et sous Cmd ? ».",
             "erreurs": ["E4"]
           },
@@ -7158,8 +7344,8 @@ contact.html  index.html</pre>
         "rappel": [
           {
             "id": "B10-Q1",
-            "question": "Pour lire : deux points .. désignent le dossier parent du dossier où l’on est, celui qui le contient ; un chemin comme /Users/farid/atelier, qui commence par une barre, nomme un à un les dossiers qui mènent à un dossier, depuis le premier. Farid est dans /Users/farid/atelier/projet/src. Quel chemin, écrit depuis le dossier où il est, désigne le dossier doc, qui est /Users/farid/atelier/projet/doc ?",
-            "attendu": "../doc : les deux points remontent dans projet, le dossier parent de src, puis doc descend dans le dossier voisin. Déduit du bloc « Lire la documentation et se déplacer ».",
+            "question": "Pour lire : un chemin est à suivre de gauche à droite, chaque nom collé à une barre étant un dossier dans le précédent ; deux points .. désignent le dossier parent de celui où l’on est. Farid est dans /Users/farid/atelier/projet/src. Quel chemin, écrit depuis le dossier où il est, désigne le dossier doc, qui est /Users/farid/atelier/projet/doc ?",
+            "attendu": "../doc : les deux points remontent dans projet, le dossier parent de src, puis doc descend dans le dossier voisin. Déduit de l’étape « Déplacer ».",
             "erreurs": []
           },
           {
@@ -7170,14 +7356,14 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-Q3",
-            "question": "Pour lire : dans une ligne de commande, la commande est le premier mot ; une option commence par un tiret. Dans cp -Rv site sauvegarde, quel morceau est la commande, et quel morceau est une option ?",
-            "attendu": "cp est la commande ; l’option est le morceau qui commence par un tiret, -Rv. Déduit des étapes « Copier » et du bloc précédent.",
+            "question": "Pour lire : -r fait descendre rm dans les dossiers, -f l’empêche de se plaindre d’un nom absent, et -rf se lit -r -f. Dans la ligne rm -rf site, quel morceau est la commande, et quel morceau est l’option ?",
+            "attendu": "rm est la commande ; l’option est -rf, le morceau qui commence par un tiret : c’est son -r qui commande la descente dans les dossiers. Déduit de l’étape « Supprimer ».",
             "erreurs": []
           },
           {
             "id": "B10-Q4",
-            "question": "Pour lire : ls -R écrit un titre par dossier, puis ses noms. Le formateur impose un dossier projet qui contient src et index.html. Yasmine tape ls -R projet : sous le titre projet, la fenêtre écrit index.htm et src. Son travail suit-il exactement la consigne du formateur, et comment le sait-elle ?",
-            "attendu": "Non : index.htm n’est pas index.html, car un nom presque juste est un autre nom. Elle le sait en comparant, nom par nom, la sortie de ls -R avec ce que le formateur impose. Déduit de l’étape « Créer sans bouger ».",
+            "question": "Pour lire : ls -R écrit un titre par dossier, puis ses noms. Le formateur impose un dossier projet qui contient src et readme.txt. Yasmine tape ls -R projet : sous le titre projet, la fenêtre écrit readme.txt et scr. Son travail suit-il exactement la consigne du formateur, et comment le sait-elle ?",
+            "attendu": "Non : scr n’est pas src, car un nom presque juste est un autre nom. Elle le sait en comparant, nom par nom, la sortie de ls -R avec ce que le formateur impose. Déduit de l’étape « Créer sans bouger ».",
             "erreurs": []
           },
           {
@@ -7264,7 +7450,7 @@ contact.html  index.html</pre>
             "id": "B10-T1",
             "type": "transfert",
             "forme": "trouver_erreur",
-            "consigne": "Pour lire : Cmd écrit les chemins avec l’antislash, bash avec la barre /, et nomme copy, move, del ce que bash nomme cp, mv, rm. Farid, dans le Terminal de son Mac, qui lit les mêmes lignes qu’Ubuntu, tape deux lignes d’un tutoriel pour Cmd : del site\\index.html, puis move site\\css site\\styles. Trouve son erreur et écris la ligne de bash qu’il aurait dû taper pour la première.",
+            "consigne": "Pour lire : Cmd écrit les chemins avec l’antislash, bash avec la barre /, et nomme copy, move, del ce que bash nomme cp, mv, rm ; site\\index.html est index.html, dans site. Farid, dans le Terminal de son Mac, lecteur de bash, tape deux lignes de Cmd : del site\\index.html, puis move site\\pages site\\html. Trouve son erreur et écris la ligne de bash qu’il aurait dû taper pour la première.",
             "attendu": "Les lignes sont écrites pour Cmd : le Terminal ne connaît ni del ni move, et rien ne change. L’équivalent de bash de la première est rm site/index.html, avec la barre pour séparateur. L’erreur est de taper dans une fenêtre une ligne écrite pour l’autre. Déduit de l’étape « Et sous Cmd ? ».",
             "erreurs": ["E4"]
           },
@@ -7288,7 +7474,7 @@ contact.html  index.html</pre>
             "id": "B10-T4",
             "type": "transfert",
             "forme": "adapter_condition",
-            "consigne": "Pour lire : mv déplace sa source vers sa destination ; mkdir crée un dossier du nom qu’on lui donne. Dans site, qui contient css, img et index.html, Yasmine tape mv index.html accueil, alors qu’il n’y a pas de dossier accueil. Que contient site ensuite, et que doit-elle faire d’abord pour ranger index.html dans un dossier accueil ?",
+            "consigne": "Pour lire : mv déplace sa source vers sa destination. Dans site, qui contient css, img et index.html, Yasmine tape mv index.html accueil, alors qu’il n’y a pas de dossier accueil. Que contient site ensuite, et que doit-elle faire d’abord pour ranger index.html dans un dossier accueil ?",
             "attendu": "accueil n’existe pas : mv renomme index.html en accueil, qui est alors un fichier, et site ne contient plus index.html. Pour le ranger dans un dossier, elle crée d’abord le dossier avec mkdir accueil, puis tape mv index.html accueil : la destination existe alors et reçoit la source. Déduit de l’étape « Déplacer ».",
             "erreurs": []
           }
@@ -7361,13 +7547,13 @@ contact.html  index.html</pre>
           ]
         },
         "aisance": {
-          "libelle": "Dix états d’un dossier prédits après une commande cp, mv ou rm (destination existante ou non, écrasement, échec), sur un état imprimé : dix justes sur dix dans le temps du palier, une série par jour.",
+          "libelle": "Dix états d’un dossier prédits après une commande cp, mv ou rm (destination existante ou non, écrasement, échec), sur un état affiché : dix justes sur dix dans le temps du palier, une série par jour.",
           "paliers_s": [150, 120]
         },
         "cartes": [
           {
             "id": "B10-K1",
-            "recto": "Pour lire : l’option -p de mkdir concerne les dossiers parents ; un chemin comme a/b veut dire le dossier b dans le dossier a. Dans un atelier vide, qu’est-ce qui différencie mkdir a/b de mkdir -p a/b ?",
+            "recto": "Pour lire : le p de l’option -p de mkdir est mis pour parents ; un chemin comme a/b veut dire le dossier b dans le dossier a. Dans un atelier vide, qu’est-ce qui différencie mkdir a/b de mkdir -p a/b ?",
             "verso": "Sans -p, mkdir échoue : a n’existe pas, un message le dit, rien n’est créé. Avec -p, il crée a, puis b dedans, sans rien dire. Déduit de l’étape « Créer sans bouger »."
           },
           {
@@ -7387,18 +7573,18 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-K5",
-            "recto": "Pour lire : sudo lance la commande qui suit en administrateur, le compte qui a tous les droits ; les fichiers du système sont protégés : seul l’administrateur peut les modifier. Pourquoi sudo rm -rf est-il plus dangereux que rm -rf ?",
+            "recto": "Pour lire : sudo lance la commande qui suit en administrateur, le compte qui a tous les droits. Pourquoi sudo rm -rf est-il plus dangereux que rm -rf ?",
             "verso": "Sans sudo, ton compte n’a pas le droit de toucher aux fichiers du système : rm s’arrête devant eux. Avec sudo, la ligne s’exécute avec tous les droits : la protection ne retient plus rien, et -rf détruit sans question. Déduit de l’étape « Supprimer »."
           },
           {
             "id": "B10-K6",
-            "recto": "Pour lire : -r descend dans les dossiers, -f empêche rm de se plaindre d’un nom absent, sudo lance en administrateur ; ~ est le dossier personnel de celui qui tape, /home/yasmine pour Yasmine ; cache/tmp veut dire le dossier tmp dans cache. Yasmine, dans /home/yasmine/atelier/site, lit sudo rm -rf ~/cache/tmp. Quel dossier détruirait-elle, et la réponse dépend-elle du dossier où elle est ?",
-            "verso": "La ligne retire, en administrateur, le dossier tmp du dossier cache avec tout son contenu, sans rien demander. ~/cache/tmp part du dossier personnel : c’est /home/yasmine/cache/tmp, d’où que Yasmine tape la ligne, donc le dossier où elle est ne change pas la réponse. Déduit de l’étape « Supprimer »."
+            "recto": "Pour lire : -r descend dans les dossiers, -f empêche rm de se plaindre d’un nom absent, sudo lance en administrateur ; /home/yasmine/cache/tmp, qui commence par une barre, est le dossier tmp, dans cache, dans yasmine, dans home. Yasmine, dans /home/yasmine/atelier/site, lit sudo rm -rf /home/yasmine/cache/tmp. Quel dossier détruirait-elle, et la réponse dépend-elle du dossier où elle est ?",
+            "verso": "La ligne retire, en administrateur, le dossier tmp du dossier cache avec tout son contenu, sans rien demander. Le chemin commence par une barre : il désigne /home/yasmine/cache/tmp d’où que Yasmine tape la ligne, donc le dossier où elle est ne change pas la réponse. Déduit de l’étape « Supprimer »."
           },
           {
             "id": "B10-K7",
-            "recto": "Pour lire : bash est l’écriture des lignes d’Ubuntu, que le Terminal d’un Mac lit ; Cmd, l’Invite de commandes de Windows, a trois écritures : le séparateur de chemin (\\), l’écriture des options (/s) et le nom des commandes (copy, del). Un tutoriel pour Cmd donne copy photos\\ete.jpg archives ; Farid veut cp photos/ete.jpg archives dans son Terminal. Qu’est-ce qui change, et laquelle des trois n’apparaît pas ?",
-            "verso": "Le nom de la commande change (copy devient cp) et le séparateur du chemin aussi (l’antislash devient la barre). L’écriture des options n’apparaît pas : aucune des deux lignes n’en a. Les trois différences sont le nom des commandes, l’écriture des options et le séparateur de chemin. Déduit de l’étape « Et sous Cmd ? »."
+            "recto": "Pour lire : bash est l’écriture des lignes d’Ubuntu, que le Terminal d’un Mac lit ; Cmd est l’Invite de commandes de Windows ; photos\\ete.jpg est le fichier ete.jpg, dans photos. Un tutoriel pour Cmd donne copy photos\\ete.jpg archives ; Farid veut cp photos/ete.jpg archives dans son Terminal. Qu’est-ce qui change entre les deux lignes ?",
+            "verso": "Le nom de la commande change (copy devient cp) et le séparateur du chemin aussi (l’antislash devient la barre). L’écriture des options, troisième différence, n’apparaît pas : aucune des deux lignes n’en a. Les trois différences sont le nom des commandes, l’écriture des options et le séparateur de chemin. Déduit de l’étape « Et sous Cmd ? »."
           },
           {
             "id": "B10-K8",
@@ -7407,7 +7593,7 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-K10",
-            "recto": "Pour lire : mkdir -p crée les dossiers manquants d’un chemin ; une commande reçoit plusieurs noms, séparés par des espaces. Yasmine veut, dans atelier, un dossier projet qui contient src et doc. Écris, en une seule ligne, ce qui les crée tous les trois.",
+            "recto": "Pour lire : mkdir -p crée les dossiers manquants d’un chemin ; docs/css est le dossier css, dans docs ; une commande reçoit plusieurs noms, séparés par des espaces. Yasmine veut, dans atelier, un dossier projet qui contient src et doc. Écris, en une seule ligne, ce qui les crée tous les trois.",
             "verso": "mkdir -p projet/src projet/doc : une ligne, deux chemins ; projet est créé au passage, avec src et doc dedans. Déduit de l’étape « Créer sans bouger »."
           },
           {
@@ -7491,7 +7677,7 @@ contact.html  index.html</pre>
             "notion": "`cp` seul refuse un dossier ; `cp -R` (ou `-r`) copie un dossier avec tout son contenu",
             "montree": ["ET5"],
             "pratiquee": ["PR1", "AT1"],
-            "questions": ["B10-Q3", "B10-Q6"]
+            "questions": ["B10-Q6"]
           },
           {
             "id": "N10",
@@ -7505,7 +7691,7 @@ contact.html  index.html</pre>
             "notion": "`-v` fait écrire à `cp` chaque copie faite ; `cp -Rv` sauvegarde une arborescence vers un nom qui n’existe pas encore",
             "montree": ["ET5"],
             "pratiquee": ["PR1", "AT1"],
-            "questions": ["B10-Q3", "B10-K9"]
+            "questions": ["B10-K9"]
           },
           {
             "id": "N12",
@@ -7540,14 +7726,14 @@ contact.html  index.html</pre>
             "notion": "`rm` seul refuse un dossier ; `rm -r` supprime le dossier avec tout ce qu’il contient",
             "montree": ["ET7"],
             "pratiquee": ["PR1", "AT1", "ET12"],
-            "questions": ["B10-R3", "B10-C3", "B10-X2"]
+            "questions": ["B10-R3", "B10-C3", "B10-X2", "B10-Q3"]
           },
           {
             "id": "N17",
             "notion": "`-f` empêche `rm` de se plaindre d’un nom absent, `rm` ne demandant rien : `rm -rf` détruit un dossier sans rien dire",
             "montree": ["ET7"],
             "pratiquee": ["PR1"],
-            "questions": ["B10-R3", "B10-Q8", "B10-C3", "B10-X2"]
+            "questions": ["B10-R3", "B10-Q8", "B10-C3", "B10-X2", "B10-Q3"]
           },
           {
             "id": "N18",
@@ -7651,7 +7837,7 @@ contact.html  index.html</pre>
             "vers": "N16",
             "type": "composition",
             "montree": "ET7",
-            "questions": ["B10-R3", "B10-X2", "B10-C3"]
+            "questions": ["B10-R3", "B10-X2", "B10-C3", "B10-Q3"]
           },
           {
             "id": "L6",
@@ -7699,7 +7885,7 @@ contact.html  index.html</pre>
             "vers": "N9",
             "type": "composition",
             "montree": "ET5",
-            "questions": ["B10-Q3", "B10-K9"]
+            "questions": ["B10-K9"]
           },
           {
             "id": "L12",
@@ -7746,7 +7932,7 @@ contact.html  index.html</pre>
             "de": "N1",
             "vers": "N21",
             "type": "condition",
-            "montree": "ET8",
+            "montree": "ET7",
             "questions": ["B10-Q1", "B10-K8", "B10-T3"]
           },
           {
