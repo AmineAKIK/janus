@@ -2161,6 +2161,10 @@ $ code .</pre>
           <ul>
             <li>index.html est le fichier de la page.</li>
             <li>
+              Un squelette de page est le début d’une page web : quelques lignes déjà écrites, où
+              l’on ajoute ensuite son contenu.
+            </li>
+            <li>
               Une extension est un programme que l’on ajoute à l’éditeur pour lui donner une
               fonction de plus.
             </li>
@@ -2290,12 +2294,12 @@ $ code .</pre>
       <p>Voici le projet de Yasmine, vu d’en haut : chaque fonction a une source.</p>
       <div
         class="chaine"
-        data-lecture="Le projet de Yasmine en une chaîne. Yasmine écrit sa page dans VS Code, sur son PC. VS Code lui donne le squelette et le terminal, et l’extension Live Preview lui donne l’aperçu. Son PC fournit le dossier site et la fenêtre où elle tape code suivi d’un point. Chaque fonction a donc sa source : l’éditeur, une extension ou la machine. Elle sait d’où vient chaque geste, donc ce qu’il lui reste à installer."
+        data-lecture="Le projet de Yasmine en une chaîne. Yasmine écrit sa page dans VS Code, sur son PC. VS Code lui donne le squelette et le terminal, et l’extension Live Preview lui donne la page vue comme dans un navigateur. Son PC fournit le dossier site et la fenêtre où elle tape code suivi d’un point. Chaque fonction a donc sa source : l’éditeur, une extension ou la machine. Elle sait d’où vient chaque geste, donc ce qu’il lui reste à installer."
       >
         <span class="boite">Yasmine écrit sa page dans VS Code, sur son PC</span
         ><span class="fleche"
-          >VS Code lui donne le squelette et le terminal ; l’extension Live Preview lui donne
-          l’aperçu</span
+          >VS Code lui donne le squelette et le terminal ; l’extension Live Preview lui donne la
+          page vue comme dans un navigateur</span
         ><span class="boite">son PC fournit le dossier site et la fenêtre où elle tape code .</span
         ><span class="fleche"
           >chaque fonction a sa source : l’éditeur, une extension ou la machine</span
@@ -2534,11 +2538,13 @@ Visual Studio</pre>
     <template data-etape="ET4">
       <div data-ecran="Quelle architecture ?">
         <p class="accroche">
-          Pour installer VS Code, il faut d’abord connaître l’<strong>architecture</strong> de ta
-          machine : l’architecture d’un processeur est la sorte d’instructions qu’il sait exécuter.
-          Un programme est écrit pour une architecture, et il faut celui de sa machine. x64 est
+          Noah, 29 ans, vient d’acheter un PC portable et veut y installer VS Code. La page de
+          téléchargement propose plusieurs fichiers, dont deux s’appellent « x64 » et « ARM64 » : un
+          seul est le bon pour sa machine. Ce sont les noms de deux <strong>architectures</strong> :
+          l’architecture d’un processeur est la sorte d’instructions qu’il sait exécuter. x64 est
           celle des processeurs Intel et AMD de la plupart des PC ; ARM64, celle des puces des Mac
-          récents (Apple M1 et suivantes) et de certains PC portables.
+          récents et de certains PC portables. Un programme est écrit pour une architecture, et son
+          téléchargement en porte le nom.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -2546,11 +2552,12 @@ Visual Studio</pre>
             <li>
               Sous Windows, « Paramètres », « Système », « Informations système » : la ligne « Type
               du système » finit par « processeur x64 » ou par « processeur ARM », qui veut dire
-              ARM64.
+              ARM64. Les téléchargements s’appellent « x64 » et « ARM64 ».
             </li>
             <li>
               Sur un Mac, menu Pomme, « À propos de ce Mac » : « Puce Apple M… » veut dire ARM64, «
-              Processeur Intel » veut dire x64.
+              Processeur Intel » veut dire x64. Les téléchargements s’appellent « Apple silicon »
+              pour ARM64 et « Intel » pour x64.
             </li>
             <li>
               Dans la fenêtre d’Ubuntu, <span class="mono">uname -m</span> répond x86_64 pour x64,
@@ -2558,10 +2565,7 @@ Visual Studio</pre>
             </li>
           </ul>
         </div>
-        <p>
-          Noah, 29 ans, vient d’acheter un PC portable. Il ouvre « Informations système » et lit une
-          ligne.
-        </p>
+        <p>Noah ouvre « Informations système » et lit une ligne.</p>
         <div
           class="ex"
           data-widget="choix"
@@ -2570,107 +2574,51 @@ Visual Studio</pre>
           data-reponse="arm"
           data-aide1="Quel mot de la ligne suit « processeur » ?"
           data-aide2="Que dit « Pour lire » d’un « processeur ARM » ?"
-          data-aide3="Cherche, dans « Pour lire », la ligne qui parle de « processeur ARM » : laquelle des deux architectures désigne-t-elle ?"
-          data-explication="Le mot après « processeur » donne l’architecture : ARM veut dire ARM64. « 64 bits » dit seulement la taille du système."
-          data-variante-enonce="Pour lire : sur un Mac, « Puce Apple M… » est ARM64 et « Processeur Intel » est x64. Le formateur lit « Processeur Intel Core i5 » dans « À propos de ce Mac ». Quelle architecture a son Mac ?"
-          data-variante-reponse="x64"
-          data-variante-options="x64=x64.|arm=ARM64.|deux=Les deux architectures à la fois."
-          data-variante-retours="arm=Quelle ligne de « Pour lire » parle d’un « Processeur Intel » ?|deux=Une même machine a-t-elle deux architectures, ou une seule ?"
+          data-aide3="Cherche, dans « Pour lire », la ligne qui parle de « processeur ARM » : quel téléchargement porte le nom de son architecture ?"
+          data-explication="Le mot après « processeur » donne l’architecture : ARM veut dire ARM64, et le téléchargement qui s’appelle « ARM64 » est le bon. « 64 bits » dit seulement la taille du système."
+          data-variante-enonce="Pour lire : sur un Mac, « Processeur Intel » veut dire x64 et « Puce Apple M… » ARM64 ; les téléchargements s’appellent « Intel » et « Apple silicon ». Le formateur lit « Processeur Intel Core i5 ». Quel téléchargement choisit-il ?"
+          data-variante-reponse="intel"
+          data-variante-options="intel=La version Intel.|silicon=La version Apple silicon : c’est la plus récente.|deux=Les deux versions, pour être sûr."
+          data-variante-retours="silicon=Quelle ligne de « Pour lire » parle d’un « Processeur Intel » ?|deux=Pour une même machine, faut-il les deux téléchargements, ou un seul ?"
           data-variante-aide1="Que lit le formateur : « Puce Apple » ou « Processeur Intel » ?"
-          data-variante-aide2="Dans « Pour lire », que veut dire « Processeur Intel » ?"
-          data-variante-aide3="Cherche dans « Pour lire » la ligne qui parle de « Processeur Intel » : quelle architecture désigne-t-elle ?"
-          data-variante-explication="« Processeur Intel » veut dire x64 : le Mac du formateur est x64."
+          data-variante-aide2="Dans « Pour lire », quel téléchargement correspond à « Processeur Intel » ?"
+          data-variante-aide3="Écris la ligne que lit le formateur, puis cherche dans « Pour lire » le téléchargement qui porte le nom de son architecture."
+          data-variante-explication="« Processeur Intel » veut dire x64, et le téléchargement de l’architecture x64 s’appelle « Intel » : le formateur télécharge la version Intel."
         >
           <pre
             class="listing"
             data-lecture="La ligne lue par Noah, dans Informations système. Type du système : système d’exploitation 64 bits, processeur ARM."
           >
 Type du système : Système d’exploitation 64 bits, processeur ARM</pre>
-          <p class="q">Quelle est l’architecture du PC de Noah ?</p>
+          <p class="q">Quel téléchargement de VS Code Noah choisit-il ?</p>
           <ul class="options">
-            <li data-option="arm">ARM64.</li>
+            <li data-option="arm">Celui qui s’appelle « ARM64 ».</li>
             <li
               data-option="x64"
               data-retour="Le mot « 64 bits » désigne-t-il le processeur, ou le système d’exploitation ?"
             >
-              x64 : le système est 64 bits.
-            </li>
-            <li
-              data-option="deux"
-              data-retour="Une même machine a-t-elle deux architectures, ou une seule ?"
-            >
-              Les deux architectures à la fois.
-            </li>
-          </ul>
-        </div>
-        <p>
-          Ton architecture se lit sur ta machine, elle ne se devine pas : lis-la avant de
-          télécharger.
-        </p>
-      </div>
-      <div data-ecran="Le nom du téléchargement">
-        <p class="accroche">
-          Chaque architecture a son téléchargement, qui en porte le nom. Le formateur, sur son Mac,
-          va sur la page de téléchargement de VS Code : « À propos de ce Mac » lui a écrit «
-          Processeur Intel Core i5 ».
-        </p>
-        <div class="cadre pour-lire">
-          <p class="discret">Pour lire :</p>
-          <ul>
-            <li>
-              Sur un Mac, « Processeur Intel » veut dire x64 et « Puce Apple M… » veut dire ARM64 ;
-              les deux téléchargements s’appellent « Intel » pour x64 et « Apple silicon » pour
-              ARM64.
-            </li>
-            <li>Sous Windows, les deux téléchargements s’appellent « x64 » et « ARM64 ».</li>
-          </ul>
-        </div>
-        <div
-          class="ex"
-          data-widget="choix"
-          data-prediction
-          data-id="nom"
-          data-reponse="intel"
-          data-aide1="Que lit le formateur : « Puce Apple » ou « Processeur Intel » ?"
-          data-aide2="Dans « Pour lire », quel téléchargement correspond à « Processeur Intel » ?"
-          data-aide3="Écris la ligne que lit le formateur, puis cherche dans « Pour lire » le téléchargement qui porte le nom de son architecture."
-          data-explication="« Processeur Intel » veut dire x64, et le téléchargement de l’architecture x64 s’appelle « Intel » : le formateur télécharge la version Intel."
-          data-variante-enonce="Pour lire : sous Windows, « processeur ARM » veut dire ARM64 ; les téléchargements s’appellent « x64 » et « ARM64 ». Yasmine lit « processeur ARM » sur son PC. Quel téléchargement choisit-elle ?"
-          data-variante-reponse="arm"
-          data-variante-options="arm=Celui qui s’appelle « ARM64 ».|x64=Celui qui s’appelle « x64 » : son système est 64 bits.|deux=Les deux, pour être sûre."
-          data-variante-retours="x64=Le mot « 64 bits » désigne-t-il le processeur, ou le système d’exploitation ?|deux=Pour une même machine, faut-il les deux téléchargements, ou un seul ?"
-          data-variante-aide1="Quel mot de la ligne suit « processeur » ?"
-          data-variante-aide2="Que dit « Pour lire » d’un « processeur ARM » ?"
-          data-variante-aide3="Cherche, dans « Pour lire », la ligne qui parle de « processeur ARM » : quel téléchargement porte le nom de son architecture ?"
-          data-variante-explication="« processeur ARM » veut dire ARM64 : Yasmine télécharge celui qui s’appelle « ARM64 »."
-        >
-          <p class="q">Quel téléchargement le formateur choisit-il ?</p>
-          <ul class="options">
-            <li data-option="intel">La version Intel.</li>
-            <li
-              data-option="silicon"
-              data-retour="Quelle ligne de « Pour lire » parle d’un « Processeur Intel » ?"
-            >
-              La version Apple silicon : c’est la plus récente.
+              Celui qui s’appelle « x64 » : son système est 64 bits.
             </li>
             <li
               data-option="deux"
               data-retour="Pour une même machine, faut-il les deux téléchargements, ou un seul ?"
             >
-              Les deux versions, pour être sûr.
+              Les deux, pour être sûr.
             </li>
           </ul>
         </div>
         <p>
-          Un téléchargement porte le nom de l’architecture de ta machine : prends toujours celui-là,
-          jamais « le plus répandu ».
+          Ton architecture se lit sur ta machine, elle ne se devine pas : lis-la avant de
+          télécharger, puis prends toujours le téléchargement qui porte son nom, jamais « le plus
+          répandu ».
         </p>
       </div>
       <div data-ecran="Installer VS Code">
         <p class="accroche">
           Yasmine télécharge VS Code, gratuit, sur
           <a data-lien="https://code.visualstudio.com/download">code.visualstudio.com/download</a>.
-          Voici la marche à suivre de chaque système : tu la suivras toi-même dans l’atelier.
+          Voici la marche à suivre de chaque système : tu la suivras toi-même dans « Sur ta machine
+          ».
         </p>
         <div
           class="outil"
@@ -2692,7 +2640,7 @@ Type du système : Système d’exploitation 64 bits, processeur ARM</pre>
           </ol>
           <p>
             VS Code s’installe dans Windows, pas dans Ubuntu : la fenêtre d’Ubuntu l’ouvre quand
-            même, avec la commande code. Ces gestes installent l’éditeur.
+            même, avec la commande code.
           </p>
         </div>
         <div data-os="macos">
@@ -2705,7 +2653,6 @@ Type du système : Système d’exploitation 64 bits, processeur ARM</pre>
             <li>Ouvre le fichier téléchargé et glisse VS Code dans le dossier Applications.</li>
             <li>Lance VS Code une fois depuis Applications.</li>
           </ol>
-          <p>Ces gestes installent l’éditeur.</p>
         </div>
       </div>
       <div data-ecran="La palette de commandes">
@@ -2856,6 +2803,10 @@ zsh: command not found: code</pre>
             <li>
               Le point . est le nom du dossier où l’on est, le dossier courant, que pwd écrit.
             </li>
+            <li>
+              Ton <strong>dossier personnel</strong> est le dossier de ton compte, celui où la
+              fenêtre de commandes s’ouvre d’abord : /home/yasmine pour Yasmine.
+            </li>
             <li><span class="mono">code</span> ouvre dans VS Code ce qu’on lui donne.</li>
           </ul>
         </div>
@@ -2908,9 +2859,9 @@ $ code .</pre>
           Le <strong>projet</strong>, c’est le dossier que l’éditeur a ouvert : sa liste de gauche
           montre ce qu’il contient. Pour ouvrir site, Yasmine se place d’abord dedans avec
           <span class="mono">cd site</span>, puis tape <span class="mono">code .</span> : le point
-          lui évite d’écrire le chemin. Pour remonter dans le <strong>dossier parent</strong>, celui
-          qui contient le dossier où l’on est, on tape <span class="mono">cd ..</span> : depuis
-          site, <span class="mono">cd ..</span> ramène dans atelier.
+          lui évite d’écrire le chemin. Depuis css, elle se placerait dans site en remontant avec
+          <span class="mono">cd ..</span>, qui ramène dans le <strong>dossier parent</strong> :
+          celui qui contient le dossier où l’on est.
         </p>
       </div>
     </template>
@@ -3003,9 +2954,14 @@ $ code .</pre>
           <p class="discret">Pour lire :</p>
           <ul>
             <li>
-              Une extension est un programme que l’on ajoute à l’éditeur pour une fonction de plus.
+              Une extension est un programme que l’on ajoute à l’éditeur pour une fonction de plus ;
+              elle s’installe depuis le panneau Extensions.
             </li>
             <li>Un aperçu est une copie en direct de la page, vue comme dans un navigateur.</li>
+            <li>
+              Emmet, vu à l’écran précédent, est intégré à VS Code : il est là dès l’installation,
+              sans rien ajouter.
+            </li>
           </ul>
         </div>
         <div
@@ -3057,6 +3013,52 @@ $ code .</pre>
           <strong>panneau Extensions</strong>, qu’on ouvre avec l’icône des Extensions, dans la
           colonne de gauche, ou avec Ctrl+Maj+X (Commande+Maj+X sur un Mac).
         </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              Dans la liste du panneau Extensions, chaque extension affiche son nom et la société
+              qui la publie, puis un bouton « Installer ».
+            </li>
+            <li>Live Preview est publiée par Microsoft.</li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-prediction
+          data-id="societe"
+          data-reponse="societe"
+          data-aide1="Que montre la liste, pour chaque extension, à côté de son nom ?"
+          data-aide2="Que dit « Pour lire » de la société qui publie Live Preview ?"
+          data-aide3="Écris ce que Yasmine lit pour chacune des deux extensions, puis cherche celle dont la société est la bonne."
+          data-explication="Deux extensions peuvent porter le même nom : on repère la bonne par la société qui la publie, ici Microsoft."
+          data-variante-enonce="Pour lire : chaque extension de la liste affiche son nom et sa société ; Aperçu Rapide est publiée par Bureau Beta. Farid cherche « Aperçu Rapide » : l’une de ces extensions vient d’Éditions Alpha, l’autre de Bureau Beta. Laquelle installe-t-il ?"
+          data-variante-reponse="beta"
+          data-variante-options="beta=Celle de Bureau Beta.|alpha=Celle d’Éditions Alpha : elle est la première de la liste.|deux=Les deux, pour être sûr."
+          data-variante-retours="alpha=Deux extensions au même nom ont-elles la même société ?|deux=Faut-il installer deux fois la même fonction ?"
+          data-variante-aide1="Que montre la liste, pour chaque extension, à côté de son nom ?"
+          data-variante-aide2="Que dit « Pour lire » de la société qui publie Aperçu Rapide ?"
+          data-variante-aide3="Écris la société de chacune des deux extensions, puis cherche celle qui est la bonne."
+          data-variante-explication="On repère la bonne extension par sa société : Farid installe celle de Bureau Beta."
+        >
+          <p class="q">
+            La liste montre deux extensions qui s’appellent « Live Preview ». Comment Yasmine
+            repère-t-elle la bonne ?
+          </p>
+          <ul class="options">
+            <li data-option="societe">Elle prend celle que publie Microsoft.</li>
+            <li
+              data-option="premiere"
+              data-retour="Deux extensions au même nom ont-elles la même société ?"
+            >
+              Elle prend la première de la liste : le nom est le même.
+            </li>
+            <li data-option="toutes" data-retour="Faut-il installer deux fois la même fonction ?">
+              Elle installe les deux, pour être sûre.
+            </li>
+          </ul>
+        </div>
         <p>Voici, dans l’ordre, ce que fait Yasmine :</p>
         <ol>
           <li>Elle ouvre le panneau Extensions.</li>
@@ -3089,7 +3091,7 @@ $ code .</pre>
           <ul>
             <li>
               <span class="mono">pwd</span> écrit le dossier où l’on est. Le projet est le dossier
-              que VS Code a ouvert.
+              que VS Code a ouvert. Par convention, le terminal intégré s’ouvre dans le projet.
             </li>
           </ul>
         </div>
@@ -3130,13 +3132,12 @@ $ code .</pre>
           </ul>
         </div>
         <p>
-          Ce terminal est une fenêtre de commandes ouverte sur ton projet : c’est une convention de
-          VS Code, il s’ouvre dans le dossier du projet. Tu y tapes ls, mkdir ou touch sans quitter
-          l’éditeur. Sous Windows, le programme de commandes qui s’y ouvre se choisit : c’est le
-          sujet de « Le profil du terminal ».
+          Ce terminal est une fenêtre de commandes ouverte sur ton projet. Tu y tapes ls, mkdir ou
+          touch sans quitter l’éditeur. Sous Windows, le programme de commandes qui s’y ouvre se
+          choisit : les deux écrans suivants le montrent.
         </p>
       </div>
-      <div data-ecran="Le profil du terminal">
+      <div data-ecran="Lire l’invite">
         <p class="accroche">
           Noah, sur son PC Windows, a ouvert VS Code depuis le menu de Windows, pas depuis la
           fenêtre d’Ubuntu. Dans son terminal intégré, il lit l’invite ci-dessous, et sa ligne
@@ -3196,13 +3197,68 @@ PS C:\Users\noah></pre>
           </ul>
         </div>
         <p>
-          Pour retrouver bash, Noah ouvre la palette de commandes, tape « select default profile »
-          et choisit « Terminal: Select Default Profile ». Il y choisit « Ubuntu (WSL) », le nom que
-          VS Code donne à la fenêtre d’Ubuntu, c’est-à-dire à bash (WSL est le nom de ce qui fait
-          tourner Ubuntu dans Windows), puis ouvre un nouveau terminal. Les deux autres profils
-          s’appellent « Command Prompt » pour Cmd et « PowerShell » pour PowerShell : ces noms sont
-          ceux que VS Code leur donne, une convention à connaître. Sur un Mac, le terminal intégré
-          lit déjà les lignes que tu tapes dans le Terminal : rien à choisir pour ce bloc.
+          L’invite dit quel profil est ouvert : quand une ligne que tu connais échoue, lis-la
+          d’abord.
+        </p>
+      </div>
+      <div data-ecran="Choisir le profil">
+        <p class="accroche">
+          Noah sait maintenant que son terminal est en PowerShell. Il veut retrouver bash, le
+          programme de la fenêtre d’Ubuntu, pour y taper ses lignes <span class="mono">touch</span>.
+          Dans VS Code, le profil se change avec une commande de la palette de commandes.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              La commande de la palette qui change le profil s’appelle « Terminal: Select Default
+              Profile » : elle propose la liste des profils.
+            </li>
+            <li>
+              VS Code donne à chaque profil un nom : « Ubuntu (WSL) » pour bash, la fenêtre d’Ubuntu
+              ; « Command Prompt » pour Cmd ; « PowerShell » pour PowerShell.
+            </li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-prediction
+          data-id="choixprofil"
+          data-reponse="wsl"
+          data-aide1="Quel programme de commandes Noah veut-il retrouver ?"
+          data-aide2="Quel nom « Pour lire » donne-t-il au profil de la fenêtre d’Ubuntu ?"
+          data-aide3="Écris le programme que Noah veut, puis cherche dans « Pour lire » le profil qui porte son nom."
+          data-explication="La fenêtre d’Ubuntu est un bash : VS Code l’appelle « Ubuntu (WSL) »."
+          data-variante-enonce="Pour lire : « Terminal: Select Default Profile » propose les profils « Ubuntu (WSL) » pour bash, « Command Prompt » pour Cmd, « PowerShell » pour PowerShell. Farid veut taper des lignes de PowerShell dans le terminal intégré. Quel profil choisit-il ?"
+          data-variante-reponse="ps"
+          data-variante-options="ps=PowerShell.|wsl=Ubuntu (WSL).|cmd=Command Prompt."
+          data-variante-retours="wsl=Ubuntu (WSL) est le nom du profil de quel programme de commandes ?|cmd=Command Prompt est le nom du profil de quel programme de commandes ?"
+          data-variante-aide1="Quel programme de commandes Farid veut-il ?"
+          data-variante-aide2="Quel nom « Pour lire » donne-t-il au profil de PowerShell ?"
+          data-variante-aide3="Écris le programme que Farid veut, puis cherche dans « Pour lire » le profil qui porte son nom."
+          data-variante-explication="Le profil de PowerShell s’appelle « PowerShell » : Farid le choisit."
+        >
+          <p class="q">Quel profil Noah choisit-il pour retrouver la fenêtre d’Ubuntu ?</p>
+          <ul class="options">
+            <li data-option="wsl">Ubuntu (WSL).</li>
+            <li
+              data-option="cmd"
+              data-retour="Quel nom « Pour lire » donne-t-il à la fenêtre d’Ubuntu ?"
+            >
+              Command Prompt : c’est le profil qui ressemble le plus à une fenêtre de commandes.
+            </li>
+            <li data-option="ps" data-retour="Noah veut-il garder le profil qu’il a déjà ?">
+              PowerShell : c’est le profil de son terminal actuel.
+            </li>
+          </ul>
+        </div>
+        <p>
+          Noah ouvre la palette de commandes, tape « select default profile », choisit « Terminal:
+          Select Default Profile », puis le profil « Ubuntu (WSL) », et ouvre un nouveau terminal.
+          Ces noms sont ceux que VS Code donne aux profils : une convention à connaître. Sur un Mac,
+          le terminal intégré lit déjà les lignes que tu tapes dans le Terminal : rien à choisir
+          pour ce bloc.
         </p>
       </div>
     </template>
@@ -3270,8 +3326,8 @@ PS C:\Users\noah></pre>
           du code (qui signale une faute avant de lancer le programme) et les outils du langage. Un
           IDE n’est pas « meilleur » qu’un éditeur : il est plus complet, donc plus lourd et souvent
           payant. Un éditeur est plus léger et se compose à ta main, extension par extension. Cette
-          image ne dit pas tout : une extension ajoute des fonctions à l’éditeur, jamais ce qui
-          vient de ta machine, comme un langage.
+          comparaison ne dit pas tout : une extension ajoute des fonctions à l’éditeur, jamais ce
+          qui vient de ta machine, comme un langage.
         </p>
       </div>
       <div data-ecran="Une extension de langage">
@@ -3370,8 +3426,9 @@ PS C:\Users\noah></pre>
           <p class="discret">Pour lire :</p>
           <ul>
             <li>
-              Les paramètres d’un éditeur sont ses réglages. La synchronisation des paramètres les
-              envoie vers ton compte en ligne, pour les retrouver sur une autre machine.
+              Les paramètres d’un éditeur sont ses réglages : un thème, un raccourci et une
+              extension en sont. La synchronisation des paramètres les envoie vers ton compte en
+              ligne, pour les retrouver sur une autre machine.
             </li>
           </ul>
         </div>
@@ -3385,7 +3442,7 @@ PS C:\Users\noah></pre>
           data-aide2="Où est le dossier site de Yasmine : dans ses réglages, ou sur un disque ?"
           data-aide3="Écris ce que « Pour lire » appelle des paramètres, puis demande-toi si le dossier site en est un."
           data-explication="La synchronisation transporte le thème, les raccourcis et les extensions. Le dossier site est resté sur l’ancien disque."
-          data-variante-enonce="Pour lire : les paramètres d’un éditeur sont ses réglages. Farid active la synchronisation, passe son thème au sombre, installe Live Preview et crée un dossier projet2. Sur un autre Mac, que retrouve-t-il ?"
+          data-variante-enonce="Pour lire : les paramètres d’un éditeur sont ses réglages : un thème, un raccourci et une extension en sont. Farid active la synchronisation, passe son thème au sombre, installe Live Preview et crée un dossier projet2. Sur un autre Mac, que retrouve-t-il ?"
           data-variante-reponse="reglages"
           data-variante-options="reglages=Son thème sombre et Live Preview, mais pas le dossier projet2.|tout=Tout, dossier projet2 compris.|theme=Seulement le thème sombre : une extension n’est pas un paramètre."
           data-variante-retours="tout=Un projet est-il un réglage de l’éditeur, ou un dossier de la machine ?|theme=Une extension installée dans l’éditeur fait-elle partie de ses réglages ?"
@@ -3439,10 +3496,7 @@ PS C:\Users\noah></pre>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
           <ul>
-            <li>
-              Visual Studio Code, abrégé VS Code : l’éditeur de Microsoft, gratuit, que la commande
-              code ouvre.
-            </li>
+            <li>Visual Studio Code, abrégé VS Code : l’éditeur de Microsoft, gratuit.</li>
             <li>
               Visual Studio : un produit de Microsoft qui a plusieurs éditions, dont Community.
             </li>
@@ -3455,7 +3509,7 @@ PS C:\Users\noah></pre>
           data-id="vscode"
           data-reponse="code"
           data-aide1="Quel produit Yasmine a-t-elle installé pour avoir la commande code ?"
-          data-aide2="Quel produit « Pour lire » dit-il que la commande code ouvre ?"
+          data-aide2="Lequel des deux produits de « Pour lire » s’abrège VS Code ?"
           data-aide3="Écris le nom du produit qui fournit la commande code, puis compare-le au nom des deux produits de la page."
           data-explication="La commande code ouvre VS Code, qui est un produit distinct de Visual Studio : Farid télécharge Visual Studio Code."
           data-variante-enonce="Pour lire : la commande code ouvre Visual Studio Code, abrégé VS Code. Yasmine lit sur un forum : « Installe Visual Studio, c’est l’éditeur qu’on ouvre avec code . ». Que télécharge-t-elle ?"
@@ -3473,14 +3527,14 @@ PS C:\Users\noah></pre>
             <li data-option="code">Visual Studio Code.</li>
             <li
               data-option="vs"
-              data-retour="Quel produit « Pour lire » dit-il que la commande code ouvre ?"
+              data-retour="Lequel des deux produits de « Pour lire » s’abrège VS Code ?"
               data-erreur="E1"
             >
               Visual Studio Community : c’est VS Code en plus complet.
             </li>
             <li
               data-option="deux"
-              data-retour="Que dit « Pour lire » de ce que la commande code ouvre : un produit, ou deux ?"
+              data-retour="« Pour lire » dit-il que Visual Studio Code a besoin de Visual Studio ?"
               data-erreur="E1"
             >
               Les deux : Visual Studio Code ne marche qu’avec Visual Studio.
@@ -3492,7 +3546,9 @@ PS C:\Users\noah></pre>
           gratuit, et s’ouvre en quelques secondes sur un dossier. Visual Studio est un IDE complet,
           plus long à installer. Pour l’éditeur de ce bloc, c’est VS Code, qui fournit la commande
           code. Ce que tu installes décide ce que ta machine a : chaque produit a son installateur,
-          et en installer un n’installe pas l’autre.
+          et en installer un n’installe pas l’autre. Là aussi, on demande d’où ça vient : la
+          commande code vient de la machine, où l’installateur de VS Code la met ; installer Visual
+          Studio ne la met pas, comme installer une extension n’installe pas le langage.
         </p>
         <p data-si-essai="p1:faux">
           Pour les deux résultats de recherche, tu avais répondu
@@ -3509,9 +3565,10 @@ PS C:\Users\noah></pre>
           <p class="discret">Pour lire :</p>
           <ul>
             <li>
-              Un IDE de JetBrains est payant, par abonnement (un paiement régulier), avec deux voies
-              gratuites : la licence étudiante, pour apprendre, sur preuve de ton statut d’étudiant
-              ; le mode non commercial, pour apprendre ou pour un projet personnel.
+              Un IDE de JetBrains est payant : on paie un abonnement, c’est-à-dire un paiement
+              régulier, pour avoir le droit de l’utiliser. Il a deux voies gratuites : la licence
+              étudiante, pour apprendre, sur preuve de ton statut d’étudiant ; le mode non
+              commercial, pour apprendre ou pour un projet personnel.
             </li>
             <li>L’usage commercial est l’usage pour un travail payé.</li>
             <li>
@@ -3532,7 +3589,7 @@ PS C:\Users\noah></pre>
           data-variante-enonce="Pour lire : les voies gratuites de JetBrains sont la licence étudiante, et le mode non commercial pour apprendre ou un projet personnel. Noah, salarié, n’est pas étudiant ; le soir, chez lui, il apprend le PHP avec PhpStorm. Quelle voie couvre son cas ?"
           data-variante-reponse="noncom"
           data-variante-options="noncom=Le mode non commercial, puisque son usage n’est pas un travail payé.|community=L’édition Community de PhpStorm.|rien=Rien : un IDE de JetBrains est payant pour tous."
-          data-variante-retours="community=Combien d’éditions gratuites « Pour lire » cite-t-il pour un IDE de JetBrains ?|rien=Pour quel usage « Pour lire » dit-il que le mode non commercial existe ?"
+          data-variante-retours="community=Les voies gratuites de « Pour lire » nomment-elles une édition Community ?|rien=Pour quel usage « Pour lire » dit-il que le mode non commercial existe ?"
           data-variante-aide1="Apprendre chez soi est-il un usage commercial, ou non ?"
           data-variante-aide2="Quelles voies gratuites « Pour lire » cite-t-il, et pour quel usage chacune ?"
           data-variante-aide3="Écris l’usage de Noah, puis cherche dans « Pour lire » une voie gratuite qui l’autorise."
@@ -3548,7 +3605,7 @@ PS C:\Users\noah></pre>
             </li>
             <li
               data-option="community"
-              data-retour="Combien d’éditions gratuites « Pour lire » cite-t-il pour un IDE de JetBrains ?"
+              data-retour="Les voies gratuites de « Pour lire » nomment-elles une édition Community ?"
               data-erreur="E4"
             >
               Prendre l’édition Community de PhpStorm, gratuite.
@@ -3586,8 +3643,13 @@ PS C:\Users\noah></pre>
           <ul>
             <li>VS Code : un éditeur gratuit, en versions x64 et ARM64.</li>
             <li>
-              PhpStorm : un IDE pour PHP, payant, avec la licence étudiante et le mode non
-              commercial, en versions x64 et ARM64.
+              PhpStorm : l’IDE de JetBrains pour le PHP, payant, avec la licence étudiante et le
+              mode non commercial, en versions x64 et ARM64 ; il comprend aussi le HTML, le CSS et
+              le JavaScript d’un site.
+            </li>
+            <li>WebStorm : l’IDE de JetBrains pour le JavaScript.</li>
+            <li>
+              Chaque téléchargement porte le nom d’une architecture : on prend celui de sa machine.
             </li>
             <li>
               Le mode non commercial est une voie gratuite pour apprendre ou pour un projet
@@ -3628,17 +3690,15 @@ PS C:\Users\noah></pre>
             </li>
           </ul>
         </div>
-        <p>
-          Chez JetBrains, chaque IDE est conçu, pour l’essentiel, pour un langage : on prend celui
-          de son besoin, PhpStorm pour le PHP, WebStorm pour le JavaScript. PhpStorm comprend aussi
-          le HTML, le CSS et le JavaScript d’un site : pour un site en PHP, il suffit.
-        </p>
+
         <p>
           Pour choisir un outil pour un besoin, on regarde quatre choses : le langage, la licence,
           ce que l’outil contient déjà, et le processeur de la machine. Un besoin donné se tranche
-          par ces quatre points : le langage dit quel IDE existe pour lui, le travail payé ou non
-          dit quelle licence est permise, la machine dit quelle version installer, et un IDE se
-          justifie quand tu veux ses outils déjà prêts pour un langage ; sinon, l’éditeur suffit.
+          par ces quatre points : le langage dit quel IDE existe pour lui (chez JetBrains, chaque
+          IDE est conçu, pour l’essentiel, pour un langage : PhpStorm pour le PHP, WebStorm pour le
+          JavaScript), le travail payé ou non dit quelle licence est permise, la machine dit quelle
+          version installer, et un IDE se justifie quand tu veux ses outils déjà prêts pour un
+          langage ; sinon, l’éditeur suffit.
         </p>
       </div>
     </template>
@@ -3667,14 +3727,14 @@ PS C:\Users\noah></pre>
           data-aide2="Un formateur qui lit la page de l’IA constate-t-il ce que Farid sait faire, ou ce que l’IA sait faire ?"
           data-aide3="Écris qui a écrit chaque ligne, puis demande-toi ce que chaque page montre sur Farid."
           data-explication="Une preuve se fait seul : la page que Farid tape lui-même compte, celle de l’IA prouve ce que l’IA sait faire."
-          data-variante-enonce="Pour lire : une preuve de ce que tu sais faire est un résultat que tu obtiens toi-même. Noah colle le code d’une IA dans index.html, puis change deux mots dans le titre. Qu’est-ce qui compte comme preuve de ce que Noah sait faire ?"
+          data-variante-enonce="Pour lire : une preuve de ce que tu sais faire permet à un formateur de constater que tu le sais. Noah colle le code d’une IA, efface le titre, tape le sien. Qu’est-ce qui compte comme preuve de ce que Noah sait faire ?"
           data-variante-reponse="titre"
-          data-variante-options="titre=Seulement les deux mots qu’il a changés lui-même.|page=Toute la page, puisqu’il l’a modifiée.|rien=Rien : changer des mots ne prouve jamais rien."
-          data-variante-retours="page=Qui a écrit les lignes que Noah n’a pas changées ?|rien=Les deux mots que Noah a écrits sont-ils un résultat qu’il a obtenu seul ?"
+          data-variante-options="titre=Seulement le titre qu’il a tapé lui-même.|page=Toute la page, puisqu’il l’a modifiée.|rien=Rien : un titre ne prouve jamais rien."
+          data-variante-retours="page=Qui a écrit les lignes que Noah n’a pas changées ?|rien=Le titre que Noah a écrit est-il un résultat qu’il a obtenu seul ?"
           data-variante-aide1="Qui a écrit les lignes que Noah n’a pas changées ?"
           data-variante-aide2="Que dit « Pour lire » d’une preuve ?"
-          data-variante-aide3="Écris ce que Noah a tapé lui-même, puis cherche si cela correspond à ce que « Pour lire » appelle une preuve."
-          data-variante-explication="Seul ce que Noah a tapé lui-même est un résultat obtenu seul : les deux mots du titre."
+          data-variante-aide3="Écris ce que Noah a tapé lui-même, puis cherche si cela permet à un formateur de constater qu’il sait le faire."
+          data-variante-explication="Seul ce que Noah a tapé lui-même est un résultat obtenu seul : le titre."
           data-variante-erreurs="page=E5"
         >
           <p class="q">Qu’est-ce qui compte comme preuve de ce que Farid sait faire ?</p>
@@ -3703,13 +3763,16 @@ PS C:\Users\noah></pre>
           la frappe sans rien inventer à ta place. Une IA invente du code d’après ta demande : si
           elle écrit à ta place, tu ne sais pas si tu saurais le faire. Une preuve de ce que tu sais
           faire est un résultat que tu obtiens toi-même : pendant l’apprentissage, tu tapes ton code
-          toi-même ; un geste que tu ne sais pas refaire seul n’est pas appris. C’est la question de
-          tout le bloc, « d’où ça vient ? ». Pour une fonction de l’éditeur, la réponse dit ce qu’il
-          te reste à installer. Pour une page, elle dit ce que la page prouve de toi : ce qui vient
-          de ta frappe prouve ce que tu sais faire, ce qui vient d’une IA prouve ce que l’IA sait
-          faire. La comparaison s’arrête là : une page ne s’installe pas, et une fonction ne prouve
-          rien de toi. Une IA qui t’explique comment faire n’écrit rien à ta place ; celle qui écrit
-          la page, si.
+          toi-même ; un geste que tu ne sais pas refaire seul n’est pas appris. Un squelette obtenu
+          avec ! puis Tab reste ton résultat : tu as tapé l’abréviation et tu sais la refaire. Une
+          page retouchée après coup ne prouve que ce que tu as tapé toi-même. Pour une fonction de
+          l’éditeur, on demande d’où elle vient (de l’éditeur, d’une extension ou de ta machine), et
+          la réponse dit ce qu’il te reste à installer. On demande de même d’où vient une page, de
+          ta frappe ou d’une IA, et la réponse dit ce que la page prouve de toi : ce qui vient de ta
+          frappe prouve ce que tu sais faire, ce qui vient d’une IA prouve ce que l’IA sait faire.
+          La comparaison s’arrête là : une page ne s’installe pas, et une fonction ne prouve rien de
+          toi. Une IA qui t’explique comment faire n’écrit rien à ta place ; celle qui écrit la
+          page, si.
         </p>
         <p data-si-essai="p4:faux">
           Pour le code collé de Yasmine, tu avais répondu
@@ -3898,13 +3961,15 @@ $ cd img</pre>
               Le PATH est la liste des dossiers où la fenêtre cherche une commande ; « command not
               found » veut dire « commande introuvable ». code --version répond trois lignes quand
               la commande est trouvée, dont la dernière est l’architecture ; le point . est le
-              dossier où l’on est.
+              dossier où l’on est. Une fenêtre ouverte avant l’installation ne connaît pas encore le
+              nouveau PATH.
             </li>
           </ul>
         </div>
         <p class="q">
-          Yasmine lit quatre situations. Elle a classé la première : classe chacune des trois
-          autres.
+          Trois classes : « La commande code n’est pas dans le PATH », « La fenêtre n’est pas dans
+          le bon dossier », « Rien ne manque ». Yasmine a classé la première des quatre situations :
+          classe les trois autres.
         </p>
         <ul class="a-classer">
           <li data-element="a" data-donne data-retour="">
@@ -3926,9 +3991,12 @@ $ cd img</pre>
           >
             code --version répond trois lignes, dont la dernière est x64.
           </li>
-          <li data-element="d" data-retour="La fenêtre a-t-elle trouvé la commande ?">
-            Sous Windows, Noah n’a pas coché la case qui ajoute VS Code au PATH : dans la fenêtre
-            d’Ubuntu, code --version répond « command not found ».
+          <li
+            data-element="d"
+            data-retour="La fenêtre a-t-elle trouvé la commande, et connaît-elle le PATH d’après l’installation ?"
+          >
+            Sous Windows, Noah garde la fenêtre d’Ubuntu qu’il avait ouverte avant d’installer VS
+            Code : il y tape code --version et la fenêtre répond « command not found ».
           </li>
         </ul>
       </div>
@@ -3951,12 +4019,15 @@ $ cd img</pre>
               Le PATH est la liste des dossiers où la fenêtre cherche une commande ; « command not
               found » veut dire « commande introuvable ». code --version répond trois lignes quand
               la commande est trouvée, dont la dernière est l’architecture ; le point . est le
-              dossier où l’on est.
+              dossier où l’on est. Une fenêtre ouverte avant l’installation ne connaît pas encore le
+              nouveau PATH.
             </li>
           </ul>
         </div>
         <p class="q">
-          Farid lit quatre situations. Il a classé la première : classe chacune des trois autres.
+          Trois classes : « La commande code n’est pas dans le PATH », « La fenêtre n’est pas dans
+          le bon dossier », « Rien ne manque ». Farid a classé la première des quatre situations :
+          classe les trois autres.
         </p>
         <ul class="a-classer">
           <li data-element="a" data-donne data-retour="">
@@ -4083,6 +4154,9 @@ $ cd img</pre>
           <ul>
             <li>
               Un endroit de l’éditeur est un panneau, un menu, un bouton ou la palette de commandes.
+              Le panneau Extensions propose les extensions ; le bouton d’aperçu apparaît en haut à
+              droite d’un fichier .html quand Live Preview est installée ; le menu Terminal propose
+              « Nouveau terminal » ; la palette de commandes lance une commande par son nom.
             </li>
           </ul>
         </div>
@@ -4127,6 +4201,9 @@ $ cd img</pre>
           <ul>
             <li>
               Un endroit de l’éditeur est un panneau, un menu, un bouton ou la palette de commandes.
+              Le panneau Extensions propose les extensions ; le bouton d’aperçu apparaît en haut à
+              droite d’un fichier .html quand Live Preview est installée ; le menu Terminal propose
+              « Nouveau terminal » ; la palette de commandes lance une commande par son nom.
             </li>
           </ul>
         </div>
@@ -4314,8 +4391,9 @@ C:\Users\noah></pre>
           </ul>
         </div>
         <p class="q">
-          Yasmine a installé l’extension PHP dans VS Code. Elle a classé la première ligne : classe
-          chacune des trois autres.
+          Yasmine a installé l’extension PHP dans VS Code. Il y a deux classes : « Vient de
+          l’extension » et « Vient de la machine ». Elle a classé la première ligne : classe chacune
+          des trois autres.
         </p>
         <ul class="a-classer">
           <li data-element="a" data-donne data-retour="">
@@ -4369,8 +4447,9 @@ C:\Users\noah></pre>
           </ul>
         </div>
         <p class="q">
-          Farid a installé l’extension JavaScript dans VS Code. Il a classé la première ligne :
-          classe chacune des trois autres.
+          Farid a installé l’extension JavaScript dans VS Code. Il y a trois classes : « Vient de
+          l’éditeur seul », « Vient de l’extension » et « Vient de la machine ». Il a classé la
+          première ligne : classe chacune des trois autres.
         </p>
         <ul class="a-classer">
           <li data-element="a" data-donne data-retour="">
@@ -4412,13 +4491,15 @@ C:\Users\noah></pre>
           <p class="discret">Pour lire :</p>
           <ul>
             <li>
-              La synchronisation des paramètres copie sur ton compte les réglages de l’éditeur. Un
-              projet est un dossier de la machine.
+              La synchronisation des paramètres copie sur ton compte les réglages de l’éditeur : le
+              thème, les raccourcis et la liste des extensions. Un projet est un dossier de la
+              machine.
             </li>
           </ul>
         </div>
         <p class="q">
-          Yasmine active la synchronisation sur son PC. Elle a classé la première ligne : classe
+          Yasmine active la synchronisation sur son PC. Il y a deux classes : « La synchronisation
+          le transporte » et « Il reste sur la machine ». Elle a classé la première ligne : classe
           chacune des trois autres.
         </p>
         <ul class="a-classer">
@@ -4465,13 +4546,15 @@ C:\Users\noah></pre>
           <p class="discret">Pour lire :</p>
           <ul>
             <li>
-              La synchronisation des paramètres copie sur ton compte les réglages de l’éditeur. Un
-              projet est un dossier de la machine.
+              La synchronisation des paramètres copie sur ton compte les réglages de l’éditeur : le
+              thème, les raccourcis et la liste des extensions. Un projet est un dossier de la
+              machine.
             </li>
           </ul>
         </div>
         <p class="q">
-          Farid active la synchronisation sur son Mac. Il a classé la première ligne : classe
+          Farid active la synchronisation sur son Mac. Il y a deux classes : « La synchronisation le
+          transporte » et « Il reste sur la machine ». Il a classé la première ligne : classe
           chacune des deux autres.
         </p>
         <ul class="a-classer">
@@ -4601,7 +4684,7 @@ C:\Users\noah></pre>
               Un IDE de JetBrains est payant, avec deux voies gratuites : la licence étudiante, pour
               apprendre, sur preuve de ton statut d’étudiant ; le mode non commercial, pour
               apprendre ou pour un projet personnel. L’usage commercial est l’usage pour un travail
-              payé.
+              payé. VS Code est un éditeur gratuit, y compris pour un travail payé.
             </li>
           </ul>
         </div>
@@ -4615,7 +4698,7 @@ C:\Users\noah></pre>
           </li>
           <li
             data-option="community"
-            data-retour="Combien d’éditions gratuites « Pour lire » cite-t-il pour un IDE de JetBrains ?"
+            data-retour="Les voies gratuites de « Pour lire » nomment-elles une édition Community ?"
             data-erreur="E4"
           >
             Elle prend l’édition Community de PhpStorm, gratuite.
@@ -4646,7 +4729,7 @@ C:\Users\noah></pre>
               Un IDE de JetBrains est payant, avec deux voies gratuites : la licence étudiante, pour
               apprendre, sur preuve de ton statut d’étudiant ; le mode non commercial, pour
               apprendre ou pour un projet personnel. L’usage commercial est l’usage pour un travail
-              payé.
+              payé. VS Code est un éditeur gratuit, y compris pour un travail payé.
             </li>
           </ul>
         </div>
@@ -4660,7 +4743,7 @@ C:\Users\noah></pre>
           </li>
           <li
             data-option="community"
-            data-retour="Combien d’éditions gratuites « Pour lire » cite-t-il pour un IDE de JetBrains ?"
+            data-retour="Les voies gratuites de « Pour lire » nomment-elles une édition Community ?"
             data-erreur="E4"
           >
             Il télécharge l’édition Community de PhpStorm.
@@ -4695,7 +4778,10 @@ C:\Users\noah></pre>
             </li>
           </ul>
         </div>
-        <p class="q">Noah range quatre exercices : classe chacun d’eux.</p>
+        <p class="q">
+          Noah range quatre exercices dans deux classes, « Une preuve de ce que je sais faire » et «
+          Pas une preuve » : classe chacun d’eux.
+        </p>
         <ul class="a-classer">
           <li
             data-element="a"
@@ -4741,7 +4827,10 @@ C:\Users\noah></pre>
             </li>
           </ul>
         </div>
-        <p class="q">Yasmine range quatre exercices : classe chacun d’eux.</p>
+        <p class="q">
+          Yasmine range quatre exercices dans deux classes, « Une preuve de ce que je sais faire »
+          et « Pas une preuve » : classe chacun d’eux.
+        </p>
         <ul class="a-classer">
           <li
             data-element="a"
@@ -4751,10 +4840,10 @@ C:\Users\noah></pre>
           </li>
           <li
             data-element="b"
-            data-retour="Qui a écrit les lignes qu’elle n’a pas changées ?"
+            data-retour="Relire un script écrit par un autre, est-ce l’avoir écrit ?"
             data-erreur="E5"
           >
-            Un script écrit par une IA, que Yasmine a adapté deux fois.
+            Un script écrit par une IA, que Yasmine a relu deux fois.
           </li>
           <li
             data-element="c"
@@ -4842,9 +4931,9 @@ C:\Users\noah></pre>
           </ul>
         </div>
         <p class="q">
-          Farid, élève, a un Mac dont « À propos de ce Mac » écrit « Puce Apple M2 ». Une
-          association le paie pour corriger ses pages HTML et ne paie aucun logiciel. Que retient-il
-          ?
+          Farid, qui n’est pas étudiant, a un Mac dont « À propos de ce Mac » écrit « Puce Apple M2
+          ». Une association le paie pour corriger ses pages HTML et ne paie aucun logiciel. Que
+          retient-il ?
         </p>
         <ul class="options">
           <li data-option="vscode">VS Code, en version ARM64.</li>
@@ -4877,6 +4966,11 @@ C:\Users\noah></pre>
             <li>
               Un chemin comme <span class="mono">atelier/site/css</span> désigne le dossier css,
               dans le dossier site, dans le dossier atelier.
+            </li>
+            <li>Ton dossier personnel est celui où ta fenêtre de commandes s’ouvre d’abord.</li>
+            <li>
+              <span class="mono">rm -r</span> suivi du nom d’un dossier supprime ce dossier et tout
+              ce qu’il contient, sans retour possible.
             </li>
           </ul>
         </div>
@@ -4917,9 +5011,8 @@ C:\Users\noah></pre>
               <summary>Une partie de la solution</summary>
               <p>
                 Un dossier que tu n’as pas demandé, resté d’un bloc précédent, s’ajoute à la liste :
-                retire-le avec la commande de « Manipuler fichiers et dossiers » qui supprime un
-                dossier et son contenu sans retour possible : tape-la seulement sur le dossier en
-                trop, après avoir tapé pwd pour lire où tu es.
+                retire-le avec la commande du « Pour lire » qui supprime un dossier, seulement sur
+                le dossier en trop, après avoir tapé pwd pour lire où tu es.
               </p>
             </details>
           </details>
@@ -4993,7 +5086,7 @@ C:\Users\noah></pre>
           <ul>
             <li>
               Les téléchargements portent le nom de l’architecture : « x64 » ou « ARM64 » sous
-              Windows, « Intel » ou « Apple silicon » sur un Mac.
+              Windows ; sur un Mac, « Intel » pour x64 et « Apple silicon » pour ARM64.
             </li>
             <li>Le PATH est la liste des dossiers où la fenêtre cherche une commande.</li>
           </ul>
@@ -5020,7 +5113,7 @@ C:\Users\noah></pre>
             Command: Install 'code' command in PATH ».
           </p>
         </div>
-        <p>Installe VS Code avec la marche à suivre de ton système.</p>
+
         <details data-cran="1">
           <summary>Un indice</summary>
           <p>Quelle architecture as-tu notée sur ton papier ?</p>
@@ -5088,7 +5181,7 @@ C:\Users\noah></pre>
           </details>
         </details>
       </div>
-      <div data-ecran="Où tu es">
+      <div data-ecran="Ta fenêtre dans site">
         <p class="discret">Tu es ici : ta fenêtre de commandes trouve la commande code.</p>
         <p class="accroche">
           Yasmine lit où est sa fenêtre avant d’ouvrir son dossier. À toi de le faire avec le tien.
@@ -5151,8 +5244,8 @@ C:\Users\noah></pre>
           <details data-cran="2">
             <summary>Une piste détaillée</summary>
             <p>
-              La ligne a deux mots : la commande qui ouvre dans VS Code, puis le nom du dossier
-              courant. Compare le nom du dossier ouvert avec le chemin que pwd a écrit.
+              Quel mot du « Pour lire » désigne le dossier où tu es ? Compare le nom du dossier
+              ouvert avec le chemin que pwd a écrit.
             </p>
             <details data-cran="3">
               <summary>Une partie de la solution</summary>
@@ -5292,7 +5385,7 @@ C:\Users\noah></pre>
         </div>
         <p>
           Tape ton prénom sur la ligne vide entre <span class="mono">&lt;body&gt;</span> et
-          <span class="mono">&lt;/body&gt;</span>, enregistre le fichier et lis l’aperçu.
+          <span class="mono">&lt;/body&gt;</span>, puis enregistre le fichier.
         </p>
         <details data-cran="1">
           <summary>Un indice</summary>
@@ -5341,9 +5434,8 @@ C:\Users\noah></pre>
         ></div>
         <p data-os="windows">
           <strong>Sous Windows :</strong> si l’invite commence par PS ou par une lettre de disque,
-          tes lignes de bash n’y marcheront pas. Ouvre la palette de commandes (Ctrl+Maj+P), choisis
-          « Terminal: Select Default Profile », puis le profil « Ubuntu (WSL) », et ouvre un nouveau
-          terminal.
+          tes lignes de bash n’y marcheront pas : change le profil du terminal, puis ouvre-en un
+          nouveau.
         </p>
         <p data-os="macos">
           <strong>Sous macOS :</strong> le terminal intégré lit déjà les lignes que tu tapes dans le
@@ -5362,7 +5454,10 @@ C:\Users\noah></pre>
               <summary>Une partie de la solution</summary>
               <p>
                 Si le chemin n’est pas celui de ton dossier site, regarde le nom du dossier ouvert
-                tout en haut de la liste de gauche de VS Code : est-ce bien site ?
+                tout en haut de la liste de gauche de VS Code : est-ce bien site ? Sous Windows, si
+                l’invite commence par PS ou par une lettre de disque, ouvre la palette de commandes
+                (Ctrl+Maj+P), choisis « Terminal: Select Default Profile », puis « Ubuntu (WSL) »,
+                et ouvre un nouveau terminal.
               </p>
             </details>
           </details>
@@ -5378,7 +5473,11 @@ C:\Users\noah></pre>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
           <ul>
-            <li>PhpStorm est l’IDE de JetBrains pour le PHP.</li>
+            <li>VS Code est un éditeur gratuit, que l’on complète par des extensions.</li>
+            <li>
+              PhpStorm est l’IDE de JetBrains pour le PHP, avec ses outils déjà prêts : débogueur,
+              analyse du code et outils du langage.
+            </li>
           </ul>
         </div>
         <p>
@@ -5446,7 +5545,7 @@ C:\Users\noah></pre>
           <ul>
             <li>
               Les téléchargements portent le nom de l’architecture : « x64 » ou « ARM64 » sous
-              Windows, « Intel » ou « Apple silicon » sur un Mac.
+              Windows ; sur un Mac, « Intel » pour x64 et « Apple silicon » pour ARM64.
             </li>
           </ul>
         </div>
@@ -5524,7 +5623,9 @@ C:\Users\noah></pre>
         <p>
           La fenêtre répond que la commande <span class="mono">php</span> est introuvable. Le
           terminal intégré est une fenêtre de commandes, et <span class="mono">php -v</span> s’y
-          tape comme ailleurs.
+          tape comme ailleurs. Si tu avais parié sur une version de PHP, l’élément en cause est
+          l’extension : tu l’avais prise pour la source de PHP, alors que
+          <span class="mono">php -v</span> s’adresse à la machine.
         </p>
         <p>
           Pourquoi cette réponse, et qui la donne ? Voici Noah, avec un autre langage : à toi de
@@ -5548,6 +5649,29 @@ C:\Users\noah></pre>
             <li>ARM64 est l’architecture des processeurs ARM.</li>
           </ul>
         </div>
+        <p>
+          Pour te rappeler la chaîne que tu as vue avec l’extension de langage, voici le cas de
+          Farid, avec PHP :
+        </p>
+        <div
+          class="chaine"
+          data-lecture="Le cas de Farid en une chaîne. Farid a installé PHP sur son Mac, sans extension PHP, et ouvre note.php dans VS Code. L’éditeur ne reçoit son aide à l’écriture que d’une extension de langage. Il n’a reçu aucune aide d’extension pour PHP : PHP est sur la machine, pas dans l’éditeur. L’éditeur n’ajoute rien à ce qu’il sait déjà faire. Il n’y a ni suggestions ni erreurs soulignées d’une extension PHP."
+        >
+          <span class="boite"
+            >Farid a installé PHP sur son Mac, sans extension PHP, et ouvre note.php dans VS
+            Code</span
+          ><span class="fleche"
+            >l’éditeur ne reçoit son aide à l’écriture que d’une extension de langage</span
+          ><span class="boite"
+            >il n’a reçu aucune aide d’extension pour PHP : PHP est sur la machine, pas dans
+            l’éditeur</span
+          ><span class="fleche">l’éditeur n’ajoute rien à ce qu’il sait déjà faire</span
+          ><span class="boite">ni suggestions ni erreurs soulignées d’une extension PHP</span>
+        </div>
+        <p class="discret">
+          Cette chaîne montre un seul cas, celui de Farid. Celui de Noah en diffère : l’extension
+          est installée, et c’est le langage qui manque.
+        </p>
         <p>
           Noah tape <span class="mono">node -v</span>, et la fenêtre répond « command not found ».
         </p>
@@ -5630,7 +5754,8 @@ C:\Users\noah></pre>
             </li>
             <li>
               VS Code n’est pas Visual Studio : deux produits de Microsoft, un éditeur gratuit et un
-              IDE à part, avec son installateur et sa licence.
+              IDE à part, avec son installateur et sa licence : installer l’un n’installe pas
+              l’autre.
             </li>
             <li>
               PhpStorm n’a pas d’édition Community : ses voies gratuites sont la licence étudiante
@@ -5653,9 +5778,9 @@ C:\Users\noah></pre>
             <li>Le terminal intégré s’ouvre dans ton projet.</li>
           </ul>
           <p>
-            <strong>Choisir un outil.</strong> Quel est le langage, le travail est-il payé, quelle
-            est mon architecture ? Lis la page de licence à jour avant de décider : ce bloc donne la
-            structure des licences, pas leur détail du jour.
+            <strong>Choisir un outil.</strong> Quel est le langage, le travail est-il payé, que
+            contient déjà l’outil, quelle est mon architecture ? Lis la page de licence à jour avant
+            de décider : ce bloc donne la structure des licences, pas leur détail du jour.
           </p>
           <p>
             <strong>Ce qui compte comme preuve.</strong> Pour une page comme pour une fonction de
@@ -5669,9 +5794,9 @@ C:\Users\noah></pre>
       <div data-ecran="La suite">
         <p class="accroche">
           Yasmine sait ouvrir un projet, écrire une page et la voir, garder un terminal sous la
-          main, et choisir son outil. Le bloc suivant lui fait préparer un serveur local, un
-          programme qui fait marcher ses pages sur sa machine, où elle ouvrira un fichier index.php
-          dans cet éditeur.
+          main, et choisir son outil. Le bloc suivant lui fait préparer un
+          <strong>serveur local</strong> : un programme de sa machine qui fait marcher ses pages, et
+          où elle ouvrira un fichier index.php dans cet éditeur.
         </p>
         <h3>À explorer plus tard</h3>
         <ul>
@@ -5692,12 +5817,12 @@ C:\Users\noah></pre>
           (data-si-essai).
         </li>
         <li>
-          Seize exercices du cours, un par écran d’explication sauf deux écrans de marche à suivre
-          (« Installer VS Code » et « Une extension à installer »), qui n’en portent pas : tous sont
-          des prédictions (data-prediction), posées avant le texte qui y répond. Chaque essai du
-          prétest faux est repris à la fin de l’écran qui en reprend l’idée, une fois l’exercice
-          fini : p1 en ET8 (« Deux Visual Studio »), p2 en ET7 (« Synchroniser ses réglages »), p3
-          en ET8 (« Gratuit, payant, étudiant »), p4 en ET9 (« Taper toi-même »).
+          Dix-sept exercices du cours, un par écran d’explication sauf l’écran de marche à suivre «
+          Installer VS Code », qui n’en porte pas : tous sont des prédictions (data-prediction),
+          posées avant le texte qui y répond. Chaque essai du prétest faux est repris à la fin de
+          l’écran qui en reprend l’idée, une fois l’exercice fini : p1 en ET8 (« Deux Visual Studio
+          »), p2 en ET7 (« Synchroniser ses réglages »), p3 en ET8 (« Gratuit, payant, étudiant »),
+          p4 en ET9 (« Taper toi-même »).
         </li>
         <li>
           Tout exercice du cours dont l’apprenant a vu la solution lui fait refaire sans regarder un
@@ -5736,7 +5861,7 @@ C:\Users\noah></pre>
           lignes), l’extension Live Preview de Microsoft et son bouton d’aperçu, le développement de
           ! puis Tab, « zsh: command not found: code » (zsh, sous macOS), le fait que code . lancé
           dans la fenêtre d’Ubuntu ouvre VS Code de Windows sans rien écrire dans la fenêtre au
-          premier lancement, et le fait que WSL est ce qui fait tourner Ubuntu dans Windows.
+          premier lancement.
         </li>
         <li>
           Faits de licence, écrits sans prix ni date et avec la réserve « à la date de cette fiche »
@@ -5759,8 +5884,9 @@ C:\Users\noah></pre>
           schéma construit à la fin porte sur le cas de Noah (extension JavaScript, node -v
           introuvable, PC ARM64), un cas que le cours n’a pas montré tel quel : une extension qui
           n’installe pas le langage (ET7) et une architecture à lire (ET4) se combinent. Il se
-          refait sans la ligne sous les yeux, et « Ton pari, corrigé » donne la réponse sans la
-          raison, que ce schéma fait écrire. Il est jugé sur la chaîne.
+          refait sans la ligne sous les yeux, et « Ton pari, corrigé » donne la réponse et nomme
+          l’élément en cause (l’extension), sans la raison, que ce schéma fait écrire. Il est jugé
+          sur la chaîne.
         </li>
       </ul>
       <h3>Charge, temps et type</h3>
@@ -5769,8 +5895,8 @@ C:\Users\noah></pre>
           Le bloc est de type procédures : trois tâches à réponse exacte, trois explications, quatre
           transferts (deux « adapter la condition », deux « trouver l’erreur »), sans aisance.
           Quarante-cinq écrans : perception 3, carte 1, prétest 4 (quatre essais), explications 18
-          (6, 3, 2, 3, 3, 1), atelier 14, ensemble 5. Saisies : 4 essais + 16 exercices du cours + 2
-          paris + 1 schéma + 13 items de pratique + 6 questions de restitution = 42, sans compter
+          (5, 3, 3, 3, 3, 1), atelier 14, ensemble 5. Saisies : 4 essais + 17 exercices du cours + 2
+          paris + 1 schéma + 13 items de pratique + 6 questions de restitution = 43, sans compter
           les autres cas refaits après une solution vue ; plusieurs sont des classements ou des
           appariements de trois ou quatre lignes. Atelier : douze critères de constat. Pratique :
           treize items, chacun avec un autre cas ; un (PR1-12) demande une explication, pour E5.
@@ -5778,11 +5904,11 @@ C:\Users\noah></pre>
         <li>
           Temps estimé, au barème de la méthode (120 mots lus par minute, une minute par exercice du
           cours, deux par item de pratique, quatre quand l’item demande une explication, trois par
-          question de restitution) : lecture 46 minutes (environ 5 500 mots), exercices du cours 25
-          (16 exercices, 4 essais, 2 paris, 1 schéma), pratique 28, restitution 18, atelier 55
+          question de restitution) : lecture 50 minutes (environ 5 950 mots), exercices du cours 24
+          (17 exercices, 4 essais, 2 paris, 1 schéma), pratique 28, restitution 18, atelier 55
           (lecture comprise, plus les manipulations réelles, plus longues que le barème). Au total,
-          environ 172 minutes : faire (pratique, atelier, restitution, 101 minutes) dépasse
-          modéliser (lecture et exercices du cours, 71 minutes).
+          environ 175 minutes : faire (pratique, atelier, restitution, 101 minutes) dépasse
+          modéliser (lecture et exercices du cours, 74 minutes).
         </li>
       </ul>
       <h3>L’atelier</h3>
@@ -5804,13 +5930,13 @@ C:\Users\noah></pre>
         "schema": 2,
         "bloc": "B11",
         "type": "procedures",
-        "version": 4,
+        "version": 5,
         "titre": "Choisir et prendre en main son éditeur",
         "titre_court": "Choisir son éditeur",
         "objectif": "Depuis le terminal, `code .` ouvre un dossier comme projet ; squelette HTML par Emmet ; aperçu Live Preview ; terminal intégré ; expliquer éditeur contre IDE et choisir entre VS Code et un IDE JetBrains pour un besoin donné, licence et architecture comprises ; dire qu’une extension de langage n’installe pas le langage, que la synchronisation des paramètres transporte les réglages et pas les projets, que VS Code n’est pas Visual Studio et que le code généré par une IA n’est pas une preuve.",
         "prerequis": ["B10"],
         "pont": 9,
-        "contexte_ia": "Bloc B11 du module « Écosystème et outils du développeur » (DWWM), quatrième bloc de la partie « Le poste du développeur », après « Manipuler fichiers et dossiers » et avant un bloc qui prépare un serveur local et ouvre un fichier index.php dans cet éditeur. Le fil : Yasmine, en formation, sur son PC, dans la fenêtre d’Ubuntu ; Farid, son ami, sur un Mac ; le projet du formateur (le dossier site de l’atelier, avec css, img et un index.html vide, créé au bloc précédent) ; Noah, 29 ans, qui sert de cas nouveau (PC ARM64, extension JavaScript, node -v introuvable) et à quelques questions. Le modèle du bloc : un éditeur ouvre un dossier de la machine comme projet ; chaque fonction qu’on lui voit a une source distincte, l’éditeur lui-même (Emmet, le terminal intégré, la palette de commandes), une extension qu’on lui ajoute (Live Preview, une extension de langage) ou la machine sur laquelle il tourne (le langage installé, son architecture). Installer l’une n’installe pas les autres : la relation centrale est « avant de dire que ça marche, demande d’où ça vient ». On choisit ensuite un outil d’après le besoin (le langage), la licence (travail payé ou non) et l’architecture de la machine.\n\nStatuts, constants d’un bout à l’autre : Yasmine, étudiante, a un PC ARM64 ; Farid, élève, a un Mac avec une puce Apple M2 ; Noah, salarié d’une agence, a un PC ARM64 ; le formateur a un Mac Intel (x64).\n\nNotions : ouvrir un dossier comme projet depuis la fenêtre de commandes (cd dans le dossier, code . ; le point est le dossier courant ; la commande code doit être dans le PATH, la liste des dossiers où la fenêtre cherche une commande ; code --version la vérifie et répond trois lignes, dont la dernière est l’architecture de l’installation) ; choisir l’installateur selon l’architecture (x64 ou ARM64, lue avec uname -m, « Type du système » sous Windows, « À propos de ce Mac » sur un Mac) ; la palette de commandes (lance une commande par son nom, dont celle qui met code dans le PATH sous macOS) ; Emmet (! puis Tab développe le squelette dans un fichier reconnu comme HTML : on l’obtient, on ne le lit pas, et le HTML n’est jamais expliqué) ; une extension s’installe depuis le panneau Extensions et se choisit par son nom et sa société (Live Preview, de Microsoft, donne l’aperçu) ; le terminal intégré s’ouvre dans le dossier du projet et son profil (bash, Cmd, PowerShell) se choisit ; éditeur contre IDE (un éditeur reçoit ses outils par des extensions, un IDE a déjà débogueur, analyse du code et outils du langage) ; une extension de langage ajoute des suggestions et des erreurs soulignées et n’installe pas le langage (php -v ou node -v répondent « command not found » tant que le langage n’est pas installé sur la machine) ; la synchronisation des paramètres transporte le thème, les raccourcis et les extensions, jamais les dossiers de projet ; VS Code n’est pas Visual Studio (deux produits de Microsoft, un éditeur gratuit et un IDE à part, avec son installateur et ses éditions) ; quel IDE de JetBrains pour quel langage (PhpStorm : PHP, WebStorm : JavaScript) ; les licences ; choisir entre VS Code et un IDE de JetBrains pour un besoin ; le code généré par une IA n’est pas une preuve de ce que l’on sait faire, car une preuve est un résultat obtenu soi-même (Emmet, lui, ne fait que développer une abréviation fixe).\n\nFaits de licence, écrits avec réserve, sans prix ni date : VS Code est gratuit, y compris pour un travail payé. Les IDE de JetBrains sont payants, avec deux voies gratuites : une licence étudiante, pour apprendre, sur preuve de statut, et un mode non commercial, qui exclut un travail payé. PhpStorm n’a pas d’édition Community, par convention de JetBrains ; JetBrains en a proposé pour d’autres de ses IDE, puis les a fait évoluer. Ces conditions changent : la fiche renvoie à la page de licence de l’IDE, à la date de la fiche, et ne donne ni prix ni date ; tu ne dois jamais exiger, ni refuser, une réponse sur un détail de ces offres que la fiche ne donne pas. Les licences de Visual Studio (édition Community gratuite sous conditions, Professional, Enterprise) ne sont pas détaillées. Faits d’installation écrits à gros traits : « User Installer » et case d’ajout au PATH sous Windows (VS Code s’installe dans Windows, la fenêtre d’Ubuntu l’ouvre avec la commande code) ; glisser dans Applications sous macOS, puis la commande de palette « Shell Command: Install 'code' command in PATH » ; profils « Ubuntu (WSL) », « Command Prompt » et « PowerShell » ; invites PS C:\\Users\\noah> (PowerShell), C:\\Users\\noah> (Cmd), noah@pc:~$ (bash). Une réponse juste n’a pas à reprendre ces noms exactement : elle donne l’idée.\n\nVocabulaire du bloc : éditeur, IDE, projet (un dossier que l’éditeur a ouvert), extension, panneau Extensions, extension de langage, architecture (la sorte d’instructions qu’un processeur sait exécuter), PATH, palette de commandes, Emmet, squelette (les lignes de base d’une page, que l’on obtient sans les lire), aperçu, terminal intégré, profil, synchronisation des paramètres, licence (le droit d’utiliser un logiciel, avec ses conditions), usage commercial (un travail payé), Community, preuve. Pièges : croire que VS Code et Visual Studio sont un seul produit ; croire qu’une extension de langage installe le langage ; croire que la synchronisation sauvegarde les projets ; croire que PhpStorm a une édition Community gratuite pour un travail payé ; croire qu’une page écrite par une IA, même relue, prouve ce que l’on sait faire ; télécharger une version qui n’est pas celle de son architecture ; taper une ligne de Cmd dans bash dans un terminal intégré ouvert sur le mauvais profil ; ouvrir le mauvais dossier avec code . (le point est le dossier où est la fenêtre, pas celui que ls a écrit). Les dossiers sont des dossiers de la machine : un projet n’est pas un réglage.\n\nUne réponse Solide retrouve la relation en une ou deux phrases (d’où vient la fonction : l’éditeur, une extension ou la machine ; ce que la licence permet pour un travail payé ou non ; quel produit est visé) sans recopier le cours, et dit ce qu’il reste à faire quand on le demande. Les lignes de commande se tapent comme dans les blocs précédents ; les faits propres à Windows et à macOS ne sont jamais demandés dans leur texte exact. Le HTML n’est jamais interrogé : le squelette s’obtient seulement.",
+        "contexte_ia": "Bloc B11 du module « Écosystème et outils du développeur » (DWWM), quatrième bloc de la partie « Le poste du développeur », après « Manipuler fichiers et dossiers » et avant un bloc qui prépare un serveur local et ouvre un fichier index.php dans cet éditeur. Le fil : Yasmine, en formation, sur son PC, dans la fenêtre d’Ubuntu ; Farid, son ami, sur un Mac ; le projet du formateur (le dossier site de l’atelier, avec css, img et un index.html vide, créé au bloc précédent) ; Noah, 29 ans, qui sert de cas nouveau (PC ARM64, extension JavaScript, node -v introuvable) et à quelques questions. Le modèle du bloc : un éditeur ouvre un dossier de la machine comme projet ; chaque fonction qu’on lui voit a une source distincte, l’éditeur lui-même (Emmet, le terminal intégré, la palette de commandes), une extension qu’on lui ajoute (Live Preview, une extension de langage) ou la machine sur laquelle il tourne (le langage installé, son architecture). Installer l’une n’installe pas les autres : la relation centrale est « avant de dire que ça marche, demande d’où ça vient ». On choisit ensuite un outil d’après le besoin (le langage), la licence (travail payé ou non) et l’architecture de la machine.\n\nStatuts, constants d’un bout à l’autre : Yasmine, étudiante, a un PC ARM64 ; Farid, qui n’est pas étudiant, a un Mac avec une puce Apple M2 ; Noah, salarié d’une agence, a un PC ARM64 ; le formateur a un Mac Intel (x64).\n\nNotions : ouvrir un dossier comme projet depuis la fenêtre de commandes (cd dans le dossier, code . ; le point est le dossier courant ; la commande code doit être dans le PATH, la liste des dossiers où la fenêtre cherche une commande ; code --version la vérifie et répond trois lignes, dont la dernière est l’architecture de l’installation) ; choisir l’installateur selon l’architecture (x64 ou ARM64, lue avec uname -m, « Type du système » sous Windows, « À propos de ce Mac » sur un Mac) ; la palette de commandes (lance une commande par son nom, dont celle qui met code dans le PATH sous macOS) ; Emmet (! puis Tab développe le squelette dans un fichier reconnu comme HTML : on l’obtient, on ne le lit pas, et le HTML n’est jamais expliqué) ; une extension s’installe depuis le panneau Extensions et se choisit par son nom et sa société (Live Preview, de Microsoft, donne l’aperçu) ; le terminal intégré s’ouvre dans le dossier du projet et son profil (bash, Cmd, PowerShell) se choisit ; éditeur contre IDE (un éditeur reçoit ses outils par des extensions, un IDE a déjà débogueur, analyse du code et outils du langage) ; une extension de langage ajoute des suggestions et des erreurs soulignées et n’installe pas le langage (php -v ou node -v répondent « command not found » tant que le langage n’est pas installé sur la machine) ; la synchronisation des paramètres transporte le thème, les raccourcis et les extensions, jamais les dossiers de projet ; VS Code n’est pas Visual Studio (deux produits de Microsoft, un éditeur gratuit et un IDE à part, avec son installateur et ses éditions) ; quel IDE de JetBrains pour quel langage (PhpStorm : PHP, WebStorm : JavaScript) ; les licences ; choisir entre VS Code et un IDE de JetBrains pour un besoin ; le code généré par une IA n’est pas une preuve de ce que l’on sait faire, car une preuve est un résultat obtenu soi-même (Emmet, lui, ne fait que développer une abréviation fixe).\n\nFaits de licence, écrits avec réserve, sans prix ni date : VS Code est gratuit, y compris pour un travail payé. Les IDE de JetBrains sont payants, avec deux voies gratuites : une licence étudiante, pour apprendre, sur preuve de statut, et un mode non commercial, qui exclut un travail payé. PhpStorm n’a pas d’édition Community, par convention de JetBrains ; JetBrains en a proposé pour d’autres de ses IDE, puis les a fait évoluer. Ces conditions changent : la fiche renvoie à la page de licence de l’IDE, à la date de la fiche, et ne donne ni prix ni date ; tu ne dois jamais exiger, ni refuser, une réponse sur un détail de ces offres que la fiche ne donne pas. Les licences de Visual Studio (édition Community gratuite sous conditions, Professional, Enterprise) ne sont pas détaillées. Faits d’installation écrits à gros traits : « User Installer » et case d’ajout au PATH sous Windows (VS Code s’installe dans Windows, la fenêtre d’Ubuntu l’ouvre avec la commande code) ; glisser dans Applications sous macOS, puis la commande de palette « Shell Command: Install 'code' command in PATH » ; profils « Ubuntu (WSL) », « Command Prompt » et « PowerShell » ; invites PS C:\\Users\\noah> (PowerShell), C:\\Users\\noah> (Cmd), noah@pc:~$ (bash). Une réponse juste n’a pas à reprendre ces noms exactement : elle donne l’idée.\n\nVocabulaire du bloc : éditeur, IDE, projet (un dossier que l’éditeur a ouvert), extension, panneau Extensions, extension de langage, architecture (la sorte d’instructions qu’un processeur sait exécuter), PATH, palette de commandes, Emmet, squelette (les lignes de base d’une page, que l’on obtient sans les lire), aperçu, terminal intégré, profil, synchronisation des paramètres, licence (le droit d’utiliser un logiciel, avec ses conditions), usage commercial (un travail payé), Community, preuve. Pièges : croire que VS Code et Visual Studio sont un seul produit ; croire qu’une extension de langage installe le langage ; croire que la synchronisation sauvegarde les projets ; croire que PhpStorm a une édition Community gratuite pour un travail payé ; croire qu’une page écrite par une IA, même relue, prouve ce que l’on sait faire ; télécharger une version qui n’est pas celle de son architecture ; taper une ligne de Cmd dans bash dans un terminal intégré ouvert sur le mauvais profil ; ouvrir le mauvais dossier avec code . (le point est le dossier où est la fenêtre, pas celui que ls a écrit). Les dossiers sont des dossiers de la machine : un projet n’est pas un réglage.\n\nUne réponse Solide retrouve la relation en une ou deux phrases (d’où vient la fonction : l’éditeur, une extension ou la machine ; ce que la licence permet pour un travail payé ou non ; quel produit est visé) sans recopier le cours, et dit ce qu’il reste à faire quand on le demande. Les lignes de commande se tapent comme dans les blocs précédents ; les faits propres à Windows et à macOS ne sont jamais demandés dans leur texte exact. Le HTML n’est jamais interrogé : le squelette s’obtient seulement.",
         "sources": [
           {
             "id": "S1",
@@ -5981,7 +6107,7 @@ C:\Users\noah></pre>
           },
           {
             "id": "B11-R2",
-            "question": "Pour lire : les paramètres d’un éditeur sont ses réglages ; la synchronisation les recopie sur chaque machine du même compte ; un projet est un dossier de la machine. Noah active la synchronisation à l’agence, où il a installé Live Preview, changé ses raccourcis et créé le dossier promo. Il se connecte chez lui au même compte. Que retrouve-t-il, et que fait-il pour avoir promo ?",
+            "question": "Pour lire : un thème, un raccourci et une extension sont des réglages ; la synchronisation les recopie sur chaque machine du même compte ; un projet est un dossier de la machine. Noah active la synchronisation à l’agence, où il installe Live Preview, change ses raccourcis et crée le dossier promo, puis se connecte chez lui au même compte. Que retrouve-t-il, et que fait-il pour avoir promo ?",
             "attendu": "Il retrouve Live Preview et ses raccourcis, qui sont des réglages de l’éditeur, mais pas le dossier promo : la synchronisation ne transporte pas les dossiers de projet, et promo n’est que sur le PC de l’agence. Pour l’avoir chez lui, Noah doit copier le dossier ailleurs, sur une clé USB par exemple, et le recopier sur son PC. Déduit de l’étape « Éditeur, IDE et extensions ».",
             "erreurs": ["E3"]
           },
@@ -5993,7 +6119,7 @@ C:\Users\noah></pre>
           },
           {
             "id": "B11-R4",
-            "question": "Pour lire : un IDE de JetBrains est payant, avec deux voies gratuites : la licence étudiante et le mode non commercial. Farid, élève, apprend le PHP avec PhpStorm en mode non commercial. Le magasin de ses parents lui commande un site payé. Que reste-t-il gratuit pour apprendre, et que choisit-il pour le site ?",
+            "question": "Pour lire : un IDE de JetBrains est payant, sauf licence étudiante ou mode non commercial (apprendre, projet personnel) ; l’usage commercial est le travail payé ; VS Code est gratuit, même pour un travail payé. Farid, non étudiant, apprend avec PhpStorm en mode non commercial. Le magasin de ses parents lui commande un site payé. Que reste-t-il gratuit pour apprendre, et que choisit-il pour le site ?",
             "attendu": "Pour apprendre, le mode non commercial reste gratuit : ce n’est pas un travail payé. Le site du magasin est payé, donc c’est un usage commercial que les voies gratuites n’autorisent pas : Farid paie l’abonnement de PhpStorm, ou prend un éditeur gratuit pour un travail payé, comme VS Code. Il lit la page de licence à jour avant de décider. Déduit de l’étape « Choisir son outil ».",
             "erreurs": ["E4"]
           },
@@ -6043,7 +6169,7 @@ C:\Users\noah></pre>
           },
           {
             "id": "B11-Q6",
-            "question": "Pour lire : un IDE de JetBrains est payant, avec une licence étudiante et un mode non commercial ; WebStorm est celui du JavaScript ; il existe en versions x64 et ARM64. Noah n’est pas étudiant. Il apprend le JavaScript chez lui, sur un PC ARM64, et veut des outils prêts sans payer. Quel outil, quelle version ?",
+            "question": "Pour lire : un IDE réunit l’éditeur et ses outils prêts ; WebStorm est l’IDE de JetBrains pour le JavaScript, en versions x64 et ARM64, payant sauf licence étudiante ou mode non commercial (apprendre, projet personnel). Noah n’est pas étudiant. Il apprend le JavaScript chez lui, sur un PC ARM64, et veut un IDE sans payer. Quel outil, quelle version ?",
             "attendu": "WebStorm, l’IDE de JetBrains du JavaScript, en mode non commercial, qui couvre un projet personnel : Noah n’est pas étudiant, mais il ne travaille pas pour de l’argent. Il télécharge la version ARM64, celle de sa machine. Déduit de l’étape « Choisir son outil ».",
             "erreurs": ["E4"]
           }
@@ -6078,17 +6204,6 @@ C:\Users\noah></pre>
             "erreurs": []
           },
           {
-            "id": "B11-X1",
-            "type": "tache",
-            "consigne": "Pour lire : la troisième ligne de code --version écrit l’architecture de l’installation, x64 ou arm64 (ARM64 en minuscules) ; uname -m répond x86_64 pour x64, aarch64 pour ARM64. Yasmine tape uname -m sur son PC portable dans la fenêtre d’Ubuntu et lit aarch64. Elle a installé VS Code pour sa machine. Écris le mot de la troisième ligne de code --version.",
-            "attendu": "arm64 : aarch64 veut dire ARM64, et l’installation est celle de la machine. Déduit de l’étape « Ouvrir un projet ».",
-            "erreurs": [],
-            "verification": {
-              "mode": "exacte",
-              "reponses": ["arm64", "ARM64"]
-            }
-          },
-          {
             "id": "B11-X2",
             "type": "tache",
             "consigne": "Pour lire : cd .. remonte dans le dossier parent ; code ouvre dans VS Code ce qu’on lui donne ; le point . est le nom du dossier où l’on est. Yasmine est dans /home/yasmine/atelier/site/css. Elle tape cd .. puis code . Écris le nom du dossier qu’elle ouvre comme projet.",
@@ -6111,6 +6226,17 @@ C:\Users\noah></pre>
             }
           },
           {
+            "id": "B11-X4",
+            "type": "tache",
+            "consigne": "Pour lire : un fichier se reconnaît à la fin de son nom : .html pour une page web, .txt pour du texte brut ; Emmet développe une abréviation en lignes de code quand on presse Tab, dans un fichier .html. Farid a un fichier vide, notes.txt, et veut y obtenir le squelette avec ! puis Tab. Écris le nom que doit porter le fichier.",
+            "attendu": "notes.html : Emmet ne développe l’abréviation que dans un fichier que l’éditeur reconnaît comme une page web, donc dont le nom finit par .html. Déduit de l’étape « Écrire et voir ».",
+            "erreurs": [],
+            "verification": {
+              "mode": "exacte",
+              "reponses": ["notes.html"]
+            }
+          },
+          {
             "id": "B11-T1",
             "type": "transfert",
             "forme": "trouver_erreur",
@@ -6122,7 +6248,7 @@ C:\Users\noah></pre>
             "id": "B11-T2",
             "type": "transfert",
             "forme": "adapter_condition",
-            "consigne": "Pour lire : la synchronisation recopie les réglages d’un éditeur sur chaque machine où l’on se connecte au même compte ; x64 et ARM64 sont deux architectures, et un programme s’installe pour la sienne. Yasmine, sur son PC ARM64, a VS Code ARM64, la synchronisation activée et son dossier site. On lui prête un PC x64. Que télécharge-t-elle, et retrouve-t-elle site ?",
+            "consigne": "Pour lire : la synchronisation recopie sur chaque machine du même compte le thème, les raccourcis et la liste des extensions ; un projet est un dossier de la machine ; un programme s’installe pour l’architecture x64 ou ARM64 de sa machine. Yasmine, sur son PC ARM64, a VS Code ARM64, la synchronisation activée et son dossier site. On lui prête un PC x64. Que télécharge-t-elle, et retrouve-t-elle site ?",
             "attendu": "Elle télécharge la version x64 de VS Code, celle de la machine prêtée, et active la synchronisation avec le même compte : elle retrouve son thème, ses raccourcis et ses extensions. Elle ne retrouve pas le dossier site, qui est resté sur son PC : la synchronisation ne transporte pas les projets, il faut le copier. Déduit des étapes « Ouvrir un projet » et « Éditeur, IDE et extensions ».",
             "erreurs": ["E3"]
           },
@@ -6138,7 +6264,7 @@ C:\Users\noah></pre>
             "id": "B11-T4",
             "type": "transfert",
             "forme": "adapter_condition",
-            "consigne": "Pour lire : VS Code est un éditeur gratuit ; les IDE de JetBrains sont payants, avec une licence étudiante et un mode non commercial ; PhpStorm n’a pas d’édition Community, par convention. Noah, sur un PC ARM64, écrit du PHP en agence, qui ne paie aucun logiciel. Un blog dit : « PhpStorm Community est gratuit. » Que fait-il, et si l’agence paie ?",
+            "consigne": "Pour lire : VS Code est un éditeur gratuit, même pour un travail payé ; les IDE de JetBrains sont payants, avec une licence étudiante et un mode non commercial ; PhpStorm n’a pas d’édition Community, par convention. Noah, sur un PC ARM64, écrit du PHP en agence, qui ne paie aucun logiciel. Un blog dit : « PhpStorm Community est gratuit. » Que fait-il, et si l’agence paie ?",
             "attendu": "PhpStorm n’a pas d’édition Community, et ses voies gratuites n’autorisent pas un travail payé : sans budget, Noah prend VS Code, gratuit pour un travail payé, en version ARM64. Si l’agence paie la licence, PhpStorm devient possible pour son travail, avec les outils PHP déjà prêts, toujours en version ARM64 ; il lit la page de licence avant de décider. Déduit de l’étape « Choisir son outil ».",
             "erreurs": ["E4"]
           }
@@ -6243,7 +6369,7 @@ C:\Users\noah></pre>
           {
             "id": "B11-K7",
             "recto": "Pour lire : un IDE de JetBrains est payant, avec deux voies gratuites : une licence étudiante et un mode non commercial. Yasmine, étudiante, fait un exercice de formation en PHP, sans être payée. Peut-elle utiliser PhpStorm gratuitement, et par quelle voie ?",
-            "verso": "Oui : sa licence étudiante, pour apprendre, couvre cet exercice ; le mode non commercial le couvrirait aussi. La limite : ces voies excluent un travail payé. Déduit de l’étape « Choisir son outil »."
+            "verso": "Oui, par la licence étudiante, pour apprendre, qui couvre cet exercice, ou par le mode non commercial, qui le couvrirait aussi : l’une ou l’autre voie est une bonne réponse. La limite : ces voies excluent un travail payé. Déduit de l’étape « Choisir son outil »."
           },
           {
             "id": "B11-K8",
@@ -6252,7 +6378,7 @@ C:\Users\noah></pre>
           },
           {
             "id": "B11-K9",
-            "recto": "Pour lire : les paramètres d’un éditeur sont ses réglages ; un projet est un dossier de la machine. Yasmine passe son thème au sombre et crée un fichier notes.txt dans son dossier site, puis active la synchronisation. Sur son autre PC, lequel des deux retrouve-t-elle ?",
+            "recto": "Pour lire : les paramètres d’un éditeur sont ses réglages, comme le thème, les raccourcis et la liste des extensions ; la synchronisation les envoie ; un projet est un dossier de la machine. Yasmine passe son thème au sombre et crée un fichier notes.txt dans son dossier site, puis active la synchronisation. Sur son autre PC, lequel des deux retrouve-t-elle ?",
             "verso": "Elle retrouve le thème sombre, un paramètre de l’éditeur ; elle ne retrouve pas notes.txt, qui est dans un dossier de projet resté sur le premier PC. Déduit de l’étape « Éditeur, IDE et extensions »."
           },
           {
@@ -6292,14 +6418,14 @@ C:\Users\noah></pre>
             "notion": "Le téléchargement se choisit selon l’architecture de la machine, x64 ou ARM64, que l’on lit sur sa machine ; la dernière ligne de `code --version` la redit",
             "montree": ["ET4"],
             "pratiquee": ["PR1", "AT1"],
-            "questions": ["B11-Q2", "B11-X1", "B11-K1"]
+            "questions": ["B11-Q2", "B11-K1"]
           },
           {
             "id": "N3",
             "notion": "Emmet : `!` puis Tab développe le squelette d’une page dans un fichier reconnu comme HTML ; on l’obtient sans le lire ni le taper",
             "montree": ["ET5"],
             "pratiquee": ["PR1", "AT1"],
-            "questions": ["B11-Q5", "B11-K3"]
+            "questions": ["B11-Q5", "B11-X4", "B11-K3"]
           },
           {
             "id": "N4",
@@ -6344,13 +6470,6 @@ C:\Users\noah></pre>
             "questions": ["B11-R3", "B11-T1", "B11-K10"]
           },
           {
-            "id": "N10",
-            "notion": "Chaque IDE de JetBrains est conçu pour un langage : PhpStorm pour PHP, WebStorm pour JavaScript",
-            "montree": ["ET8"],
-            "pratiquee": ["PR1"],
-            "questions": ["B11-K6"]
-          },
-          {
             "id": "N11",
             "notion": "VS Code est gratuit, y compris pour un travail payé ; les IDE de JetBrains sont payants, avec une licence étudiante et un mode non commercial ; PhpStorm n’a pas d’édition Community ; on lit la page de licence à jour avant de décider",
             "montree": ["ET8"],
@@ -6359,10 +6478,10 @@ C:\Users\noah></pre>
           },
           {
             "id": "N12",
-            "notion": "Choisir entre VS Code et un IDE de JetBrains pour un besoin : le langage, le travail payé ou non, ce que l’outil contient déjà, et l’architecture de la machine",
+            "notion": "Choisir entre VS Code et un IDE de JetBrains pour un besoin : le langage (chaque IDE de JetBrains est conçu pour un langage : PhpStorm pour PHP, WebStorm pour JavaScript), le travail payé ou non, ce que l’outil contient déjà, et l’architecture de la machine",
             "montree": ["ET8"],
             "pratiquee": ["PR1", "AT1"],
-            "questions": ["B11-Q6", "B11-T4"]
+            "questions": ["B11-Q6", "B11-T4", "B11-K6"]
           },
           {
             "id": "N13",
@@ -6394,7 +6513,7 @@ C:\Users\noah></pre>
             "vers": "N1",
             "type": "sequence",
             "montree": "ET4",
-            "questions": ["B11-Q2", "B11-X1", "B11-K1"]
+            "questions": ["B11-Q2", "B11-K1"]
           },
           {
             "id": "L3",
@@ -6411,14 +6530,6 @@ C:\Users\noah></pre>
             "type": "condition",
             "montree": "ET4",
             "questions": ["B11-K2"]
-          },
-          {
-            "id": "L5",
-            "de": "N10",
-            "vers": "N6",
-            "type": "categorie",
-            "montree": "ET8",
-            "questions": ["B11-K6"]
           },
           {
             "id": "L6",
