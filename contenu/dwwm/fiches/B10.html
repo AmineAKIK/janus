@@ -6440,8 +6440,8 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-Q2",
-            "question": "Sous Ubuntu, un dossier contient index.html. Yasmine tape touch Index.html, avec un I majuscule. Que contient le dossier ensuite ?",
-            "attendu": "Deux fichiers, index.html et Index.html : sous Linux, la casse compte, donc ce sont deux noms. touch crée le fichier absent et ne touche pas à l’autre. Déduit du bloc « Lire la documentation et se déplacer » et de l’étape « Créer sans bouger ».",
+            "question": "Dans un dossier d’un Mac ou d’Ubuntu, Yasmine a un fichier notes.txt qui contient quelques lignes de texte. Elle tape touch notes.txt. Que devient le fichier, et que répond la fenêtre ?",
+            "attendu": "Le fichier reste, avec ses lignes : touch ne vide pas un fichier qui existe, il n’en change que la date. La fenêtre ne répond rien, comme pour tout fichier créé. Déduit de l’étape « Créer sans bouger ».",
             "erreurs": []
           },
           {
@@ -6464,8 +6464,8 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-Q6",
-            "question": "Dans un atelier où site existe et sauvegarde n’existe pas, Farid tape cp site sauvegarde. Que se passe-t-il, et qu’écrit la fenêtre ?",
-            "attendu": "cp refuse de copier un dossier sans l’option -R : un message dit que le dossier est omis, et sauvegarde n’est pas créé. Le message commence par cp, et sa phrase diffère entre Ubuntu et un Mac. -R, ou -r, copie le dossier avec son contenu. Déduit de l’étape « Copier ».",
+            "question": "Pour lire : cp -R copie un dossier avec son contenu. Dans un atelier où photos est un dossier et archive n’existe pas, Noah, sous Ubuntu, tape cp photos archive. Que se passe-t-il, et qu’écrit la fenêtre ?",
+            "attendu": "cp refuse, parce qu’il manque l’option -R : un message écrit que le dossier photos est omis, et archive n’est pas créé. Le message commence par cp, et sa phrase diffère entre Ubuntu et un Mac. Avec -R ou -r, la copie se fait, avec tout ce que photos contient. Déduit de l’étape « Copier ».",
             "erreurs": []
           },
           {
@@ -6485,8 +6485,8 @@ contact.html  index.html</pre>
           {
             "id": "B10-C1",
             "type": "explication",
-            "consigne": "Un stagiaire écrit dans ses notes : « Si je supprime un fichier avec rm, je le retrouverai dans la corbeille. » Qu’est-ce qui ne va pas ?",
-            "attendu": "rm retire le nom du fichier pour de bon : il ne passe pas par la corbeille de l’Explorateur ou du Finder, et il ne demande rien. Un fichier retiré ne se retrouve pas ; seule une copie faite avant le permet. Déduit de l’étape « Supprimer ».",
+            "consigne": "Un stagiaire retire son dossier docs avec rm -r docs, se rend compte de son erreur et écrit : « Pas de souci, je tape mkdir docs et tout revient. » Qu’est-ce qui ne va pas ?",
+            "attendu": "mkdir docs crée un dossier vide, du même nom : ce que docs contenait n’est pas revenu. rm retire pour de bon, sans passer par une corbeille et sans rien demander. Seule une copie faite avant permet de retrouver le contenu. Déduit de l’étape « Supprimer ».",
             "erreurs": ["E1"]
           },
           {
@@ -6499,8 +6499,8 @@ contact.html  index.html</pre>
           {
             "id": "B10-C3",
             "type": "explication",
-            "consigne": "Un stagiaire écrit : « Une ligne rm -rf trouvée sur un forum est sans danger : on peut la coller telle quelle. » Qu’est-ce qui ne va pas ?",
-            "attendu": "-r fait descendre rm dans les dossiers, -f ne demande rien, sudo retire la protection du système, et rien ne passe par une corbeille : une telle ligne détruit ce qu’elle désigne, depuis le dossier où l’on est. On la lit dans l’ordre (commande, options, chemins, dossier courant) avant de la lancer. Déduit de l’étape « Supprimer ».",
+            "consigne": "Un stagiaire écrit : « Avec rm -rf, si je me trompe de nom de dossier, la commande me le dira. » Qu’est-ce qui ne va pas ?",
+            "attendu": "-f fait taire rm : un nom qui n’existe pas n’écrit rien, et un autre dossier qui existe et porte le nom tapé est détruit avec son contenu, sans question. Rien ne passe par une corbeille. On lit la ligne dans l’ordre (commande, options, chemins, dossier courant) avant de la lancer. Déduit de l’étape « Supprimer ».",
             "erreurs": ["E2"]
           },
           {
@@ -6641,18 +6641,18 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-K2",
-            "recto": "Farid retire un fichier avec rm, ouvre la Corbeille et ne le trouve pas. Qu’aurait fait Windows avec un fichier supprimé à la souris, et pourquoi pas ici ?",
-            "verso": "La souris range le fichier dans la corbeille, qui est un dossier du bureau graphique. rm est une commande du shell : elle retire le nom pour de bon, sans corbeille ni confirmation."
+            "recto": "Yasmine supprime rapport.pdf avec la touche Suppr de l’explorateur de fichiers, puis brouillon.txt avec rm dans la fenêtre de commandes. Lequel peut-elle retrouver dans la corbeille, et pourquoi ?",
+            "verso": "rapport.pdf : l’explorateur le range dans la corbeille, un dossier du bureau graphique. brouillon.txt est perdu : rm est une commande du shell, qui retire le nom pour de bon, sans corbeille ni confirmation."
           },
           {
             "id": "B10-K3",
-            "recto": "Pour lire : cp -R copie un dossier avec son contenu. Noah a un dossier rapports. Qu’est-ce qui décide si cp -R rapports bilan crée bilan ou range rapports dans bilan ?",
-            "verso": "L’existence de la destination : si bilan n’existe pas, il devient la copie de rapports ; s’il existe et que c’est un dossier, rapports s’y range, sous son nom."
+            "recto": "Pour lire : cp -R copie un dossier avec son contenu. Noah a un dossier comptes, qui contient juin.txt, et un dossier bilan, vide, qui existe déjà. Que contient bilan après cp -R comptes bilan ?",
+            "verso": "Un dossier comptes, qui contient juin.txt : bilan existe, donc la copie s’y range sous son nom d’origine. Le chemin du fichier est bilan/comptes/juin.txt."
           },
           {
             "id": "B10-K4",
-            "recto": "Que fait mv a.txt b.txt si b.txt est un fichier qui existe déjà ?",
-            "verso": "Il remplace b.txt par a.txt, sans rien demander : a.txt disparaît de sa place, b.txt reste, avec le contenu de a.txt."
+            "recto": "Dans atelier, notes.txt contient « un » et memo.txt contient « deux ». Que contient memo.txt après mv notes.txt memo.txt, et que reste-t-il de notes.txt ?",
+            "verso": "memo.txt contient « un », et notes.txt n’existe plus à sa place : mv a remplacé memo.txt sans rien demander, et « deux » est perdu."
           },
           {
             "id": "B10-K5",
@@ -6661,28 +6661,28 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-K6",
-            "recto": "Dans quel ordre lis-tu une ligne rm -r copiée d’ailleurs avant de la lancer ?",
-            "verso": "La commande, les options, les chemins, puis le dossier où tu es (pwd), qui donne son sens à un chemin relatif."
+            "recto": "Pour lire : -r fait descendre rm dans les dossiers ; -f le fait travailler sans rien demander. Yasmine, dans /home/yasmine/atelier, lit sur un forum rm -rf cache/tmp. Dans quel ordre lit-elle la ligne, et quel dossier la ligne désigne-t-elle ?",
+            "verso": "La commande (rm), les options (-r, -f), le chemin (cache/tmp), puis le dossier où elle est, que pwd donne. Le chemin est relatif : il désigne /home/yasmine/atelier/cache/tmp, détruit avec son contenu, sans question."
           },
           {
             "id": "B10-K7",
-            "recto": "Dans Cmd, les chemins s’écrivent avec l’antislash. Cite une autre différence avec bash, et les noms de Cmd pour cp, mv, rm.",
-            "verso": "Les options s’écrivent avec une barre, comme /s, au lieu d’un tiret. Les noms de Cmd sont copy pour cp, move pour mv, del pour rm sur un fichier (rmdir /s pour un dossier)."
+            "recto": "Pour lire : Cmd écrit copy pour cp, move pour mv, del pour rm sur un fichier, rmdir /s pour rm -r sur un dossier, et sépare les chemins par l’antislash. Traduis en bash la ligne de Cmd rmdir /s site\\css2.",
+            "verso": "rm -r site/css2 : rmdir /s devient rm -r, et l’antislash devient la barre."
           },
           {
             "id": "B10-K8",
-            "recto": "Pourquoi tape-t-on pwd avant un rm dans un atelier ?",
-            "verso": "Un chemin relatif part du répertoire courant : la même ligne détruit un dossier ou un autre selon l’endroit où on la tape. pwd dit où l’on est avant de retirer."
+            "recto": "Pour lire : rm -r retire un dossier avec son contenu ; un chemin relatif part du dossier où l’on est. Site contient css et img. Yasmine tape rm -r img depuis site, puis son amie tape la même ligne depuis site/css. Que fait chaque ligne ?",
+            "verso": "Depuis site, la ligne détruit site/img avec son contenu. Depuis site/css, elle échoue : css ne contient pas de dossier img, un message le dit. D’où le pwd avant chaque rm."
           },
           {
             "id": "B10-K10",
-            "recto": "Le formateur impose un dossier site qui contient css et img, avec index.html dans site, style.css dans css et logo.png dans img. Combien de lignes suffisent au minimum, et de quels morceaux chacune est-elle faite ?",
-            "verso": "Deux lignes : une mkdir -p, avec les chemins site/css et site/img, crée les trois dossiers ; une touch, avec les trois chemins des fichiers, crée les trois fichiers vides."
+            "recto": "Pour lire : mkdir -p crée les dossiers manquants d’un chemin ; une commande reçoit plusieurs noms, séparés par des espaces. Yasmine veut, dans atelier, un dossier projet qui contient src et doc. Écris la ligne la plus courte qui les crée tous les trois.",
+            "verso": "mkdir -p projet/src projet/doc : une ligne, deux chemins ; projet est créé au passage, avec src et doc dedans."
           },
           {
             "id": "B10-K9",
-            "recto": "Yasmine lit six lignes après cp -Rv site sauvegarde sous Ubuntu. Que peut-on dire de la sortie sur un Mac ?",
-            "verso": "Elle écrit aussi une ligne par élément copié, mais sous une forme un peu différente : la page ne dépend pas de son texte exact. Le message de cp sans -R diffère aussi entre les deux systèmes."
+            "recto": "Pour lire : cp -R copie un dossier avec son contenu ; -v fait écrire une ligne par élément copié. Dans site, css contient style.css. Sur un Mac, Yasmine tape cp -Rv css css2. Combien de lignes la fenêtre écrit-elle, et peut-on prévoir leur texte exact ?",
+            "verso": "Deux lignes : une pour le dossier css, une pour style.css. Leur texte exact varie d’un système à l’autre ; leur nombre, non."
           }
         ]
       }
