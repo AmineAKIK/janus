@@ -2581,11 +2581,25 @@ a.txt  b.txt</pre>
           imposé compte six éléments, trois dossiers et trois fichiers vides.
         </p>
       </div>
-      <div data-ecran="Créer un dossier, et le silence">
+      <div data-ecran="Créer un dossier">
         <p class="accroche">
           Dans un atelier vide, Yasmine tape <span class="mono">mkdir site</span>, puis
           <span class="mono">ls</span> pour voir.
         </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              <span class="mono">mkdir</span> crée un dossier du nom qu’on lui donne ; un chemin
+              comme <span class="mono">doc/notes</span> veut dire le dossier notes dans le dossier
+              doc.
+            </li>
+            <li>
+              <span class="mono">ls</span> écrit les noms de ce que contient le dossier où l’on est.
+            </li>
+          </ul>
+        </div>
+
         <pre
           class="listing"
           data-lecture="Lignes tapées : mkdir site, puis ls. La fenêtre ne répond rien à mkdir, puis ls répond : site."
@@ -2639,12 +2653,83 @@ site</pre>
 $ mkdir doc/notes
 mkdir: cannot create directory ‘doc/notes’: No such file or directory</pre>
         <p>
-          <span class="mono">mkdir site</span> n’avait rien répondu, et il avait réussi : c’est une
-          convention des commandes UNIX, une commande qui réussit ne dit rien. Un message n’apparaît
-          que si quelque chose a échoué, et alors la commande n’a rien changé : ici, atelier
-          contient toujours seulement site. Un mkdir crée un dossier dans un dossier qui existe déjà
-          ; sinon, il échoue. Le silence ne veut pas dire que rien n’a changé : il veut dire que
-          tout s’est bien passé.
+          Un <span class="mono">mkdir</span> crée un dossier dans un dossier qui existe déjà ;
+          sinon, il échoue, et atelier contient toujours seulement site. Il échoue aussi quand le
+          dossier à créer existe déjà : <span class="mono">mkdir site</span>, tapé une seconde fois,
+          répondrait que le nom existe déjà (« File exists »).
+        </p>
+      </div>
+      <div data-ecran="Le silence">
+        <p class="accroche">
+          Yasmine continue dans le même atelier. Elle tape trois lignes
+          <span class="mono">mkdir</span> de suite, puis <span class="mono">ls</span> : voici tout
+          ce que la fenêtre écrit.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              <span class="mono">mkdir</span> crée un dossier du nom qu’on lui donne ;
+              <span class="mono">docs/js/lib</span> veut dire le dossier lib dans js, dans docs.
+            </li>
+            <li>
+              <span class="mono">ls</span> écrit les noms de ce que contient le dossier qu’on lui
+              donne.
+            </li>
+          </ul>
+        </div>
+        <pre
+          class="listing"
+          data-lecture="Lignes tapées : mkdir docs, puis mkdir docs/js/lib, puis mkdir docs/js, puis ls docs. La fenêtre répond à la deuxième ligne : mkdir: cannot create directory ‘docs/js/lib’: No such file or directory. Elle répond à ls docs : js."
+        >
+$ mkdir docs
+$ mkdir docs/js/lib
+mkdir: cannot create directory ‘docs/js/lib’: No such file or directory
+$ mkdir docs/js
+$ ls docs
+js</pre>
+        <div
+          class="ex"
+          data-widget="saisie"
+          data-id="silence"
+          data-prediction
+          data-accepte="2|deux|Deux"
+          data-clavier="Le nombre de lignes"
+          data-si-un="1|un|une"
+          data-retour-un="Cherche, dans le listing, ce qui prouve que docs et js existent : quelles lignes les ont créés ?"
+          data-si-trois="3|trois"
+          data-retour-trois="Une des trois lignes mkdir a écrit un message : que dit-il ?"
+          data-aide1="Une des trois lignes mkdir a écrit un message : que dit-il ?"
+          data-aide2="Le dernier ls montre ce que contient docs : qu’a-t-il fallu pour que js y soit ?"
+          data-aide3="Pour chacune des trois lignes mkdir, cherche un message sous elle, puis un signe, plus bas, que son dossier existe."
+          data-sinon="Pas encore. Pour chaque ligne mkdir, un message est-il écrit dessous, et le dossier existe-t-il plus bas ?"
+          data-explication="Deux lignes ont réussi, sans rien écrire : docs et docs/js existent. La troisième a écrit un message : lib n’a pas été créé."
+          data-variante-enonce="Pour lire : mkdir crée un dossier. Farid, dans un atelier vide, tape mkdir src, puis mkdir lib/outils (la fenêtre écrit un message), puis mkdir src/css, puis mkdir src/js. Combien de ces quatre lignes ont réussi ?"
+          data-variante-accepte="3|trois|Trois"
+          data-variante-reponse="3"
+          data-variante-clavier="Le nombre de lignes"
+          data-variante-si-deux="2|deux|Deux"
+          data-variante-retour-deux="Une seule des quatre lignes a écrit un message : combien en reste-t-il sans message ?"
+          data-variante-si-quatre="4|quatre"
+          data-variante-retour-quatre="Une des quatre lignes a écrit un message : que dit-il ?"
+          data-variante-aide1="Une des quatre lignes mkdir a écrit un message : que dit-il ?"
+          data-variante-aide2="Une ligne qui écrit un message n’a pas créé son dossier : lesquelles n’en ont pas écrit ?"
+          data-variante-aide3="Pour chacune des quatre lignes, cherche si la fenêtre a écrit un message."
+          data-variante-sinon="Pas encore. Pour chaque ligne mkdir, la fenêtre a-t-elle écrit un message ?"
+          data-variante-explication="Trois lignes ont réussi, sans rien écrire : src, src/css et src/js existent. La ligne lib/outils a écrit un message : outils n’a pas été créé."
+        >
+          <p class="q">
+            À ton avis, combien de ces trois lignes <span class="mono">mkdir</span> ont réussi ?
+          </p>
+        </div>
+        <p>
+          Les commandes qui créent, copient, déplacent ou retirent ne disent rien quand elles
+          réussissent : c’est une convention. Un message veut dire qu’une ligne a échoué, et qu’elle
+          n’a rien créé pour ce nom : ici, lib n’existe pas. <span class="mono">pwd</span> et
+          <span class="mono">ls</span> répondent toujours, parce que répondre est leur travail ;
+          <span class="mono">cp</span> avec <span class="mono">-v</span> aussi, parce qu’on lui
+          demande d’écrire ce qu’il copie. Le silence ne veut pas dire que rien n’a changé : il veut
+          dire que tout s’est bien passé.
         </p>
       </div>
       <div data-ecran="Créer tous les dossiers du chemin">
@@ -2783,21 +2868,156 @@ site/img:</pre>
           pas toucher ce fichier, parce qu’il n’existe pas de tel fichier ou dossier.
         </p>
       </div>
-      <div data-ecran="Lire ce qu’on a créé">
+      <div data-ecran="Plusieurs noms à la fois">
         <p class="accroche">
-          Les six éléments créés, Yasmine vérifie son travail avec
-          <span class="mono">ls -R site</span>. Le formateur a imposé : site contient css, img et
-          index.html ; css contient style.css ; img contient logo.png. Elle compare. Voici d’abord
-          la réponse de Farid, qui a fait une faute.
+          Yasmine veut aller plus vite : au lieu d’une ligne par dossier, une seule ligne, dans un
+          atelier vide, <span class="mono">mkdir -p docs/css docs/js</span>.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
           <ul>
             <li>
-              ls -R, avec R comme récursif : ls affiche le dossier donné, puis chaque dossier qu’il
-              contient, un titre par dossier.
+              Une commande reçoit autant de noms qu’on veut, séparés par des espaces ; elle les
+              traite l’un après l’autre.
             </li>
-            <li>Un nom à point reste caché sans -a, mais aucun nom du projet n’en porte.</li>
+            <li>
+              <span class="mono">mkdir -p</span> crée tous les dossiers d’un chemin qui manquent.
+            </li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="plusieurs"
+          data-prediction
+          data-reponse="deux"
+          data-aide1="Combien de noms la ligne contient-elle, après l’option ?"
+          data-aide2="Chaque nom est un chemin : que crée mkdir -p pour un chemin ?"
+          data-aide3="Écris deux lignes séparées, une par nom, et demande-toi ce que chacune crée."
+          data-explication="La ligne a deux noms, donc deux chemins : docs/css et docs/js. docs est créé une fois, avec css et js dedans."
+          data-variante-enonce="Pour lire : une commande reçoit autant de noms qu’on veut, séparés par des espaces, et les traite l’un après l’autre. Farid tape mkdir -p src/img src/js dans un atelier vide. À ton avis, que contient src ensuite ?"
+          data-variante-reponse="deux"
+          data-variante-options="deux=Un dossier img et un dossier js.|un=Un seul dossier, img, parce que le second nom est ignoré.|aucun=Rien : une ligne ne crée qu’un seul chemin."
+          data-variante-retours="un=Combien de noms la ligne contient-elle, et la commande en laisse-t-elle un de côté ?|aucun=Que dit la phrase « pour lire » sur le nombre de noms qu’une commande reçoit ?"
+          data-variante-aide1="Combien de noms la ligne contient-elle, après l’option ?"
+          data-variante-aide2="Chaque nom est un chemin : que crée mkdir -p pour un chemin ?"
+          data-variante-aide3="Écris deux lignes séparées, une par nom, et demande-toi ce que chacune crée."
+          data-variante-explication="La ligne a deux noms, donc deux chemins : src/img et src/js. src est créé une fois, avec img et js dedans."
+        >
+          <p class="q">À ton avis, que contient docs ensuite ?</p>
+          <ul class="options">
+            <li data-option="deux">Un dossier css et un dossier js.</li>
+            <li
+              data-option="un"
+              data-retour="Combien de noms la ligne contient-elle, et la commande en laisse-t-elle un de côté ?"
+            >
+              Un seul dossier, css, parce que le second nom est ignoré.
+            </li>
+            <li
+              data-option="aucun"
+              data-retour="Que dit l’encadré sur le nombre de noms qu’une commande reçoit ?"
+            >
+              Rien : une ligne ne crée qu’un seul chemin.
+            </li>
+          </ul>
+        </div>
+        <p>
+          <span class="mono">touch</span> fait de même :
+          <span class="mono">touch docs/index.html docs/css/style.css</span> crée les deux fichiers.
+          Les noms sont traités un par un : si l’un échoue, parce que son dossier n’existe pas, la
+          fenêtre l’écrit, et les autres noms sont quand même créés. Après la ligne,
+          <span class="mono">ls -R docs</span> montre ce qui existe vraiment.
+        </p>
+        <pre
+          class="listing"
+          data-lecture="Lignes tapées : mkdir -p docs/css docs/js, puis touch docs/index.html docs/css/style.css, puis ls -R docs. La fenêtre répond : docs contient css, index.html, js ; docs/css contient style.css ; docs/js contient rien."
+        >
+$ mkdir -p docs/css docs/js
+$ touch docs/index.html docs/css/style.css
+$ ls -R docs
+docs:
+css  index.html  js
+
+docs/css:
+style.css
+
+docs/js:</pre>
+      </div>
+      <div data-ecran="Lire une arborescence">
+        <p class="accroche">
+          Yasmine a créé une partie des éléments et vérifie où elle en est avec
+          <span class="mono">ls -R site</span>. Voici la réponse de sa fenêtre.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              <span class="mono">ls -R</span>, avec R comme récursif : ls affiche le dossier donné,
+              puis chaque dossier qu’il contient, un titre par dossier.
+            </li>
+          </ul>
+        </div>
+        <pre
+          class="listing"
+          data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient rien."
+        >
+$ ls -R site
+site:
+css  img  index.html
+
+site/css:
+style.css
+
+site/img:</pre>
+        <div
+          class="ex"
+          data-widget="saisie"
+          data-id="arbo"
+          data-accepte="css|site/css|le dossier css"
+          data-clavier="Le nom du dossier"
+          data-si-site="site|le dossier site"
+          data-retour-site="Le fichier est-il sous le titre site:, ou sous un titre plus long ?"
+          data-si-img="img|site/img"
+          data-retour-img="Sous quel titre se trouve le nom style.css : le titre img, ou un autre ?"
+          data-aide1="Cherche le nom style.css dans le listing, puis lis le titre juste au-dessus de lui."
+          data-aide2="Un titre se termine par deux-points : le titre au-dessus de style.css est celui de son dossier."
+          data-aide3="Repère la ligne qui contient style.css, puis remonte jusqu’au premier titre qui se termine par deux-points."
+          data-sinon="Pas encore. Sous quel titre le listing range-t-il style.css ?"
+          data-explication="style.css est sous le titre site/css : il est rangé dans le dossier css de site. Le titre site/img n’a pas de nom dessous : img est vide."
+          data-variante-enonce="Pour lire : ls -R écrit un titre par dossier, puis ses noms. Farid lit : cours: img js ; cours/img: rien ; cours/js: app.js. Dans quel dossier est rangé app.js ?"
+          data-variante-accepte="js|cours/js|le dossier js"
+          data-variante-clavier="Le nom du dossier"
+          data-variante-si-site="cours|le dossier cours"
+          data-variante-retour-site="Le fichier est-il sous le titre cours:, ou sous un titre plus long ?"
+          data-variante-aide1="Cherche le nom app.js dans ce que Farid lit, puis lis le titre juste au-dessus."
+          data-variante-aide2="Un titre se termine par deux-points : le titre au-dessus de app.js est celui de son dossier."
+          data-variante-aide3="Repère le titre qui est suivi de app.js, puis lis le dernier mot de ce titre."
+          data-variante-sinon="Pas encore. Sous quel titre Farid lit-il app.js ?"
+          data-variante-explication="app.js est sous le titre cours/js : il est rangé dans le dossier js de cours. Le titre cours/img n’a pas de nom dessous : img est vide."
+        >
+          <p class="q">Dans quel dossier est rangé style.css ?</p>
+        </div>
+        <p>
+          Chaque dossier a son titre, qui se termine par deux-points, suivi des noms qu’il contient
+          ; un dossier vide n’a que son titre. Le titre d’un dossier contenu dans un autre porte le
+          chemin complet : <span class="mono">site/css</span>, pas seulement css. Quand les noms
+          tiennent, <span class="mono">ls</span> les range côte à côte, et un nom par ligne si la
+          fenêtre est étroite : c’est la même liste.
+        </p>
+      </div>
+      <div data-ecran="Vérifier nom par nom">
+        <p class="accroche">
+          Les six éléments créés, Yasmine compare avec la consigne du formateur : site contient css,
+          img et index.html ; css contient style.css ; img contient logo.png. Voici d’abord la
+          réponse de Farid, qui a fait une faute.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              <span class="mono">ls -R</span> écrit un titre par dossier, suivi des noms qu’il
+              contient ; un dossier vide n’a que son titre.
+            </li>
           </ul>
         </div>
         <pre
@@ -2832,17 +3052,16 @@ logo.png  style.css</pre>
           data-variante-sinon="Pas encore. Pour chaque fichier, sous quel titre le listing le range-t-il, et est-ce celui de la consigne ?"
           data-variante-explication="Le formateur impose index.html : le listing montre index.htm, un nom différent d’une lettre, donc un autre fichier."
         >
-          <p class="q">Quel fichier n’est pas dans le dossier que le formateur a imposé ?</p>
+          <p class="q">
+            Quel fichier est rangé dans un autre dossier que celui que le formateur a imposé ?
+          </p>
         </div>
         <p>
           Pour une arborescence imposée, <strong>vérifier</strong> veut dire comparer la sortie de
           <span class="mono">ls -R</span> à la consigne, nom par nom, majuscules comprises : un nom
-          presque juste est un autre nom. Chaque dossier a son titre, qui se termine par
-          deux-points, suivi des noms qu’il contient ; un dossier vide n’a que son titre. Quand les
-          noms tiennent, <span class="mono">ls</span> les range côte à côte, et un nom par ligne si
-          la fenêtre est étroite : c’est la même liste.
+          presque juste est un autre nom. Voici ce que répond la fenêtre de Yasmine, qui a bien tout
+          créé :
         </p>
-        <p>Voici ce que répond la fenêtre de Yasmine, qui a bien tout créé :</p>
         <pre
           class="listing"
           data-lecture="Ligne tapée : ls -R site. La fenêtre répond : site contient css, img, index.html ; site/css contient style.css ; site/img contient logo.png."
@@ -3275,11 +3494,21 @@ css  home.html  img</pre>
           option : <span class="mono">mv</span> n’a pas de <span class="mono">-R</span>.
         </p>
       </div>
-      <div data-ecran="Écraser, et refuser">
+      <div data-ecran="Écraser">
         <p class="accroche">
           Yasmine a, dans site, deux fichiers vides : index.html et home.html. Elle tape
           <span class="mono">mv site/home.html site/index.html</span>. Voici l’état avant :
         </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              <span class="mono">mv</span> source destination : la source prend le nom de la
+              destination, et n’existe plus à son ancienne place.
+            </li>
+          </ul>
+        </div>
+
         <pre
           class="listing"
           data-lecture="Ligne tapée : ls site. La fenêtre répond : css, home.html, img, index.html."
@@ -3293,15 +3522,15 @@ css  home.html  img  index.html</pre>
           data-prediction
           data-reponse="un"
           data-aide1="Qui est la source, et qui est la destination ?"
-          data-aide2="La destination est un fichier qui existe déjà : qu’as-tu lu, pour cp, sur ce cas ?"
+          data-aide2="La destination est un fichier qui existe déjà : qu’arrive-t-il au fichier qui porte déjà ce nom ?"
           data-aide3="Après un déplacement, la source n’existe plus à son ancienne place : lequel des deux noms reste ?"
           data-explication="La destination est un fichier qui existe : mv le remplace sans rien demander. home.html, la source, disparaît ; index.html reste."
-          data-variante-enonce="Farid a dans css deux fichiers vides, style.css et reset.css. Il tape mv site/css/reset.css site/css/style.css. À ton avis, que contient site/css ensuite ?"
+          data-variante-enonce="Pour lire : mv source destination : la source prend le nom de la destination, et n’existe plus à son ancienne place. Farid a dans css deux fichiers vides, style.css et reset.css. Il tape mv site/css/reset.css site/css/style.css. À ton avis, que contient site/css ensuite ?"
           data-variante-reponse="un"
           data-variante-options="un=Seulement style.css : reset.css a pris la place de style.css, sans rien demander.|refus=style.css et reset.css : mv a refusé, un message l’explique.|reset=Seulement reset.css : style.css a disparu."
-          data-variante-retours="refus=Qu’as-tu lu, pour cp, sur un fichier déjà présent sous le nom de la destination ?|reset=Quel fichier est la source, quel fichier est la destination ?"
+          data-variante-retours="refus=Que devient un fichier déjà présent sous le nom de la destination, quand un autre prend ce nom ?|reset=Quel fichier est la source, quel fichier est la destination ?"
           data-variante-aide1="Qui est la source, et qui est la destination ?"
-          data-variante-aide2="La destination est un fichier qui existe déjà : qu’as-tu lu, pour cp, sur ce cas ?"
+          data-variante-aide2="La destination est un fichier qui existe déjà : qu’arrive-t-il au fichier qui porte déjà ce nom ?"
           data-variante-aide3="Après un déplacement, la source n’existe plus à son ancienne place : lequel des deux noms reste ?"
           data-variante-explication="La destination est un fichier qui existe : mv le remplace sans rien demander. reset.css, la source, disparaît ; style.css reste."
         >
@@ -3312,7 +3541,7 @@ css  home.html  img  index.html</pre>
             </li>
             <li
               data-option="refus"
-              data-retour="Qu’as-tu lu, pour cp, sur un fichier déjà présent sous le nom de la destination ?"
+              data-retour="Que devient un fichier déjà présent sous le nom de la destination, quand un autre prend ce nom ?"
             >
               css, home.html, img et index.html : mv a refusé, un message l’explique.
             </li>
@@ -3330,10 +3559,59 @@ css  home.html  img  index.html</pre>
           vides, on le voit au fait que la source a disparu ; avec du contenu, c’est celui de la
           source qui resterait et celui de la destination qui serait perdu.
         </p>
-        <p>
-          <span class="mono">mv</span> refuse aussi une chose : ranger un dossier dans lui-même.
-          Sous Ubuntu, <span class="mono">mv site site/css</span> répond :
+      </div>
+      <div data-ecran="Refuser de se ranger dans soi-même">
+        <p class="accroche">
+          Yasmine veut ranger site dans son propre dossier css. Elle tape
+          <span class="mono">mv site site/css</span>, dans atelier.
         </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              <span class="mono">mv</span> source destination : si la destination est un dossier, la
+              source est rangée dedans.
+            </li>
+            <li><span class="mono">site/css</span> est le dossier css qui est dans site.</li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="refus"
+          data-prediction
+          data-reponse="refuse"
+          data-aide1="Où se trouve le dossier css : dans site, ou à côté de lui ?"
+          data-aide2="Si site allait dans css, le dossier css, qui est dans site, serait dans quoi ?"
+          data-aide3="Dessine site, avec css dedans, puis essaie de ranger site dans css : où se trouverait alors site ?"
+          data-explication="site contient css : le ranger dans css, ce serait le mettre dans lui-même. mv refuse, avec un message, et ne change rien."
+          data-variante-enonce="Pour lire : mv source destination : si la destination est un dossier, la source est rangée dedans. Farid a un dossier notes qui contient brouillons, et tape mv notes notes/brouillons. À ton avis, que fait la fenêtre ?"
+          data-variante-reponse="refuse"
+          data-variante-options="refuse=Elle refuse avec un message : notes ne peut pas aller dans son propre sous-dossier, et rien ne change.|range=Elle range notes dans brouillons, qui reste dans notes.|renomme=Elle renomme notes en brouillons."
+          data-variante-retours="range=Où se trouve le dossier brouillons : dans notes, ou à côté de lui ?|renomme=La destination notes/brouillons est-elle un dossier qui existe ?"
+          data-variante-aide1="Où se trouve le dossier brouillons : dans notes, ou à côté de lui ?"
+          data-variante-aide2="Si notes allait dans brouillons, le dossier brouillons, qui est dans notes, serait dans quoi ?"
+          data-variante-aide3="Dessine notes, avec brouillons dedans, puis essaie de ranger notes dans brouillons : où se trouverait alors notes ?"
+          data-variante-explication="notes contient brouillons : le ranger dans brouillons, ce serait le mettre dans lui-même. mv refuse, avec un message, et ne change rien."
+        >
+          <p class="q">À ton avis, que fait la fenêtre ?</p>
+          <ul class="options">
+            <li data-option="refuse">Elle refuse avec un message, et rien ne change.</li>
+            <li
+              data-option="range"
+              data-retour="Où se trouve le dossier css : dans site, ou à côté de lui ?"
+            >
+              Elle range site dans css, qui reste dans site.
+            </li>
+            <li
+              data-option="renomme"
+              data-retour="La destination site/css est-elle un dossier qui existe ?"
+            >
+              Elle renomme site en css.
+            </li>
+          </ul>
+        </div>
+        <p>Sous Ubuntu, voici ce que la fenêtre répond :</p>
         <pre
           class="listing"
           data-lecture="Ligne tapée : mv site site/css. La fenêtre répond : mv: cannot move &#x27;site&#x27; to a subdirectory of itself, &#x27;site/css/site&#x27;."
@@ -3600,7 +3878,7 @@ $ rm -r sauvegarde</pre>
           <span class="mono">rm -r docs site</span> retire les deux dossiers.
         </p>
       </div>
-      <div data-ecran="Ne rien demander, tout demander">
+      <div data-ecran="L’option -f">
         <p class="accroche">
           Yasmine veut retirer un fichier nope, qui n’existe peut-être pas dans site. Elle tape
           <span class="mono">rm -f site/nope</span>.
@@ -3612,7 +3890,6 @@ $ rm -r sauvegarde</pre>
               L’option -f de <span class="mono">rm</span>, comme force, fait supprimer sans rien
               demander.
             </li>
-            <li>L’option -i, comme interactive, fait demander avant chaque suppression.</li>
           </ul>
         </div>
         <div
@@ -3625,15 +3902,14 @@ $ rm -r sauvegarde</pre>
           data-aide2="Un fichier qui n’existe pas est un cas où rm, sans -f, aurait quelque chose à dire."
           data-aide3="Compare ce que dirait la ligne sans -f avec ce que -f lui demande de faire."
           data-explication="Avec -f, rm ne dit rien, même quand le nom n’existe pas : l’invite revient."
-          data-variante-enonce="Pour lire : l’option -f de rm fait supprimer sans rien demander ; l’option -i fait demander avant chaque suppression. Farid, dans atelier, tape rm -i site/index.html. À ton avis, que fait la fenêtre ?"
-          data-variante-reponse="demande"
-          data-variante-options="demande=Elle demande confirmation avant de retirer index.html, et ne le retire que si Farid répond oui.|retire=Elle retire index.html sans rien demander.|refuse=Elle refuse : -i n’existe pas."
-          data-variante-retours="retire=Laquelle des deux options de la phrase « pour lire » est écrite dans cette ligne ?|refuse=La phrase « pour lire » nomme-t-elle l’option -i ?"
-          data-variante-erreurs="retire=E1"
-          data-variante-aide1="Quelle option est écrite dans la ligne, -f ou -i ?"
-          data-variante-aide2="Que dit la phrase « pour lire » sur -i ?"
-          data-variante-aide3="Cherche, dans la ligne, le morceau qui commence par un tiret, puis relis ce que la phrase « pour lire » dit de lui."
-          data-variante-explication="Avec -i, rm demande avant de retirer chaque fichier : index.html n’est retiré que si Farid répond oui."
+          data-variante-enonce="Pour lire : l’option -f de rm, comme force, fait supprimer sans rien demander. Farid, dans atelier, tape rm -f site/css/old.css, alors que old.css n’existe pas dans css. À ton avis, que répond la fenêtre ?"
+          data-variante-reponse="rien"
+          data-variante-options="rien=Rien : l’invite revient.|message=Un message qui dit que old.css n’existe pas.|question=Une question : « Supprimer old.css ? »"
+          data-variante-retours="message=Que fait -f, d’après la phrase « pour lire » : se plaint-il ?|question=La phrase « pour lire » dit-elle que -f fait poser une question ?"
+          data-variante-aide1="Que dit la phrase « pour lire » sur -f : demande-t-il, ou ne demande-t-il pas ?"
+          data-variante-aide2="Un fichier qui n’existe pas est un cas où rm, sans -f, aurait quelque chose à dire."
+          data-variante-aide3="Compare ce que dirait la ligne sans -f avec ce que -f lui demande de faire."
+          data-variante-explication="Avec -f, rm ne dit rien, même quand le nom n’existe pas : l’invite revient."
         >
           <p class="q">À ton avis, que répond la fenêtre, sachant que nope n’existe pas ?</p>
           <ul class="options">
@@ -3666,10 +3942,72 @@ rm: cannot remove 'site/nope': No such file or directory</pre>
 $ rm -f site/nope</pre>
         <p>
           <span class="mono">-f</span> fait taire <span class="mono">rm</span> : il ne demande rien
-          et ne se plaint pas d’un nom qui n’existe pas. <span class="mono">-i</span> est son
-          contraire : une question avant chaque suppression, dont la phrase varie avec le système.
-          <span class="mono">rm -rf</span> réunit les deux : il détruit un dossier et tout son
-          contenu sans rien dire, ce qui le rend dangereux à lancer sans l’avoir lu.
+          et ne se plaint pas d’un nom qui n’existe pas. <span class="mono">rm -rf</span> réunit
+          <span class="mono">-r</span> et <span class="mono">-f</span> : il détruit un dossier et
+          tout son contenu sans rien dire, ce qui le rend dangereux à lancer sans l’avoir lu.
+        </p>
+      </div>
+      <div data-ecran="L’option -i">
+        <p class="accroche">
+          Yasmine préfère qu’on lui demande avant de retirer. Elle tape
+          <span class="mono">rm -i site/index.html</span>, dans atelier, et la fenêtre pose une
+          question.
+        </p>
+        <div class="cadre pour-lire">
+          <p class="discret">Pour lire :</p>
+          <ul>
+            <li>
+              L’option -i de <span class="mono">rm</span>, comme interactive, fait demander avant
+              chaque suppression ; on répond y pour oui, n pour non.
+            </li>
+          </ul>
+        </div>
+        <div
+          class="ex"
+          data-widget="choix"
+          data-id="moins-i"
+          data-prediction
+          data-reponse="reste"
+          data-aide1="Que veut dire n, dans l’encadré : oui, ou non ?"
+          data-aide2="Si la réponse est non, le fichier est-il retiré, ou laissé en place ?"
+          data-aide3="Imagine la ligne sans option : elle retirerait index.html. Que change une réponse non à la question de -i ?"
+          data-explication="Yasmine répond non : rm ne retire rien, et index.html est toujours dans site."
+          data-variante-enonce="Pour lire : l’option -i de rm fait demander avant chaque suppression ; on répond y pour oui, n pour non. Farid tape rm -i site/css/style.css, et répond y à la question. À ton avis, que contient css ensuite ?"
+          data-variante-reponse="vide"
+          data-variante-options="vide=Rien : style.css a été retiré.|reste=style.css : rm l’a gardé malgré la réponse.|message=Un message d’erreur, parce que -i n’existe pas."
+          data-variante-retours="reste=Que veut dire y, dans la phrase « pour lire » : oui, ou non ?|message=La phrase « pour lire » nomme-t-elle l’option -i ?"
+          data-variante-aide1="Que veut dire y, dans la phrase « pour lire » : oui, ou non ?"
+          data-variante-aide2="Si la réponse est oui, le fichier est-il retiré, ou laissé en place ?"
+          data-variante-aide3="Imagine la ligne sans option : elle retirerait style.css. Que change une réponse oui à la question de -i ?"
+          data-variante-explication="Farid répond oui : rm retire style.css, et css est vide."
+        >
+          <p class="q">Yasmine répond n. À ton avis, que contient site ensuite ?</p>
+          <ul class="options">
+            <li data-option="reste">index.html est toujours là, avec css et img.</li>
+            <li data-option="retire" data-retour="Que veut dire n, dans l’encadré : oui, ou non ?">
+              index.html n’y est plus : rm l’a retiré quand même.
+            </li>
+            <li data-option="message" data-retour="L’encadré nomme-t-il l’option -i ?">
+              Un message d’erreur, parce que -i n’existe pas.
+            </li>
+          </ul>
+        </div>
+        <p>
+          Voici ce que la fenêtre écrit sous Ubuntu, puis ce que montre
+          <span class="mono">ls site</span> :
+        </p>
+        <pre
+          class="listing"
+          data-lecture="Lignes tapées : rm -i site/index.html, réponse n, puis ls site. La fenêtre pose la question : rm: remove regular empty file &#x27;site/index.html&#x27;?, puis, après ls site, écrit : css, img, index.html."
+        >
+$ rm -i site/index.html
+rm: remove regular empty file 'site/index.html'? n
+$ ls site
+css  img  index.html</pre>
+        <p>
+          <span class="mono">-i</span> est le contraire de <span class="mono">-f</span> : une
+          question avant chaque suppression, dont la phrase varie avec le système. Seule une réponse
+          oui retire le fichier ; toute autre réponse le laisse.
         </p>
       </div>
       <div data-ecran="sudo">
