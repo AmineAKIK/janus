@@ -2017,6 +2017,10 @@
               vide existe, mais ne contient rien.
             </li>
             <li>
+              atelier est le dossier de travail de Yasmine : elle s’y exerce sans rien risquer
+              d’autre.
+            </li>
+            <li>
               Dans la page, une ligne qui commence par $ est une ligne que Yasmine tape, avec Entrée
               ; les lignes dessous sont ce que la fenêtre répond.
             </li>
@@ -2117,6 +2121,7 @@ sauvegarde  site</pre>
             <li>
               La Corbeille est le dossier du Mac où vont les fichiers supprimés avec la souris.
             </li>
+            <li>atelier est le dossier de travail de Farid, comme celui de Yasmine.</li>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, suivi des noms qu’il
               contient ; un dossier vide n’a que son titre.
@@ -2228,6 +2233,9 @@ $ ls sauvegarde/site/img</pre>
               mv déplace ce qu’on lui donne, le premier nom, à l’endroit qu’on lui indique, le
               second.
             </li>
+            <li>
+              atelier est le dossier de travail de Yasmine : elle s’y exerce sans rien risquer.
+            </li>
           </ul>
         </div>
         <pre
@@ -2296,7 +2304,8 @@ css  img  index.html</pre>
         <li>lire une ligne de suppression avant de l’exécuter, et dire ce qu’elle détruit ;</li>
         <li>
           lire une ligne écrite pour la fenêtre de commandes de Windows, dire ce qui la sépare d’une
-          ligne écrite pour celle d’Ubuntu, et écrire l’équivalent Cmd d’une ligne de bash.
+          ligne écrite pour celle d’Ubuntu, et réécrire pour Windows une ligne que tu connais dans
+          Ubuntu.
         </li>
       </ul>
       <p class="discret">
@@ -2496,18 +2505,17 @@ a.txt  b.txt</pre>
       </div>
       <div data-ecran="La même ligne dans Ubuntu">
         <p class="accroche">
-          Il y a donc deux fenêtres de commandes : Cmd, sur les PC de la salle, et la fenêtre
-          d’Ubuntu, que l’on appelle bash. Yasmine recopie dans sa fenêtre d’Ubuntu la ligne que le
-          formateur a écrite au tableau pour Cmd, avec l’antislash de ses chemins.
+          Il y a donc deux fenêtres de commandes : Cmd, sur les PC de la salle, et celle d’Ubuntu.
+          Yasmine recopie dans sa fenêtre d’Ubuntu la ligne que le formateur a écrite au tableau
+          pour Cmd, avec l’antislash de ses chemins.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
           <ul>
             <li>
-              La fenêtre d’Ubuntu lit des lignes écrites en <strong>bash</strong>, le nom de son
-              shell : le programme qui lit chaque ligne que tu tapes et la lance. Le Terminal d’un
-              Mac lit les mêmes lignes que bash pour tout ce bloc : dans la suite, « bash » désigne
-              ces deux fenêtres.
+              Le shell de la fenêtre d’Ubuntu s’appelle <strong>bash</strong> : ses lignes sont
+              dites « écrites en bash ». Le Terminal d’un Mac lit les mêmes lignes pour tout ce
+              bloc.
             </li>
             <li>
               La ligne du tableau, écrite pour Cmd :
@@ -2528,7 +2536,8 @@ a.txt  b.txt</pre>
         >
           <p class="q">
             Yasmine, dans la fenêtre d’Ubuntu, tape la ligne que le formateur a écrite au tableau
-            pour Cmd, <span class="mono">copy site\index.html sauvegarde</span>. Que se passe-t-il ?
+            pour Cmd, <span class="mono">copy site\index.html sauvegarde</span> (sauvegarde est un
+            dossier qui existe déjà). Que se passe-t-il ?
           </p>
           <ul class="options">
             <li data-option="inconnue">
@@ -2615,11 +2624,11 @@ a.txt  b.txt</pre>
           </ul>
         </div>
         <p>
-          Le shell, le programme de la fenêtre qui lit ta ligne et la lance, part du répertoire
-          courant pour lire chaque chemin relatif : une commande qui crée, copie, déplace ou
-          supprime agit à l’endroit que ses chemins désignent, et te laisse où tu es. Ce que tu veux
-          atteindre, tu l’écris dans le chemin : une fois dans atelier, tu peux faire tout le projet
-          sans taper <span class="mono">cd</span> ; il ne sert qu’à te placer quelque part.
+          La fenêtre part du répertoire courant pour lire chaque chemin relatif : une commande qui
+          crée, copie, déplace ou supprime agit à l’endroit que ses chemins désignent, et te laisse
+          où tu es. Ce que tu veux atteindre, tu l’écris dans le chemin : une fois dans atelier, tu
+          peux faire tout le projet sans taper <span class="mono">cd</span> ; il ne sert qu’à te
+          placer quelque part.
         </p>
       </div>
       <div data-ecran="Créer un dossier">
@@ -2816,7 +2825,7 @@ js</pre>
           data-explication="-p crée tous les dossiers du chemin qui manquent : site, puis css dedans."
           data-variante-enonce="Pour lire : mkdir crée un dossier ; -p est mis pour parents ; un chemin comme cours/js désigne le dossier js, dans cours. Farid tape mkdir -p cours/js/lib dans un atelier vide. À ton avis, que contient atelier ensuite ?"
           data-variante-reponse="chaine"
-          data-variante-options="chaine=Un dossier cours, qui contient js, qui contient lib.|echec=Rien : cours n’existe pas, donc la commande échoue comme sans -p.|lib=Un dossier lib seul, dans atelier."
+          data-variante-options="chaine=Un dossier cours, qui contient js, qui contient lib.|echec=Rien : cours n’existe pas, donc la commande échoue, comme un mkdir sans -p.|lib=Un dossier lib seul, dans atelier."
           data-variante-retours="echec=Que veut dire le p de l’option -p, dans « Pour lire » ?|lib=Dans quel dossier le chemin cours/js/lib place-t-il lib ?"
           data-variante-aide1="Que veut dire p, dans « Pour lire » ?"
           data-variante-aide2="Les dossiers qui contiennent lib, ce sont ceux que le chemin traverse avant lui : lesquels ?"
@@ -2830,7 +2839,7 @@ js</pre>
               data-option="echec"
               data-retour="Que veut dire le p de l’option -p, dans « Pour lire » ?"
             >
-              Rien : site n’existe pas, donc la commande échoue comme sans -p.
+              Rien : site n’existe pas, donc la commande échoue, comme un mkdir sans -p.
             </li>
             <li
               data-option="css"
@@ -2984,7 +2993,8 @@ site/css:</pre>
           Chaque nom réussit ou échoue pour lui-même : si l’un échoue, la fenêtre l’écrit, et les
           autres sont quand même créés. Les six éléments du projet de Yasmine tiennent ainsi en deux
           lignes, une avec <span class="mono">mkdir -p</span> et une avec
-          <span class="mono">touch</span>.
+          <span class="mono">touch</span> : écrire plusieurs noms sur la même ligne, c’est ce qui
+          permet de recréer toute l’arborescence en moins d’une minute.
         </p>
         <pre
           class="listing"
@@ -3006,9 +3016,19 @@ docs/js:</pre>
           Les dossiers et les fichiers rangés les uns dans les autres forment une
           <strong>arborescence</strong> : celle du projet de Yasmine compte six éléments, trois
           dossiers et trois fichiers vides. Farid les a créés et compare avec ce que le formateur
-          impose : site contient css, img et index.html ; css contient style.css ; img contient
-          logo.png. Voici sa réponse, où il y a une faute.
+          impose, dessiné ci-dessous : chaque nom est rangé sous le dossier qui le contient.
         </p>
+        <pre
+          class="listing"
+          data-lecture="L’arborescence imposée : site contient css, img et index.html ; css contient style.css ; img contient logo.png."
+        >
+site
+├── css
+│   └── style.css
+├── img
+│   └── logo.png
+└── index.html</pre>
+        <p class="discret">Voici la réponse de Farid, où il y a une faute.</p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
           <ul>
@@ -3662,7 +3682,7 @@ css  home.html  img  index.html</pre>
           data-aide2="Si site allait dans css, le dossier css, qui est dans site, serait dans quoi ?"
           data-aide3="Dessine site, avec css dedans, puis essaie de ranger site dans css : où se trouverait alors site ?"
           data-explication="site contient css : le ranger dans css, ce serait le mettre dans lui-même. mv refuse, avec un message, et ne change rien."
-          data-variante-enonce="Pour lire : mv source destination : si la destination est un dossier, la source est rangée dedans . Le dossier notes contient brouillons ; Farid tape mv notes notes/brouillons. À ton avis, que fait la fenêtre ?"
+          data-variante-enonce="Pour lire : mv source destination : si la destination est un dossier, la source est rangée dedans. Le dossier notes contient brouillons ; Farid tape mv notes notes/brouillons. À ton avis, que fait la fenêtre ?"
           data-variante-reponse="refuse"
           data-variante-options="refuse=Elle refuse avec un message : notes ne peut pas aller dans un dossier qu’il contient, et rien ne change.|range=Elle range notes dans brouillons, qui reste dans notes.|renomme=Elle renomme notes en brouillons."
           data-variante-retours="range=Où se trouve le dossier brouillons : dans notes, ou à côté de lui ?|renomme=La destination notes/brouillons est-elle un dossier qui existe ?"
@@ -3894,11 +3914,10 @@ logo.png</pre>
         <p>
           La Corbeille de Windows, ou celle d’un Mac, sert quand on supprime un fichier avec la
           souris, sans taper de ligne :
-          <span class="mono">rm</span>, une commande tapée que le shell, le programme de la fenêtre
-          qui lit ta ligne, lance, ne s’en sert pas. Contrairement à <span class="mono">cp</span> et
-          <span class="mono">mv</span>, <span class="mono">rm</span> n’a pas de destination à
-          regarder : il retire, et le nom retiré n’existe plus. Rien ne revient en arrière : un
-          fichier retiré ne se retrouve pas.
+          <span class="mono">rm</span>, une commande tapée que la fenêtre lance, ne s’en sert pas.
+          Contrairement à <span class="mono">cp</span> et <span class="mono">mv</span>,
+          <span class="mono">rm</span> n’a pas de destination à regarder : il retire, et le nom
+          retiré n’existe plus. Rien ne revient en arrière : un fichier retiré ne se retrouve pas.
         </p>
         <p data-si-essai="p2:faux">
           Pour <span class="mono">rm brouillon.txt</span>, tu avais répondu
@@ -4102,21 +4121,10 @@ $ rm -f site/css/old.css site/css/style.css site/css/tmp.css</pre>
         <p>
           Dans ton atelier, <span class="mono">-f</span> ne supprime que ce message, et
           <span class="mono">rm</span> ne demandait déjà rien. Sans <span class="mono">-f</span>, rm
-          écrit un message pour chaque nom absent, et retire quand même les noms qui existent.
-          <span class="mono">rm -rf</span> réunit <span class="mono">-r</span> et
-          <span class="mono">-f</span>.
+          écrit un message pour chaque nom absent, et retire quand même les noms qui existent. C’est
+          ce qui sert à nettoyer un projet : <span class="mono">-f</span> force le nettoyage d’un
+          nom qui n’existe plus, sans message d’erreur.
         </p>
-        <p>
-          Sans <span class="mono">-f</span>, avec <span class="mono">-r</span> devant, un nom absent
-          fait écrire le même message. Voici la réponse, depuis un dossier qui n’a pas de dossier
-          photos :
-        </p>
-        <pre
-          class="listing"
-          data-lecture="Ligne tapée : rm -r photos. La fenêtre répond : rm: cannot remove &#x27;photos&#x27;: No such file or directory."
-        >
-$ rm -r photos
-rm: cannot remove 'photos': No such file or directory</pre>
       </div>
       <div data-ecran="sudo">
         <p class="accroche">
@@ -4194,11 +4202,12 @@ $ sudo rm /etc/hostname</pre>
           tous les droits. Sans <span class="mono">sudo</span>, <span class="mono">rm</span>
           travaille sous ton compte et se heurte à cette protection ; avec
           <span class="mono">sudo</span>, il travaille en administrateur, et rien ne le retient.
-          <span class="mono">sudo</span> n’ajoute aucune demande de confirmation, puisque
-          <span class="mono">rm</span> n’en pose pas : il change seulement ce que le compte a le
-          droit d’atteindre, pas ce que <span class="mono">rm</span> fait à l’arborescence. Dans
-          l’atelier, il ne change rien : tes dossiers sont à toi, et ton compte a déjà le droit de
-          les retirer.
+          <span class="mono">sudo</span> peut demander ton mot de passe : ce n’est pas une
+          confirmation de ce que <span class="mono">rm</span> va faire, et
+          <span class="mono">rm</span>, lui, ne demande rien. <span class="mono">sudo</span> change
+          seulement ce que le compte a le droit d’atteindre, pas ce que
+          <span class="mono">rm</span> fait à l’arborescence. Dans l’atelier, il ne change rien :
+          tes dossiers sont à toi, et ton compte a déjà le droit de les retirer.
         </p>
       </div>
       <div data-ecran="Lire avant de lancer">
@@ -4450,8 +4459,8 @@ C:\atelier&gt; rmdir /s site\css2</pre>
               d’un tiret.
             </li>
             <li>
-              Les lignes de la fenêtre d’Ubuntu s’écrivent en <strong>bash</strong> ; le Terminal
-              d’un Mac lit les mêmes lignes pour tout ce bloc.
+              <strong>bash</strong> est le nom du shell d’Ubuntu ; le Terminal d’un Mac lit les
+              mêmes lignes pour tout ce bloc.
             </li>
             <li>
               Un chemin comme <span class="mono">site\css</span> désigne le dossier css, dans le
@@ -4524,10 +4533,8 @@ C:\atelier&gt; rmdir /s site\css2</pre>
           </p>
         </div>
         <p>
-          Comme <span class="mono">mv</span>, <span class="mono">move</span> range la source dans
-          une destination qui est un dossier qui existe :
-          <span class="mono">move site\accueil.html site\css</span> range accueil.html dans css.
-          Sous Cmd aussi, le nom de la destination décide du résultat.
+          Les deux lignes se lisent de la même façon, morceau après morceau : seuls le nom de la
+          commande et les barres des chemins changent.
         </p>
       </div>
       <div data-ecran="Trois différences">
@@ -4550,9 +4557,9 @@ C:\atelier&gt; rmdir /s site\css2</pre>
               dans bash) désigne le dossier css2, dans le dossier site.
             </li>
             <li>
-              Cmd est l’Invite de commandes de Windows ; bash est l’écriture des lignes d’Ubuntu,
-              que le Terminal d’un Mac lit. Cmd écrit les chemins avec l’antislash \ au lieu de la
-              barre /.
+              Cmd est l’Invite de commandes de Windows ; bash est le nom du shell d’Ubuntu, dont le
+              Terminal d’un Mac lit les lignes. Cmd écrit les chemins avec l’antislash \ au lieu de
+              la barre /.
             </li>
           </ul>
         </div>
@@ -4566,7 +4573,7 @@ C:\atelier&gt; rmdir /s site\css2</pre>
           data-aide2="Pour chaque morceau de la ligne de Cmd, qu’est-ce qui diffère de son vis-à-vis dans la ligne de bash : le mot entier, ou seulement un signe ?"
           data-aide3="Prends les morceaux dans l’ordre de la ligne de Cmd et, pour chacun, cherche son vis-à-vis dans la ligne de bash."
           data-explication="rmdir remplace rm, /s remplace -r, et l’antislash remplace la barre : trois différences, une par morceau."
-          data-variante-enonce="Pour lire : Cmd est l’Invite de commandes de Windows, bash l’écriture d’Ubuntu. site/css désigne css, dans site. La ligne de bash est mv site/css site/styles, celle de Cmd, move site\css site\styles. Dis ce qui a changé dans chaque morceau de la ligne de Cmd."
+          data-variante-enonce="Pour lire : Cmd est l’Invite de commandes de Windows, bash le nom du shell d’Ubuntu ; site/css désigne css, dans site. mv site/css site/styles s’écrit move site\css site\styles. Dis ce qui a changé dans chaque morceau de la ligne de Cmd."
           data-variante-colonnes="nom=Le nom de la commande|sep=Le séparateur de chemin"
           data-variante-reponse="a=nom,b=sep,c=sep"
           data-variante-elements="a~move|b~site\css|c~site\styles"
@@ -4733,7 +4740,7 @@ C:\atelier&gt; rmdir /s site\css2</pre>
         data-widget="classer"
         data-verifie
         data-colonnes="cree=Réussit et crée un élément|date=Réussit sans rien créer|echec=Échoue, avec un message"
-        data-reponse="a=cree,b=cree,c=date,d=echec,e=echec"
+        data-reponse="a=cree,b=date,c=echec,d=echec"
         data-aide1="Pour chaque ligne, cherche dans l’état de départ le dossier où elle veut créer, puis le nom qu’elle veut créer."
         data-aide2="Pour chaque ligne, que se passe-t-il quand le nom à créer est déjà là, et quand le dossier du chemin est absent ?"
         data-aide3="Pour chaque ligne, écris le dossier du chemin et le nom à créer, puis cherche les deux dans l’état de départ : le dossier existe-t-il, le nom y est-il déjà ?"
@@ -4743,7 +4750,9 @@ C:\atelier&gt; rmdir /s site\css2</pre>
           <ul>
             <li>
               <span class="mono">mkdir</span> crée un dossier et <span class="mono">touch</span> un
-              fichier vide, du nom qu’on lui donne.
+              fichier vide, du nom qu’on lui donne. Quand le nom existe déjà,
+              <span class="mono">touch</span> réussit sans rien changer et
+              <span class="mono">mkdir</span> échoue avec un message.
             </li>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
@@ -4768,7 +4777,7 @@ site/css:
 style.css</pre>
         <p class="q">
           Yasmine part de l’état ci-dessus, dans atelier. Elle a déjà classé la première ligne : dis
-          ce que fait chacune des quatre autres, appliquée à cet état.
+          ce que fait chacune des trois autres, appliquée à cet état.
         </p>
         <ul class="a-classer">
           <li data-element="a" data-donne>
@@ -4780,24 +4789,18 @@ style.css</pre>
           </li>
           <li
             data-element="b"
-            data-retour="Le dossier site/css existe-t-il, et notes.txt s’y trouve-t-il déjà ?"
-          >
-            <span class="mono">touch site/css/notes.txt</span>
-          </li>
-          <li
-            data-element="c"
             data-retour="index.html est-il déjà dans site ? Que devient un fichier qui existe quand touch le reprend ?"
           >
             <span class="mono">touch site/index.html</span>
           </li>
           <li
-            data-element="d"
+            data-element="c"
             data-retour="scripts existe-t-il dans site ? Que peut contenir un dossier qui n’existe pas ?"
           >
             <span class="mono">touch site/scripts/app.js</span>
           </li>
           <li
-            data-element="e"
+            data-element="d"
             data-retour="css est-il déjà dans site ? Que devient un nom qui existe quand mkdir le reprend ?"
           >
             <span class="mono">mkdir site/css</span>
@@ -4811,7 +4814,7 @@ style.css</pre>
         data-widget="classer"
         data-verifie
         data-colonnes="cree=Réussit et crée un élément|date=Réussit sans rien créer|echec=Échoue, avec un message"
-        data-reponse="a=cree,b=cree,c=date,d=echec,e=echec"
+        data-reponse="a=cree,b=date,c=echec,d=echec"
         data-aide1="Pour chaque ligne, cherche dans l’état de départ le dossier où elle veut créer, puis le nom qu’elle veut créer."
         data-aide2="Pour chaque ligne, que se passe-t-il quand le nom à créer est déjà là, et quand le dossier du chemin est absent ?"
         data-aide3="Pour chaque ligne, écris le dossier du chemin et le nom à créer, puis cherche les deux dans l’état de départ : le dossier existe-t-il, le nom y est-il déjà ?"
@@ -4821,7 +4824,9 @@ style.css</pre>
           <ul>
             <li>
               <span class="mono">mkdir</span> crée un dossier et <span class="mono">touch</span> un
-              fichier vide, du nom qu’on lui donne.
+              fichier vide, du nom qu’on lui donne. Quand le nom existe déjà,
+              <span class="mono">touch</span> réussit sans rien changer et
+              <span class="mono">mkdir</span> échoue avec un message.
             </li>
             <li>
               <span class="mono">ls -R</span> écrit un titre par dossier, puis ses noms ; un dossier
@@ -4846,7 +4851,7 @@ cours/js:
 app.js</pre>
         <p class="q">
           Farid part de l’état ci-dessus, dans atelier. Il a déjà classé la première ligne : dis ce
-          que fait chacune des quatre autres, appliquée à cet état.
+          que fait chacune des trois autres, appliquée à cet état.
         </p>
         <ul class="a-classer">
           <li data-element="a" data-donne>
@@ -4858,24 +4863,18 @@ app.js</pre>
           </li>
           <li
             data-element="b"
-            data-retour="Le dossier cours/js existe-t-il, et main.js s’y trouve-t-il déjà ?"
-          >
-            <span class="mono">touch cours/js/main.js</span>
-          </li>
-          <li
-            data-element="c"
             data-retour="plan.txt est-il déjà dans cours ? Que devient un fichier qui existe quand touch le reprend ?"
           >
             <span class="mono">touch cours/plan.txt</span>
           </li>
           <li
-            data-element="d"
+            data-element="c"
             data-retour="img existe-t-il dans cours ? Que peut contenir un dossier qui n’existe pas ?"
           >
             <span class="mono">touch cours/img/logo.png</span>
           </li>
           <li
-            data-element="e"
+            data-element="d"
             data-retour="js est-il déjà dans cours ? Que devient un nom qui existe quand mkdir le reprend ?"
           >
             <span class="mono">mkdir cours/js</span>
@@ -5873,7 +5872,7 @@ docs  projet  readme.txt</pre>
               <span class="mono">move</span> pour <span class="mono">mv</span> et
               <span class="mono">del</span> pour <span class="mono">rm</span> sur un fichier.
             </li>
-            <li>Les lignes de la fenêtre d’Ubuntu s’écrivent en bash.</li>
+            <li>bash est le nom du shell d’Ubuntu.</li>
             <li>
               Un chemin comme <span class="mono">site/css</span> (<span class="mono">site\css</span>
               pour Cmd) désigne le dossier css, dans le dossier site.
@@ -5936,9 +5935,7 @@ docs  projet  readme.txt</pre>
               <span class="mono">move</span> pour <span class="mono">mv</span> et
               <span class="mono">del</span> pour <span class="mono">rm</span> sur un fichier.
             </li>
-            <li>
-              Le Terminal d’un Mac lit les mêmes lignes que la fenêtre d’Ubuntu, écrites en bash.
-            </li>
+            <li>bash est le nom du shell d’Ubuntu, dont le Terminal d’un Mac lit les lignes.</li>
             <li>
               Un chemin comme <span class="mono">site/css</span> (<span class="mono">site\css</span>
               pour Cmd) désigne le dossier css, dans le dossier site.
@@ -6012,8 +6009,8 @@ docs  projet  readme.txt</pre>
               pour Cmd) désigne le dossier js, dans le dossier docs.
             </li>
             <li>
-              Cmd est l’Invite de commandes de Windows ; bash est l’écriture des lignes d’Ubuntu,
-              que le Terminal d’un Mac lit.
+              Cmd est l’Invite de commandes de Windows ; bash est le nom du shell d’Ubuntu, dont le
+              Terminal d’un Mac lit les lignes.
             </li>
           </ul>
         </div>
@@ -6061,8 +6058,8 @@ docs  projet  readme.txt</pre>
               pour Cmd) désigne le dossier js, dans le dossier docs.
             </li>
             <li>
-              Cmd est l’Invite de commandes de Windows ; bash est l’écriture des lignes d’Ubuntu,
-              que le Terminal d’un Mac lit.
+              Cmd est l’Invite de commandes de Windows ; bash est le nom du shell d’Ubuntu, dont le
+              Terminal d’un Mac lit les lignes.
             </li>
           </ul>
         </div>
@@ -6107,8 +6104,8 @@ docs  projet  readme.txt</pre>
               pour Cmd) désigne le dossier js, dans le dossier docs.
             </li>
             <li>
-              Cmd est l’Invite de commandes de Windows ; bash est l’écriture des lignes d’Ubuntu,
-              que le Terminal d’un Mac lit.
+              Cmd est l’Invite de commandes de Windows ; bash est le nom du shell d’Ubuntu, dont le
+              Terminal d’un Mac lit les lignes.
             </li>
           </ul>
         </div>
@@ -6148,8 +6145,8 @@ docs  projet  readme.txt</pre>
               pour Cmd) désigne le dossier js, dans le dossier docs.
             </li>
             <li>
-              Cmd est l’Invite de commandes de Windows ; bash est l’écriture des lignes d’Ubuntu,
-              que le Terminal d’un Mac lit.
+              Cmd est l’Invite de commandes de Windows ; bash est le nom du shell d’Ubuntu, dont le
+              Terminal d’un Mac lit les lignes.
             </li>
           </ul>
         </div>
@@ -6188,8 +6185,8 @@ docs  projet  readme.txt</pre>
               pour Cmd) désigne le dossier js, dans le dossier docs.
             </li>
             <li>
-              Cmd est l’Invite de commandes de Windows ; bash est l’écriture des lignes d’Ubuntu,
-              que le Terminal d’un Mac lit.
+              Cmd est l’Invite de commandes de Windows ; bash est le nom du shell d’Ubuntu, dont le
+              Terminal d’un Mac lit les lignes.
             </li>
           </ul>
         </div>
@@ -6227,8 +6224,8 @@ docs  projet  readme.txt</pre>
               pour Cmd) désigne le dossier js, dans le dossier docs.
             </li>
             <li>
-              Cmd est l’Invite de commandes de Windows ; bash est l’écriture des lignes d’Ubuntu,
-              que le Terminal d’un Mac lit.
+              Cmd est l’Invite de commandes de Windows ; bash est le nom du shell d’Ubuntu, dont le
+              Terminal d’un Mac lit les lignes.
             </li>
           </ul>
         </div>
@@ -6816,9 +6813,9 @@ logo.png</pre>
         <p class="discret">Ce que tu fais :</p>
         <ol>
           <li>
-            Tape <span class="mono">cp -Rv site sauvegarde</span>, vérifie avec
-            <span class="mono">ls -R sauvegarde</span>, et note le temps que tu as mis, au
-            chronomètre.
+            Fais la sauvegarde du dossier site sous le nom sauvegarde, avec une ligne par élément
+            copié, vérifie avec <span class="mono">ls -R sauvegarde</span>, et note le temps que tu
+            as mis, au chronomètre.
           </li>
         </ol>
         <p class="discret">Le temps de la sauvegarde, tu le notes seulement, sans limite.</p>
@@ -6834,8 +6831,9 @@ logo.png</pre>
             <details data-cran="3">
               <summary>Une partie de la solution</summary>
               <p>
-                Si ls -R sauvegarde montre un dossier site dans sauvegarde, sauvegarde existait déjà
-                : retire-la avec rm -r sauvegarde, puis refais la ligne.
+                La ligne est cp -Rv site sauvegarde. Si ls -R sauvegarde montre un dossier site dans
+                sauvegarde, sauvegarde existait déjà : retire-la avec rm -r sauvegarde, puis refais
+                la ligne.
               </p>
             </details>
           </details>
@@ -6846,13 +6844,15 @@ logo.png</pre>
       <p class="accroche">
         Yasmine ne tape plus pour savoir : elle prédit l’état de son dossier avant d’appuyer sur
         Entrée. Répétée, cette prédiction devient une aisance, un geste qui vient sans chercher :
-        dix lignes justes sur dix. À toi de faire comme elle, sur un état affiché.
+        toutes tes réponses justes, dans le temps affiché. À toi de faire comme elle, sur un état
+        affiché.
       </p>
       <p>
-        <strong>Ce que tu fais</strong> : pour chaque ligne, tu lis la ligne tapée, puis tu écris
-        les noms que le <span class="mono">ls</span> affiché sous elle montrerait (par exemple
-        <span class="mono">ls copie</span>), en partant de l’état de départ ci-dessous. Tu les
-        sépares par des espaces, dans l’ordre que tu veux. Si le dossier est vide, écris
+        <strong>Ce que tu vois</strong> : une ligne tapée dans atelier, puis la question « que
+        répond <span class="mono">ls</span> ensuite ? », avec le dossier à regarder.
+        <strong>Ce que tu fais</strong> : tu écris les noms que ce <span class="mono">ls</span>
+        afficherait, en partant de l’état de départ ci-dessous. Tu les sépares par des espaces, dans
+        l’ordre que tu veux ; si le dossier est vide, écris
         <span class="mono">rien</span>.
       </p>
       <p class="discret">
@@ -6913,12 +6913,12 @@ logo.png</pre>
           <p class="discret">La situation, pour lire :</p>
           <ul>
             <li>
-              Yasmine est dans atelier, qui contient site et sauvegarde. sauvegarde est un dossier,
-              comme ls le montre :
-            </li>
-            <li>
               Elle tape <span class="mono">mv site sauvegarde</span> : <span class="mono">mv</span>
               déplace sa source, site, vers sa destination, sauvegarde.
+            </li>
+            <li>
+              Yasmine est dans atelier, qui contient site et sauvegarde. sauvegarde est un dossier,
+              comme ls le montre :
             </li>
           </ul>
         </div>
@@ -6987,7 +6987,6 @@ css  img  index.html</pre>
               <span class="mono">mv</span> source destination : la source est le premier nom, la
               destination le second.
             </li>
-            <li>Le shell est le programme de la fenêtre qui lit la ligne et la lance.</li>
             <li>
               Un chemin absolu, comme <span class="mono">/home/noah/promo</span>, commence par une
               barre et nomme un à un les dossiers qui mènent à un dossier, depuis la racine : le
@@ -7024,7 +7023,7 @@ contact.html  index.html</pre>
               Noah est dans /home/noah/promo, qui contient archive et index.html ; archive contient
               contact.html et index.html ; il tape mv index.html archive
             </li>
-            <li class="fleche">Que lit le shell dans cette ligne ?</li>
+            <li class="fleche">Que lit la fenêtre dans cette ligne ?</li>
             <li class="boite">Que valent la source et la destination avant la ligne ?</li>
             <li class="fleche">
               Qu’est-ce qui, avant la ligne, détermine ce que mv fait de index.html ?
@@ -7040,13 +7039,13 @@ contact.html  index.html</pre>
           <div class="modele" hidden>
             <div
               class="chaine"
-              data-lecture="Le schéma, pour Noah. Noah est dans /home/noah/promo, qui contient archive et index.html ; archive contient contact.html et index.html ; il tape mv index.html archive. Le shell lit la commande mv, la source index.html et la destination archive. Avant la ligne, archive existe et c’est un dossier : le nom de la destination décide que index.html s’y range. Archive contient déjà un index.html : il est remplacé. Après la ligne, promo ne contient plus que archive, et archive contient contact.html et index.html, celui qui était dans promo."
+              data-lecture="Le schéma, pour Noah. Noah est dans /home/noah/promo, qui contient archive et index.html ; archive contient contact.html et index.html ; il tape mv index.html archive. La fenêtre lit la commande mv, la source index.html et la destination archive. Avant la ligne, archive existe et c’est un dossier : le nom de la destination décide que index.html s’y range. Archive contient déjà un index.html : il est remplacé. Après la ligne, promo ne contient plus que archive, et archive contient contact.html et index.html, celui qui était dans promo."
             >
               <span class="boite"
                 >Noah est dans /home/noah/promo, qui contient archive et index.html ; archive
                 contient contact.html et index.html ; il tape mv index.html archive</span
               ><span class="fleche"
-                >le shell lit la commande mv, la source index.html et la destination archive</span
+                >la fenêtre lit la commande mv, la source index.html et la destination archive</span
               ><span class="boite"
                 >avant la ligne, archive existe et c’est un dossier : le nom de la destination
                 décide que index.html s’y range ; un index.html y est déjà, il sera remplacé</span
@@ -7160,16 +7159,16 @@ contact.html  index.html</pre>
           quand même les noms qui existent est dit après la réponse. Dans « sudo », l’encadré tient
           en deux phrases (le mot, avec « un compte à part », et « protégé », avec /etc/hostname
           pour cas) ; que l’administrateur est le compte qui a tous les droits, que les fichiers et
-          les dossiers du système lui appartiennent, que sudo retire cette protection sans rien
-          demander de plus, et ce qu’il change dans l’atelier (rien), tiennent en trois phrases dans
-          le texte qui suit la réponse : l’écran n’a qu’une notion, le compte sous lequel la ligne
-          travaille. La phrase qui relie le compte, le dossier où l’on est et les chemins ouvre le
-          texte de « Lire avant de lancer ». La même définition de « protégé » (« un compte
-          ordinaire n’a pas le droit de le modifier ») est écrite dans la variante de cet exercice
-          et dans la carte B10-K5, sans renvoi à /etc/hostname. Tout exercice du cours dont
-          l’apprenant a vu la solution, prédiction comprise, lui fait refaire sans regarder un autre
-          cas écrit dans la fiche (data-variante-…), puis expliquer ; seuls les essais du prétest en
-          sont dispensés.
+          les dossiers du système lui appartiennent, que sudo retire cette protection (il peut
+          demander ton mot de passe, ce qui n’est pas une confirmation de ce que rm fait), et ce
+          qu’il change dans l’atelier (rien), tiennent en trois phrases dans le texte qui suit la
+          réponse : l’écran n’a qu’une notion, le compte sous lequel la ligne travaille. La phrase
+          qui relie le compte, le dossier où l’on est et les chemins ouvre le texte de « Lire avant
+          de lancer ». La même définition de « protégé » (« un compte ordinaire n’a pas le droit de
+          le modifier ») est écrite dans la variante de cet exercice et dans la carte B10-K5, sans
+          renvoi à /etc/hostname. Tout exercice du cours dont l’apprenant a vu la solution,
+          prédiction comprise, lui fait refaire sans regarder un autre cas écrit dans la fiche
+          (data-variante-…), puis expliquer ; seuls les essais du prétest en sont dispensés.
         </li>
         <li>
           Le gabarit mélange les options de chaque choix à l’affichage. Seuls les essais du prétest
@@ -7237,9 +7236,9 @@ contact.html  index.html</pre>
         <li>
           Saisies hors aisance : 4 essais + 23 exercices du cours + 2 paris + 1 schéma + 14 items de
           pratique + 5 questions de restitution = 49, sans compter les autres cas refaits après une
-          solution vue ; six de ces saisies sont des classements ou des appariements de 2 à 4 lignes
-          (PR1-2, PR1-4, PR1-8, PR1-11, PR1-12 et « Trois différences »), soit 18 réponses pour 6
-          saisies. Aisance : deux séries de dix lignes. Atelier : dix critères de constat.
+          solution vue ; six de ces saisies sont des classements ou des appariements de 2 à 3 lignes
+          à remplir (PR1-2, PR1-4, PR1-8, PR1-11, PR1-12 et « Trois différences »), soit 17 réponses
+          pour 6 saisies. Aisance : deux séries de dix lignes. Atelier : dix critères de constat.
         </li>
         <li>
           Pratique : quatorze items, chacun avec un autre cas ; trois (PR1-6, PR1-9, PR1-10)
@@ -7276,11 +7275,11 @@ contact.html  index.html</pre>
           trois par question de restitution et par série d’aisance ; l’atelier compte sa lecture et
           ses minutes de frappe réelles, 5 pour le dossier, 10 pour l’arborescence, 5 pour la
           sauvegarde deux fois, 20 pour les dix commandes, 5 le second jour avec la sauvegarde
-          chronométrée, soit 45). Modéliser : 8 900 mots, 74 minutes de lecture, et 30 d’exercices
-          (4 essais, 23 exercices, 2 paris, 1 schéma), soit 104 minutes. Faire : pratique 1 831
+          chronométrée, soit 45). Modéliser : 8 908 mots, 74 minutes de lecture, et 30 d’exercices
+          (4 essais, 23 exercices, 2 paris, 1 schéma), soit 104 minutes. Faire : pratique 1 851
           mots, 15 minutes, plus 14 items à 2 minutes et 3 explications à 2 minutes de plus, soit 49
-          ; atelier 2 639 mots, 22 minutes, plus 45 de frappe, soit 67 ; aisance 304 mots, 3
-          minutes, plus 2 séries à 3 minutes, soit 9 ; restitution 410 mots, 3 minutes, plus 5
+          ; atelier 2 657 mots, 22 minutes, plus 45 de frappe, soit 67 ; aisance 317 mots, 3
+          minutes, plus 2 séries à 3 minutes, soit 9 ; restitution 414 mots, 3 minutes, plus 5
           questions à 3 minutes, soit 18 ; au total 143 minutes. Faire dépasse modéliser (143 contre
           104 minutes) : la pratique, au sens de la méthode (pratique, atelier, aisance,
           restitution), prend la plus grande part du temps.
@@ -7322,7 +7321,7 @@ contact.html  index.html</pre>
         "schema": 2,
         "bloc": "B10",
         "type": "procedures",
-        "version": 21,
+        "version": 22,
         "titre": "Manipuler fichiers et dossiers : créer, copier, déplacer, supprimer",
         "titre_court": "Manipuler fichiers et dossiers",
         "objectif": "Dans un dossier d'atelier, réaliser sans `cd` une arborescence imposée de 3 dossiers et 3 fichiers vides avec `mkdir` (`-p`) et `touch`, la vérifier avec `ls -R`, la sauvegarder avec `cp -Rv`, puis prédire par écrit l'état de l'arborescence après 10 commandes `cp`, `mv`, `rm` (destination existante ou non, écrasement sans confirmation, échec qui ne change rien) et les exécuter avec 10 justes ; dire que `rm` supprime sans corbeille ni confirmation, et lire ce que détruit une ligne `rm -r` ou `rm -rf`, avec ou sans `sudo`, avant de l'exécuter ; donner l'équivalent Cmd de `copy`, `move`, `del` et `rmdir /s` et reconnaître trois différences entre Cmd et bash (séparateur de chemin, option, nom de commande)",
@@ -7539,7 +7538,7 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-R4",
-            "question": "Pour lire : Cmd, l’Invite de commandes de Windows, écrit les chemins avec l’antislash, bash, l’écriture d’Ubuntu, avec la barre / ; css\\vieux est vieux, dans css. Une page d’Internet donne, pour Cmd, la ligne move css\\vieux css\\neuf. Farid la tape dans le Terminal de son Mac, qui lit du bash. Que se passe-t-il, et quelle ligne tape-t-il à la place ?",
+            "question": "Pour lire : Cmd, l’Invite de commandes de Windows, écrit les chemins avec l’antislash, bash, le nom du shell d’Ubuntu, avec la barre / ; css\\vieux désigne l’élément vieux, dans css. Une page d’Internet donne, pour Cmd, la ligne move css\\vieux css\\neuf. Farid la tape dans le Terminal de son Mac, qui lit du bash. Que se passe-t-il, et quelle ligne tape-t-il à la place ?",
             "attendu": "Le Terminal ne connaît pas move, nom de Cmd : un message dit que la commande est introuvable, et rien n’est déplacé. Il tape l’équivalent de bash, avec le nom mv et la barre pour séparateur : mv css/vieux css/neuf. Déduit de l’étape « Et sous Cmd ? ».",
             "erreurs": ["E4"]
           },
@@ -7659,7 +7658,7 @@ contact.html  index.html</pre>
             "id": "B10-T1",
             "type": "transfert",
             "forme": "trouver_erreur",
-            "consigne": "Pour lire : Cmd, l’Invite de commandes de Windows, écrit les chemins avec l’antislash, bash, l’écriture d’Ubuntu, avec la barre / ; site\\index.html est index.html, dans site. Farid, dans le Terminal de son Mac, tape deux lignes de Cmd : del site\\index.html, puis move site\\pages site\\html. Trouve son erreur, puis écris la ligne de bash pour la première.",
+            "consigne": "Pour lire : Cmd, l’Invite de commandes de Windows, écrit les chemins avec l’antislash, bash, le nom du shell d’Ubuntu, avec la barre / ; site\\index.html est index.html, dans site. Farid, dans le Terminal de son Mac, tape deux lignes de Cmd : del site\\index.html, puis move site\\pages site\\html. Trouve son erreur, puis écris la ligne de bash pour la première.",
             "attendu": "Les lignes sont écrites pour Cmd : le Terminal ne connaît ni del ni move, et rien ne change. L’équivalent de bash de la première est rm site/index.html, avec la barre pour séparateur. L’erreur est de taper dans une fenêtre une ligne écrite pour l’autre. Déduit de l’étape « Et sous Cmd ? ».",
             "erreurs": ["E4"]
           },
@@ -7792,7 +7791,7 @@ contact.html  index.html</pre>
           },
           {
             "id": "B10-K7",
-            "recto": "Pour lire : bash est l’écriture des lignes d’Ubuntu, que le Terminal d’un Mac lit ; Cmd est l’Invite de commandes de Windows ; photos\\ete.jpg est le fichier ete.jpg, dans photos. Une page d’Internet donne, pour Cmd, copy photos\\ete.jpg archives ; Farid veut cp photos/ete.jpg archives dans son Terminal. Qu’est-ce qui change entre les deux lignes ?",
+            "recto": "Pour lire : bash est le nom du shell d’Ubuntu, dont le Terminal d’un Mac lit les lignes ; Cmd est l’Invite de commandes de Windows ; photos\\ete.jpg est le fichier ete.jpg, dans photos. Une page d’Internet donne, pour Cmd, copy photos\\ete.jpg archives ; Farid veut cp photos/ete.jpg archives dans son Terminal. Qu’est-ce qui change entre les deux lignes ?",
             "verso": "Le nom de la commande change (copy devient cp) et le séparateur du chemin aussi (l’antislash devient la barre). Déduit de l’étape « Et sous Cmd ? »."
           },
           {
@@ -8182,7 +8181,7 @@ contact.html  index.html</pre>
           "`/mnt/c`, le Finder, les moyens de récupérer un fichier supprimé : jamais enseignés ni interrogés ; la Corbeille de Windows ou du Mac n’est citée que pour dire que `rm` ne s’en sert pas",
           "Écrire du contenu dans un fichier : les fichiers de l’atelier sont vides, aucune question ni aucune carte n’en met ; seule une clause d’ET6 « Deux pages dans site » dit que le contenu de la destination serait perdu, sans exemple",
           "Taper une ligne de Cmd : le Mac n’en a pas ; les lignes de Cmd se lisent, jamais tapées",
-          "Ce que `del`, `rmdir /s`, `copy` et `move` font de la Corbeille ou d’une confirmation, ce que `del` fait d’un dossier et `copy` des sous-dossiers : jamais dit ni demandé, l’objectif ne demande que leurs noms et trois différences avec bash ; seul le nom de la destination est dit, en ET9 « Les noms de Cmd » (`move` range la source dans un dossier qui existe : « Sous Cmd aussi, le nom de la destination décide du résultat ») et « Trois différences » (« comme avant »), comme phrase de lien avec le modèle, jamais demandé",
+          "Ce que `del`, `rmdir /s`, `copy` et `move` font de la Corbeille ou d’une confirmation, ce que `del` fait d’un dossier et `copy` des sous-dossiers, et ce que Cmd fait d’une destination qui existe ou non : jamais dit ni demandé, l’objectif ne demande que leurs noms et trois différences avec bash ; seule la phrase « Les deux lignes se lisent de la même façon, morceau après morceau » (ET9 « Les noms de Cmd ») relie les deux écritures, sans fait nouveau sur Windows",
           "PowerShell et ses alias ; `xcopy`, `robocopy`, `dir /s` : jamais nommés",
           "Les droits d’un fichier (propriétaire, permissions) et pourquoi `sudo` est nécessaire : jamais enseignés ; la page dit seulement qu’un fichier du système est protégé, qu’un compte ordinaire n’a pas le droit de le modifier, que ces fichiers « appartiennent à l’administrateur » (une façon de dire que seul son compte peut les modifier : ni propriétaire, ni groupe, ni permissions ne sont expliqués ni interrogés) et que `sudo` lance la commande en administrateur",
           "`rm -rf /` et la protection de GNU : nommés nulle part",
