@@ -2063,22 +2063,9 @@
           <p class="discret">Pour lire :</p>
           <ul>
             <li>
-              XAMPP est un paquet : un programme qui installe d’un coup, sur un PC, Apache, PHP, une
-              base de données (MySQL) et phpMyAdmin. Son panneau de contrôle est la fenêtre où l’on
-              démarre et arrête ses programmes ; htdocs est son dossier de pages, où Yasmine rangera
-              ses fichiers.
-            </li>
-            <li>
-              Sous Windows, Yasmine tape ses lignes dans PowerShell, la fenêtre de commandes de
-              Windows, dont l’invite commence par PS : XAMPP est un programme de Windows.
-            </li>
-            <li>
-              Un chemin comme C:\xampp\htdocs\projet\index.php se lit de gauche à droite : le disque
-              C:, des dossiers emboîtés, puis le fichier.
-            </li>
-            <li>
-              Un fichier PHP finit par .php : il contient du code, que le programme PHP sait
-              exécuter.
+              XAMPP est un paquet : un programme qui installe d’un coup, sur un PC, tout ce qu’il
+              faut pour servir une page PHP. Son panneau de contrôle est la fenêtre où l’on démarre
+              et arrête ses programmes.
             </li>
           </ul>
         </div>
@@ -2096,6 +2083,7 @@
                 Elle ouvre le panneau de contrôle de XAMPP et clique sur « Start » à côté d’Apache,
                 puis à côté de MySQL : les deux lignes passent au vert.
               </p>
+              <p class="discret">Apache et MySQL sont deux des programmes que XAMPP installe.</p>
               <figure class="fenetre-editeur">
                 <svg
                   viewBox="0 0 320 130"
@@ -2124,6 +2112,10 @@
                 Elle ouvre PowerShell et tape trois lignes : elle va dans le dossier htdocs de
                 XAMPP, y crée un dossier projet, et entre dedans.
               </p>
+              <p class="discret">
+                PowerShell est la fenêtre de commandes de Windows : son invite commence par PS.
+                htdocs est le dossier de pages de XAMPP.
+              </p>
               <pre
                 class="listing"
                 data-lecture="Lignes tapées dans PowerShell : cd C:\xampp\htdocs, puis mkdir projet, puis cd projet. L’invite finit par le nouveau dossier : C:\xampp\htdocs\projet."
@@ -2140,6 +2132,11 @@ PS C:\xampp\htdocs\projet&gt;</pre>
               <p>
                 Elle ouvre ce dossier dans VS Code, crée le fichier index.php et y écrit une seule
                 ligne.
+              </p>
+              <p class="discret">
+                Un fichier PHP finit par .php : il contient du code, que PHP, un programme de XAMPP,
+                sait exécuter. Son chemin, C:\xampp\htdocs\projet\index.php, se lit de gauche à
+                droite : le disque C:, des dossiers emboîtés, puis le fichier.
               </p>
               <pre
                 class="listing"
@@ -2177,9 +2174,9 @@ PS C:\xampp\htdocs\projet&gt;</pre>
       </div>
       <div data-ecran="Yasmine range une base">
         <p class="accroche">
-          Le formateur lui demande aussi de ranger des données : une base. Toujours dans son
-          navigateur, Yasmine ouvre une autre adresse, et crée sa base en quelques gestes : regarde,
-          tu n’as rien à retenir encore.
+          Le formateur lui demande aussi de ranger des données : une base, où une page PHP viendra
+          lire plus tard. Toujours dans son navigateur, Yasmine ouvre une autre adresse, et crée sa
+          base en quelques gestes : regarde, tu n’as rien à retenir encore.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -2227,8 +2224,7 @@ PS C:\xampp\htdocs\projet&gt;</pre>
             <li>
               <p>
                 Elle clique sur « Nouvelle base de données », écrit le nom
-                <span class="mono">boutique</span>, choisit dans une liste la règle qui trie les
-                textes (l’interclassement), puis clique sur « Créer ».
+                <span class="mono">boutique</span>, puis clique sur « Créer ».
               </p>
             </li>
             <li>
@@ -2294,79 +2290,85 @@ PS C:\xampp\htdocs\projet&gt;</pre>
       </div>
     </template>
     <template data-etape="ET2">
-      <p class="accroche">
-        Comment Yasmine a-t-elle fait marcher sa page, et que fait-elle quand elle ne marche plus ?
-        Ce bloc t’apprend à installer un serveur sur ta machine, à y servir une page, à y ranger une
-        base, et à retrouver ce qui cloche quand rien ne s’affiche.
-      </p>
-      <h3>Où tu es</h3>
-      <p>
-        Ce bloc est le cinquième de la partie « Le poste du développeur ». Dans « Choisir et prendre
-        en main son éditeur », tu as installé ton éditeur et ouvert un dossier comme projet. Ici, tu
-        fais marcher une page sur ta machine : tu es ici. Le bloc suivant te fera ouvrir un compte
-        en ligne pour garder ton travail et accéder à d’autres outils.
-      </p>
-      <h3>À quoi ça sert</h3>
-      <p>
-        Un développeur web essaie ses pages sur sa propre machine avant de les mettre en ligne. Un
-        <strong>serveur local</strong> est un programme de ta machine qui répond aux demandes de ton
-        navigateur, ses <strong>requêtes</strong>, comme le ferait un serveur sur Internet. Savoir
-        où le trajet d’une page casse (rien ne répond, la page est introuvable, le code s’affiche au
-        lieu de la page) évite de perdre une heure à chercher au mauvais endroit.
-      </p>
-      <p>
-        Yasmine, par exemple, sert sa page en quelques gestes, y range une base, et sait ce qu’elle
-        regarde quand elle ne voit plus rien s’afficher.
-      </p>
-      <h3>Le trajet de la page de Yasmine</h3>
-      <p>Voici le trajet d’une page vue d’en haut : chaque programme a son rôle.</p>
-      <div
-        class="chaine"
-        data-lecture="Le serveur de Yasmine en une chaîne de quatre éléments reliés par ce qu’ils se passent. Le navigateur de Yasmine, qui a tapé http://localhost/projet, demande la page à Apache, le serveur de sa machine, qui lit le fichier index.php du dossier projet. Apache passe le code du fichier à PHP, qui exécute le code. PHP rend le texte de la page, que le navigateur reçoit : Bonjour, Yasmine."
-      >
-        <span class="boite">le navigateur de Yasmine, qui a tapé http://localhost/projet</span
-        ><span class="fleche">demande la page à</span
-        ><span class="boite"
-          >Apache, le serveur de sa machine, qui lit le fichier index.php du dossier projet</span
-        ><span class="fleche">passe le code du fichier à</span
-        ><span class="boite">PHP, qui exécute le code</span
-        ><span class="fleche">rend le texte de la page, que le navigateur reçoit</span
-        ><span class="boite">la page du navigateur : Bonjour, Yasmine</span>
+      <div data-ecran="Où tu es">
+        <p class="accroche">
+          Comment Yasmine a-t-elle fait marcher sa page, et que fait-elle quand elle ne marche plus
+          ? Ce bloc t’apprend à installer un serveur sur ta machine, à y servir une page, à y ranger
+          une base, et à retrouver ce qui cloche quand rien ne s’affiche.
+        </p>
+        <h3>Où tu es</h3>
+        <p>
+          Ce bloc est le cinquième de la partie « Le poste du développeur ». Dans « Choisir et
+          prendre en main son éditeur », tu as installé ton éditeur et ouvert un dossier comme
+          projet. Ici, tu fais marcher une page sur ta machine : tu es ici. Le bloc suivant te fera
+          ouvrir un compte en ligne pour garder ton travail et accéder à d’autres outils.
+        </p>
+        <h3>À quoi ça sert</h3>
+        <p>
+          Un développeur web essaie ses pages sur sa propre machine avant de les mettre en ligne. Un
+          <strong>serveur local</strong> est un programme de ta machine qui répond aux demandes de
+          ton navigateur, ses <strong>requêtes</strong>, comme le ferait un serveur sur Internet.
+          Savoir où le trajet d’une page casse (rien ne répond, la page est introuvable, le code
+          s’affiche au lieu de la page) évite de perdre une heure à chercher au mauvais endroit.
+        </p>
+        <p>
+          Yasmine, par exemple, sert sa page en quelques gestes, y range une base, et sait ce
+          qu’elle regarde quand elle ne voit plus rien s’afficher.
+        </p>
+        <h3>À la fin, tu sauras</h3>
+        <ul>
+          <li>
+            installer sur ta machine le serveur de ton système et y afficher une page, comme Yasmine
+            ;
+          </li>
+          <li>
+            dire quel programme fait quoi quand une page s’affiche, et pourquoi un fichier PHP
+            ouvert par double-clic montre son code au lieu de la page ;
+          </li>
+          <li>créer une base de données et lire la version de PHP dans ton terminal ;</li>
+          <li>
+            retrouver la cause de trois pannes : rien ne répond, la page est introuvable, le serveur
+            ne démarre pas ;
+          </li>
+          <li>dire pourquoi on ne met pas ce serveur tel quel sur Internet.</li>
+        </ul>
+        <p class="discret">
+          Ce bloc n’enseigne pas le langage PHP : tu écris seulement une ligne minimale, qui affiche
+          un texte. Il te faudra ton ordinateur, ton éditeur, une connexion à Internet pour
+          télécharger le paquet et le droit d’installer un programme sur ta machine.
+        </p>
       </div>
-      <p class="discret">
-        Ce schéma montre un seul trajet, celui d’une page servie par Apache : il ne dit pas encore
-        comment chaque pièce se règle ni ce qui se passe quand une pièce manque.
-      </p>
-      <h3>Les mots d’une adresse</h3>
-      <p>
-        Une adresse comme <span class="mono">http://localhost:8080/projet</span> se lit en trois
-        parties : l’hôte, <span class="mono">localhost</span>, le nom de la machine à qui le
-        navigateur envoie sa demande ; le <strong>port</strong>, <span class="mono">8080</span>, le
-        numéro de la porte par laquelle un programme de cette machine reçoit les demandes ; le
-        chemin, <span class="mono">/projet</span>. Un programme qui attend les demandes sur un port
-        <strong>écoute</strong> sur ce port. La demande du navigateur est une
-        <strong>requête HTTP</strong> (HTTP est la langue du Web), et la réponse d’un serveur porte
-        un code, comme 404, « page introuvable ».
-      </p>
-      <h3>À la fin, tu sauras</h3>
-      <ul>
-        <li>
-          installer le serveur de ton système (XAMPP, MAMP ou XAMPP pour Linux), le démarrer et
-          servir un index.php à l’adresse localhost/projet ;
-        </li>
-        <li>
-          dire qui fait quoi entre le navigateur, Apache, PHP et la base de données, et pourquoi un
-          fichier PHP ouvert par double-clic affiche son code ;
-        </li>
-        <li>créer une base dans phpMyAdmin et lancer php -v dans ton terminal ;</li>
-        <li>diagnostiquer trois pannes : Apache arrêté, port 80 occupé, mauvais dossier ;</li>
-        <li>dire pourquoi on ne met pas XAMPP ou MAMP sur un serveur public.</li>
-      </ul>
-      <p class="discret">
-        Ce bloc n’enseigne pas le langage PHP : tu écris seulement une ligne minimale, qui affiche
-        un texte. Il te faudra ton ordinateur, ton éditeur, une connexion à Internet pour
-        télécharger le paquet et le droit d’installer un programme sur ta machine.
-      </p>
+      <div data-ecran="Le trajet d’une page">
+        <h3>Le trajet de la page de Yasmine</h3>
+        <p>Voici le trajet d’une page vue d’en haut : chaque programme a son rôle.</p>
+        <div
+          class="chaine"
+          data-lecture="Le serveur de Yasmine en une chaîne de quatre éléments reliés par ce qu’ils se passent. Le navigateur de Yasmine, qui a tapé http://localhost/projet, demande la page à Apache, le serveur de sa machine, qui lit le fichier index.php du dossier projet. Apache passe le code du fichier à PHP, qui exécute le code. PHP rend le texte de la page, que le navigateur reçoit : Bonjour, Yasmine."
+        >
+          <span class="boite">le navigateur de Yasmine, qui a tapé http://localhost/projet</span
+          ><span class="fleche">demande la page à</span
+          ><span class="boite"
+            >Apache, le serveur de sa machine, qui lit le fichier index.php du dossier projet</span
+          ><span class="fleche">passe le code du fichier à</span
+          ><span class="boite">PHP, qui exécute le code</span
+          ><span class="fleche">rend le texte de la page, que le navigateur reçoit</span
+          ><span class="boite">la page du navigateur : Bonjour, Yasmine</span>
+        </div>
+        <p class="discret">
+          Ce schéma montre un seul trajet, celui d’une page servie par Apache : il ne dit pas encore
+          comment chaque pièce se règle ni ce qui se passe quand une pièce manque.
+        </p>
+        <h3>Les mots d’une adresse</h3>
+        <p>
+          Dans l’adresse <span class="mono">http://localhost/projet</span>,
+          <span class="mono">localhost</span> est l’<strong>hôte</strong> : le nom de la machine à
+          qui le navigateur envoie sa demande.
+        </p>
+        <p>
+          Le <strong>chemin</strong>, <span class="mono">/projet</span>, dit à cette machine ce
+          qu’on lui demande.
+        </p>
+      </div>
     </template>
     <template data-etape="ET3">
       <div data-ecran="Une base pour les clients">
@@ -2423,7 +2425,7 @@ PS C:\xampp\htdocs\projet&gt;</pre>
           data-melanger="non"
           data-id="p2"
           data-reponse="non"
-          data-explication="XAMPP est réglé pour la commodité d’un poste de développement. Un serveur ouvert à Internet se configure autrement."
+          data-explication="XAMPP est réglé pour la commodité d’un poste de développement, pas pour un serveur ouvert à Internet."
         >
           <p>
             Yasmine a fini son site sur son PC. Farid lui dit : « Copie tout XAMPP sur le serveur du
@@ -2527,7 +2529,7 @@ http://localhost</pre>
           data-aide2="Faut-il chercher une machine lointaine pour joindre celle sur laquelle on est ?"
           data-aide3="Écris sur quelle machine Apache a été démarré, puis demande-toi vers quelle machine part une requête qui vise ce nom."
           data-explication="localhost est le nom de la machine sur laquelle on est : la requête reste sur le PC de Yasmine, où Apache tourne."
-          data-variante-enonce="Pour lire : 127.0.0.1 est une adresse qui désigne la machine sur laquelle on est, comme le nom localhost. Noah, sous Linux, a démarré Apache sur son PC. Il tape http://127.0.0.1/ dans son navigateur. À qui le navigateur envoie-t-il sa requête ?"
+          data-variante-enonce="Pour lire : 127.0.0.1 est une adresse qui désigne la machine sur laquelle on est, comme le nom localhost. Noah, sous Linux, a démarré Apache sur son PC. Il tape http://127.0.0.1/ dans son navigateur. À qui le navigateur envoie-t-il sa demande ?"
           data-variante-reponse="moi"
           data-variante-options="moi=À la machine de Noah elle-même.|lointain=À un site nommé 127.0.0.1, quelque part sur Internet.|box=À la box de Noah, qui répond à sa place."
           data-variante-retours="lointain=Une adresse qui désigne la machine sur laquelle on est mène-t-elle vers Internet ?|box=Sur quelle machine Apache a-t-il été démarré ?"
@@ -2545,8 +2547,8 @@ http://localhost</pre>
               </li>
               <li>
                 Un serveur web est un programme qui répond aux requêtes HTTP d’un navigateur (une
-                requête HTTP est la demande d’une page, écrite dans la langue du Web) ; Apache est
-                un serveur web.
+                requête HTTP est la demande d’une page, faite selon HTTP, la forme que les
+                navigateurs et les serveurs web ont convenue) ; Apache est un serveur web.
               </li>
             </ul>
           </div>
@@ -2567,7 +2569,8 @@ http://localhost</pre>
         <p>
           localhost est le nom de ta propre machine, que l’on peut aussi écrire par son adresse
           127.0.0.1 : la requête ne quitte pas ton PC. Apache tourne sur ton PC et répond comme un
-          serveur sur Internet : un tel serveur s’appelle un <strong>serveur local</strong>.
+          serveur sur Internet, mais il ne sert que ta machine : un tel serveur s’appelle un
+          <strong>serveur local</strong>.
         </p>
       </div>
       <div data-ecran="Le port d’Apache">
@@ -2585,7 +2588,7 @@ http://localhost</pre>
           data-aide2="Où s’écrit le port dans l’adresse, par rapport au nom de la machine ?"
           data-aide3="Écris le nom de la machine sur laquelle Farid est, puis ajoute son port là où l’adresse l’écrit."
           data-explication="Farid vise sa propre machine, donc localhost, et le port d’Apache s’écrit après deux-points : http://localhost:8888/."
-          data-variante-enonce="Pour lire : sans port écrit, http utilise le 80 ; un port s’écrit après deux-points. Noah lit dans la barre d’adresse de son voisin : http://localhost:8080/projet. Sur quel port le navigateur de ce voisin a-t-il envoyé sa requête ?"
+          data-variante-enonce="Pour lire : sans port écrit, http utilise le 80 ; un port s’écrit après deux-points. Noah lit dans la barre d’adresse de son voisin : http://localhost:8080/projet. Sur quel port le navigateur de ce voisin a-t-il envoyé sa demande ?"
           data-variante-reponse="p8080"
           data-variante-options="p8080=Le port 8080.|p80=Le port 80.|projet=Le port projet."
           data-variante-retours="p80=Cette adresse écrit-elle un port ? Que fait http quand elle en écrit un ?|projet=Le mot projet est-il écrit après des deux-points, ou après une barre oblique ?"
@@ -2598,9 +2601,8 @@ http://localhost</pre>
             <p class="discret">Pour lire :</p>
             <ul>
               <li>
-                Un port est le numéro d’une porte de la machine : un programme qui attend les
-                demandes sur un port écoute sur ce port, et un seul programme peut écouter sur un
-                port à la fois.
+                Un port est un simple numéro de la machine. Un programme qui attend les demandes sur
+                ce numéro écoute sur ce port ; un seul programme peut écouter sur un port à la fois.
               </li>
               <li>
                 Quand une adresse n’écrit pas de port, http envoie la requête sur le port 80. Un
@@ -2691,6 +2693,11 @@ http://localhost</pre>
           serveur, celle du paquet : c’est le chemin <span class="mono">/projet</span> qui mène au
           dossier de Yasmine.
         </p>
+        <p>
+          Quand l’adresse nomme un dossier (<span class="mono">/projet</span>), Apache sert le
+          fichier index.php de ce dossier : c’est une convention, qui évite d’écrire son nom dans
+          l’adresse.
+        </p>
         <p data-si-essai="p3:faux">
           Pour la page d’accueil, tu avais répondu <span data-essai-rappel="p3">autre chose</span> :
           c’est la page du paquet, pas celle de Yasmine.
@@ -2729,9 +2736,10 @@ http://localhost</pre>
               </li>
             </ul>
           </div>
+          <p>Voici la ligne de son fichier index.php :</p>
           <pre
             class="listing"
-            data-lecture="Contenu du fichier index.php de Noah : une seule ligne, echo suivi du texte Bonjour, Noah entre guillemets, puis un point-virgule. Elle ne commence pas par une balise."
+            data-lecture="Contenu du fichier index.php de Noah : une seule ligne, echo suivi du texte Bonjour, Noah entre guillemets, puis un point-virgule."
           >
 echo "Bonjour, Noah";</pre>
           <p class="q">Que lit Noah dans la page ?</p>
@@ -2742,7 +2750,7 @@ echo "Bonjour, Noah";</pre>
             </li>
             <li
               data-option="vide"
-              data-retour="Qu’est-ce qu’Apache envoie au navigateur quand il ne passe rien à PHP ?"
+              data-retour="Le fichier contient-il quelque chose qu’Apache puisse envoyer au navigateur ?"
             >
               Rien : la page est vide.
             </li>
@@ -2763,11 +2771,6 @@ echo "Bonjour, Noah";</pre>
           <span class="mono">Bonjour, Yasmine</span>. Une autre ligne minimale,
           <span class="mono">&lt;?php phpinfo(); ?&gt;</span>, affiche une page de renseignements
           sur PHP. Dans les deux cas, voir le résultat prouve que PHP a exécuté le code.
-        </p>
-        <p>
-          Quand l’adresse nomme un dossier (<span class="mono">/projet</span>), Apache sert le
-          fichier index.php de ce dossier : c’est une convention, qui évite d’écrire son nom dans
-          l’adresse.
         </p>
       </div>
       <div data-ecran="Qui fait quoi">
@@ -2845,8 +2848,8 @@ echo "Bonjour, Noah";</pre>
         </p>
         <p data-si-essai="p1:faux">
           Pour les clients de Farid, tu avais répondu
-          <span data-essai-rappel="p1">autre chose</span> : Apache sert les pages, c’est le SGBD qui
-          les range.
+          <span data-essai-rappel="p1">autre chose</span> : Apache sert les pages ; c’est le SGBD
+          qui range les données, par exemple les clients.
         </p>
       </div>
       <div data-ecran="Double-clic ou localhost">
@@ -2929,10 +2932,11 @@ http://localhost/projet</pre>
           Pour servir une page chez toi, il te faut un serveur web, PHP, un programme qui range des
           données et phpMyAdmin. Un <strong>paquet</strong> installe les quatre d’un coup. Ce bloc
           en fixe un par système : XAMPP sous Windows, MAMP sous macOS, XAMPP pour Linux sous Linux.
-          LAMP est le nom d’une <strong>pile</strong> : la liste des programmes qui servent ensemble
-          un site, Linux, Apache, MySQL et PHP. Ce n’est pas un programme à télécharger : XAMPP pour
-          Linux est un paquet qui réunit une telle pile. Yasmine, sous Windows, a pris XAMPP. Voici
-          la marche à suivre de ton système : tu la suivras toi-même dans « Sur ta machine ».
+          LAMP est le nom d’une <strong>pile</strong> : les programmes du trajet d’une page (Apache,
+          PHP, MySQL) empilés sur le système qui les fait tourner, Linux. Ce n’est pas un programme
+          à télécharger : XAMPP pour Linux est un paquet qui réunit une telle pile. Yasmine, sous
+          Windows, a pris XAMPP. Voici la marche à suivre de ton système : tu la suivras toi-même
+          dans « Sur ta machine ».
         </p>
         <div
           class="outil"
@@ -2990,7 +2994,8 @@ http://localhost/projet</pre>
               fichier dont le nom finit par .run.
             </li>
             <li>
-              Dans ton terminal, rends-le exécutable puis lance-le avec sudo.
+              Dans ton terminal, la fenêtre où l’on tape des commandes, rends-le exécutable puis
+              lance-le avec sudo.
               <span class="mono">chmod +x</span> rend un fichier exécutable (un fichier que le
               système peut lancer comme un programme), <span class="mono">sudo</span> lance une
               commande en administrateur, et <span class="mono">./</span> désigne le dossier où tu
@@ -3039,7 +3044,8 @@ $ sudo ./xampp-linux-installer.run</pre>
             <ul>
               <li>
                 Le panneau de contrôle de XAMPP a une ligne par programme (Apache, MySQL…), avec un
-                bouton « Start » ; une ligne en marche est colorée en vert.
+                bouton « Start » ; une ligne en marche est colorée en vert. Le SGBD, le programme
+                qui range les bases, s’appelle MySQL dans le panneau.
               </li>
             </ul>
           </div>
@@ -3073,8 +3079,9 @@ $ sudo ./xampp-linux-installer.run</pre>
           <p>
             Dans le panneau de contrôle de XAMPP, « Start » démarre un programme et « Stop »
             l’arrête. Windows peut demander d’autoriser Apache à passer son pare-feu, le programme
-            de Windows qui laisse passer ou bloque les demandes arrivant sur un port de ton PC :
-            Apache écoute sur un port, autorise-le sur les réseaux privés.
+            de Windows qui laisse passer ou bloque les demandes arrivant sur un port de ton PC.
+            Autorise-le sur les réseaux privés seulement, comme celui de chez toi : un serveur de
+            poste n’a pas à répondre à n’importe qui.
           </p>
         </div>
         <div data-os="macos">
@@ -3103,8 +3110,8 @@ $ sudo /opt/lampp/lampp status</pre>
       </div>
       <div data-ecran="php -v et le PATH">
         <p class="accroche">
-          Le formateur demande à Yasmine la version de PHP qu’a installée XAMPP. Dans PowerShell,
-          elle tape php -v.
+          Le formateur demande à Yasmine la version de PHP qu’a installée XAMPP : une page peut
+          marcher avec une version de PHP et pas avec une autre. Dans PowerShell, elle tape php -v.
         </p>
         <div
           class="ex"
@@ -3161,7 +3168,10 @@ PS C:\Users\yasmine&gt; php -v</pre>
           XAMPP ne met pas le dossier de PHP dans le PATH : la fenêtre ne trouve pas
           <span class="mono">php</span>. On appelle alors PHP par son
           <strong>chemin complet</strong>, qui n’a pas besoin du PATH. La réponse commence par PHP,
-          suivi du numéro de version.
+          suivi du numéro de version. Dans le trajet d’une page, c’est Apache qui appelle PHP ; ici,
+          c’est toi qui l’appelles, sans Apache : <span class="mono">php -v</span> lance seulement
+          le programme PHP, pour qu’il écrive sa version, et aucun serveur n’a besoin d’être
+          démarré.
         </p>
         <div
           class="outil"
@@ -3251,8 +3261,8 @@ $ /opt/lampp/bin/php -v</pre>
           </ul>
         </div>
         <p>
-          Le SGBD écoute sur le port 3306 et parle un langage que le navigateur ne parle pas : seul
-          PHP, ou une page PHP comme phpMyAdmin, lui parle. Il range les données dans des
+          Le SGBD écoute sur le port 3306 et ne comprend pas les requêtes HTTP d’un navigateur :
+          seul PHP, ou une page PHP comme phpMyAdmin, l’interroge. Il range les données dans des
           <strong>bases</strong>.
         </p>
         <p>
@@ -3329,8 +3339,9 @@ $ /opt/lampp/bin/php -v</pre>
             <li>
               Un interclassement est la règle qui compare et trie les textes d’une base ; phpMyAdmin
               l’écrit aussi en anglais, « collation » ; le SGBD s’en sert quand une page lui demande
-              de classer des noms. Choisir utf8mb4_general_ci est une convention : il accepte les
-              accents et les caractères de toutes les langues.
+              de classer des noms, comme la page de Farid qui lit ses clients triés par nom. Choisir
+              utf8mb4_general_ci est une convention : il accepte les accents et les caractères de
+              toutes les langues.
             </li>
           </ul>
         </div>
@@ -3342,8 +3353,9 @@ $ /opt/lampp/bin/php -v</pre>
           </li>
           <li>Clique sur « Nouvelle base de données », à gauche.</li>
           <li>
-            Écris le nom de la base : des lettres minuscules, sans espace ni accent. Yasmine écrit
-            <span class="mono">boutique</span>.
+            Écris le nom de la base : par convention, des lettres minuscules et des chiffres, sans
+            espace ni accent ; un tiret bas <span class="mono">_</span> peut séparer les mots.
+            Yasmine écrit <span class="mono">boutique</span>.
           </li>
           <li>
             Dans la liste de l’interclassement, choisis
@@ -3353,7 +3365,8 @@ $ /opt/lampp/bin/php -v</pre>
         </ol>
         <p>
           Une base contient des <strong>tables</strong> : des tableaux d’une ligne par élément, par
-          exemple une ligne par client. La tienne est vide, et ce bloc s’arrête là.
+          exemple une ligne par client. Une page PHP, comme celle de Farid pour ses clients,
+          interroge ensuite ces tables. La tienne est vide, et ce bloc s’arrête là.
         </p>
       </div>
     </template>
@@ -3411,7 +3424,8 @@ $ /opt/lampp/bin/php -v</pre>
           Sans Apache, rien n’écoute sur le port 80 : le navigateur n’a aucune réponse, donc aucun
           code. Il dit qu’il ne peut pas se connecter, avec des mots qui changent d’un navigateur à
           l’autre. C’est la panne <strong>Apache arrêté</strong> : on lit l’état d’Apache dans le
-          panneau (ou avec <span class="mono">lampp status</span> sous Linux), puis on le démarre.
+          panneau (ou avec <span class="mono">sudo /opt/lampp/lampp status</span> sous Linux), puis
+          on le démarre.
         </p>
       </div>
       <div data-ecran="Mauvais dossier">
@@ -3567,9 +3581,10 @@ $ /opt/lampp/bin/php -v</pre>
             <p class="discret">Pour lire :</p>
             <ul>
               <li>
-                Sous Linux et macOS, la commande lsof -i :80 écrit une ligne par programme qui
-                utilise le port 80 : la colonne COMMAND est le nom du programme, PID son numéro,
-                USER le compte qui l’a lancé. Dans la dernière colonne, http est le nom du port 80.
+                Sous Linux et macOS, la commande lsof -i :80, lancée avec sudo (en administrateur),
+                écrit une ligne par programme qui utilise le port 80 : la colonne COMMAND est le nom
+                du programme, PID son numéro, USER le compte qui l’a lancé. Dans la dernière
+                colonne, http est le nom du port 80.
               </li>
             </ul>
           </div>
@@ -3622,7 +3637,7 @@ python3 2016 root    3u  IPv4  83032      0t0  TCP *:http (LISTEN)</pre>
           data-aide2="Que dit « Pour lire » du compte root et de phpMyAdmin ?"
           data-aide3="Écris qui peut joindre le serveur, puis ce que ses réglages leur demandent pour modifier les bases."
           data-explication="Le serveur est ouvert à tout Internet, et phpMyAdmin se passe de mot de passe : n’importe qui peut y modifier les bases."
-          data-variante-enonce="Pour lire : avec les réglages de MAMP, PHP écrit les erreurs dans la page, avec le chemin du fichier fautif. Le site de Farid est en ligne avec ces réglages, et un visiteur provoque une erreur. Que voit-il ?"
+          data-variante-enonce="Pour lire : avec les réglages de MAMP, PHP affiche ses messages d’erreur dans la page. Le site de Farid est en ligne avec ces réglages, et un visiteur provoque une erreur. Qu’apprend ce visiteur sur le serveur de Farid ?"
           data-variante-reponse="chemin"
           data-variante-options="chemin=Le message d’erreur de PHP, avec le chemin des fichiers du serveur.|rien=Rien : seuls les développeurs voient les erreurs.|page=Une page d’accueil sans erreur, que PHP réécrit."
           data-variante-retours="rien=Le visiteur reçoit-il une autre page que celle que PHP a écrite pour lui ?|page=PHP corrige-t-il lui-même une erreur de code ?"
@@ -3635,8 +3650,9 @@ python3 2016 root    3u  IPv4  83032      0t0  TCP *:http (LISTEN)</pre>
             <p class="discret">Pour lire :</p>
             <ul>
               <li>
-                Un serveur ouvert à Internet est une machine reliée à Internet où le site est en
-                ligne : c’est la production.
+                Un serveur ouvert à Internet est une machine reliée à Internet que n’importe qui
+                peut joindre, où le site est en ligne : c’est la production. Mettre un site en
+                ligne, c’est le placer sur un tel serveur.
               </li>
               <li>
                 XAMPP règle le SGBD avec un compte administrateur, root, sans mot de passe, et
@@ -3663,19 +3679,22 @@ python3 2016 root    3u  IPv4  83032      0t0  TCP *:http (LISTEN)</pre>
           </ul>
         </div>
         <p>
-          XAMPP et MAMP sont réglés pour la commodité d’un poste de développement : pas de mot de
-          passe pour le SGBD, phpMyAdmin ouvert, erreurs affichées. Sur un serveur ouvert à
-          Internet, ces réglages exposent les bases et les fichiers : un serveur de production se
-          configure autrement, avec des mots de passe et sans ces aides. Configurer un serveur,
-          c’est régler ses options : qui peut y entrer, ce qu’il montre à ceux qui le joignent. On
-          développe avec le paquet ; on ne le met pas en ligne.
+          XAMPP est réglé pour la commodité d’un poste de développement : pas de mot de passe pour
+          le SGBD, phpMyAdmin ouvert, erreurs affichées ; MAMP l’est de même, selon sa version. Sur
+          un serveur ouvert à Internet, ces réglages exposent les bases et les fichiers : un serveur
+          de production se configure autrement, avec des mots de passe et sans ces aides. Configurer
+          un serveur, c’est régler ses options : qui peut y entrer, ce qu’il montre à ceux qui le
+          joignent. On développe avec le paquet ; on ne le met pas en ligne.
         </p>
         <p>
           Les erreurs affichées font la même chose. Sur le poste de Yasmine, une page qui plante
           affiche le message d’erreur de PHP, avec le chemin du fichier fautif, et cela l’aide à
           corriger. Sur un site en ligne, un visiteur lit ce message : il apprend où le serveur
           range ses fichiers. Dans les deux cas, un réglage pratique pour une seule personne devient
-          une porte ouverte quand n’importe qui peut joindre le serveur.
+          un risque dès que n’importe qui peut joindre le serveur. La racine, le dossier que le
+          serveur publie, n’est pas un risque en soi : elle ne donne aucun pouvoir à un visiteur.
+          Comment mettre un site en ligne n’est pas l’objet de ce bloc : il dit seulement ce qu’on
+          n’y copie pas.
         </p>
         <p data-si-essai="p2:faux">
           Pour l’idée de copier XAMPP chez le client, tu avais répondu
@@ -3690,6 +3709,7 @@ python3 2016 root    3u  IPv4  83032      0t0  TCP *:http (LISTEN)</pre>
         data-widget="choix"
         data-verifie
         data-reponse="chemin"
+        data-justifier="Explique pourquoi l’adresse http://localhost n’affiche pas le fichier du dossier atelier de Yasmine."
         data-aide1="Quelle page Apache montre-t-il quand l’adresse n’a pas de chemin ?"
         data-aide2="Quel dossier mène au fichier de Yasmine, d’après son chemin ?"
         data-aide3="Écris le chemin du fichier, retire la racine, puis lis ce qui reste : c’est ce qui doit suivre localhost."
@@ -3725,6 +3745,7 @@ python3 2016 root    3u  IPv4  83032      0t0  TCP *:http (LISTEN)</pre>
         data-widget="choix"
         data-verifie
         data-reponse="chemin"
+        data-justifier="Explique pourquoi l’adresse du dossier cours de Noah ne contient pas le nom htdocs."
         data-aide1="Quelle page cette adresse a-t-elle déjà montrée à Noah ?"
         data-aide2="Quelle partie du chemin du fichier vient après la racine ?"
         data-aide3="Écris le chemin du fichier, retire la racine, puis ajoute ce qui reste après localhost."
@@ -3814,9 +3835,9 @@ python3 2016 root    3u  IPv4  83032      0t0  TCP *:http (LISTEN)</pre>
         data-widget="choix"
         data-verifie
         data-reponse="juste"
-        data-aide1="Quelle balise ouvre le passage de code PHP ?"
-        data-aide2="Quelle instruction écrit le texte dans la page, d’après « Pour lire » ?"
-        data-aide3="Écris la balise qui ouvre, l’instruction qui écrit, puis la balise qui ferme, dans cet ordre."
+        data-aide1="Quelle partie de la page doit venir d’une instruction PHP, et laquelle peut être écrite simplement ?"
+        data-aide2="Que devient, dans la page, un texte qui n’est pas entre &lt;?php et ?&gt; ?"
+        data-aide3="Écris le texte simple, puis la partie qui doit être écrite par PHP, entre les deux balises."
       >
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -3828,18 +3849,19 @@ python3 2016 root    3u  IPv4  83032      0t0  TCP *:http (LISTEN)</pre>
           </ul>
         </div>
         <p class="q">
-          Quelle ligne, écrite seule dans index.php, fait afficher Bonjour par la page servie ?
+          Yasmine veut que sa page affiche Salut Lina. Quelle ligne, écrite seule dans index.php, le
+          fait ?
         </p>
         <ul class="options">
-          <li data-option="juste">&lt;?php echo "Bonjour"; ?&gt;</li>
+          <li data-option="juste">Salut &lt;?php echo "Lina"; ?&gt;</li>
           <li data-option="sans" data-retour="Cette ligne est-elle entre &lt;?php et ?&gt; ?">
-            echo "Bonjour";
+            Salut echo "Lina";
           </li>
           <li
             data-option="sansecho"
-            data-retour="Qu’y a-t-il entre &lt;?php et ?&gt; : l’instruction qui écrit le texte, ou rien ?"
+            data-retour="Où le mot Lina est-il écrit dans cette ligne, et que devient ce que PHP écrit ?"
           >
-            &lt;?php ?&gt; echo "Bonjour";
+            &lt;?php echo "Salut"; ?&gt;
           </li>
         </ul>
       </div>
@@ -3938,7 +3960,7 @@ python3 2016 root    3u  IPv4  83032      0t0  TCP *:http (LISTEN)</pre>
         data-options="nav=Le navigateur|apache=Apache|php=PHP|sgbd=Le SGBD"
         data-reponse="a1=nav,a2=apache,a3=php,a4=sgbd"
         data-aide1="Pour chaque étape, le programme sert, exécute ou range-t-il ?"
-        data-aide2="Quel programme parle au SGBD, et quel programme lui ordonne ?"
+        data-aide2="Quel programme interroge le SGBD, et lequel répond à la demande du navigateur ?"
         data-aide3="Pour chaque étape, écris son verbe (servir, exécuter ou ranger), puis cherche le programme qui fait cela."
       >
         <div class="cadre pour-lire">
@@ -3951,30 +3973,30 @@ python3 2016 root    3u  IPv4  83032      0t0  TCP *:http (LISTEN)</pre>
           </ul>
         </div>
         <p class="q">
-          Farid envoie un formulaire d’inscription. Il a déjà associé la première étape : associe
+          Farid affiche la liste de ses produits. Il a déjà associé la première étape : associe
           chacune des trois autres au programme qui la fait.
         </p>
         <ul class="a-apparier">
           <li data-element="a1" data-donne data-retour="">
-            Envoie le formulaire rempli au serveur<span class="raison"
-              >Le navigateur envoie les données du formulaire.</span
+            Envoie la demande de la page des produits<span class="raison"
+              >Le navigateur envoie la demande de la page.</span
             >
           </li>
           <li
             data-element="a2"
             data-retour="Quel programme répond à la requête et passe le fichier à PHP ?"
           >
-            Reçoit le formulaire et passe le fichier au code
+            Reçoit la demande et passe le fichier au code
           </li>
           <li data-element="a3" data-retour="Quel programme exécute le code de la page ?">
-            Lit le nom reçu et ordonne de l’enregistrer
+            Demande la liste des produits à la base
           </li>
           <li
             data-element="a4"
             data-retour="Quel programme du trajet sert les pages, et lequel range les données ?"
             data-erreur="E2"
           >
-            Enregistre le nom dans la base
+            Range les produits et les rend à la page
           </li>
         </ul>
       </div>
@@ -4019,10 +4041,7 @@ python3 2016 root    3u  IPv4  83032      0t0  TCP *:http (LISTEN)</pre>
           >
             Elle ouvre file:///C:/xampp/htdocs/projet/index.php.
           </li>
-          <li
-            data-element="c"
-            data-retour="Quelle machine désigne 127.0.0.1, et la requête passe-t-elle par Apache ?"
-          >
+          <li data-element="c" data-retour="Quelle machine désigne 127.0.0.1 ?">
             Elle tape http://127.0.0.1/projet/index.php.
           </li>
           <li
@@ -4052,35 +4071,34 @@ python3 2016 root    3u  IPv4  83032      0t0  TCP *:http (LISTEN)</pre>
             <li>
               file:// commence l’adresse d’un fichier du disque ; http:// celle d’une page demandée
               à un serveur. Un port écrit après localhost: est celui où le navigateur envoie sa
-              requête ; sans port écrit, http envoie la requête sur le port 80 ; rien ne répond sur
-              un port que personne n’écoute.
+              requête ; sans port écrit, http envoie la requête sur le port 80.
             </li>
           </ul>
         </div>
-        <p class="q">Quatre essais de Farid. Il a classé le premier : classe les trois autres.</p>
+        <p class="q">Quatre essais de Samir. Il a classé le premier : classe les trois autres.</p>
         <ul class="a-classer">
           <li data-element="a" data-donne data-retour="">
-            Apache écoute sur le port 8080, et Farid tape http://localhost:8080/projet.<span
+            Apache écoute sur le port 8080, et Samir tape http://localhost:8080/projet.<span
               class="raison"
-              >Classé par Farid : la requête arrive à Apache sur son port, et PHP exécute le
+              >Classé par Samir : la requête arrive à Apache sur son port, et PHP exécute le
               code.</span
             >
           </li>
           <li data-element="b" data-retour="Qui répond à cette adresse quand Apache est arrêté ?">
-            Apache est arrêté, et Farid tape http://localhost:8080/projet.
+            Apache est arrêté, et Samir tape http://localhost:8080/projet.
           </li>
           <li
             data-element="c"
             data-retour="Quelle adresse affiche le navigateur quand il lit un fichier du disque ?"
             data-erreur="E1"
           >
-            Farid ouvre file:///Users/farid/projet/index.php dans Safari.
+            Samir ouvre file:///Users/samir/projet/index.php dans Safari.
           </li>
           <li
             data-element="d"
             data-retour="Sur quel port part la requête quand l’adresse n’en écrit pas ?"
           >
-            Apache écoute sur le port 8080, et Farid tape http://localhost/projet.
+            Apache écoute sur le port 8080, et Samir tape http://localhost/projet.
           </li>
         </ul>
       </div>
@@ -4106,14 +4124,14 @@ python3 2016 root    3u  IPv4  83032      0t0  TCP *:http (LISTEN)</pre>
           </ul>
         </div>
         <p class="q">
-          Yasmine a installé XAMPP dans D:\serveur. Dans PowerShell, php -v répond que le terme php
+          Lina a installé XAMPP dans D:\serveur. Dans PowerShell, php -v répond que le terme php
           n’est pas reconnu. Que tape-t-elle pour avoir la version de PHP ?
         </p>
         <ul class="options">
           <li data-option="chemin">D:\serveur\php\php.exe -v</li>
           <li
             data-option="ancien"
-            data-retour="Dans quel dossier Yasmine a-t-elle installé XAMPP, et la ligne le dit-elle ?"
+            data-retour="Dans quel dossier Lina a-t-elle installé XAMPP, et la ligne le dit-elle ?"
           >
             C:\xampp\php\php.exe -v
           </li>
@@ -4193,7 +4211,7 @@ python3 2016 root    3u  IPv4  83032      0t0  TCP *:http (LISTEN)</pre>
           </li>
           <li
             data-element="b"
-            data-retour="phpMyAdmin est-il servi par un programme, et lit-il des bases rangées par un autre ?"
+            data-retour="Qui sert la page de phpMyAdmin, et d’où vient la liste des bases qu’elle affiche ?"
           >
             Ouvrir http://localhost/phpmyadmin et lire la liste des bases.
           </li>
@@ -4424,8 +4442,8 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
         data-widget="choix"
         data-verifie
         data-reponse="pma"
-        data-justifier="Explique pourquoi ce réglage, sans danger sur ton PC, devient un risque sur un serveur ouvert à Internet."
-        data-aide1="Qui peut joindre le serveur d’un client, et qui peut joindre ton PC ?"
+        data-justifier="Explique pourquoi ce réglage ne pose pas le même problème sur le PC de Yasmine et sur ce serveur."
+        data-aide1="Qui peut joindre le serveur d’un client, et qui peut joindre le PC de Yasmine ?"
         data-aide2="Quel réglage permet de modifier une base sans dire qui on est ?"
         data-aide3="Écris ce qu’il faut pour effacer une base dans phpMyAdmin, puis cherche le réglage d’origine de XAMPP qui le permet à n’importe quel visiteur."
       >
@@ -4468,7 +4486,7 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
         data-widget="choix"
         data-verifie
         data-reponse="racine"
-        data-justifier="Explique pourquoi les trois autres réglages ne se gardent pas en ligne."
+        data-justifier="Explique ce qui sépare le réglage gardé des trois autres."
         data-aide1="Parmi ces quatre réglages, lesquels laissent un visiteur agir ou lire sans qu’on le lui ait permis ?"
         data-aide2="Le dossier où le serveur range ses pages laisse-t-il un visiteur agir sur les bases ?"
         data-aide3="Écris, pour chaque réglage, ce qu’un visiteur inconnu pourrait en faire, puis garde celui qui ne lui donne rien."
@@ -4537,8 +4555,7 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
         <div data-os="windows">
           <p>
             <strong>Sous Windows,</strong> ton paquet est XAMPP, et tes lignes se tapent dans
-            PowerShell (menu Démarrer, tape « PowerShell »), XAMPP est un programme de Windows.
-            Télécharge-le sur
+            PowerShell (menu Démarrer, tape « PowerShell »). Télécharge XAMPP sur
             <a data-lien="https://www.apachefriends.org/fr/index.html">apachefriends.org</a>, lance
             l’installateur, garde le dossier proposé, C:\xampp, et laisse cochés Apache, MySQL, PHP
             et phpMyAdmin.
@@ -4728,12 +4745,14 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
           <ul>
             <li>
               La racine du serveur est le dossier que le serveur publie : htdocs. Sous PowerShell,
-              mkdir crée un dossier ; sous macOS et Linux, aussi.
+              mkdir crée un dossier ; sous macOS et Linux, aussi. cd suivi d’un chemin entre dans ce
+              dossier.
             </li>
             <li>
               Sous Linux, la racine appartient à l’administrateur : sudo lance une commande en
-              administrateur, et sudo chown suivi de $USER (ton compte) puis du chemin d’un dossier
-              le donne à ton compte, pour que VS Code y écrive.
+              administrateur, sudo mkdir crée le dossier dans la racine, et sudo chown suivi de
+              $USER (ton compte) puis du chemin d’un dossier le donne à ton compte, pour que VS Code
+              y écrive.
             </li>
           </ul>
         </div>
@@ -4768,8 +4787,8 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
             <details data-cran="3">
               <summary>Une partie de la solution</summary>
               <p>
-                Ton papier doit porter un seul chemin, qui commence par la racine de ton système et
-                se termine par le nom du dossier.
+                Ton papier doit porter un seul chemin, qui commence par le disque ou la barre
+                oblique de ton système, passe par htdocs et se termine par le nom du dossier.
               </p>
             </details>
           </details>
@@ -4846,8 +4865,8 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
           <details data-cran="2">
             <summary>Une piste détaillée</summary>
             <p>
-              Ton adresse commence par http et ton port, puis une barre oblique : qu’écris-tu après
-              cette barre ?
+              Ton adresse commence par http://localhost, suivi de ton port s’il n’est pas 80, puis
+              d’une barre oblique : qu’écris-tu après cette barre ?
             </p>
             <details data-cran="3">
               <summary>Une partie de la solution</summary>
@@ -5051,6 +5070,10 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
               Apache et MySQL ensemble ; sous Linux, sudo /opt/lampp/lampp stop arrête les
               programmes.
             </li>
+            <li>
+              Ta page est à http://localhost/projet, avec ton port après localhost: s’il n’est pas
+              80.
+            </li>
           </ul>
         </div>
         <div
@@ -5095,6 +5118,10 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
               renomme ; sous macOS et Linux, c’est mv. Sous Linux, la racine appartient à
               l’administrateur : ajoute sudo devant mv.
             </li>
+            <li>
+              Ta page est à http://localhost/projet, avec ton port après localhost: s’il n’est pas
+              80.
+            </li>
           </ul>
         </div>
         <div
@@ -5129,10 +5156,7 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
             </p>
             <details data-cran="3">
               <summary>Une partie de la solution</summary>
-              <p>
-                Note ce que tu lis dans la page, titre et numéro compris, sans chercher à
-                l’expliquer encore.
-              </p>
+              <p>Note ce que tu lis dans la page, titre et numéro compris.</p>
             </details>
           </details>
         </details>
@@ -5227,9 +5251,9 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
           data-invite="Choisis ton système : la page ne te montrera que ce qui le concerne."
         ></div>
         <p>Démarre Apache, puis écris sur ton papier ce que ton paquet dit.</p>
+        <p class="discret">Essaie d’abord seul : ouvre une aide seulement si tu es bloqué.</p>
         <p class="discret">
-          Essaie d’abord seul : ouvre une aide seulement si tu es bloqué. Garde la fenêtre du
-          serveur de PHP ouverte : l’écran suivant lit qui occupe le port.
+          Garde la fenêtre du serveur de PHP ouverte : l’écran suivant lit qui occupe le port.
         </p>
         <details data-cran="1">
           <summary>Un indice</summary>
@@ -5352,12 +5376,9 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
         ></p>
         <p>
           Elle voit le texte du fichier, ligne de code comprise. Un navigateur ouvre bien un fichier
-          .php. L’élément en cause est le lecteur du fichier.
+          .php : tout se joue sur qui lit le fichier.
         </p>
-        <p>
-          Pourquoi cette réponse, et qui lit le fichier ? Voici Noah, avec un autre cas : à toi de
-          l’écrire sur son cas.
-        </p>
+        <p>À l’écran suivant, tu écris ce qui arrive à Noah, sur un autre cas.</p>
       </div>
       <div data-ecran="Le schéma, pour Noah">
         <p class="accroche">
@@ -5376,12 +5397,12 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
           </ul>
         </div>
         <p>
-          Pour te rappeler la chaîne que tu as vue avec une adresse, voici le cas de Farid, avec son
-          port :
+          Voici d’abord une chaîne déjà remplie, celle de Farid, avec une adresse et un port : elle
+          montre la forme d’une chaîne.
         </p>
         <div
           class="chaine"
-          data-lecture="Le cas de Farid en une chaîne. Farid, sur son Mac, a un MAMP dont le port est 8888 et tape http://localhost/projet. Une adresse sans port demande le port 80. Rien n’écoute sur le port 80 de son Mac : Apache écoute sur le 8888. Le navigateur n’a personne à qui parler. Aucune réponse : il dit qu’il ne peut pas se connecter."
+          data-lecture="Le cas de Farid en une chaîne. Farid, sur son Mac, a un MAMP dont le port est 8888 et tape http://localhost/projet. Une adresse sans port demande le port 80. Rien n’écoute sur le port 80 de son Mac : Apache écoute sur le 8888. Personne ne répond à la demande du navigateur. Aucune réponse : il dit qu’il ne peut pas se connecter."
         >
           <span class="boite"
             >Farid, sur son Mac, a un MAMP dont le port est 8888 et tape
@@ -5389,7 +5410,7 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
           ><span class="fleche">une adresse sans port demande le port 80</span
           ><span class="boite"
             >rien n’écoute sur le port 80 de son Mac : Apache écoute sur le 8888</span
-          ><span class="fleche">le navigateur n’a personne à qui parler</span
+          ><span class="fleche">personne ne répond à la demande du navigateur</span
           ><span class="boite">aucune réponse : il dit qu’il ne peut pas se connecter</span>
         </div>
         <p class="discret">
@@ -5402,8 +5423,8 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
           data-cas="Un seul programme peut écouter sur un port : l’autre programme tient le port 80, donc Apache ne démarre pas. Le double-clic n’est pas un détour : il ouvre le fichier par son chemin du disque, en file://, le navigateur le lit lui-même, sans Apache ni PHP, et affiche le code. Il reste à libérer le port ou à changer celui d’Apache, puis à taper localhost/projet. Déduit des étapes « Les trois pannes » et « Le trajet d’une page »."
         >
           <p class="q">
-            Écris avec tes mots ce qui manque sur chaque flèche et dans la boîte du milieu, puis
-            réponds sous la dernière boîte. Le schéma du cours s’affiche ensuite, pour comparer.
+            Écris avec tes mots ce qui manque sur chaque flèche et dans la boîte du milieu. Le
+            schéma du cours s’affiche ensuite, pour comparer.
           </p>
           <ol class="depart" hidden>
             <li class="boite" data-pose>
@@ -5411,7 +5432,7 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
               programme tient le port 80, puis double-clique son index.php
             </li>
             <li class="fleche">Que fait Apache au démarrage, quand son port est pris ?</li>
-            <li class="boite">Qui répond sur le port 80 de Noah ?</li>
+            <li class="boite">À qui reste le port 80 de Noah ?</li>
             <li class="fleche">Qui lit le fichier ouvert par un double-clic ?</li>
             <li class="boite" data-pose data-champ="Que voit Noah, et que lui reste-t-il à faire ?">
               L’arrivée de Noah, à toi de l’écrire
@@ -5522,10 +5543,13 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
         <ul>
           <li>Ce que contient une base : des tables, et les requêtes qui les interrogent.</li>
           <li>
-            Les hôtes virtuels d’Apache, qui donnent un nom à chaque projet à la place de
-            localhost/projet.
+            Les hôtes virtuels d’Apache, qui servent plusieurs sites sur la même machine et donnent
+            un nom à chaque projet à la place de localhost/projet.
           </li>
-          <li>Composer, qui installe les bibliothèques d’un projet PHP.</li>
+          <li>
+            Composer, qui installe les bibliothèques d’un projet PHP, des morceaux de code déjà
+            écrits.
+          </li>
           <li>Docker, qui sert d’autres piles que XAMPP ou MAMP.</li>
         </ul>
       </div>
@@ -5578,9 +5602,11 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
           /Applications/MAMP/bin/php, l’installateur de XAMPP pour Linux, sudo /opt/lampp/lampp
           start, /opt/lampp/htdocs et ses droits, /opt/lampp/bin/php, l’adresse
           localhost/phpmyadmin, le formulaire de création d’une base et le nom « Interclassement »,
-          la page d’accueil du paquet, le mot de passe du SGBD de MAMP (la fiche dit qu’il n’en a
-          pas ; MAMP propose peut-être root et root), le serveur intégré de PHP sur le port 80 sous
-          Windows et macOS, la réponse d’un navigateur dont Apache est arrêté.
+          la page d’accueil du paquet, le nom d’une base en minuscules, chiffres et tiret bas, les
+          réseaux privés du pare-feu de Windows, apache2 comme nom d’Apache sous Linux, le mot de
+          passe du SGBD de MAMP (la fiche dit qu’il n’en a pas ; MAMP propose peut-être root et
+          root), le serveur intégré de PHP sur le port 80 sous Windows et macOS, la réponse d’un
+          navigateur dont Apache est arrêté.
         </li>
       </ul>
       <h3>Le déroulé et le pari (première étape)</h3>
@@ -5593,10 +5619,10 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
         <li>
           Le pari, sans note, porte sur le double-clic d’un index.php, dont la ligne est redonnée à
           la reprise ; la bonne réponse est « le texte du fichier ». Il est repris à la fin, puis
-          corrigé : « Ton pari, corrigé » donne la réponse et nomme l’élément en cause (le lecteur
-          du fichier), sans la raison, que le schéma fait écrire. Le schéma construit à la fin porte
-          sur le cas de Noah (un autre programme tient le port 80, puis un double-clic), un cas que
-          le cours n’a pas montré tel quel : une panne de port et un double-clic se combinent.
+          corrigé : « Ton pari, corrigé » donne la réponse et dit que tout se joue sur qui lit le
+          fichier, sans la raison, que le schéma fait écrire. Le schéma construit à la fin porte sur
+          le cas de Noah (un autre programme tient le port 80, puis un double-clic), un cas que le
+          cours n’a pas montré tel quel : une panne de port et un double-clic se combinent.
         </li>
       </ul>
       <h3>Charge, temps et type</h3>
@@ -5606,21 +5632,23 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
           transferts (deux « adapter la condition », deux « trouver l’erreur »), sans aisance.
         </li>
         <li>
-          Quarante-trois écrans : perception 3, carte 1, prétest 3 (trois essais), explications 17
+          Quarante-quatre écrans : perception 3, carte 2, prétest 3 (trois essais), explications 17
           (6, 3, 3, 4, 1), atelier 14, ensemble 5. Saisies : 3 essais + 15 exercices du cours + 2
           paris + 1 schéma + 10 items de pratique + 6 questions de restitution = 37, sans compter
           les autres cas refaits après une solution vue ; quatre items sont des classements ou des
           appariements de trois ou quatre lignes. Atelier : quinze critères de constat. Pratique :
-          dix items, chacun avec un autre cas ; un (PR1-10) demande une explication, pour E3.
+          dix items, chacun avec un autre cas ; deux demandent une explication (PR1-1, pour E4, et
+          PR1-10, pour E3).
         </li>
         <li>
           Temps estimé, au barème de la méthode (120 mots lus par minute, une minute par exercice du
           cours, deux par item de pratique, quatre quand l’item demande une explication, trois par
-          question de restitution) : lecture 51 minutes (environ 6 170 mots), exercices du cours 21
-          (15 exercices, 3 essais, 2 paris, 1 schéma), pratique 22, restitution 18, atelier 80
-          (lecture comprise, plus les manipulations réelles, plus longues que le barème). Au total,
-          environ 192 minutes : faire (pratique, atelier, restitution, 120 minutes) dépasse
-          modéliser (lecture et exercices du cours, 72 minutes).
+          question de restitution) : lecture 53 minutes (environ 6 340 mots, soit 173 de plus que la
+          version 2 d’après pnpm fiches:texte), exercices du cours 21 (15 exercices, 3 essais, 2
+          paris, 1 schéma), pratique 24, restitution 18, atelier 80 (lecture comprise, plus les
+          manipulations réelles, plus longues que le barème). Au total, environ 196 minutes : faire
+          (pratique, atelier, restitution, 122 minutes) dépasse modéliser (lecture et exercices du
+          cours, 74 minutes).
         </li>
       </ul>
       <h3>L’atelier</h3>
@@ -5644,7 +5672,7 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
         "schema": 2,
         "bloc": "B12",
         "type": "procedures",
-        "version": 2,
+        "version": 3,
         "titre": "Un serveur web local",
         "titre_court": "Serveur web local",
         "objectif": "XAMPP, MAMP ou LAMP installé ; un index.php servi sur localhost/projet ; une base créée dans phpMyAdmin ; php -v dans le terminal ; expliquer sans support le flux navigateur, Apache, PHP, SGBD et pourquoi le PHP ouvert par double-clic affiche le code ; diagnostiquer 3 pannes (Apache arrêté, port 80 occupé, mauvais dossier) ; dire que le serveur ne publie que le contenu de sa racine, que localhost est la machine elle-même et que file:// n’appelle ni Apache ni PHP, et pourquoi XAMPP et MAMP, réglés pour un poste de développement, ne vont pas en production ; écrire un index.php minimal, démarrer Apache, lire quel programme occupe le port 80 et en sortir",
@@ -5784,16 +5812,30 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
         ],
         "explication": [
           {
+            "id": "PR1-1",
+            "question": "Pour lire : la racine de XAMPP est C:\\xampp\\htdocs. Yasmine tape http://localhost et voit la page de bienvenue de XAMPP. Son fichier est C:\\xampp\\htdocs\\atelier\\index.php. Explique pourquoi l’adresse http://localhost n’affiche pas le fichier du dossier atelier de Yasmine.",
+            "attendu": "Sans chemin, l’adresse montre la page d’accueil du serveur, celle du paquet. Le fichier de Yasmine est dans le dossier atelier, sous la racine : sa page est à http://localhost/atelier, dont le chemin reprend ce dossier. Déduit de l’étape « Le trajet d’une page ».",
+            "erreurs": ["E4"],
+            "item": "PR1-1"
+          },
+          {
+            "id": "PR1-1:variante",
+            "question": "Pour lire : sous Linux, la racine de XAMPP est /opt/lampp/htdocs. Noah range son fichier dans /opt/lampp/htdocs/cours/index.php, et son adresse est http://localhost/cours. Explique pourquoi l’adresse du dossier cours de Noah ne contient pas le nom htdocs.",
+            "attendu": "Apache cherche ses fichiers dans htdocs, la racine : le chemin de l’adresse commence juste après elle, et le nom htdocs n’y figure donc pas. Il ne reste que le dossier cours. Déduit de l’étape « Le trajet d’une page ».",
+            "erreurs": ["E4"],
+            "item": "PR1-1"
+          },
+          {
             "id": "PR1-10",
-            "question": "Pour lire : XAMPP règle le SGBD sans mot de passe, laisse phpMyAdmin s’ouvrir sans demander de compte et fait écrire les erreurs de PHP dans la page ; un serveur de production est ouvert à Internet. Sur le serveur en ligne du client de Yasmine, installé avec XAMPP tel quel, un inconnu a effacé une base. Quel réglage l’a permis ? Explique pourquoi il devient un risque en ligne.",
-            "attendu": "Le réglage qui ouvre phpMyAdmin sans compte : sur le PC de Yasmine, personne d’autre ne l’atteint, mais sur un serveur ouvert à Internet n’importe quel visiteur peut modifier ou effacer une base. Ces réglages sont faits pour la commodité d’un poste de développement. Déduit de l’étape « Pas en production ».",
+            "question": "Pour lire : XAMPP règle le SGBD sans mot de passe, laisse phpMyAdmin s’ouvrir sans compte et écrit les erreurs de PHP dans la page. Sur le serveur en ligne d’un client de Yasmine, installé avec XAMPP tel quel, un inconnu a effacé une base grâce à phpMyAdmin sans compte. Explique pourquoi ce réglage ne pose pas le même problème sur le PC de Yasmine et sur ce serveur.",
+            "attendu": "Sur le PC de Yasmine, personne d’autre n’atteint phpMyAdmin ; sur un serveur ouvert à Internet, n’importe quel visiteur peut l’ouvrir sans compte et modifier ou effacer une base. Ces réglages sont faits pour la commodité d’un poste de développement. Déduit de l’étape « Pas en production ».",
             "erreurs": ["E3"],
             "item": "PR1-10"
           },
           {
             "id": "PR1-10:variante",
-            "question": "Pour lire : XAMPP pour Linux règle, à l’origine, un SGBD sans mot de passe, phpMyAdmin ouvert sans compte, les erreurs de PHP écrites dans la page, et une racine, dossier que le serveur publie, à /opt/lampp/htdocs. Noah met son site sur un serveur de production. Un seul de ces quatre réglages peut rester : lequel ? Explique pourquoi les trois autres ne se gardent pas en ligne.",
-            "attendu": "La racine du serveur, à /opt/lampp/htdocs : elle ne donne aucun pouvoir à un visiteur. Les trois autres ne se gardent pas : sans mot de passe sur le SGBD et avec phpMyAdmin ouvert, n’importe qui peut lire et modifier les bases ; les erreurs écrites dans la page montrent aux visiteurs des détails du serveur. Déduit de l’étape « Pas en production ».",
+            "question": "Pour lire : XAMPP pour Linux règle, à l’origine, un SGBD sans mot de passe, phpMyAdmin ouvert sans compte, les erreurs de PHP écrites dans la page, et une racine, dossier que le serveur publie, à /opt/lampp/htdocs. Noah met son site sur un serveur de production et ne garde que la racine. Explique ce qui sépare le réglage gardé des trois autres.",
+            "attendu": "La racine ne donne aucun pouvoir à un visiteur, alors que les trois autres le lui donnent : sans mot de passe sur le SGBD et avec phpMyAdmin ouvert, n’importe qui peut lire et modifier les bases ; les erreurs écrites dans la page lui montrent des détails du serveur. Déduit de l’étape « Pas en production ».",
             "erreurs": ["E3"],
             "item": "PR1-10"
           }
@@ -5801,37 +5843,37 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
         "restitution": [
           {
             "id": "B12-R1",
-            "question": "Pour lire : file:// commence l’adresse d’un fichier du disque, http:// celle d’une page demandée à un serveur ; echo écrit le texte qui le suit. Farid, sur son Mac, écrit la ligne <?php echo \"Merci\"; ?> dans /Applications/MAMP/htdocs/clients/index.php. MAMP tourne, Apache et PHP aussi. Il glisse le fichier dans son navigateur, dont la barre d’adresse écrit file:///Applications/MAMP/htdocs/clients/index.php. Que lit-il dans la page, et qui a lu le fichier ?",
+            "question": "Pour lire : file:// commence l’adresse d’un fichier du disque, http:// celle d’une page demandée à un serveur. Farid, sur son Mac, écrit la ligne <?php echo \"Merci\"; ?> dans /Applications/MAMP/htdocs/clients/index.php. MAMP tourne, Apache et PHP aussi. Il glisse le fichier dans son navigateur, dont la barre d’adresse écrit file:///Applications/MAMP/htdocs/clients/index.php. Que lit-il dans la page, et qui a lu le fichier ?",
             "attendu": "Il lit le texte du fichier, avec sa ligne <?php echo \"Merci\"; ?>, et non Merci : le navigateur a lu le fichier lui-même, sans Apache ni PHP, même s’ils tournent, parce que l’adresse commence par file://. Avec http://localhost:8888/clients, la requête passerait par Apache et PHP. Déduit de l’étape « Le trajet d’une page ».",
             "erreurs": ["E1"]
           },
           {
             "id": "B12-R2",
-            "question": "Pour lire : le paquet de Noah installe quatre programmes : Apache, PHP, MySQL et phpMyAdmin ; une base de données est un endroit où l’on range des données. Un camarade de Noah lit cette liste et dit, en montrant Apache : « C’est ma base de données, j’y range mes clients. » A-t-il raison, et lequel des quatre programmes les range ?",
-            "attendu": "Non : Apache sert les pages, il ne range aucune donnée. Les clients sont rangés par MySQL, le SGBD du paquet (en fait MariaDB, que le panneau appelle MySQL), auquel seul PHP parle. Déduit de l’étape « Le trajet d’une page ».",
+            "question": "Pour lire : le paquet de Noah installe quatre programmes : Apache, PHP, le SGBD (MySQL dans son panneau) et phpMyAdmin ; une base de données est un endroit où l’on range des données. Un camarade de Noah lit cette liste et dit, en montrant Apache : « C’est ma base de données, j’y range mes clients. » A-t-il raison, et que fait Apache ?",
+            "attendu": "Non : Apache sert les pages, il ne range aucune donnée. Les clients sont rangés par le SGBD, appelé MySQL dans le panneau (en fait MariaDB), auquel seul PHP parle. Déduit de l’étape « Le trajet d’une page ».",
             "erreurs": ["E2"]
           },
           {
             "id": "B12-R3",
-            "question": "Pour lire : un hébergeur loue un serveur ouvert à Internet ; le sien demande un mot de passe au SGBD et garde phpMyAdmin fermé. XAMPP, lui, laisse le SGBD sans mot de passe et phpMyAdmin ouvert. Noah copie XAMPP sur le serveur de son hébergeur, par-dessus ces réglages. Que perd le serveur, et que fait Noah à la place ?",
-            "attendu": "Le serveur perd ses protections : le SGBD n’a plus de mot de passe et phpMyAdmin s’ouvre sans compte, donc n’importe qui peut modifier les bases. Les réglages de XAMPP sont ceux d’un poste de développement. Noah garde les réglages de production de l’hébergeur et y dépose seulement les fichiers de son site. Déduit de l’étape « Pas en production ».",
+            "question": "Pour lire : un hébergeur est une entreprise qui loue des serveurs ouverts à Internet, déjà réglés pour la production. Noah veut mettre son site chez un hébergeur, qui lui demande d’envoyer seulement le dossier de son site, et non tout son XAMPP. Pourquoi ne faut-il pas envoyer tout XAMPP ?",
+            "attendu": "Les réglages de XAMPP sont ceux d’un poste de développement : le SGBD n’a pas de mot de passe et phpMyAdmin s’ouvre sans compte. Copiés sur le serveur de l’hébergeur, ils laisseraient n’importe qui modifier les bases. Noah envoie seulement son dossier et garde les réglages de production de l’hébergeur. Déduit de l’étape « Pas en production ».",
             "erreurs": ["E3"]
           },
           {
             "id": "B12-R4",
-            "question": "Pour lire : un port autre que 80 s’écrit après localhost: ; la racine de MAMP est /Applications/MAMP/htdocs. Farid a son fichier dans /Applications/MAMP/htdocs/projet/index.php, et le port d’Apache de MAMP est 8888. Il tape http://localhost:8888 et voit la page de MAMP. Sa page est-elle servie, et quelle adresse tape-t-il pour la voir ?",
+            "question": "Pour lire : avec MAMP, la racine est /Applications/MAMP/htdocs et un port autre que 80 s’écrit après localhost: . Farid a son fichier dans /Applications/MAMP/htdocs/projet/index.php, et le port d’Apache de MAMP est 8888. Il tape http://localhost:8888 et voit la page de MAMP. Voit-il sa page à cette adresse, et quelle adresse tape-t-il pour la voir ?",
             "attendu": "Non : la page de MAMP est la page d’accueil du serveur, qui n’est pas celle de Farid. Sa page est à http://localhost:8888/projet : le chemin est celui de son dossier sous la racine, et le port 8888 s’écrit après localhost. Déduit de l’étape « Le trajet d’une page ».",
             "erreurs": ["E4"]
           },
           {
             "id": "B12-R5",
-            "question": "Pour lire : un 404 est le code que renvoie un serveur qui ne trouve pas la page demandée ; la racine de MAMP est /Applications/MAMP/htdocs ; un port autre que 80 s’écrit après localhost: . Farid range un second site dans /Applications/MAMP/clients/index.php, à côté du dossier htdocs. MAMP est démarré ; son port est 8888. Il tape http://localhost:8888/clients. Que montre son navigateur, et que fait-il ?",
+            "question": "Pour lire : un 404 est le code que renvoie un serveur qui ne trouve pas la page demandée. Avec MAMP, la racine est /Applications/MAMP/htdocs et un port autre que 80 s’écrit après localhost: . Farid range un second site dans /Applications/MAMP/clients/index.php, à côté du dossier htdocs. MAMP est démarré ; son port est 8888. Il tape http://localhost:8888/clients. Que montre son navigateur, et que fait-il ?",
             "attendu": "Une page 404 : Apache répond, mais ne trouve pas le dossier clients dans sa racine, car le fichier est à côté de htdocs et non dedans. Farid déplace le dossier clients dans /Applications/MAMP/htdocs. Déduit de l’étape « Les trois pannes ».",
             "erreurs": []
           },
           {
             "id": "B12-R6",
-            "question": "Pour lire : lsof -i :80 écrit une ligne par programme qui utilise le port 80 : la colonne COMMAND est le nom du programme. Le XAMPP pour Linux de Noah ne démarre pas Apache. Il tape sudo lsof -i :80 et lit : apache2 1138 root 4u IPv6 25194 0t0 TCP *:http (LISTEN). Quel programme occupe le port, et quelles sont les deux sorties de la panne ?",
+            "question": "Pour lire : lsof -i :80 écrit une ligne par programme qui utilise le port 80 : COMMAND est son nom ; apache2 est le nom d’Apache sous Linux. Le XAMPP pour Linux de Noah ne démarre pas Apache. Sa commande sudo lsof -i :80 écrit : apache2 1138 root 4u IPv6 25194 0t0 TCP *:http (LISTEN). Quel programme occupe le port, et quelles sont les deux sorties ?",
             "attendu": "Le programme apache2, un autre Apache déjà installé sur la machine, tient le port 80. Les deux sorties : arrêter ce programme puis démarrer Apache de XAMPP, ou garder ce programme et mettre Apache de XAMPP sur un autre port, qui s’écrit alors dans l’adresse. Déduit de l’étape « Les trois pannes ».",
             "erreurs": []
           }
@@ -5839,13 +5881,13 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
         "rappel": [
           {
             "id": "B12-Q1",
-            "question": "Pour lire : les trois paquets sont XAMPP, MAMP et XAMPP pour Linux, un par système ; LAMP veut dire Linux, Apache, MySQL, PHP ; le programme de XAMPP pour Linux est sudo /opt/lampp/lampp, suivi de start, stop ou status. Un camarade de Yasmine, sous Linux, lit : « Installe LAMP et lance le panneau. » Que lui conseilles-tu d’installer, et comment démarre-t-il Apache ?",
+            "question": "Pour lire : les paquets sont XAMPP, MAMP et XAMPP pour Linux ; LAMP veut dire Linux, Apache, MySQL, PHP ; le programme de XAMPP pour Linux est sudo /opt/lampp/lampp. Un camarade de Yasmine, sous Linux, lit : « Installe LAMP et lance le panneau. » Que lui conseilles-tu d’installer, et comment démarre-t-il Apache ?",
             "attendu": "XAMPP pour Linux, le paquet de son système : LAMP est le nom d’une pile, pas d’un programme à télécharger. Il n’a pas de panneau à lancer : il démarre Apache avec sudo /opt/lampp/lampp start. Déduit de l’étape « Installer, démarrer, vérifier ».",
             "erreurs": []
           },
           {
             "id": "B12-Q2",
-            "question": "Pour lire : sudo /opt/lampp/lampp est le programme de XAMPP pour Linux ; start démarre les programmes du paquet, stop les arrête et status écrit leur état. Noah, sous Linux, tape sudo /opt/lampp/lampp start, puis cherche le panneau de contrôle de XAMPP pour voir si Apache tourne. Où lit-il cet état ?",
+            "question": "Pour lire : sudo /opt/lampp/lampp est le programme de XAMPP pour Linux ; il prend un mot après lui, comme start ou stop. Noah, sous Linux, tape sudo /opt/lampp/lampp start, puis cherche le panneau de contrôle de XAMPP pour voir si Apache tourne. Où lit-il cet état ?",
             "attendu": "Dans son terminal : XAMPP pour Linux n’ouvre aucun panneau, et sudo /opt/lampp/lampp status écrit l’état de chaque programme. Déduit de l’étape « Installer, démarrer, vérifier ».",
             "erreurs": []
           },
@@ -5893,8 +5935,8 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
             "id": "B12-C3",
             "type": "explication",
             "erreurs": ["E3"],
-            "consigne": "Pour lire : la production est le serveur ouvert à Internet où le site est en ligne ; XAMPP laisse le SGBD sans mot de passe et phpMyAdmin ouvert sans compte. Un camarade de Yasmine dit : « Mon XAMPP n’a jamais eu de problème sur mon PC : je l’installe tel quel sur le serveur en ligne de mon client. » Que penses-tu de ce raisonnement ?",
-            "attendu": "Le raisonnement ne tient pas : son poste n’a jamais eu de problème parce que personne d’autre ne l’atteint ; en ligne, n’importe qui peut joindre phpMyAdmin et le SGBD, qui n’ont pas de mot de passe. Les réglages de XAMPP sont ceux d’un poste de développement, et un serveur en ligne se configure autrement. Déduit de l’étape « Pas en production »."
+            "consigne": "Pour lire : XAMPP écrit les erreurs de PHP dans la page. Un camarade de Yasmine a mis son site en ligne avec XAMPP. Un visiteur lui écrit : « Ton site m’affiche un message d’erreur avec le chemin de tes fichiers. » Il répond : « C’est normal, ça m’aide à corriger. » Que penses-tu de sa réponse ?",
+            "attendu": "Sa réponse ne tient pas : sur son poste, il est seul à lire le message et cela l’aide à corriger ; en ligne, n’importe quel visiteur le lit et apprend où le serveur range ses fichiers. Ce réglage est celui d’un poste de développement, et un serveur en ligne se configure autrement. Déduit de l’étape « Pas en production »."
           },
           {
             "id": "B12-X1",
@@ -5908,7 +5950,19 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
                 "localhost/cours/php",
                 "localhost/cours/php/",
                 "http://localhost/cours/php",
-                "http://localhost/cours/php/"
+                "http://localhost/cours/php/",
+                "localhost:80/cours/php",
+                "localhost:80/cours/php/",
+                "http://localhost:80/cours/php",
+                "http://localhost:80/cours/php/",
+                "127.0.0.1/cours/php",
+                "127.0.0.1/cours/php/",
+                "http://127.0.0.1/cours/php",
+                "http://127.0.0.1/cours/php/",
+                "127.0.0.1:80/cours/php",
+                "127.0.0.1:80/cours/php/",
+                "http://127.0.0.1:80/cours/php",
+                "http://127.0.0.1:80/cours/php/"
               ]
             }
           },
@@ -5924,7 +5978,11 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
                 "localhost:8888/clients",
                 "localhost:8888/clients/",
                 "http://localhost:8888/clients",
-                "http://localhost:8888/clients/"
+                "http://localhost:8888/clients/",
+                "127.0.0.1:8888/clients",
+                "127.0.0.1:8888/clients/",
+                "http://127.0.0.1:8888/clients",
+                "http://127.0.0.1:8888/clients/"
               ]
             }
           },
@@ -5932,7 +5990,7 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
             "id": "B12-X3",
             "type": "tache",
             "erreurs": [],
-            "consigne": "Pour lire : lsof -i :80 écrit une ligne par programme qui utilise le port 80 : la colonne COMMAND est le nom du programme, et la colonne suivante, PID, le numéro de ce programme. Noah lit, après sudo lsof -i :80 : nginx 912 root 6u IPv4 31077 0t0 TCP *:http (LISTEN). Écris le numéro du programme qui occupe le port 80.",
+            "consigne": "Pour lire : lsof -i :80 écrit une ligne par programme qui utilise le port 80 : COMMAND est le nom du programme, PID son numéro ; nginx est un serveur web. Noah lit, après sudo lsof -i :80 : nginx 912 root 6u IPv4 31077 0t0 TCP *:http (LISTEN). Écris le numéro du programme qui occupe le port 80.",
             "attendu": "912 : c’est le contenu de la colonne PID, celle qui suit le nom du programme. Déduit de l’étape « Les trois pannes ».",
             "verification": {
               "mode": "exacte",
@@ -5952,7 +6010,7 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
             "type": "transfert",
             "forme": "adapter_condition",
             "erreurs": ["E4"],
-            "consigne": "Pour lire : un port autre que 80 s’écrit après localhost: . Le fichier de Yasmine est C:\\xampp\\htdocs\\boutique\\index.php. Un autre programme de son PC tient le port 80 : elle met Apache sur le port 8081. Quelle adresse tape-t-elle pour voir sa page, et pourquoi celle sans port ne répond-elle plus ?",
+            "consigne": "Pour lire : un port autre que 80 s’écrit après localhost: . Le fichier de Yasmine est C:\\xampp\\htdocs\\boutique\\index.php. Un autre programme de son PC tient le port 80 : elle met Apache sur le port 8081. Quelle adresse tape-t-elle pour voir sa page, et pourquoi celle sans port n’atteint-elle plus Apache ?",
             "attendu": "http://localhost:8081/boutique : le port 8081 s’écrit après localhost, et le chemin est celui du dossier boutique sous la racine. L’adresse sans port va au port 80, que tient l’autre programme : Apache n’y écoute plus. Déduit de l’étape « Les trois pannes »."
           },
           {
@@ -5968,8 +6026,8 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
             "type": "transfert",
             "forme": "adapter_condition",
             "erreurs": ["E3"],
-            "consigne": "Pour lire : un serveur de production est une machine ouverte à Internet, où le site est en ligne ; XAMPP règle son SGBD sans mot de passe et laisse phpMyAdmin s’ouvrir sans demander de compte. Le client de Yasmine veut voir son site depuis chez lui, ce soir, à travers Internet. Elle l’a servi avec le XAMPP de son PC. Que fait-elle, et que ne fait-elle pas ?",
-            "attendu": "Elle ne rend pas son XAMPP joignable depuis Internet : ses réglages sont ceux d’un poste de développement, avec le SGBD sans mot de passe et phpMyAdmin ouvert. Elle met le site sur un serveur configuré pour la production. Déduit de l’étape « Pas en production »."
+            "consigne": "Pour lire : un serveur de production est une machine ouverte à Internet, où le site est en ligne ; XAMPP règle son SGBD sans mot de passe et laisse phpMyAdmin s’ouvrir sans demander de compte. Le client de Yasmine veut voir son site depuis chez lui, ce soir, à travers Internet. Elle l’a servi avec le XAMPP de son PC. Que ne fait-elle pas, et pourquoi ?",
+            "attendu": "Elle ne rend pas le XAMPP de son PC joignable depuis Internet : ses réglages sont ceux d’un poste de développement, avec le SGBD sans mot de passe et phpMyAdmin ouvert, et n’importe quel visiteur pourrait modifier les bases. Un serveur ouvert à Internet se configure autrement. Déduit de l’étape « Pas en production »."
           }
         ],
         "pratique": [
@@ -6036,7 +6094,7 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
           {
             "id": "B12-K1",
             "recto": "Pour lire : le panneau de XAMPP écrit, à côté de chaque programme en marche, le numéro de son port. Yasmine lit 80 sur la ligne d’Apache et 3306 sur la ligne de MySQL. Quel port écrit-elle dans l’adresse de sa page ?",
-            "verso": "Aucun des deux : Apache est sur le 80, que http utilise quand l’adresse n’écrit aucun port, et le 3306 est celui du SGBD, auquel le navigateur ne parle pas. Déduit de l’étape « La base de données »."
+            "verso": "Aucun des deux : Apache est sur le 80, que http utilise quand l’adresse n’écrit aucun port, et le 3306 est celui du SGBD, que le navigateur ne sait pas interroger. Déduit de l’étape « La base de données »."
           },
           {
             "id": "B12-K2",
@@ -6045,12 +6103,12 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
           },
           {
             "id": "B12-K3",
-            "recto": "Pour lire : le PATH est la liste des dossiers où la fenêtre cherche ses commandes ; un chemin complet nomme le fichier du programme. Yasmine, sous Windows, tape php -v et lit que le terme php n’est pas reconnu ; elle tape D:\\outils\\php\\php.exe -v et la version s’écrit. Que sait-elle du dossier D:\\outils\\php, et que fait-elle tant qu’il n’est pas dans le PATH ?",
-            "verso": "Ce dossier n’est pas dans le PATH : la fenêtre ne trouve pas php par son nom, mais l’exécute quand elle reçoit le chemin complet. Tant qu’il n’y est pas, elle tape le chemin complet. Déduit de l’étape « Installer, démarrer, vérifier »."
+            "recto": "Pour lire : le PATH est la liste des dossiers où la fenêtre cherche ses commandes ; un chemin complet nomme le fichier du programme. Samir, sous Windows, tape php -v et lit que le terme php n’est pas reconnu ; il tape D:\\outils\\php\\php.exe -v et la version s’écrit. Que sait-il du dossier D:\\outils\\php, et que fait-il tant qu’il n’est pas dans le PATH ?",
+            "verso": "Ce dossier n’est pas dans le PATH : la fenêtre ne trouve pas php par son nom, mais l’exécute quand elle reçoit le chemin complet. Tant qu’il n’y est pas, il tape le chemin complet. Déduit de l’étape « Installer, démarrer, vérifier »."
           },
           {
             "id": "B12-K4",
-            "recto": "Pour lire : un port autre que 80 s’écrit après localhost: ; phpMyAdmin s’ouvre à l’adresse /phpmyadmin, placée à la fin. Farid lit 8888 dans les préférences de MAMP. Quelle adresse tape-t-il pour voir la page d’accueil du paquet, et pour phpMyAdmin ?",
+            "recto": "Pour lire : avec un port autre que 80, l’adresse s’écrit localhost: suivi du port ; phpMyAdmin s’ouvre en ajoutant /phpmyadmin à la fin de l’adresse. Farid lit 8888 dans les préférences de MAMP. Quelle adresse tape-t-il pour voir la page d’accueil du paquet, et pour phpMyAdmin ?",
             "verso": "http://localhost:8888 pour la page d’accueil, http://localhost:8888/phpmyadmin pour phpMyAdmin : son port prend la place du 80, après localhost. Déduit de l’étape « Installer, démarrer, vérifier »."
           },
           {
@@ -6075,8 +6133,8 @@ php     2026 root    4u  IPv4  83081      0t0  TCP localhost:http (LISTEN)</pre>
           },
           {
             "id": "B12-K9",
-            "recto": "Pour lire : phpMyAdmin est une page web du paquet ; un interclassement est la règle qui compare et trie les textes d’une base ; utf8mb4_general_ci est celui que l’on choisit par convention. Yasmine veut nommer sa base « Clients 2025 ». Quels deux champs remplit-elle avant de cliquer sur « Créer », avec quelles valeurs ?",
-            "verso": "Le nom de la base, clients2025 : des minuscules, sans espace ni accent ; et l’interclassement, utf8mb4_general_ci. Sa base apparaît ensuite dans la liste de gauche de phpMyAdmin. Déduit de l’étape « La base de données »."
+            "recto": "Pour lire : par convention, le nom d’une base s’écrit en lettres minuscules et en chiffres, sans espace ni accent, un tiret bas _ pouvant séparer les mots. Yasmine veut nommer sa base « Clients 2025 ». Quel nom écrit-elle ?",
+            "verso": "clients2025, ou clients_2025 : des minuscules et des chiffres, sans espace ; le tiret bas remplace l’espace. Sa base apparaît ensuite dans la liste de gauche de phpMyAdmin. Déduit de l’étape « La base de données »."
           }
         ]
       }
