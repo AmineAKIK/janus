@@ -2207,35 +2207,35 @@
         <h3>À quoi ça sert</h3>
         <p>
           Un développeur met à jour ses outils, choisit des versions et justifie ses choix devant un
-          client. Une information fausse, sans date ou sans source peut laisser une faille ouverte
-          ou faire perdre une journée. Une même question relie tout le bloc : d’où vient cette
-          information, et de quand date-t-elle ? Tu la poseras à une page lue, à une fiche de veille
-          et à une nouveauté.
+          client. Une information fausse ou dépassée peut laisser une faille ouverte ou faire perdre
+          une journée. Une seule question relie tout le bloc : en suivant Jade, tu la trouveras,
+          puis tu la poseras à une page lue, à une fiche de veille et à une nouveauté.
         </p>
         <h3>À la fin, tu sauras</h3>
         <ul>
           <li>
-            mettre en place ton agrégateur avec cinq sources, après avoir trouvé l’adresse du
-            fichier de chacune ;
+            mettre en place ton agrégateur avec cinq sources, en collant l’adresse du fichier de
+            chacune ;
           </li>
           <li>
-            dire si une source est primaire, secondaire ou officielle, et pourquoi un blog n’est pas
-            une source officielle ;
+            juger une source avant de la citer, et reconnaître celle qui parle au nom de l’organisme
+            concerné ;
           </li>
           <li>
-            distinguer un avis, une alerte et un bulletin d’actualité du CERT-FR, et lire un
-            identifiant CVE ;
+            reconnaître les trois sortes de documents du CERT-FR (le service de l’État qui suit les
+            failles de sécurité des logiciels) et lire le numéro d’une faille ;
           </li>
-          <li>remplir une fiche de veille sourcée et datée ;</li>
-          <li>évaluer une nouveauté, puis décider de l’adopter, de la tester ou de l’ignorer ;</li>
+          <li>noter une information pour qu’un lecteur la retrouve ;</li>
+          <li>évaluer une nouveauté, puis décider quoi en faire ;</li>
           <li>
-            rédiger une question reproductible pour un forum, et développer les sigles RSS, CVE,
-            CERT-FR, CNIL et MDN.
+            rédiger une question de forum que d’autres peuvent rejouer, et dire ce que veulent dire
+            les sigles RSS, CVE, CERT-FR, CNIL et MDN.
           </li>
         </ul>
         <p class="discret">
           Il te faut un ordinateur, une adresse e-mail à toi (pour un compte gratuit sur un
-          agrégateur), un papier et un stylo. Tu ne publies rien : tu lis et tu notes.
+          agrégateur), un papier et un stylo, et PHP si tu l’as déjà installé : sinon, l’atelier te
+          dit quoi noter à la place. Tu ne publies rien : tu lis et tu notes.
         </p>
       </div>
       <div data-ecran="Le chemin d’une information">
@@ -2246,14 +2246,13 @@
         </p>
         <div
           class="chaine"
-          data-lecture="Le chemin de Jade en cinq éléments. Le site php.net publie un avis de sécurité sur PHP. Un fichier à une adresse propose cet avis à l’agrégateur de Jade. Jade lit l’élément dans l’agrégateur et juge sa source : qui publie, et de quand date-t-il. Elle cherche une autre source et note sa fiche de veille. Elle décide de mettre à jour PHP sur son PC."
+          data-lecture="Le chemin de Jade en trois étapes. Le site php.net publie un avis de sécurité sur PHP. Un fichier publié à une adresse l’apporte à l’agrégateur de Jade, qui le lit. Une fois la source jugée, recoupée et notée dans sa fiche, Jade décide de mettre à jour PHP sur son PC."
         >
           <span class="boite">php.net publie un avis de sécurité sur PHP</span
+          ><span class="fleche">un fichier publié à une adresse l’apporte à l’agrégateur</span
+          ><span class="boite">Jade lit l’élément dans l’agrégateur</span
           ><span class="fleche"
-            >un fichier à une adresse propose cet avis à l’agrégateur de Jade</span
-          ><span class="boite"
-            >Jade lit l’élément dans l’agrégateur : qui publie, et de quand date-t-il ?</span
-          ><span class="fleche">elle cherche une autre source et note sa fiche de veille</span
+            >une fois la source jugée, recoupée et notée dans sa fiche, elle mène à</span
           ><span class="boite">Jade décide : mettre à jour PHP de son PC</span>
         </div>
         <p class="discret">
@@ -2330,7 +2329,10 @@
           <div class="cadre pour-lire">
             <p class="discret">Pour lire :</p>
             <ul>
-              <li>Vérifier une information, c’est retrouver la page d’où elle vient.</li>
+              <li>
+                Le rapport de projet est le texte que Jade remet avec son site. Son lecteur n’a pas
+                vu comment elle a travaillé.
+              </li>
             </ul>
           </div>
           <p class="q">Que manque-t-il pour qu’un lecteur puisse vérifier cette phrase ?</p>
@@ -2414,8 +2416,8 @@
           data-id="flux"
           data-reponse="interroge"
           data-aide1="Qui prend l’initiative : php.net ou l’agrégateur ?"
-          data-aide2="Un agrégateur travaille même quand Jade n’ouvre aucun site."
-          data-aide3="Repère ce que php.net peut laisser à une adresse, pour que l’agrégateur le demande : un fichier."
+          data-aide2="Un site publie pour tout le monde : sait-il quels agrégateurs le suivent ?"
+          data-aide3="php.net laisse quelque chose à une adresse prévue pour cela : un message adressé à Jade, ou un contenu que tout agrégateur peut demander ?"
           data-explication="php.net publie un fichier à une adresse ; l’agrégateur le redemande à intervalles réguliers, et le nouvel élément apparaît quand il le lit."
           data-variante-enonce="Pour lire : HTTP est la façon dont on demande un fichier à un serveur. Une camarade de Jade suit un blog de cuisine avec son agrégateur. Le blog publie un article. Qu’est-ce qui le fait apparaître dans sa liste ?"
           data-variante-reponse="interroge"
@@ -2532,8 +2534,8 @@
         </div>
         <p>
           L’agrégateur lit ces trois lignes pour chaque élément et en fait une ligne de sa liste :
-          le titre, la date, et le lien qui ouvre la page. C’est pourquoi un flux porte toujours une
-          date de publication : sans elle, la liste ne pourrait pas se classer.
+          le titre, la date, et le lien qui ouvre la page. La plupart des flux portent une date, et
+          l’agrégateur s’en sert pour classer sa liste.
         </p>
       </div>
       <div data-ecran="Trouver l’adresse du flux">
@@ -2598,15 +2600,16 @@
     <template data-etape="ET5">
       <div data-ecran="Cinq flux, cinq émetteurs">
         <p class="accroche">
-          Jade a choisi cinq sources. Pour chacune, elle a noté l’adresse du fichier de son flux. Un
+          Jade a choisi cinq sources. Pour quatre d’entre elles, elle a noté l’adresse du fichier de
+          leur flux, lue le 16 novembre 2026 ; celle du CERT-FR se copie sur sa page des flux. Un
           émetteur est celui qui publie.
         </p>
         <table
           class="table-lue"
-          data-lecture="Les cinq flux de Jade. MDN : publié par MDN Web Docs, adresse developer.mozilla.org, blog, rss.xml, on y lit les billets du blog de MDN. php.net : publié par le projet PHP, adresse www.php.net, feed.atom, on y lit les versions de PHP et les avis de sécurité. CERT-FR : service de l’État, adresse cert.cyber.gouv.fr, avis, feed, on y lit les avis de sécurité. VS Code : l’équipe de l’éditeur, adresse code.visualstudio.com, feed.xml, notes de version et billets. CNIL : adresse www.cnil.fr, fr, rss.xml, les actualités de la CNIL."
+          data-lecture="Les cinq flux de Jade. MDN : publié par MDN, la documentation du Web, adresse developer.mozilla.org, blog, rss.xml, on y lit les billets du blog de MDN. php.net : publié par le projet PHP, adresse www.php.net, feed.atom, on y lit les annonces de versions de PHP. CERT-FR : service de l’État, adresse à copier sur sa page des flux, on y lit les avis de sécurité sur les failles des logiciels. VS Code : l’équipe de l’éditeur, adresse code.visualstudio.com, feed.xml, notes de version et billets. CNIL : adresse www.cnil.fr, fr, rss.xml, les actualités de la CNIL."
         >
           <caption>
-            Les cinq flux de Jade, lus le 16 novembre 2026
+            Les cinq flux de Jade
           </caption>
           <thead>
             <tr>
@@ -2619,7 +2622,7 @@
           <tbody>
             <tr>
               <th scope="row">MDN</th>
-              <td>MDN Web Docs, la documentation du Web</td>
+              <td>MDN, la documentation du Web</td>
               <td>https://developer.mozilla.org/en-US/blog/rss.xml</td>
               <td>les billets du blog de MDN</td>
             </tr>
@@ -2627,12 +2630,12 @@
               <th scope="row">php.net</th>
               <td>le projet PHP, sur le site du langage</td>
               <td>https://www.php.net/feed.atom</td>
-              <td>les versions de PHP et les avis de sécurité</td>
+              <td>les annonces de versions de PHP</td>
             </tr>
             <tr>
               <th scope="row">CERT-FR</th>
               <td>le CERT-FR, service de l’État</td>
-              <td>https://cert.cyber.gouv.fr/avis/feed/</td>
+              <td>à copier sur sa page « Les flux RSS »</td>
               <td>les avis de sécurité sur les failles des logiciels</td>
             </tr>
             <tr>
@@ -2660,11 +2663,11 @@
           data-aide2="Cherche dans la table le flux qui parle de ce sujet."
           data-aide3="Apparie chaque ligne au flux dont la colonne « On y lit » la nomme."
           data-explication="Chaque source publie sur son sujet : PHP sur PHP, le CERT-FR sur les failles, la CNIL sur les données personnelles, VS Code sur son éditeur, MDN sur le Web."
-          data-variante-enonce="Pour lire : la table des cinq flux de Jade est celle de l’écran. Une camarade de Jade doit répondre à quatre questions avant de choisir un hébergeur. Relie chaque question à la source de Jade où elle la lira d’abord."
+          data-variante-enonce="Pour lire : un hébergeur fait tourner des sites sur ses serveurs. Flux de Jade : MDN (Web), php.net (PHP), CERT-FR (failles), VS Code (éditeur), CNIL (données). Relie chaque question de sa camarade à la source où elle la lira d’abord."
           data-variante-options="php=php.net|cert=CERT-FR|cnil=CNIL|vscode=VS Code"
           data-variante-reponse="a=cnil,b=php,c=vscode,d=cert"
-          data-variante-elements="a~une règle publiée sur les données de ses clients|b~la fin du support d’une version de PHP|c~les nouveautés de son éditeur de code|d~la faille d’un produit qu’elle utilise"
-          data-variante-retours="a=Qui publie les règles sur les données personnelles ?|b=Qui publie les versions de PHP ?|c=Quel flux liste les notes de version de l’éditeur ?|d=Quel flux liste les avis sur les failles ?"
+          data-variante-elements="a~une règle publiée sur les données de ses clients|b~la fin du support d’une version de PHP|c~les nouveautés de son éditeur de code|d~les failles de plusieurs logiciels, avec leurs versions touchées"
+          data-variante-retours="a=Qui publie les règles sur les données personnelles ?|b=Qui publie les versions de PHP ?|c=Quel flux liste les notes de version de l’éditeur ?|d=Quel flux suit les failles de tous les logiciels ?"
           data-variante-aide1="Relis la colonne « On y lit » de la table."
           data-variante-aide2="Cherche dans la table le flux qui parle de ce sujet."
           data-variante-aide3="Apparie chaque ligne au flux dont la colonne « On y lit » la nomme."
@@ -2673,7 +2676,10 @@
           <div class="cadre pour-lire">
             <p class="discret">Pour lire :</p>
             <ul>
-              <li>Une nouveauté est une information qui vient de paraître.</li>
+              <li>
+                Une nouveauté est une information qui vient de paraître. Atom est un autre format de
+                flux, que l’agrégateur lit comme le RSS : l’adresse de php.net finit par .atom.
+              </li>
             </ul>
           </div>
           <p class="q">Relie chaque nouveauté à la source de Jade où elle la lira d’abord.</p>
@@ -2687,8 +2693,12 @@
             >
               une décision de l’autorité des données personnelles
             </li>
-            <li data-element="c" data-retour="Quelle source publie des avis sur les failles ?">
-              une faille dans un produit, avec ses versions touchées
+            <li
+              data-element="c"
+              data-retour="Quelle source suit les failles de tous les logiciels, et pas d’un seul ?"
+            >
+              les failles de plusieurs logiciels de marques différentes, avec leurs versions
+              touchées
             </li>
             <li data-element="d" data-retour="Quel flux liste les notes de version de VS Code ?">
               les nouveautés de la dernière version de VS Code
@@ -2705,25 +2715,8 @@
       </div>
       <div data-ecran="Le CERT-FR et la CNIL">
         <p class="accroche">
-          Deux des cinq sources sont des organismes de l’État. Jade doit savoir ce que fait chacun,
-          et ce que chaque sigle veut dire.
-        </p>
-        <p>
-          <strong>Le CERT-FR</strong> (French Computer Emergency Response Team, en anglais) est le
-          service de l’État, rattaché à l’ANSSI, l’agence nationale de la sécurité des systèmes
-          d’information, qui suit les failles et les incidents informatiques. Il publie des avis,
-          des alertes et des bulletins sur son site.
-        </p>
-        <p>
-          <strong>La CNIL</strong> (Commission nationale de l’informatique et des libertés) est
-          l’autorité française de protection des données personnelles : elle publie ses actualités,
-          ses règles et ses sanctions.
-        </p>
-        <p>
-          <strong>MDN</strong> (MDN Web Docs) est le site de documentation du Web de Mozilla et de
-          ses contributeurs. <strong>CVE</strong> (Common Vulnerabilities and Exposures) est le nom
-          du système qui numérote les failles connues. <strong>RSS</strong> (Really Simple
-          Syndication) est le format des fichiers de flux.
+          Trois des cinq sources portent un sigle : CERT-FR, CNIL et MDN. Jade doit savoir qui
+          publie sur quel sujet.
         </p>
         <div
           class="ex"
@@ -2770,6 +2763,20 @@
             </li>
           </ul>
         </div>
+        <p>
+          <strong>Le CERT-FR</strong> (French Computer Emergency Response Team, en anglais) est le
+          service de l’État qui suit les failles et les incidents informatiques. Il publie des avis,
+          des alertes et des bulletins sur son site.
+        </p>
+        <p>
+          <strong>La CNIL</strong> (Commission nationale de l’informatique et des libertés) est
+          l’autorité française de protection des données personnelles : elle publie ses actualités,
+          ses règles et ses sanctions.
+        </p>
+        <p>
+          <strong>MDN</strong> (Mozilla Developer Network, aujourd’hui MDN Web Docs) est le site de
+          documentation du Web de Mozilla et de ses contributeurs.
+        </p>
       </div>
       <div data-ecran="Des notes de version dans un flux">
         <p class="accroche">
@@ -2831,9 +2838,9 @@
           </ul>
         </div>
         <p>
-          Les notes de version d’un outil sont publiées par l’équipe qui le fait : c’est un émetteur
-          de première main. Mais un même fichier peut mêler notes et billets. Jade lit le numéro de
-          la version et la date pour savoir ce qu’elle a devant elle.
+          Les notes de version d’un outil sont publiées par l’équipe qui le fait. Mais un même
+          fichier peut mêler notes et billets. Jade lit le numéro de la version et la date pour
+          savoir ce qu’elle a devant elle.
         </p>
       </div>
     </template>
@@ -2870,8 +2877,8 @@
             <p class="discret">Pour lire :</p>
             <ul>
               <li>
-                Un organisme produit une information quand il en est l’auteur : l’équipe de PHP
-                produit les avis sur PHP.
+                Une source est la page ou le texte d’où vient une information. Un organisme produit
+                une information quand il en est l’auteur : l’équipe de PHP produit les avis sur PHP.
               </li>
             </ul>
           </div>
@@ -2907,9 +2914,9 @@
           <strong>Une source primaire</strong> est émise par l’organisme qui produit l’information :
           l’équipe de PHP pour PHP, la CNIL pour ses décisions.
           <strong>Une source secondaire</strong> la reprend, la résume ou la commente : un article,
-          un relais, un forum, un message. Une source secondaire peut être exacte, mais elle peut
-          aussi se tromper, oublier un détail ou arriver en retard : pour citer, Jade remonte à la
-          source primaire.
+          un relais (un site qui ne fait que reprendre ce qu’un autre a publié), un forum, un
+          message. Une source secondaire peut être exacte, mais elle peut aussi se tromper, oublier
+          un détail ou arriver en retard : pour citer, Jade remonte à la source primaire.
         </p>
       </div>
       <div data-ecran="Un blog n’est pas une source officielle">
@@ -2995,8 +3002,11 @@
           est-il identifiable ? <strong>La date</strong> : quand la page a-t-elle été publiée ?
           <strong>La référence ou la version</strong> : de quoi parle-t-elle précisément, quel
           numéro de version, quelle référence d’avis ? <strong>Le recoupement</strong> : une autre
-          source, d’un autre émetteur, dit-elle la même chose ? Une page qui manque d’un critère
-          n’est pas fausse pour autant, mais Jade ne peut pas la citer sans réserve.
+          source, d’un autre émetteur, dit-elle la même chose ? Ces quatre critères composent le
+          jugement d’une source : l’émetteur dit si elle est primaire ou secondaire, officielle ou
+          non ; la date, la référence ou la version et le recoupement disent si elle tient. Une page
+          qui manque d’un critère n’est pas fausse pour autant, mais Jade ne peut pas la citer sans
+          réserve.
         </p>
         <div
           class="ex"
@@ -3043,7 +3053,7 @@
           data-id="recoupement"
           data-reponse="confirme"
           data-aide1="Le CERT-FR et php.net sont-ils le même émetteur ?"
-          data-aide2="Deux émetteurs qui disent la même chose se confirment."
+          data-aide2="Une deuxième lecture ne sert que si elle vient d’un autre auteur : cherche l’auteur de chaque texte."
           data-aide3="Repère ce que les deux documents ont en commun : le fait et les identifiants CVE, publiés par deux émetteurs."
           data-explication="php.net et le CERT-FR sont deux émetteurs : quand ils disent le même fait, l’information est recoupée. Un avis qui n’aurait fait que recopier php.net ne recouperait rien."
           data-variante-enonce="Pour lire : une règle de la CNIL change au 1er janvier, d’après cnil.fr. Un site d’actualités, actus-web.example, écrit la même chose en citant cnil.fr à chaque ligne. Que gagne une camarade de Jade à lire aussi ce site, pour confirmer la règle ?"
@@ -3089,7 +3099,9 @@
           <strong>Recouper</strong>, c’est chercher une autre source, d’un autre émetteur, qui dit
           le même fait. Jade recoupe l’avis de php.net avec celui du CERT-FR : même faille, mêmes
           versions corrigées. Recouper n’est pas relire la même source : deux pages dont l’une
-          recopie l’autre ne recoupent rien.
+          recopie l’autre ne recoupent rien. Le CERT-FR est la source primaire de ses avis, car il
+          en est l’auteur ; et c’est un émetteur distinct de l’équipe de PHP, ce qui permet de
+          recouper php.net.
         </p>
       </div>
     </template>
@@ -3111,7 +3123,7 @@
           data-aide2="AVI, ALE et ACT sont les initiales des trois sortes de documents."
           data-aide3="Mets en avis le code AVI, en alerte le code ALE, en bulletin d’actualité le code ACT."
           data-explication="Les trois lettres du code disent la sorte de document : AVI un avis, ALE une alerte, ACT un bulletin d’actualité."
-          data-variante-enonce="Pour lire : le code d’un document du CERT-FR a quatre parties : CERTFR, l’année, trois lettres (AVI, ALE ou ACT), un numéro. Classe ces trois documents."
+          data-variante-enonce="Pour lire : le code d’un document du CERT-FR a quatre parties : CERTFR, l’année, trois lettres (AVI pour avis, ALE pour alerte, ACT pour actualité), un numéro. [MàJ] veut dire mise à jour. Classe ces trois documents."
           data-variante-colonnes="avis=Avis|alerte=Alerte|actu=Bulletin d’actualité"
           data-variante-reponse="a=alerte,b=avis,c=actu"
           data-variante-elements="a~CERTFR-2026-ALE-014 : [Màj] Multiples vulnérabilités dans PHP|b~CERTFR-2026-AVI-1539 : Multiples vulnérabilités dans les produits IBM|c~CERTFR-2026-ACT-046 : Bulletin d’actualité"
@@ -3127,7 +3139,8 @@
             <ul>
               <li>
                 Le code d’un document du CERT-FR a quatre parties : CERTFR, l’année, trois lettres
-                qui disent la sorte de document (AVI, ALE ou ACT), puis un numéro.
+                qui disent la sorte de document (AVI pour avis, ALE pour alerte, ACT pour
+                actualité), puis un numéro. [MàJ] veut dire mise à jour.
               </li>
             </ul>
           </div>
@@ -3168,10 +3181,12 @@
         </div>
         <p>
           <strong>Un avis</strong> (AVI) décrit une faille dans un produit : les systèmes affectés,
-          le risque, la solution. <strong>Une alerte</strong> (ALE) prévient d’un danger immédiat.
-          <strong>Un bulletin d’actualité</strong> (ACT) informe : il résume la semaine et renvoie
-          vers les avis. C’est l’avis, pas le bulletin, qui dit quels systèmes sont affectés et
-          quelle mesure appliquer ; un bulletin se lit pour savoir où chercher.
+          le risque, la solution. <strong>Une alerte</strong> (ALE) prévient d’un danger immédiat,
+          par exemple d’une faille que des attaquants exploitent déjà (ils s’en servent) : on la lit
+          sans attendre, avant les avis et les bulletins, et elle peut être mise à jour, ce que le
+          titre montre par [MàJ]. <strong>Un bulletin d’actualité</strong> (ACT) informe : il résume
+          la semaine et renvoie vers les avis. C’est l’avis, pas le bulletin, qui dit quels systèmes
+          sont affectés et quelle mesure appliquer ; un bulletin se lit pour savoir où chercher.
         </p>
         <p data-si-essai="p3:faux">
           Au début, Malik disait que l’avis et le bulletin d’actualité étaient la même chose. Tu
@@ -3287,16 +3302,16 @@
           data-prediction
           data-id="cve"
           data-reponse="meme"
-          data-aide1="Que désigne un numéro CVE : un texte ou une faille ?"
-          data-aide2="Trois textes qui portent le même numéro parlent de la même chose."
+          data-aide1="Pourquoi donner un numéro à une faille, plutôt que la décrire chaque fois ?"
+          data-aide2="Un numéro est écrit pour être le même partout : ce qui est le même, c’est le texte, ou ce dont il parle ?"
           data-aide3="Repère ce que le numéro identifie : la faille, pas le document."
           data-explication="Le numéro CVE désigne la faille : tous les documents qui le portent parlent de la même."
           data-variante-enonce="Pour lire : un identifiant CVE comprend CVE, l’année, un numéro. php.net cite CVE-2026-111497, une faille de la bibliothèque Brotli ; un site d’actualités écrit « la faille CVE-2026-111497 ». Que dit le numéro commun ?"
           data-variante-reponse="meme"
           data-variante-options="meme=Les deux textes parlent de la même faille.|copie=Les deux textes sont le même texte.|deux=Ce sont deux failles différentes, une par texte."
           data-variante-retours="copie=Un numéro CVE désigne-t-il un texte, ou une faille ?|deux=Deux failles différentes auraient-elles le même numéro ?"
-          data-variante-aide1="Que désigne un numéro CVE : un texte ou une faille ?"
-          data-variante-aide2="Deux textes qui portent le même numéro parlent de la même chose."
+          data-variante-aide1="Pourquoi donner un numéro à une faille, plutôt que la décrire chaque fois ?"
+          data-variante-aide2="Un numéro est écrit pour être le même partout : ce qui est le même, c’est le texte, ou ce dont il parle ?"
           data-variante-aide3="Repère ce que le numéro identifie : la faille, pas le texte."
           data-variante-explication="Le numéro CVE désigne la faille : deux textes qui le portent parlent de la même."
         >
@@ -3328,11 +3343,11 @@
           </ul>
         </div>
         <p>
-          Un <strong>identifiant CVE</strong> désigne une faille publique de façon unique : tout le
-          monde dit CVE-2026-109618 pour la même faille, quel que soit le document qui en parle. Un
-          avis peut en citer plusieurs : celui sur PHP en cite deux. C’est la clé de recherche de
-          Jade : en cherchant l’identifiant, elle retrouve tous les documents sur la même faille et
-          peut les recouper.
+          Un <strong>identifiant CVE</strong> (CVE est le sigle de Common Vulnerabilities and
+          Exposures) désigne une faille publique de façon unique : tout le monde dit CVE-2026-109618
+          pour la même faille, quel que soit le document qui en parle. Un avis peut en citer
+          plusieurs : celui sur PHP en cite deux. C’est la clé de recherche de Jade : en cherchant
+          l’identifiant, elle retrouve tous les documents sur la même faille et peut les recouper.
         </p>
       </div>
     </template>
@@ -3351,8 +3366,8 @@
           data-options="emetteur=Émetteur|publication=Date de publication|consultation=Date de consultation|consequence=Conséquence pour le projet"
           data-reponse="a=emetteur,b=publication,c=consultation,d=consequence"
           data-aide1="Pour chaque ligne : est-ce un nom, une date ou une action ?"
-          data-aide2="Une date écrite sur l’annonce est celle de sa publication ; celle du jour de lecture est celle de la consultation."
-          data-aide3="Émetteur : le nom ; publication : la date de l’annonce ; consultation : la date du jour ; conséquence : l’action."
+          data-aide2="Une date écrite sur l’annonce est celle de sa publication ; celle du jour où tu la lis est celle de la consultation."
+          data-aide3="Pour chaque ligne, cherche la question à laquelle elle répond : qui publie, quand c’est publié, quand Jade l’a lue, ce que cela change pour elle. Prends la rubrique qui répond à cette question."
           data-explication="Chaque rubrique répond à une question : qui publie, quand c’est publié, quand tu l’as lu, ce que cela change pour toi."
           data-variante-enonce="Pour lire : une fiche de veille est la page où l’on note ce qu’on a lu. Le 9 novembre 2026, une camarade lit sur cnil.fr un billet publié le 6 novembre 2026. Relie chaque ligne de sa fiche à sa rubrique."
           data-variante-options="emetteur=Émetteur|publication=Date de publication|consultation=Date de consultation|consequence=Conséquence pour le projet"
@@ -3360,8 +3375,8 @@
           data-variante-elements="a~la CNIL, sur son site cnil.fr|b~9 novembre 2026, le jour de sa lecture|c~6 novembre 2026, la date écrite sur le billet|d~relire le formulaire de santé de son projet avant de le mettre en ligne"
           data-variante-retours="a=Qui publie le billet ?|b=Cette date est-elle celle du billet, ou celle du jour où elle le lit ?|c=Cette date est-elle celle du billet, ou celle du jour où elle le lit ?|d=Cette ligne dit-elle qui publie, ou ce qu’elle va faire ?"
           data-variante-aide1="Pour chaque ligne : est-ce un nom, une date ou une action ?"
-          data-variante-aide2="Une date écrite sur le billet est celle de sa publication ; celle du jour de lecture est celle de la consultation."
-          data-variante-aide3="Émetteur : le nom ; publication : la date du billet ; consultation : la date du jour ; conséquence : l’action."
+          data-variante-aide2="Une date écrite sur le billet est celle de sa publication ; celle du jour où tu la lis est celle de la consultation."
+          data-variante-aide3="Pour chaque ligne, cherche la question à laquelle elle répond : qui publie, quand c’est publié, quand elle l’a lu, ce que cela change pour elle. Prends la rubrique qui répond à cette question."
           data-variante-explication="Chaque rubrique répond à une question : qui publie, quand c’est publié, quand tu l’as lu, ce que cela change pour toi."
         >
           <div class="cadre pour-lire">
@@ -3402,9 +3417,9 @@
           Une <strong>fiche de veille</strong> porte sept rubriques : le titre de la page,
           l’émetteur, l’adresse (l’URL), la date de publication, la date de consultation, un résumé
           en deux phrases et la conséquence pour le projet. La date de publication est celle que
-          l’émetteur a écrite ; la date de consultation est le jour où tu lis. Les deux servent : la
-          première dit l’âge de l’information, la seconde dit quand tu l’as vue, car une page peut
-          changer après.
+          l’émetteur a écrite ; la date de consultation est le jour où tu consultes la page. Les
+          deux servent : la première dit l’âge de l’information, la seconde dit quand tu l’as vue,
+          car une page peut changer après.
         </p>
       </div>
       <div data-ecran="Citer sans source ni date">
@@ -3415,21 +3430,21 @@
           data-id="citer"
           data-reponse="complete"
           data-aide1="Le lecteur peut-il retrouver la page avec cette phrase seule ?"
-          data-aide2="Il faut qui publie, où, et quand."
+          data-aide2="Une citation sert à retrouver la page : de quoi le lecteur a-t-il besoin pour y arriver, et pour savoir quand elle a paru ?"
           data-aide3="Repère la réponse qui donne l’émetteur, l’adresse et la date."
           data-explication="Une citation donne l’émetteur, l’adresse de la page et sa date de publication : sans eux, le lecteur ne peut pas vérifier."
           data-variante-enonce="Pour lire : une phrase se vérifie quand le lecteur peut retrouver sa page. Une camarade écrit : « La CNIL a prononcé dix sanctions contre des collectivités. » Que doit-elle ajouter pour que son lecteur la vérifie ?"
           data-variante-reponse="complete"
-          data-variante-options="complete=L’émetteur, l’adresse et la date : « selon la CNIL (https://www.cnil.fr/fr/sanctions-cybersecurite-collectivites-territoriales, publié le 9 novembre 2026) ».|rien=Rien : la CNIL est une source officielle, la phrase se suffit.|journal=Le nom du journal où elle a lu la phrase, sans adresse ni date."
+          data-variante-options="complete=L’émetteur, l’adresse et la date de publication : « selon la CNIL (https://www.cnil.fr/fr/sanctions-cybersecurite-collectivites-territoriales, publié le 9 novembre 2026) ».|rien=Rien : la CNIL est une source officielle, la phrase se suffit.|journal=Le nom du journal où elle a lu la phrase, sans adresse ni date."
           data-variante-retours="rien=Le lecteur sait-il où retrouver la page, et de quand elle date ?|journal=Avec un nom de journal seul, le lecteur retrouve-t-il la page exacte ?"
           data-variante-erreurs="rien=E2|journal=E2"
           data-variante-aide1="Le lecteur peut-il retrouver la page avec cette phrase seule ?"
-          data-variante-aide2="Il faut qui publie, où, et quand."
+          data-variante-aide2="Une citation sert à retrouver la page : de quoi le lecteur a-t-il besoin pour y arriver, et pour savoir quand elle a paru ?"
           data-variante-aide3="Repère la réponse qui donne l’émetteur, l’adresse et la date."
           data-variante-explication="Une citation donne l’émetteur, l’adresse de la page et sa date de publication : sans eux, le lecteur ne peut pas vérifier."
         >
           <p>
-            Jade rédige le rapport de son projet. Elle écrit : « PHP a corrigé deux failles
+            Jade rédige le rapport de son projet. Elle écrit : « PHP 8.4.27 corrige deux failles
             critiques. » Elle ne note rien d’autre.
           </p>
           <div class="cadre pour-lire">
@@ -3443,8 +3458,8 @@
           <p class="q">Que doit ajouter Jade à cette phrase pour que son lecteur la vérifie ?</p>
           <ul class="options">
             <li data-option="complete">
-              L’émetteur, l’adresse de la page et sa date : « selon php.net, page … publiée le 21
-              octobre 2026 ».
+              L’émetteur, l’adresse de la page et sa date de publication : « selon php.net, page …
+              publiée le 21 octobre 2026 ».
             </li>
             <li
               data-option="rien"
@@ -3464,15 +3479,20 @@
         </div>
         <p>
           Toute information d’une fiche ou d’un rapport renvoie à une source datée. Citer, c’est
-          écrire qui a publié, à quelle adresse et à quelle date : « Selon php.net
-          (https://www.php.net/archive/2026.php#2026-10-21-5, publié le 21 octobre 2026, lu le 2
-          novembre 2026), PHP 8.4.27 corrige deux failles critiques. » Une phrase sans source ni
-          date est une faute : le lecteur ne peut ni la vérifier ni savoir si elle est encore vraie.
+          écrire qui a publié, à quelle adresse, à quelle date de publication et à quelle date de
+          consultation : « Selon php.net (https://www.php.net/archive/2026.php#2026-10-21-5, publié
+          le 21 octobre 2026, consulté le 2 novembre 2026), PHP 8.4.27 corrige deux failles
+          critiques. » Une phrase sans source ni date est une faute : le lecteur ne peut ni la
+          vérifier ni savoir si elle est encore vraie. Citer bien suppose d’avoir jugé la source :
+          Jade cite la page de l’émetteur, la source primaire, et non un blog qui la commente, sinon
+          l’adresse et les dates citent la mauvaise page. Si Jade relit la page plus tard, la date
+          de consultation devient le jour de cette nouvelle lecture ; la date de publication ne
+          change pas, sauf si l’émetteur a publié un nouveau texte.
         </p>
         <p data-si-essai="p2:faux">
           Au début, Jade notait une phrase sans rien d’autre. Tu avais répondu
           <span data-essai-rappel="p2">autre chose</span>. Ce n’est pas ce que demande une citation
-          : il lui faut l’émetteur, l’adresse et la date.
+          : il lui faut l’émetteur, l’adresse et les dates.
         </p>
       </div>
       <div data-ecran="Une fiche remplie">
@@ -3540,13 +3560,13 @@
           data-aide2="La publication est la date de l’émetteur, pas celle de la lecture."
           data-aide3="Il a recopié le jour de sa lecture dans la rubrique publication."
           data-explication="La date de publication est celle de l’émetteur, ici le 15 juin 2026 ; le camarade a noté le jour de sa lecture à la place."
-          data-variante-enonce="Pour lire : la publication est la date de l’émetteur ; la consultation, le jour de lecture. Un billet de MDN daté du 8 avril 2026, lu le 16 novembre 2026, est noté publié le 16 novembre 2026. Quelle rubrique est fausse ?"
+          data-variante-enonce="Pour lire : la publication est la date de l’émetteur ; la consultation, le jour où l’on lit. Un billet de MDN daté du 8 avril 2026, consulté le 16 novembre 2026, est noté publié le 16 novembre 2026. Quelle rubrique est fausse ?"
           data-variante-reponse="publication"
           data-variante-options="publication=La date de publication : le fichier donne le 8 avril 2026.|consultation=La date de consultation : il a lu le billet un autre jour.|adresse=L’adresse : une adresse ne se note pas dans une fiche."
           data-variante-retours="consultation=Quel jour a-t-il lu le billet, d’après l’énoncé ?|adresse=Une fiche de veille porte-t-elle une adresse ?"
           data-variante-aide1="Quelle date donne le fichier de MDN ?"
           data-variante-aide2="La publication est la date de l’émetteur, pas celle de la lecture."
-          data-variante-aide3="Il a recopié le jour de lecture dans la rubrique publication."
+          data-variante-aide3="Il a recopié le jour de consultation dans la rubrique publication."
           data-variante-explication="La date de publication est celle de l’émetteur, ici le 8 avril 2026 ; il a noté le jour de sa lecture à la place."
         >
           <p>
@@ -3560,6 +3580,10 @@
               <li>
                 Le fichier de MDN date l’élément « Introducing the MDN MCP server » du lundi 15 juin
                 2026.
+              </li>
+              <li>
+                La date de publication est celle que l’émetteur a écrite ; la date de consultation
+                est le jour où l’on consulte la page.
               </li>
             </ul>
           </div>
@@ -3617,9 +3641,11 @@
             <ul>
               <li>
                 RC veut dire release candidate, une version candidate à la sortie. En production
-                veut dire sur un site réel, vu par ses visiteurs. L’annonce de php.net du 21 octobre
-                2026 pour PHP 8.6.0 RC4 dit : « Please DO NOT use this version in production, it is
-                an early test version. » (ne l’utilise pas en production ; version de test précoce).
+                veut dire sur un site réel, vu par ses visiteurs. Une version stable est publiée
+                pour être utilisée sur un site réel ; une version expérimentale est publiée pour
+                être essayée, sans garantie. Une annonce précédente de php.net, pour PHP 8.6.0 RC4,
+                dit : « Please DO NOT use this version in production, it is an early test version. »
+                (ne l’utilise pas en production ; version de test précoce).
               </li>
             </ul>
           </div>
@@ -3647,8 +3673,9 @@
           stable ou expérimental ? <strong>La date</strong> : quand a-t-elle été publiée ?
           <strong>La compatibilité</strong> : marche-t-elle avec son projet, sa version de PHP, ses
           outils ? <strong>Le recoupement</strong> : une autre source, d’un autre émetteur, dit-elle
-          la même chose ? <strong>L’impact</strong> : qu’est-ce que cela change pour son projet ?
-          Elle décide ensuite.
+          la même chose ? <strong>L’impact</strong> : qu’est-ce que cela change pour son projet ? La
+          date et le recoupement sont déjà des critères pour juger une source ; le statut, la
+          compatibilité et l’impact portent sur la nouveauté et sur le projet. Elle décide ensuite.
         </p>
       </div>
       <div data-ecran="Adopter, tester ou ignorer">
@@ -3664,7 +3691,7 @@
           data-colonnes="adopter=Adopter|tester=Tester|ignorer=Ignorer"
           data-reponse="a=adopter,b=tester,c=ignorer"
           data-aide1="Pour chaque ligne : statut, et impact sur le projet."
-          data-aide2="Une version stable qui corrige une faille de ton projet s’installe ; une version d’essai s’essaie ; ce qui ne te touche pas se laisse."
+          data-aide2="Compare chaque nouveauté à deux choses : son statut (stable ou d’essai) et son impact sur le projet de Jade."
           data-aide3="Adopter : stable et utile ; tester : en essai mais utile plus tard ; ignorer : sans impact."
           data-explication="Le statut et l’impact décident : stable et utile, on adopte ; en essai mais utile plus tard, on teste sur une copie ; sans impact, on ignore."
           data-variante-enonce="Pour lire : adopter, c’est l’installer dans son projet ; tester, l’essayer sur une copie, sans toucher au site réel ; ignorer, ne rien faire pour l’instant, en notant pourquoi. Pour l’outil fictif Pinceau, dont une camarade de Jade se sert, classe ces trois nouveautés."
@@ -3673,7 +3700,7 @@
           data-variante-elements="a~Pinceau 4.2.1 : correctif de sécurité, version stable du 5 novembre 2026, confirmé par une autre source ; elle utilise Pinceau 4.2|b~Pinceau 5.0 beta : version d’essai, « pas pour la production » ; son projet devra passer en 5.0 dans six mois|c~Un nouveau thème pour un autre outil, que son projet n’utilise pas"
           data-variante-retours="a=La version est-elle stable, et touche-t-elle son projet ?|b=Peut-elle mettre cette version sur le site réel ?|c=Cette nouveauté touche-t-elle son projet ?"
           data-variante-aide1="Pour chaque ligne : statut, et impact sur le projet."
-          data-variante-aide2="Une version stable qui corrige une faille de ton projet s’installe ; une version d’essai s’essaie ; ce qui ne te touche pas se note puis se laisse."
+          data-variante-aide2="Compare chaque nouveauté à deux choses : son statut (stable ou d’essai) et son impact sur le projet de sa camarade."
           data-variante-aide3="Adopter : stable et utile ; tester : en essai mais utile plus tard ; ignorer : sans impact."
           data-variante-explication="Le statut et l’impact décident : stable et utile, on adopte ; en essai mais utile plus tard, on teste sur une copie ; sans impact, on ignore."
         >
@@ -3719,17 +3746,17 @@
           data-prediction
           data-id="justifier"
           data-reponse="bonne"
-          data-aide1="Quelle décision donne sa raison avec le statut, la date et l’impact ?"
+          data-aide1="Qu’est-ce qui distingue une décision justifiée d’une simple opinion ?"
           data-aide2="Une raison s’appuie sur les cinq questions."
-          data-aide3="Repère la décision qui nomme le statut, la date et ce que cela change."
+          data-aide3="Compare la raison de chaque décision aux cinq questions : l’une s’appuie sur plusieurs d’entre elles, les autres sur aucune."
           data-explication="La décision justifiée donne le statut, la date et l’impact sur le projet : adopter parce que c’est stable, daté et touche le projet."
           data-variante-enonce="Pour lire : une décision écrite donne son choix et sa raison. Une camarade de Jade note quatre décisions sur Pinceau 4.2.1, une version stable du 5 novembre 2026 qui corrige une faille touchant sa version 4.2. Laquelle est justifiée ?"
           data-variante-reponse="bonne"
           data-variante-options="bonne=Adopter : version stable du 5 novembre 2026, qui corrige une faille touchant sa version 4.2.|recent=Adopter : c’est la version la plus récente.|attendre=Ignorer : « ça n’arrive qu’aux autres »."
           data-variante-retours="recent=La raison donnée parle-t-elle du statut ou de l’impact sur son projet ?|attendre=Cette raison s’appuie-t-elle sur une des cinq questions ?"
-          data-variante-aide1="Quelle décision donne sa raison avec le statut, la date et l’impact ?"
+          data-variante-aide1="Qu’est-ce qui distingue une décision justifiée d’une simple opinion ?"
           data-variante-aide2="Une raison s’appuie sur les cinq questions."
-          data-variante-aide3="Repère la décision qui nomme le statut, la date et ce que cela change."
+          data-variante-aide3="Compare la raison de chaque décision aux cinq questions : l’une s’appuie sur plusieurs d’entre elles, les autres sur aucune."
           data-variante-explication="La décision justifiée donne le statut, la date et l’impact sur le projet."
         >
           <p>
@@ -3767,6 +3794,31 @@
           recoupement, impact), et la <strong>date</strong> de la décision. « C’est nouveau » n’est
           pas une raison. Décider d’ignorer une nouveauté se justifie aussi, par exemple parce
           qu’elle ne touche pas le projet.
+        </p>
+        <p>
+          Voici le même chemin pour une autre information : celle d’une camarade de Jade, qui
+          utilise Pinceau.
+        </p>
+        <div
+          class="chaine"
+          data-lecture="Le chemin d’une camarade de Jade, en trois étapes. L’éditeur de Pinceau publie les notes de la version 4.2.1, une version stable du 5 novembre 2026. Un fichier publié à une adresse les apporte à son agrégateur, où elle les lit : l’éditeur est la source primaire, la date et la version sont écrites, une autre source confirme. Une fois la source jugée et la fiche notée, elle décide d’adopter, car la version est stable et touche son projet."
+        >
+          <span class="boite"
+            >l’éditeur de Pinceau publie les notes de la version 4.2.1, une version stable du 5
+            novembre 2026</span
+          ><span class="fleche">un fichier publié à une adresse les apporte à l’agrégateur</span
+          ><span class="boite"
+            >elle les lit : l’éditeur est la source primaire, la date et la version sont écrites,
+            une autre source confirme</span
+          ><span class="fleche">une fois la source jugée et la fiche notée, elle mène à</span
+          ><span class="boite"
+            >elle décide d’adopter : la version est stable et touche son projet</span
+          >
+        </div>
+        <p class="discret">
+          Cette chaîne montre un seul cas, celui d’un correctif stable qui touche le projet. Pour
+          une version d’essai, ou une nouveauté qui ne touche pas le projet, la dernière boîte
+          change.
         </p>
       </div>
     </template>
@@ -3825,16 +3877,16 @@
         <p>
           Une <strong>question reproductible</strong> contient tout ce qu’il faut pour que quelqu’un
           voie la même chose chez lui : un <strong>titre précis</strong> ; les
-          <strong>versions</strong> et l’environnement (système, serveur) ; un
-          <strong>code minimal</strong>, les quelques lignes qui produisent l’erreur ; le
-          <strong>résultat attendu</strong> ; le <strong>résultat obtenu</strong>, avec le
+          <strong>versions</strong> et l’environnement (le système et le serveur sur lesquels tourne
+          le site) ; un <strong>code minimal</strong>, les quelques lignes qui produisent l’erreur ;
+          le <strong>résultat attendu</strong> ; le <strong>résultat obtenu</strong>, avec le
           <strong>message d’erreur exact</strong>, copié mot pour mot ; et
           <strong>ce qui a été essayé</strong>. Un seul problème par question.
         </p>
       </div>
       <div data-ecran="Les éléments d’une question">
         <p class="accroche">
-          Jade prépare sa question avec six morceaux de brouillon. Chacun remplit un élément.
+          Jade prépare sa question avec cinq lignes de brouillon. Chacune remplit un élément.
         </p>
         <div
           class="ex"
@@ -3856,6 +3908,17 @@
           data-variante-aide3="Associe chaque ligne à l’élément qu’elle remplit."
           data-variante-explication="Chaque ligne remplit un élément différent : contexte, code, attendu, message exact, essais."
         >
+          <div class="cadre pour-lire">
+            <p class="discret">Pour lire :</p>
+            <ul>
+              <li>
+                Une question reproductible porte six éléments : un titre précis, les versions et
+                l’environnement, un code minimal, le résultat attendu, le résultat obtenu avec le
+                message d’erreur exact, ce qui a été essayé. Le titre se choisit à l’écran précédent
+                ; ici, on place les cinq autres.
+              </li>
+            </ul>
+          </div>
           <p class="q">
             Relie chaque ligne du brouillon de Jade à l’élément de la question qu’elle remplit.
           </p>
@@ -3892,15 +3955,15 @@
           data-id="manque"
           data-reponse="manque"
           data-aide1="Qu’est-ce qu’un lecteur ne peut pas reproduire ?"
-          data-aide2="Il lui faut les versions, le message et un code court."
+          data-aide2="Quelqu’un d’autre peut-il rejouer le problème avec ce brouillon ? Que lui manque-t-il pour le rejouer chez lui ?"
           data-aide3="Repère ce que le brouillon omet : versions et message exact."
           data-explication="Sans versions ni message d’erreur exact, personne ne peut voir la même chose : la question ne se traite pas."
-          data-variante-enonce="Pour lire : une question reproductible donne les versions, le message d’erreur exact et un code minimal. Une camarade de Jade écrit : « Mon formulaire ne marche pas. J’ai collé les 600 lignes de mon projet. » Quel défaut gêne le plus ?"
+          data-variante-enonce="Pour lire : une question reproductible est une question que quelqu’un d’autre peut rejouer chez lui. Une camarade de Jade écrit : « Mon formulaire ne marche pas. J’ai collé les 600 lignes de mon projet. » Quel défaut gêne le plus ?"
           data-variante-reponse="manque"
           data-variante-options="manque=Elle ne donne ni versions ni message d’erreur, et son code n’est pas minimal : personne ne peut voir la même chose.|poli=Elle ne dit pas bonjour.|court=Elle est trop courte."
           data-variante-retours="poli=La politesse aide-t-elle quelqu’un à reproduire le problème ?|court=Un texte plus long réglerait-il l’absence de message et de versions ?"
           data-variante-aide1="Qu’est-ce qu’un lecteur ne peut pas reproduire ?"
-          data-variante-aide2="Il lui faut les versions, le message et un code court."
+          data-variante-aide2="Quelqu’un d’autre peut-il rejouer le problème avec ce message ? Que lui manque-t-il pour le rejouer chez lui ?"
           data-variante-aide3="Repère ce que le brouillon omet : versions, message exact, code minimal."
           data-variante-explication="Sans versions, message exact et code minimal, personne ne peut reproduire le problème : la question ne se traite pas."
         >
@@ -3912,8 +3975,8 @@
             <p class="discret">Pour lire :</p>
             <ul>
               <li>
-                Une question reproductible donne les versions, le message d’erreur exact et un code
-                minimal.
+                Une question reproductible est une question que quelqu’un d’autre peut rejouer chez
+                lui.
               </li>
             </ul>
           </div>
@@ -3956,19 +4019,21 @@
           <ul>
             <li>
               Un agrégateur est un site qui rassemble, au même endroit, les nouveautés de plusieurs
-              sites choisis. Inoreader en est un : son offre gratuite permet 150 flux.
+              sites choisis. Inoreader en est un.
             </li>
             <li>
               Un compte gratuit se crée avec une adresse e-mail à toi et un mot de passe que tu
               n’utilises nulle part ailleurs.
             </li>
+            <li>
+              Le bouton qui ajoute un flux change de nom selon la version du site : il contient
+              souvent « Add » ou un « + ».
+            </li>
           </ul>
         </div>
         <p>
-          Ouvre <a data-lien="https://www.inoreader.com">inoreader.com</a> et crée un compte
-          gratuit. Une fois connecté, repère le bouton qui ajoute un flux : son nom change selon la
-          version du site, il contient souvent « Add » ou un « + ». Écris sur ton papier le nom
-          exact du bouton que tu trouves.
+          Crée un compte gratuit sur <a data-lien="https://www.inoreader.com">inoreader.com</a>,
+          puis écris sur ton papier le nom exact du bouton de l’agrégateur qui ajoute un flux.
         </p>
         <p class="discret">
           Essaie d’abord seul, jusqu’à avoir fait un geste sur ton agrégateur ou sur ton papier :
@@ -3978,10 +4043,10 @@
           <summary>J’ai essayé seul, et je suis bloqué</summary>
           <details data-cran="1">
             <summary>Un indice</summary>
-            <p>Où se trouve le bouton qui ajoute quelque chose, en haut ou à gauche de la page ?</p>
+            <p>Le bouton se trouve-t-il en haut de la page, ou dans le menu à gauche ?</p>
             <details data-cran="2">
               <summary>Une piste détaillée</summary>
-              <p>Quel mot du bouton veut dire « ajouter » en anglais ?</p>
+              <p>Regarde près de la liste de tes flux, puis dans le menu.</p>
               <details data-cran="3">
                 <summary>Une partie de la solution</summary>
                 <p>
@@ -4009,13 +4074,9 @@
           </ul>
         </div>
         <p>
-          Dans ton agrégateur, ajoute le flux de MDN : ouvre le bouton qui ajoute un flux, colle
-          l’adresse <strong>https://developer.mozilla.org/en-US/blog/rss.xml</strong> et valide.
-          Ouvre ensuite le flux dans ton agrégateur.
-        </p>
-        <p>
-          Écris sur ton papier : le nom de l’émetteur, l’adresse du flux, le titre du premier
-          élément et sa date, tels que ton agrégateur les affiche.
+          Ajoute à ton agrégateur le flux de MDN : colle l’adresse
+          <strong>https://developer.mozilla.org/en-US/blog/rss.xml</strong> et valide. Écris sur ton
+          papier l’émetteur, l’adresse, le titre du premier élément et sa date.
         </p>
         <p class="discret">
           Essaie d’abord seul, jusqu’à avoir fait un geste sur ton agrégateur ou sur ton papier :
@@ -4038,8 +4099,7 @@
               <details data-cran="3">
                 <summary>Une partie de la solution</summary>
                 <p>
-                  Le titre du premier élément est le premier titre de la liste : recopie-le avec sa
-                  date.
+                  Le premier élément de la liste est le plus récent : recopie son titre et sa date.
                 </p>
               </details>
             </details>
@@ -4063,13 +4123,9 @@
           </ul>
         </div>
         <p>
-          Dans ton agrégateur, ajoute le flux de php.net : ouvre le bouton qui ajoute un flux, colle
-          l’adresse <strong>https://www.php.net/feed.atom</strong> et valide. Ouvre ensuite le flux
-          dans ton agrégateur.
-        </p>
-        <p>
-          Écris sur ton papier : le nom de l’émetteur, l’adresse du flux, le titre du premier
-          élément et sa date, tels que ton agrégateur les affiche.
+          Ajoute à ton agrégateur le flux de php.net : colle l’adresse
+          <strong>https://www.php.net/feed.atom</strong> et valide. Écris sur ton papier l’émetteur,
+          l’adresse, le titre du premier élément et sa date.
         </p>
         <p class="discret">
           Essaie d’abord seul, jusqu’à avoir fait un geste sur ton agrégateur ou sur ton papier :
@@ -4079,18 +4135,14 @@
           <summary>J’ai essayé seul, et je suis bloqué</summary>
           <details data-cran="1">
             <summary>Un indice</summary>
-            <p>
-              Cette adresse finit par .atom : un agrégateur la lit-il comme un flux, d’après le bloc
-              ?
-            </p>
+            <p>Cette adresse finit par .atom : que dit l’encadré « Pour lire » sur ce format ?</p>
             <details data-cran="2">
               <summary>Une piste détaillée</summary>
               <p>Quel élément de la liste est le plus récent ? Regarde les dates.</p>
               <details data-cran="3">
                 <summary>Une partie de la solution</summary>
                 <p>
-                  Écris le titre du premier élément avec sa date, telle que ton agrégateur
-                  l’affiche.
+                  Le premier élément de la liste est le plus récent : recopie son titre et sa date.
                 </p>
               </details>
             </details>
@@ -4114,13 +4166,9 @@
           </ul>
         </div>
         <p>
-          Dans ton agrégateur, ajoute le flux de VS Code : ouvre le bouton qui ajoute un flux, colle
-          l’adresse <strong>https://code.visualstudio.com/feed.xml</strong> et valide. Ouvre ensuite
-          le flux dans ton agrégateur.
-        </p>
-        <p>
-          Écris sur ton papier : le nom de l’émetteur, l’adresse du flux, le titre du premier
-          élément et sa date, tels que ton agrégateur les affiche.
+          Ajoute à ton agrégateur le flux de VS Code : colle l’adresse
+          <strong>https://code.visualstudio.com/feed.xml</strong> et valide. Écris sur ton papier
+          l’émetteur, l’adresse, le titre du premier élément et sa date.
         </p>
         <p class="discret">
           Essaie d’abord seul, jusqu’à avoir fait un geste sur ton agrégateur ou sur ton papier :
@@ -4136,7 +4184,9 @@
               <p>Ces éléments sont des notes de version ; les autres sont d’autres billets.</p>
               <details data-cran="3">
                 <summary>Une partie de la solution</summary>
-                <p>Note le numéro de la dernière version que ton flux annonce, avec sa date.</p>
+                <p>
+                  Le premier élément de la liste est le plus récent : recopie son titre et sa date.
+                </p>
               </details>
             </details>
           </details>
@@ -4161,13 +4211,9 @@
           </ul>
         </div>
         <p>
-          Dans ton agrégateur, ajoute le flux de la CNIL : ouvre le bouton qui ajoute un flux, colle
-          l’adresse <strong>https://www.cnil.fr/fr/rss.xml</strong> et valide. Ouvre ensuite le flux
-          dans ton agrégateur.
-        </p>
-        <p>
-          Écris sur ton papier : le nom de l’émetteur, l’adresse du flux, le titre du premier
-          élément et sa date, tels que ton agrégateur les affiche.
+          Ajoute à ton agrégateur le flux de la CNIL : colle l’adresse
+          <strong>https://www.cnil.fr/fr/rss.xml</strong> et valide. Écris sur ton papier
+          l’émetteur, l’adresse, le titre du premier élément et sa date.
         </p>
         <p class="discret">
           Essaie d’abord seul, jusqu’à avoir fait un geste sur ton agrégateur ou sur ton papier :
@@ -4184,8 +4230,7 @@
               <details data-cran="3">
                 <summary>Une partie de la solution</summary>
                 <p>
-                  Note le titre du premier élément et sa date, avec le mot « actualités » si ton
-                  agrégateur l’affiche.
+                  Le premier élément de la liste est le plus récent : recopie son titre et sa date.
                 </p>
               </details>
             </details>
@@ -4205,19 +4250,18 @@
               Le CERT-FR est le service de l’État qui publie les avis de sécurité sur les failles
               des logiciels.
             </li>
+            <li>
+              Si ton agrégateur répond qu’il ne trouve pas de flux, écris son message exact sur ton
+              papier, puis essaie le lien d’un autre flux de la même page (alertes, actualités) : un
+              flux du CERT-FR doit s’ajouter pour que ta veille compte cinq sources.
+            </li>
           </ul>
         </div>
         <p>
           Ouvre la page
-          <a data-lien="https://cert.cyber.gouv.fr/flux-rss/">cert.cyber.gouv.fr/flux-rss</a>,
-          repère le flux des avis et copie son adresse : clic droit sur le lien, puis « copier
-          l’adresse du lien ». Ajoute-la à ton agrégateur comme les autres. Si ton agrégateur répond
-          qu’il ne trouve pas de flux, écris sur ton papier le message exact qu’il t’affiche : ce
-          constat compte aussi.
-        </p>
-        <p>
-          Écris sur ton papier l’adresse que tu as copiée, puis le titre et la date du premier
-          élément si ton agrégateur en affiche, ou son message.
+          <a data-lien="https://cert.cyber.gouv.fr/flux-rss/">cert.cyber.gouv.fr/flux-rss</a>, copie
+          l’adresse du flux des avis (clic droit sur son lien, puis « copier l’adresse du lien ») et
+          ajoute-la à ton agrégateur. Écris sur ton papier l’adresse ajoutée.
         </p>
         <p class="discret">
           Essaie d’abord seul, jusqu’à avoir fait un geste sur ton agrégateur ou sur ton papier :
@@ -4227,10 +4271,10 @@
           <summary>J’ai essayé seul, et je suis bloqué</summary>
           <details data-cran="1">
             <summary>Un indice</summary>
-            <p>Quelle ligne de la page parle des avis ?</p>
+            <p>Combien de flux la page liste-t-elle, et lequel concerne les avis ?</p>
             <details data-cran="2">
               <summary>Une piste détaillée</summary>
-              <p>Le lien du flux est celui qui porte le mot « avis », souvent avec le sigle RSS.</p>
+              <p>Chaque ligne de la page nomme un flux : relis les noms un par un.</p>
               <details data-cran="3">
                 <summary>Une partie de la solution</summary>
                 <p>
@@ -4259,10 +4303,9 @@
           </ul>
         </div>
         <p>
-          Choisis dans ton agrégateur le dernier élément de php.net, du CERT-FR ou de la CNIL. Ouvre
-          la page de l’élément sur le site de l’émetteur, pas sur l’agrégateur. Écris sur ton papier
-          ta fiche de veille, avec les sept rubriques. L’adresse que tu notes est celle de la page
-          de l’émetteur.
+          Ouvre la page du dernier élément de php.net, du CERT-FR ou de la CNIL, sur le site de
+          l’émetteur et non dans l’agrégateur. Écris sur ton papier ta fiche de veille, avec les
+          sept rubriques ; l’adresse est celle de la page de l’émetteur.
         </p>
         <p class="discret">
           Essaie d’abord seul, jusqu’à avoir fait un geste sur ton agrégateur ou sur ton papier :
@@ -4308,8 +4351,8 @@
         </div>
         <p>
           Choisis dans ton flux de VS Code ou de php.net un élément qui annonce une nouveauté. Écris
-          sur ton papier la réponse à chacune des cinq questions, puis ta décision (adopter, tester
-          ou ignorer) avec sa raison et la date du jour.
+          sur ton papier la réponse à chacune des cinq questions, puis ta décision avec sa raison et
+          la date du jour.
         </p>
         <p class="discret">
           Essaie d’abord seul, jusqu’à avoir fait un geste sur ton agrégateur ou sur ton papier :
@@ -4325,7 +4368,9 @@
             </p>
             <details data-cran="2">
               <summary>Une piste détaillée</summary>
-              <p>Le statut se lit dans le texte de l’annonce : stable, ou version d’essai.</p>
+              <p>
+                Le statut se lit dans le texte de l’annonce : version stable, ou version d’essai.
+              </p>
               <details data-cran="3">
                 <summary>Une partie de la solution</summary>
                 <p>
@@ -4351,12 +4396,16 @@
               résultat attendu, le résultat obtenu avec le message d’erreur exact, ce qui a été
               essayé.
             </li>
+            <li>
+              Si php -v ne répond pas parce que PHP n’est pas installé, recopie à la place le
+              message de ta machine.
+            </li>
           </ul>
         </div>
         <p>
-          Prends une erreur que tu as rencontrée dans ton travail (PHP, Apache, ton éditeur) ou, à
-          défaut, une que tu inventes. Dans ton terminal, tape <code>php -v</code> pour lire ta
-          version de PHP. Écris sur ton papier ta question, avec les six éléments.
+          Écris sur ton papier une question de forum sur une erreur de ton travail (PHP, Apache, ton
+          éditeur) ou, à défaut, une que tu inventes, avec les six éléments. Pour les versions, tape
+          <code>php -v</code> dans ton terminal et recopie le résultat.
         </p>
         <p class="discret">
           Essaie d’abord seul, jusqu’à avoir fait un geste sur ton agrégateur ou sur ton papier :
@@ -4433,9 +4482,9 @@
         ></p>
         <p>
           Elle ne le retient pas tel quel. La page de blog n’a ni auteur ni date et ne renvoie vers
-          aucune source : ce n’est pas une source officielle, et un mot fort ne prouve rien. Jade
-          cherche la source primaire, php.net, lit sa date, puis la recoupe avec un autre émetteur,
-          le CERT-FR : l’annonce du 21 octobre 2026 et l’avis qui la confirme.
+          aucune source : on ne sait pas qui publie, rien ne la rend officielle, et un mot fort ne
+          prouve rien. Jade cherche la source primaire, php.net, lit sa date, puis la recoupe avec
+          un autre émetteur, le CERT-FR : l’annonce du 21 octobre 2026 et l’avis qui la confirme.
         </p>
         <p>À l’écran suivant, tu fais le même chemin pour un autre cas.</p>
       </div>
@@ -4451,7 +4500,18 @@
           <ul>
             <li>
               Les actualités de la CNIL sont la rubrique de son site où elle publie ses annonces. Le
-              flux de ces actualités est une adresse que Camille peut ajouter à son agrégateur.
+              flux de ces actualités est un fichier, publié à une adresse que Camille peut ajouter à
+              son agrégateur.
+            </li>
+            <li>
+              Une source primaire est émise par l’organisme qui produit l’information ; une source
+              secondaire la reprend ; une source officielle parle au nom de l’autorité ou de
+              l’éditeur lui-même. Citer, c’est écrire de quelle page vient une phrase, pour que le
+              lecteur la retrouve.
+            </li>
+            <li>
+              Une collectivité est une commune, un département ou une région. Une sanction est une
+              peine que la CNIL prononce contre qui n’a pas respecté les règles.
             </li>
             <li>
               Le flux de la CNIL porte, le 9 novembre 2026, la page « Cybersécurité des
@@ -4495,7 +4555,7 @@
             </li>
             <li class="fleche">Que vaut ce site comme source, et pourquoi ?</li>
             <li class="boite">Ce que vaut actus-web.example</li>
-            <li class="fleche">Où Camille cherche-t-elle la source primaire ?</li>
+            <li class="fleche">Que fait Camille de ce lien avant de le citer ?</li>
             <li class="boite" data-pose data-champ="Que note Camille dans son rapport ?">
               Ce que Camille note
             </li>
@@ -4533,16 +4593,29 @@
         <div class="cadre a-retenir">
           <p>
             <strong>L’idée du bloc.</strong> Une même question relie tout le bloc : d’où vient cette
-            information, et de quand date-t-elle ? Un flux est un fichier à une adresse que ton
-            agrégateur relit, et l’agrégateur rassemble les nouveautés de tes cinq sources. Une
-            source primaire est émise par celui qui produit l’information ; une source officielle
-            parle au nom de l’autorité ou de l’éditeur ; un blog, même bien écrit, n’est pas une
-            source officielle. Le CERT-FR publie des avis sur les failles, des alertes pour un
-            danger immédiat, des bulletins d’actualité qui renvoient aux avis ; la CNIL publie ses
-            actualités sur les données personnelles. Une fiche de veille cite l’émetteur, l’adresse,
-            la date de publication et la date de lecture. Une nouveauté se juge sur cinq questions,
-            puis s’adopte, se teste ou s’ignore.
+            information, et de quand date-t-elle ?
           </p>
+          <ul>
+            <li>
+              Un flux est un fichier à une adresse que ton agrégateur relit ; l’agrégateur rassemble
+              les nouveautés de tes cinq sources.
+            </li>
+            <li>
+              Une source primaire est émise par celui qui produit l’information ; une source
+              officielle parle au nom de l’autorité ou de l’éditeur ; un blog, même bien écrit,
+              n’est pas une source officielle.
+            </li>
+            <li>
+              Le CERT-FR publie des avis sur les failles, des alertes pour un danger immédiat, des
+              bulletins d’actualité qui renvoient aux avis ; la CNIL publie ses actualités sur les
+              données personnelles.
+            </li>
+            <li>
+              Une fiche de veille cite l’émetteur, l’adresse, la date de publication et la date de
+              consultation.
+            </li>
+            <li>Une nouveauté se juge sur cinq questions, puis s’adopte, se teste ou s’ignore.</li>
+          </ul>
           <p><strong>Trois confusions à éviter.</strong></p>
           <ul>
             <li>
@@ -4569,8 +4642,8 @@
               de la faille.
             </li>
             <li>
-              Remplis la fiche : titre, émetteur, adresse, date de publication, date de lecture,
-              résumé, conséquence pour le projet.
+              Remplis la fiche : titre, émetteur, adresse, date de publication, date de
+              consultation, résumé, conséquence pour le projet.
             </li>
             <li>
               Pose ta question reproductible avec le titre précis, les versions, le code minimal, ce
@@ -4580,14 +4653,14 @@
           <p>
             <strong>Les sigles.</strong> RSS : Really Simple Syndication. CVE : Common
             Vulnerabilities and Exposures. CERT-FR : French Computer Emergency Response Team. CNIL :
-            Commission nationale de l’informatique et des libertés.
+            Commission nationale de l’informatique et des libertés. MDN : Mozilla Developer Network.
           </p>
         </div>
       </div>
       <div data-ecran="La suite">
         <p class="accroche">
-          Jade sait tenir sa veille, juger une source et citer ce qu’elle lit. Les blocs suivants
-          reprennent ces gestes dans le travail de tous les jours.
+          Jade sait tenir sa veille, juger une source et citer ce qu’elle lit. Ces gestes servent
+          dans le travail de tous les jours.
         </p>
         <h3>À explorer plus tard</h3>
         <ul>
@@ -4616,7 +4689,7 @@
         data-reponse="a=primaire,b=secondaire,c=primaire,d=secondaire"
         data-aide1="Pour chaque page, demande-toi qui a produit l’information."
         data-aide2="Une source primaire est écrite par celui qui produit l’information ; si la page parle de ce qu’un autre a écrit, ce n’est pas la sienne."
-        data-aide3="Mets en primaire l’annonce de php.net et l’avis du CERT-FR, en secondaire les deux pages qui les commentent ou les recopient."
+        data-aide3="Regarde l’auteur de chaque ligne : celui qui publie sur son propre site produit l’information, celui qui commente ou recopie la reprend. Classe selon l’auteur."
       >
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -4669,7 +4742,7 @@
         data-reponse="a=primaire,b=secondaire,c=primaire,d=secondaire"
         data-aide1="Pour chaque page, demande-toi qui a produit l’information."
         data-aide2="Le mot « blog » ne décide pas : regarde qui écrit la page."
-        data-aide3="Mets en primaire ce que MDN et l’éditeur de VS Code publient eux-mêmes, en secondaire ce qui reprend ou résume."
+        data-aide3="Regarde l’auteur de chaque ligne : celui qui publie sur son propre site produit l’information, celui qui résume ou reprend la reprend. Classe selon l’auteur."
       >
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -4723,7 +4796,7 @@
         data-aide1="Qui a écrit la page : la CNIL, ou une personne ?"
         data-aide2="Une source officielle parle au nom de l’autorité ou de l’éditeur lui-même."
         data-aide3="Une page écrite par une personne qui cite la CNIL parle de la CNIL, pas en son nom."
-        data-justifier="Pourquoi une page qui cite la CNIL ne parle-t-elle pas au nom de la CNIL ?"
+        data-justifier="Un site d’actualités recopie mot pour mot une page de la CNIL, en la citant. Est-il une source officielle sur la CNIL ? Explique pourquoi."
       >
         <p>
           Un camarade colle une page de <strong>blog-de-yan.example</strong>, écrite par Yan, qui
@@ -4744,9 +4817,7 @@
         </div>
         <p class="q">Cette page est-elle une source officielle sur la CNIL ?</p>
         <ul class="options">
-          <li data-option="non">
-            Non : une personne y parle de la CNIL ; l’autorité n’y parle pas elle-même.
-          </li>
+          <li data-option="non">Non, ce n’est pas une source officielle sur la CNIL.</li>
           <li
             data-option="oui"
             data-retour="Citer une autorité, est-ce parler au nom de cette autorité ?"
@@ -4773,7 +4844,7 @@
         data-aide1="Qui a écrit la page : le CERT-FR, ou une élève ?"
         data-aide2="Une source officielle parle au nom de l’autorité ou de l’éditeur lui-même."
         data-aide3="Une page tenue par une élève, même intitulée « avis du CERT-FR », reste la page d’une élève."
-        data-justifier="Pourquoi une page titrée « avis du CERT-FR » peut-elle ne pas être une source officielle ?"
+        data-justifier="Une élève recopie un avis du CERT-FR sans aucune erreur. Sa page devient-elle une source officielle ? Explique pourquoi."
       >
         <p>
           Sur <strong>blog-de-la-classe.example</strong>, une élève a publié une page titrée « Avis
@@ -4790,9 +4861,7 @@
         </div>
         <p class="q">Cette page est-elle une source officielle sur le CERT-FR ?</p>
         <ul class="options">
-          <li data-option="non">
-            Non : c’est une élève qui recopie le CERT-FR, il n’y parle pas lui-même.
-          </li>
+          <li data-option="non">Non, ce n’est pas une source officielle sur le CERT-FR.</li>
           <li
             data-option="oui"
             data-retour="Mettre un nom dans un titre suffit-il à publier au nom de celui qui le porte ?"
@@ -4821,19 +4890,16 @@
         data-aide3="Un document qui renvoie vers d’autres documents fait le point sans décrire lui-même chaque faille."
       >
         <p>
-          Le 9 novembre 2026, le CERT-FR publie un document qui liste, pour la semaine 45, les
-          vulnérabilités notables, avec pour chacune un renvoi vers son avis.
+          Le 9 novembre 2026, le CERT-FR publie un document qui liste les vulnérabilités notables
+          d’une semaine, avec pour chacune un renvoi vers son avis.
         </p>
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
           <ul>
             <li>
-              Le CERT-FR publie trois sortes de documents. L’avis décrit la vulnérabilité d’un
-              produit, avec les systèmes touchés et la solution. L’alerte prévient d’un danger
-              immédiat, déjà exploité. Le bulletin d’actualité fait le point sur une période et
-              renvoie vers les avis.
+              Le CERT-FR publie trois sortes de documents : des avis, des alertes et des bulletins
+              d’actualité.
             </li>
-            <li>Une période est un intervalle de temps, comme une semaine.</li>
           </ul>
         </div>
         <p class="q">De quelle sorte de document du CERT-FR s’agit-il ?</p>
@@ -4874,10 +4940,8 @@
           <p class="discret">Pour lire :</p>
           <ul>
             <li>
-              Le CERT-FR publie trois sortes de documents. L’avis décrit la vulnérabilité d’un
-              produit, avec les systèmes touchés et la solution. L’alerte prévient d’un danger
-              immédiat, déjà exploité. Le bulletin d’actualité fait le point sur une période et
-              renvoie vers les avis.
+              Le CERT-FR publie trois sortes de documents : des avis, des alertes et des bulletins
+              d’actualité. Une faille est exploitée quand des attaquants s’en servent déjà.
             </li>
             <li>
               OpenSSH est un logiciel qui sert à se connecter à distance à une machine, de façon
@@ -4968,7 +5032,7 @@
         data-reponse="complete"
         data-aide1="Que doit retrouver le lecteur de Jade en lisant sa phrase ?"
         data-aide2="Une citation donne qui parle, à quelle adresse, à quelle date."
-        data-aide3="Prends la phrase qui donne l’émetteur, l’adresse et les deux dates."
+        data-aide3="Compare chaque phrase à ce que le lecteur doit retrouver : qui parle, où la page se trouve, et deux dates différentes."
       >
         <p>
           Jade rédige le rapport de son projet. Elle a lu, le 16 novembre 2026, la page de la CNIL
@@ -4978,8 +5042,11 @@
           <p class="discret">Pour lire :</p>
           <ul>
             <li>
-              Citer, c’est écrire de quelle page vient une phrase, pour que le lecteur la retrouve :
-              l’émetteur, l’adresse, la date de publication et la date de lecture.
+              Citer, c’est écrire de quelle page vient une phrase, pour que le lecteur la retrouve.
+            </li>
+            <li>
+              Une collectivité est une commune, un département ou une région. Une sanction est une
+              peine que la CNIL prononce contre qui n’a pas respecté les règles.
             </li>
           </ul>
         </div>
@@ -4988,8 +5055,8 @@
           <li data-option="complete">
             Selon la CNIL
             (https://www.cnil.fr/fr/sanctions-cybersecurite-collectivites-territoriales, publié le 9
-            novembre 2026, lu le 16 novembre 2026), dix sanctions ont été prononcées contre des
-            collectivités.
+            novembre 2026, consulté le 16 novembre 2026), dix sanctions ont été prononcées contre
+            des collectivités.
           </li>
           <li
             data-option="sans"
@@ -5016,7 +5083,7 @@
         data-reponse="complete"
         data-aide1="Que doit retrouver le lecteur de Sam en lisant sa phrase ?"
         data-aide2="Une citation donne qui parle, à quelle adresse, à quelle date."
-        data-aide3="Prends la phrase qui donne l’émetteur, l’adresse et les deux dates."
+        data-aide3="Compare chaque phrase à ce que le lecteur doit retrouver : qui parle, où la page se trouve, et deux dates différentes."
       >
         <p>
           Sam rédige le compte rendu de sa veille. Il a lu, le 16 novembre 2026, l’annonce de
@@ -5026,8 +5093,7 @@
           <p class="discret">Pour lire :</p>
           <ul>
             <li>
-              Citer, c’est écrire de quelle page vient une phrase, pour que le lecteur la retrouve :
-              l’émetteur, l’adresse, la date de publication et la date de lecture.
+              Citer, c’est écrire de quelle page vient une phrase, pour que le lecteur la retrouve.
             </li>
           </ul>
         </div>
@@ -5035,7 +5101,7 @@
         <ul class="options">
           <li data-option="complete">
             Selon php.net (https://www.php.net/archive/2026.php#2026-10-21-5, publié le 21 octobre
-            2026, lu le 16 novembre 2026), PHP 8.4.27 corrige deux failles critiques.
+            2026, consulté le 16 novembre 2026), PHP 8.4.27 corrige deux failles critiques.
           </li>
           <li
             data-option="sans"
@@ -5062,8 +5128,8 @@
         data-reponse="tester"
         data-aide1="Pose-toi les cinq questions : statut, date, compatibilité, recoupement, impact."
         data-aide2="Adopter, tester ou ignorer : la décision suit le statut de la version et ce qu’elle change pour le projet."
-        data-aide3="Une version d’essai utile plus tard s’essaie sur une copie."
-        data-justifier="Pourquoi Jade ne met-elle pas cette version sur son site réel ?"
+        data-aide3="Compare le statut de la version (d’essai ou stable) et son utilité pour Jade plus tard : une des trois décisions va avec cette combinaison."
+        data-justifier="Pourquoi Jade teste-t-elle cette version sur une copie, plutôt que de l’ignorer ?"
       >
         <p>
           Le 12 novembre 2026, php.net annonce « PHP 8.6.0 RC7 available for testing ». Une annonce
@@ -5079,7 +5145,9 @@
               pour l’instant, en notant pourquoi.
             </li>
             <li>
-              Une RC est une version candidate à la sortie ; la production, c’est le site réel.
+              Une RC est une version candidate à la sortie ; la production, c’est le site réel. Une
+              version stable est publiée pour être utilisée sur un site réel ; une version d’essai
+              est publiée pour être essayée.
             </li>
           </ul>
         </div>
@@ -5130,9 +5198,7 @@
         </div>
         <p class="q">Quelle décision Jade note-t-elle ?</p>
         <ul class="options">
-          <li data-option="ignorer">
-            L’ignorer et noter pourquoi : elle ne touche pas son projet.
-          </li>
+          <li data-option="ignorer">L’ignorer et noter la raison.</li>
           <li
             data-option="adopter"
             data-retour="Une version stable est-elle utile à tout le monde ? Qu’est-ce qui compte pour le projet de Jade ?"
@@ -5153,11 +5219,11 @@
         class="ex"
         data-widget="apparier"
         data-verifie
-        data-options="rss=RSS|cve=CVE|cnil=CNIL|certfr=CERT-FR"
-        data-reponse="a=rss,b=cve,c=cnil,d=certfr"
-        data-aide1="Associe chaque développement à ce qu’il désigne."
+        data-options="rss=RSS|cve=CVE|cnil=CNIL|certfr=CERT-FR|mdn=MDN"
+        data-reponse="a=rss,b=cve,c=cnil,d=certfr,e=mdn"
+        data-aide1="Que désigne chacun des sigles : un format, un numéro, un organisme, un site ?"
         data-aide2="Un développement garde les initiales du sigle."
-        data-aide3="Compare les initiales : R S S, C V E, C N I L, C E R T."
+        data-aide3="Compare les initiales : R S S, C V E, C N I L, C E R T, M D N."
       >
         <div class="cadre pour-lire">
           <p class="discret">Pour lire :</p>
@@ -5178,6 +5244,9 @@
           </li>
           <li data-element="d" data-retour="Quel organisme publie des avis sur les failles ?">
             French Computer Emergency Response Team
+          </li>
+          <li data-element="e" data-retour="Quel sigle nomme un site de documentation du Web ?">
+            Mozilla Developer Network
           </li>
         </ul>
       </div>
@@ -5229,11 +5298,11 @@
           Vingt-deux exercices du cours, un par écran d’explication (ET4 trois, ET5 trois, ET6
           quatre, ET7 trois, ET8 trois, ET9 trois, ET10 trois) ; vingt sont des prédictions
           (data-prediction), posées avant le texte qui y répond, et deux (« Les quatre critères », «
-          Les éléments d’une question ») lisent d’abord un cas rempli, puis le font refaire. Les
-          trois essais du prétest (p1 pour E1, p2 pour E2, p3 pour E3) sont des choix à options
-          fixes, repris à la fin de l’écran qui en reprend l’idée ; la reprise ne s’affiche que si
-          l’essai était faux (data-si-essai). Le pari de la perception porte sur le message de Malik
-          (E1).
+          Les éléments d’une question ») donnent d’abord leur matière (le texte des critères,
+          l’encadré des six éléments), puis la font appliquer. Les trois essais du prétest (p1 pour
+          E1, p2 pour E2, p3 pour E3) sont des choix à options fixes, repris à la fin de l’écran qui
+          en reprend l’idée ; la reprise ne s’affiche que si l’essai était faux (data-si-essai). Le
+          pari de la perception porte sur le message de Malik (E1).
         </li>
         <li>
           Tout exercice du cours dont l’apprenant a vu la solution lui fait refaire sans regarder un
@@ -5256,8 +5325,9 @@
           Les pages réelles ont été lues le 16 novembre 2026 par l’auteur, par un outil qui rend des
           résumés de texte et non dans un navigateur : les dates, les titres et les identifiants
           cités viennent de là. Les fichiers de flux du CERT-FR n’ont pas pu être ouverts comme
-          fichiers par l’auteur : l’atelier fait copier l’adresse sur la page officielle des flux et
-          note le message de l’agrégateur si l’ajout échoue.
+          fichiers par l’auteur : l’atelier fait copier l’adresse sur la page officielle des flux
+          et, si l’ajout échoue, fait noter le message puis essayer le lien d’un autre flux de la
+          même page.
         </li>
         <li>
           Non joué : le chemin d’ajout d’un flux dans Inoreader (les libellés varient, la fiche
@@ -5295,14 +5365,14 @@
       {
         "schema": 2,
         "bloc": "B18",
-        "version": 1,
+        "version": 2,
         "type": "procedures",
         "titre": "Tenir sa veille",
         "titre_court": "Tenir sa veille",
         "objectif": "Agrégateur RSS en place avec 5 sources primaires (MDN, php.net, CERT-FR, notes de version d'un outil, blog de la CNIL) ; une fiche de veille sourcée et datée ; évaluer une nouveauté avec esprit critique ; rédiger une question reproductible pour un forum (titre précis, versions, code minimal, résultat attendu et obtenu, message d'erreur exact, ce qui a été essayé) ; un flux RSS est un fichier publié à une URL que l'agrégateur interroge par HTTP (trouver l'URL d'un flux) ; une source primaire est émise par l'organisme qui produit l'information, un blog ou un relais est secondaire, et on juge une source sur l'émetteur, la date, la référence ou la version et le recoupement ; un avis CERT-FR décrit une vulnérabilité, les systèmes affectés et les mesures, une actualité informe sans exiger d'action ; un identifiant CVE désigne une vulnérabilité publique de façon unique ; une fiche de veille porte titre, émetteur, adresse, date de publication, date de consultation, résumé et conséquence pour le projet ; évaluer une nouveauté sur son statut, sa date, sa compatibilité, un recoupement et son impact, puis décider (adopter, tester, ignorer) en justifiant ; développer RSS, CVE, CERT-FR, CNIL et MDN et dire le rôle du CERT-FR et de la CNIL",
         "prerequis": ["B07"],
         "pont": 9,
-        "contexte_ia": "Bloc B18 « Tenir sa veille » du module « Écosystème et outils du développeur » (DWWM), dernier de la partie « Le cadre du métier », après les menaces, les parades, le RGPD et le droit d’auteur. Type procédures : l’apprenant met en place une veille avec un agrégateur, juge ses sources, remplit une fiche de veille, évalue une nouveauté et rédige une question reproductible. Prérequis : l’URL et HTTP. Fil rouge : Jade, 27 ans, avec un petit site PHP local (PHP 8.4.25), sa veille du lundi 2 novembre 2026 ; Malik, un camarade qui colle la page d’un blog ; Camille et Sam, autres apprenants. Les sites fictifs finissent en .example (blog-de-yan.example, actus-web.example, club-photo.example, cuisine-du-lundi.example) ; Pinceau est un outil inventé. Les pages réelles ont été lues le 16 novembre 2026 par l’auteur, par extraction de texte et non dans un navigateur.\n\nVocabulaire défini dans la fiche : veille, agrégateur, flux, URL du flux, RSS, Atom, source primaire, source secondaire, source officielle, émetteur, recoupement, avis, alerte, bulletin d’actualité, CERT-FR, CNIL, CVE, fiche de veille, date de publication, date de consultation, citer, version, release candidate (RC), production, adopter, tester, ignorer, forum, question reproductible, code minimal, message d’erreur exact, MDN.\n\nLes trois erreurs critiques. E1 : prendre un blog pour une source officielle ; « blog » ne dit pas qui écrit et une page qui cite une autorité parle d’elle, pas en son nom. E2 : citer sans source ni date ; il faut l’émetteur, l’adresse, la date de publication et la date de lecture. E3 : confondre un avis du CERT-FR avec une actualité ; l’avis décrit la vulnérabilité d’un produit, ses systèmes affectés et sa solution, l’alerte prévient d’un danger immédiat, le bulletin d’actualité fait le point d’une période et renvoie vers les avis.\n\nCe que la fiche enseigne comme règle. Un flux est un fichier publié à une adresse, que l’agrégateur interroge par HTTP ; on colle l’adresse du fichier, trouvée dans la ligne link rel=alternate type=application/rss+xml de la page (mécanisme montré sur des pages fictives) ou dans la page des flux du site. Les cinq sources de l’atelier : MDN (https://developer.mozilla.org/en-US/blog/rss.xml), php.net (https://www.php.net/feed.atom), VS Code (https://code.visualstudio.com/feed.xml, notes de version et autres billets), la CNIL (https://www.cnil.fr/fr/rss.xml, ses actualités) et le CERT-FR (page https://cert.cyber.gouv.fr/flux-rss/ ; l’apprenant y copie l’adresse du flux des avis, et note le message de son agrégateur si l’ajout échoue : cette adresse n’a pas pu être ouverte en tant que fichier par l’auteur). Primaire : émise par l’organisme qui produit l’information ; officielle : parle au nom de l’autorité ou de l’éditeur ; le blog de MDN est primaire parce que MDN en est l’émetteur, le mot « blog » ne décide pas. On juge une source sur l’émetteur, la date, la référence ou la version et le recoupement ; deux pages dont l’une recopie l’autre ne recoupent rien. La CNIL est une source officielle, lue dans ses actualités. Faits lus : l’annonce php.net du 21 octobre 2026 (PHP 8.5.12, 8.4.27, 8.3.36 et 8.2.35 corrigent CVE-2026-109618 et CVE-2026-109619) ; l’avis CERTFR-2026-AVI-1359 du 21 octobre 2026 (systèmes affectés : 8.2.x avant 8.2.35, 8.3.x avant 8.3.36, 8.4.x avant 8.4.27, 8.5.x avant 8.5.12 ; 8.1 et antérieures toutes versions) ; l’alerte CERTFR-2026-ALE-014 (première version le 21, dernière le 27 octobre 2026) ; le bulletin CERTFR-2026-ACT-047 du 9 novembre 2026 ; l’avis CERTFR-2026-AVI-1534 sur Axis du 13 novembre 2026 (CVE-2026-13312) ; l’annonce « PHP 8.6.0 RC7 available for testing » du 12 novembre 2026 ; l’actualité de la CNIL du 9 novembre 2026 sur dix sanctions de collectivités. Sigles : RSS (Really Simple Syndication), CVE (Common Vulnerabilities and Exposures), CERT-FR (French Computer Emergency Response Team, rattaché à l’ANSSI), CNIL (Commission nationale de l’informatique et des libertés), MDN (MDN Web Docs). Fiche de veille : titre, émetteur, adresse, date de publication, date de consultation, résumé en deux phrases, conséquence pour le projet. Nouveauté : statut, date, compatibilité, recoupement, impact, puis adopter (installer), tester (sur une copie) ou ignorer (en notant pourquoi) ; « c’est nouveau » n’est pas une raison. Question reproductible : titre précis, versions et environnement, code minimal, résultat attendu, résultat obtenu avec le message d’erreur exact, ce qui a été essayé, un seul problème.\n\nComment corriger. Accepte une reformulation exacte. Une citation doit donner l’émetteur, l’adresse et les deux dates ; refuse une réponse qui n’en donne qu’une partie. Pour un avis, exige la sorte du document et le rôle de chaque sorte. Pour une source, exige l’émetteur comme raison, pas la date seule. Ne demande pas de score CVSS, ni les règles de la CNIL, ni le format interne d’un fichier de flux, ni le chemin exact d’un autre agrégateur.\n\nPièges. Prendre un blog de MDN pour un blog personnel ; croire qu’une alerte informe seulement ; mélanger date de publication et date de consultation ; croire qu’une version RC se met sur un site réel ; croire qu’une source stable doit toujours être adoptée.",
+        "contexte_ia": "Bloc B18 « Tenir sa veille » du module « Écosystème et outils du développeur » (DWWM), dernier de la partie « Le cadre du métier », après les menaces, les parades, le RGPD et le droit d’auteur. Type procédures : l’apprenant met en place une veille avec un agrégateur, juge ses sources, remplit une fiche de veille, évalue une nouveauté et rédige une question reproductible. Prérequis : l’URL et HTTP. Fil rouge : Jade, 27 ans, avec un petit site PHP local (PHP 8.4.25), sa veille du lundi 2 novembre 2026 ; Malik, un camarade qui colle la page d’un blog ; Camille et Sam, autres apprenants. Les sites fictifs finissent en .example (blog-de-yan.example, actus-web.example, club-photo.example, cuisine-du-lundi.example) ; Pinceau est un outil inventé. Les pages réelles ont été lues le 16 novembre 2026 par l’auteur, par extraction de texte et non dans un navigateur.\n\nVocabulaire défini dans la fiche : veille, agrégateur, flux, URL du flux, RSS, Atom, source primaire, source secondaire, source officielle, émetteur, recoupement, avis, alerte, bulletin d’actualité, CERT-FR, CNIL, CVE, fiche de veille, date de publication, date de consultation, citer, version, release candidate (RC), production, version stable, version expérimentale, adopter, tester, ignorer, forum, question reproductible, code minimal, message d’erreur exact, MDN.\n\nLes trois erreurs critiques. E1 : prendre un blog pour une source officielle ; « blog » ne dit pas qui écrit et une page qui cite une autorité parle d’elle, pas en son nom. E2 : citer sans source ni date ; il faut l’émetteur, l’adresse, la date de publication et la date de consultation. E3 : confondre un avis du CERT-FR avec une actualité ; l’avis décrit la vulnérabilité d’un produit, ses systèmes affectés et sa solution, l’alerte prévient d’un danger immédiat, le bulletin d’actualité fait le point d’une période et renvoie vers les avis.\n\nCe que la fiche enseigne comme règle. Un flux est un fichier publié à une adresse, que l’agrégateur interroge par HTTP ; on colle l’adresse du fichier, trouvée dans la ligne link rel=alternate type=application/rss+xml de la page (mécanisme montré sur des pages fictives) ou dans la page des flux du site. Les cinq sources de l’atelier : MDN (https://developer.mozilla.org/en-US/blog/rss.xml), php.net (https://www.php.net/feed.atom), VS Code (https://code.visualstudio.com/feed.xml, notes de version et autres billets), la CNIL (https://www.cnil.fr/fr/rss.xml, ses actualités) et le CERT-FR (page https://cert.cyber.gouv.fr/flux-rss/ ; l’apprenant y copie l’adresse du flux des avis ; si son agrégateur ne trouve pas de flux, il note le message et essaie le lien d’un autre flux de la même page, jusqu’à ce qu’un flux du CERT-FR s’ajoute : les fichiers de flux du CERT-FR n’ont pas pu être ouverts en tant que fichiers par l’auteur). Primaire : émise par l’organisme qui produit l’information ; officielle : parle au nom de l’autorité ou de l’éditeur ; le blog de MDN est primaire parce que MDN en est l’émetteur, le mot « blog » ne décide pas. On juge une source sur l’émetteur, la date, la référence ou la version et le recoupement ; deux pages dont l’une recopie l’autre ne recoupent rien. La CNIL est une source officielle, lue dans ses actualités. Faits lus : l’annonce php.net du 21 octobre 2026 (PHP 8.5.12, 8.4.27, 8.3.36 et 8.2.35 corrigent CVE-2026-109618 et CVE-2026-109619) ; l’avis CERTFR-2026-AVI-1359 du 21 octobre 2026 (systèmes affectés : 8.2.x avant 8.2.35, 8.3.x avant 8.3.36, 8.4.x avant 8.4.27, 8.5.x avant 8.5.12 ; 8.1 et antérieures toutes versions) ; l’alerte CERTFR-2026-ALE-014 (première version le 21, dernière le 27 octobre 2026) ; le bulletin CERTFR-2026-ACT-047 du 9 novembre 2026 ; l’avis CERTFR-2026-AVI-1534 sur Axis du 13 novembre 2026 (CVE-2026-13312) ; l’annonce « PHP 8.6.0 RC7 available for testing » du 12 novembre 2026 ; l’actualité de la CNIL du 9 novembre 2026 sur dix sanctions de collectivités. Sigles : RSS (Really Simple Syndication), CVE (Common Vulnerabilities and Exposures), CERT-FR (French Computer Emergency Response Team), CNIL (Commission nationale de l’informatique et des libertés), MDN (Mozilla Developer Network, aujourd’hui MDN Web Docs). Fiche de veille : titre, émetteur, adresse, date de publication, date de consultation (un seul terme, pour la fiche comme pour la citation), résumé en deux phrases, conséquence pour le projet. Nouveauté : statut, date, compatibilité, recoupement, impact, puis adopter (installer), tester (sur une copie) ou ignorer (en notant pourquoi) ; « c’est nouveau » n’est pas une raison. Question reproductible : titre précis, versions et environnement, code minimal, résultat attendu, résultat obtenu avec le message d’erreur exact, ce qui a été essayé, un seul problème.\n\nComment corriger. Accepte une reformulation exacte. Une citation doit donner l’émetteur, l’adresse et les deux dates (publié le…, consulté le…) ; refuse une réponse qui n’en donne qu’une partie. Si la page est relue plus tard, la date de consultation devient le jour de la nouvelle lecture et la date de publication reste, sauf nouveau texte de l’émetteur. Pour un avis, exige la sorte du document et le rôle de chaque sorte. Pour une source, exige l’émetteur comme raison, pas la date seule. Ne demande pas de score CVSS, ni les règles de la CNIL, ni le format interne d’un fichier de flux, ni le chemin exact d’un autre agrégateur.\n\nPièges. Prendre un blog de MDN pour un blog personnel ; croire qu’une alerte informe seulement ; mélanger date de publication et date de consultation ; croire qu’une version RC se met sur un site réel ; croire qu’une source stable doit toujours être adoptée.",
         "sources": [
           {
             "id": "S1",
@@ -5452,22 +5522,22 @@
             "id": "PR1-2",
             "item": "PR1-2",
             "erreurs": ["E1"],
-            "question": "Pour lire : Une source officielle parle au nom de l’autorité ou de l’éditeur lui-même. Un camarade colle une page de blog-de-yan.example, écrite par Yan, qui dit : « La CNIL a prononcé dix sanctions contre des mairies. » La CNIL est la Commission nationale de l’informatique et des libertés. Pourquoi une page qui cite la CNIL ne parle-t-elle pas au nom de la CNIL ?",
-            "attendu": "Citer la CNIL, c’est parler d’elle, pas en son nom : la page est écrite par Yan, une personne, et non publiée par la CNIL. Une source officielle est publiée par l’autorité elle-même ; pour savoir ce que dit la CNIL, il faut lire la page de la CNIL, dans ses actualités. Déduit de l’étape « Juger une source »."
+            "question": "Pour lire : Une source officielle parle au nom de l’autorité ou de l’éditeur lui-même. Un site d’actualités recopie mot pour mot une page de la CNIL, en la citant. Est-il une source officielle sur la CNIL ? Explique pourquoi.",
+            "attendu": "Non : même s’il recopie fidèlement et cite la CNIL, le site est tenu par d’autres personnes, qui parlent de la CNIL sans parler en son nom. Pour lire ce que dit la CNIL, il faut ouvrir sa propre page, dans ses actualités. Déduit de l’étape « Juger une source »."
           },
           {
             "id": "PR1-2:variante",
             "item": "PR1-2",
             "erreurs": ["E1"],
-            "question": "Pour lire : Une source officielle parle au nom de l’autorité ou de l’éditeur lui-même. Le CERT-FR est le service de l’État qui publie les avis de sécurité. Sur blog-de-la-classe.example, une élève a publié une page titrée « Avis du CERT-FR sur PHP », recopiée de mémoire. Pourquoi une page titrée « avis du CERT-FR » peut-elle ne pas être une source officielle ?",
-            "attendu": "Le titre ne dit pas qui publie : la page est écrite par une élève, pas par le CERT-FR, et elle est recopiée de mémoire, donc peut contenir des erreurs. Une source officielle est celle que le CERT-FR publie lui-même sur son site ; c’est celle-là qu’il faut lire et citer. Déduit de l’étape « Juger une source »."
+            "question": "Pour lire : Une source officielle parle au nom de l’autorité ou de l’éditeur lui-même. Le CERT-FR est le service de l’État qui publie les avis de sécurité. Une élève recopie un avis du CERT-FR sans aucune erreur. Sa page devient-elle une source officielle ? Explique pourquoi.",
+            "attendu": "Non : une copie exacte reste la page d’une élève, qui ne publie pas au nom du CERT-FR. La source officielle est la page que le CERT-FR publie lui-même sur son site ; c’est celle-là qu’il faut lire et citer. Déduit de l’étape « Juger une source »."
           },
           {
             "id": "PR1-6",
             "item": "PR1-6",
             "erreurs": [],
-            "question": "Pour lire : une RC est une version candidate à la sortie ; la production, c’est le site réel. Le 12 novembre 2026, php.net annonce « PHP 8.6.0 RC7 available for testing » ; une annonce précédente de la même série déconseille de l’utiliser en production. Pourquoi Jade ne met-elle pas cette version sur son site réel ?",
-            "attendu": "Parce que php.net la dit réservée aux essais : une version candidate n’est pas stable et peut casser le site vu par les visiteurs. Jade la teste sur une copie, sans toucher au site réel, pour préparer son passage à PHP 8.6. Déduit de l’étape « Évaluer une nouveauté »."
+            "question": "Pour lire : adopter, c’est installer la nouveauté dans son projet ; tester, l’essayer sur une copie ; ignorer, ne rien faire en notant pourquoi. Le 12 novembre 2026, php.net annonce « PHP 8.6.0 RC7 available for testing », une version d’essai déconseillée en production. Jade prévoit de passer à PHP 8.6 plus tard. Pourquoi la teste-t-elle sur une copie, plutôt que de l’ignorer ?",
+            "attendu": "Parce que son site devra passer en PHP 8.6 : la version touche son projet, donc elle ne l’ignore pas. Mais c’est une version d’essai, déconseillée en production : elle l’essaie sur une copie, sans toucher au site réel. Déduit de l’étape « Évaluer une nouveauté »."
           },
           {
             "id": "PR1-6:variante",
@@ -5481,37 +5551,37 @@
           {
             "id": "B18-R1",
             "erreurs": [],
-            "question": "Pour lire : un flux est un fichier publié à une adresse, que l’agrégateur relit pour récupérer les nouveautés d’un site. Un site de recettes publie ses nouveautés dans un flux. Camille veut l’ajouter à son agrégateur. Que doit-elle y coller, et où peut-elle le trouver ?",
-            "attendu": "Elle doit coller l’adresse du fichier du flux, pas celle d’une page quelconque du site. Elle la trouve dans la page du site qui liste ses flux, ou dans la ligne de la page qui annonce le flux (une ligne link de type application/rss+xml). Déduit de l’étape « Les flux »."
+            "question": "Pour lire : un agrégateur rassemble au même endroit les nouveautés de plusieurs sites choisis. Un site de randonnées publie ses nouveautés dans un flux. Camille veut le suivre dans son agrégateur. Que doit-elle y coller, et où peut-elle le trouver ?",
+            "attendu": "Elle doit coller l’adresse du fichier du flux, pas celle de la page d’accueil du site. Elle la trouve dans un lien ou une icône RSS du site, dans la ligne link de l’en-tête de la page, ou dans la page du site qui liste ses flux. Déduit de l’étape « Les flux »."
           },
           {
             "id": "B18-R2",
             "erreurs": ["E1"],
-            "question": "Pour lire : une source primaire est émise par l’organisme qui produit l’information ; une source secondaire la reprend. On juge une source sur son émetteur, sa date, sa référence et son recoupement. Une page de actus-web.example reprend un avis du CERT-FR, sans date ni lien. Est-elle une source primaire ou secondaire, et que fait-on pour vérifier ?",
-            "attendu": "Elle est secondaire : actus-web.example n’est pas l’émetteur de l’avis, et la page n’a ni date ni lien. Pour vérifier, on cherche la source primaire, la page du CERT-FR, on lit sa date, et on recoupe avec un autre émetteur si l’information compte. Déduit de l’étape « Juger une source »."
+            "question": "Pour lire : une source primaire est émise par l’organisme qui produit l’information. Une page de lettre-du-web.example reprend une annonce de MDN, sans date ni lien. Est-elle une source primaire ou secondaire, et que fait-on pour vérifier ?",
+            "attendu": "Elle est secondaire : lettre-du-web.example n’est pas l’émetteur de l’annonce, et la page n’a ni date ni lien. Pour vérifier, on cherche la source primaire, la page de MDN, on lit sa date, et on recoupe avec un autre émetteur si l’information compte. Déduit de l’étape « Juger une source »."
           },
           {
             "id": "B18-R3",
             "erreurs": [],
-            "question": "Pour lire : le CERT-FR est le service de l’État qui publie des avis sur les failles des logiciels ; la CNIL est la Commission nationale de l’informatique et des libertés, qui publie ses actualités sur les données personnelles. Une étudiante veut savoir (a) si sa version de PHP est touchée par une faille, (b) quelles sanctions la CNIL a prononcées. Où cherche-t-elle chacune ?",
+            "question": "Pour lire : la CNIL est la Commission nationale de l’informatique et des libertés. Une étudiante veut savoir (a) si sa version de PHP est touchée par une faille, (b) quelles sanctions la CNIL a prononcées. Où cherche-t-elle chacune ?",
             "attendu": "(a) Elle cherche chez le CERT-FR, dans ses avis, qui donnent les systèmes affectés. (b) Elle cherche chez la CNIL, dans ses actualités, publiées sur le site de la CNIL. Déduit de l’étape « Cinq sources »."
           },
           {
             "id": "B18-R4",
             "erreurs": ["E3"],
-            "question": "Pour lire : dans un code du CERT-FR, AVI désigne un avis (la faille d’un produit, ses systèmes touchés, la solution), ALE une alerte, ACT un bulletin d’actualité. Un CVE est le numéro d’une faille connue. Un document porte le code CERTFR-2026-AVI-1359 et cite CVE-2026-109618. De quelle sorte est-il, et que désigne ce CVE ?",
-            "attendu": "Il porte les lettres AVI : c’est un avis, qui décrit la vulnérabilité d’un produit, avec les systèmes touchés et la solution. CVE-2026-109618 est le numéro qui désigne, de façon unique, une faille publique de PHP. Déduit de l’étape « Les documents du CERT-FR »."
+            "question": "Pour lire : les trois lettres du milieu d’un code du CERT-FR sont AVI pour avis, ALE pour alerte, ACT pour actualité. Un CVE s’écrit CVE, l’année, un numéro. Un document porte le code CERTFR-2026-AVI-0001 et cite CVE-2026-00001 (numéros inventés). Que contient-il que le bulletin d’actualité ne donne pas, et que retrouve-t-on en cherchant ce CVE ?",
+            "attendu": "C’est un avis (AVI) : il décrit la vulnérabilité d’un produit, avec les systèmes affectés et la solution, ce que le bulletin ne donne pas. Le CVE désigne une faille précise, de façon unique : en le cherchant, on retrouve tous les documents qui parlent de cette faille. Déduit de l’étape « Les documents du CERT-FR »."
           },
           {
             "id": "B18-R5",
             "erreurs": ["E2"],
-            "question": "Pour lire : Citer, c’est écrire de quelle page vient une phrase : l’émetteur, l’adresse, la date de publication et la date de lecture. Sam lit le 16 novembre 2026 une annonce de php.net publiée le 21 octobre 2026. Quelles deux dates note-t-il dans sa fiche, et laquelle dit l’âge de l’information ?",
-            "attendu": "Il note la date de publication, le 21 octobre 2026, et la date de consultation, le 16 novembre 2026. La date de publication dit l’âge de l’information ; la date de consultation dit quand il l’a vue, car la page peut changer ensuite. Déduit de l’étape « La fiche de veille »."
+            "question": "Pour lire : citer, c’est écrire de quelle page vient une phrase, pour que le lecteur la retrouve. Sam consulte le 16 novembre 2026 les notes de la version 1.146 de VS Code, publiées le 11 novembre 2026. Quelles deux dates note-t-il dans sa fiche, et laquelle dit l’âge de l’information ?",
+            "attendu": "Il note la date de publication, le 11 novembre 2026, et la date de consultation, le 16 novembre 2026. La date de publication dit l’âge de l’information ; la date de consultation dit quand il l’a vue, car la page peut changer ensuite. Déduit de l’étape « La fiche de veille »."
           },
           {
             "id": "B18-R6",
             "erreurs": [],
-            "question": "Pour lire : adopter, c’est installer la nouveauté dans son projet ; tester, l’essayer sur une copie ; ignorer, ne rien faire en notant pourquoi. Lina évalue une version stable d’un éditeur de code qu’elle utilise, publiée hier par l’éditeur lui-même. Quelles cinq questions se pose-t-elle, et quelle décision paraît la plus probable ?",
+            "question": "Pour lire : adopter, c’est installer la nouveauté dans son projet ; tester, l’essayer sur une copie ; ignorer, ne rien faire en notant pourquoi. Une version stable est publiée pour un site réel. Lina évalue une version stable d’un éditeur de code qu’elle utilise, publiée hier par l’éditeur lui-même. Quelles cinq questions se pose-t-elle, et quelle décision paraît la plus probable ?",
             "attendu": "Elle se demande le statut, la date, la compatibilité avec son projet, le recoupement par un autre émetteur et l’impact. La version est stable et touche un outil qu’elle utilise : elle l’adopte, en notant la raison et la date. Déduit de l’étape « Évaluer une nouveauté »."
           }
         ],
@@ -5519,8 +5589,8 @@
           {
             "id": "B18-Q1",
             "erreurs": [],
-            "question": "Pour lire : un agrégateur rassemble au même endroit les nouveautés de plusieurs sites choisis ; un flux est le fichier, à une adresse, qu’il relit. Qu’est-ce que Jade ajoute à son agrégateur pour suivre php.net, et par quel protocole l’agrégateur le lit-il ?",
-            "attendu": "Elle ajoute l’adresse du flux de php.net, un fichier publié à une adresse. L’agrégateur le lit comme un navigateur lit une page, avec HTTP. Déduit de l’étape « Les flux »."
+            "question": "Pour lire : un agrégateur rassemble au même endroit les nouveautés de plusieurs sites choisis. Hugo veut suivre le blog d’un club de théâtre. Que doit-il ajouter à son agrégateur, et qui prend l’initiative de chercher les nouveautés, le blog ou l’agrégateur ?",
+            "attendu": "Il ajoute l’adresse du flux du blog, un fichier publié à une adresse. C’est l’agrégateur qui prend l’initiative : il redemande ce fichier par HTTP, à intervalles réguliers ; le blog ne le prévient pas. Déduit de l’étape « Les flux »."
           },
           {
             "id": "B18-Q2",
@@ -5531,25 +5601,25 @@
           {
             "id": "B18-Q3",
             "erreurs": ["E3"],
-            "question": "Pour lire : Le CERT-FR publie des avis (la faille d’un produit, ses systèmes touchés, la solution), des alertes (un danger immédiat) et des bulletins d’actualité (le point d’une période, avec des renvois vers les avis). Une étudiante reçoit un document du CERT-FR qui prévient qu’une faille est déjà exploitée. Elle dit : « C’est une actualité, je lirai plus tard. » A-t-elle raison ?",
-            "attendu": "Non : un document qui prévient d’un danger déjà exploité est une alerte, pas une actualité. Elle doit le lire sans attendre et agir : une actualité informe, une alerte prévient d’un danger immédiat. Déduit de l’étape « Les documents du CERT-FR »."
+            "question": "Pour lire : les trois lettres du milieu d’un code du CERT-FR sont AVI pour avis, ALE pour alerte, ACT pour actualité. Une faille est exploitée quand des attaquants s’en servent déjà. Un étudiant lit le code CERTFR-2026-ALE-031 (numéro inventé) et dit : « C’est un bulletin d’actualité, je le lirai en fin de semaine. » A-t-il raison ?",
+            "attendu": "Non : ALE désigne une alerte, qui prévient d’un danger immédiat, par exemple d’une faille déjà exploitée. Elle se lit sans attendre ; un bulletin d’actualité fait le point d’une période et renvoie vers les avis. Déduit de l’étape « Les documents du CERT-FR »."
           },
           {
             "id": "B18-Q4",
             "erreurs": ["E2"],
-            "question": "Pour lire : Citer, c’est écrire de quelle page vient une phrase : l’émetteur, l’adresse, la date de publication et la date de lecture. Un étudiant écrit dans son rapport : « PHP 8.4.27 corrige deux failles. » Que doit-il ajouter ?",
-            "attendu": "L’émetteur, l’adresse de la page, la date de publication et la date de lecture, par exemple « selon php.net (adresse, publié le 21 octobre 2026, lu le 16 novembre 2026) ». Sans cela, le lecteur ne peut ni retrouver la page ni dater l’information. Déduit de l’étape « La fiche de veille »."
+            "question": "Pour lire : citer, c’est écrire de quelle page vient une phrase, pour que le lecteur la retrouve. Un étudiant écrit dans son rapport : « Une faille touche Axis Camera Station pro avant la version 6.17. » Elle vient d’un avis du CERT-FR publié le 13 novembre 2026, qu’il a consulté le 16 novembre 2026. Que doit-il ajouter ?",
+            "attendu": "L’émetteur, le CERT-FR ; l’adresse de la page de l’avis ; la date de publication, le 13 novembre 2026 ; la date de consultation, le 16 novembre 2026 : par exemple « selon le CERT-FR (adresse, publié le 13 novembre 2026, consulté le 16 novembre 2026) ». Sans cela, le lecteur ne peut ni retrouver la page ni dater l’information. Déduit de l’étape « La fiche de veille »."
           },
           {
             "id": "B18-Q5",
             "erreurs": [],
-            "question": "Pour lire : une RC est une version candidate à la sortie ; la production, c’est le site réel. php.net annonce « PHP 8.6.0 RC7 available for testing » et déconseille de l’utiliser en production. Que décide Jade, qui garde PHP 8.4 sur son site : adopter, tester ou ignorer ?",
-            "attendu": "Elle teste la version sur une copie, sans toucher au site réel : c’est une version d’essai, déconseillée en production, utile pour préparer plus tard son passage à PHP 8.6. Déduit de l’étape « Évaluer une nouveauté »."
+            "question": "Pour lire : adopter, c’est installer dans son projet ; tester, essayer sur une copie ; ignorer, ne rien faire en notant pourquoi. Une version expérimentale est faite pour être essayée, pas pour un site réel. L’éditeur de Pinceau annonce « Pinceau 6.0 preview, not for production use ». Lina, qui utilise Pinceau 5, passera à la version 6 dans l’année. Que décide-t-elle ?",
+            "attendu": "Elle teste la version sur une copie, sans toucher au site réel : c’est une version expérimentale, déconseillée en production, mais utile puisque son projet passera à la version 6. Déduit de l’étape « Évaluer une nouveauté »."
           },
           {
             "id": "B18-Q6",
             "erreurs": [],
-            "question": "Pour lire : une question reproductible donne tout ce qu’il faut pour que quelqu’un voie la même chose chez lui. Jade écrit : « Mon formulaire plante. » Cite trois éléments qui manquent à sa question.",
+            "question": "Pour lire : une question reproductible est une question que quelqu’un d’autre peut rejouer chez lui. Hugo écrit sur un forum : « Mon site affiche une erreur depuis hier. » Cite trois éléments qui manquent à sa question.",
             "attendu": "Par exemple : un titre précis, les versions et l’environnement, le code minimal, le message d’erreur exact, le résultat attendu, ce qu’elle a essayé. Trois de ces six éléments suffisent. Déduit de l’étape « Une question reproductible »."
           }
         ],
@@ -5565,21 +5635,21 @@
             "id": "B18-C2",
             "type": "explication",
             "erreurs": ["E2"],
-            "consigne": "Pour lire : Citer, c’est écrire de quelle page vient une phrase : l’émetteur, l’adresse, la date de publication et la date de lecture. Un camarade écrit dans son rapport : « PHP 8.4.27 corrige deux failles (php.net). » Que manque-t-il pour que son lecteur retrouve la page et sache de quand elle date ? Justifie.",
-            "attendu": "Il manque l’adresse de la page, la date de publication et la date de lecture : citer seulement l’émetteur ne permet ni de retrouver la page ni de savoir si l’information est encore vraie. Il faut les quatre éléments : émetteur, adresse, date de publication, date de lecture. Déduit de l’étape « La fiche de veille »."
+            "consigne": "Pour lire : citer, c’est écrire de quelle page vient une phrase, pour que le lecteur la retrouve. Un camarade écrit dans son rapport : « La version 1.146 de VS Code est sortie le 11 novembre 2026 (selon l’équipe de VS Code). » Que manque-t-il pour que son lecteur retrouve la page et sache si elle a changé depuis ? Justifie.",
+            "attendu": "Il manque l’adresse de la page, pour la retrouver, et la date de consultation, pour savoir quand le camarade l’a lue et si elle a changé depuis. L’émetteur et la date de publication y sont déjà. Déduit de l’étape « La fiche de veille »."
           },
           {
             "id": "B18-C3",
             "type": "explication",
             "erreurs": ["E3"],
-            "consigne": "Pour lire : Le CERT-FR publie des avis (la faille d’un produit, ses systèmes touchés, la solution), des alertes (un danger immédiat) et des bulletins d’actualité (le point d’une période, avec des renvois vers les avis). Un étudiant dit : « Le CERT-FR a publié un bulletin d’actualité sur PHP, il y a donc tout lu : les systèmes affectés et la solution. » Qu’est-ce qui est faux ? Justifie.",
+            "consigne": "Pour lire : le CERT-FR publie trois sortes de documents : des avis, des alertes et des bulletins d’actualité. Un étudiant dit : « Le CERT-FR a publié un bulletin d’actualité sur PHP, il y a donc tout lu : les systèmes affectés et la solution. » Qu’est-ce qui est faux ? Justifie.",
             "attendu": "Le bulletin d’actualité fait le point d’une période et renvoie vers les avis : il ne détaille pas les systèmes touchés ni la solution. Ces éléments sont dans l’avis, qu’il doit ouvrir à partir du renvoi du bulletin. Déduit de l’étape « Les documents du CERT-FR »."
           },
           {
             "id": "B18-X1",
             "type": "tache",
             "erreurs": [],
-            "consigne": "Pour lire : l’alerte CERTFR-2026-ALE-014 du CERT-FR, « [Màj] Multiples vulnérabilités dans PHP », porte une première version datée du 21 octobre 2026 et une dernière version datée du 27 octobre 2026. D’après la page lue le 16 novembre 2026, combien de jours séparent la première version de la dernière ?",
+            "consigne": "Pour lire : [MàJ] veut dire mise à jour. L’alerte CERTFR-2026-ALE-014 du CERT-FR, « [MàJ] Multiples vulnérabilités dans PHP », porte une première version datée du 21 octobre 2026 et une dernière version datée du 27 octobre 2026. D’après la page lue le 16 novembre 2026, combien de jours séparent la première version de la dernière ?",
             "attendu": "6 : du 21 au 27 octobre, il y a six jours. Déduit de l’étape « Les documents du CERT-FR ».",
             "verification": {
               "mode": "exacte",
@@ -5605,7 +5675,7 @@
             "type": "tache",
             "erreurs": [],
             "consigne": "Pour lire : un sigle est un mot formé des initiales de plusieurs mots ; un CVE est le numéro qui désigne une faille connue. Développe le sigle CVE, en anglais.",
-            "attendu": "Common Vulnerabilities and Exposures. Déduit de l’étape « Cinq sources ».",
+            "attendu": "Common Vulnerabilities and Exposures. Déduit de l’étape « Les documents du CERT-FR ».",
             "verification": {
               "mode": "exacte",
               "reponses": [
@@ -5627,23 +5697,23 @@
             "type": "transfert",
             "forme": "adapter_condition",
             "erreurs": ["E2"],
-            "consigne": "Pour lire : Citer, c’est écrire de quelle page vient une phrase : l’émetteur, l’adresse, la date de publication et la date de lecture. Jade a cité : « Selon php.net (adresse, publié le 21 octobre 2026, lu le 2 novembre 2026), PHP 8.4.27 corrige des failles. » Le 16 novembre 2026, elle rouvre la page, inchangée. Que devient chaque date de sa citation ?",
-            "attendu": "Elle change seulement la date de lecture, qui devient le 16 novembre 2026, si elle relit la page ce jour-là. La date de publication reste le 21 octobre 2026 : l’annonce n’a pas été publiée de nouveau. Déduit de l’étape « La fiche de veille »."
+            "consigne": "Pour lire : citer, c’est écrire de quelle page vient une phrase, pour que le lecteur la retrouve. Sam a cité : « Selon l’équipe de VS Code (adresse, publié le 11 novembre 2026, consulté le 12 novembre 2026), la version 1.146 est sortie. » Le 16 novembre 2026, il relit la page, qui n’a pas changé. Que devient chaque date de sa citation ?",
+            "attendu": "La date de publication reste le 11 novembre 2026 : l’équipe de VS Code n’a pas publié de nouveau texte. La date de consultation devient le 16 novembre 2026, le jour de sa nouvelle lecture. Déduit de l’étape « La fiche de veille »."
           },
           {
             "id": "B18-T3",
             "type": "transfert",
             "forme": "trouver_erreur",
             "erreurs": ["E3"],
-            "consigne": "Pour lire : Le CERT-FR publie des avis (la faille d’un produit, ses systèmes touchés, la solution), des alertes (un danger immédiat) et des bulletins d’actualité (le point d’une période, avec des renvois vers les avis). Un document du CERT-FR prévient que des attaquants exploitent déjà une faille de PHP. Une étudiante dit : « C’est une actualité : je n’ai rien à faire. » Trouve son erreur.",
-            "attendu": "Elle prend une alerte pour une actualité : un document qui prévient d’un danger déjà exploité est une alerte, qui demande d’agir sans attendre. Une actualité fait le point d’une période et renvoie vers les avis. Déduit de l’étape « Les documents du CERT-FR »."
+            "consigne": "Pour lire : le CERT-FR publie des avis, des alertes et des bulletins d’actualité. Une faille est exploitée quand des attaquants s’en servent déjà. Une étudiante lit une alerte du CERT-FR sur une faille de PHP déjà exploitée. Elle dit : « Je l’aurai dans le bulletin d’actualité de la semaine, j’attends de le lire. » Trouve son erreur.",
+            "attendu": "Elle attend le bulletin alors qu’une alerte prévient d’un danger immédiat : une faille déjà exploitée demande de lire l’alerte et d’agir sans attendre. Le bulletin d’actualité fait le point d’une période et renvoie vers les avis ; il arrive trop tard pour ce danger. Déduit de l’étape « Les documents du CERT-FR »."
           },
           {
             "id": "B18-T4",
             "type": "transfert",
             "forme": "adapter_condition",
             "erreurs": ["E3"],
-            "consigne": "Pour lire : le bulletin d’actualité du CERT-FR fait le point d’une période et renvoie vers les avis, qui donnent les systèmes touchés. L’avis sur PHP dit : 8.3.x avant 8.3.36 sont affectées. Une étudiante en PHP 8.3.30 n’a lu que le bulletin. Que fait-elle, et que change en 8.3.36 ?",
+            "consigne": "Pour lire : l’avis du CERT-FR sur PHP dit : 8.3.x avant 8.3.36 sont affectées. Une étudiante utilise PHP 8.3.30 et n’a lu que le bulletin d’actualité de la semaine. Que fait-elle, et que devient sa situation en passant à 8.3.36 ?",
             "attendu": "Elle ouvre l’avis, auquel le bulletin renvoie, car seul l’avis donne les systèmes affectés. Sa version 8.3.30 est avant 8.3.36 : elle est affectée et doit passer à 8.3.36. En 8.3.36, elle ne serait pas affectée par cette faille. Déduit de l’étape « Les documents du CERT-FR »."
           }
         ],
@@ -5681,70 +5751,70 @@
           "id": "AT1",
           "reussite_aide_max": 0,
           "criteres": [
-            "Mon agrégateur affiche cinq flux : ceux de MDN, de php.net, de VS Code, de la CNIL et du CERT-FR (ou, pour le CERT-FR, le message qu’il m’a donné).",
+            "Mon agrégateur affiche cinq flux : ceux de MDN, de php.net, de VS Code, de la CNIL et du CERT-FR.",
             "J’ai écrit sur mon papier le nom exact du bouton de mon agrégateur qui ajoute un flux.",
             "J’ai écrit sur mon papier, pour chaque flux, le nom de l’émetteur et l’adresse du flux que j’ai collée.",
             "J’ai écrit sur mon papier, pour chaque flux, le titre du premier élément et sa date, tels que mon agrégateur les affiche.",
-            "J’ai écrit sur mon papier l’adresse que j’ai copiée pour le flux du CERT-FR, et le message de mon agrégateur si ce flux n’a pas pu s’ajouter.",
+            "J’ai écrit sur mon papier l’adresse que j’ai copiée pour le flux du CERT-FR et, si un premier lien a échoué, le message de mon agrégateur.",
             "Ma fiche de veille porte les sept rubriques : titre, émetteur, adresse, date de publication, date de consultation, résumé et conséquence pour mon projet.",
-            "L’adresse de ma fiche est celle d’une page de l’émetteur, jamais celle de mon agrégateur ni d’un blog.",
-            "Les deux dates de ma fiche sont écrites chacune à sa rubrique : celle de la page, et celle du jour où je l’ai lue.",
+            "L’adresse de ma fiche est celle d’une page de l’émetteur, jamais celle de mon agrégateur ni d’une page qui reprend l’émetteur.",
+            "Les deux dates de ma fiche sont écrites chacune à sa rubrique : celle de la page, et celle du jour où je l’ai consultée.",
             "J’ai écrit sur mon papier la réponse aux cinq questions (statut, date, compatibilité, recoupement, impact) pour une nouveauté de mon flux.",
             "J’ai écrit sur mon papier ma décision (adopter, tester ou ignorer) avec une raison tirée d’une de mes cinq réponses et la date du jour.",
             "Ma question reproductible porte les six éléments : titre précis, versions, code minimal, résultat attendu, résultat obtenu avec le message d’erreur exact, ce que j’ai essayé.",
-            "Le résultat de php -v, copié sur mon papier, est dans les versions de ma question."
+            "Le résultat de php -v, ou le message de ma machine si la commande n’existe pas, copié sur mon papier, est dans les versions de ma question."
           ]
         },
         "cartes": [
           {
             "id": "B18-K1",
-            "recto": "Pour lire : un agrégateur rassemble les nouveautés de plusieurs sites choisis. Qu’est-ce qu’un flux RSS, et que fait l’agrégateur avec lui ?",
+            "recto": "Hugo veut suivre le blog d’un club de théâtre sans l’ouvrir chaque semaine. Le club écrit : « Notre flux RSS est disponible. » Qu’est-ce qu’un flux RSS, et que fait l’agrégateur d’Hugo avec lui ?",
             "verso": "Un flux RSS est un fichier publié à une adresse (une URL). L’agrégateur l’interroge par HTTP, comme un navigateur ouvre une page, pour récupérer les nouveautés du site. Déduit de l’étape « Les flux »."
           },
           {
             "id": "B18-K2",
-            "recto": "Pour lire : une page de site peut annoncer son flux par une ligne link de type application/rss+xml. Où Camille trouve-t-elle l’adresse à coller dans son agrégateur ?",
-            "verso": "Dans l’attribut href de cette ligne link, ou dans la page du site qui liste ses flux. C’est l’adresse du fichier du flux, pas celle de la page d’accueil. Déduit de l’étape « Les flux »."
+            "recto": "Hugo est sur la page d’accueil du club de théâtre et veut ajouter son flux à son agrégateur. Où trouve-t-il l’adresse à coller ?",
+            "verso": "Dans l’attribut href de la ligne link de l’en-tête de la page, dans un lien ou une icône RSS du site, ou dans la page du site qui liste ses flux. C’est l’adresse du fichier du flux, pas celle de la page d’accueil. Déduit de l’étape « Les flux »."
           },
           {
             "id": "B18-K3",
-            "recto": "Quelles cinq sources forment la veille de Jade ?",
+            "recto": "Théo monte la même veille que Jade, avec cinq sources. Lesquelles ajoute-t-il à son agrégateur ?",
             "verso": "MDN, php.net, VS Code (notes de version d’un outil), la CNIL (ses actualités) et le CERT-FR (ses avis). Déduit de l’étape « Cinq sources »."
           },
           {
             "id": "B18-K4",
-            "recto": "Pour lire : un organisme produit une information quand il en est l’auteur. Qu’est-ce qu’une source primaire, et qu’est-ce qu’une source secondaire ?",
-            "verso": "Une source primaire est émise par l’organisme qui produit l’information. Une source secondaire reprend ou commente ce que d’autres ont produit : un blog ou un relais est secondaire. Déduit de l’étape « Juger une source »."
+            "recto": "Un camarade dit : « Mon article résume l’annonce de php.net, c’est donc une source primaire. » Qu’est-ce qu’une source primaire, et qu’est donc son article ?",
+            "verso": "Une source primaire est émise par l’organisme qui produit l’information : son article, qui résume l’annonce de php.net, est une source secondaire. Une source secondaire reprend ou commente ce que d’autres ont produit : un blog ou un relais est secondaire. Déduit de l’étape « Juger une source »."
           },
           {
             "id": "B18-K5",
-            "recto": "Sur quoi juge-t-on une source ?",
+            "recto": "Léa trouve une page de blog dans un forum et se demande si elle peut la citer. Sur quels critères juge-t-elle cette source ?",
             "verso": "Sur l’émetteur, la date, la référence ou la version, et le recoupement par un autre émetteur. Déduit de l’étape « Juger une source »."
           },
           {
             "id": "B18-K6",
-            "recto": "Que désigne un identifiant CVE comme CVE-2026-109618 ?",
+            "recto": "Un camarade lit « CVE-2026-00001 » dans deux documents du CERT-FR et croit à deux failles. Que désigne un identifiant CVE ?",
             "verso": "Une vulnérabilité publique, de façon unique : deux documents qui citent le même CVE parlent de la même faille. Déduit de l’étape « Les documents du CERT-FR »."
           },
           {
             "id": "B18-K7",
-            "recto": "Quelles sept rubriques porte une fiche de veille ?",
+            "recto": "Sam remplit sa première fiche de veille. Quelles sept rubriques porte-t-elle ?",
             "verso": "Le titre, l’émetteur, l’adresse, la date de publication, la date de consultation, le résumé et la conséquence pour le projet. Déduit de l’étape « La fiche de veille »."
           },
           {
             "id": "B18-K8",
-            "recto": "Sur quelles cinq questions évalue-t-on une nouveauté, avant de décider ?",
+            "recto": "Lina doit décider d’une nouveauté pour son projet. Sur quelles cinq questions l’évalue-t-elle, avant de décider ?",
             "verso": "Son statut, sa date, sa compatibilité, un recoupement et son impact. On décide ensuite : adopter, tester ou ignorer, en justifiant. Déduit de l’étape « Évaluer une nouveauté »."
           },
           {
             "id": "B18-K9",
-            "recto": "Quels six éléments donne une question reproductible pour un forum ?",
+            "recto": "Hugo prépare une question de forum sur une erreur de son site. Quels six éléments doit-elle donner pour qu’on puisse la rejouer ?",
             "verso": "Un titre précis, les versions, un code minimal, le résultat attendu, le résultat obtenu avec le message d’erreur exact, et ce qui a été essayé. Déduit de l’étape « Une question reproductible »."
           },
           {
             "id": "B18-K10",
-            "recto": "Développe les sigles RSS, CVE, CERT-FR, CNIL et MDN, et dis le rôle du CERT-FR et de la CNIL.",
-            "verso": "RSS : Really Simple Syndication. CVE : Common Vulnerabilities and Exposures. CERT-FR : French Computer Emergency Response Team. CNIL : Commission nationale de l’informatique et des libertés. MDN : MDN Web Docs. Le CERT-FR publie des avis sur les failles ; la CNIL publie ses actualités sur les données personnelles. Déduit de l’étape « Cinq sources »."
+            "recto": "Une camarade confond le CERT-FR et la CNIL. Quel est le rôle de chacun ?",
+            "verso": "Le CERT-FR est le service de l’État qui suit les failles et publie des avis, des alertes et des bulletins ; la CNIL est l’autorité de protection des données personnelles et publie ses actualités, ses règles et ses sanctions. Déduit de l’étape « Cinq sources »."
           }
         ]
       }
@@ -5833,7 +5903,7 @@
           },
           {
             "id": "N11",
-            "notion": "Une information se cite avec son émetteur, son adresse, sa date de publication et sa date de lecture ; sans source ni date, la phrase est une faute",
+            "notion": "Une information se cite avec son émetteur, son adresse, sa date de publication et sa date de consultation ; sans source ni date, la phrase est une faute",
             "montree": ["ET8"],
             "pratiquee": ["PR1", "AT1"],
             "questions": ["B18-Q4", "B18-C2", "B18-T2", "B18-R5"]
@@ -5857,7 +5927,7 @@
             "notion": "RSS, CVE, CERT-FR, CNIL et MDN sont des sigles à développer",
             "montree": ["ET4", "ET5", "ET7"],
             "pratiquee": ["PR1"],
-            "questions": ["B18-X3", "B18-K10"]
+            "questions": ["B18-X3"]
           }
         ],
         "relations": [
