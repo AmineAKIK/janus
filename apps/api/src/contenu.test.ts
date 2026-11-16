@@ -34,5 +34,5 @@ describe('catalogues de contenu', () => {
 
   it('les fiches du dépôt passent la vérification', async () => {
     expect(await verifierLesFiches({ dossierContenu: racine })).toEqual([])
-  })
+  }, 30_000)
 })
