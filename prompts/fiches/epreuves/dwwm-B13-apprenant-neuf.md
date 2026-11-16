@@ -1,78 +1,47 @@
-PR1-1 : déductible (ET6 « Qui y a droit », écran des conditions) : Lina non (sa preuve date de 2022, pas de la période en cours), Samir non (12 ans, moins de 13), M. Roux non (enseignant, pas inscrit à une formation), Noah oui (relevé de notes accepté comme preuve, daté de cette année).
-PR1-2 : RECOPIÉE (ET7 « Microsoft Azure », tableau) : « à utiliser dans les 12 mois » est la durée ; « pour les étudiants de 18 ans ou plus, sans carte bancaire » est la condition.
-PR1-3 : déductible (ET4 « Git, sur ton PC » et « GitHub, en ligne ») : il se trompe ; Git, sur son PC, suit les versions, et GitHub héberge le dépôt.
-PR1-4 : RECOPIÉE (ET1 « Yasmine ouvre et protège son compte » et ET5 « Les codes de récupération ») : il l'imprime et la range chez lui, hors de son téléphone.
-PR1-5 : déductible (ET7 « Heroku », règle sur la durée de 24 mois et le premier mois compté) : le crédit est fini, donc ce qui reste en ligne est facturé sur sa carte, à moins qu'il l'arrête. Rester étudiant n'y change rien, et l'offre ne se redemande pas (une seule période).
-PR1-6 : déductible (ET8 « GitHub Pages » et « PHP côté serveur ») : seulement accueil.html, car envoi.php n'est pas exécuté.
-PR1-7 : déductible (ET8 « Classer les offres ») : le portfolio sur GitHub Pages, la boutique PHP sur Heroku.
-PR1-8 : déductible (ET8 « GitHub Pages », texte « distinct du pack ») : c'est inexact ; GitHub Pages est un service de GitHub qui existe sans le pack.
-B13-R1 : déductible (ET4 « Git, sur ton PC ») : non, son dépôt n'est pas en ligne. Les versions sont sur son PC, gardées par Git, qui n'a besoin ni d'Internet ni de compte.
-B13-R2 : RECOPIÉE (ET4 « En deux phrases ») : Git est un logiciel de ton PC qui garde les versions des fichiers d'un dépôt. GitHub est un service en ligne qui héberge des dépôts Git.
-B13-R3 : déductible (ET7 « Heroku », règle de comptage des mois) : novembre 2024 à octobre 2026 font 24 mois, donc décembre 2026 est après la fin. Il n'y a plus de crédit, et ce qui reste en ligne est facturé sur sa carte, à moins qu'il l'arrête.
-B13-R4 : déductible (ET8 « Un site statique », « GitHub Pages ») : non, la ligne PHP n'est pas exécutée et la date ne s'affiche pas. Elle doit mettre le site sur un hébergement qui exécute PHP, comme Heroku.
-B13-R5 : déductible (ET5 « Les codes de récupération » et ET3 « Un téléphone perdu ») : non, la liste était dans le téléphone perdu, le mot de passe ne suffit pas et le support ne rend pas l'accès. Sa prochaine liste ira sur papier, chez elle, hors du téléphone.
-B13-R6 : déductible (ET6 « Qui y a droit » et ET10 « Ta demande de pack », cas du refus) : non, la preuve est trop ancienne (2022, pas la période en cours). Elle envoie un document de son établissement daté de la période en cours (carte récente, emploi du temps, relevé ou lettre).
-B13-Q1 : déductible (ET6 « Lire une offre ») : la durée est 90 jours et la condition est une carte bancaire exigée.
-B13-Q2 : déductible (ET6 « GitHub Pro ») : non, Pro n'est gratuit que tant qu'elle est étudiante ; son statut prend fin en juin.
-B13-Q3 : déductible (ET7 « Aucune offre n'est sans fin ») : il relit l'offre sur la page officielle (celle du pack et celle du partenaire) et note la date de sa lecture.
-B13-Q4 : déductible (ET8 « Un site statique » et « GitHub Pages ») : non, GitHub Pages publie le JavaScript, qui s'exécute dans le navigateur du visiteur.
-B13-Q5 : déductible (ET5 « Le code de l'application » et « Vérifier que c'est actif ») : non, GitHub n'a pas accepté le code. Elle lit l'état dans les réglages du compte, page « Password and authentication », section « Two-factor authentication ».
-B13-Q6 : déductible (ET6 « Qui y a droit ») : non, les enseignants ne sont pas éligibles et il n'est inscrit à aucune formation ; payer un abonnement n'y change rien.
-B13-C1 : déductible (ET4 « Git, sur ton PC » et « GitHub, en ligne ») : il se trompe ; Git reste sur son PC. Il lui manque un compte sur un service en ligne qui héberge des dépôts Git, GitHub, avec le dépôt mis dessus.
-B13-C2 : déductible (ET6 « GitHub Pro », ET7 « JetBrains » et « Aucune offre n'est sans fin ») : il se trompe ; « gratuit » ne veut pas dire sans fin. Pro dure tant qu'on est étudiant et JetBrains doit être renouvelé chaque année, donc les deux ont une limite.
-B13-C3 : déductible (ET8 « GitHub Pages ») : il se trompe ; GitHub Pages n'exécute pas de PHP. Il faut un hébergement qui exécute PHP, comme Heroku.
-B13-X1 : déductible (ET7 « Heroku », montant et durée) : 13 x 24 = 312 dollars.
-B13-X2 : déductible (ET7 « JetBrains », règle du mois de départ compris, exemple mai à avril) : le dernier mois couvert est août 2026.
-B13-X3 : déductible (ET7 « Heroku », exemple janvier à décembre de l'année suivante) : le dernier mois couvert est novembre 2028.
-B13-T1 : déductible (ET4 « GitHub, en ligne ») : son dépôt est sur son PC, que le formateur ne voit pas. Il aurait dû mettre son dépôt sur GitHub (service en ligne, avec un compte) et donner l'adresse.
-B13-T2 : déductible (ET7 « Heroku », condition « une seule période de 24 mois ») : rien. Les 24 mois sont écoulés et il n'y a pas de seconde période, donc ce qui reste en ligne est facturé sur sa carte.
-B13-T3 : déductible (ET8 « PHP côté serveur », « GitHub Pages ») : GitHub Pages n'exécute pas de PHP, donc menu.php n'est jamais calculé. Elle aurait dû choisir un hébergement qui exécute PHP.
-B13-T4 : déductible (ET5 « Les codes de récupération ») : la liste et le téléphone sont perdus ensemble et le support ne rend pas l'accès, donc il ne peut plus entrer. La prochaine liste va chez lui, séparée du téléphone.
-B13-K1 : RECOPIÉE (ET4 « Git, sur ton PC », cas de Yasmine dans le train) : oui ; Git marche sans Internet et la version est sur son PC.
-B13-K2 : déductible (ET4 « GitHub, en ligne ») : il lui faut un compte, que Git ne demande pas. Le service, GitHub, héberge le dépôt, c'est-à-dire le garde sur ses machines pour que d'autres le lisent.
-B13-K3 : déductible (ET5 « Un compte ») : github.com/farid-m.
-B13-K4 : déductible (ET5 « Le code de l'application ») : elle reçoit un secret, qu'elle garde. Avec l'heure, il lui sert à calculer le même code à six chiffres que GitHub, sans Internet.
-B13-K5 : déductible (ET6 « Qui y a droit ») : non, il a 12 ans et il faut au moins 13 ans.
-B13-K6 : déductible (ET6 « Un assistant de code ») : elle ne s'en sert pas pendant son apprentissage ; elle doit pouvoir écrire et expliquer chaque ligne.
-B13-K7 : déductible (ET7 « JetBrains » et « Heroku », règle du mois de départ compris) : de mars 2026 sur 12 mois, le dernier mois est février 2027.
-B13-K8 : déductible (ET8 « GitHub Pages ») : non, c'est un service de GitHub distinct du pack.
-B13-K9 : déductible (ET8 « Classer les offres » et « Un site statique ») : non, il sert seulement du statique.
+PR1-1 : déductible (ET6, « Qui y a droit ») : Lina non (carte datée de 2022, pas de la période en cours) ; Samir non (12 ans, moins de 13) ; M. Roux non (enseignant, sans formation) ; Noah oui (29 ans, formation diplômante, relevé de notes daté de cette année).
+PR1-2 : déductible (ET6, « Lire une offre ») : « un crédit de 60 dollars » = montant ; « valable pendant 8 mois après l'activation » = durée ; « réservé aux étudiants de 21 ans ou plus, avec une carte bancaire » = condition.
+PR1-3 : déductible (ET4, « Git, sur ton PC » et « GitHub, en ligne ») : il se trompe, Git sur son PC suit les versions, GitHub héberge le dépôt.
+PR1-4 : déductible (ET5 « Les codes de récupération » ; ET10 « Imprime-la, ou recopie-la sur une feuille ») : il recopie la liste à la main sur une feuille rangée chez lui, pas dans le téléphone, pas envoyée à un ami.
+PR1-5 : déductible (ET7, « Heroku ») : 24 mois écoulés, une seule période, donc plus de crédit ; ce qui reste en ligne est facturé sur sa carte, à moins qu'il l'arrête.
+PR1-6 : déductible (ET8, « GitHub Pages ») : seulement accueil.html, car GitHub Pages n'exécute pas de PHP.
+PR1-7 : déductible (ET8, « PHP côté serveur » et « Classer les offres ») : le portfolio sur GitHub Pages, la boutique PHP sur Heroku.
+PR1-8 : déductible (ET8, « GitHub Pages » ; ET6, « Le pack ») : c'est inexact, GitHub Pages est un service de GitHub distinct du pack, qui existe sans le pack pour un dépôt public.
+B13-R1 : déductible (ET4, « Git, sur ton PC ») : non, il n'est pas en ligne ; ses versions sont sur son PC, gardées par Git, qui n'a besoin ni d'Internet ni de compte.
+B13-R2 : déductible (ET4, « Git, sur ton PC » et « GitHub, en ligne ») : Git est un logiciel de son PC qui garde les versions et les retrouve sans réseau ; GitHub est un service en ligne qui héberge le dépôt pour que sa mère le lise, et il demande un compte.
+B13-R3 : déductible (ET7, « Heroku », règle du mois de départ compté) : 24 mois à partir de novembre 2024 vont jusqu'à octobre 2026 ; en décembre 2026 il n'y a plus de crédit, et ce qui reste en ligne est facturé sur sa carte, à moins qu'il l'arrête.
+B13-R4 : déductible (ET8, « GitHub Pages » ; ET7, « Heroku ») : non, GitHub Pages n'exécute pas le PHP ; elle met son site sur un hébergement qui exécute PHP, comme Heroku.
+B13-R5 : déductible (ET5, « Les codes de récupération ») : non, elle ne peut pas entrer, le support ne rend pas l'accès ; la prochaine liste, elle la range sur papier chez elle, hors du téléphone.
+B13-R6 : déductible (ET6, « Qui y a droit ») : non, une carte datée de 2021 n'est pas de la période en cours ; il doit se procurer un document de son établissement daté de la période en cours et renvoyer sa demande.
+B13-Q1 : déductible (ET6 « Lire une offre » ; ET7) : durée = à utiliser dans les 90 jours ; condition = une carte bancaire exigée (le montant est 20 dollars).
+B13-Q2 : déductible (ET6, « GitHub Pro ») : non, l'offre dure tant qu'elle est étudiante ; après juin elle ne l'est plus, donc elle ne continue pas.
+B13-Q3 : déductible (ET7, « Aucune offre n'est sans fin ») : il relit l'offre sur la page officielle et note la date de sa lecture, car les valeurs ont pu changer.
+B13-Q4 : déductible (ET8, « Un site statique ») : non, il a tort ; le JavaScript est un fichier que GitHub Pages renvoie tel quel et qui s'exécute dans le navigateur du visiteur.
+B13-Q5 : déductible (ET5, « Vérifier que c'est actif ») : non, GitHub n'a pas accepté le code ; elle le lit dans les réglages du compte, page « Password and authentication », section « Two-factor authentication ».
+B13-Q6 : déductible (ET6, « Qui y a droit ») : non, les enseignants ne sont pas éligibles et il n'est inscrit à aucune formation ; son abonnement payant n'y change rien.
+B13-C1 : déductible (ET4, « GitHub, en ligne ») : il se trompe, Git reste sur son PC ; il lui manque un compte GitHub, service en ligne qui héberge le dépôt pour que le formateur le lise.
+B13-C2 : déductible (ET6 « GitHub Pro » ; ET7 « Aucune offre n'est sans fin ») : il a tort, « gratuit » ne dit pas « sans fin » ; JetBrains se renouvelle chaque année, Pro dure tant qu'on est étudiant, aucune offre n'est sans fin.
+B13-C3 : déductible (ET8, « GitHub Pages ») : il se trompe, GitHub Pages n'exécute pas de PHP ; il faut un hébergement qui exécute PHP, comme Heroku.
+B13-X1 : déductible (ET7, « Heroku », montant et durée) : 13 dollars par mois pendant 24 mois, soit 312 dollars.
+B13-X2 : déductible (ET7, « JetBrains », règle de comptage, mai à avril) : septembre 2025 est le premier mois, le dernier est août 2026.
+B13-X3 : déductible (ET7, « Heroku », règle de comptage, janvier à décembre de l'année suivante) : décembre 2026 est le premier mois, le dernier est novembre 2028.
+B13-T1 : déductible (ET4, « GitHub, en ligne ») : son erreur est de croire que Git sur son PC rend le dépôt lisible par le formateur ; il aurait dû mettre le dépôt sur GitHub, avec un compte.
+B13-T2 : déductible (ET7, « Heroku ») : rien, les 24 mois sont finis (novembre 2024 à octobre 2026), une seule période ; son site en ligne est facturé sur sa carte, même vérifié étudiant.
+B13-T3 : déductible (ET8, « GitHub Pages ») : son erreur est de croire que GitHub Pages exécute menu.php ; elle aurait dû choisir un hébergement qui exécute PHP, comme Heroku.
+B13-T4 : déductible (ET5, « Les codes de récupération ») : téléphone et liste sont volés ensemble, l'accès est perdu, le support ne le rend pas ; la prochaine fois elle range la liste chez elle, ailleurs que dans le sac avec le téléphone.
+B13-K1 : déductible (ET4, « Git, sur ton PC ») : oui, Git n'a pas besoin d'Internet ; la version est gardée sur son PC.
+B13-K2 : déductible (ET4, « GitHub, en ligne ») : il lui faut un compte et un service en ligne ; GitHub héberge le dépôt, le garde sur ses machines pour que les autres le lisent.
+B13-K3 : déductible (ET5, « Un compte ») : github.com/farid-m.
+B13-K4 : déductible (ET5, « Le code de l'application ») : elle reçoit un secret qu'elle garde ; avec l'heure, elle calcule ensuite le même code à six chiffres que GitHub.
+B13-K5 : déductible (ET6, « Qui y a droit ») : non, 11 ans est moins de 13 ans.
+B13-K6 : déductible (ET6, « Un assistant de code ») : elle ne s'en sert pas pendant sa formation ; elle doit pouvoir écrire et expliquer chaque ligne elle-même.
+B13-K7 : déductible (ET7, règle de comptage, donnée aussi dans la question) : mars 2026 est le premier mois, le dernier est février 2027.
+B13-K8 : déductible (ET8, « GitHub Pages ») : non, c'est un service de GitHub distinct du pack, qui existe pour un compte gratuit.
+B13-K9 : déductible (ET8, « Classer les offres » ; ET8 « Un site statique ») : non, c'est un hébergement statique, il renvoie les fichiers tels quels.
 
-LISTES FINALES
+LISTE 1 : éléments NON DÉDUCTIBLES : aucun. Éléments RECOPIÉS : aucun classé tel quel. Proches de la recopie : PR1-3, PR1-8, B13-K8 et B13-C1, dont la réponse reprend presque mot pour mot une phrase de l'explication (ET4, ET8) sans changer le cas ; B13-K3, qui ne change que le nom d'utilisateur de l'exemple yasmine-dev. Points d'ambiguïté mineurs : PR1-5 (« ce mois-ci » : 24 mois écoulés depuis le début, je lis le mois 25) ; B13-Q1 (la durée est donnée en jours alors que le texte ne travaille qu'en mois ; je lis « 90 jours » comme durée) ; PR1-1, Lina (« période en cours » jamais définie, je lis 2022 comme hors période).
 
-1. Éléments NON DÉDUCTIBLES : aucun.
-   Éléments RECOPIÉS : PR1-2 (lignes du tableau Azure d'ET7), PR1-4 (cas de Yasmine, ET1 et ET5), B13-R2 (les deux phrases d'ET4 « En deux phrases »), B13-K1 (le cas de Yasmine dans le train, ET4).
+LISTE 2 : mots ou notions employés par les questions et jamais définis : « période en cours » (jamais dit ce que c'est, année, semestre) ; « éligible » ; « statut » ; « formation diplômante » (seulement via « étudiant ») ; « ce mois-ci » (PR1-5) ; « activation » du crédit (PR1-2) ; « sans réseau » (K1, R2) ; « tombé à l'eau » (R5) ; « jours » comme unité de durée (Q1). « Facturé » et « carte bancaire enregistrée » sont définis à ET7 Heroku.
 
-2. Mots ou notions employés par les questions et jamais définis :
+LISTE 3 : passages qui renvoient à autre chose que la fiche : ET2 « Où tu es » (« Tu y as appris à parler à ta machine par un terminal... », bloc précédent, et « La partie suivante reprend la double authentification ») ; « Ce bloc n'enseigne pas Git » ; ET11 « La suite » et « À explorer plus tard » (commandes Git, créer un dépôt, autres offres, clés de sécurité, passkeys) ; les pages externes à lire : education.github.com/pack, www.heroku.com/github-students, azure.microsoft.com/en-us/free/students, www.jetbrains.com/academy/student-pack/, devcenter.heroku.com/articles/php-support, docs.github.com/... ; « Replié sous "Ce qui sera vérifié" » ; « plus bas, dans "Ce qu'on te demande" » (ET9, ET12) ; la page de GitHub Pages avec « plus de quarante offres » ; B13-K9, qui renvoie à « la liste de services gratuits de la page d'Azure » que la fiche ne montre pas en entier.
 
-- « PHP » : le texte dit que PHP transforme une ligne en page, mais ne dit jamais ce que c'est. Dans les questions il ne sert que comme « code qu'un serveur exécute ».
-- « serveur » : jamais défini ; seul « serveur web » est dit à propos d'Apache.
-- « support » de GitHub : jamais défini, mais le sens se devine.
-- « identifiants » (ET5) : jamais défini.
-- « éligible » : jamais défini, mais le sens se devine.
-- « période en cours » : jamais définie, mais le sens se devine.
-- « dépassement » (B13-R3, B13-T2) : le texte dit « ce qui dépasse le crédit » ; le nom n'est pas défini.
-- « abonnement payant GitHub » (B13-Q6) : le texte parle de formules de compte, mais « abonnement » n'est défini que pour JetBrains.
-
-3. Passages qui renvoient à autre chose que la fiche :
-
-- ET2 : « Ce bloc est le dernier de la partie "Le poste du développeur" », « Tu y as appris à parler à ta machine par un terminal… », « La partie suivante reprend la double authentification ».
-- ET11 « La suite » et « À explorer plus tard » (commandes Git, créer un dépôt, autres offres, passkeys).
-- Les pages externes d'ET10 (docs.github.com, education.github.com/pack, pages de Heroku, Azure, JetBrains), qui ne font pas partie du texte.
-- « Replié sous "Ce qui sera vérifié" » (ET2 et ET9) et « plus bas, dans "Ce qu'on te demande" » (ET9, ET12).
-- « À l'écran suivant, tu écris ce qui arrive à Noah » (ET11).
-- ET12 : « Elle se fait sans le cours : il est masqué ».
-
-4. Passages qui parlent de la fiche au lieu de me parler :
-
-- « regarde seulement ce qu'elle fait, tu n'as rien à retenir ici » (ET1), et « Toujours seulement un regard : tu n'as rien à retenir encore » (deux fois).
-- Les étiquettes « Pour lire : », « Ton pari », « Essaie avec ton bon sens. Personne ne te note ».
-- « Essaie d'abord seul : ouvre une aide seulement si tu es bloqué. » et les paliers « Un indice / Une piste détaillée / Une partie de la solution », ainsi que « L'aide que tu as prise : Aucune aide… ».
-- Les marqueurs conditionnels « [seulement si l'essai p1 est faux] », « [seulement si l'essai p2 est faux] » et « [seulement si l'essai p3 est faux] », avec « [la réponse à l'essai p1] » (et p2, p3) laissés tels quels.
-- Les numéros d'étape ET1 à ET13, que je ne vois pas.
-- « Ce schéma montre un seul chemin… » et « Cette chaîne montre un seul cas… » (remarques de conception).
-- « Le dessin n'en montre que l'essentiel », « Le dessin ne dit pas d'où vient ce code ».
-- « Ton constat. La page ne voit pas ta machine… » et « Celles que la page a repérées dans tes réponses y sont déjà cochées ».
-- « Tes réponses sont corrigées à la fin de la série, pour qu'une correction ne souffle pas la question suivante ».
-- « Voici d'abord une chaîne déjà remplie… La première boîte est donnée ».
-- Les [outil interactif : …] et [image : …], dont je ne vois pas le contenu : les [image] ont une description, les [outil interactif] n'en ont aucune. Aucune réponse ne dépend d'eux.
+LISTE 4 : passages qui parlent de la fiche au lieu de me parler : « regarde seulement ce qu'elle fait, tu n'as rien à retenir ici » ; « Toujours seulement un regard : tu n'as rien à retenir encore » ; « Pour lire : » (étiquette répétée) ; « Ton pari » et « Reviens sur ton pari » ; « À l'écran suivant, tu écris ce qui arrive à Noah » ; « Ce schéma montre un seul chemin... il ne dit pas encore » ; « Cette chaîne montre un seul cas » ; « Essaie avec ton bon sens. Personne ne te note » ; « Essaie d'abord seul... les coups de pouce viennent après » et « J'ai essayé seul, et je suis bloqué » ; « Un indice / Une piste détaillée / Une partie de la solution » ; « [seulement si l'essai p1 est faux] ... [la réponse à l'essai p1] » (balises de conception visibles : p1, p2, p3) ; « Les questions, une à la fois... il est masqué jusqu'à ta dernière réponse » ; « L'aide que tu as prise : Aucune aide... » ; « Ce que tu as fait, puis les erreurs critiques du bloc... À reprendre » ; les numéros ET1 à ET13 ; « La première ligne est déjà classée : elle te montre comment lire » ; « un partenaire fictif, Acme » et « un partenaire inventé pour l'exercice » (remarque sur la conception de l'exercice) ; le résumé « Replié sous "Ce qui sera vérifié" ».
